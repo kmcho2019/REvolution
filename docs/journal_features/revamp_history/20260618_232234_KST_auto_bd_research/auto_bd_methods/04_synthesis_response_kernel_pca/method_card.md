@@ -142,17 +142,18 @@ and free of PPA leakage.
 
 ## 10. Implementation Status
 
-Partial.
+Runtime-ready, not evaluated.
 
 Implemented:
 
 - PPA-free raw synthesis-response feature extraction.
 - Fixed offline PCA fitting artifact builder.
 - Development-seed fitting artifact for `sr_raw_pca_qd`.
+- In-loop archive insertion with `sr_pca_0..2` descriptor axes.
+- Run-matrix arm generation for `sr_raw_pca_qd`.
 
 Not implemented:
 
-- In-loop archive insertion with `sr_pca_0..2` axes.
 - Random ReLU or random Fourier feature expansion.
 - Seed-1/seed-3 SR-PCA evolution runs.
 

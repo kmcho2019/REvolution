@@ -2,8 +2,8 @@
 
 Decision: not evaluated.
 
-Current status: fitting artifact ready for `sr_raw_pca_qd`; in-loop QD
-descriptor wiring and evolution runs are not implemented yet.
+Current status: runtime ready for `sr_raw_pca_qd`; evolution runs are not
+implemented yet.
 
 ## Required Evidence
 

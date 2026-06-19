@@ -79,7 +79,7 @@ evidence and rationale.
 
 ## P5 - Learned Or Codebook Variants
 
-- [ ] Add `sr_raw_pca_qd` over stable synthesis-response vectors as the
+- [x] Add `sr_raw_pca_qd` over stable synthesis-response vectors as the
   first projected baseline.
 - [ ] Add `sr_random_relu_pca_qd` as the main SR-kernel-PCA candidate only
   after fitting artifacts are frozen.

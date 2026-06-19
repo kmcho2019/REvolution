@@ -30,8 +30,8 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
         run_root=tmp_path / "exp",
     )
 
-    assert len(payload["manifest_commands"]) == 7
-    assert len(payload["entries"]) == 14
+    assert len(payload["manifest_commands"]) == 8
+    assert len(payload["entries"]) == 16
     assert (tmp_path / "out" / "auto_bd_development_run_matrix.json").is_file()
     assert (tmp_path / "out" / "auto_bd_development_run_matrix.sh").is_file()
     arms = {entry["arm_name"] for entry in payload["entries"]}
@@ -43,6 +43,7 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
         "netlist_motif_occupancy",
         "synthesis_trajectory_nod",
         "synthesis_trajectory_motif_nod",
+        "sr_raw_pca_qd",
     }
     random_entry = next(
         entry for entry in payload["entries"]
@@ -70,6 +71,15 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
     assert (
         "--qd_descriptor_profile stnod_motif_trajectory_9d"
         in hybrid_entry["command_string"]
+    )
+    sr_pca_entry = next(
+        entry for entry in payload["entries"]
+        if entry["arm_name"] == "sr_raw_pca_qd"
+    )
+    assert "--qd_descriptor_profile sr_pca_3d" in sr_pca_entry["command_string"]
+    assert (
+        "04_synthesis_response_kernel_pca/descriptor_profile.yaml"
+        in sr_pca_entry["command_string"]
     )
 
 
@@ -219,6 +229,7 @@ def _write_inputs(tmp_path: Path) -> dict[str, Path]:
                     "synthesis_trajectory_motif_nod": {
                         "descriptor_source": "motif_and_stage_dumps"
                     },
+                    "sr_raw_pca_qd": {"descriptor_source": "sr_pca_artifact"},
                 },
             },
             sort_keys=False,

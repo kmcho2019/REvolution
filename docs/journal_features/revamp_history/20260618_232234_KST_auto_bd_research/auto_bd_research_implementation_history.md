@@ -8251,3 +8251,108 @@ Results:
 - ty: pass
 - pyright: 0 errors
 - artifact check: `sr raw pca artifact check ok`
+
+## 2026-06-19 - Wired SR Raw PCA Into QD Runtime
+
+Added implementation support:
+
+- `src/revolution/qd/descriptors.py`
+- `src/revolution/qd/engine.py`
+- `scripts/build_auto_bd_run_matrix.py`
+- `tests/revolution/test_auto_bd_sr_pca_descriptor.py`
+- `tests/revolution/test_qd_descriptors.py`
+- `tests/scripts/test_build_auto_bd_run_matrix.py`
+
+Implemented scope:
+
+- registered `sr_pca_0..4` as synthesis-backed descriptor axes
+- loaded the frozen SR-PCA artifact from the descriptor profile
+- computed `sr_pca_0..2` in-loop from final netlist text plus ST-NOD
+  stage dumps
+- added `sr_raw_pca_qd` to the locked run-policy candidate arms
+- added run-matrix generation for `--qd_descriptor_profile sr_pca_3d`
+- kept `sr_raw_pca_qd` marked runtime-ready but not evaluated
+
+Current boundary:
+
+- No SR-PCA evolution run has been launched yet.
+- No Gate 0, robustness, HV, common-audit QD, or learned-BD scatter
+  result is claimed for SR-PCA yet.
+- Random ReLU, RFF, VQ, and contrastive variants remain unimplemented.
+
+Run-matrix smoke:
+
+```bash
+rm -rf /tmp/sr_pca_matrix_check /tmp/sr_pca_exp
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_run_matrix.py \
+  --phase development \
+  --output-dir /tmp/sr_pca_matrix_check \
+  --run-root /tmp/sr_pca_exp \
+  --arms sr_raw_pca_qd
+rg -n "sr_pca_3d|131072|128000" \
+  /tmp/sr_pca_matrix_check/auto_bd_development_run_matrix.json
+```
+
+Result:
+
+- matrix entries: 2
+- descriptor profile: `sr_pca_3d`
+- model length: `--vllm_min_model_len 131072`
+- token budgets: `--max_tokens 128000`, `--diff_max_tokens 128000`
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_auto_bd_method_specs.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  src/revolution/qd/__init__.py \
+  src/revolution/qd/descriptors.py \
+  src/revolution/qd/engine.py \
+  scripts/build_sr_pca_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+UV_LINK_MODE=copy uv tool run ty check \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  src/revolution/qd/__init__.py \
+  src/revolution/qd/descriptors.py \
+  src/revolution/qd/engine.py \
+  scripts/build_sr_pca_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  src/revolution/qd/__init__.py \
+  src/revolution/qd/descriptors.py \
+  src/revolution/qd/engine.py \
+  scripts/build_sr_pca_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- pytest: 42 passed
+- ruff: pass
+- ty: pass
+- pyright: 0 errors

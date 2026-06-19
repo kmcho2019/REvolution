@@ -18,6 +18,13 @@ from typing import Any, Literal, cast
 from revolution.auto_bd.motif_descriptor import motif_occupancy_descriptor_values
 from revolution.auto_bd.netlist_hash import canonical_netlist_hash
 from revolution.auto_bd.random_descriptor import random_hash_descriptor_values
+from revolution.auto_bd.sr_pca_descriptor import (
+    SR_PCA_AXES,
+    SrPcaArtifact,
+    sr_pca_artifact_from_json,
+    sr_raw_feature_values,
+    transform_sr_raw_pca,
+)
 from revolution.auto_bd.trajectory_descriptor import (
     synthesis_trajectory_descriptor_values,
 )
@@ -55,6 +62,7 @@ from revolution.qd.artifacts import (
 from revolution.qd.descriptors import (
     descriptor_requirements,
     extract_descriptor_values,
+    load_sr_pca_artifact_path,
     resolve_descriptor_axes,
     resolve_grid_axis_specs,
 )
@@ -293,6 +301,7 @@ class QDEngine(EoHEngine):
         self._qd_last_rebin_axes: tuple[str, ...] = ()
         self._qd_last_rebin_generation: int | None = None
         self._qd_last_corrected_threshold: float | None = None
+        self._sr_pca_artifact: SrPcaArtifact | None = None
 
     def _uses_descriptor_guided_generation(self) -> bool:
         return self.qd_descriptor_profile not in _ARCHIVE_ONLY_DESCRIPTOR_PROFILES
@@ -438,6 +447,19 @@ class QDEngine(EoHEngine):
             )
         )
 
+    def _requires_auto_bd_sr_pca_metrics(self) -> bool:
+        return bool(
+            descriptor_requirements(self._archive_axes()).get("requires_auto_bd_sr_pca")
+        )
+
+    def _load_sr_pca_artifact(self) -> SrPcaArtifact:
+        if self._sr_pca_artifact is None:
+            artifact_path = load_sr_pca_artifact_path(self.qd_descriptor_file)
+            payload = json.loads(artifact_path.read_text(encoding="utf-8"))
+            assert isinstance(payload, dict)
+            self._sr_pca_artifact = sr_pca_artifact_from_json(payload)
+        return self._sr_pca_artifact
+
     def _extract_candidate_descriptor_values(
         self,
         cand: Heuristic,
@@ -446,7 +468,8 @@ class QDEngine(EoHEngine):
         needs_hash = self._requires_auto_bd_hash_metrics()
         needs_motif = self._requires_auto_bd_motif_metrics()
         needs_stage = self._requires_auto_bd_stage_metrics()
-        if not (needs_hash or needs_motif or needs_stage):
+        needs_sr_pca = self._requires_auto_bd_sr_pca_metrics()
+        if not (needs_hash or needs_motif or needs_stage or needs_sr_pca):
             return {}
         if not (
             synthesis_result.get("synthesis_success")
@@ -454,7 +477,8 @@ class QDEngine(EoHEngine):
         ):
             return {}
         values: dict[str, float] = {}
-        if needs_hash or needs_motif:
+        netlist_text: str | None = None
+        if needs_hash or needs_motif or needs_sr_pca:
             path = Path(str(synthesis_result["synthesized_netlist_path"]))
             assert path.is_file(), f"missing synthesized netlist: {path}"
             netlist_text = path.read_text(encoding="utf-8", errors="ignore")
@@ -464,7 +488,7 @@ class QDEngine(EoHEngine):
                 )
             if needs_motif:
                 values.update(motif_occupancy_descriptor_values(netlist_text))
-        if needs_stage:
+        if needs_stage or needs_sr_pca:
             if "stage_dump_verilog_paths" not in synthesis_result:
                 code_file_path = self._refresh_candidate_code_path(cand)
                 stage_dump_result = self.synthesis_evaluator.run_yosys_stage_dumps(
@@ -476,19 +500,30 @@ class QDEngine(EoHEngine):
                 if not bool(stage_dump_result["stage_dump_success"]):
                     synthesis_result["ppa_success"] = False
                     return {}
-            values.update(
-                synthesis_trajectory_descriptor_values(
-                    tuple(
-                        Path(str(path))
-                        for path in synthesis_result["stage_dump_verilog_paths"]
-                    )
-                )
+            stage_paths = tuple(
+                Path(str(path)) for path in synthesis_result["stage_dump_verilog_paths"]
             )
+            if needs_stage:
+                values.update(synthesis_trajectory_descriptor_values(stage_paths))
+            if needs_sr_pca:
+                assert netlist_text is not None
+                artifact = self._load_sr_pca_artifact()
+                raw_values = sr_raw_feature_values(
+                    final_netlist_text=netlist_text,
+                    stage_verilog_paths=stage_paths,
+                )
+                projected = transform_sr_raw_pca(artifact, raw_values)
+                for axis, value in zip(
+                    SR_PCA_AXES[: len(projected)],
+                    projected,
+                    strict=True,
+                ):
+                    values[axis] = value
         return values
 
     def _phase_mode(self, phase: str) -> Literal["whole", "diff"]:
         if not self._uses_descriptor_guided_generation():
-            return cast(Literal["whole", "diff"], self.generation_mode)
+            return self.generation_mode
         override = {
             "fail": self.qd_fail_generation_mode,
             "seed": self.qd_seed_generation_mode,
@@ -674,14 +709,17 @@ class QDEngine(EoHEngine):
             ]
             if not archive_values or not recent_values:
                 continue
-            test = ks_2samp(archive_values, recent_values)
+            ks_statistic, ks_p_value = cast(
+                tuple[float, float],
+                ks_2samp(archive_values, recent_values),
+            )
             results.append(
                 {
                     "axis": axis,
                     "archive_count": len(archive_values),
                     "recent_count": len(recent_values),
-                    "ks_statistic": float(test.statistic),
-                    "ks_p_value": float(test.pvalue),
+                    "ks_statistic": float(ks_statistic),
+                    "ks_p_value": float(ks_p_value),
                 }
             )
         return results
@@ -784,7 +822,7 @@ class QDEngine(EoHEngine):
             for result in axis_results
             if float(result["ks_p_value"]) < corrected_threshold
         )
-        check_event = {
+        check_event: dict[str, Any] = {
             **check_base,
             "check_status": "tested",
             "corrected_p_threshold": corrected_threshold,
@@ -2467,16 +2505,19 @@ class QDEngine(EoHEngine):
             if self._uses_descriptor_guided_generation() and (
                 budget.phase == "fill" or idx < budget.backfill_budget
             ):
-                available: list[EvolStrategyMethodSuccess] = ["M-T", "M-E"]
+                success_available = cast(list[EvolStrategyMethodSuccess], ["M-T", "M-E"])
                 if len(self.success_pool) > 1:
-                    available.append("C-D")
+                    success_available.append("C-D")
             else:
-                available = ["M-S", "M-E", "M-R", "M-I"]
+                success_available = cast(
+                    list[EvolStrategyMethodSuccess],
+                    ["M-S", "M-E", "M-R", "M-I"],
+                )
                 if len(self.success_pool) > 1:
-                    available.append("C-F")
+                    success_available.append("C-F")
             strat_name, _ = self._select_strategy(
                 "success",
-                available,
+                success_available,
                 success_selected,
             )
             if strat_name is None:
@@ -2809,7 +2850,7 @@ class QDEngine(EoHEngine):
         self,
         thought: ThoughtIndividual,
         evaluation: ThoughtEvaluation,
-        samples: list[Heuristic] = (),
+        samples: list[Heuristic],
     ) -> Heuristic:
         status = "failed_functionality"
         if evaluation.sample_statuses:
@@ -3324,16 +3365,19 @@ class QDEngine(EoHEngine):
                 if not self._uses_descriptor_guided_generation():
                     arity = self._success_parent_arity()
                     if arity == 2:
-                        available = ["C-F"]
+                        success_available = cast(list[EvolStrategyMethodSuccess], ["C-F"])
                     elif arity == 1:
-                        available = ["M-S", "M-E", "M-R", "M-I"]
+                        success_available = cast(
+                            list[EvolStrategyMethodSuccess],
+                            ["M-S", "M-E", "M-R", "M-I"],
+                        )
                     else:
-                        available = list(CLASSIC_SUCCESS_STRATEGIES)
-                        if len(self.success_pool) < 2 and "C-F" in available:
-                            available.remove("C-F")
+                        success_available = list(CLASSIC_SUCCESS_STRATEGIES)
+                        if len(self.success_pool) < 2 and "C-F" in success_available:
+                            success_available.remove("C-F")
                     selected_name, prob_dist = self._select_strategy(
                         "success",
-                        available,
+                        success_available,
                         success_selected,
                     )
                     if selected_name is None or prob_dist is None:
@@ -3359,16 +3403,16 @@ class QDEngine(EoHEngine):
                 elif budget.phase == "fill" or idx < budget.backfill_budget:
                     arity = self._success_parent_arity()
                     if arity is None:
-                        available = ["M-T", "M-E"]
+                        success_available = cast(list[EvolStrategyMethodSuccess], ["M-T", "M-E"])
                         if len(self.success_pool) > 1:
-                            available.append("C-D")
+                            success_available.append("C-D")
                     elif arity == 2:
-                        available: list[EvolStrategyMethodSuccess] = ["C-D"]
+                        success_available = cast(list[EvolStrategyMethodSuccess], ["C-D"])
                     else:
-                        available = ["M-T", "M-E"]
+                        success_available = cast(list[EvolStrategyMethodSuccess], ["M-T", "M-E"])
                     selected_name, prob_dist = self._select_strategy(
                         "success",
-                        available,
+                        success_available,
                         success_selected,
                     )
                     if selected_name is None or prob_dist is None:
@@ -3407,16 +3451,22 @@ class QDEngine(EoHEngine):
                     if not parents:
                         break
                     if arity is None:
-                        available = ["M-S", "M-R", "M-I"]
+                        success_available = cast(
+                            list[EvolStrategyMethodSuccess],
+                            ["M-S", "M-R", "M-I"],
+                        )
                         if len(self.success_pool) > 1:
-                            available.append("C-F")
+                            success_available.append("C-F")
                     elif arity == 2:
-                        available = ["C-F"]
+                        success_available = cast(list[EvolStrategyMethodSuccess], ["C-F"])
                     else:
-                        available = ["M-S", "M-R", "M-I"]
+                        success_available = cast(
+                            list[EvolStrategyMethodSuccess],
+                            ["M-S", "M-R", "M-I"],
+                        )
                     selected_name, prob_dist = self._select_strategy(
                         "success",
-                        available,
+                        success_available,
                         success_selected,
                     )
                     if selected_name is None or prob_dist is None:

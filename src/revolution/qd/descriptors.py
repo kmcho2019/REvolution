@@ -115,6 +115,11 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "stnod_control_swing": DescriptorDefinition("stnod_control_swing", "auto_bd_stage_dumps", requires_synthesis=True),
     "stnod_arith_swing": DescriptorDefinition("stnod_arith_swing", "auto_bd_stage_dumps", requires_synthesis=True),
     "stnod_diversity_swing": DescriptorDefinition("stnod_diversity_swing", "auto_bd_stage_dumps", requires_synthesis=True),
+    "sr_pca_0": DescriptorDefinition("sr_pca_0", "auto_bd_sr_pca", requires_synthesis=True),
+    "sr_pca_1": DescriptorDefinition("sr_pca_1", "auto_bd_sr_pca", requires_synthesis=True),
+    "sr_pca_2": DescriptorDefinition("sr_pca_2", "auto_bd_sr_pca", requires_synthesis=True),
+    "sr_pca_3": DescriptorDefinition("sr_pca_3", "auto_bd_sr_pca", requires_synthesis=True),
+    "sr_pca_4": DescriptorDefinition("sr_pca_4", "auto_bd_sr_pca", requires_synthesis=True),
 }
 
 
@@ -187,6 +192,20 @@ def load_grid_axis_specs(path: str | Path | None = None) -> dict[str, GridAxisDe
             upper_bound=upper_bound,
         )
     return specs
+
+
+def load_sr_pca_artifact_path(path: str | Path | None) -> Path:
+    """Load the frozen SR-PCA artifact path from a descriptor-profile file."""
+
+    assert path is not None
+    profile_path = Path(path)
+    payload = _load_descriptor_config(profile_path)
+    artifact_path = payload["sr_pca_artifact"]
+    assert isinstance(artifact_path, str)
+    resolved = Path(artifact_path)
+    if resolved.is_absolute():
+        return resolved
+    return profile_path.parent / resolved
 
 
 def resolve_descriptor_axes(
@@ -343,6 +362,8 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (-8.0, 8.0)
     if axis.startswith("stnod_"):
         return (0.0, 1.0)
+    if axis.startswith("sr_pca_"):
+        return (-3.0, 3.0)
     if axis in {"wire_cell_ratio_est", "resource_sharing_ratio_est"}:
         return (0.0, 4.0)
     if axis == "ltp_noff":
@@ -402,6 +423,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         "requires_auto_bd_stage_dumps": any(
             registry[axis].source_tool == "auto_bd_stage_dumps" for axis in axes
         ),
+        "requires_auto_bd_sr_pca": any(
+            registry[axis].source_tool == "auto_bd_sr_pca" for axis in axes
+        ),
     }
 
 
@@ -423,6 +447,7 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             "requires_auto_bd_stage_dumps": (
                 registry[axis].source_tool == "auto_bd_stage_dumps"
             ),
+            "requires_auto_bd_sr_pca": registry[axis].source_tool == "auto_bd_sr_pca",
         }
         for axis in axes
     ]

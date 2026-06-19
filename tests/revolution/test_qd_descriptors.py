@@ -8,6 +8,7 @@ from revolution.qd.descriptors import (
     extract_descriptor_values,
     load_grid_axis_specs,
     load_descriptor_profiles,
+    load_sr_pca_artifact_path,
     resolve_descriptor_axes,
     resolve_grid_axis_specs,
 )
@@ -31,6 +32,11 @@ STNOD_DESCRIPTOR_FILE = (
     "docs/journal_features/revamp_history/"
     "20260618_232234_KST_auto_bd_research/"
     "auto_bd_methods/03_synthesis_trajectory_nod/descriptor_profile.yaml"
+)
+SR_PCA_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/04_synthesis_response_kernel_pca/descriptor_profile.yaml"
 )
 
 
@@ -445,6 +451,23 @@ def test_descriptor_requirements_detect_journal_profile_needs_graph_and_synthesi
     assert reqs["requires_graph_metrics"] is True
     assert reqs["requires_synthesis"] is True
     assert reqs["requires_ppa"] is False
+
+
+def test_sr_pca_profile_resolves_artifact_and_requirements():
+    axes = resolve_descriptor_axes(
+        profile_name="sr_pca_3d",
+        explicit_axes=None,
+        descriptor_file=SR_PCA_DESCRIPTOR_FILE,
+        archive_type="grid",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+    artifact_path = load_sr_pca_artifact_path(SR_PCA_DESCRIPTOR_FILE)
+
+    assert axes == ["sr_pca_0", "sr_pca_1", "sr_pca_2"]
+    assert requirements["requires_synthesis"] is True
+    assert requirements["requires_auto_bd_sr_pca"] is True
+    assert artifact_path.is_file()
 
 
 def test_load_descriptor_profiles_accepts_custom_file(tmp_path: Path):

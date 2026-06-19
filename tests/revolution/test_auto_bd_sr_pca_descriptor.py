@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
 
@@ -14,6 +16,7 @@ from revolution.auto_bd.sr_pca_descriptor import (
     transform_sr_raw_pca,
 )
 from revolution.auto_bd.stage_dumps import STNOD_STAGE_NAMES
+from revolution.qd.engine import QDEngine
 
 
 def test_sr_raw_feature_schema_excludes_leakage_inputs(tmp_path: Path) -> None:
@@ -58,6 +61,54 @@ def test_sr_raw_pca_artifact_round_trips_and_projects() -> None:
     assert len(descriptor) == 3
     assert payload["raw_feature_schema_version"] == "synthesis_response_raw_v1"
     assert list(SR_PCA_AXES[:3]) == ["sr_pca_0", "sr_pca_1", "sr_pca_2"]
+
+
+def test_qd_engine_extracts_sr_pca_descriptor_values(tmp_path: Path) -> None:
+    stage_paths = _write_stage_files(tmp_path, "candidate")
+    netlist_path = tmp_path / "code.syn.v"
+    netlist_path.write_text(_netlist_text(("AND2_X1", "MUX2_X1", "ADD_X1")), encoding="utf-8")
+    matrix = np.array(
+        [
+            [float(row + col) for col in range(len(sr_raw_feature_axes()))]
+            for row in range(6)
+        ],
+        dtype=float,
+    )
+    artifact = fit_sr_raw_pca_artifact(matrix, dimensions=3)
+    artifact_path = tmp_path / "sr_raw_pca_artifact.json"
+    artifact_path.write_text(
+        json.dumps(sr_pca_artifact_to_json(artifact), indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    descriptor_file = tmp_path / "descriptor_profile.yaml"
+    descriptor_file.write_text(
+        "sr_pca_artifact: sr_raw_pca_artifact.json\n"
+        "profiles:\n"
+        "  sr_pca_3d:\n"
+        "    - sr_pca_0\n"
+        "    - sr_pca_1\n"
+        "    - sr_pca_2\n",
+        encoding="utf-8",
+    )
+    engine = object.__new__(QDEngine)
+    engine.qd_archive_type = "grid"
+    engine.qd_grid_axes = ("sr_pca_0", "sr_pca_1", "sr_pca_2")
+    engine.qd_descriptor_file = str(descriptor_file)
+    engine._sr_pca_artifact = None
+
+    values = QDEngine._extract_candidate_descriptor_values(
+        engine,
+        cast(Any, object()),
+        {
+            "synthesis_success": True,
+            "ppa_success": True,
+            "synthesized_netlist_path": netlist_path.as_posix(),
+            "stage_dump_verilog_paths": [path.as_posix() for path in stage_paths],
+        },
+    )
+
+    assert set(values) == {"sr_pca_0", "sr_pca_1", "sr_pca_2"}
+    assert all(isinstance(value, float) for value in values.values())
 
 
 def _write_stage_files(tmp_path: Path, name: str) -> tuple[Path, ...]:

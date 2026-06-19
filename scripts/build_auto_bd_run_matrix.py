@@ -46,6 +46,10 @@ METHOD_CONFIGS = {
     / "auto_bd_methods"
     / "03_synthesis_trajectory_nod"
     / "config_motif_trajectory.yaml",
+    "sr_raw_pca_qd": SCAFFOLD_DIR
+    / "auto_bd_methods"
+    / "04_synthesis_response_kernel_pca"
+    / "config.yaml",
 }
 
 
@@ -143,6 +147,10 @@ def write_arm_configs(
         "synthesis_trajectory_motif_nod": mapping_at(
             mapping_at(run_policy, "candidate_method_arms"),
             "synthesis_trajectory_motif_nod",
+        ),
+        "sr_raw_pca_qd": mapping_at(
+            mapping_at(run_policy, "candidate_method_arms"),
+            "sr_raw_pca_qd",
         ),
     }
     selected_arms = arm_names or list(arm_payloads)
@@ -312,6 +320,14 @@ def arm_flags(arm_name: str) -> list[str]:
             *base_qd,
             "--qd_descriptor_profile",
             "stnod_motif_trajectory_9d",
+            "--qd_descriptor_file",
+            str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
+        ]
+    if arm_name == "sr_raw_pca_qd":
+        return [
+            *base_qd,
+            "--qd_descriptor_profile",
+            "sr_pca_3d",
             "--qd_descriptor_file",
             str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
         ]
