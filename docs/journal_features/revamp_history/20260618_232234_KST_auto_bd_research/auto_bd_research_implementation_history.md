@@ -6266,3 +6266,142 @@ PY
 ```
 
 Result: `random descriptor seed1002 rtllm status check ok`.
+
+## 2026-06-19 10:07 UTC
+
+Completed the second seed-3 main-screening command for
+`random_descriptor_qd` seed 1002.
+
+Model endpoint preflight:
+
+```bash
+curl -s http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Run command:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob098_circuit7 Prob116_m2014_q3 Prob135_m2014_q6b Prob150_review2015_fsmonehot Prob151_review2015_fsm Prob153_gshare \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 20 \
+  --num_generations 5 \
+  --evaluation_mode search_accelerated \
+  --accelerated_synthesis_top_k 1 \
+  --total_worker_slots 13 \
+  --max_active_problems 13 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1002 \
+  --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1002 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile random_hash_3d \
+  --qd_descriptor_file /workspace/.worktrees/journal-auto-bd-exp-20260618/docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/00_random_descriptor/descriptor_profile.yaml
+```
+
+Result:
+
+- arm: `random_descriptor_qd`
+- seed: 1002
+- benchmark group: `VerilogEval-Spec-to-RTL`
+- run time: 2919.44 seconds
+- run log:
+  `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1002/revolution/openai_gpt-oss-120b/20260619_091834_revolution_run_log.txt`
+- summary:
+  `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1002/revolution/openai_gpt-oss-120b/20260619_091834_revolution_summary_results.txt`
+- scheduler telemetry:
+  `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1002/revolution/openai_gpt-oss-120b/20260619_091834_revolution_scheduler_telemetry.json`
+
+Problem outcomes:
+
+| Problem | Status | Best Score |
+| --- | --- | --- |
+| `Prob098_circuit7` | `success` | 0.01200564971751411 |
+| `Prob116_m2014_q3` | `success` | 0.46535233160621764 |
+| `Prob135_m2014_q6b` | `success` | 0.33104633781763826 |
+| `Prob150_review2015_fsmonehot` | `success` | 0.32968627450980387 |
+| `Prob151_review2015_fsm` | `success` | -0.11027823779501628 |
+| `Prob153_gshare` | `success` | 0.1669956061551651 |
+
+Refreshed status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py
+```
+
+Current seed-3 status:
+
+- manifest commands: 12 complete, 0 pending
+- benchmark commands: 16 complete, 8 pending
+- arm/seed pairs: 7 standard-results complete, 1 runs complete, 4 pending
+- `random_descriptor_qd` seed 1002: runs complete, 2/2 benchmark groups complete
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+p = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+payload = json.loads(p.read_text())
+assert payload["manifest_summary"] == {"complete": 12, "total": 12}
+assert payload["entry_summary"] == {"complete": 16, "pending": 8, "total": 24}
+assert payload["arm_seed_summary"] == {
+    "pending": 4,
+    "runs_complete": 1,
+    "standard_results_complete": 7,
+    "total": 12,
+}
+entry = next(
+    item
+    for item in payload["arm_seed_status"]
+    if item["arm_name"] == "random_descriptor_qd"
+    and item["seed"] == 1002
+)
+assert entry["status"] == "runs_complete"
+assert entry["benchmark_groups_complete"] == 2
+verilog_entry = next(
+    item
+    for item in payload["entry_status"]
+    if item["arm_name"] == "random_descriptor_qd"
+    and item["seed"] == 1002
+    and item["benchmark"] == "VerilogEval-Spec-to-RTL"
+)
+assert verilog_entry["status"] == "complete"
+assert verilog_entry["completed_problem_count"] == 6
+print("random descriptor seed1002 verilog status check ok")
+PY
+```
+
+Result: `random descriptor seed1002 verilog status check ok`.
