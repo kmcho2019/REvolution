@@ -142,7 +142,7 @@ and free of PPA leakage.
 
 ## 10. Implementation Status
 
-Runtime-ready, not evaluated.
+Seed-1 evaluated for `sr_raw_pca_qd`.
 
 Implemented:
 
@@ -151,11 +151,13 @@ Implemented:
 - Development-seed fitting artifact for `sr_raw_pca_qd`.
 - In-loop archive insertion with `sr_pca_0..2` descriptor axes.
 - Run-matrix arm generation for `sr_raw_pca_qd`.
+- Development seed-1 run, standard results, Gate 0 coverage artifact,
+  and method-local artifact report for `sr_raw_pca_qd`.
 
 Not implemented:
 
 - Random ReLU or random Fourier feature expansion.
-- Seed-1/seed-3 SR-PCA evolution runs.
+- Seed-3 SR-PCA screening runs.
 
 ## 11. Experimental Setup
 
@@ -170,7 +172,28 @@ Not implemented:
 
 ## 12. Results
 
-No SR-PCA evolution runs yet.
+Development seed-1 `sr_raw_pca_qd` result:
+
+- run root:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001`
+- standard results:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/standard_results`
+- method report: `seed1_artifact_report.md`
+- Gate 0 artifact:
+  `../../auto_bd_gate0_coverage_seed1_sr_raw_pca_qd.json`
+- centralized report: `../../auto_bd_seed1_centralized_report.md`
+
+Seed-1 metrics:
+
+- Gate 0: pass, 6/6 classic-covered problems, no missing problems.
+- Valid PPA: 209/288, equal to classic REvolution.
+- Mean best fitness: 0.2404 versus 0.2671 for classic.
+- Mean hypervolume: 0.1208 versus 0.1245 for classic.
+- PPA-front unique netlists: 14 versus 12 for classic.
+- Unique canonical netlists: 74 versus 70 for classic.
+- Unique motif signatures: 48 versus 43 for classic.
+- Common-audit occupied cells: 12, equal to classic.
+- Common-audit QD score: 1.9663 versus 2.3163 for classic.
 
 Frozen development fitting artifact:
 
@@ -207,10 +230,13 @@ Required plots:
 
 ## 13. Accept / Reject Decision
 
-Not evaluated.
+Reject as a selected final method; keep as the first projected baseline.
 
 ## 14. Reason
 
-The method cannot be accepted until it passes Gate 0, preserves repair
-robustness, improves PPA/HV or diversity under common-audit reporting,
-and proves the descriptor was fitted only from allowed data.
+`sr_raw_pca_qd` proves that frozen synthesis-response PCA can be used
+in-loop without breaking seed-1 valid-PPA coverage. It does not yet show
+the material uplift required for a journal method: fitness and HV do not
+beat classic REvolution, common-audit coverage only ties classic, and
+PPA-front unique-netlist uplift is below the predeclared 20 percent
+target. Proceed to the planned random-kernel variant.

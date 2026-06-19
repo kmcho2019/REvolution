@@ -63,6 +63,7 @@ fixed cross-method diversity surface required by the controlling plan.
 | `netlist_motif_occupancy` | 288 | 192 | 64 | 37 | 8 | -3.0274 |
 | `synthesis_trajectory_nod` | 288 | 205 | 72 | 52 | 11 | -2.0643 |
 | `synthesis_trajectory_motif_nod` | 288 | 198 | 77 | 45 | 16 | 1.7144 |
+| `sr_raw_pca_qd` | 288 | 209 | 74 | 48 | 12 | 1.9663 |
 
 ## Artifact Paths
 
@@ -80,6 +81,8 @@ fixed cross-method diversity surface required by the controlling plan.
   `exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results/`
 - `synthesis_trajectory_motif_nod`:
   `exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_motif_nod/seed_1001/standard_results/`
+- `sr_raw_pca_qd`:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/standard_results/`
 
 ## Interpretation Notes
 
@@ -95,3 +98,6 @@ fixed cross-method diversity surface required by the controlling plan.
 - `synthesis_trajectory_motif_nod` is an ST-NOD ablation, not a promoted
   seed-3 arm. Its accept/reject decision lives in
   `auto_bd_methods/03_synthesis_trajectory_nod/hybrid_ablation_accept_reject.md`.
+- `sr_raw_pca_qd` is the first projected synthesis-response baseline, not
+  a promoted final method. Its accept/reject decision lives in
+  `auto_bd_methods/04_synthesis_response_kernel_pca/accept_reject.md`.

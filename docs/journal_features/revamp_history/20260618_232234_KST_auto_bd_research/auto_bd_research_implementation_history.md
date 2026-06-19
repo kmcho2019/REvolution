@@ -8356,3 +8356,211 @@ Results:
 - ruff: pass
 - ty: pass
 - pyright: 0 errors
+
+## 2026-06-19 - Ran SR Raw PCA Seed-1 Development
+
+Preflight:
+
+```bash
+curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model: `openai/gpt-oss-120b`
+- reported `max_model_len`: 131072
+
+Run-matrix update:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_run_matrix.py \
+  --phase development \
+  --output-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research \
+  --run-root exp/auto_bd_research
+```
+
+Result:
+
+- development matrix entries: 16
+- added arm: `sr_raw_pca_qd`
+- generated config:
+  `auto_bd_run_configs/development/sr_raw_pca_qd.yaml`
+
+Run manifest:
+
+```bash
+jq -r '.manifest_commands[] | select(.arm_name=="sr_raw_pca_qd") |
+  .command_string' \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_development_run_matrix.json |
+  bash
+```
+
+Result:
+
+- manifest:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/run_manifest.json`
+- manifest git commit: `be530b9d2240ba5d6cd14687b0511ece8a813491`
+- branch: `feat/journal-auto-bd-exp-20260618`
+
+SR-PCA development run commands:
+
+```bash
+jq -r '.entries[] | select(.arm_name=="sr_raw_pca_qd" and
+  .benchmark=="RTLLM") | .command_string' \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_development_run_matrix.json |
+  bash
+
+jq -r '.entries[] | select(.arm_name=="sr_raw_pca_qd" and
+  .benchmark=="VerilogEval-Spec-to-RTL") | .command_string' \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_development_run_matrix.json |
+  bash
+```
+
+Run roots:
+
+- `exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/revolution/openai_gpt-oss-120b`
+
+Runtime:
+
+- RTLLM half: 551.68 seconds.
+- VerilogEval half: 486.39 seconds.
+
+Runtime sanity:
+
+- built-in vLLM preflight passed for both benchmark halves.
+- run commands used `--vllm_min_model_len 131072`.
+- run commands used `--max_tokens 128000` and
+  `--diff_max_tokens 128000`.
+- sampled `qd_archive_event.json` files contain `archive_axes`
+  `["sr_pca_0", "sr_pca_1", "sr_pca_2"]` and finite SR-PCA descriptor
+  tuples.
+
+Standard result generation:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_standard_results.py \
+  --run-dir exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/revolution/openai_gpt-oss-120b \
+  --output-dir exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/standard_results \
+  --method-name sr_raw_pca_qd \
+  --method-family synthesis_response_kernel_pca \
+  --descriptor-version sr_raw_pca_v1 \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --run-manifest exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/run_manifest.json
+```
+
+Standard result summary:
+
+- candidates: 288
+- valid PPA candidates: 209
+- problem count: 6
+- unique canonical netlists: 74
+- unique motif signatures: 48
+- common-audit occupied cells: 12
+- common-audit QD score: 1.9663
+
+Generated reports and artifacts:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --figure-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1
+
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_method_results.py \
+  --central-report-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --method-root docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods \
+  --output-name seed1_artifact_report.md
+
+UV_LINK_MODE=copy uv run --active python \
+  scripts/summarize_auto_bd_gate0.py \
+  --run-dir exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/revolution/openai_gpt-oss-120b \
+  --method-name sr_raw_pca_qd \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --output docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_gate0_coverage_seed1_sr_raw_pca_qd.json
+```
+
+Generated docs:
+
+- `auto_bd_seed1_centralized_report.md`
+- `auto_bd_seed1_centralized_report.json`
+- `auto_bd_gate0_coverage_seed1_sr_raw_pca_qd.json`
+- `auto_bd_methods/04_synthesis_response_kernel_pca/seed1_artifact_report.md`
+- `auto_bd_methods/04_synthesis_response_kernel_pca/seed1_preliminary_report.md`
+
+Seed-1 comparison against classic:
+
+- Gate 0: pass, 6/6 classic-covered problems, no missing problems.
+- Valid PPA: 209/288, equal to classic REvolution.
+- Mean best fitness: 0.2404 versus 0.2671 for classic.
+- Fitness W/T/L: 0/5/1.
+- Mean hypervolume: 0.1208 versus 0.1245 for classic.
+- Hypervolume W/T/L: 1/4/1.
+- Unique canonical netlists: 74 versus 70 for classic.
+- Unique motif signatures: 48 versus 43 for classic.
+- PPA-front unique netlists: 14 versus 12 for classic.
+- Common-audit occupied cells: 12, equal to classic.
+- Common-audit QD score: 1.9663 versus 2.3163 for classic.
+
+Decision:
+
+- Reject `sr_raw_pca_qd` as the selected final method.
+- Keep it as the first projected synthesis-response baseline.
+- Do not promote it to seed-3 as a final-method candidate from this
+  evidence.
+- Proceed to `sr_random_relu_pca_qd` after freezing a random-kernel
+  fitting artifact with the same leakage controls.
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+UV_LINK_MODE=copy uv tool run ty check \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- pytest: 43 passed
+- ruff: pass
+- ty: pass
+- pyright: 0 errors

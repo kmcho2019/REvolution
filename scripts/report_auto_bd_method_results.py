@@ -13,6 +13,7 @@ METHOD_DIRS = {
     "simple_yosys_stat_bd": "01_yosys_stat_bd",
     "netlist_motif_occupancy": "02_netlist_motif_occupancy",
     "synthesis_trajectory_nod": "03_synthesis_trajectory_nod",
+    "sr_raw_pca_qd": "04_synthesis_response_kernel_pca",
 }
 
 

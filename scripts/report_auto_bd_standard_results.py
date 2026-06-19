@@ -30,6 +30,8 @@ METHOD_ORDER = (
     "simple_yosys_stat_bd",
     "netlist_motif_occupancy",
     "synthesis_trajectory_nod",
+    "synthesis_trajectory_motif_nod",
+    "sr_raw_pca_qd",
 )
 FITNESS_EPSILON = 0.03
 HV_EPSILON = 1e-9
