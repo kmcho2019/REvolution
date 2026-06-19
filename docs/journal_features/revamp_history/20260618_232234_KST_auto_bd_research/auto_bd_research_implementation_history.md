@@ -9985,6 +9985,10 @@ Changes:
   - seed-1 `sr_rff_pca_qd`
   - seed-1 `sr_vq_codebook_qd`
   - seed-3 `sr_random_relu_pca_qd` seeds 1001, 1002, and 1003
+- Then regenerated all 26 available `standard_results/` roots so
+  baseline, control, fixed-vector, projected, and codebook artifacts all
+  share the same provenance-column schema. Baseline and fixed-vector rows
+  use empty provenance strings.
 - Regenerated seed-1 centralized, method-local, and promotion-decision
   reports.
 - Regenerated seed-3 centralized reports for seeds 1001, 1002, and 1003.
@@ -10059,6 +10063,8 @@ Results:
 - `ruff check`: pass
 - `ty check`: pass
 - pyright: 0 errors, 0 warnings, 0 informations
+- all 26 `standard_results/` roots have the provenance columns in
+  `candidates.parquet` and `descriptor_vectors.parquet`
 
 Next:
 
