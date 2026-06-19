@@ -85,7 +85,7 @@ evidence and rationale.
   after fitting artifacts are frozen.
 - [ ] Try `sr_rff_pca_qd` only as a kernel control after ReLU PCA is
   understood.
-- [ ] Define descriptor fitting protocol and frozen fitting artifacts for
+- [x] Define descriptor fitting protocol and frozen fitting artifacts for
   projected methods: feature schema, scaler, random map, PCA components,
   training candidate list, and excluded data.
 - [ ] Implement AURORA-style encoder only if fixed-vector methods are

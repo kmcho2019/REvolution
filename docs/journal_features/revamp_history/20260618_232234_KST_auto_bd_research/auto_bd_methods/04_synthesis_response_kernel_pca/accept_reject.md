@@ -2,6 +2,9 @@
 
 Decision: not evaluated.
 
+Current status: fitting artifact ready for `sr_raw_pca_qd`; in-loop QD
+descriptor wiring and evolution runs are not implemented yet.
+
 ## Required Evidence
 
 - Frozen feature schema, scaler, random-map, and PCA hashes.

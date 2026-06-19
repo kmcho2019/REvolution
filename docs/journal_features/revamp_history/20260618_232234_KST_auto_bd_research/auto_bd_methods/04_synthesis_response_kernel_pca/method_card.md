@@ -142,7 +142,19 @@ and free of PPA leakage.
 
 ## 10. Implementation Status
 
-Planned. No backend descriptor extraction exists yet.
+Partial.
+
+Implemented:
+
+- PPA-free raw synthesis-response feature extraction.
+- Fixed offline PCA fitting artifact builder.
+- Development-seed fitting artifact for `sr_raw_pca_qd`.
+
+Not implemented:
+
+- In-loop archive insertion with `sr_pca_0..2` axes.
+- Random ReLU or random Fourier feature expansion.
+- Seed-1/seed-3 SR-PCA evolution runs.
 
 ## 11. Experimental Setup
 
@@ -157,7 +169,27 @@ Planned. No backend descriptor extraction exists yet.
 
 ## 12. Results
 
-No runs yet.
+No SR-PCA evolution runs yet.
+
+Frozen development fitting artifact:
+
+- artifact:
+  `fitting_artifacts/sr_raw_pca_dev_seed1001/sr_raw_pca_artifact.json`
+- source data:
+  `exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results`
+- training candidates: 205 valid development candidates
+- raw feature schema: `synthesis_response_raw_v1`
+- descriptor version: `sr_raw_pca_v1`
+- feature schema hash:
+  `505c9fb648a6a2bd2dadca0e8f1ed30de567bd00df4d72fef2ec385ece47421a`
+- scaler hash:
+  `4d2b9bbe7cfb8841e11ead36c893f092693ddccc5e624312f1036687c927d5cf`
+- PCA hash:
+  `ef2bd4ee1d8532fb765a002aee01fc10d78bd88ce9f77ad8bf3afe722d127257`
+- descriptor hash:
+  `931edf18e9ec5e3a7b2b8d7996c603c64ec82619f6185ea44cf4803e6105ee1b`
+- explained variance ratio:
+  `[0.437099552626324, 0.22443819250404728, 0.1833523891094817]`
 
 Required plots:
 

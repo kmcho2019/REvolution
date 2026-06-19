@@ -8150,3 +8150,104 @@ Screening summary:
   Smooth-QD manual-BD.
 - Decision: keep ST-NOD as a synthesis-response control, then proceed to
   the P5 `synthesis_response_kernel_pca` family.
+
+## 2026-06-19 - Built SR Raw PCA Fitting Artifact
+
+Added implementation support:
+
+- `src/revolution/auto_bd/sr_pca_descriptor.py`
+- `scripts/build_sr_pca_artifacts.py`
+- `tests/revolution/test_auto_bd_sr_pca_descriptor.py`
+- `tests/scripts/test_build_sr_pca_artifacts.py`
+
+Implemented scope:
+
+- fixed synthesis-response raw feature schema
+  `synthesis_response_raw_v1`
+- PPA-free raw feature extraction from final netlist text and ST-NOD
+  stage dumps
+- fixed offline PCA artifact fitting for `sr_raw_pca_qd`
+- artifact hashes for feature schema, scaler, PCA, and descriptor version
+- training candidate, raw feature, and projected descriptor parquet files
+
+Artifact generation command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_sr_pca_artifacts.py \
+  --standard-results-dir exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results \
+  --output-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/fitting_artifacts/sr_raw_pca_dev_seed1001 \
+  --method-name sr_raw_pca_qd \
+  --dimensions 3
+```
+
+Generated artifact root:
+
+`docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/fitting_artifacts/sr_raw_pca_dev_seed1001`
+
+Generated files:
+
+- `sr_raw_pca_artifact.json`
+- `training_candidates.parquet`
+- `raw_features.parquet`
+- `training_descriptor_vectors.parquet`
+
+Artifact summary:
+
+- training candidates: 205 valid development candidates
+- excluded data: held-out problems, main-screening candidates, final
+  evaluation candidates
+- forbidden descriptor inputs: PPA, reference PPA, fitness, hypervolume,
+  testbench pass percentage, problem ID
+- feature schema hash:
+  `505c9fb648a6a2bd2dadca0e8f1ed30de567bd00df4d72fef2ec385ece47421a`
+- scaler hash:
+  `4d2b9bbe7cfb8841e11ead36c893f092693ddccc5e624312f1036687c927d5cf`
+- PCA hash:
+  `ef2bd4ee1d8532fb765a002aee01fc10d78bd88ce9f77ad8bf3afe722d127257`
+- descriptor hash:
+  `931edf18e9ec5e3a7b2b8d7996c603c64ec82619f6185ea44cf4803e6105ee1b`
+- explained variance ratio:
+  `[0.437099552626324, 0.22443819250404728, 0.1833523891094817]`
+
+Current boundary:
+
+- Runtime archive insertion with `sr_pca_0..2` is not implemented yet.
+- Random ReLU and RFF variants are not implemented yet.
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/revolution/test_auto_bd_method_specs.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  scripts/build_sr_pca_artifacts.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/scripts/test_build_sr_pca_artifacts.py
+UV_LINK_MODE=copy uv tool run ty check \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  scripts/build_sr_pca_artifacts.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/scripts/test_build_sr_pca_artifacts.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  scripts/build_sr_pca_artifacts.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/scripts/test_build_sr_pca_artifacts.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- pytest: 8 passed
+- ruff: pass
+- ty: pass
+- pyright: 0 errors
+- artifact check: `sr raw pca artifact check ok`
