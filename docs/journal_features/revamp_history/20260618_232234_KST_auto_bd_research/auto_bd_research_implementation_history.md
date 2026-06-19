@@ -7201,3 +7201,115 @@ PY
 ```
 
 Result: `stnod seed1001 verilog status check ok`.
+
+## 2026-06-19 13:03 UTC
+
+Packaged standard results for the seed-3
+`synthesis_trajectory_nod` seed 1001 run pair.
+
+Packaging command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_standard_results.py \
+  --run-dir exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1001/revolution/openai_gpt-oss-120b \
+  --output-dir exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1001/standard_results \
+  --method-name synthesis_trajectory_nod \
+  --method-family synthesis_trajectory_nod \
+  --descriptor-version stnod_trajectory_5d \
+  --phase main_screening \
+  --seed 1001 \
+  --run-manifest exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1001/run_manifest.json
+```
+
+Generated standard result root:
+
+`exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1001/standard_results`
+
+Generated files:
+
+- `archive_snapshots.parquet`
+- `candidates.parquet`
+- `descriptor_vectors.parquet`
+- `elites.parquet`
+- `method_summary.json`
+- `netlist_hashes.parquet`
+- `per_generation_metrics.parquet`
+- `per_problem_metrics.parquet`
+- `run_manifest.json`
+
+Method summary:
+
+| Metric | Value |
+| --- | ---: |
+| `candidate_count` | 1560 |
+| `valid_ppa_candidate_count` | 652 |
+| `problem_count` | 13 |
+| `unique_canonical_netlist_count` | 280 |
+| `unique_motif_signature_count` | 200 |
+| `common_audit_bins` | 4 |
+| `common_audit_total_cells` | 256 |
+| `common_audit_occupied_cells` | 39 |
+| `common_audit_qd_score` | 8.653995093843593 |
+
+Refreshed status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py
+```
+
+Current seed-3 status:
+
+- manifest commands: 12 complete, 0 pending
+- benchmark commands: 20 complete, 4 pending
+- arm/seed pairs: 10 standard-results complete, 2 pending
+- `synthesis_trajectory_nod` seed 1001: standard results complete, 2/2 benchmark groups complete
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+status_path = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+summary_path = Path(
+    "exp/auto_bd_research/main_screening_screening_seed3/"
+    "synthesis_trajectory_nod/seed_1001/standard_results/"
+    "method_summary.json"
+)
+status = json.loads(status_path.read_text())
+summary = json.loads(summary_path.read_text())
+assert status["manifest_summary"] == {"complete": 12, "total": 12}
+assert status["entry_summary"] == {"complete": 20, "pending": 4, "total": 24}
+assert status["arm_seed_summary"] == {
+    "pending": 2,
+    "standard_results_complete": 10,
+    "total": 12,
+}
+entry = next(
+    item
+    for item in status["arm_seed_status"]
+    if item["arm_name"] == "synthesis_trajectory_nod"
+    and item["seed"] == 1001
+)
+assert entry["status"] == "standard_results_complete"
+assert entry["benchmark_groups_complete"] == 2
+assert summary["method_name"] == "synthesis_trajectory_nod"
+assert summary["phase"] == "main_screening"
+assert summary["seed"] == 1001
+assert summary["candidate_count"] == 1560
+assert summary["valid_ppa_candidate_count"] == 652
+assert summary["unique_canonical_netlist_count"] == 280
+assert summary["unique_motif_signature_count"] == 200
+assert summary["common_audit_occupied_cells"] == 39
+print("stnod seed1001 standard results check ok")
+PY
+```
+
+Result: `stnod seed1001 standard results check ok`.
