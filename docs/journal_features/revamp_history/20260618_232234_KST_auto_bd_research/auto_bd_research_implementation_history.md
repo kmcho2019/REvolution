@@ -8899,3 +8899,62 @@ Results:
 - `git diff --check`: pass
 - pytest: 7 passed
 - standard-results sanity: pass
+
+## 2026-06-19 - Added ReLU PCA To Seed-3 Matrix
+
+Scope:
+
+- Regenerated the main-screening run matrix with
+  `sr_random_relu_pca_qd` added to the already completed seed-3 arms.
+- Refreshed the run-status report so the existing baseline/control/ST-NOD
+  standard results remain complete and only ReLU PCA is pending.
+- This config state is committed before generating ReLU seed-3 manifests
+  so run manifests record the correct git commit.
+
+Run-matrix command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python scripts/build_auto_bd_run_matrix.py \
+  --phase main_screening \
+  --output-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research \
+  --run-root exp/auto_bd_research \
+  --arms classic_revolution landing_smooth_qd_manual_bd random_descriptor_qd synthesis_trajectory_nod sr_random_relu_pca_qd
+```
+
+Status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python scripts/report_auto_bd_run_matrix_status.py \
+  --matrix docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_matrix.json \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.json \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.md
+```
+
+Result:
+
+- arms:
+  `classic_revolution`, `landing_smooth_qd_manual_bd`,
+  `random_descriptor_qd`, `synthesis_trajectory_nod`,
+  `sr_random_relu_pca_qd`
+- manifest commands: 15 total, 12 complete, 3 pending
+- benchmark commands: 30 total, 24 complete, 6 pending
+- arm/seed statuses: 12 standard-results complete, 3 ReLU PCA pending
+- new generated config:
+  `auto_bd_run_configs/main_screening/sr_random_relu_pca_qd.yaml`
+- pending ReLU commands preserve `--vllm_min_model_len 131072`,
+  `--max_tokens 128000`, `--diff_max_tokens 128000`, and
+  `descriptor_profile_random_relu.yaml`.
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- pytest: 5 passed
