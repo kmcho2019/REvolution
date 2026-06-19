@@ -18,6 +18,14 @@ CANDIDATE_FIELDS = (
     "method_name",
     "method_family",
     "descriptor_version",
+    "raw_feature_schema_version",
+    "feature_schema_hash",
+    "scaler_hash",
+    "random_feature_map_hash",
+    "pca_hash",
+    "codebook_hash",
+    "layout_hash",
+    "descriptor_hash",
     "problem_id",
     "benchmark_source",
     "seed",
@@ -98,4 +106,3 @@ def assert_required_fields(
 
     missing = [field for field in required_fields if field not in row]
     assert not missing, f"{label} missing required fields: {', '.join(missing)}"
-

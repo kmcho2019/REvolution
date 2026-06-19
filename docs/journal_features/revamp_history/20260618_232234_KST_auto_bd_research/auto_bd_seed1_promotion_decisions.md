@@ -43,6 +43,12 @@ Status: predeclared seed-3 screening decision from seed-1 development artifacts.
 - `random_descriptor_qd`
 - `synthesis_trajectory_nod`
 
+## Historical Amendments
+
+| Method | Historical Status | Current Status | Rationale |
+| --- | --- | --- | --- |
+| `sr_random_relu_pca_qd` | promoted_to_seed3_before_current_regeneration | DO_NOT_PROMOTE | The completed seed-3 matrix includes this arm because an earlier seed-1 decision promoted it for screening. The current regenerated table applies the stricter final seed-1 gate after additional methods and report logic were added. The seed-3 screening report is the controlling rejection evidence for this arm. |
+
 ## Source
 
 - Central report JSON: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json`

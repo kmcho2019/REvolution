@@ -31,6 +31,7 @@ def test_build_decision_payload_promotes_only_screening_passes(tmp_path: Path) -
     assert decisions["landing_smooth_qd_manual_bd"] == "RETAIN_AS_COMPARATOR"
     assert decisions["random_descriptor_qd"] == "PROMOTE_TO_SEED3"
     assert decisions["synthesis_trajectory_nod"] == "PROMOTE_TO_SEED3"
+    assert decisions["sr_random_relu_pca_qd"] == "DO_NOT_PROMOTE"
     assert decisions["sr_rff_pca_qd"] == "DO_NOT_PROMOTE"
     assert decisions["simple_yosys_stat_bd"] == "DO_NOT_PROMOTE"
     assert decisions["netlist_motif_occupancy"] == "DO_NOT_PROMOTE"
@@ -40,6 +41,7 @@ def test_build_decision_payload_promotes_only_screening_passes(tmp_path: Path) -
         "random_descriptor_qd",
         "synthesis_trajectory_nod",
     ]
+    assert payload["historical_amendments"][0]["method_name"] == "sr_random_relu_pca_qd"
 
 
 def _central_payload() -> dict[str, object]:
@@ -50,6 +52,7 @@ def _central_payload() -> dict[str, object]:
         "simple_yosys_stat_bd",
         "netlist_motif_occupancy",
         "synthesis_trajectory_nod",
+        "sr_random_relu_pca_qd",
         "sr_rff_pca_qd",
     ]
     return {
@@ -73,6 +76,7 @@ def _rate(method: str) -> float:
         "simple_yosys_stat_bd": 0.69,
         "netlist_motif_occupancy": 0.66,
         "synthesis_trajectory_nod": 0.72,
+        "sr_random_relu_pca_qd": 0.70,
         "sr_rff_pca_qd": 0.74,
     }
     return rates[method]

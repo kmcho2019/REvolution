@@ -28,6 +28,34 @@ COMMON_AUDIT_AXES = (
     "motif_arith_ratio",
     "motif_diversity",
 )
+DESCRIPTOR_PROVENANCE_FIELDS = (
+    "raw_feature_schema_version",
+    "feature_schema_hash",
+    "scaler_hash",
+    "random_feature_map_hash",
+    "pca_hash",
+    "codebook_hash",
+    "layout_hash",
+    "descriptor_hash",
+)
+METHOD_DESCRIPTOR_ARTIFACTS = {
+    "sr_raw_pca_qd": REPO_ROOT
+    / "docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research"
+    / "auto_bd_methods/04_synthesis_response_kernel_pca"
+    / "fitting_artifacts/sr_raw_pca_dev_seed1001/sr_raw_pca_artifact.json",
+    "sr_random_relu_pca_qd": REPO_ROOT
+    / "docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research"
+    / "auto_bd_methods/04_synthesis_response_kernel_pca"
+    / "fitting_artifacts/sr_random_relu_pca_dev_seed1001/sr_random_relu_pca_artifact.json",
+    "sr_rff_pca_qd": REPO_ROOT
+    / "docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research"
+    / "auto_bd_methods/04_synthesis_response_kernel_pca"
+    / "fitting_artifacts/sr_rff_pca_dev_seed1001/sr_rff_pca_artifact.json",
+    "sr_vq_codebook_qd": REPO_ROOT
+    / "docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research"
+    / "auto_bd_methods/07_vq_implementation_codebook"
+    / "fitting_artifacts/sr_vq_codebook_dev_seed1001/sr_vq_codebook_artifact.json",
+}
 
 
 def build_standard_results(
@@ -55,6 +83,7 @@ def build_standard_results(
     generation_rows: list[dict[str, Any]] = []
     problem_rows: list[dict[str, Any]] = []
     archive_rows: list[dict[str, Any]] = []
+    descriptor_provenance = load_descriptor_provenance(method_name)
 
     for summary_path in sorted(run_dir.glob("*/*/*_summary.json")):
         if summary_path.name != f"{summary_path.parent.name}_summary.json":
@@ -107,6 +136,7 @@ def build_standard_results(
                 "method_name": method_name,
                 "method_family": method_family,
                 "descriptor_version": descriptor_version,
+                **descriptor_provenance,
                 "problem_id": problem_id,
                 "benchmark_source": benchmark,
                 "seed": seed,
@@ -159,6 +189,7 @@ def build_standard_results(
                         "candidate_id": candidate_id,
                         "descriptor_axes": json_dumps(tuple(event.get("archive_axes", ()))),
                         "descriptor_vector": json_dumps(descriptor_vector),
+                        **descriptor_provenance,
                         "common_audit_axes": json_dumps(COMMON_AUDIT_AXES),
                         "common_audit_descriptor_vector": json_dumps(audit_vector),
                         "common_audit_cell_id": audit_cell,
@@ -327,6 +358,19 @@ def standardized_manifest(path: Path, phase: str) -> dict[str, Any]:
     for field in RUN_MANIFEST_FIELDS:
         assert field in manifest, f"run_manifest missing required field: {field}"
     return manifest
+
+
+def load_descriptor_provenance(method_name: str) -> dict[str, str]:
+    """Return frozen descriptor hashes that must travel with each row."""
+
+    artifact_path = METHOD_DESCRIPTOR_ARTIFACTS.get(method_name)
+    if artifact_path is None:
+        return {field: "" for field in DESCRIPTOR_PROVENANCE_FIELDS}
+    artifact = load_json(artifact_path)
+    return {
+        field: str(artifact.get(field, ""))
+        for field in DESCRIPTOR_PROVENANCE_FIELDS
+    }
 
 
 def method_summary(

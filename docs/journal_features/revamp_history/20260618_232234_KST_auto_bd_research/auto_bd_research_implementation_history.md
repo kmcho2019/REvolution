@@ -9951,3 +9951,115 @@ Checklist update:
 
 - P5 AURORA item is closed as scoped out with evidence.
 - P7 final-selection items are closed as negative-selection scope-outs.
+
+## 2026-06-20 KST - Resolve Adversarial Validation Findings
+
+Initial adversarial validation result:
+
+- Verdict: FAIL.
+- Report:
+  `auto_bd_research_subagent_validation_report.md`.
+
+Findings fixed:
+
+1. P8 checklist items were still unchecked.
+2. Learned/projected/codebook descriptor provenance hashes were present in
+   fitting artifacts but not logged per candidate in standard results.
+3. The seed-1 promotion decision table conflicted with the historical
+   `sr_random_relu_pca_qd` seed-3 run.
+
+Changes:
+
+- Added descriptor provenance fields to the standard candidate schema:
+  `raw_feature_schema_version`, `feature_schema_hash`, `scaler_hash`,
+  `random_feature_map_hash`, `pca_hash`, `codebook_hash`,
+  `layout_hash`, and `descriptor_hash`.
+- Updated `scripts/build_auto_bd_standard_results.py` to attach the
+  frozen artifact hashes to every candidate and descriptor-vector row for
+  SR-PCA, ReLU PCA, RFF PCA, and SR-VQ methods.
+- Added tests that fail if projected/codebook standard results omit the
+  expected provenance hashes.
+- Regenerated standard results for:
+  - seed-1 `sr_raw_pca_qd`
+  - seed-1 `sr_random_relu_pca_qd`
+  - seed-1 `sr_rff_pca_qd`
+  - seed-1 `sr_vq_codebook_qd`
+  - seed-3 `sr_random_relu_pca_qd` seeds 1001, 1002, and 1003
+- Regenerated seed-1 centralized, method-local, and promotion-decision
+  reports.
+- Regenerated seed-3 centralized reports for seeds 1001, 1002, and 1003.
+- Added a generated historical-amendment section to
+  `auto_bd_seed1_promotion_decisions.md` explaining that ReLU PCA was
+  historically promoted to seed-3 before the stricter regenerated
+  decision table, and that the seed-3 screening report is the controlling
+  rejection evidence.
+- Checked the final P8 validation/handoff checklist items.
+
+Provenance verification:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+from pathlib import Path
+import pandas as pd
+checks = [
+    ('sr_raw_pca_qd', Path('exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/standard_results')),
+    ('sr_random_relu_pca_qd', Path('exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/standard_results')),
+    ('sr_rff_pca_qd', Path('exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/standard_results')),
+    ('sr_vq_codebook_qd', Path('exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001/standard_results')),
+    ('sr_random_relu_pca_qd', Path('exp/auto_bd_research/main_screening_screening_seed3/sr_random_relu_pca_qd/seed_1001/standard_results')),
+]
+fields = ['raw_feature_schema_version', 'feature_schema_hash', 'scaler_hash', 'descriptor_hash']
+for method, root in checks:
+    candidates = pd.read_parquet(root / 'candidates.parquet')
+    descriptors = pd.read_parquet(root / 'descriptor_vectors.parquet')
+    assert all(field in candidates.columns for field in fields), method
+    assert all(field in descriptors.columns for field in fields), method
+    assert candidates.loc[0, 'descriptor_hash'], method
+    assert descriptors.loc[0, 'descriptor_hash'], method
+    print(method, candidates.loc[0, 'descriptor_hash'])
+PY
+```
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_build_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_auto_bd_method_specs.py \
+  tests/scripts/test_build_sr_vq_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/results.py \
+  scripts/build_auto_bd_standard_results.py \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/scripts/test_build_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv tool run ty check \
+  src/revolution/auto_bd/results.py \
+  scripts/build_auto_bd_standard_results.py \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/scripts/test_build_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  src/revolution/auto_bd/results.py \
+  scripts/build_auto_bd_standard_results.py \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/scripts/test_build_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+```
+
+Results:
+
+- focused pytest: 58 passed
+- `ruff check`: pass
+- `ty check`: pass
+- pyright: 0 errors, 0 warnings, 0 informations
+
+Next:
+
+- Re-run adversarial validation after committing these fixes.

@@ -42,9 +42,39 @@ def test_build_standard_results_writes_required_files(tmp_path):
     candidates = pd.read_parquet(output / "candidates.parquet")
     hashes = pd.read_parquet(output / "netlist_hashes.parquet")
     assert candidates.loc[0, "common_audit_cell_id"].startswith("audit_motif4:")
+    assert candidates.loc[0, "descriptor_hash"] == ""
     assert hashes.loc[0, "canonical_netlist_hash"]
     assert (output / "run_manifest.json").is_file()
     assert (output / "method_summary.json").is_file()
+
+
+def test_build_standard_results_logs_learned_descriptor_hashes(tmp_path):
+    run_dir = _write_run(tmp_path)
+    manifest = _write_manifest(tmp_path)
+    output = tmp_path / "standard"
+
+    mod.build_standard_results(
+        run_dir=run_dir,
+        output_dir=output,
+        method_name="sr_random_relu_pca_qd",
+        method_family="synthesis_response_kernel_pca",
+        descriptor_version="sr_random_relu_pca_v1",
+        phase="development_preliminary_seed1",
+        seed=1001,
+        run_manifest=manifest,
+        common_audit_bins=4,
+    )
+
+    candidates = pd.read_parquet(output / "candidates.parquet")
+    descriptors = pd.read_parquet(output / "descriptor_vectors.parquet")
+
+    assert candidates.loc[0, "raw_feature_schema_version"] == "synthesis_response_raw_v1"
+    assert candidates.loc[0, "feature_schema_hash"]
+    assert candidates.loc[0, "scaler_hash"]
+    assert candidates.loc[0, "random_feature_map_hash"]
+    assert candidates.loc[0, "pca_hash"]
+    assert candidates.loc[0, "descriptor_hash"]
+    assert descriptors.loc[0, "descriptor_hash"] == candidates.loc[0, "descriptor_hash"]
 
 
 def test_main_writes_standard_results(tmp_path):

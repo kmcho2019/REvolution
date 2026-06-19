@@ -137,21 +137,21 @@ evidence and rationale.
 
 ## P8 - Validation And Handoff
 
-- [ ] Run focused tests for touched code.
-- [ ] Run `ruff check` on touched files.
-- [ ] Run `uv tool run ty check <touched source modules>` as the primary
+- [x] Run focused tests for touched code.
+- [x] Run `ruff check` on touched files.
+- [x] Run `uv tool run ty check <touched source modules>` as the primary
   Auto-BD type check.
-- [ ] Run `python -m pyright` on touched source modules as secondary
+- [x] Run `python -m pyright` on touched source modules as secondary
   compatibility evidence while repo guidance still requires it.
-- [ ] Verify new public interfaces have useful type hints and docstrings.
-- [ ] Verify comments are sparse and clarify only non-obvious logic.
-- [ ] Verify required loaded data uses asserts or explicit validation
+- [x] Verify new public interfaces have useful type hints and docstrings.
+- [x] Verify comments are sparse and clarify only non-obvious logic.
+- [x] Verify required loaded data uses asserts or explicit validation
   rather than broad fallback defaults.
-- [ ] Verify method-family handling is exhaustive and fails on unknown
+- [x] Verify method-family handling is exhaustive and fails on unknown
   descriptor/method kinds.
-- [ ] Record all commands, artifacts, failures, and decisions in
+- [x] Record all commands, artifacts, failures, and decisions in
   `auto_bd_research_implementation_history.md`.
-- [ ] Run adversarial validation using
+- [x] Run adversarial validation using
   `auto_bd_research_adversarial_prompt.md`.
-- [ ] Resolve FAIL findings or mark the goal blocked with exact missing
+- [x] Resolve FAIL findings or mark the goal blocked with exact missing
   evidence.

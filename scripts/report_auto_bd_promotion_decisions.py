@@ -53,6 +53,7 @@ def build_decision_payload(report_path: Path) -> dict[str, Any]:
         "baseline_mde_power_review": mde_power_review_payload(report),
         "decisions": rows,
         "seed3_screening_arms": seed3_screening_arms(rows),
+        "historical_amendments": historical_amendments(rows),
     }
 
 
@@ -168,6 +169,29 @@ def seed3_screening_arms(rows: list[dict[str, Any]]) -> list[str]:
     return sorted(set(arms), key=arms.index)
 
 
+def historical_amendments(rows: list[dict[str, Any]]) -> list[dict[str, str]]:
+    """Explain historical seed-3 runs that predate stricter regeneration."""
+
+    by_name = by_method(rows)
+    relu = by_name.get("sr_random_relu_pca_qd")
+    if relu is None or relu["decision"] == "PROMOTE_TO_SEED3":
+        return []
+    return [
+        {
+            "method_name": "sr_random_relu_pca_qd",
+            "historical_status": "promoted_to_seed3_before_current_regeneration",
+            "current_status": str(relu["decision"]),
+            "rationale": (
+                "The completed seed-3 matrix includes this arm because an earlier "
+                "seed-1 decision promoted it for screening. The current regenerated "
+                "table applies the stricter final seed-1 gate after additional "
+                "methods and report logic were added. The seed-3 screening report "
+                "is the controlling rejection evidence for this arm."
+            ),
+        }
+    ]
+
+
 def thresholds_payload() -> dict[str, Any]:
     return {
         "gate0": {
@@ -277,11 +301,32 @@ def render_markdown(payload: dict[str, Any]) -> str:
             "",
             "\n".join(f"- `{method}`" for method in payload["seed3_screening_arms"]),
             "",
+            "## Historical Amendments",
+            "",
+            render_historical_amendments(payload["historical_amendments"]),
+            "",
             "## Source",
             "",
             f"- Central report JSON: `{payload['source_report']}`",
             "",
         ]
+    )
+
+
+def render_historical_amendments(rows: list[dict[str, str]]) -> str:
+    if not rows:
+        return "- None."
+    return markdown_table(
+        ["Method", "Historical Status", "Current Status", "Rationale"],
+        [
+            [
+                code(row["method_name"]),
+                row["historical_status"],
+                row["current_status"],
+                row["rationale"],
+            ]
+            for row in rows
+        ],
     )
 
 
