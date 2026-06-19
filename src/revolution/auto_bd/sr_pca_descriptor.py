@@ -23,8 +23,9 @@ from revolution.auto_bd.trajectory_descriptor import (
 SR_RAW_FEATURE_SCHEMA_VERSION = "synthesis_response_raw_v1"
 SR_RAW_PCA_DESCRIPTOR_VERSION = "sr_raw_pca_v1"
 SR_RANDOM_RELU_PCA_DESCRIPTOR_VERSION = "sr_random_relu_pca_v1"
+SR_RFF_PCA_DESCRIPTOR_VERSION = "sr_rff_pca_v1"
 SR_PCA_AXES = ("sr_pca_0", "sr_pca_1", "sr_pca_2", "sr_pca_3", "sr_pca_4")
-RandomFeatureKind = Literal["none", "relu"]
+RandomFeatureKind = Literal["none", "relu", "rff"]
 
 
 @dataclass(frozen=True)
@@ -139,6 +140,25 @@ def fit_sr_random_relu_pca_artifact(
         dimensions=dimensions,
         descriptor_version=SR_RANDOM_RELU_PCA_DESCRIPTOR_VERSION,
         random_map_kind="relu",
+        random_feature_count=random_feature_count,
+        random_feature_seed=random_feature_seed,
+    )
+
+
+def fit_sr_rff_pca_artifact(
+    matrix: np.ndarray,
+    *,
+    dimensions: int,
+    random_feature_count: int,
+    random_feature_seed: int,
+) -> SrPcaArtifact:
+    """Fit fixed random Fourier feature PCA over standardized SR features."""
+
+    return _fit_sr_pca_artifact(
+        matrix,
+        dimensions=dimensions,
+        descriptor_version=SR_RFF_PCA_DESCRIPTOR_VERSION,
+        random_map_kind="rff",
         random_feature_count=random_feature_count,
         random_feature_seed=random_feature_seed,
     )
@@ -290,6 +310,8 @@ def _artifact_from_parts(
         assert random_map.kind == "none"
     elif descriptor_version == SR_RANDOM_RELU_PCA_DESCRIPTOR_VERSION:
         assert random_map.kind == "relu"
+    elif descriptor_version == SR_RFF_PCA_DESCRIPTOR_VERSION:
+        assert random_map.kind == "rff"
     else:
         raise AssertionError(f"unknown SR-PCA descriptor version: {descriptor_version}")
     feature_schema_hash = hash_json_payload(
@@ -359,6 +381,18 @@ def _fit_random_map(
             weights=tuple(tuple(float(value) for value in row) for row in weights),
             bias=tuple(float(value) for value in bias),
         )
+    if kind == "rff":
+        assert feature_count > 0
+        rng = np.random.default_rng(seed)
+        weights = rng.normal(0.0, 1.0, size=(feature_count, raw_width))
+        bias = rng.uniform(0.0, 2.0 * math.pi, size=feature_count)
+        return _random_map_from_parts(
+            kind="rff",
+            seed=seed,
+            feature_count=feature_count,
+            weights=tuple(tuple(float(value) for value in row) for row in weights),
+            bias=tuple(float(value) for value in bias),
+        )
     raise AssertionError(f"unknown random feature kind: {kind}")
 
 
@@ -369,6 +403,11 @@ def _apply_random_map(random_map: SrPcaRandomMap, matrix: np.ndarray) -> np.ndar
         weights = np.array(random_map.weights, dtype=float)
         bias = np.array(random_map.bias, dtype=float)
         return np.maximum(matrix @ weights.T + bias, 0.0)
+    if random_map.kind == "rff":
+        weights = np.array(random_map.weights, dtype=float)
+        bias = np.array(random_map.bias, dtype=float)
+        scale = math.sqrt(2.0 / random_map.feature_count)
+        return scale * np.cos(matrix @ weights.T + bias)
     raise AssertionError(f"unknown random feature kind: {random_map.kind}")
 
 
@@ -411,14 +450,14 @@ def _random_map_from_parts(
         assert feature_count == 0
         assert not weights
         assert not bias
-    elif kind == "relu":
+    elif kind in {"relu", "rff"}:
         assert feature_count > 0
         assert len(weights) == feature_count
         assert len(bias) == feature_count
         assert len({len(row) for row in weights}) == 1
     else:
         raise AssertionError(f"unknown random feature kind: {kind}")
-    typed_kind: RandomFeatureKind = "none" if kind == "none" else "relu"
+    typed_kind = _typed_random_feature_kind(kind)
     random_feature_map_hash = hash_json_payload(
         {
             "kind": typed_kind,
@@ -436,3 +475,13 @@ def _random_map_from_parts(
         bias=bias,
         random_feature_map_hash=random_feature_map_hash,
     )
+
+
+def _typed_random_feature_kind(kind: str) -> RandomFeatureKind:
+    if kind == "none":
+        return "none"
+    if kind == "relu":
+        return "relu"
+    if kind == "rff":
+        return "rff"
+    raise AssertionError(f"unknown random feature kind: {kind}")

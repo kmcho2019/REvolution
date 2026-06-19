@@ -143,6 +143,7 @@ and free of PPA leakage.
 ## 10. Implementation Status
 
 Seed-1 evaluated for `sr_raw_pca_qd` and `sr_random_relu_pca_qd`.
+`sr_rff_pca_qd` is artifact/config ready but not yet run.
 
 Implemented:
 
@@ -160,10 +161,13 @@ Implemented:
 - Main seed-3 screening runs, standard results, centralized reports, and
   aggregate screening decision for `sr_random_relu_pca_qd`.
 - Fixed problem-local PPA-grid coverage reporting in centralized reports.
+- Fixed random Fourier feature-map PCA fitting path.
+- Development-seed fitting artifact, descriptor profile, method config,
+  and run-matrix support for `sr_rff_pca_qd`.
 
 Not implemented:
 
-- Random Fourier feature expansion.
+- Seed-1 run and accept/reject report for `sr_rff_pca_qd`.
 
 ## 11. Experimental Setup
 
@@ -297,6 +301,29 @@ Frozen random-ReLU development fitting artifact:
   `5a4c6690deca43d298ec385ad65186fd053f73caef00e29a00e6b4ac6ba6e88a`
 - explained variance ratio:
   `[0.7211238734356278, 0.12495621097388841, 0.0552489401776463]`
+
+Frozen random Fourier feature development fitting artifact:
+
+- artifact:
+  `fitting_artifacts/sr_rff_pca_dev_seed1001/sr_rff_pca_artifact.json`
+- source data:
+  `exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results`
+- training candidates: 205 valid development candidates
+- raw feature schema: `synthesis_response_raw_v1`
+- descriptor version: `sr_rff_pca_v1`
+- random feature map: RFF, 128 features, seed `20260618`
+- feature schema hash:
+  `505c9fb648a6a2bd2dadca0e8f1ed30de567bd00df4d72fef2ec385ece47421a`
+- scaler hash:
+  `4d2b9bbe7cfb8841e11ead36c893f092693ddccc5e624312f1036687c927d5cf`
+- random feature map hash:
+  `e5982aa2a4ab4fb15a556f6a313c84305ed06b40466b42780406692ae8799dc2`
+- PCA hash:
+  `20504a27892706765c1c48abc493cdd5d06d0c2366321fcadc87ec08d8708446`
+- descriptor hash:
+  `cef74673a3136470e1ec3f14613f6f2160d6b6e2ad90f10615bce83c6423a09c`
+- explained variance ratio:
+  `[0.1923650880473621, 0.17299119210380623, 0.16588050097890297]`
 
 Required plots:
 

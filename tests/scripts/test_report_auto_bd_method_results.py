@@ -33,6 +33,7 @@ def test_build_reports_writes_method_reports(tmp_path: Path) -> None:
     assert set(outputs) == set(mod.METHOD_DIRS)
     assert len(set(outputs.values())) == len(outputs)
     assert outputs["sr_random_relu_pca_qd"].name == "sr_random_relu_seed1_artifact_report.md"
+    assert outputs["sr_rff_pca_qd"].name == "sr_rff_seed1_artifact_report.md"
     for path in outputs.values():
         text = path.read_text(encoding="utf-8")
         assert "## Gate 0" in text

@@ -991,6 +991,7 @@ uv tool run ty check \
 Result: all checks passed.
 
 ```bash
+git diff --check
 UV_LINK_MODE=copy uv run --active pytest \
   tests/scripts/test_summarize_auto_bd_gate0.py
 ```
@@ -9160,3 +9161,110 @@ Results:
 - `ruff check`: pass
 - `ty check`: pass
 - pyright: 0 errors, 0 warnings, 0 informations
+
+## 2026-06-19 - Prepared RFF PCA Kernel Control
+
+Scope:
+
+- Added `sr_rff_pca_qd` support as the next predeclared SR kernel-PCA
+  control after ReLU PCA.
+- Implemented the fixed random Fourier feature map in the existing
+  SR-PCA artifact path, keeping random-map kinds exhaustive:
+  `none`, `relu`, and `rff`.
+- Built the frozen development fitting artifact from the same
+  development seed-1 ST-NOD standard results used by raw PCA and ReLU
+  PCA.
+- Added `descriptor_profile_rff.yaml`, `config_rff.yaml`, run-policy
+  lock entries, run-matrix support, method-report naming, tests, and
+  method-card documentation.
+
+Artifact command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python scripts/build_sr_pca_artifacts.py \
+  --standard-results-dir exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results \
+  --output-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/fitting_artifacts/sr_rff_pca_dev_seed1001 \
+  --method-name sr_rff_pca_qd \
+  --dimensions 3 \
+  --random-feature-kind rff \
+  --random-feature-count 128 \
+  --random-feature-seed 20260618
+```
+
+Frozen artifact:
+
+- artifact:
+  `auto_bd_methods/04_synthesis_response_kernel_pca/fitting_artifacts/sr_rff_pca_dev_seed1001/sr_rff_pca_artifact.json`
+- descriptor version: `sr_rff_pca_v1`
+- training candidates: 205 valid development candidates
+- feature schema hash:
+  `505c9fb648a6a2bd2dadca0e8f1ed30de567bd00df4d72fef2ec385ece47421a`
+- scaler hash:
+  `4d2b9bbe7cfb8841e11ead36c893f092693ddccc5e624312f1036687c927d5cf`
+- random feature map hash:
+  `e5982aa2a4ab4fb15a556f6a313c84305ed06b40466b42780406692ae8799dc2`
+- PCA hash:
+  `20504a27892706765c1c48abc493cdd5d06d0c2366321fcadc87ec08d8708446`
+- descriptor hash:
+  `cef74673a3136470e1ec3f14613f6f2160d6b6e2ad90f10615bce83c6423a09c`
+- explained variance ratio:
+  `[0.1923650880473621, 0.17299119210380623, 0.16588050097890297]`
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  src/revolution/auto_bd/__init__.py \
+  scripts/build_sr_pca_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py
+UV_LINK_MODE=copy uv tool run ty check \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  src/revolution/auto_bd/__init__.py \
+  scripts/build_sr_pca_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/report_auto_bd_method_results.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  src/revolution/auto_bd/__init__.py \
+  scripts/build_sr_pca_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/report_auto_bd_method_results.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- pytest: 47 passed
+- `ruff check`: pass
+- `ty check`: pass
+- pyright: 0 errors, 0 warnings, 0 informations
+
+Next:
+
+- Run `sr_rff_pca_qd` seed-1 development before considering any seed-3
+  promotion.

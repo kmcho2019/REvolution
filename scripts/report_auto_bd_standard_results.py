@@ -33,6 +33,7 @@ METHOD_ORDER = (
     "synthesis_trajectory_motif_nod",
     "sr_raw_pca_qd",
     "sr_random_relu_pca_qd",
+    "sr_rff_pca_qd",
 )
 FITNESS_EPSILON = 0.03
 HV_EPSILON = 1e-9

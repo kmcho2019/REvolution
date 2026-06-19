@@ -15,6 +15,7 @@ METHOD_DIRS = {
     "synthesis_trajectory_nod": "03_synthesis_trajectory_nod",
     "sr_raw_pca_qd": "04_synthesis_response_kernel_pca",
     "sr_random_relu_pca_qd": "04_synthesis_response_kernel_pca",
+    "sr_rff_pca_qd": "04_synthesis_response_kernel_pca",
 }
 
 
@@ -44,6 +45,8 @@ def method_output_name(method: str, output_name: str) -> str:
 
     if method == "sr_random_relu_pca_qd":
         return f"sr_random_relu_{output_name}"
+    if method == "sr_rff_pca_qd":
+        return f"sr_rff_{output_name}"
     return output_name
 
 

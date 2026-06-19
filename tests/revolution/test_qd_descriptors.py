@@ -38,6 +38,11 @@ SR_PCA_DESCRIPTOR_FILE = (
     "20260618_232234_KST_auto_bd_research/"
     "auto_bd_methods/04_synthesis_response_kernel_pca/descriptor_profile.yaml"
 )
+SR_RFF_PCA_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/04_synthesis_response_kernel_pca/descriptor_profile_rff.yaml"
+)
 
 
 def test_load_descriptor_profiles_includes_hybrid_defaults():
@@ -468,6 +473,21 @@ def test_sr_pca_profile_resolves_artifact_and_requirements():
     assert requirements["requires_synthesis"] is True
     assert requirements["requires_auto_bd_sr_pca"] is True
     assert artifact_path.is_file()
+
+
+def test_sr_rff_pca_profile_resolves_artifact():
+    axes = resolve_descriptor_axes(
+        profile_name="sr_pca_3d",
+        explicit_axes=None,
+        descriptor_file=SR_RFF_PCA_DESCRIPTOR_FILE,
+        archive_type="grid",
+        circuit_type="sequential",
+    )
+    artifact_path = load_sr_pca_artifact_path(SR_RFF_PCA_DESCRIPTOR_FILE)
+
+    assert axes == ["sr_pca_0", "sr_pca_1", "sr_pca_2"]
+    assert artifact_path.is_file()
+    assert "sr_rff_pca_artifact.json" in artifact_path.as_posix()
 
 
 def test_load_descriptor_profiles_accepts_custom_file(tmp_path: Path):

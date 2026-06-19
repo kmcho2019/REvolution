@@ -15,6 +15,7 @@ from revolution.auto_bd.sr_pca_descriptor import (
     SR_PCA_AXES,
     fit_sr_random_relu_pca_artifact,
     fit_sr_raw_pca_artifact,
+    fit_sr_rff_pca_artifact,
     hash_json_payload,
     sr_pca_artifact_to_json,
     sr_raw_feature_axes,
@@ -92,6 +93,13 @@ def build_artifacts(
             random_feature_count=random_feature_count,
             random_feature_seed=random_feature_seed,
         )
+    elif random_feature_kind == "rff":
+        artifact = fit_sr_rff_pca_artifact(
+            matrix,
+            dimensions=dimensions,
+            random_feature_count=random_feature_count,
+            random_feature_seed=random_feature_seed,
+        )
     else:
         raise AssertionError(f"unknown random feature kind: {random_feature_kind}")
     descriptor_rows = [
@@ -161,7 +169,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--method-name", default="sr_raw_pca_qd")
     parser.add_argument("--dimensions", type=int, default=3)
-    parser.add_argument("--random-feature-kind", choices=("none", "relu"), default="none")
+    parser.add_argument("--random-feature-kind", choices=("none", "relu", "rff"), default="none")
     parser.add_argument("--random-feature-count", type=int, default=0)
     parser.add_argument("--random-feature-seed", type=int, default=0)
     args = parser.parse_args(argv)
