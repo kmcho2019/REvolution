@@ -9,8 +9,8 @@
 | Level | Total | Complete | Partial | Pending | Runs Complete | Standard Results |
 | --- | --- | --- | --- | --- | --- | --- |
 | Manifest | 12 | 12 | 0 | 0 | 0 | 0 |
-| Benchmark Command | 24 | 7 | 0 | 17 | 0 | 0 |
-| Arm/Seed | 12 | 0 | 1 | 8 | 0 | 3 |
+| Benchmark Command | 24 | 8 | 0 | 16 | 0 | 0 |
+| Arm/Seed | 12 | 0 | 0 | 8 | 1 | 3 |
 
 ## Arm / Seed Status
 
@@ -19,7 +19,7 @@
 | `classic_revolution` | 1001 | `standard_results_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001/standard_results` |
 | `classic_revolution` | 1002 | `standard_results_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1002/standard_results` |
 | `classic_revolution` | 1003 | `standard_results_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1003/standard_results` |
-| `landing_smooth_qd_manual_bd` | 1001 | `partial` | 1/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1001/standard_results` |
+| `landing_smooth_qd_manual_bd` | 1001 | `runs_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1001/standard_results` |
 | `landing_smooth_qd_manual_bd` | 1002 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1002/standard_results` |
 | `landing_smooth_qd_manual_bd` | 1003 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1003/standard_results` |
 | `random_descriptor_qd` | 1001 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1001/standard_results` |
@@ -30,12 +30,6 @@
 | `synthesis_trajectory_nod` | 1003 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1003/standard_results` |
 
 ## Next Pending Commands
-
-- `landing_smooth_qd_manual_bd` seed `1001` `VerilogEval-Spec-to-RTL`:
-
-```bash
-env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --benchmarks VerilogEval-Spec-to-RTL --problems Prob098_circuit7 Prob116_m2014_q3 Prob135_m2014_q6b Prob150_review2015_fsmonehot Prob151_review2015_fsm Prob153_gshare --api_backend vllm --vllm_host 20.0.0.103 --vllm_port 8000 --vllm_min_model_len 131072 --model_name openai/gpt-oss-120b --max_tokens 128000 --diff_max_tokens 128000 --population_size 20 --num_generations 5 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --total_worker_slots 13 --max_active_problems 13 --max_workers_per_problem 4 --rtl_simulation_timeout_s 60 --synthesis_timeout_s 300 --post_synthesis_simulation_timeout_s 300 --seed 1001 --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1001 --search_mode revolution_qd --qd_archive_type grid_quantile --qd_grid_quantile_warmup_successes 8 --qd_cell_mode pareto_front --qd_max_elites_per_cell 5 --qd_objectives ppa --qd_champion_lane_fraction 0.5 --qd_parent_selection nsga2_global_rank --qd_two_parent_probability 0.5 --qd_operator_kind eoh_strategies --representation_kind code_individual --qd_descriptor_profile journal_logic_ff_width_3d
-```
 
 - `landing_smooth_qd_manual_bd` seed `1002` `RTLLM`:
 
@@ -53,4 +47,10 @@ env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py --backend 
 
 ```bash
 env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --benchmarks RTLLM --problems Prob004_adder_8bit Prob015_multi_pipe_8bit Prob024_fsm Prob037_parallel2serial Prob041_traffic_light Prob045_alu Prob049_signal_generator --api_backend vllm --vllm_host 20.0.0.103 --vllm_port 8000 --vllm_min_model_len 131072 --model_name openai/gpt-oss-120b --max_tokens 128000 --diff_max_tokens 128000 --population_size 20 --num_generations 5 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --total_worker_slots 13 --max_active_problems 13 --max_workers_per_problem 4 --rtl_simulation_timeout_s 60 --synthesis_timeout_s 300 --post_synthesis_simulation_timeout_s 300 --seed 1003 --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1003 --search_mode revolution_qd --qd_archive_type grid_quantile --qd_grid_quantile_warmup_successes 8 --qd_cell_mode pareto_front --qd_max_elites_per_cell 5 --qd_objectives ppa --qd_champion_lane_fraction 0.5 --qd_parent_selection nsga2_global_rank --qd_two_parent_probability 0.5 --qd_operator_kind eoh_strategies --representation_kind code_individual --qd_descriptor_profile journal_logic_ff_width_3d
+```
+
+- `landing_smooth_qd_manual_bd` seed `1003` `VerilogEval-Spec-to-RTL`:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --benchmarks VerilogEval-Spec-to-RTL --problems Prob098_circuit7 Prob116_m2014_q3 Prob135_m2014_q6b Prob150_review2015_fsmonehot Prob151_review2015_fsm Prob153_gshare --api_backend vllm --vllm_host 20.0.0.103 --vllm_port 8000 --vllm_min_model_len 131072 --model_name openai/gpt-oss-120b --max_tokens 128000 --diff_max_tokens 128000 --population_size 20 --num_generations 5 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --total_worker_slots 13 --max_active_problems 13 --max_workers_per_problem 4 --rtl_simulation_timeout_s 60 --synthesis_timeout_s 300 --post_synthesis_simulation_timeout_s 300 --seed 1003 --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1003 --search_mode revolution_qd --qd_archive_type grid_quantile --qd_grid_quantile_warmup_successes 8 --qd_cell_mode pareto_front --qd_max_elites_per_cell 5 --qd_objectives ppa --qd_champion_lane_fraction 0.5 --qd_parent_selection nsga2_global_rank --qd_two_parent_probability 0.5 --qd_operator_kind eoh_strategies --representation_kind code_individual --qd_descriptor_profile journal_logic_ff_width_3d
 ```
