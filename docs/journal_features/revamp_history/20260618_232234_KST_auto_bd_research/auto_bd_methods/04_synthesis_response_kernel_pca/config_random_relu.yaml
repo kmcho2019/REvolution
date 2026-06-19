@@ -1,0 +1,62 @@
+method_family: synthesis_response_kernel_pca
+method_name: sr_random_relu_pca_qd
+status: fitting_artifact_ready_runtime_ready_not_run
+
+descriptor:
+  profile: sr_pca_3d
+  descriptor_file: descriptor_profile_random_relu.yaml
+  raw_feature_schema: synthesis_response_v1
+  raw_features:
+  - final_yosys_stats
+  - final_motif_occupancy
+  - stnod_trajectory_swings
+  - per_stage_motif_ratios
+  - per_stage_cell_count_deltas
+  random_feature_map: relu
+  random_feature_count: 128
+  random_feature_seed: 20260618
+  pca_dimensions: 3
+  fitting_protocol: fixed_offline
+  training_data: predeclared_development_or_warmup_candidates_only
+  fitting_artifact: fitting_artifacts/sr_random_relu_pca_dev_seed1001/sr_random_relu_pca_artifact.json
+  excluded_data:
+  - held_out_problems
+  - final_evaluation_candidates
+  forbidden_inputs:
+  - ppa
+  - reference_ppa
+  - fitness
+  - hypervolume
+  - testbench_pass_percentage
+  - problem_id
+  frozen_artifacts:
+    raw_feature_schema_hash: 505c9fb648a6a2bd2dadca0e8f1ed30de567bd00df4d72fef2ec385ece47421a
+    scaler_hash: 4d2b9bbe7cfb8841e11ead36c893f092693ddccc5e624312f1036687c927d5cf
+    random_feature_map_hash: 566f32269d2396455718e7a444a5c7aead1a60d52996b3d3f2a4e1b293e46d3a
+    pca_component_hash: 9915d4d7b7bfb4e504949ef6115bf5949f132b0db08b8d4c43c2dc6f905f86b8
+    descriptor_hash: 5a4c6690deca43d298ec385ad65186fd053f73caef00e29a00e6b4ac6ba6e88a
+
+planned_variants:
+- sr_raw_pca_qd
+- sr_random_relu_pca_qd
+- sr_rff_pca_qd
+- sr_vq_codebook_qd
+- sr_contrastive_encoder_qd
+
+qd:
+  archive_type: grid_quantile
+  descriptor_file: descriptor_profile_random_relu.yaml
+  cell_mode: pareto_front
+  objectives: ppa
+  grid_quantile_warmup_successes: 8
+  max_elites_per_cell: 5
+  parent_selection: nsga2_global_rank
+  champion_lane_fraction: 0.5
+  operator_kind: eoh_strategies
+
+comparison_policy:
+  baseline_lock: ../../auto_bd_run_policy_lock.yaml
+  same_subsets_seeds_model_budget_as_baseline: true
+  report_internal_and_common_audit_space: true
+  fit_before_evaluation: true
+  posthoc_fit_is_visualization_only: true

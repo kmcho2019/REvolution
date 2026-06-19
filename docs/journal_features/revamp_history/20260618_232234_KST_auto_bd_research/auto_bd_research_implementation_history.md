@@ -8564,3 +8564,156 @@ Results:
 - ruff: pass
 - ty: pass
 - pyright: 0 errors
+
+## 2026-06-19 - Added SR Random-ReLU PCA Artifact
+
+Motivation:
+
+- The raw SR-PCA descriptor was useful as a projected baseline but did
+  not produce enough seed-1 PPA or common-audit uplift to promote.
+- User feedback identified the next best AutoQD-inspired candidate as a
+  fixed random-kernel PCA descriptor over hardware-native
+  synthesis-response features.
+
+Change:
+
+- Added `sr_random_relu_pca_qd` artifact support with a fixed ReLU
+  random feature map before PCA.
+- Kept `sr_raw_pca_qd` hash semantics backward-compatible with the
+  already frozen raw artifact.
+- Added ReLU artifact metadata fields to the fitting output:
+  random-map kind, seed, feature count, and random-map hash.
+- Added the `sr_random_relu_pca_qd` run-policy arm, descriptor profile,
+  method config, generated development run-matrix entries, and
+  non-clobbering method-local report output name.
+- Marked the P5 checklist item complete only for artifact/runtime
+  readiness; the seed-1 evolutionary run is still pending.
+
+Artifact command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python scripts/build_sr_pca_artifacts.py \
+  --standard-results-dir exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results \
+  --output-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/fitting_artifacts/sr_random_relu_pca_dev_seed1001 \
+  --method-name sr_random_relu_pca_qd \
+  --dimensions 3 \
+  --random-feature-kind relu \
+  --random-feature-count 128 \
+  --random-feature-seed 20260618
+```
+
+Frozen artifact:
+
+- artifact:
+  `auto_bd_methods/04_synthesis_response_kernel_pca/fitting_artifacts/sr_random_relu_pca_dev_seed1001/sr_random_relu_pca_artifact.json`
+- training candidates: 205 valid development candidates
+- descriptor version: `sr_random_relu_pca_v1`
+- random feature map: ReLU, 128 features, seed `20260618`
+- feature schema hash:
+  `505c9fb648a6a2bd2dadca0e8f1ed30de567bd00df4d72fef2ec385ece47421a`
+- scaler hash:
+  `4d2b9bbe7cfb8841e11ead36c893f092693ddccc5e624312f1036687c927d5cf`
+- random feature map hash:
+  `566f32269d2396455718e7a444a5c7aead1a60d52996b3d3f2a4e1b293e46d3a`
+- PCA hash:
+  `9915d4d7b7bfb4e504949ef6115bf5949f132b0db08b8d4c43c2dc6f905f86b8`
+- descriptor hash:
+  `5a4c6690deca43d298ec385ad65186fd053f73caef00e29a00e6b4ac6ba6e88a`
+- explained variance ratio:
+  `[0.7211238734356278, 0.12495621097388841, 0.0552489401776463]`
+
+Run-matrix regeneration:
+
+```bash
+UV_LINK_MODE=copy uv run --active python scripts/build_auto_bd_run_matrix.py \
+  --phase development \
+  --output-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research \
+  --run-root exp/auto_bd_research
+```
+
+Result:
+
+- development run matrix entries: 18
+- new generated config:
+  `auto_bd_run_configs/development/sr_random_relu_pca_qd.yaml`
+- new run commands point to
+  `descriptor_profile_random_relu.yaml`
+- commands preserve `--vllm_min_model_len 131072`,
+  `--max_tokens 128000`, and `--diff_max_tokens 128000`
+
+Artifact load sanity:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+from revolution.auto_bd.sr_pca_descriptor import sr_pca_artifact_from_json
+
+paths = [
+    Path("docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/fitting_artifacts/sr_raw_pca_dev_seed1001/sr_raw_pca_artifact.json"),
+    Path("docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/fitting_artifacts/sr_random_relu_pca_dev_seed1001/sr_random_relu_pca_artifact.json"),
+]
+for path in paths:
+    artifact = sr_pca_artifact_from_json(json.loads(path.read_text(encoding="utf-8")))
+    print(path.name, artifact.descriptor_version, artifact.random_map.kind, artifact.descriptor_hash)
+PY
+```
+
+Result:
+
+- `sr_raw_pca_artifact.json sr_raw_pca_v1 none 931edf18e9ec5e3a7b2b8d7996c603c64ec82619f6185ea44cf4803e6105ee1b`
+- `sr_random_relu_pca_artifact.json sr_random_relu_pca_v1 relu 5a4c6690deca43d298ec385ad65186fd053f73caef00e29a00e6b4ac6ba6e88a`
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_method_results.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  scripts/build_sr_pca_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_method_results.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py
+UV_LINK_MODE=copy uv tool run ty check \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  scripts/build_sr_pca_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_method_results.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/sr_pca_descriptor.py \
+  scripts/build_sr_pca_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_method_results.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/scripts/test_build_sr_pca_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- pytest: 44 passed
+- ruff: pass
+- ty: pass
+- pyright: 0 errors

@@ -26,9 +26,11 @@ from revolution.auto_bd.stage_dumps import (
 )
 from revolution.auto_bd.sr_pca_descriptor import (
     SR_PCA_AXES,
+    SR_RANDOM_RELU_PCA_DESCRIPTOR_VERSION,
     SR_RAW_FEATURE_SCHEMA_VERSION,
     SR_RAW_PCA_DESCRIPTOR_VERSION,
     SrPcaArtifact,
+    fit_sr_random_relu_pca_artifact,
     fit_sr_raw_pca_artifact,
     sr_pca_artifact_from_json,
     sr_pca_artifact_to_json,
@@ -55,9 +57,11 @@ __all__ = [
     "RANDOM_HASH_AXES",
     "random_hash_descriptor_values",
     "SR_PCA_AXES",
+    "SR_RANDOM_RELU_PCA_DESCRIPTOR_VERSION",
     "SR_RAW_FEATURE_SCHEMA_VERSION",
     "SR_RAW_PCA_DESCRIPTOR_VERSION",
     "SrPcaArtifact",
+    "fit_sr_random_relu_pca_artifact",
     "fit_sr_raw_pca_artifact",
     "sr_pca_artifact_from_json",
     "sr_pca_artifact_to_json",

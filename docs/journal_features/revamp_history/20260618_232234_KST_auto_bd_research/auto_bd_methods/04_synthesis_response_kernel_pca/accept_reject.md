@@ -4,6 +4,8 @@ Decision: reject as the selected final method; keep as the first
 projected synthesis-response baseline.
 
 Current status: seed-1 development evaluated for `sr_raw_pca_qd`.
+`sr_random_relu_pca_qd` is artifact-frozen and ready for its seed-1
+development run.
 
 ## Evidence
 
@@ -61,7 +63,7 @@ planned random-kernel expansion before PCA.
 
 ## Next Use
 
-Proceed to `sr_random_relu_pca_qd` only after freezing a new fitting
-artifact with the same leakage controls: no PPA, no fitness, no
-hypervolume, no reference PPA, no visible testbench pass percentage, and
-no problem ID as descriptor inputs.
+Run `sr_random_relu_pca_qd` next. Its frozen fitting artifact uses the
+same leakage controls: no PPA, no fitness, no hypervolume, no reference
+PPA, no visible testbench pass percentage, and no problem ID as
+descriptor inputs.

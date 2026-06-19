@@ -142,7 +142,8 @@ and free of PPA leakage.
 
 ## 10. Implementation Status
 
-Seed-1 evaluated for `sr_raw_pca_qd`.
+Seed-1 evaluated for `sr_raw_pca_qd`. The `sr_random_relu_pca_qd`
+artifact and run arm are frozen but not yet evaluated.
 
 Implemented:
 
@@ -150,13 +151,17 @@ Implemented:
 - Fixed offline PCA fitting artifact builder.
 - Development-seed fitting artifact for `sr_raw_pca_qd`.
 - In-loop archive insertion with `sr_pca_0..2` descriptor axes.
-- Run-matrix arm generation for `sr_raw_pca_qd`.
+- Fixed random-ReLU feature-map PCA fitting artifact builder.
+- Development-seed fitting artifact for `sr_random_relu_pca_qd`.
+- Run-matrix arm generation for `sr_raw_pca_qd` and
+  `sr_random_relu_pca_qd`.
 - Development seed-1 run, standard results, Gate 0 coverage artifact,
   and method-local artifact report for `sr_raw_pca_qd`.
 
 Not implemented:
 
-- Random ReLU or random Fourier feature expansion.
+- Random Fourier feature expansion.
+- Seed-1 evolutionary run for `sr_random_relu_pca_qd`.
 - Seed-3 SR-PCA screening runs.
 
 ## 11. Experimental Setup
@@ -214,6 +219,29 @@ Frozen development fitting artifact:
   `931edf18e9ec5e3a7b2b8d7996c603c64ec82619f6185ea44cf4803e6105ee1b`
 - explained variance ratio:
   `[0.437099552626324, 0.22443819250404728, 0.1833523891094817]`
+
+Frozen random-ReLU development fitting artifact:
+
+- artifact:
+  `fitting_artifacts/sr_random_relu_pca_dev_seed1001/sr_random_relu_pca_artifact.json`
+- source data:
+  `exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results`
+- training candidates: 205 valid development candidates
+- raw feature schema: `synthesis_response_raw_v1`
+- descriptor version: `sr_random_relu_pca_v1`
+- random feature map: ReLU, 128 features, seed `20260618`
+- feature schema hash:
+  `505c9fb648a6a2bd2dadca0e8f1ed30de567bd00df4d72fef2ec385ece47421a`
+- scaler hash:
+  `4d2b9bbe7cfb8841e11ead36c893f092693ddccc5e624312f1036687c927d5cf`
+- random feature map hash:
+  `566f32269d2396455718e7a444a5c7aead1a60d52996b3d3f2a4e1b293e46d3a`
+- PCA hash:
+  `9915d4d7b7bfb4e504949ef6115bf5949f132b0db08b8d4c43c2dc6f905f86b8`
+- descriptor hash:
+  `5a4c6690deca43d298ec385ad65186fd053f73caef00e29a00e6b4ac6ba6e88a`
+- explained variance ratio:
+  `[0.7211238734356278, 0.12495621097388841, 0.0552489401776463]`
 
 Required plots:
 

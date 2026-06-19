@@ -50,6 +50,10 @@ METHOD_CONFIGS = {
     / "auto_bd_methods"
     / "04_synthesis_response_kernel_pca"
     / "config.yaml",
+    "sr_random_relu_pca_qd": SCAFFOLD_DIR
+    / "auto_bd_methods"
+    / "04_synthesis_response_kernel_pca"
+    / "config_random_relu.yaml",
 }
 
 
@@ -151,6 +155,10 @@ def write_arm_configs(
         "sr_raw_pca_qd": mapping_at(
             mapping_at(run_policy, "candidate_method_arms"),
             "sr_raw_pca_qd",
+        ),
+        "sr_random_relu_pca_qd": mapping_at(
+            mapping_at(run_policy, "candidate_method_arms"),
+            "sr_random_relu_pca_qd",
         ),
     }
     selected_arms = arm_names or list(arm_payloads)
@@ -330,6 +338,14 @@ def arm_flags(arm_name: str) -> list[str]:
             "sr_pca_3d",
             "--qd_descriptor_file",
             str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
+        ]
+    if arm_name == "sr_random_relu_pca_qd":
+        return [
+            *base_qd,
+            "--qd_descriptor_profile",
+            "sr_pca_3d",
+            "--qd_descriptor_file",
+            str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile_random_relu.yaml"),
         ]
     raise AssertionError(f"unknown Auto-BD arm: {arm_name}")
 

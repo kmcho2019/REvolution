@@ -13,6 +13,7 @@ import pandas as pd
 
 from revolution.auto_bd.sr_pca_descriptor import (
     SR_PCA_AXES,
+    fit_sr_random_relu_pca_artifact,
     fit_sr_raw_pca_artifact,
     hash_json_payload,
     sr_pca_artifact_to_json,
@@ -38,6 +39,9 @@ def build_artifacts(
     output_dir: Path,
     method_name: str,
     dimensions: int,
+    random_feature_kind: str = "none",
+    random_feature_count: int = 0,
+    random_feature_seed: int = 0,
 ) -> dict[str, Any]:
     """Fit SR-PCA artifacts from valid development candidates."""
 
@@ -79,7 +83,17 @@ def build_artifacts(
         )
 
     matrix = np.array([[raw_row[axis] for axis in axes] for raw_row in raw_rows], dtype=float)
-    artifact = fit_sr_raw_pca_artifact(matrix, dimensions=dimensions)
+    if random_feature_kind == "none":
+        artifact = fit_sr_raw_pca_artifact(matrix, dimensions=dimensions)
+    elif random_feature_kind == "relu":
+        artifact = fit_sr_random_relu_pca_artifact(
+            matrix,
+            dimensions=dimensions,
+            random_feature_count=random_feature_count,
+            random_feature_seed=random_feature_seed,
+        )
+    else:
+        raise AssertionError(f"unknown random feature kind: {random_feature_kind}")
     descriptor_rows = [
         {
             "problem_id": raw_row["problem_id"],
@@ -92,6 +106,10 @@ def build_artifacts(
             "raw_feature_schema_version": artifact.raw_feature_schema_version,
             "feature_schema_hash": artifact.feature_schema_hash,
             "scaler_hash": artifact.scaler_hash,
+            "random_feature_map_kind": artifact.random_map.kind,
+            "random_feature_count": artifact.random_map.feature_count,
+            "random_feature_seed": artifact.random_map.seed,
+            "random_feature_map_hash": artifact.random_map.random_feature_map_hash,
             "pca_hash": artifact.pca_hash,
             "descriptor_hash": artifact.descriptor_hash,
         }
@@ -110,13 +128,19 @@ def build_artifacts(
         "training_candidate_list_hash": hash_json_payload({"training_candidates": train_rows}),
         "excluded_data": ["held_out_problems", "main_screening_candidates", "final_evaluation_candidates"],
         "forbidden_descriptor_inputs": list(FORBIDDEN_SR_DESCRIPTOR_INPUTS),
+        "random_feature_map_kind": artifact.random_map.kind,
+        "random_feature_count": artifact.random_map.feature_count,
+        "random_feature_seed": artifact.random_map.seed,
+        "random_feature_map_hash": artifact.random_map.random_feature_map_hash,
         "artifact_files": {
             "training_candidates": "training_candidates.parquet",
             "raw_features": "raw_features.parquet",
             "training_descriptor_vectors": "training_descriptor_vectors.parquet",
         },
     }
-    (output_dir / "sr_raw_pca_artifact.json").write_text(
+    artifact_name = f"{method_name.removesuffix('_qd')}_artifact.json"
+    payload["artifact_file"] = artifact_name
+    (output_dir / artifact_name).write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
@@ -137,6 +161,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--method-name", default="sr_raw_pca_qd")
     parser.add_argument("--dimensions", type=int, default=3)
+    parser.add_argument("--random-feature-kind", choices=("none", "relu"), default="none")
+    parser.add_argument("--random-feature-count", type=int, default=0)
+    parser.add_argument("--random-feature-seed", type=int, default=0)
     args = parser.parse_args(argv)
 
     payload = build_artifacts(
@@ -144,8 +171,11 @@ def main(argv: list[str] | None = None) -> int:
         output_dir=args.output_dir,
         method_name=args.method_name,
         dimensions=args.dimensions,
+        random_feature_kind=args.random_feature_kind,
+        random_feature_count=args.random_feature_count,
+        random_feature_seed=args.random_feature_seed,
     )
-    print(f"SR-PCA artifact -> {args.output_dir / 'sr_raw_pca_artifact.json'}")
+    print(f"SR-PCA artifact -> {args.output_dir / payload['artifact_file']}")
     print(f"feature_schema_hash: {payload['feature_schema_hash']}")
     print(f"scaler_hash: {payload['scaler_hash']}")
     print(f"pca_hash: {payload['pca_hash']}")

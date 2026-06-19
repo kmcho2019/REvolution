@@ -8,7 +8,9 @@ import numpy as np
 
 from revolution.auto_bd.sr_pca_descriptor import (
     SR_PCA_AXES,
+    SR_RANDOM_RELU_PCA_DESCRIPTOR_VERSION,
     fit_sr_raw_pca_artifact,
+    fit_sr_random_relu_pca_artifact,
     sr_pca_artifact_from_json,
     sr_pca_artifact_to_json,
     sr_raw_feature_axes,
@@ -61,6 +63,54 @@ def test_sr_raw_pca_artifact_round_trips_and_projects() -> None:
     assert len(descriptor) == 3
     assert payload["raw_feature_schema_version"] == "synthesis_response_raw_v1"
     assert list(SR_PCA_AXES[:3]) == ["sr_pca_0", "sr_pca_1", "sr_pca_2"]
+
+
+def test_sr_raw_pca_loads_legacy_payload_without_random_map() -> None:
+    matrix = np.array(
+        [
+            [float(row + col) for col in range(len(sr_raw_feature_axes()))]
+            for row in range(6)
+        ],
+        dtype=float,
+    )
+    payload = sr_pca_artifact_to_json(fit_sr_raw_pca_artifact(matrix, dimensions=3))
+    del payload["random_feature_map"]
+
+    loaded = sr_pca_artifact_from_json(payload)
+
+    assert loaded.random_map.kind == "none"
+    assert loaded.descriptor_version == "sr_raw_pca_v1"
+
+
+def test_sr_random_relu_pca_artifact_round_trips() -> None:
+    matrix = np.array(
+        [
+            [float(row + col) for col in range(len(sr_raw_feature_axes()))]
+            for row in range(8)
+        ],
+        dtype=float,
+    )
+
+    artifact = fit_sr_random_relu_pca_artifact(
+        matrix,
+        dimensions=3,
+        random_feature_count=12,
+        random_feature_seed=123,
+    )
+    payload = sr_pca_artifact_to_json(artifact)
+    loaded = sr_pca_artifact_from_json(payload)
+    raw_values = {
+        axis: float(index)
+        for index, axis in enumerate(sr_raw_feature_axes())
+    }
+
+    descriptor = transform_sr_raw_pca(loaded, raw_values)
+
+    assert loaded.descriptor_hash == artifact.descriptor_hash
+    assert loaded.descriptor_version == SR_RANDOM_RELU_PCA_DESCRIPTOR_VERSION
+    assert loaded.random_map.kind == "relu"
+    assert loaded.random_map.feature_count == 12
+    assert len(descriptor) == 3
 
 
 def test_qd_engine_extracts_sr_pca_descriptor_values(tmp_path: Path) -> None:

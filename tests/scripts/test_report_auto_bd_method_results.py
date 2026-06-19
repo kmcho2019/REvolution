@@ -20,7 +20,7 @@ _SPEC.loader.exec_module(mod)
 def test_build_reports_writes_method_reports(tmp_path: Path) -> None:
     method_root = tmp_path / "auto_bd_methods"
     for directory in mod.METHOD_DIRS.values():
-        (method_root / directory).mkdir(parents=True)
+        (method_root / directory).mkdir(parents=True, exist_ok=True)
     central_report = tmp_path / "central.json"
     central_report.write_text(json.dumps(_central_payload()), encoding="utf-8")
 
@@ -31,6 +31,8 @@ def test_build_reports_writes_method_reports(tmp_path: Path) -> None:
     )
 
     assert set(outputs) == set(mod.METHOD_DIRS)
+    assert len(set(outputs.values())) == len(outputs)
+    assert outputs["sr_random_relu_pca_qd"].name == "sr_random_relu_seed1_artifact_report.md"
     for path in outputs.values():
         text = path.read_text(encoding="utf-8")
         assert "## Gate 0" in text

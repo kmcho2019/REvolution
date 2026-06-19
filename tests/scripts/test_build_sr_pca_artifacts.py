@@ -45,6 +45,33 @@ def test_build_artifacts_writes_frozen_sr_pca_files(tmp_path: Path) -> None:
     assert (output_dir / "training_descriptor_vectors.parquet").is_file()
 
 
+def test_build_artifacts_writes_random_relu_pca_files(tmp_path: Path) -> None:
+    standard_results = tmp_path / "standard_results"
+    _write_candidates(standard_results)
+    output_dir = tmp_path / "artifacts"
+
+    payload = mod.build_artifacts(
+        standard_results_dir=standard_results,
+        output_dir=output_dir,
+        method_name="sr_random_relu_pca_qd",
+        dimensions=3,
+        random_feature_kind="relu",
+        random_feature_count=12,
+        random_feature_seed=123,
+    )
+
+    artifact_path = output_dir / "sr_random_relu_pca_artifact.json"
+    saved = json.loads(artifact_path.read_text(encoding="utf-8"))
+    vectors = pd.read_parquet(output_dir / "training_descriptor_vectors.parquet")
+
+    assert saved["descriptor_version"] == "sr_random_relu_pca_v1"
+    assert saved["random_feature_map_kind"] == "relu"
+    assert saved["random_feature_count"] == 12
+    assert saved["random_feature_seed"] == 123
+    assert saved["random_feature_map_hash"] == payload["random_feature_map_hash"]
+    assert set(vectors["random_feature_map_kind"]) == {"relu"}
+
+
 def _write_candidates(standard_results: Path) -> None:
     standard_results.mkdir(parents=True)
     rows = []

@@ -81,7 +81,7 @@ evidence and rationale.
 
 - [x] Add `sr_raw_pca_qd` over stable synthesis-response vectors as the
   first projected baseline.
-- [ ] Add `sr_random_relu_pca_qd` as the main SR-kernel-PCA candidate only
+- [x] Add `sr_random_relu_pca_qd` as the main SR-kernel-PCA candidate only
   after fitting artifacts are frozen.
 - [ ] Try `sr_rff_pca_qd` only as a kernel control after ReLU PCA is
   understood.

@@ -14,6 +14,7 @@ METHOD_DIRS = {
     "netlist_motif_occupancy": "02_netlist_motif_occupancy",
     "synthesis_trajectory_nod": "03_synthesis_trajectory_nod",
     "sr_raw_pca_qd": "04_synthesis_response_kernel_pca",
+    "sr_random_relu_pca_qd": "04_synthesis_response_kernel_pca",
 }
 
 
@@ -32,10 +33,18 @@ def build_reports(
     for method, directory in METHOD_DIRS.items():
         method_dir = method_root / directory
         assert method_dir.is_dir(), method_dir
-        output_path = method_dir / output_name
+        output_path = method_dir / method_output_name(method, output_name)
         output_path.write_text(render_method_report(report, method), encoding="utf-8")
         outputs[method] = output_path
     return outputs
+
+
+def method_output_name(method: str, output_name: str) -> str:
+    """Return a non-clobbering filename for variants sharing one directory."""
+
+    if method == "sr_random_relu_pca_qd":
+        return f"sr_random_relu_{output_name}"
+    return output_name
 
 
 def render_method_report(report: dict[str, Any], method: str) -> str:
