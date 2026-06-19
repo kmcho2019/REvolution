@@ -7313,3 +7313,150 @@ PY
 ```
 
 Result: `stnod seed1001 standard results check ok`.
+
+## 2026-06-19 13:40 UTC
+
+Completed the first seed-3 main-screening command for
+`synthesis_trajectory_nod` seed 1002.
+
+Model endpoint preflight:
+
+```bash
+curl -s http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Run command:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks RTLLM \
+  --problems Prob004_adder_8bit Prob015_multi_pipe_8bit Prob024_fsm Prob037_parallel2serial Prob041_traffic_light Prob045_alu Prob049_signal_generator \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 20 \
+  --num_generations 5 \
+  --evaluation_mode search_accelerated \
+  --accelerated_synthesis_top_k 1 \
+  --total_worker_slots 13 \
+  --max_active_problems 13 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1002 \
+  --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile stnod_trajectory_5d \
+  --qd_descriptor_file /workspace/.worktrees/journal-auto-bd-exp-20260618/docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/03_synthesis_trajectory_nod/descriptor_profile.yaml
+```
+
+Result:
+
+- arm: `synthesis_trajectory_nod`
+- seed: 1002
+- benchmark group: `RTLLM`
+- run time: 2055.68 seconds
+- run log:
+  `exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/revolution/openai_gpt-oss-120b/20260619_130630_revolution_run_log.txt`
+- summary:
+  `exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/revolution/openai_gpt-oss-120b/20260619_130630_revolution_summary_results.txt`
+- scheduler telemetry:
+  `exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/revolution/openai_gpt-oss-120b/20260619_130630_revolution_scheduler_telemetry.json`
+- final ST-NOD `07_buffered.v` snapshots observed: 335
+
+Problem outcomes:
+
+| Problem | Status | Best Score |
+| --- | --- | --- |
+| `Prob004_adder_8bit` | `success` | 0.38154412826809186 |
+| `Prob015_multi_pipe_8bit` | `success` | 0.05279453299055512 |
+| `Prob024_fsm` | `success` | 0.6834970284641851 |
+| `Prob037_parallel2serial` | `success` | 0.06325075627503886 |
+| `Prob041_traffic_light` | `success` | 0.42087509077705154 |
+| `Prob045_alu` | `success` | 0.4052032328011039 |
+| `Prob049_signal_generator` | `success` | 0.25646362727407895 |
+
+Refreshed status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py
+```
+
+Current seed-3 status:
+
+- manifest commands: 12 complete, 0 pending
+- benchmark commands: 21 complete, 3 pending
+- arm/seed pairs: 10 standard-results complete, 1 partial, 1 pending
+- `synthesis_trajectory_nod` seed 1002: partial, 1/2 benchmark groups complete
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+status_path = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+stage_root = Path(
+    "exp/auto_bd_research/main_screening_screening_seed3/"
+    "synthesis_trajectory_nod/seed_1002/revolution/"
+    "openai_gpt-oss-120b/RTLLM"
+)
+status = json.loads(status_path.read_text())
+assert status["manifest_summary"] == {"complete": 12, "total": 12}
+assert status["entry_summary"] == {"complete": 21, "pending": 3, "total": 24}
+assert status["arm_seed_summary"] == {
+    "partial": 1,
+    "pending": 1,
+    "standard_results_complete": 10,
+    "total": 12,
+}
+entry = next(
+    item
+    for item in status["arm_seed_status"]
+    if item["arm_name"] == "synthesis_trajectory_nod"
+    and item["seed"] == 1002
+)
+assert entry["status"] == "partial"
+assert entry["benchmark_groups_complete"] == 1
+rtllm_entry = next(
+    item
+    for item in status["entry_status"]
+    if item["arm_name"] == "synthesis_trajectory_nod"
+    and item["seed"] == 1002
+    and item["benchmark"] == "RTLLM"
+)
+assert rtllm_entry["status"] == "complete"
+assert rtllm_entry["completed_problem_count"] == 7
+assert len(list(stage_root.rglob("*.stnod.stages/07_buffered.v"))) == 335
+print("stnod seed1002 rtllm status check ok")
+PY
+```
+
+Result: `stnod seed1002 rtllm status check ok`.
