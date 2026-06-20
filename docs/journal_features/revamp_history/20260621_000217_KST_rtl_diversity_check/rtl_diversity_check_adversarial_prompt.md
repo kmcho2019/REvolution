@@ -35,25 +35,29 @@ Automatic FAIL preconditions:
 7. RTLLM is available as a broad practical corpus but ignored without
    rationale, or VerilogEval partial evidence is presented as full-suite
    evidence.
-8. New live evolution runs are launched before available historical corpora
+8. The 20260618 Auto-BD negative/control evidence is ignored, or Yosys-stat,
+   motif histogram, ST-NOD, projected SR, VQ/codebook, or random descriptor
+   arms are presented as untested promising baselines rather than existing
+   mixed/negative evidence.
+9. New live evolution runs are launched before available historical corpora
    are indexed and analyzed, without a recorded rationale.
-9. Live model calls or runs use a model other than `gpt-oss-120b`, a different
+10. Live model calls or runs use a model other than `gpt-oss-120b`, a different
    endpoint, or low token settings without explicit rationale.
-10. If live runs are used, there is no recorded preflight for
+11. If live runs are used, there is no recorded preflight for
    `curl http://20.0.0.103:8000/v1/models`, served max_model_len, and
    128K-token policy.
-11. Qwen3 or DeepGate3 embeddings are promoted as in-loop behavior descriptors
+12. Qwen3 or DeepGate3 embeddings are promoted as in-loop behavior descriptors
    without post-hoc evidence that distances correlate with Pareto
    contribution, future improvement, or valid descendant yield.
-12. AURORA-style custom encoder training is added before pre-trained
+13. AURORA-style custom encoder training is added before pre-trained
     Qwen/DeepGate3 diagnostics are attempted or explicitly shown
     insufficient.
-13. Code organization is overcomplicated for a research experiment: broad
+14. Code organization is overcomplicated for a research experiment: broad
     fallback layers, production database machinery, scattered scripts, or
     excessive backward-compatibility paths.
-14. The implementation writes into `/aux/revolution-history` or any historical
+15. The implementation writes into `/aux/revolution-history` or any historical
     checkout intended to be read-only.
-15. Tests are missing for corpus indexing and the selected analysis metrics.
+16. Tests are missing for corpus indexing and the selected analysis metrics.
 
 Mechanical checks:
 1. Inspect branch status and commit history. Confirm the devcontainer GPU and
@@ -62,38 +66,42 @@ Mechanical checks:
    files.
 3. Inspect the corpus index. Confirm it includes Auto-BD standard-results
    roots and at least one historical root when available.
-4. Inspect the candidate audit table. Confirm it includes method, seed, model,
+4. Inspect the 20260618 Auto-BD final negative decision, seed-3 screening
+   report, and centralized reports. Confirm the new study explains how those
+   results constrain the interpretation of Yosys-stat, motif, ST-NOD, random,
+   projected SR, and VQ/codebook descriptors.
+5. Inspect the candidate audit table. Confirm it includes method, seed, model,
    problem, generation, validity funnel, PPA fields, code path, netlist path,
    and available descriptor/hash fields.
-5. Confirm missing historical artifacts are reported as coverage, not silently
+6. Confirm missing historical artifacts are reported as coverage, not silently
    filled with broad fallback behavior.
-6. Confirm quick subset reports are labeled development/preliminary and that
+7. Confirm quick subset reports are labeled development/preliminary and that
    final conclusions use a large practical corpus, preferably broad RTLLM.
-7. If VerilogEval appears in conclusions, confirm whether it is full,
+8. If VerilogEval appears in conclusions, confirm whether it is full,
    representative, or partial evidence.
-8. Confirm Qwen embedding extraction has a dry-run coverage mode and records
+9. Confirm Qwen embedding extraction has a dry-run coverage mode and records
    model name/path, device, batch size, max length, and output path/hash for
    any real run.
-9. Confirm DeepGate3 is either implemented as a bounded diagnostic path or
+10. Confirm DeepGate3 is either implemented as a bounded diagnostic path or
    deferred with exact graph-export/setup blockers.
-10. Recompute or inspect the cluster contribution report. Confirm it separates
+11. Recompute or inspect the cluster contribution report. Confirm it separates
    clusters that contribute Pareto/HV from clusters that are merely occupied.
-11. Recompute or inspect the oracle downsampling report. Confirm it compares
+12. Recompute or inspect the oracle downsampling report. Confirm it compares
    best-fitness-only, random, structural-diversity, synthesis-response, and
    embedding-based selectors at equal candidate budget.
-12. Confirm early-diversity, parent-child jump, and shadow-archive analyses
+13. Confirm early-diversity, parent-child jump, and shadow-archive analyses
     are either implemented after the audit table is stable or explicitly
     scoped out with evidence.
-13. Inspect plots/tables. Confirm conclusions are labeled as predictive,
+14. Inspect plots/tables. Confirm conclusions are labeled as predictive,
     reconstructive, descriptive-only, inconclusive, or negative.
-14. Inspect touched Python code for repo style: simple, skimmable, typed where
+15. Inspect touched Python code for repo style: simple, skimmable, typed where
     useful, asserts for required data, narrow states, and no broad try/except
     defaults where data must exist.
-15. Confirm focused pytest, ruff, and typecheck evidence for touched code, or
+16. Confirm focused pytest, ruff, and typecheck evidence for touched code, or
     an explicit doc-only rationale if no code was added.
-16. Inspect docs for clear usage, artifact paths, limitations, and how to
+17. Inspect docs for clear usage, artifact paths, limitations, and how to
     reproduce the report from ignored experiment outputs.
-17. Inspect commits for atomicity, conventional commit messages, and
+18. Inspect commits for atomicity, conventional commit messages, and
     sign-offs according to `GUIDELINES.md`.
 
 Paper-facing checks:

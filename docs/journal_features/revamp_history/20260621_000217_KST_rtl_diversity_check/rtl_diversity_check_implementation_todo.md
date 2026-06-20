@@ -25,10 +25,17 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   details in the history.
 - [ ] Confirm this is a post-hoc diagnostic goal, not a new in-loop QD
   method goal.
+- [ ] Read the 20260618 Auto-BD final negative decision and seed-3 screening
+  report before designing new descriptor experiments.
+- [ ] Record that Yosys-stat, motif histogram, ST-NOD, projected SR,
+  VQ/codebook, and random descriptor arms are existing control/negative
+  evidence, not fresh default candidates.
 
 ## P1 - Corpus Inventory
 
 - [ ] Index current Auto-BD seed-1 and seed-3 `standard_results` roots.
+- [ ] Ingest the 20260618 Auto-BD centralized reports and final negative
+  decision as context for why new diagnostics are needed.
 - [ ] Index historical `exp/` roots under `/aux/revolution-history`.
 - [ ] Check whether an `aspdac2026-paper` checkout/worktree is available
   locally and index its `exp/` roots if present.
@@ -54,15 +61,16 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 
 ## P3 - Diagnostic Descriptors
 
-- [ ] Add simple RTL/source features only if needed for the first report.
-- [ ] Add structural netlist descriptors from existing hashes/motif fields
-  before adding heavier graph work.
+- [ ] Reuse existing structural descriptor outputs from the Auto-BD push
+  where available instead of re-running failed arms by default.
 - [ ] Add Qwen3-Embedding-0.6B extraction for RTL/source text as a bounded
   diagnostic path.
 - [ ] Add Qwen dry-run mode that reports candidate text coverage without
   loading the model.
 - [ ] Investigate DeepGate3 input requirements and record the minimum
   graph-export path needed.
+- [ ] Treat DeepSeq, NetTAG, CircuitFusion, larger Qwen models, and custom
+  AURORA training as later-stage candidates only.
 - [ ] Defer custom AURORA/autoencoder training unless post-hoc evidence
   justifies it.
 - [ ] If AURORA-style training is later approved, record why pre-trained

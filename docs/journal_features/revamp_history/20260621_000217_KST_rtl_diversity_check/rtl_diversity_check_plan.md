@@ -22,6 +22,33 @@ The first milestone is post-hoc and diagnostic. Use existing evolutionary
 run corpora first, then pre-trained encoders as analysis tools. Do not start
 with a new in-loop QD algorithm.
 
+## Current Evidence From 20260618 Auto-BD Work
+
+The notes in `original_notes/` include pre-study brainstorming written before
+the 20260618 Auto-BD result push. The plan must be interpreted in light of the
+newer evidence in
+`docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research`.
+
+That evidence already tested several simple/manual hardware descriptor arms:
+random descriptor QD, simple Yosys-stat BD, netlist motif occupancy, ST-NOD,
+synthesis-trajectory motif variants, projected synthesis-response variants,
+and VQ/codebook variants. The important lesson is not that these should be
+rerun as promising first methods. The lesson is that descriptor/archive
+diversity could be measured and sometimes organized archives differently, but
+it did not produce a clean robust PPA uplift and often hurt the valid-PPA
+funnel.
+
+Therefore this branch should ask a prior question:
+
+> Were those failures because diversity is weakly relevant for RTL PPA search,
+> because the tested descriptors measured the wrong diversity, or because
+> diversity pressure was applied in a way that traded away exploitation and
+> repair?
+
+Use the 20260618 Auto-BD results as baseline/control evidence and as a warning
+against assuming that hardware-native descriptor labels are automatically
+useful.
+
 ## Source Of Truth
 
 - Full plan: `rtl_diversity_check_plan.md`
@@ -130,10 +157,11 @@ budget when comparing against historical evidence.
 
 ### E1: Cluster Contribution Test
 
-Cluster valid candidates by simple structural features, ST-NOD-like
-features when present, and embeddings when available. Report how many
+Cluster valid candidates by existing structural/ST-NOD-like descriptor
+outputs when present, plus embeddings when available. Report how many
 clusters contribute final Pareto points and how much hypervolume each
-cluster contributes.
+cluster contributes. Treat the 20260618 structural descriptor outcomes as
+prior evidence, not as methods to rerun by default.
 
 ### E2: Oracle Downsampling Test
 
@@ -186,6 +214,160 @@ Do not train a new AURORA/autoencoder/GNN descriptor in the first goal.
 That is a follow-on only after fixed structural, synthesis-response, and
 pre-trained encoder descriptors show useful signal.
 
+## Descriptor Families
+
+Compare descriptor families in increasing complexity, but avoid treating the
+already-tested descriptor arms as fresh proposed methods. Every learned or
+neural descriptor must beat or complement the existing simple-control evidence
+before it is promoted beyond "diagnostic only."
+
+Existing/control families to ingest from prior artifacts:
+
+- `manual_bd`: current Smooth-QD manual trio: combinational depth, FF depth,
+  and log combinational gate count.
+- `yosys_stat`: gate/FF/mux/arithmetic/comparator counts, PI/PO counts,
+  fanout summary, depth, cell histogram, and level histogram.
+- `motif_histogram`: local netlist motifs, pathlets, FF-to-FF cones,
+  PI-to-PO cones, reconvergent fanout, mux-heavy, arithmetic-heavy, and
+  control-heavy regions.
+- `stnod_like`: synthesis-stage motif/stat vectors and trajectory deltas
+  across Yosys lowering, optimization, ABC/AIG, and mapping stages.
+- `random_descriptor`: negative control under the same archive mechanics.
+
+Treat these families as controls and retrospective evidence. Do not spend the
+first goal re-proving that Yosys-stat, motif histogram, ST-NOD, or random
+descriptor are final methods unless a specific coverage gap is found in the
+existing artifacts.
+
+New diagnostic families to evaluate before exotic/custom training:
+
+- `qwen3_embedding_0p6b`: frozen `Qwen/Qwen3-Embedding-0.6B` over raw RTL,
+  canonical RTL without comments, identifier-normalized RTL, and optional
+  module-summary-plus-canonical-RTL text.
+- `deepgate3_aig`: frozen DeepGate3 over final AIG/netlist graphs when AIG
+  export and model setup are stable enough.
+
+Later-stage families are optional and should not block the first milestone:
+Qwen3-Embedding-4B/8B, RTL-specialized encoders if available, DeepSeq for
+sequential circuits, DeepGate4 for larger circuits, NetTAG, CircuitFusion,
+and post-mapped netlist encoders. These belong after the first-pass report
+shows a real diversity signal.
+
+## Encoder Method Card Requirements
+
+Each descriptor or encoder promoted beyond a quick probe must have a method
+card or equivalent report section covering:
+
+- family, motivation, and expected RTL/PPA diversity mechanism;
+- input artifacts: RTL variant, Yosys JSON, AIG, techmapped netlist,
+  synthesis-stage dumps, or OpenROAD report fields;
+- model/checkpoint/version/hash, license if relevant, frozen/trained status,
+  and fitting data;
+- preprocessing: comments, identifier normalization, module chunking,
+  canonicalization, and large-module policy;
+- embedding dimension, pooling, normalization, runtime, and failure handling;
+- projection/archive mapping: PCA, k-means, CVT, VQ, or quantile grid,
+  including fitting-data hash;
+- leakage controls: no direct area, power, timing, fitness, reference PPA,
+  final HV, or held-out tuning;
+- stability tests under renaming, formatting, declaration order changes, and
+  comment removal;
+- interpretability: dominant motifs, representative RTL/netlist examples,
+  and PPA tendency for important regions;
+- verdict: accept, reject, diagnostic only, or needs more evidence.
+
+## Quantitative Gates
+
+The project should proceed from diversity pre-study to full Auto-BD only if
+at least two Diversity Necessity gates pass:
+
+- `D1 early_predictive`: early implementation diversity has positive
+  association with final HV or best fitness after controlling for valid
+  candidate count, problem, and seed. Suggested evidence: positive
+  standardized coefficient with mostly positive bootstrap 95% CI, or
+  Spearman rho >= 0.25 on at least 60% of analyzable problems.
+- `D2 multi_cluster_front`: in at least 60% of analyzable problems, the final
+  PPA Pareto front contains candidates from at least two structural clusters.
+- `D3 replay_retention`: diversity-aware counterfactual retention improves
+  retained HV, unique motif signatures, common-audit coverage, or retained
+  positive-improvement candidates by at least one predeclared threshold:
+  10% HV, 10% motif signatures, 10% common-audit coverage, or two additional
+  positive-improvement problems.
+- `D4 prospective_moderate_diversity`: if live runs are later approved,
+  archive parent fraction 0.25 or 0.5 beats 0.0 on HV or best fitness without
+  more than a 5 percentage point functionality, synthesis, or valid-PPA drop.
+- `D5 real_beats_random`: a hardware descriptor beats random descriptor under
+  identical archive mechanics on HV, common-audit QD score, unique motif
+  diversity, or valid-PPA-safe front quality.
+- `D6 interpretable_regions`: representative regions correspond to clear
+  RTL/netlist implementation styles such as mux-heavy, arithmetic-heavy,
+  shallow-wide, deep-narrow, register-balanced, resource-shared,
+  duplicated-compute, or control-dominated.
+
+An embedding can be accepted as an in-loop BD only after it passes extraction
+success, stability, leakage, non-collapse, interpretability, common-audit, and
+runtime gates:
+
+- extraction success >= 99% for synthesized candidates;
+- embedding NaN rate equals 0 and embedding dimension is fixed/logged;
+- perturbation stability: same-cluster rate >= 90%, or median cosine
+  similarity >= 0.95, or same-candidate perturbation distance below the 10th
+  percentile of between-candidate distance;
+- no direct PPA leakage;
+- no near-perfect collapse to manual BDs; reject if max absolute correlation
+  with a manual-BD dimension exceeds 0.95, flag high-risk above 0.85;
+- extraction overhead is acceptable: target <= 10% of synthesis/PPA time, or
+  <= 30 seconds per candidate for screening when OpenROAD dominates.
+
+For a journal-candidate Auto-BD method versus landing Smooth-QD manual-BD,
+the method must preserve robustness and improve at least one optimization or
+diversity gate: no valid-PPA problem coverage drop, no >5 percentage point
+functionality/synthesis/valid-PPA drop, and at least one of >=10% best-fitness
+or HV improvement, >=2 additional positive-improvement problems, >=15%
+common-audit QD-score improvement, >=20% common-audit coverage improvement,
+or >=25% more motif-signature elites.
+
+## Report And Visualization Spec
+
+The main deliverable is a regenerated Diversity Necessity Report, with
+per-encoder sections and a centralized comparison. It should not be manually
+assembled from cherry-picked tables.
+
+Required centralized tables:
+
+- corpus coverage by root, method, model, seed, benchmark, and artifact type;
+- encoder leaderboard with family, stability, non-collapse, predictive
+  signal, Pareto-cluster signal, replay signal, cost, and verdict;
+- signoff gate matrix for D1-D6;
+- diversity-vs-PPA regression summary;
+- cluster summary with dominant motifs, candidate count, best area/power/
+  timing/fitness, Pareto members, and representative paths;
+- counterfactual retention-policy comparison;
+- common-audit metrics across descriptor families;
+- final recommendation: do not proceed, restrict diversity to diagnostics,
+  revisit a simple hardware descriptor only with new evidence, proceed with
+  learned netlist embedding, or proceed with multimodal encoder.
+
+Required visualizations:
+
+- embedding scatter by fitness, validity, generation, cluster, and Pareto
+  membership;
+- PPA Pareto front colored by implementation cluster;
+- diversity over time versus best fitness or HV over time;
+- early diversity versus final HV with problem/method markers;
+- counterfactual archive replay bar charts;
+- descriptor stability boxplots for renamed/reformatted/comment-stripped RTL;
+- descriptor/manual-BD/PPA correlation heatmaps;
+- common-audit archive heatmaps using a fixed audit space;
+- representative implementation gallery with RTL snippet, netlist motif
+  summary, manual BD values, PPA values, and why the region is distinct.
+
+Every report must distinguish internal descriptor-space metrics from common
+audit-space metrics. Cross-method diversity claims should rely on PPA HV,
+best fitness, valid-PPA coverage, common-audit QD score/coverage, unique
+canonical netlists, unique motif signatures, and representative examples, not
+only each method's internal archive coverage.
+
 ## Implementation Boundaries
 
 Keep the implementation small and skimmable:
@@ -210,6 +392,26 @@ Out of scope for the first goal:
 - broad production-grade database/schema compatibility;
 - claims that diversity helps search unless the post-hoc evidence supports
   them.
+
+## Roadmap
+
+1. Preparation: verify devcontainer GPU access, read-only historical mount,
+   corpus roots, and ignored output location.
+2. Retrospective corpus: index candidates, validity, PPA, code/netlist paths,
+   existing descriptors, hashes, generation/operator metadata, and the
+   20260618 Auto-BD negative/control reports.
+3. First-pass new diagnostics: Qwen3-Embedding-0.6B and DeepGate3 if
+   practical, compared against existing manual-BD, Yosys-stat, motif,
+   ST-NOD, projected SR, VQ/codebook, and random-control evidence.
+4. Retrospective report: cluster contribution, oracle downsampling,
+   early-diversity predictor, counterfactual archive replay, and
+   visualization package.
+5. Decision point: if at least two D gates pass, design a small prospective
+   diversity-pressure sweep; otherwise conclude that Auto-BD should be
+   scoped to reporting/illumination or deprioritized.
+6. Follow-on only if justified: duplicate suppression, quality-gated novelty
+   lane, archive-parent fraction sweep, ST-NOD-VQ/codebook, DeepSeq/NetTAG/
+   CircuitFusion, or AURORA-style training.
 
 ## Completion Gates
 

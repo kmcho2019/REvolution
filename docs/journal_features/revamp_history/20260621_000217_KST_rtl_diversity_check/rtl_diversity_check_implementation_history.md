@@ -49,6 +49,26 @@ validation evidence.
   should be used when available but labeled partial if full-suite coverage is
   impractical.
 
+## Notes Assimilation - 2026-06-21 KST
+
+- User added `original_notes/notes_1.md` and `original_notes/notes_2.md` as
+  disorganized source notes for the future goal scaffold.
+- Those notes predate the 20260618 Auto-BD result push. The scaffold now
+  treats Yosys-stat, motif histogram, ST-NOD, projected synthesis-response,
+  VQ/codebook, and random descriptor results as existing control or negative
+  evidence, not fresh promising defaults.
+- The future study should test whether those failures came from weak RTL PPA
+  diversity signal, wrong descriptor families, or diversity pressure that
+  harmed exploitation and repair.
+- The plan now makes reporting and visualization first-class outputs:
+  encoder leaderboard, D1-D6 gates, diversity-vs-PPA regression,
+  common-audit metrics, embedding/PPA-front plots, replay bars, stability
+  boxplots, heatmaps, and representative implementation galleries.
+- Qwen3-Embedding-0.6B and DeepGate3 remain the first diagnostic encoder
+  paths. DeepSeq, NetTAG, CircuitFusion, larger Qwen variants, and AURORA or
+  custom encoder training are explicitly later-stage unless the first-pass
+  evidence justifies them.
+
 ## Evidence To Record During The Future Goal
 
 - Corpus roots scanned and artifact coverage.
