@@ -65,20 +65,28 @@ The `docs/` directory contains deeper dives:
 
 ### Devcontainer + optional shared vLLM Compose
 
-REvolution now ships a Compose-based devcontainer (`.devcontainer/docker-compose.yml`) with an optional `vllm` service profile.
+REvolution now ships a Compose-based devcontainer (`.devcontainer/docker-compose.yml`) with an optional `vllm` service profile. The devcontainer and optional `vllm` service both request NVIDIA GPU devices through Docker Compose, so the host must have the NVIDIA driver and NVIDIA Container Toolkit installed.
 
 This is compatible with the LLM-EvoLegalizer devcontainer setup: both can join the same Docker network (`llm-evolegalizer-net`), so one vLLM server can be reused across both repositories.
 
 1. Open REvolution in VS Code and reopen in container using `.devcontainer/devcontainer.json`.
-2. Optional: configure vLLM launch variables by copying:
+2. Optional: configure vLLM launch variables and GPU selection by copying:
    ```bash
    cp .devcontainer/.env.example .devcontainer/.env
    ```
-3. Start a shared vLLM service from either repo:
+   Leave `NVIDIA_VISIBLE_DEVICES=all` to expose every GPU, or set a subset such as `0,1`.
+   The optional `REVOLUTION_AUX_REPO` path is mounted read-only at
+   `/aux/revolution-history` so retrospective corpus tools can inspect older
+   REvolution experiment runs without modifying them.
+3. Confirm GPU visibility from inside the REvolution devcontainer:
+   ```bash
+   nvidia-smi
+   ```
+4. Start a shared vLLM service from either repo:
    ```bash
    docker compose -f .devcontainer/docker-compose.yml --profile vllm up -d vllm
    ```
-4. From REvolution (inside devcontainer), target the server:
+5. From REvolution (inside devcontainer), target the server:
    - If vLLM runs on the shared network: use `--vllm_host vllm`.
    - If vLLM runs outside Compose: use `--vllm_host host.docker.internal` (or Linux bridge IP such as `172.17.0.1`).
 

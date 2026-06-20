@@ -5,15 +5,28 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile
+    shm_size: "16gb"
+    ipc: host
     volumes:
       - ..:/workspace:cached
+      - ${REVOLUTION_AUX_REPO:-/home/kmcho/1_RESEARCH/2026_REvolution_Journal_Ext/code_repo/REvolution}:/aux/revolution-history:ro
     working_dir: /workspace
     command: sleep infinity
     environment:
       VLLM_HOST: ${VLLM_HOST:-vllm}
       VLLM_PORT: ${VLLM_PORT:-8888}
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
+      NVIDIA_DRIVER_CAPABILITIES: ${NVIDIA_DRIVER_CAPABILITIES:-compute,utility}
+      REVOLUTION_HISTORY_ROOT: ${REVOLUTION_HISTORY_ROOT:-/aux/revolution-history}
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
     networks:
       - shared-vllm
 
@@ -55,7 +68,9 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: ["gpu"]
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
     networks:
       - shared-vllm
 

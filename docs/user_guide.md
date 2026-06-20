@@ -40,17 +40,21 @@ For local inference servers such as vLLM, ensure the server is reachable (`http:
 
 ### 1.4 Devcontainer and shared vLLM compose (optional)
 
-REvolution's devcontainer now uses `.devcontainer/docker-compose.yml` and includes an optional `vllm` profile. The Compose network name matches the legalization reference setup (`llm-evolegalizer-net`), so one vLLM service can be shared across both repos.
+REvolution's devcontainer now uses `.devcontainer/docker-compose.yml` and includes an optional `vllm` profile. The devcontainer and optional `vllm` service both request NVIDIA GPU devices through Docker Compose, so the host must have the NVIDIA driver and NVIDIA Container Toolkit installed. The Compose network name matches the legalization reference setup (`llm-evolegalizer-net`), so one vLLM service can be shared across both repos.
 
 Typical flow:
 
 1. Reopen REvolution in container using `.devcontainer/devcontainer.json`.
-2. Optionally create `.devcontainer/.env` from `.devcontainer/.env.example` and set model-related values.
-3. Start vLLM from either repo:
+2. Optionally create `.devcontainer/.env` from `.devcontainer/.env.example` and set model-related values. Leave `NVIDIA_VISIBLE_DEVICES=all` to expose every GPU, or set a subset such as `0,1`. Set `REVOLUTION_AUX_REPO` to mount a historical REvolution checkout read-only at `/aux/revolution-history` for retrospective corpus discovery.
+3. Confirm GPU visibility from inside the REvolution devcontainer:
+   ```bash
+   nvidia-smi
+   ```
+4. Start vLLM from either repo:
    ```bash
    docker compose -f .devcontainer/docker-compose.yml --profile vllm up -d vllm
    ```
-4. Use REvolution with vLLM:
+5. Use REvolution with vLLM:
    ```bash
    python scripts/run_evolution.py \
      --api_backend vllm \
