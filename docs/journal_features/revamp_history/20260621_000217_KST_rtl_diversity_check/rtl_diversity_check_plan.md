@@ -2,9 +2,9 @@
 
 Feature slug: `rtl_diversity_check`
 
-Status: scaffold for a future `/goal`; do not treat this as an activated
-goal. This directory defines the research contract for the
-`feat/journal-diversity-check-exp-20260620` branch.
+Status: restarted after Phase 0. The committed preliminary audit is useful
+evidence, but it is not research sign-off. This directory defines the active
+research contract for the `feat/journal-diversity-check-exp-20260620` branch.
 
 ## Outcome
 
@@ -21,6 +21,115 @@ The central question is:
 The first milestone is post-hoc and diagnostic. Use existing evolutionary
 run corpora first, then pre-trained encoders as analysis tools. Do not start
 with a new in-loop QD algorithm.
+
+## Restart Directive - 2026-06-20 UTC
+
+The first implementation pass stopped too early. It built a useful candidate
+audit/report generator and corrected the initial RTLLM-only `C reconstructive`
+read to an ASP-DAC-backed `B illumination_only` read, but it did not exhaust
+the research question. The previous PASS validates only that narrow generated
+report. It must not be read as sign-off that diversity is unimportant or that
+the original notes have been fully tested.
+
+What went wrong:
+
+- Real Qwen3 embedding extraction was not made to work; missing `torch` was
+  accepted too quickly instead of trying dependency setup.
+- DeepGate3 stopped at an import/setup card; there was no end-to-end AIG or
+  graph embedding attempt.
+- ST-NOD and synthesis-response descriptors were treated mostly as prior
+  Auto-BD evidence, not reconstructed as post-hoc descriptors in the new audit.
+- Lineage, parent-child jump, and descendant-yield evidence were scoped out
+  after one broad corpus lacked lineage, rather than searching for corpora
+  that expose it.
+- The report did not run a bounded live or replay-based test of duplicate
+  suppression, quality-gated novelty, or archive-parent fraction.
+- The TODO and validation report allowed the Phase 0 `B illumination_only`
+  artifact to look complete even though the original-notes escalation ladder
+  remained mostly unattempted.
+
+Dependency rule: missing Python/model dependencies are engineering tasks, not
+terminal blockers. For Qwen, DeepGate3, DeepSeq, NetTAG, CircuitFusion, or
+AURORA-style probes, the implementer must try one of:
+
+- adding a repo-local optional dependency path with `uv add` or the nearest
+  existing dependency mechanism;
+- creating an isolated throwaway environment under ignored `exp/` for the
+  encoder probe;
+- checking out or adding an external encoder repo in a documented
+  submodule-style or ignored source directory when license/size allows.
+
+Only after those attempts fail with command evidence may the encoder be marked
+blocked.
+
+The restarted plan reinstates the work-package ladder from `original_notes/`.
+Each package must end with artifacts, quantitative gates, and a proceed /
+no-proceed decision.
+
+### WP0 - Deeper Diversity Necessity
+
+Re-run the diversity-necessity study across the full layered definition:
+`D_code`, `D_struct`, `D_synth`, `D_ppa`, and `D_lineage`.
+
+Required additions beyond Phase 0:
+
+- reconstruct ST-NOD or synthesis-response descriptors where stage dumps or
+  prior fitting artifacts allow;
+- compute diversity at 25%, 50%, 75%, and 100% of budget where generation
+  metadata exists;
+- search historical roots for parent/child or generation-log lineage and run
+  parent-child jump or descendant-yield analysis wherever recoverable;
+- split counterfactual replay into oracle reconstructive, online-available,
+  duplicate-suppression, and quality-plus-diversity variants;
+- report validity-normalized diversity at generated, functional,
+  synthesis-valid, valid-PPA, and Pareto-front levels;
+- compare every descriptor in a shared common-audit space, not only its
+  internal archive occupancy.
+
+### WP1 - Real Encoder Diagnostics
+
+Use encoders as diagnostics before in-loop claims. Required families:
+
+- Qwen3-Embedding-0.6B on raw, comment-stripped, identifier-normalized, and
+  Yosys-normalized RTL where available;
+- DeepGate3 over AIG/netlist graphs, including a recorded state policy:
+  sequential elements kept, cone-split, or dropped;
+- larger Qwen, DeepSeq, NetTAG, CircuitFusion, or similar encoders if the
+  first two are blocked or inconclusive and dependency setup is feasible.
+
+Every promoted encoder needs a method card with extraction success, runtime,
+stability, non-collapse, leakage controls, descriptor/manual-BD correlation,
+descriptor/PPA correlation, cluster-to-PPA contribution, replay signal,
+common-audit score, and an accept/reject/diagnostic-only verdict.
+
+### WP2 - Quality-Gated Search Coupling
+
+If retrospective evidence remains inconclusive, run a bounded replay or live
+test of repair-preserving diversity pressure. Keep quality-first search as the
+primary path and add diversity only as a valid-only novelty lane.
+
+Minimum experiments:
+
+- duplicate suppression by canonical netlist hash and near-identical motif
+  signature;
+- quality-gated novelty-parent sweep with `novelty_parent_fraction` in
+  `{0.00, 0.10, 0.25, 0.50}`;
+- quality floors: non-dominated candidate, HV contributor, top-quartile valid
+  candidate, above problem-median valid fitness, or one PPA axis improved
+  without catastrophic regression;
+- compare against both classic REvolution and landing Smooth-QD manual-BD
+  where artifacts or live budget allow.
+
+Reject any live/replay method that loses valid-PPA coverage by more than 5
+percentage points or repeats the ST-NOD-style robustness loss.
+
+### WP3 - Learned / AURORA / VQ Only If Justified
+
+AURORA, VQ/codebook revival, or learned netlist embeddings may move beyond
+diagnostics only if WP0-WP2 show that useful diversity exists and that a
+quality-gated diversity lane helps without robustness loss. The preferred
+learned direction, if justified, is a hardware-native synthesis-trajectory
+embedding/codebook rather than a black-box text embedding.
 
 ## Current Evidence From 20260618 Auto-BD Work
 
@@ -546,35 +655,42 @@ Keep the implementation small and skimmable:
 - Treat `/aux/revolution-history` as read-only; do not write into historical
   checkouts.
 
-Out of scope for the first goal:
+Superseded Phase 0 boundaries:
 
-- new in-loop MAP-Elites/QD parent-selection mechanisms;
-- duplicate suppression or novelty lanes in live evolution;
-- AURORA-style custom encoder training;
+- full production-grade in-loop MAP-Elites/QD parent-selection rewrites;
+- ungated descriptor pressure that can dominate repair/exploitation;
+- AURORA-style custom encoder training before WP0-WP2 justify it;
 - broad production-grade database/schema compatibility;
-- claims that diversity helps search unless the post-hoc evidence supports
-  them.
+- claims that diversity helps search unless retrospective, encoder, replay, or
+  bounded live evidence supports the corresponding claim level.
+
+The earlier prohibition on duplicate suppression, novelty lanes, and live
+sampling is no longer absolute. They are now allowed only as bounded WP2
+experiments after historical evidence is organized and the dependency/setup
+attempts are logged.
 
 ## Roadmap
 
-1. Preparation: verify devcontainer GPU access, read-only historical mount,
-   corpus roots, and ignored output location.
-2. Retrospective corpus: index candidates, validity, PPA, code/netlist paths,
-   existing descriptors, hashes, generation/operator metadata, and the
-   20260618 Auto-BD negative/control reports.
-3. First-pass new diagnostics: Qwen3-Embedding-0.6B and DeepGate3 if
-   practical, compared against existing manual-BD, Yosys-stat, motif,
-   ST-NOD, projected SR, VQ/codebook, and random-control evidence.
-4. Retrospective report: cluster contribution, oracle downsampling,
-   early-diversity predictor, counterfactual archive replay, and
-   visualization package.
-5. Decision point: proceed only if at least one utility gate and one meaning
-   gate pass. Otherwise keep diversity as reporting/illumination or
-   deprioritize Auto-BD.
-6. Follow-on only if justified: duplicate suppression, quality-gated novelty
-   lane, archive-parent fraction sweep, ST-NOD/SR-PCA/RFF diagnostics,
-   DeepSeq/NetTAG/CircuitFusion, or AURORA-style training. Do not revive
-   VQ/codebook until a continuous descriptor first passes quality-gated tests.
+1. Preserve Phase 0: keep the preliminary ASP-DAC-backed
+   `B illumination_only` report and the derailed RTLLM-only archive as audit
+   artifacts, not final research sign-off.
+2. Re-read `original_notes/` and record the methods Phase 0 did not attempt.
+3. WP0: deepen the retrospective study with ST-NOD/synthesis-response,
+   lineage, online-available replay, duplicate-suppression replay, and
+   validity-normalized common-audit comparisons.
+4. WP1: make real encoder attempts. Use dependency escalation for Qwen3 and
+   DeepGate3 before marking them blocked; add method cards and per-encoder
+   reports.
+5. WP2: run bounded quality-gated diversity-pressure tests when retrospective
+   evidence remains inconclusive. Include novelty fractions 0, 0.10, 0.25,
+   and 0.50 or record why a live sweep is not affordable.
+6. WP3: consider AURORA/VQ/learned encoders only after WP0-WP2 pass the
+   utility, meaning, robustness, and common-audit gates.
+7. Regenerate the centralized Diversity Necessity Report with a preliminary
+   negative-result section, per-encoder comparison, and final proceed /
+   no-proceed recommendation.
+8. Run the restarted adversarial validation prompt. A validator must be able
+   to fail the work for premature dependency blocking or missing WP2 evidence.
 
 ## Completion Gates
 
@@ -604,6 +720,25 @@ Out of scope for the first goal:
 - [ ] The TODO and history files are updated with commands, artifacts, and
   blocked evidence.
 - [ ] The adversarial validator returns PASS or records exact FAIL findings.
+- [ ] The implementation history records why Phase 0 was insufficient and
+  which `original_notes/` details were reinstated.
+- [ ] Missing Qwen/DeepGate3 dependencies are handled through `uv add`, an
+  optional dependency path, or an isolated ignored environment before blocker
+  status is accepted.
+- [ ] Qwen3 real embeddings are extracted, or the failed setup/runtime attempt
+  is logged with commands and environment evidence.
+- [ ] DeepGate3 graph export plus embedding is run, or the failed setup/runtime
+  attempt is logged with commands and graph-state-policy evidence.
+- [ ] ST-NOD/synthesis-response descriptors are reconstructed from available
+  artifacts or blocked with exact missing-stage evidence.
+- [ ] At least one lineage, parent-child, or descendant-yield analysis is run
+  on a corpus that exposes lineage, or a corpus search proves none do.
+- [ ] At least one duplicate-suppression, online-available replay, or bounded
+  quality-gated novelty experiment is run before the research is closed as
+  illumination-only.
+- [ ] The final recommendation explicitly chooses among no-proceed,
+  diagnostic-only, quality-gated ST-NOD, learned encoder diagnostic follow-up,
+  or AURORA/VQ escalation.
 
 ## Risks And Blockers
 

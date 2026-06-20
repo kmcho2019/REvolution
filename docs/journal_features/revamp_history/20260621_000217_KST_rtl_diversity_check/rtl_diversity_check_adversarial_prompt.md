@@ -79,6 +79,27 @@ Automatic FAIL preconditions:
     actively useful, or Auto-BD candidate justified.
 26. Visual conclusions are based on cherry-picked examples, lack declared
     case-study selection rules, or are not tied to numeric gates/effect sizes.
+27. The Phase 0 `B illumination_only` PASS is treated as final research
+    sign-off instead of preliminary evidence to be escalated.
+28. `original_notes/` details are not incorporated into the restarted plan,
+    especially WP0 diversity necessity, WP1 encoder diagnostics, WP2
+    quality-gated diversity pressure, and WP3 learned/AURORA/VQ gating.
+29. Qwen3 real embedding extraction is marked blocked solely because
+    `torch`, `transformers`, model weights, or GPU setup is missing, without
+    trying `uv add`, an optional dependency path, or an isolated ignored
+    environment.
+30. DeepGate3 is marked blocked solely because the package is absent, without
+    attempting graph export plus package/source/environment setup.
+31. ST-NOD or synthesis-response descriptors are not reconstructed from
+    available stage dumps, sidecars, or prior fitting artifacts, and the report
+    does not prove those artifacts are absent.
+32. Lineage, parent-child jump, or descendant-yield analysis is skipped after
+    one corpus lacks lineage, without searching other historical corpora.
+33. The restarted work closes as illumination-only without at least one
+    duplicate-suppression, online-available replay, quality-gated novelty
+    replay, or bounded live novelty-lane experiment.
+34. AURORA, VQ/codebook, larger Qwen, DeepSeq, NetTAG, or CircuitFusion are
+    promoted beyond diagnostics before WP0-WP2 show useful, robust diversity.
 
 Mechanical checks:
 1. Inspect branch status and commit history. Confirm the devcontainer GPU and
@@ -135,6 +156,19 @@ Mechanical checks:
     strongest evidence.
 24. Inspect visual case studies. Confirm they include positive/null/negative
     outcomes where available, captions with sample sizes, and matching tables.
+25. Confirm the history records what went wrong in Phase 0 and cites the
+    original-notes details reinstated in the restarted plan.
+26. Inspect Qwen setup logs. Confirm dependency escalation was attempted
+    before blocker status or that real embeddings were produced.
+27. Inspect DeepGate3 setup logs. Confirm AIG/Yosys graph export and package
+    setup were attempted before blocker status or that embeddings were
+    produced.
+28. Inspect ST-NOD/synthesis-response artifacts and verify reconstruction or
+    exact missing-stage blockers.
+29. Inspect lineage corpus search results and verify parent-child or
+    descendant-yield analysis ran wherever possible.
+30. Inspect duplicate-suppression, online-available replay, or novelty-lane
+    sweep artifacts and verify robustness gates are reported.
 
 Paper-facing checks:
 1. Does the evidence justify testing diversity in RTL PPA evolution, or does

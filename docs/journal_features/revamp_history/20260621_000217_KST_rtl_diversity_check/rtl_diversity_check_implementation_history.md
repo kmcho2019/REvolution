@@ -396,3 +396,82 @@ validation evidence.
 - The archive preserves the superseded `C reconstructive` report for audit
   history only. The authoritative current result remains the ASP-DAC-backed
   `B illumination_only` report under `exp/diversity_check/full_20260620/`.
+
+## Restart Decision - 2026-06-20 UTC
+
+### Preliminary Audit Commit
+
+- Committed the preliminary audit package as:
+  `a5fc5018ab feat(diversity): Add preliminary RTL audit`.
+- The commit includes `scripts/report_rtl_diversity_check.py`, focused tests,
+  the Phase 0 history/TODO/validation record, and the timestamped archive of
+  the derailed RTLLM-only report.
+- The stored commit message was checked with `git log --format=%B -n 1`,
+  `git show --pretty=fuller --no-patch HEAD`, and an over-72-character line
+  scan. The message was amended until it had no raw `\n`, one sign-off, and
+  wrapped body lines.
+
+### What Went Wrong
+
+- Phase 0 was too narrow for the original research intent. It validated that
+  the generated ASP-DAC-backed report honestly supports only
+  `B illumination_only`, but it treated that as close to final sign-off.
+- The pass accepted missing `torch` as enough to block real
+  Qwen3-Embedding-0.6B extraction. That is not acceptable: dependency setup
+  should have been attempted.
+- DeepGate3 was reduced to a missing-import/setup card. There was no actual
+  AIG export plus embedding attempt, and the graph-state policy remained a
+  future note instead of an attempted diagnostic.
+- ST-NOD and synthesis-response descriptors were treated mainly as prior
+  Auto-BD control evidence. The restarted plan must reconstruct them
+  post-hoc where stage dumps, sidecars, or fitting artifacts allow.
+- Parent-child and descendant-yield analysis was scoped out after the selected
+  broad RTLLM root lacked lineage. The correct response is to search for
+  lineage-rich corpora and run the analysis wherever the data exists.
+- No bounded duplicate-suppression, quality-gated novelty, or
+  archive-parent-fraction experiment was run, even though `original_notes/`
+  explicitly proposed these as the way to distinguish "diversity is useless"
+  from "diversity pressure was coupled badly."
+
+### Original Notes Reinstated
+
+- Read `original_notes/notes_1.md`: reinstated the layered diversity
+  definition `D_code`, `D_struct`, `D_synth`, `D_ppa`, and `D_lineage`; the
+  post-hoc audit tasks; duplicate suppression; quality-gated novelty lane;
+  and the requirement to treat encoders as diagnostics before in-loop BDs.
+- Read `original_notes/notes_2.md`: reinstated per-encoder reports, the
+  centralized encoder leaderboard, method-card requirements, stage gates for
+  accepting embeddings, the first-pass descriptor list
+  (manual BD, Yosys-stat, motif histogram, ST-NOD, Qwen3, DeepGate3, random),
+  and the preferred ST-NOD/VQ direction only if the pre-study succeeds.
+- Read `original_notes/notes_3.md`: reinstated the negative Auto-BD
+  interpretation, ST-NOD as the best hardware-native but robustness-losing
+  signal, the quality-gated ST-NOD/Auto-BD work package, novelty-parent
+  sweep `0.00/0.10/0.25/0.50`, and explicit no-proceed rules for AURORA/VQ.
+- Read `original_notes/notes_4.md`: reinstated encoder diagnostics, DeepSeq /
+  NetTAG / CircuitFusion as later diagnostics, quality floors, and robustness
+  gates that reject ST-NOD-style valid-PPA loss.
+- Read `original_notes/goal_v1_review.md`: reinstated stricter claim levels,
+  utility-plus-meaning gate logic, historical-corpus confound policy,
+  descriptor-fitting leakage controls, oracle vs online replay separation,
+  random-label controls for multi-cluster fronts, D5 real-vs-random controls,
+  and validity-normalized diversity.
+
+### Restarted Goal And Dependency Rule
+
+- Created a new active goal to restart the research rather than leave the
+  old goal complete.
+- Updated `goal_template.md`, `rtl_diversity_check_plan.md`, and
+  `rtl_diversity_check_implementation_todo.md` so Phase 0 is explicitly
+  preserved as preliminary evidence only.
+- Missing dependencies are no longer accepted as blockers without escalation.
+  For Qwen, DeepGate3, DeepSeq, NetTAG, CircuitFusion, or AURORA-style probes,
+  the next run must try `uv add`, the nearest repo-local optional dependency
+  path, or an isolated ignored environment under `exp/` before declaring the
+  diagnostic blocked.
+- The restarted completion surface now requires real Qwen or logged setup
+  failure, DeepGate3 graph export plus embedding or logged setup failure,
+  ST-NOD/synthesis-response reconstruction where possible, lineage analysis
+  on any corpus that exposes it, and at least one duplicate-suppression or
+  quality-gated novelty replay/live experiment before closing the research as
+  illumination-only.
