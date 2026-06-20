@@ -69,6 +69,24 @@ validation evidence.
   custom encoder training are explicitly later-stage unless the first-pass
   evidence justifies them.
 
+## Goal Review Assimilation - 2026-06-21 KST
+
+- Reviewed `original_notes/goal_v1_review.md`, `notes_3.md`, and `notes_4.md`.
+- Accepted review points that close validation loopholes: formal claim levels,
+  stricter utility-plus-meaning proceed rule, descriptor fitting/leakage
+  policy, historical-corpus pairing labels, minimum D-gate evidence, oracle vs
+  online-available downsampling split, validity-normalized diversity metrics,
+  final A-F verdicts, Qwen style-leakage checks, and DeepGate3 sequential-state
+  reporting.
+- Rejected or deferred heavier suggestions that would bloat the first
+  milestone: a new directory tree, full active quality-gated Auto-BD work
+  package, and immediate VQ/AURORA/large-encoder method development. Those
+  remain follow-on only after the retrospective study supports diversity.
+- Strengthened the visual-evidence contract after user feedback: each main
+  claim should pair a figure with a quantitative table, use declared
+  case-study selection rules, include positive/null/negative examples where
+  available, and tie visual conclusions to claim levels and D gates.
+
 ## Evidence To Record During The Future Goal
 
 - Corpus roots scanned and artifact coverage.

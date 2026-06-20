@@ -58,6 +58,27 @@ Automatic FAIL preconditions:
 15. The implementation writes into `/aux/revolution-history` or any historical
     checkout intended to be read-only.
 16. Tests are missing for corpus indexing and the selected analysis metrics.
+17. The report claims diversity is useful because D2 and D6 pass, without a
+    predictive, reconstructive, random-control, or prospective utility gate.
+18. Early-diversity prediction uses PCA, clustering, projection, or scaling
+    fitted on the full final corpus without labeling the claim as post-hoc.
+19. Oracle downsampling uses final PPA or final-front membership while claiming
+    online search utility.
+20. Multi-cluster Pareto evidence lacks random-label or shuffled-label
+    controls.
+21. Descriptor distances over mixed-scale features lack standardization or a
+    documented distance metric.
+22. Qwen claims omit truncation, identifier-normalization stability, or a
+    lexical baseline comparison.
+23. DeepGate3 claims omit whether sequential elements were represented,
+    cone-split, or dropped.
+24. A D gate is marked PASS without minimum corpus/problem/seed/candidate
+    coverage or a low-data/preliminary label.
+25. The final conclusion does not select one predefined verdict level:
+    diversity not supported, illumination only, reconstructive, predictive,
+    actively useful, or Auto-BD candidate justified.
+26. Visual conclusions are based on cherry-picked examples, lack declared
+    case-study selection rules, or are not tied to numeric gates/effect sizes.
 
 Mechanical checks:
 1. Inspect branch status and commit history. Confirm the devcontainer GPU and
@@ -103,6 +124,17 @@ Mechanical checks:
     reproduce the report from ignored experiment outputs.
 18. Inspect commits for atomicity, conventional commit messages, and
     sign-offs according to `GUIDELINES.md`.
+19. Inspect descriptor projection artifacts and verify fitting data does not
+    include future/held-out data for predictive claims.
+20. Recompute or inspect D2 with random or shuffled cluster labels.
+21. Confirm oracle downsampling reports both oracle-reconstructive and
+    online-available variants where data permits.
+22. Confirm diversity metrics are stratified by all candidates, functional,
+    synthesis-valid, valid-PPA, and Pareto-front candidates.
+23. Inspect the final verdict section and verify the claim level matches the
+    strongest evidence.
+24. Inspect visual case studies. Confirm they include positive/null/negative
+    outcomes where available, captions with sample sizes, and matching tables.
 
 Paper-facing checks:
 1. Does the evidence justify testing diversity in RTL PPA evolution, or does

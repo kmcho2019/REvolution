@@ -98,6 +98,27 @@ Track diversity in layers:
 Do not count diversity as useful merely because archive occupancy increases.
 It must predict or reconstruct valid-PPA outcomes.
 
+## Claim Levels
+
+Every result and paper-facing sentence must use the strongest claim level
+actually supported by evidence:
+
+- `L0 descriptive`: multiple implementation regions exist. This does not
+  imply useful search pressure.
+- `L1 reconstructive`: diversity-aware retention reconstructs a better
+  historical Pareto front at equal candidate budget.
+- `L2 predictive`: early diversity predicts later HV, best fitness,
+  Pareto-front expansion, or descendant yield after controls.
+- `L3 mechanistic`: diverse parents, regions, or jumps produce useful
+  descendants or final-front lineages.
+- `L4 active`: a prospective diversity intervention improves PPA/HV without
+  robustness loss under the same budget.
+- `L5 method`: a concrete QD/Auto-BD method beats landing Smooth-QD manual-BD
+  under frozen gates, budget, seeds, and benchmark subset.
+
+The report may not claim a higher level than the evidence supports. `L0`
+alone is an illumination result, not an optimization result.
+
 ## Initial Corpus
 
 Use existing artifacts before launching new expensive runs:
@@ -128,6 +149,20 @@ largest practical corpus available. Prefer a broad RTLLM sweep because it is
 large enough to be meaningful but usually small enough to analyze or rerun in
 a short period. Use VerilogEval when existing artifacts make it practical;
 otherwise label VerilogEval evidence as partial rather than final.
+
+Stratify historical corpora before making comparative claims:
+
+- `fully_paired`: same problem, seed, model, prompt policy, budget, and
+  evaluator;
+- `partially_paired`: same problem and evaluator, but different seed or
+  budget;
+- `unpaired`: different problem mix, model, prompt policy, budget, or
+  evaluator.
+
+Active method comparisons require fully paired data. Predictive and
+descriptive analyses may use less paired data, but must include method, model,
+budget, problem, and valid-count controls. Unpaired corpora cannot support
+"method A is better than method B" claims.
 
 ## Live Run Policy
 
@@ -177,6 +212,14 @@ From a fixed historical candidate pool, select equal-size subsets by:
 Compare reconstructed Pareto front, hypervolume, unique front netlists, and
 valid-PPA coverage.
 
+Report two variants:
+
+- `E2a oracle_reconstructive`: may use final PPA/front information and only
+  supports `L1 reconstructive` claims.
+- `E2b online_available`: uses only information available at candidate
+  insertion time and is the only replay result that can support stronger
+  method-follow-up claims.
+
 ### E3: Early Diversity Predictor Test
 
 Measure whether generation-0 or generation-1 diversity predicts later best
@@ -209,6 +252,18 @@ Encoders are diagnostic descriptor sources in this goal. They are not
 accepted as in-loop behavior descriptors unless post-hoc evidence shows
 that distances correlate with Pareto contribution, future improvement, or
 valid descendant yield.
+
+Qwen diagnostics should compare raw RTL, comment-stripped RTL,
+identifier-normalized RTL, and Yosys-normalized `write_verilog` output when
+available. Record truncation, chunks, pooling, prompt, max length, and compare
+against a simple lexical baseline such as TF-IDF or Verilog token counts. If
+Qwen mainly separates comments, formatting, or names, it is text-style
+diagnostic only.
+
+DeepGate3 diagnostics must record the graph export format, whether sequential
+elements are represented, cone-split, or dropped, graph size distribution, and
+extraction failures. Do not compare DeepGate3 against ST-NOD without stating
+which circuit information each representation keeps or discards.
 
 Do not train a new AURORA/autoencoder/GNN descriptor in the first goal.
 That is a follow-on only after fixed structural, synthesis-response, and
@@ -276,18 +331,35 @@ card or equivalent report section covering:
   and PPA tendency for important regions;
 - verdict: accept, reject, diagnostic only, or needs more evidence.
 
+## Descriptor Fitting And Leakage
+
+Every descriptor/projection must be labeled:
+
+- `intrinsic`: no fitting, such as manual BD or raw Yosys stats;
+- `frozen_pretrained`: frozen model, no corpus fitting, such as raw Qwen
+  embeddings;
+- `fitted_unsupervised`: scaler, PCA, k-means, CVT, VQ, UMAP, or clustering
+  fitted on a declared corpus;
+- `posthoc_visualization`: fitted after the full run for plotting only.
+
+Predictive claims require fitted projections and clusters to be trained only
+on data available before the prediction cutoff, or on a separate dev corpus.
+Anything fitted on the full final corpus is descriptive or reconstructive
+only. UMAP/t-SNE are visualization-only unless their fitting seed, stability,
+and quantitative use are explicitly validated.
+
 ## Quantitative Gates
 
-The project should proceed from diversity pre-study to full Auto-BD only if
-at least two Diversity Necessity gates pass:
+The D gates measure whether diversity has useful signal:
 
 - `D1 early_predictive`: early implementation diversity has positive
   association with final HV or best fitness after controlling for valid
-  candidate count, problem, and seed. Suggested evidence: positive
-  standardized coefficient with mostly positive bootstrap 95% CI, or
-  Spearman rho >= 0.25 on at least 60% of analyzable problems.
+  candidate count, problem, seed, method, model, and budget. Suggested
+  evidence: positive standardized coefficient with mostly positive bootstrap
+  95% CI, or Spearman rho >= 0.25 on at least 60% of analyzable problems.
 - `D2 multi_cluster_front`: in at least 60% of analyzable problems, the final
-  PPA Pareto front contains candidates from at least two structural clusters.
+  PPA Pareto front contains candidates from at least two stable structural
+  clusters, and those clusters beat random or shuffled cluster labels.
 - `D3 replay_retention`: diversity-aware counterfactual retention improves
   retained HV, unique motif signatures, common-audit coverage, or retained
   positive-improvement candidates by at least one predeclared threshold:
@@ -297,12 +369,28 @@ at least two Diversity Necessity gates pass:
   archive parent fraction 0.25 or 0.5 beats 0.0 on HV or best fitness without
   more than a 5 percentage point functionality, synthesis, or valid-PPA drop.
 - `D5 real_beats_random`: a hardware descriptor beats random descriptor under
-  identical archive mechanics on HV, common-audit QD score, unique motif
-  diversity, or valid-PPA-safe front quality.
+  identical archive mechanics, cells/dimensions, retained budget, validity
+  denominator, and common-audit space on HV, common-audit QD score, unique
+  motif diversity, or valid-PPA-safe front quality.
 - `D6 interpretable_regions`: representative regions correspond to clear
   RTL/netlist implementation styles such as mux-heavy, arithmetic-heavy,
   shallow-wide, deep-narrow, register-balanced, resource-shared,
   duplicated-compute, or control-dominated.
+
+Minimum evidence for PASS:
+
+- D1/D2/D3 need at least 8 analyzable problems, preferably 12+, or must be
+  labeled low-data/preliminary.
+- D3 random-selection controls need at least 20 random seeds.
+- D4 live evidence, if later approved, needs at least 3 seeds under the same
+  model, prompt policy, budget, subset, and evaluator.
+- D5 random descriptors need at least 5 descriptor seeds offline or 3 live-run
+  seeds online.
+
+Proceed to full Auto-BD only if at least one utility gate passes
+(`D1`, `D3`, `D4`, or `D5`) and at least one meaning gate passes (`D2` or
+`D6`). `D2 + D6` alone supports illumination/reporting only. If only `D3`
+passes, prefer shadow archives or offline retention over causal search claims.
 
 An embedding can be accepted as an in-loop BD only after it passes extraction
 success, stability, leakage, non-collapse, interpretability, common-audit, and
@@ -327,6 +415,23 @@ or HV improvement, >=2 additional positive-improvement problems, >=15%
 common-audit QD-score improvement, >=20% common-audit coverage improvement,
 or >=25% more motif-signature elites.
 
+## Validity-Normalized Diversity
+
+For every descriptor family, report diversity through the funnel:
+
+- all generated candidates;
+- syntax-valid candidates;
+- functionally valid candidates;
+- synthesis-valid candidates;
+- valid-PPA candidates;
+- Pareto-front candidates.
+
+Also report efficiency metrics: `valid_PPA_per_occupied_cell`,
+`HV_per_valid_PPA_candidate`, `front_members_per_valid_PPA_candidate`,
+`unique_motif_signatures_per_valid_PPA_candidate`, and
+`common_audit_QD_per_valid_PPA_candidate`. High all-candidate diversity with
+low valid-PPA diversity means the descriptor mostly creates invalid variety.
+
 ## Report And Visualization Spec
 
 The main deliverable is a regenerated Diversity Necessity Report, with
@@ -339,14 +444,16 @@ Required centralized tables:
 - encoder leaderboard with family, stability, non-collapse, predictive
   signal, Pareto-cluster signal, replay signal, cost, and verdict;
 - signoff gate matrix for D1-D6;
+- claim-level table using `L0` through `L5`;
 - diversity-vs-PPA regression summary;
 - cluster summary with dominant motifs, candidate count, best area/power/
   timing/fitness, Pareto members, and representative paths;
 - counterfactual retention-policy comparison;
+- prior 20260618 Auto-BD negative/control summary table;
 - common-audit metrics across descriptor families;
-- final recommendation: do not proceed, restrict diversity to diagnostics,
-  revisit a simple hardware descriptor only with new evidence, proceed with
-  learned netlist embedding, or proceed with multimodal encoder.
+- final verdict: `A diversity_not_supported`,
+  `B illumination_only`, `C reconstructive`, `D predictive`,
+  `E actively_useful`, or `F autobd_candidate_justified`.
 
 Required visualizations:
 
@@ -354,6 +461,8 @@ Required visualizations:
   membership;
 - PPA Pareto front colored by implementation cluster;
 - diversity over time versus best fitness or HV over time;
+- diversity-efficiency frontier: valid-PPA rate/count versus HV, best
+  fitness, or common-audit QD score;
 - early diversity versus final HV with problem/method markers;
 - counterfactual archive replay bar charts;
 - descriptor stability boxplots for renamed/reformatted/comment-stripped RTL;
@@ -367,6 +476,59 @@ audit-space metrics. Cross-method diversity claims should rely on PPA HV,
 best fitness, valid-PPA coverage, common-audit QD score/coverage, unique
 canonical netlists, unique motif signatures, and representative examples, not
 only each method's internal archive coverage.
+
+## Visual Evidence And Case Studies
+
+Visuals are not decoration in this study. Each main claim must have one
+primary figure and one quantitative table that support the same conclusion.
+Figures must be reproducible from the candidate audit table and report the
+corpus stratum, candidate count, problem count, seed count, and descriptor
+family in the caption or adjacent table.
+
+Required diagrams:
+
+- RTL evolution validity funnel: syntax, interface, functional, synthesis,
+  OpenROAD, valid-PPA, and final Pareto/frontier contribution.
+- Claim-level ladder from `L0 descriptive` to `L5 method`, showing which
+  analyses can support each claim.
+- Descriptor fitting/leakage diagram showing raw candidate artifacts,
+  descriptor extraction, fitted projections, frozen hashes, and which outputs
+  are prediction-safe versus post-hoc visualization only.
+- Retrospective analysis dataflow from historical run roots to corpus index,
+  candidate audit table, descriptors, reports, and verdict.
+
+Required visual case studies:
+
+- one positive or best-supported case where diversity appears useful;
+- one null case where implementation regions exist but do not improve PPA;
+- one negative case where descriptor diversity trades away valid-PPA
+  throughput;
+- one 20260618 Auto-BD negative-control case, preferably ST-NOD or VQ, showing
+  why archive organization alone was not enough;
+- one encoder case study for Qwen or DeepGate3 when embeddings are used,
+  showing whether clusters align with implementation/PPA meaning or collapse
+  to style/noise.
+
+Case studies must be selected by declared rules before narrative writing:
+largest HV delta, median representative problem, clearest robustness loss, or
+predeclared benchmark family. Do not cherry-pick only attractive examples. If
+no positive case exists, the positive slot becomes an explicit negative/null
+case.
+
+High-value figure panels:
+
+- robustness funnel plus HV/common-audit score in the same panel family;
+- PPA Pareto front colored by cluster, with objective extremes labeled;
+- descriptor or embedding scatter colored separately by validity, fitness,
+  generation, and Pareto membership;
+- diversity-efficiency frontier with valid-PPA rate/count on one axis and HV,
+  best fitness, or common-audit QD on the other;
+- lineage strip or ancestry graph for representative Pareto candidates;
+- before/after RTL or netlist motif snippets for representative regions.
+
+Every visual conclusion must also state the corresponding numeric gate,
+effect size, and whether the figure supports `L0`, `L1`, `L2`, `L3`, `L4`, or
+`L5`.
 
 ## Implementation Boundaries
 
@@ -406,12 +568,13 @@ Out of scope for the first goal:
 4. Retrospective report: cluster contribution, oracle downsampling,
    early-diversity predictor, counterfactual archive replay, and
    visualization package.
-5. Decision point: if at least two D gates pass, design a small prospective
-   diversity-pressure sweep; otherwise conclude that Auto-BD should be
-   scoped to reporting/illumination or deprioritized.
+5. Decision point: proceed only if at least one utility gate and one meaning
+   gate pass. Otherwise keep diversity as reporting/illumination or
+   deprioritize Auto-BD.
 6. Follow-on only if justified: duplicate suppression, quality-gated novelty
-   lane, archive-parent fraction sweep, ST-NOD-VQ/codebook, DeepSeq/NetTAG/
-   CircuitFusion, or AURORA-style training.
+   lane, archive-parent fraction sweep, ST-NOD/SR-PCA/RFF diagnostics,
+   DeepSeq/NetTAG/CircuitFusion, or AURORA-style training. Do not revive
+   VQ/codebook until a continuous descriptor first passes quality-gated tests.
 
 ## Completion Gates
 
@@ -433,7 +596,9 @@ Out of scope for the first goal:
   corpus, preferably broad RTLLM coverage; any smaller or partial subset is
   labeled as development-only or preliminary.
 - [ ] The generated report states whether diversity is predictive,
-  reconstructive, merely descriptive, or inconclusive.
+  reconstructive, merely descriptive, active, method-level, or inconclusive.
+- [ ] The final report selects exactly one verdict from A-F and does not
+  claim above the supported level.
 - [ ] Tests cover corpus indexing and the selected analysis metrics with
   small fixtures.
 - [ ] The TODO and history files are updated with commands, artifacts, and
