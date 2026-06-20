@@ -98,3 +98,301 @@ validation evidence.
 - Failed or inconclusive checks, especially missing lineage, missing PPA, or
   model/budget confounds.
 - Commit hashes and validation commands.
+
+## Goal Execution - 2026-06-20 UTC / 2026-06-21 KST
+
+### Environment And Scope
+
+- Branch/HEAD recorded with `git status --short && git branch --show-current
+  && git rev-parse HEAD`:
+  `feat/journal-diversity-check-exp-20260620` at
+  `6a725c544265b35ffd9aa2792bc1d9974a152eaf`.
+- Dirty state before this documentation update:
+  `M GUIDELINES.md`, `?? .devcontainer/devcontainer-lock.json`,
+  `?? scripts/report_rtl_diversity_check.py`, and
+  `?? tests/scripts/test_report_rtl_diversity_check.py`. The first two were
+  pre-existing/unrelated and were not modified for this goal.
+- Container evidence: `hostname` returned `b2b60f6e4513`; `/etc/os-release`
+  reports Ubuntu 22.04.5 LTS.
+- GPU visibility: `nvidia-smi --query-gpu=name,memory.total
+  --format=csv,noheader` returned one RTX A4000 and three RTX A6000 GPUs.
+- Historical checkout mount: `findmnt -T /aux/revolution-history -o
+  TARGET,SOURCE,FSTYPE,OPTIONS` reports NFS4 mounted with `ro` options from
+  `20.0.0.51:/data/kmcho/1_RESEARCH/2026_REvolution_Journal_Ext/code_repo/REvolution`.
+  `test -w /aux/revolution-history` exited `1`, so the mounted checkout is not
+  writable from the devcontainer.
+- No live model calls or new live evolution runs were needed. The vLLM
+  preflight and 128K-token live-run checks remain scoped out by policy.
+
+### Corpus Inventory
+
+- Auto-BD control roots indexed from
+  `/aux/revolution-history/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3`.
+  The indexed standard-results roots cover classic, manual-BD, random
+  descriptor, sr-random-ReLU, and ST-NOD methods for seeds 1001, 1002, and
+  1003.
+- Auto-BD context read from
+  `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/`,
+  including `auto_bd_final_negative_decision.md`,
+  `auto_bd_seed3_screening_report.md`, and centralized JSON reports for seed 1
+  and seed 3. The final report treats Yosys-stat, motif histogram, ST-NOD,
+  projected synthesis response, VQ/codebook, and random descriptor arms as
+  negative/control evidence.
+- Historical RTLLM root selected as the largest practical conclusion corpus:
+  `/aux/revolution-history/exp/ablation_pop10_gen20_20260212_115506/revolution/_models_openai-gpt-oss-120b/RTLLM`.
+  Coverage: 50 problems, 10,413 generated candidates, 10,413 RTL code
+  artifacts, 2,600 synthesized netlist artifacts, and 2,335 PPA artifacts.
+- `/aux/revolution-history/exp` was listed for historical context. The broad
+  RTLLM run above was selected over smoke/debug roots for final claims.
+- Local ASPDAC checkout check:
+  `find /workspace -maxdepth 3 \( -type d -name '*aspdac*' -o -type d -name
+  '*ASPDAC*' \)` returned no local checkout.
+- Recoverable archived baselines were listed from `baselines/`:
+  FunSearch, CodeEvolve, and EOH `raw_results.tar.xz` archives plus
+  `baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv`. These
+  were not unpacked because the broad paired RTLLM artifacts were sufficient
+  for this post-hoc conclusion.
+- VerilogEval was not used for final claims because the selected practical
+  large corpus was RTLLM and no local full-suite VerilogEval corpus was needed.
+
+### Implementation
+
+- Added `scripts/report_rtl_diversity_check.py`.
+- Added `tests/scripts/test_report_rtl_diversity_check.py`.
+- The report script builds one candidate audit table and derived artifacts
+  under `exp/diversity_check/`. It asserts required RTLLM and Auto-BD roots,
+  reads standard-results summaries, computes lexical/structural descriptors,
+  canonical netlist hashes, motif signatures, style clusters, Pareto/front
+  metrics, cluster contribution, replay policies, early-diversity summaries,
+  D1-D6 gates, L0-L5 claims, and the final verdict.
+- Descriptor fitting leakage is avoided for predictive claims by not fitting
+  PCA/scalers/clusters for D1. The report labels early-diversity evidence as
+  uncontrolled single-run correlation and marks D1 as FAIL.
+- Parent-child jump analysis was scoped out because lineage was not
+  recoverable from the selected broad RTLLM artifacts.
+- Qwen diagnostics include dry-run text coverage and comment/identifier
+  stability checks for `Qwen/Qwen3-Embedding-0.6B`. The optional real smoke was
+  attempted and blocked by `ModuleNotFoundError: No module named 'torch'`.
+- DeepGate3 diagnostics were deferred with setup evidence:
+  `deepgate3` was not importable, Yosys is available at `/usr/local/bin/yosys`,
+  and the report records that future graph export must decide whether
+  sequential elements are kept, cone-split, or dropped.
+
+### Final Report Command And Artifacts
+
+- Final command:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/full_20260620 --qwen-real-smoke --qwen-smoke-limit 64`.
+- Main report artifacts:
+  `exp/diversity_check/full_20260620/diversity_necessity_report.md` and
+  `exp/diversity_check/full_20260620/diversity_necessity_report.json`.
+- Audit/table artifacts:
+  `candidate_audit.csv`, `candidate_audit.parquet`, `corpus_coverage.csv`,
+  `problem_metrics.csv`, `cluster_summary.csv`, `counterfactual_replay.csv`,
+  `early_diversity.csv`, `common_audit_metrics.csv`, `d_gate_matrix.csv`,
+  `encoder_leaderboard.csv`, `claim_levels.csv`, and `case_studies.csv`.
+- Diagnostic artifacts:
+  `qwen_dry_run_coverage.csv`, `deepgate3_diagnostic_card.json`, and
+  `implementation_gallery.md`.
+- Figure artifacts:
+  `figures/embedding_scatter.png`, `figures/ppa_front_by_cluster.png`,
+  `figures/diversity_efficiency_frontier.png`,
+  `figures/diversity_over_time_vs_quality.png`,
+  `figures/early_diversity_vs_final_hv.png`,
+  `figures/counterfactual_replay_bars.png`,
+  `figures/descriptor_stability_boxplots.png`,
+  `figures/correlation_heatmap.png`, `figures/common_audit_heatmap.png`, and
+  `figures/validity_funnel.png`.
+- Report artifact hashes:
+  - `diversity_necessity_report.json`:
+    `9687b373407e2b4be99b8d7b599bd54d7eb07823a25ebe487fb1af0688e42615`
+  - `candidate_audit.csv`:
+    `4ca353a5df7cdf10bb993aa5c4f9fec9a0c23c4de1518d8f9aa85467ce505bb6`
+  - `qwen_dry_run_coverage.csv`:
+    `829aa7512fcf8196a734a00fd7ef665dcfabe58f7acac611dae8aad941893cb6`
+  - `deepgate3_diagnostic_card.json`:
+    `0f4a27e12034480d1088cdd8f98e2c8f7af268f694b1201a494ef6529a658c63`
+
+### Final Result
+
+- Final verdict: `C reconstructive`.
+- Candidate counts: 33,813 total; 10,413 RTLLM candidates; 23,400 Auto-BD
+  control candidates; 50 RTLLM problems.
+- D gates:
+  - D1 early predictive: FAIL. Early lexical distance vs final HV rho is
+    0.441, but the corpus has one historical run per problem without
+    seed/model/budget controls.
+  - D2 multi-cluster front: FAIL. 13.8% of analyzable valid-PPA problems have
+    at least two style clusters on the Pareto front; shuffled-label rate is
+    20.8%.
+  - D3 replay retention: PASS. Best diversity oracle HV gain over
+    best-fitness retention is 14.7%, above the 10% threshold. This is
+    reconstructive/post-hoc evidence only.
+  - D4 prospective moderate diversity: NOT_RUN.
+  - D5 real beats random: FAIL because the 20260618 Auto-BD controls did not
+    show robust PPA uplift and no new in-loop descriptor is promoted.
+  - D6 interpretable regions: PASS with eight style clusters.
+- Claim levels:
+  L0 descriptive and L1 reconstructive are supported; L2 predictive, L3
+  mechanistic, and L5 method are not supported; L4 active was not run.
+- Interpretation: D3 plus D6 supports offline/reconstructive diversity
+  follow-up, not a new Auto-BD default. Auto-BD follow-up is not justified as
+  an in-loop candidate because D4 and D5 did not pass.
+
+### Validation Commands
+
+- `uv run pytest tests/scripts/test_report_rtl_diversity_check.py`:
+  3 passed.
+- `uv run ruff check scripts/report_rtl_diversity_check.py
+  tests/scripts/test_report_rtl_diversity_check.py`: all checks passed.
+- `uv run pyright scripts/report_rtl_diversity_check.py`: 0 errors,
+  0 warnings, 0 informations. Pyright reported only that a newer pyright
+  release is available.
+
+### Adversarial Validation
+
+- Independent subagent wrote
+  `docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_subagent_validation_report.md`.
+- Verdict: PASS for the stated `C reconstructive` claim level.
+- Subagent checks:
+  - `uv run pytest -q -p no:cacheprovider
+    tests/scripts/test_report_rtl_diversity_check.py`: 3 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    tests/scripts/test_report_rtl_diversity_check.py`: clean.
+  - `uv run pyright scripts/report_rtl_diversity_check.py`: 0 errors,
+    0 warnings, 0 informations.
+  - Read-only recomputation from generated artifacts confirmed 33,813 total
+    candidates, `C reconstructive` verdict, D3/D6 PASS, D1/D2/D5 FAIL, D4
+    NOT_RUN, D3 replay gain 14.6926%, and D2 multi-cluster front rate below
+    shuffled-label rate.
+- Residual risks recorded by the validator: historical Auto-BD worktree Git
+  status could not be checked because its `.git` pointer references an absent
+  local worktree metadata path; the read-only mount still prevents writes.
+
+## ASP-DAC Release Corpus Correction - 2026-06-20 UTC
+
+- User pointed out that the rich past-run source is the `aspdac2026-paper`
+  branch/release `exp/` directory, with DeepSeek-V3, GPT-4.1-mini, and
+  Llama-3.2-70B-Instruct style runs over both RTLLM and
+  VerilogEval-Spec-to-RTL.
+- Local Git refs and `/aux/revolution-history/.worktrees` did not expose an
+  `aspdac2026-paper` worktree. GitHub branch search confirmed that
+  `aspdac2026-paper` exists. Public release tag
+  `aspdac2026-submission` contains a tracked `exp/` tree.
+- Downloaded release source archive to `/tmp/revolution-aspdac2026-submission.tar.gz`
+  with:
+  `curl -L --fail --max-time 120 -o /tmp/revolution-aspdac2026-submission.tar.gz https://github.com/kmcho2019/REvolution/archive/refs/tags/aspdac2026-submission.tar.gz`.
+- Extracted the source archive under ignored output path
+  `exp/diversity_check/aspdac2026_submission_source/`. The first full
+  extraction was interrupted after slow NFS writes; a second
+  `tar --skip-old-files -xzf ...` pass completed the tree.
+- Verified ASP-DAC release coverage:
+  824 summary JSON files total, with 206 problem summaries under each root:
+  `deepseek_clean_results`, `gpt-4.1-mini_clean_results`,
+  `llama3_baseline_clean_results`, and `llama3_clean_results`.
+- Added an optional `--aspdac-root` loader to
+  `scripts/report_rtl_diversity_check.py` for the ASP-DAC flat filename
+  layout. The loader covers RTLLM and VerilogEval-Spec-to-RTL, and the report
+  now uses this source for the final conclusion.
+- Performance guard: ASP-DAC candidates without valid PPA do not read RTL text
+  during annotation; ASP-DAC valid candidates use lexical/style RTL
+  descriptors but skip content-derived canonical netlist and motif hashes.
+  Legacy broad RTLLM candidates still compute canonical netlist and motif
+  hashes.
+- Added focused fixture coverage for the ASP-DAC flat layout in
+  `tests/scripts/test_report_rtl_diversity_check.py`.
+
+### Superseding Final Report
+
+- Superseding command:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/full_20260620 --aspdac-root exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp --qwen-real-smoke --qwen-smoke-limit 64`.
+- Main report artifacts remain under `exp/diversity_check/full_20260620/`.
+- Report artifact hashes after the ASP-DAC rerun:
+  - `diversity_necessity_report.json`:
+    `c62f29a03f2fa816d8397db182b826316d1d6694b70a073cb254535a185ba523`
+  - `candidate_audit.csv`:
+    `8dcc4876fa5630bd1cb20bdc0476fc6140f5f7b737b0080645461c21221f34fc`
+  - `qwen_dry_run_coverage.csv`:
+    `829aa7512fcf8196a734a00fd7ef665dcfabe58f7acac611dae8aad941893cb6`
+  - `deepgate3_diagnostic_card.json`:
+    `0f4a27e12034480d1088cdd8f98e2c8f7af268f694b1201a494ef6529a658c63`
+
+### Superseding Final Result
+
+- Final verdict: `B illumination_only`.
+- Candidate counts: 203,944 total; 180,544 evolution-analysis candidates;
+  10,413 legacy broad RTLLM candidates; 170,131 ASP-DAC release candidates;
+  23,400 Auto-BD control candidates.
+- Final conclusion problem coverage: 874 evolution problem-runs; 697
+  analyzable valid-PPA problem-runs for D2/D3/D6.
+- D gates:
+  - D1 early predictive: FAIL. Early lexical distance vs final HV rho is
+    0.300, still a single-run uncontrolled post-hoc correlation.
+  - D2 multi-cluster front: FAIL. 48.8% of analyzable valid-PPA problem-runs
+    have at least two style clusters on the Pareto front, below the 60% gate
+    and below the 56.0% shuffled-label rate.
+  - D3 replay retention: FAIL. Best diversity oracle HV gain over
+    best-fitness retention is 1.4%, below the 10% threshold.
+  - D4 prospective moderate diversity: NOT_RUN.
+  - D5 real beats random: FAIL because the 20260618 Auto-BD controls did not
+    show robust PPA uplift and no new in-loop descriptor is promoted.
+  - D6 interpretable regions: PASS with eight style clusters.
+- Claim levels: L0 descriptive is supported; L1 reconstructive, L2
+  predictive, L3 mechanistic, and L5 method are not supported; L4 active was
+  not run.
+- Interpretation: the ASP-DAC-backed corpus weakens the earlier
+  RTLLM-only reconstructive signal. Current evidence supports illumination
+  only: implementation regions are interpretable, but the utility gates do
+  not justify predictive, reconstructive, active, or Auto-BD method claims.
+
+### Superseding Validation Commands
+
+- `uv run pytest tests/scripts/test_report_rtl_diversity_check.py`:
+  4 passed.
+- `uv run ruff check scripts/report_rtl_diversity_check.py
+  tests/scripts/test_report_rtl_diversity_check.py`: all checks passed.
+- `uv run pyright scripts/report_rtl_diversity_check.py`: 0 errors,
+  0 warnings, 0 informations. Pyright reported only that a newer pyright
+  release is available.
+
+### Superseding Adversarial Validation Attempt
+
+- Independent subagent initially returned FAIL for the revised
+  `B illumination_only` report because the generated Markdown limits section
+  still contained a stale `D3 plus D6 justify reconstructive/offline diversity
+  follow-up` sentence from the earlier RTLLM-only result.
+- Fixed `scripts/report_rtl_diversity_check.py` so the limits conclusion is
+  D-gate aware. With D3 FAIL and D6 PASS, the report now states:
+  `D6 supports illumination only; D1/D2/D3/D5 failed and D4 was not run, so
+  the evidence does not justify reconstructive, predictive, active, or Auto-BD
+  method claims.`
+- Regenerated `exp/diversity_check/full_20260620/diversity_necessity_report.md`
+  from the current JSON/CSV artifacts using the report writer.
+- Post-fix checks:
+  - `uv run pytest tests/scripts/test_report_rtl_diversity_check.py`:
+    4 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    tests/scripts/test_report_rtl_diversity_check.py`: all checks passed.
+  - `uv run pyright scripts/report_rtl_diversity_check.py`: 0 errors,
+    0 warnings, 0 informations.
+- Independent subagent rerun wrote
+  `docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_subagent_validation_report.md`.
+- Final validation verdict: PASS for the current `B illumination_only` claim.
+- Subagent recomputed D3 replay gain as 1.35%, D2 multi-cluster Pareto-front
+  rate as 48.8% versus 56.0% shuffled-label rate, confirmed the stale
+  reconstructive/offline sentence is absent from current report artifacts,
+  and ran `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py`
+  with 4 passed.
+
+### Superseded Initial Report Archive
+
+- Regenerated the derailed RTLLM-only initial report with:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/initial_rtllm_only_20260620_183839_UTC --qwen-real-smoke --qwen-smoke-limit 64`.
+- Archived the report-facing Markdown, JSON, CSV diagnostics, implementation
+  gallery, and 10 visualization PNGs under
+  `docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/20260620_183839_UTC_derailed_initial_report/`.
+- Left the large raw audit dumps in ignored `exp/`:
+  `candidate_audit.csv` is about 38 MB and `candidate_audit.parquet` is about
+  4.6 MB for this RTLLM-only run.
+- The archive preserves the superseded `C reconstructive` report for audit
+  history only. The authoritative current result remains the ASP-DAC-backed
+  `B illumination_only` report under `exp/diversity_check/full_20260620/`.
