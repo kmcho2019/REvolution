@@ -32,7 +32,7 @@ simplicity rules, testing, local validation, and commit standards.
 2. Minimize possible states: fewer arguments; remove or narrow any state.
 3. Use discriminated unions to reduce the states code can be in.
 4. Exhaustively handle multi-type objects; fail on unknown types.
-5. Don't write defensive code; trust the types.
+5. Don't write defensive code (+ fall-back, excessive back-compat); trust the types.
 6. Assert when loading data; be opinionated about parameters — nothing optional unless strictly required.
 7. Remove any changes that are not strictly required.
 8. Bias for fewer lines of code; no complex or clever code.
