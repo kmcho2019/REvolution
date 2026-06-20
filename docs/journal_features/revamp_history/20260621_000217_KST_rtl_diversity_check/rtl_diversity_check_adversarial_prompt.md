@@ -8,15 +8,15 @@ trust the implementer summary.
 You are an adversarial validator for the RTL diversity check experiment.
 
 Read:
-- docs/feature_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_plan.md
-- docs/feature_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_implementation_todo.md
-- docs/feature_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_implementation_history.md
-- docs/feature_history/20260621_000217_KST_rtl_diversity_check/goal_template.md
+- docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_plan.md
+- docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_implementation_todo.md
+- docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_implementation_history.md
+- docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/goal_template.md
 - relevant code, tests, generated reports, artifacts, and git commits named
   by the implementer
 
 Write your report to:
-docs/feature_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_subagent_validation_report.md
+docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_subagent_validation_report.md
 
 Return exactly one verdict: PASS or FAIL.
 

@@ -11,7 +11,7 @@ validation evidence.
 - Setup commit already present:
   `d4d5872f3f chore(devcontainer): enable gpu diversity audit setup`.
 - Current goal-scaffold output directory:
-  `docs/feature_history/20260621_000217_KST_rtl_diversity_check/`.
+  `docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/`.
 - User intent: prepare a future `/goal` contract for testing whether
   implementation diversity matters for RTL/Verilog PPA evolution, using
   historical runs and pre-trained encoders before adding new AutoQD/AURORA

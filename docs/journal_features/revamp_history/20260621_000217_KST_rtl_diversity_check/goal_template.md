@@ -5,7 +5,7 @@ activated goal under 4000 characters when possible.
 
 ```text
 /goal Objective: implement the RTL diversity check experiment specified in
-docs/feature_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_plan.md.
+docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_plan.md.
 Use the living checklist in
 rtl_diversity_check_implementation_todo.md and record all commands,
 artifacts, decisions, failures, and commits in
