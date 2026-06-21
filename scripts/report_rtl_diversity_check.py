@@ -71,6 +71,18 @@ DEEPGATE_TOKENIZER_SUMMARY = (
     REPO_ROOT
     / "exp/diversity_check/deepgate3_tokenizer_probe_20260621_034921_UTC/deepgate3_tokenizer_summary.json"
 )
+WP3_LEARNED_SUMMARIES = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp3_learned_encoder_20260621_053245_UTC_dim2_fixed/"
+        "wp3_learned_encoder_summary.json"
+    ),
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp3_learned_encoder_20260621_053245_UTC_dim3_fixed/"
+        "wp3_learned_encoder_summary.json"
+    ),
+)
 RANDOM_SEEDS = tuple(range(20))
 VERILOG_KEYWORDS = {
     "always",
@@ -159,6 +171,7 @@ def build_report(
         smoke_limit=qwen_smoke_limit,
     )
     deepgate_card = deepgate_diagnostics(output_dir)
+    learned_card = learned_encoder_diagnostics()
 
     problem_metrics = problem_level_metrics(evolution_analysis)
     cluster_rows = cluster_contribution_rows(evolution_analysis)
@@ -166,7 +179,12 @@ def build_report(
     early_rows = early_diversity_rows(evolution_analysis, problem_metrics)
     gate_rows = gate_matrix(cluster_rows, replay_rows, early_rows)
     claim_rows, verdict = claim_levels_and_verdict(gate_rows)
-    encoder_rows = encoder_leaderboard(qwen_card, deepgate_card, gate_rows)
+    encoder_rows = encoder_leaderboard(
+        qwen_card,
+        deepgate_card,
+        learned_card,
+        gate_rows,
+    )
     common_audit_rows = common_audit_metrics(rtllm_analysis, problem_metrics)
     case_rows = representative_cases(evolution_analysis, cluster_rows, replay_rows)
 
@@ -227,6 +245,7 @@ def build_report(
         "figures": {key: rel(path) for key, path in figure_paths.items()},
         "qwen_card": qwen_card,
         "deepgate_card": deepgate_card,
+        "learned_card": learned_card,
         "auto_bd_controls": auto_bd_controls,
         "wp0_replay": wp0_replay,
         "gate_matrix": gate_rows,
@@ -244,6 +263,7 @@ def build_report(
         common_audit_rows=common_audit_rows,
         encoder_rows=encoder_rows,
         wp0_replay=wp0_replay,
+        learned_card=learned_card,
         case_rows=case_rows,
     )
     return payload
@@ -1134,10 +1154,11 @@ def claim_levels_and_verdict(gate_rows: list[dict[str, Any]]) -> tuple[list[dict
 def encoder_leaderboard(
     qwen_card: dict[str, Any],
     deepgate_card: dict[str, Any],
+    learned_card: dict[str, Any],
     gate_rows: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     d3 = next(row for row in gate_rows if row["gate"].startswith("D3"))
-    return [
+    rows = [
         {
             "family": "lexical_structural_baseline",
             "stability": "measured",
@@ -1169,6 +1190,20 @@ def encoder_leaderboard(
             "verdict": deepgate_card["verdict"],
         },
     ]
+    for row in learned_card["rows"]:
+        rows.append(
+            {
+                "family": row["family"],
+                "stability": row["stability"],
+                "non_collapse": row["non_collapse"],
+                "predictive_signal": "not tested",
+                "pareto_cluster_signal": "not promoted",
+                "replay_signal": row["replay_signal"],
+                "cost": row["cost"],
+                "verdict": row["verdict"],
+            }
+        )
+    return rows
 
 
 def qwen_diagnostics(
@@ -1365,6 +1400,45 @@ def deepgate_diagnostics(output_dir: Path) -> dict[str, Any]:
         )
     write_json(output_dir / "deepgate3_diagnostic_card.json", card)
     return card
+
+
+def learned_encoder_diagnostics() -> dict[str, Any]:
+    rows = []
+    summaries = []
+    for path in WP3_LEARNED_SUMMARIES:
+        if not path.is_file():
+            continue
+        summary = load_json(path)
+        comparison = summary["comparison"]
+        delta = comparison["aurora_minus_common"]
+        rows.append(
+            {
+                "family": f"aurora_linear_ae{summary['latent_dim']}",
+                "stability": (
+                    f"problem split; train={summary['train_candidate_count']}, "
+                    f"holdout={summary['holdout_candidate_count']}"
+                ),
+                "non_collapse": (
+                    f"latent std={format_float_list(summary['latent_std'])}; "
+                    f"holdout MSE={summary['holdout_reconstruction_mse']:.4g}"
+                ),
+                "replay_signal": (
+                    f"holdout d_canon={delta['unique_canonical_netlists']}, "
+                    f"d_pareto={delta['pareto_size']}, "
+                    f"gain={comparison['pareto_gain_fraction']:.4f}"
+                ),
+                "cost": "NumPy SVD over common-audit vectors",
+                "verdict": comparison["verdict"],
+                "artifact": summary["out_dir"],
+            }
+        )
+        summaries.append(summary)
+    return {
+        "status": "loaded" if rows else "not_found",
+        "summary_paths": [path.as_posix() for path in WP3_LEARNED_SUMMARIES],
+        "rows": rows,
+        "summaries": summaries,
+    }
 
 
 def common_audit_metrics(candidates: pd.DataFrame, problem_metrics: pd.DataFrame) -> pd.DataFrame:
@@ -1675,6 +1749,7 @@ def write_markdown_report(
     common_audit_rows: pd.DataFrame,
     encoder_rows: list[dict[str, Any]],
     wp0_replay: dict[str, Any],
+    learned_card: dict[str, Any],
     case_rows: pd.DataFrame,
 ) -> None:
     verdict = payload["verdict"]
@@ -1742,8 +1817,9 @@ def write_markdown_report(
         "no-proceed for method promotion; escalate to larger common-audit "
         "Qwen, stronger graph encoders, or bounded live sampling only if the "
         "next pass targets a concrete D1/D3/D4/D5 utility gate.",
-        "- AURORA/VQ or learned-encoder training remains conditional on WP0-WP2 "
-        "showing useful, stable, non-leaky diversity signal.",
+        "- A bounded AURORA-style learned-encoder replay was attempted after "
+        "WP0-WP2, but it did not improve meaningfully over the common-audit "
+        "control and remains no-proceed for method promotion.",
         "",
         "## Corpus Coverage",
         "",
@@ -1780,6 +1856,14 @@ def write_markdown_report(
         "replay does not fit a new scaler or use PPA-derived normalization.",
         "",
         markdown_table(wp0_replay["rows"][:20]),
+        "",
+        "## WP3 Learned Encoder Diagnostics",
+        "",
+        f"- Status: `{learned_card['status']}`",
+        "- Policy: frozen problem-split linear bottlenecks over non-PPA "
+        "common-audit implementation vectors.",
+        "",
+        markdown_table(learned_card["rows"]),
         "",
         "## Encoder Leaderboard",
         "",
@@ -2167,6 +2251,10 @@ def finite_or_nan(value: Any) -> float:
 def finite_or_zero(value: Any) -> float:
     parsed = finite_or_nan(value)
     return 0.0 if math.isnan(parsed) else parsed
+
+
+def format_float_list(values: list[float]) -> str:
+    return "[" + ", ".join(f"{float(value):.3g}" for value in values) + "]"
 
 
 def finite_max(values: pd.Series) -> float:

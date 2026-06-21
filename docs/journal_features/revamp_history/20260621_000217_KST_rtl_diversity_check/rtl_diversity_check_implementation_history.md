@@ -1042,3 +1042,49 @@ validation evidence.
     tests/scripts/test_run_rtl_diversity_wp3_learned_encoder.py`: clean.
   - `uv run pyright scripts/run_rtl_diversity_wp3_learned_encoder.py`:
     0 errors, 0 warnings.
+
+### WP3-Integrated Central Report Regeneration
+
+- Updated `scripts/report_rtl_diversity_check.py` so the central Diversity
+  Necessity Report loads the bounded WP3 learned-encoder summaries and renders
+  them in both the dedicated WP3 diagnostics section and the encoder
+  leaderboard.
+- Added `tests/scripts/test_report_rtl_diversity_check.py` coverage for the
+  WP3 summary loader.
+- Regenerated the report:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/restarted_report_20260621_054009_UTC --aspdac-root exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp --wp0-artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --qwen-smoke-limit 64`.
+- Report artifact:
+  `exp/diversity_check/restarted_report_20260621_054009_UTC/`.
+- Central result remains `B illumination_only`. The report now records:
+  - Qwen3 as real artifact-loaded diagnostic evidence, not promoted.
+  - DeepGate3 as diagnostic-only no-proceed because the bounded tokenizer
+    embeddings collapsed and the graph-state policy remains limited.
+  - AURORA-style 2D and 3D linear probes as
+    `diagnostic_only_no_proceed`.
+- WP3-integrated artifact hashes:
+  - `diversity_necessity_report.md`:
+    `375f2c0438e19e50daf5fe650694be0ad5dd79892814f83f9ae57351790000a2`
+  - `diversity_necessity_report.json`:
+    `68c5e4075879edd13b19780f032575430134089d5c8331cf1546eeba521992d9`
+  - `encoder_leaderboard.csv`:
+    `38a138fb098198f12b8334837a7186aa6ea5e38ac9027369995a433b2ad71d32`
+  - `d_gate_matrix.csv`:
+    `4bf52c6ab5db8a13bec254fd7373643c6fa9fb9cdd11d259b05204bd0d0c995d`
+  - `claim_levels.csv`:
+    `92551a1f6ebe2432089d1a3389333b2fbc46c18da857d245825bbf43963a23a5`
+  - `wp0_replay_summary.csv`:
+    `c2656cc1f41cbc7998c8a4ffff0ee0376d8fd88393385d85626ed7f95d3d102b`
+  - `case_studies.csv`:
+    `c42ff93e19ede55c72ad9bcbc8dab49af7432c7b5e7241d14e87582d35e1f5d4`
+- Validation before commit:
+  - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py`:
+    7 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    tests/scripts/test_report_rtl_diversity_check.py`: clean.
+  - `uv run pyright scripts/report_rtl_diversity_check.py`: 0 errors,
+    0 warnings.
+- The previous independent adversarial PASS remains scoped to HEAD
+  `b4383b5cc5` and report
+  `exp/diversity_check/restarted_report_20260621_051025_UTC/`. The
+  WP3-integrated report needs refreshed adversarial validation after this
+  report integration is committed.

@@ -147,6 +147,39 @@ def test_wp0_restart_replay_summary_reads_quality_artifact(tmp_path):
     }
 
 
+def test_learned_encoder_diagnostics_reads_wp3_summaries(tmp_path, monkeypatch):
+    summary_path = tmp_path / "wp3_summary.json"
+    summary_path.write_text(
+        json.dumps(
+            {
+                "latent_dim": 2,
+                "train_candidate_count": 4,
+                "holdout_candidate_count": 2,
+                "latent_std": [1.0, 0.5],
+                "holdout_reconstruction_mse": 0.02,
+                "out_dir": "exp/wp3",
+                "comparison": {
+                    "aurora_minus_common": {
+                        "unique_canonical_netlists": 0,
+                        "pareto_size": -1,
+                    },
+                    "pareto_gain_fraction": -0.1,
+                    "verdict": "diagnostic_only_no_proceed",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(mod, "WP3_LEARNED_SUMMARIES", (summary_path,))
+
+    card = mod.learned_encoder_diagnostics()
+
+    assert card["status"] == "loaded"
+    assert card["rows"][0]["family"] == "aurora_linear_ae2"
+    assert card["rows"][0]["verdict"] == "diagnostic_only_no_proceed"
+    assert "holdout d_canon=0" in card["rows"][0]["replay_signal"]
+
+
 def test_representative_cases_uses_replay_problem_candidate_path():
     candidates = pd.DataFrame(
         [

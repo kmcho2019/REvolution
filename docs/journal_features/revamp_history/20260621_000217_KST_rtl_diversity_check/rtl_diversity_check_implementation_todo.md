@@ -265,3 +265,7 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   resolved or logged as blockers with three concrete attempts.
   PASS covers current HEAD `b4383b5cc5` and artifact
   `exp/diversity_check/restarted_report_20260621_051025_UTC/`.
+  The WP3-integrated report artifact
+  `exp/diversity_check/restarted_report_20260621_054009_UTC/` is regenerated
+  and awaits refreshed adversarial validation after the report integration
+  commit.
