@@ -424,6 +424,7 @@ def _build_backend(
             qd_archive_type=args.qd_archive_type,
             qd_num_cells=args.qd_num_cells,
             qd_fill_target_fraction=args.qd_fill_target_fraction,
+            qd_improve_backfill_fraction=args.qd_improve_backfill_fraction,
             qd_cell_reservoir=args.qd_cell_reservoir,
             qd_cell_mode=args.qd_cell_mode,
             qd_max_elites_per_cell=args.qd_max_elites_per_cell,
@@ -927,6 +928,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     )
     parser.add_argument("--qd_num_cells", type=int, default=64)
     parser.add_argument("--qd_fill_target_fraction", type=float, default=0.25)
+    parser.add_argument("--qd_improve_backfill_fraction", type=float, default=0.20)
     parser.add_argument("--qd_cell_reservoir", type=int, default=2)
     parser.add_argument(
         "--qd_cell_mode",

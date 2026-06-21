@@ -43,6 +43,7 @@ class RevolutionBackendConfig:
     qd_archive_type: str = "grid"
     qd_num_cells: int = 64
     qd_fill_target_fraction: float = 0.25
+    qd_improve_backfill_fraction: float = 0.20
     qd_cell_reservoir: int = 2
     qd_cell_mode: str = "scalar_elite"
     qd_max_elites_per_cell: int = 1
@@ -158,6 +159,7 @@ class RevolutionBackend(EvolutionBackend):
                 qd_archive_type=self.config.qd_archive_type,
                 qd_num_cells=self.config.qd_num_cells,
                 qd_fill_target_fraction=self.config.qd_fill_target_fraction,
+                qd_improve_backfill_fraction=self.config.qd_improve_backfill_fraction,
                 qd_cell_reservoir=self.config.qd_cell_reservoir,
                 qd_cell_mode=self.config.qd_cell_mode,
                 qd_max_elites_per_cell=self.config.qd_max_elites_per_cell,
@@ -239,6 +241,7 @@ class RevolutionBackend(EvolutionBackend):
                     "two_parent_probability": self.config.qd_two_parent_probability,
                     "num_cells": self.config.qd_num_cells,
                     "fill_target_fraction": self.config.qd_fill_target_fraction,
+                    "improve_backfill_fraction": self.config.qd_improve_backfill_fraction,
                     "quality_mode": self.config.qd_quality_mode,
                     "grid_quantile_warmup_successes": self.config.qd_grid_quantile_warmup_successes,
                     "grid_quantile_warmup_max_buffer": self.config.qd_grid_quantile_warmup_max_buffer,

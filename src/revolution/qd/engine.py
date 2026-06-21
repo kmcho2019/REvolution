@@ -119,6 +119,7 @@ class QDEngine(EoHEngine):
         qd_archive_type: str = "grid",
         qd_num_cells: int = 64,
         qd_fill_target_fraction: float = 0.25,
+        qd_improve_backfill_fraction: float = 0.20,
         qd_cell_reservoir: int = 2,
         qd_cell_mode: str = "scalar_elite",
         qd_max_elites_per_cell: int = 1,
@@ -164,6 +165,9 @@ class QDEngine(EoHEngine):
         self.qd_archive_type = qd_archive_type
         self.qd_num_cells = max(1, int(qd_num_cells))
         self.qd_fill_target_fraction = float(qd_fill_target_fraction)
+        if not 0.0 <= float(qd_improve_backfill_fraction) <= 1.0:
+            raise ValueError("qd_improve_backfill_fraction must be in [0, 1].")
+        self.qd_improve_backfill_fraction = float(qd_improve_backfill_fraction)
         self.qd_cell_reservoir = max(0, int(qd_cell_reservoir))
         if qd_cell_mode not in {"scalar_elite", "pareto_front"}:
             raise ValueError(f"Unsupported qd_cell_mode '{qd_cell_mode}'.")
@@ -1200,6 +1204,7 @@ class QDEngine(EoHEngine):
                 self.success_archive.num_cells,
                 self.qd_fill_target_fraction,
             ),
+            "qd_improve_backfill_fraction": self.qd_improve_backfill_fraction,
             "coverage": coverage,
             "coverage_fail_share": coverage_fail_share,
             "p_fail_cap": p_fail_cap,
@@ -1249,6 +1254,7 @@ class QDEngine(EoHEngine):
                     "seed_budget": budget.seed_budget,
                     "backfill_budget": budget.backfill_budget,
                     "refine_budget": budget.refine_budget,
+                    "improve_backfill_fraction": budget.improve_backfill_fraction,
                     "planned_parent_source_counts": {
                         "archive": budget.backfill_budget + budget.refine_budget,
                         "fail_pool": budget.fail_budget,
@@ -1513,6 +1519,7 @@ class QDEngine(EoHEngine):
             archive_empty=self.success_archive.occupied_count() == 0,
             empty_cells_remaining=self.success_archive.occupied_count() < self.success_archive.num_cells,
             fail_share_cap=self._fail_pool_archive_member_ratio(),
+            improve_backfill_fraction=self.qd_improve_backfill_fraction,
         )
 
     def _split_thought_generation_budget(self) -> QDBudgetSplit:

@@ -149,6 +149,18 @@ a numbered `techniques/T##_slug/` package before running it.
   Pareto against classic, manual BD, and T22 random descriptor under the same
   budget.
 
+## From `T24_sr_pareto_live_validation` T0
+
+- Local Pareto cells and NSGA-II parent selection run end to end, but unguarded
+  local-Pareto pressure loses too much `Prob015_multi_pipe_8bit` best quality.
+- SR raw remains the best immediate source for a follow-up because it keeps the
+  strongest multi-pipe front material and the best ALU gain.
+- Manual BD is the traffic-light quality control: it improves traffic-light
+  best score without a catastrophic validity drop, but still fails multi-pipe.
+- The next method should not reset descriptors. It should keep SR raw and test
+  a quality/yield-guarded schedule that lowers improve-phase backfill and
+  two-parent fusion before spending budget on learned encoders.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

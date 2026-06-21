@@ -1,0 +1,7 @@
+# T25 Figure Visual Inspection Notes
+
+Status: no figures generated yet.
+
+Add entries here after the live run packages figures. Each note should state
+the image path, resolution, readability, whether labels overlap, and what
+claim the figure supports or blocks.

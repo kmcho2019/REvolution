@@ -80,6 +80,11 @@ strongest on traffic-light best score, and SR raw is strongest on ALU best
 score plus multi-pipe front material, so the next live method should preserve
 those strengths with explicit quality/yield guarding.
 
+`T25_guarded_sr_raw_pareto_qd` is the pre-registered follow-up to T24. It keeps
+the SR raw descriptor and local Pareto archive but lowers improve-phase
+backfill and two-parent fusion to test whether quality/yield can recover
+without changing the BD or subset.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -100,9 +105,8 @@ those strengths with explicit quality/yield guarding.
 
 ## Next Decisions
 
-- Add a quality/yield guard or adaptive emitter variant before expanding the
-  SR-family live run, because every T24 QD arm loses too much best quality on
-  `Prob015_multi_pipe_8bit`.
+- Run T25 before expanding the SR-family live run, because every T24 QD arm
+  loses too much best quality on `Prob015_multi_pipe_8bit`.
 - Use manual BD as the traffic-light quality control and SR raw as the
   front-material control for the next T24-derived variant.
 - Keep `T22` in validation tables as a required comparator for any positive

@@ -24,6 +24,7 @@ class QDBudgetSplit:
     seed_budget: int
     backfill_budget: int
     refine_budget: int
+    improve_backfill_fraction: float = 0.20
 
 
 def qd_target_cells(num_cells: int, fill_target_fraction: float) -> int:
@@ -51,6 +52,7 @@ def split_qd_budget(
     occupied_cells: int,
     num_cells: int,
     fill_target_fraction: float,
+    improve_backfill_fraction: float = 0.20,
     fail_pool_empty: bool,
     archive_empty: bool,
     empty_cells_remaining: bool,
@@ -59,6 +61,7 @@ def split_qd_budget(
     """Split initialized QD budget across fail, seed, backfill, and refine."""
 
     total_budget = max(0, int(total_budget))
+    improve_backfill_fraction = min(1.0, max(0.0, float(improve_backfill_fraction)))
     target = qd_target_cells(num_cells, fill_target_fraction)
     coverage_fail_share = qd_fail_share(
         occupied_cells=occupied_cells,
@@ -108,8 +111,9 @@ def split_qd_budget(
         )
 
     backfill_budget = (
-        max(1, round(0.20 * success_budget))
+        max(1, round(improve_backfill_fraction * success_budget))
         if empty_cells_remaining and success_budget > 0
+        and improve_backfill_fraction > 0.0
         else 0
     )
     refine_budget = max(0, success_budget - backfill_budget)
@@ -126,4 +130,5 @@ def split_qd_budget(
         seed_budget=0,
         backfill_budget=backfill_budget,
         refine_budget=refine_budget,
+        improve_backfill_fraction=improve_backfill_fraction,
     )

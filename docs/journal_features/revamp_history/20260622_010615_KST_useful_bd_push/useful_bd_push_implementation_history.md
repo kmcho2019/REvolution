@@ -715,3 +715,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Lane decision: keep SR raw as the front-material control and manual BD as the
   traffic-light quality control for a quality/yield-guarded emitter or
   parent-pressure variant before larger live sampling.
+
+## T25 Guarded SR Raw Method Card - 2026-06-21 UTC
+
+- Added a default-preserving scheduler knob:
+  `qd_improve_backfill_fraction`, default `0.20`, matching the prior hardcoded
+  improve-phase backfill behavior.
+- Pre-registered `T25_guarded_sr_raw_pareto_qd` as the first direct follow-up
+  to the complete T24 live matrix.
+- T25 keeps the SR raw descriptor, `grid_quantile` archive, local Pareto cells,
+  NSGA-II parent selection, and T24 budget/model/subset.
+- T25 changes only the schedule guard:
+  `qd_fill_target_fraction=0.10`, `qd_improve_backfill_fraction=0.05`,
+  `qd_two_parent_probability=0.25`, and
+  `qd_champion_lane_fraction=0.50`.
+- Pre-registered run root:
+  `exp/useful_bd_push/t25_guarded_sr_raw_pareto_qd_20260621_210402_UTC/`.
+- Rationale: test whether SR raw can keep ALU gain and multi-pipe front
+  material while reducing the multi-pipe best-quality collapse and
+  traffic-light synthesis-validity drop observed in T24.
+- Next action: run the T25 live command after code/tests pass, then package the
+  comparison against T24 classic/manual/random/SR raw.

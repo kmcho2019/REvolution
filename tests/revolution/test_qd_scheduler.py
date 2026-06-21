@@ -103,6 +103,26 @@ def test_qd_budget_improve_phase_uses_refine_after_target_fill():
     assert split.fail_budget == 0
     assert split.backfill_budget == 2
     assert split.refine_budget == 8
+    assert split.improve_backfill_fraction == 0.20
+
+
+def test_qd_budget_improve_phase_accepts_guarded_backfill_fraction():
+    split = split_qd_budget(
+        total_budget=20,
+        occupied_cells=16,
+        num_cells=64,
+        fill_target_fraction=0.25,
+        improve_backfill_fraction=0.05,
+        fail_pool_empty=False,
+        archive_empty=False,
+        empty_cells_remaining=True,
+        fail_share_cap=1.0,
+    )
+
+    assert split.phase == "improve"
+    assert split.backfill_budget == 1
+    assert split.refine_budget == 19
+    assert split.improve_backfill_fraction == 0.05
 
 
 def test_qd_budget_reassigns_fail_budget_when_fail_pool_empty():

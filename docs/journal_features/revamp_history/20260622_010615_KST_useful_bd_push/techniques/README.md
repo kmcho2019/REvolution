@@ -38,6 +38,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T22` | `T22_random_descriptor_control` | Negative control | `T0 control`, required comparator |
 | `T23` | `T23_sr_pareto_validation_matrix` | Archive-coupling validation | `T0 diagnostic`, passive live-candidate matrix |
 | `T24` | `T24_sr_pareto_live_validation` | Archive-coupling live validation | `T0 diagnostic`, complete six-arm live matrix |
+| `T25` | `T25_guarded_sr_raw_pareto_qd` | Archive-coupling guarded live variant | Planned |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
