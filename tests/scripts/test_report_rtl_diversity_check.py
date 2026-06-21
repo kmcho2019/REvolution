@@ -51,7 +51,9 @@ def test_replay_rows_compare_quality_and_diversity():
     assert sum(policy.startswith("random_seed_") for policy in policies) == 20
 
 
-def test_qwen_dry_run_writes_coverage(tmp_path):
+def test_qwen_dry_run_writes_coverage(tmp_path, monkeypatch):
+    monkeypatch.setattr(mod, "QWEN_PROBE_SUMMARY", tmp_path / "missing_qwen.json")
+    monkeypatch.setattr(mod, "QWEN_YOSYS_SUMMARY", tmp_path / "missing_yosys.json")
     root = _write_rtllm_problem(tmp_path / "corpus")
     candidates = mod.add_candidate_annotations(
         mod.load_rtllm_candidates(root, max_problems=None)
@@ -84,6 +86,65 @@ def test_load_aspdac_candidates_extracts_flat_release_layout(tmp_path):
     assert valid["has_netlist"]
     assert valid["style_cluster"] == "wire_assign"
     assert invalid["failure_reason"] == "no_paired_ppa_artifact"
+
+
+def test_wp0_restart_replay_summary_reads_quality_artifact(tmp_path):
+    root = tmp_path / "wp0"
+    root.mkdir()
+    (root / "wp0_reconstruction_summary.json").write_text(
+        json.dumps(
+            {
+                "candidate_rows": 4,
+                "event_rows": 2,
+                "quality_gated_novelty_rows": 8,
+                "artifact_sha256": {
+                    "wp0_quality_gated_novelty.csv": "abc",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    pd.DataFrame(
+        [
+            {
+                "method_name": "synthesis_trajectory_nod",
+                "replay_key": "canonical_netlist",
+                "budget_fraction": 1.0,
+                "valid_ppa_count": 2,
+                "suppressed_duplicate_count": 1,
+                "online_retained_count": 1,
+                "online_pareto_size": 1,
+                "baseline_pareto_size": 2,
+            }
+        ]
+    ).to_csv(root / "wp0_duplicate_suppression.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "method_name": "synthesis_trajectory_nod",
+                "budget_fraction": 1.0,
+                "novelty_parent_fraction": 0.5,
+                "valid_ppa_count": 2,
+                "selected_count": 1,
+                "unique_canonical_netlists": 1,
+                "unique_motif_signatures": 1,
+                "occupied_common_audit_cells": 1,
+                "pareto_size": 1,
+                "baseline_pareto_size": 2,
+                "best_fitness": 0.7,
+            }
+        ]
+    ).to_csv(root / "wp0_quality_gated_novelty.csv", index=False)
+
+    summary = mod.wp0_restart_replay_summary(root)
+
+    assert summary["status"] == "loaded"
+    assert summary["candidate_rows"] == 4
+    assert len(summary["rows"]) == 2
+    assert {row["evidence"] for row in summary["rows"]} == {
+        "duplicate_suppression_full_budget",
+        "quality_gated_novelty_full_budget",
+    }
 
 
 def _candidate(

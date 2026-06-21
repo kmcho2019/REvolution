@@ -860,3 +860,58 @@ validation evidence.
     tests/scripts/test_reconstruct_rtl_diversity_wp0.py`: clean.
   - `uv run pyright scripts/reconstruct_rtl_diversity_wp0.py`: 0 errors,
     0 warnings.
+
+### Restarted Report Regeneration With WP0/WP2 And WP1 Artifacts
+
+- Updated `scripts/report_rtl_diversity_check.py` so the restarted report
+  ingests `wp0_duplicate_suppression.csv` and
+  `wp0_quality_gated_novelty.csv` from the WP0/WP2 replay artifact instead of
+  leaving replay evidence out of the final report package.
+- The report now loads the restarted Qwen3 and DeepGate3 probe summaries when
+  present. This fixes the stale Phase 0 cards that still said Qwen was
+  dependency-blocked and DeepGate3 was only deferred.
+- Added a dedicated preliminary negative-result and plan-pivot section. The
+  regenerated report keeps the verdict at `B illumination_only`, recommends
+  diagnostic-only / no-proceed for method promotion, and leaves larger Qwen,
+  stronger graph encoders, bounded live sampling, and AURORA/VQ training
+  conditional on targeting a concrete D1/D3/D4/D5 utility gate.
+- Ran:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/restarted_report_20260621_045103_UTC --aspdac-root exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp --wp0-artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --qwen-smoke-limit 64`.
+- Artifact directory:
+  `exp/diversity_check/restarted_report_20260621_045103_UTC/`.
+- Report counts: 203,944 total candidates, 170,131 ASP-DAC release
+  candidates, 180,544 evolution-analysis candidates, and 23,400 Auto-BD
+  control candidates.
+- WP0/WP2 report evidence: full-budget duplicate suppression records
+  1,006-1,292 duplicate hits depending on method/key; quality-gated novelty
+  preserves best fitness at 0.683497 while increasing unique canonical
+  netlists from 228 to 248 for SR and from 211 to 224 for ST-NOD between
+  novelty fractions 0.00 and 0.50.
+- WP1 report evidence: Qwen3 card now reports 45 embedded texts with
+  `[45, 1024]` shape, 15/15 Yosys-normalized conversions, variant stability
+  mean 0.748, and raw-to-Yosys cosine mean 0.862. DeepGate3 card now reports
+  9 AIG exports, 6 latch-free parses, 3 embeddings, and pairwise cosine mean
+  0.999971, so the current DeepGate3 path remains no-proceed due collapse and
+  combinational-only graph policy.
+- Artifact hashes:
+  - `diversity_necessity_report.md`:
+    `ada5868be4100cc2596ac92fcacb5389a99122e3625c813c89e209d88b2d5519`
+  - `diversity_necessity_report.json`:
+    `b6ae7200d960480cf7fe29a2b12f1a85df78280327d55deface8adcba96e599f`
+  - `wp0_replay_summary.csv`:
+    `c2656cc1f41cbc7998c8a4ffff0ee0376d8fd88393385d85626ed7f95d3d102b`
+  - `encoder_leaderboard.csv`:
+    `3b09ffa9927b3f877f4ae76b54ff44a16d659e023071e068720a27ea5b4896b4`
+  - `d_gate_matrix.csv`:
+    `4bf52c6ab5db8a13bec254fd7373643c6fa9fb9cdd11d259b05204bd0d0c995d`
+  - `claim_levels.csv`:
+    `92551a1f6ebe2432089d1a3389333b2fbc46c18da857d245825bbf43963a23a5`
+- Validation:
+  - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_reconstruct_rtl_diversity_wp0.py`: 6 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    tests/scripts/test_report_rtl_diversity_check.py
+    scripts/reconstruct_rtl_diversity_wp0.py
+    tests/scripts/test_reconstruct_rtl_diversity_wp0.py`: clean.
+  - `uv run pyright scripts/report_rtl_diversity_check.py
+    scripts/reconstruct_rtl_diversity_wp0.py`: 0 errors, 0 warnings.

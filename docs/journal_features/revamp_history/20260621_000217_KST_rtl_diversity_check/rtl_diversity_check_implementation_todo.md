@@ -173,13 +173,13 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   Partial: computed for ST-NOD/SR seed-3 roots in
   `wp0_budget_curves.csv`; broader RTLLM/ASP-DAC generation curves remain
   open.
-- [ ] Add online-available replay policies separate from oracle
+- [x] Add online-available replay policies separate from oracle
   reconstructive replay.
 - [ ] Add duplicate-suppression replay by canonical netlist hash and
   near-identical motif signature.
   Partial: `wp0_duplicate_suppression.csv` covers canonical netlist hash and
   exact motif-signature hash for ST-NOD/SR seed-3 roots. Near-identical motif
-  distance and quality-gated novelty remain open.
+  distance remains open; quality-gated novelty replay is complete.
 - [ ] Report diversity through the generated, functional, synthesis-valid,
   valid-PPA, and Pareto-front funnels for each descriptor family.
 - [ ] Add common-audit comparisons that do not let each descriptor define an
@@ -233,8 +233,10 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 
 ## WP3 - Learned / AURORA / VQ Escalation
 
-- [ ] Decide from WP0-WP2 whether AURORA/VQ/learned netlist embeddings are
+- [x] Decide from WP0-WP2 whether AURORA/VQ/learned netlist embeddings are
   justified, diagnostic-only, or no-proceed.
+  Scoped: current restarted report keeps AURORA/VQ and learned encoders
+  conditional; they are not justified until a non-leaky utility gate appears.
 - [ ] If justified, write the training/fitting corpus, leakage policy,
   checkpoint/hash, and common-audit evaluation before running training.
 - [ ] Do not revive VQ/codebook in-loop unless a continuous descriptor first
@@ -242,13 +244,16 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 
 ## Restart Completion Gates
 
-- [ ] The restarted Diversity Necessity Report is regenerated from artifacts.
-- [ ] It contains a preliminary negative-result and plan-pivot section.
-- [ ] It includes per-encoder method cards and centralized encoder
+- [x] The restarted Diversity Necessity Report is regenerated from artifacts.
+- [x] It contains a preliminary negative-result and plan-pivot section.
+- [x] It includes per-encoder method cards and centralized encoder
   leaderboard rows for every attempted encoder.
-- [ ] It includes D-gate and claim-level tables after WP0-WP2 evidence.
-- [ ] It chooses one final recommendation: no-proceed, diagnostic-only,
+- [x] It includes D-gate and claim-level tables after WP0-WP2 evidence.
+- [x] It chooses one final recommendation: no-proceed, diagnostic-only,
   quality-gated ST-NOD, learned-encoder diagnostic follow-up, or AURORA/VQ
   escalation.
+  Scoped: current recommendation is diagnostic-only / no-proceed for method
+  promotion; larger Qwen, stronger graph encoders, or live sampling require a
+  concrete D1/D3/D4/D5 target.
 - [ ] The restarted adversarial prompt returns PASS, or FAIL findings are
   resolved or logged as blockers with three concrete attempts.

@@ -55,6 +55,22 @@ AUTO_BD_REPORTS = (
     AUTO_BD_DOC_DIR / "auto_bd_seed3_seed1002_centralized_report.json",
     AUTO_BD_DOC_DIR / "auto_bd_seed3_seed1003_centralized_report.json",
 )
+QWEN_PROBE_SUMMARY = (
+    REPO_ROOT
+    / "exp/diversity_check/qwen3_probe_20260621_032811_UTC/qwen3_probe_summary.json"
+)
+QWEN_YOSYS_SUMMARY = (
+    REPO_ROOT
+    / "exp/diversity_check/qwen3_yosys_probe_20260621_033323_UTC/qwen3_yosys_summary.json"
+)
+DEEPGATE_AIG_SUMMARY = (
+    REPO_ROOT
+    / "exp/diversity_check/deepgate3_aig_probe_20260621_034421_UTC/deepgate3_aig_summary.json"
+)
+DEEPGATE_TOKENIZER_SUMMARY = (
+    REPO_ROOT
+    / "exp/diversity_check/deepgate3_tokenizer_probe_20260621_034921_UTC/deepgate3_tokenizer_summary.json"
+)
 RANDOM_SEEDS = tuple(range(20))
 VERILOG_KEYWORDS = {
     "always",
@@ -104,6 +120,7 @@ def build_report(
     auto_bd_root: Path,
     auto_bd_worktree: Path,
     aspdac_root: Path | None,
+    wp0_artifact_dir: Path | None,
     max_problems: int | None,
     qwen_real_smoke: bool,
     qwen_smoke_limit: int,
@@ -134,6 +151,7 @@ def build_report(
         candidates["corpus"].isin({"rtllm_gen20", "aspdac2026_release"})
     ].copy()
     auto_bd_controls = auto_bd_negative_control_summary()
+    wp0_replay = wp0_restart_replay_summary(wp0_artifact_dir)
     qwen_card = qwen_diagnostics(
         evolution_analysis,
         output_dir=output_dir,
@@ -174,6 +192,7 @@ def build_report(
         "encoder_leaderboard_csv": output_dir / "encoder_leaderboard.csv",
         "claim_levels_csv": output_dir / "claim_levels.csv",
         "case_studies_csv": output_dir / "case_studies.csv",
+        "wp0_replay_summary_csv": output_dir / "wp0_replay_summary.csv",
         "implementation_gallery_md": output_dir / "implementation_gallery.md",
     }
     candidates.to_csv(artifacts["candidate_audit_csv"], index=False)
@@ -188,6 +207,7 @@ def build_report(
     write_rows(artifacts["encoder_leaderboard_csv"], encoder_rows)
     write_rows(artifacts["claim_levels_csv"], claim_rows)
     case_rows.to_csv(artifacts["case_studies_csv"], index=False)
+    write_rows(artifacts["wp0_replay_summary_csv"], wp0_replay["rows"])
     write_implementation_gallery(
         artifacts["implementation_gallery_md"],
         candidates=evolution_analysis,
@@ -208,6 +228,7 @@ def build_report(
         "qwen_card": qwen_card,
         "deepgate_card": deepgate_card,
         "auto_bd_controls": auto_bd_controls,
+        "wp0_replay": wp0_replay,
         "gate_matrix": gate_rows,
         "claim_levels": claim_rows,
     }
@@ -222,6 +243,7 @@ def build_report(
         early_rows=early_rows,
         common_audit_rows=common_audit_rows,
         encoder_rows=encoder_rows,
+        wp0_replay=wp0_replay,
         case_rows=case_rows,
     )
     return payload
@@ -1184,8 +1206,51 @@ def qwen_diagnostics(
         "error": "",
         "output_path": "",
     }
+    artifact_summary = {}
+    yosys_summary = {}
+    if QWEN_PROBE_SUMMARY.is_file() and QWEN_YOSYS_SUMMARY.is_file():
+        artifact_summary = load_json(QWEN_PROBE_SUMMARY)
+        yosys_summary = load_json(QWEN_YOSYS_SUMMARY)
+        real_result = {
+            "attempted": True,
+            "status": "artifact_loaded",
+            "error": "",
+            "output_path": str(artifact_summary["out_dir"]),
+            "device": artifact_summary["device"],
+            "shape": artifact_summary["embedding_shape"],
+            "yosys_output_path": str(yosys_summary["out_dir"]),
+            "yosys_shape": yosys_summary["embedding_shape"],
+        }
     if real_smoke:
         real_result = qwen_real_embedding_smoke(rtl, output_dir)
+    if artifact_summary:
+        coverage_summary = (
+            f"{artifact_summary['text_count']} embedded texts, "
+            f"shape={artifact_summary['embedding_shape']}; "
+            f"Yosys conversions={yosys_summary['yosys_success_count']}/"
+            f"{yosys_summary['candidate_count']}"
+        )
+        stability = (
+            f"variant stability mean={artifact_summary['variant_stability_mean']:.3f}, "
+            f"raw-to-Yosys mean={yosys_summary['cosine_mean']:.3f}"
+        )
+        runtime = (
+            f"artifact loaded; model load {artifact_summary['model_load_seconds']:.3f}s, "
+            f"encode {artifact_summary['encode_seconds']:.3f}s"
+        )
+        verdict = "diagnostic only; real Qwen artifact loaded"
+    else:
+        coverage_summary = (
+            f"{len(rows)} RTL candidates inspected; "
+            f"{sum(int(row['dry_run_truncated']) for row in rows)} truncated at 4000 chars"
+        )
+        stability = stability_summary(rows)
+        runtime = real_result["status"]
+        verdict = (
+            "diagnostic only; real embeddings unavailable"
+            if real_result["status"] != "ok"
+            else "diagnostic only"
+        )
     return {
         "family": "qwen3_embedding_0p6b",
         "model": "Qwen/Qwen3-Embedding-0.6B",
@@ -1195,15 +1260,12 @@ def qwen_diagnostics(
             "identifier-normalized RTL",
         ],
         "dry_run_path": rel(dry_run_path),
-        "coverage_summary": (
-            f"{len(rows)} RTL candidates inspected; "
-            f"{sum(int(row['dry_run_truncated']) for row in rows)} truncated at 4000 chars"
-        ),
-        "stability_summary": stability_summary(rows),
-        "runtime_summary": real_result["status"],
+        "coverage_summary": coverage_summary,
+        "stability_summary": stability,
+        "runtime_summary": runtime,
         "real_smoke": real_result,
         "leakage_policy": "frozen_pretrained; no PPA fields used as inputs",
-        "verdict": "diagnostic only; real embeddings unavailable" if real_result["status"] != "ok" else "diagnostic only",
+        "verdict": verdict,
     }
 
 
@@ -1277,6 +1339,30 @@ def deepgate_diagnostics(output_dir: Path) -> dict[str, Any]:
         "runtime_summary": "blocked_missing_deepgate3" if not importable else "not_run",
         "verdict": "deferred with setup evidence",
     }
+    if DEEPGATE_AIG_SUMMARY.is_file() and DEEPGATE_TOKENIZER_SUMMARY.is_file():
+        aig = load_json(DEEPGATE_AIG_SUMMARY)
+        tokenizer = load_json(DEEPGATE_TOKENIZER_SUMMARY)
+        card.update(
+            {
+                "minimum_graph_export_path": str(aig["out_dir"]),
+                "graph_state_policy": aig["graph_state_policy"],
+                "coverage_summary": (
+                    f"{aig['aig_export_success_count']} AIG exports, "
+                    f"{aig['latch_free_parse_count']} latch-free parses, "
+                    f"{tokenizer['embedding_success_count']} embeddings; "
+                    f"pairwise cosine mean={tokenizer['pairwise_cosine_mean']:.6f}"
+                ),
+                "runtime_summary": (
+                    f"artifact loaded; graph export {aig['export_seconds']:.3f}s, "
+                    f"model load {tokenizer['model_load_seconds']:.3f}s, "
+                    f"encode {tokenizer['encode_seconds']:.3f}s"
+                ),
+                "verdict": (
+                    "diagnostic-only no-proceed in current form; tokenizer "
+                    "embeddings collapsed and sequential policy remains limited"
+                ),
+            }
+        )
     write_json(output_dir / "deepgate3_diagnostic_card.json", card)
     return card
 
@@ -1588,6 +1674,7 @@ def write_markdown_report(
     early_rows: pd.DataFrame,
     common_audit_rows: pd.DataFrame,
     encoder_rows: list[dict[str, Any]],
+    wp0_replay: dict[str, Any],
     case_rows: pd.DataFrame,
 ) -> None:
     verdict = payload["verdict"]
@@ -1610,6 +1697,29 @@ def write_markdown_report(
             "- No utility gate passed; the evidence does not justify "
             "reconstructive, predictive, active, or Auto-BD method claims."
         )
+    if payload["qwen_card"]["real_smoke"]["status"] == "artifact_loaded":
+        qwen_limit = (
+            "- Qwen3 real embeddings were extracted in the restarted WP1 "
+            "probe, but remain diagnostic-only because predictive, replay, "
+            "and common-audit utility were not established."
+        )
+    else:
+        qwen_limit = (
+            "- Qwen3 real embeddings were not extracted unless the optional "
+            "smoke succeeds; dry-run coverage and lexical perturbation checks "
+            "are diagnostic only."
+        )
+    if "artifact loaded" in str(payload["deepgate_card"]["runtime_summary"]):
+        deepgate_limit = (
+            "- DeepGate3 AIG export and checkpoint-compatible tokenizer "
+            "embeddings were attempted, but the bounded embeddings collapsed "
+            "and the graph-state policy remains combinational-only."
+        )
+    else:
+        deepgate_limit = (
+            "- DeepGate3 is deferred because the package/checkpoint is absent; "
+            "Yosys is available for future AIG/JSON export."
+        )
     lines = [
         "# Diversity Necessity Report",
         "",
@@ -1617,6 +1727,23 @@ def write_markdown_report(
         "",
         "This report is generated from post-hoc local artifacts only. No live "
         "evolutionary run was launched.",
+        "",
+        "## Preliminary Negative Result And Plan Pivot",
+        "",
+        "- Restarted WP0-WP2 evidence still does not justify an active "
+        "diversity method or Auto-BD promotion.",
+        "- The quality-gated novelty replay preserves best fitness and modestly "
+        "increases unique structural coverage, but it remains replay-only "
+        "diagnostic evidence.",
+        "- Qwen3 is no longer dependency-blocked and should be treated as a "
+        "larger common-audit diagnostic candidate, while the bounded DeepGate3 "
+        "tokenizer probe is no-proceed in its current collapsed form.",
+        "- Recommendation: keep the current claim at diagnostic-only / "
+        "no-proceed for method promotion; escalate to larger common-audit "
+        "Qwen, stronger graph encoders, or bounded live sampling only if the "
+        "next pass targets a concrete D1/D3/D4/D5 utility gate.",
+        "- AURORA/VQ or learned-encoder training remains conditional on WP0-WP2 "
+        "showing useful, stable, non-leaky diversity signal.",
         "",
         "## Corpus Coverage",
         "",
@@ -1640,6 +1767,14 @@ def write_markdown_report(
         "robust valid-PPA uplift.",
         "",
         markdown_table(payload["auto_bd_controls"]["rows"][:12]),
+        "",
+        "## Restart WP0/WP2 Replay Evidence",
+        "",
+        f"- Status: `{wp0_replay['status']}`",
+        f"- Source artifact directory: `{wp0_replay['artifact_dir']}`",
+        f"- Summary CSV: `{payload['artifacts']['wp0_replay_summary_csv']}`",
+        "",
+        markdown_table(wp0_replay["rows"][:20]),
         "",
         "## Encoder Leaderboard",
         "",
@@ -1703,11 +1838,8 @@ def write_markdown_report(
             "- Parent-child lineage was not recoverable from the selected broad "
             "RTLLM artifacts, so D3 descendants and L3 mechanistic claims are "
             "not supported.",
-            "- Qwen3 real embeddings were not extracted unless the optional "
-            "smoke succeeds; dry-run coverage and lexical perturbation checks "
-            "are diagnostic only.",
-            "- DeepGate3 is deferred because the package/checkpoint is absent; "
-            "Yosys is available for future AIG/JSON export.",
+            qwen_limit,
+            deepgate_limit,
             diversity_limit,
             "",
         ]
@@ -1812,6 +1944,91 @@ def auto_bd_negative_control_summary() -> dict[str, Any]:
                 }
             )
     return {"source_reports": [path.name for path in AUTO_BD_REPORTS], "rows": rows}
+
+
+def wp0_restart_replay_summary(artifact_dir: Path | None) -> dict[str, Any]:
+    if artifact_dir is None:
+        return {"status": "not_provided", "artifact_dir": "", "rows": []}
+    assert artifact_dir.is_dir(), f"missing WP0 artifact dir: {artifact_dir}"
+    summary = load_json(artifact_dir / "wp0_reconstruction_summary.json")
+    rows: list[dict[str, Any]] = []
+
+    duplicate_path = artifact_dir / "wp0_duplicate_suppression.csv"
+    if duplicate_path.is_file():
+        duplicate = pd.read_csv(duplicate_path)
+        full = duplicate.loc[duplicate["budget_fraction"].eq(1.0)]
+        for row in (
+            full.groupby(["method_name", "replay_key"], as_index=False)
+            .agg(
+                valid_ppa_count=("valid_ppa_count", "sum"),
+                suppressed_duplicate_count=("suppressed_duplicate_count", "sum"),
+                retained_count=("online_retained_count", "sum"),
+                pareto_size=("online_pareto_size", "sum"),
+                baseline_pareto_size=("baseline_pareto_size", "sum"),
+            )
+            .to_dict("records")
+        ):
+            rows.append(
+                {
+                    "evidence": "duplicate_suppression_full_budget",
+                    "method_name": row["method_name"],
+                    "variant": row["replay_key"],
+                    "valid_ppa_count": int(row["valid_ppa_count"]),
+                    "selected_count": int(row["retained_count"]),
+                    "unique_canonical_netlists": "",
+                    "unique_motif_signatures": "",
+                    "occupied_common_audit_cells": "",
+                    "pareto_size": int(row["pareto_size"]),
+                    "baseline_pareto_size": int(row["baseline_pareto_size"]),
+                    "best_fitness": "",
+                    "note": f"suppressed {int(row['suppressed_duplicate_count'])} duplicate hits",
+                }
+            )
+
+    novelty_path = artifact_dir / "wp0_quality_gated_novelty.csv"
+    if novelty_path.is_file():
+        novelty = pd.read_csv(novelty_path)
+        full = novelty.loc[novelty["budget_fraction"].eq(1.0)]
+        for row in (
+            full.groupby(["method_name", "novelty_parent_fraction"], as_index=False)
+            .agg(
+                valid_ppa_count=("valid_ppa_count", "sum"),
+                selected_count=("selected_count", "sum"),
+                unique_canonical_netlists=("unique_canonical_netlists", "sum"),
+                unique_motif_signatures=("unique_motif_signatures", "sum"),
+                occupied_common_audit_cells=("occupied_common_audit_cells", "sum"),
+                pareto_size=("pareto_size", "sum"),
+                baseline_pareto_size=("baseline_pareto_size", "sum"),
+                best_fitness=("best_fitness", "max"),
+            )
+            .to_dict("records")
+        ):
+            rows.append(
+                {
+                    "evidence": "quality_gated_novelty_full_budget",
+                    "method_name": row["method_name"],
+                    "variant": row["novelty_parent_fraction"],
+                    "valid_ppa_count": int(row["valid_ppa_count"]),
+                    "selected_count": int(row["selected_count"]),
+                    "unique_canonical_netlists": int(row["unique_canonical_netlists"]),
+                    "unique_motif_signatures": int(row["unique_motif_signatures"]),
+                    "occupied_common_audit_cells": int(row["occupied_common_audit_cells"]),
+                    "pareto_size": int(row["pareto_size"]),
+                    "baseline_pareto_size": int(row["baseline_pareto_size"]),
+                    "best_fitness": float(row["best_fitness"]),
+                    "note": "prefix median valid-fitness quality floor",
+                }
+            )
+
+    return {
+        "status": "loaded",
+        "artifact_dir": artifact_dir.as_posix(),
+        "candidate_rows": summary["candidate_rows"],
+        "event_rows": summary["event_rows"],
+        "quality_gated_novelty_rows": summary.get("quality_gated_novelty_rows", 0),
+        "artifact_sha256": summary.get("artifact_sha256", {}),
+        "rows": rows,
+    }
 
 
 def improvement_points(group: pd.DataFrame) -> list[tuple[float, ...]]:
@@ -2040,6 +2257,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--auto-bd-root", type=Path, default=DEFAULT_AUTO_BD_ROOT)
     parser.add_argument("--auto-bd-worktree", type=Path, default=DEFAULT_AUTO_BD_WORKTREE)
     parser.add_argument("--aspdac-root", type=Path)
+    parser.add_argument("--wp0-artifact-dir", type=Path)
     parser.add_argument("--max-problems", type=int)
     parser.add_argument("--qwen-real-smoke", action="store_true")
     parser.add_argument("--qwen-smoke-limit", type=int, default=32)
@@ -2051,6 +2269,7 @@ def main(argv: list[str] | None = None) -> int:
         auto_bd_root=args.auto_bd_root,
         auto_bd_worktree=args.auto_bd_worktree,
         aspdac_root=args.aspdac_root,
+        wp0_artifact_dir=args.wp0_artifact_dir,
         max_problems=args.max_problems,
         qwen_real_smoke=args.qwen_real_smoke,
         qwen_smoke_limit=args.qwen_smoke_limit,
