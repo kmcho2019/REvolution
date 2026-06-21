@@ -943,3 +943,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   Conservative exploit has 6 rank-1 front points, SR raw has 10, and Classic
   has 14. This agrees with the T28 family-level blocker and strengthens the
   case for a front-recovery variant before any promotion claim.
+
+## T29 SR Raw Front Recovery Pre-Registration - 2026-06-21 UTC
+
+- Created `techniques/T29_sr_raw_front_recovery_qd/` as the next live
+  archive-coupling package.
+- The pre-registered question is whether limited SR raw exploration can recover
+  front material versus T26 while preserving T26's live HV/HV-AUC signal.
+- T29 keeps the frozen SR raw PCA descriptor, `grid_quantile` archive,
+  local-Pareto cells, T26 fill/improve backfill settings, NSGA-II parent
+  selection, seed 1001, model, endpoint, token budgets, and fixed
+  three-problem live screen.
+- T29 changes only parent-source pressure: `qd_champion_lane_fraction=0.60`
+  and `qd_two_parent_probability=0.20`.
+- Added methodology, command, run matrix, pending artifact manifest, pending
+  results report, figure requirements, visualization placeholder, and central
+  lane/index updates before executing the live run.

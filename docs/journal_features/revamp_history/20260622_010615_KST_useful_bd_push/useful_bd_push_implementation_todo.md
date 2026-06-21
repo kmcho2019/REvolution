@@ -119,6 +119,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T28_t26_family_audit` is packaged with RTL/netlist/family duplicate
       accounting, direct PPA-front figures, scoped HTML viewer, visual
       inspection, and lane-decision documentation.
+- [ ] `T29_sr_raw_front_recovery_qd` is pre-registered, executed, packaged, and
+      assigned a tier decision.
 
 ## Minimum Goal Completion
 

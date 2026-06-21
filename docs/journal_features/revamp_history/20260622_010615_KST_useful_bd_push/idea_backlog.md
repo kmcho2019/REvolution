@@ -226,6 +226,10 @@ a numbered `techniques/T##_slug/` package before running it.
 - Potential T29 alternative: `sr_raw_exploit_front_recovery`, with a fixed
   SR-raw exploration quota, repair emitter, or local-front parent quota to
   recover front families while keeping T26's champion exploit pressure.
+- T29 selected: `sr_raw_front_recovery_qd` keeps SR raw PCA and T26's archive
+  substrate, lowers champion lane to 0.60, and restores limited 0.20 two-parent
+  fusion. Any further schedule tweak should become T30 after the T29 result is
+  measured.
 
 ## Near-Term Hybrids
 

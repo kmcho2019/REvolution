@@ -32,6 +32,8 @@ Real result packages:
   T26 runs
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
+`T29_sr_raw_front_recovery_qd` is pre-registered as the next live
+front-recovery variant.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -134,6 +136,12 @@ T26 blocker visually obvious: Conservative exploit has strong best-PPA points,
 but on `Prob015_multi_pipe_8bit` it has 6 candidate-level rank-1 front points
 while SR raw has 10 and Classic has 14.
 
+`T29_sr_raw_front_recovery_qd` is the pre-registered next live variant. It
+keeps SR raw PCA, local Pareto cells, the T26 fill target, and NSGA-II parent
+selection, but lowers champion-lane pressure from 0.80 to 0.60 and restores
+limited two-parent archive fusion at 0.20. The test is whether this recovers
+front material versus T26 without losing T26's HV/HV-AUC signal.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -166,6 +174,7 @@ while SR raw has 10 and Classic has 14.
 
 - Run a holdout audit or a front-recovery T26 variant before any promotion
   claim.
+- Execute and package T29 before changing these front-recovery parameters.
 - Use the direct PPA-front audit figures when deciding whether a candidate has
   improved front shape, not only HV, best score, or aggregate front counts.
 - Use manual BD as the traffic-light quality control, SR raw as the
