@@ -176,11 +176,13 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   positive mean quality delta.
   Artifact:
   `exp/diversity_check/wp0_lineage_descendant_yield_20260621_060447_UTC/`.
-- [ ] Compute diversity at 25%, 50%, 75%, and 100% of budget where generation
+- [x] Compute diversity at 25%, 50%, 75%, and 100% of budget where generation
   metadata exists.
-  Partial: computed for ST-NOD/SR seed-3 roots in
-  `wp0_budget_curves.csv`; broader RTLLM/ASP-DAC generation curves remain
-  open.
+  Artifact:
+  `exp/diversity_check/wp0_budget_funnel_curves_20260621_062414_UTC/`.
+  Scoped: 203,944 candidates, 1,069 problem groups, 21,380 curve rows, and
+  budget checkpoints 0.25, 0.50, 0.75, and 1.00 across Auto-BD, RTLLM, and
+  ASP-DAC-release corpora.
 - [x] Add online-available replay policies separate from oracle
   reconstructive replay.
 - [ ] Add duplicate-suppression replay by canonical netlist hash and
@@ -188,10 +190,15 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   Partial: `wp0_duplicate_suppression.csv` covers canonical netlist hash and
   exact motif-signature hash for ST-NOD/SR seed-3 roots. Near-identical motif
   distance remains open; quality-gated novelty replay is complete.
-- [ ] Report diversity through the generated, functional, synthesis-valid,
+- [x] Report diversity through the generated, functional, synthesis-valid,
   valid-PPA, and Pareto-front funnels for each descriptor family.
-- [ ] Add common-audit comparisons that do not let each descriptor define an
+  Artifact:
+  `exp/diversity_check/wp0_budget_funnel_curves_20260621_062414_UTC/`.
+- [x] Add common-audit comparisons that do not let each descriptor define an
   easier archive space.
+  Scoped: the budget/funnel curves use shared candidate-audit fields rather
+  than descriptor-owned archive cells; ASP-DAC lacks recovered netlist hashes
+  in this post-hoc audit, so canonical/motif counts are zero there.
 
 ## WP1 - Real Encoder Diagnostics
 
@@ -214,6 +221,10 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   stability, non-collapse, leakage, runtime, interpretability, and verdict.
 - [ ] Consider larger Qwen, DeepSeq, NetTAG, CircuitFusion, or similar
   encoders only if Qwen3/DeepGate3 are blocked or inconclusive with evidence.
+  Next eligible escalation: Qwen3 produced real embeddings but only
+  diagnostic signal, and DeepGate3 collapsed on the bounded AIG/tokenizer
+  path. Any larger encoder or finetuning run must first name the utility
+  target, fitting corpus, leakage controls, and no-proceed threshold.
 
 ## WP2 - Quality-Gated / Repair-Preserving Diversity Pressure
 
@@ -253,6 +264,9 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 - [ ] If justified beyond diagnostics, write the training/fitting corpus,
   leakage policy,
   checkpoint/hash, and common-audit evaluation before running training.
+  Current status: not justified as an in-loop method. AURORA-style or
+  finetuned-encoder work is eligible only as a diagnostic escalation unless it
+  targets a concrete D1/D3/D4/D5 gate.
 - [ ] Do not revive VQ/codebook in-loop unless a continuous descriptor first
   passes quality-gated robustness tests.
 

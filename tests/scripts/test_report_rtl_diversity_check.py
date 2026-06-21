@@ -228,6 +228,51 @@ def test_lineage_diagnostics_reads_yield_artifacts(tmp_path, monkeypatch):
     assert "1/2 method/table groups" in card["mechanistic_evidence"]
 
 
+def test_budget_funnel_diagnostics_reads_curve_artifacts(tmp_path, monkeypatch):
+    summary_path = tmp_path / "budget_funnel_summary.json"
+    aggregate_path = tmp_path / "budget_funnel_aggregate.csv"
+    summary_path.write_text(
+        json.dumps(
+            {
+                "candidate_count": 10,
+                "problem_group_count": 2,
+                "curve_rows": 40,
+                "funnels": ["generated", "valid_ppa"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    pd.DataFrame(
+        [
+            {
+                "corpus": "toy",
+                "descriptor_family": "lexical",
+                "method": "classic",
+                "budget_fraction": 1.0,
+                "funnel": "valid_ppa",
+                "mean_style_clusters": 2.0,
+            },
+            {
+                "corpus": "toy",
+                "descriptor_family": "lexical",
+                "method": "classic",
+                "budget_fraction": 0.5,
+                "funnel": "valid_ppa",
+                "mean_style_clusters": 1.0,
+            },
+        ]
+    ).to_csv(aggregate_path, index=False)
+    monkeypatch.setattr(mod, "BUDGET_FUNNEL_SUMMARY", summary_path)
+    monkeypatch.setattr(mod, "BUDGET_FUNNEL_AGGREGATE", aggregate_path)
+
+    card = mod.budget_funnel_diagnostics()
+
+    assert card["status"] == "loaded"
+    assert len(card["rows"]) == 1
+    assert "10 candidates" in card["evidence"]
+    assert card["rows"][0]["mean_style_clusters"] == 2.0
+
+
 def test_representative_cases_uses_replay_problem_candidate_path():
     candidates = pd.DataFrame(
         [

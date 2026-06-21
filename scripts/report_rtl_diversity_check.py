@@ -104,6 +104,20 @@ LINEAGE_YIELD_AGGREGATE = (
         "lineage_aggregate.csv"
     )
 )
+BUDGET_FUNNEL_SUMMARY = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp0_budget_funnel_curves_20260621_062414_UTC/"
+        "budget_funnel_summary.json"
+    )
+)
+BUDGET_FUNNEL_AGGREGATE = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp0_budget_funnel_curves_20260621_062414_UTC/"
+        "budget_funnel_aggregate.csv"
+    )
+)
 RANDOM_SEEDS = tuple(range(20))
 VERILOG_KEYWORDS = {
     "always",
@@ -194,6 +208,7 @@ def build_report(
     deepgate_card = deepgate_diagnostics(output_dir)
     learned_card = learned_encoder_diagnostics()
     lineage_card = lineage_diagnostics()
+    budget_funnel_card = budget_funnel_diagnostics()
 
     problem_metrics = problem_level_metrics(evolution_analysis)
     cluster_rows = cluster_contribution_rows(evolution_analysis)
@@ -269,6 +284,7 @@ def build_report(
         "deepgate_card": deepgate_card,
         "learned_card": learned_card,
         "lineage_card": lineage_card,
+        "budget_funnel_card": budget_funnel_card,
         "auto_bd_controls": auto_bd_controls,
         "wp0_replay": wp0_replay,
         "gate_matrix": gate_rows,
@@ -288,6 +304,7 @@ def build_report(
         wp0_replay=wp0_replay,
         learned_card=learned_card,
         lineage_card=lineage_card,
+        budget_funnel_card=budget_funnel_card,
         case_rows=case_rows,
     )
     return payload
@@ -1513,6 +1530,36 @@ def lineage_diagnostics() -> dict[str, Any]:
     }
 
 
+def budget_funnel_diagnostics() -> dict[str, Any]:
+    if not BUDGET_FUNNEL_SUMMARY.is_file() or not BUDGET_FUNNEL_AGGREGATE.is_file():
+        return {
+            "status": "not_found",
+            "summary_path": BUDGET_FUNNEL_SUMMARY.as_posix(),
+            "aggregate_path": BUDGET_FUNNEL_AGGREGATE.as_posix(),
+            "rows": [],
+            "evidence": "budget/funnel curves were not loaded for this report",
+        }
+    summary = load_json(BUDGET_FUNNEL_SUMMARY)
+    aggregate = pd.read_csv(BUDGET_FUNNEL_AGGREGATE)
+    rows = aggregate.loc[
+        aggregate["budget_fraction"].eq(1.0) & aggregate["funnel"].eq("valid_ppa")
+    ].to_dict("records")
+    evidence = (
+        f"budget curves cover {summary['candidate_count']} candidates, "
+        f"{summary['problem_group_count']} problem groups, "
+        f"{summary['curve_rows']} curve rows, and funnels "
+        f"{', '.join(summary['funnels'])}"
+    )
+    return {
+        "status": "loaded",
+        "summary_path": BUDGET_FUNNEL_SUMMARY.as_posix(),
+        "aggregate_path": BUDGET_FUNNEL_AGGREGATE.as_posix(),
+        "summary": summary,
+        "rows": rows,
+        "evidence": evidence,
+    }
+
+
 def common_audit_metrics(candidates: pd.DataFrame, problem_metrics: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for problem_id, group in candidates.groupby("problem_id", sort=True):
@@ -1823,6 +1870,7 @@ def write_markdown_report(
     wp0_replay: dict[str, Any],
     learned_card: dict[str, Any],
     lineage_card: dict[str, Any],
+    budget_funnel_card: dict[str, Any],
     case_rows: pd.DataFrame,
 ) -> None:
     verdict = payload["verdict"]
@@ -1951,6 +1999,13 @@ def write_markdown_report(
         f"- Evidence: {lineage_card['mechanistic_evidence']}",
         "",
         markdown_table(lineage_card["aggregate_rows"]),
+        "",
+        "## WP0 Budget/Funnel Curves",
+        "",
+        f"- Status: `{budget_funnel_card['status']}`",
+        f"- Evidence: {budget_funnel_card['evidence']}",
+        "",
+        markdown_table(budget_funnel_card["rows"]),
         "",
         "## Encoder Leaderboard",
         "",

@@ -1177,3 +1177,87 @@ validation evidence.
     scripts/audit_rtl_diversity_lineage_sources.py
     scripts/analyze_rtl_diversity_lineage_yield.py`: 0 errors, 0 warnings.
   - `git diff --check`: clean.
+
+### WP0 Budget/Funnel Curves And Encoder Escalation Status
+
+- Added `scripts/analyze_rtl_diversity_budget_funnels.py` with focused test
+  `tests/scripts/test_analyze_rtl_diversity_budget_funnels.py`.
+- Ran the budget/funnel analysis:
+  `uv run python scripts/analyze_rtl_diversity_budget_funnels.py --candidate-audit exp/diversity_check/restarted_report_20260621_060721_UTC/candidate_audit.parquet --output-dir exp/diversity_check/wp0_budget_funnel_curves_20260621_062414_UTC`.
+- Budget/funnel artifact:
+  `exp/diversity_check/wp0_budget_funnel_curves_20260621_062414_UTC/`.
+- Result: 203,944 candidates, 1,069 problem groups, 21,380 curve rows, and
+  140 aggregate rows across budget checkpoints 0.25, 0.50, 0.75, and 1.00.
+  Funnels are generated, functional, synthesis-valid, valid-PPA, and
+  Pareto-front. Later funnel stages are cumulative, so synthesis-valid also
+  requires functional validity, valid-PPA requires synthesis-valid, and
+  Pareto-front requires valid-PPA.
+- Full-budget valid-PPA aggregate highlights:
+  - ASP-DAC release lexical/classic: 824 problem groups, 90,058 valid-PPA
+    candidates, mean best fitness 0.2069, mean style clusters 2.2002, and
+    mean Pareto members 50.5. Canonical netlist and motif counts are zero
+    because this imported post-hoc release path lacks recovered netlist hashes.
+  - RTLLM Gen20 lexical/classic: 50 problem groups, 2,335 valid-PPA
+    candidates, mean best fitness 0.2120, mean style clusters 1.06, mean
+    canonical netlists 8.1, and mean motif signatures 5.02.
+  - Auto-BD valid-PPA mean best fitness remains highest for
+    `landing_smooth_qd_manual_bd` at 0.2887; descriptor families still do not
+    show a promoted diversity-utility gate in the common-audit read.
+- Budget/funnel artifact hashes:
+  - `budget_funnel_summary.json`:
+    `34d8950bde7ed9efe72092ec7669555cf1b581d3deda4e612c09cd84195938e5`
+  - `budget_funnel_curves.csv`:
+    `b805b4d40577b74fbe26fc204904acaa09922044b730249c24eb592b16ffeeb9`
+  - `budget_funnel_aggregate.csv`:
+    `8b0db9dd6422cceca4b55722f06cabe87914159d5138a9b7e64a9ce89a5bb6fe`
+  - `budget_funnel_report.md`:
+    `a700050bc8b52614634bb603f9e2c28892759bae3e583818d7a9f35fccfa28af`
+- Updated `scripts/report_rtl_diversity_check.py` to load the budget/funnel
+  summary into the central Diversity Necessity Report and added loader
+  coverage in `tests/scripts/test_report_rtl_diversity_check.py`.
+- Regenerated the central report:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/restarted_report_20260621_062641_UTC --aspdac-root exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp --wp0-artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --qwen-smoke-limit 64`.
+- Report artifact:
+  `exp/diversity_check/restarted_report_20260621_062641_UTC/`.
+- Updated report hashes:
+  - `diversity_necessity_report.md`:
+    `8f9196b53894a3084aeb2d21eed6dae673fb21c09ab217bbe921adf37a715556`
+  - `diversity_necessity_report.json`:
+    `b5a3122af3ee6249ea02b8674fec69a98af6a8068678544cdda3d7ed07f43c9b`
+  - `encoder_leaderboard.csv`:
+    `38a138fb098198f12b8334837a7186aa6ea5e38ac9027369995a433b2ad71d32`
+  - `d_gate_matrix.csv`:
+    `4bf52c6ab5db8a13bec254fd7373643c6fa9fb9cdd11d259b05204bd0d0c995d`
+  - `claim_levels.csv`:
+    `27e5ee31d38a9fd2a48d351bba9a9d9731be70da66ba3896cbf8371a92dd8826`
+  - `wp0_replay_summary.csv`:
+    `c2656cc1f41cbc7998c8a4ffff0ee0376d8fd88393385d85626ed7f95d3d102b`
+  - `case_studies.csv`:
+    `c42ff93e19ede55c72ad9bcbc8dab49af7432c7b5e7241d14e87582d35e1f5d4`
+- Interpretation: Qwen3 and DeepGate3 did not return promoted results.
+  Qwen3 produced real `Qwen/Qwen3-Embedding-0.6B` embeddings but remains
+  diagnostic-only; DeepGate3 reached the bounded AIG/tokenizer path but
+  embeddings collapsed under the current graph representation. AURORA-style
+  or finetuned-encoder work is therefore reasonable as a diagnostic
+  escalation, but it should first declare a fitting corpus, leakage controls,
+  utility target, and no-proceed threshold rather than becoming an in-loop
+  method by default.
+- Current verdict remains `B illumination_only`.
+- Validation before commit:
+  - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_analyze_rtl_diversity_budget_funnels.py
+    tests/scripts/test_audit_rtl_diversity_lineage_sources.py
+    tests/scripts/test_analyze_rtl_diversity_lineage_yield.py`: 12 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    scripts/analyze_rtl_diversity_budget_funnels.py
+    scripts/audit_rtl_diversity_lineage_sources.py
+    scripts/analyze_rtl_diversity_lineage_yield.py
+    tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_analyze_rtl_diversity_budget_funnels.py
+    tests/scripts/test_audit_rtl_diversity_lineage_sources.py
+    tests/scripts/test_analyze_rtl_diversity_lineage_yield.py`: clean.
+  - `uv run pyright scripts/report_rtl_diversity_check.py
+    scripts/analyze_rtl_diversity_budget_funnels.py
+    scripts/audit_rtl_diversity_lineage_sources.py
+    scripts/analyze_rtl_diversity_lineage_yield.py`: 0 errors, 0 warnings.
+  - `git diff --check`: clean.
