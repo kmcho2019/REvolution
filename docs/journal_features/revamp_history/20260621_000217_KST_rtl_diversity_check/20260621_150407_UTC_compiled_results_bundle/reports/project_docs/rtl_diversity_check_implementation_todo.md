@@ -1,0 +1,320 @@
+# RTL Diversity Check Experiment TODO
+
+Line limit: 240 lines. Keep this checklist concise and update-oriented.
+Move command details, failed attempts, artifact paths, and rationale to
+`rtl_diversity_check_implementation_history.md`.
+
+Central plan: `rtl_diversity_check_plan.md`.
+Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
+
+## P0 - Setup And Scope
+
+- [x] Create `feat/journal-diversity-check-exp-20260620` from
+  `feat/journal-auto-bd-exp-20260618`.
+- [x] Move GPU devcontainer setup onto the diversity-check branch.
+- [x] Mount the historical REvolution checkout read-only at
+  `/aux/revolution-history`.
+- [x] Confirm `nvidia-smi` works inside the devcontainer.
+- [x] Confirm `/aux/revolution-history` is readable and not writable from
+  the devcontainer.
+- [x] Preflight `curl http://20.0.0.103:8000/v1/models` only if live runs or
+  live model calls become necessary. Scoped: no live calls/runs were needed.
+- [x] If live runs are needed, confirm `gpt-oss-120b` is served with
+  `max_model_len >= 131072` and record token settings. Scoped: no live runs.
+- [x] Record branch, HEAD, dirty state, and devcontainer image/container
+  details in the history.
+- [x] Confirm this is a post-hoc diagnostic goal, not a new in-loop QD
+  method goal.
+- [x] Read the 20260618 Auto-BD final negative decision and seed-3 screening
+  report before designing new descriptor experiments.
+- [x] Record that Yosys-stat, motif histogram, ST-NOD, projected SR,
+  VQ/codebook, and random descriptor arms are existing control/negative
+  evidence, not fresh default candidates.
+
+## P1 - Corpus Inventory
+
+- [x] Index current Auto-BD seed-1 and seed-3 `standard_results` roots.
+  Scoped: seed-3 raw roots indexed; seed-1 centralized report ingested.
+- [x] Ingest the 20260618 Auto-BD centralized reports and final negative
+  decision as context for why new diagnostics are needed.
+- [x] Index historical `exp/` roots under `/aux/revolution-history`.
+- [x] Check whether an `aspdac2026-paper` checkout/worktree is available
+  locally and index its `exp/` roots if present. Scoped: no local worktree;
+  public `aspdac2026-submission` release archive was downloaded and indexed.
+- [x] Index recoverable archived baselines from `baselines/`.
+- [x] Emit a corpus coverage table with candidate counts and available
+  code/netlist/PPA artifacts.
+- [x] Label corpus strata as fully paired, partially paired, or unpaired.
+- [x] Record missing-artifact patterns without adding broad fallback logic.
+- [x] Mark small subsets as development/debug evidence only.
+- [x] Identify the largest practical final-conclusion corpus, preferring
+  broad RTLLM coverage when available. Superseded by ASP-DAC release coverage.
+- [x] Use VerilogEval only when existing artifacts make it practical, or
+  label its evidence as partial. ASP-DAC release includes VerilogEval.
+
+## P2 - Candidate Audit Table
+
+- [x] Define one simple candidate-level table for retrospective analysis.
+- [x] Include method, seed, model, benchmark, problem, generation, operator,
+  candidate id, code path, netlist path, validity funnel, PPA, and fitness.
+- [x] Include existing canonical netlist hash, motif signature, descriptor
+  vector, and archive cell fields when present.
+- [x] Include descriptor/projection version and fitting-corpus hashes when
+  fitted descriptors are used. Scoped: no fitted descriptor claim is used.
+- [x] Assert required fields for standard-results inputs.
+- [x] Keep outputs under `exp/diversity_check/`.
+
+## P3 - Diagnostic Descriptors
+
+- [x] Reuse existing structural descriptor outputs from the Auto-BD push
+  where available instead of re-running failed arms by default.
+- [x] Add Qwen3-Embedding-0.6B extraction for RTL/source text as a bounded
+  diagnostic path. Phase 0 scoped this as blocked by missing `torch`; the
+  restart requires dependency escalation before accepting blocker status.
+- [x] Add Qwen dry-run mode that reports candidate text coverage without
+  loading the model.
+- [x] Check Qwen against identifier/comment stability and a lexical baseline.
+- [x] Investigate DeepGate3 input requirements and record the minimum
+  graph-export path needed.
+- [x] Record whether DeepGate3 keeps, cone-splits, or drops sequential state.
+  Scoped: DeepGate3 is absent; future run must settle graph-state policy.
+- [x] Treat DeepSeq, NetTAG, CircuitFusion, larger Qwen models, and custom
+  AURORA training as later-stage candidates only.
+- [x] Defer custom AURORA/autoencoder training unless post-hoc evidence
+  justifies it.
+- [x] If AURORA-style training is later approved, record why pre-trained
+  Qwen/DeepGate3 diagnostics were insufficient first. Scoped: not approved.
+
+## P4 - First Post-Hoc Analyses
+
+- [x] Implement cluster contribution analysis.
+- [x] Implement oracle downsampling analysis.
+- [x] Split downsampling into oracle-reconstructive and online-available
+  variants.
+- [x] Implement early diversity predictor analysis if generation data is
+  available.
+- [x] Implement parent-child jump analysis only when lineage is recoverable.
+  Scoped: selected broad RTLLM artifacts do not expose lineage.
+- [x] Implement shadow archive replay only after the audit table is stable.
+- [x] Compare against best-fitness-only and random-selection controls.
+- [x] Report diversity through the validity funnel and normalize by valid-PPA
+  count.
+
+## P5 - Reporting
+
+- [x] Generate one concise report with tables and plots for the completed
+  analyses.
+- [x] Report paired problem/seed/method deltas where possible.
+- [x] Separate development-subset findings from final-conclusion findings.
+- [x] Base final conclusions on a large dataset run or retrospective corpus,
+  preferably broad RTLLM coverage. Final uses broad RTLLM plus ASP-DAC.
+- [x] Report whether each diversity layer is predictive, reconstructive,
+  descriptive-only, or inconclusive.
+- [x] Assign claim levels `L0` through `L5` and one final verdict from A-F.
+- [x] Include the diversity-efficiency frontier plot.
+- [x] Include visual case studies for positive, null, and negative outcomes.
+- [x] Record case-study selection rules before narrative interpretation.
+- [x] Include negative findings plainly.
+- [x] State limits from missing artifacts, model/budget confounds, and
+  unpaired corpora.
+
+## P6 - Validation And Handoff
+
+- [x] Add focused tests for corpus indexing and metric calculations.
+- [x] Run focused pytest commands for touched tests.
+- [x] Run `ruff check` on touched Python files.
+- [x] Run type checks on touched source modules if source modules are added.
+- [x] Update user-facing docs only for stable entry points. Scoped: experiment
+  entry point is documented in the goal history/report, not promoted to README.
+- [x] Record all command evidence and artifacts in the history.
+- [x] Run adversarial validation.
+- [x] Verify D-gate minimum evidence and descriptor-fitting leakage checks.
+- [x] Resolve FAIL findings or mark exact blockers and missing evidence.
+
+## Completion Gates
+
+- [x] Phase 0 `rtl_diversity_check_plan.md` outcome is satisfied or explicitly
+  narrowed with evidence for the generated ASP-DAC-backed report.
+- [x] Phase 0 claims are not based only on partial sub-datasets.
+- [x] Phase 0 broad claims do not rely only on archive occupancy or exact
+  duplicate counts.
+- [x] Phase 0 Auto-BD follow-up is not justified by the current utility gates.
+- [x] Phase 0 code remains simple, typed where useful, and skimmable.
+- [x] Phase 0 `rtl_diversity_check_subagent_validation_report.md` records PASS.
+
+## Restart Notice - Phase 0 Is Not Final Sign-Off
+
+- [x] Commit Phase 0 preliminary audit and archived derailed report before
+  changing the plan. Commit: `a5fc5018ab`.
+- [x] Treat the Phase 0 PASS as validating only the generated
+  `B illumination_only` report, not the full research question.
+- [x] Record in the history why Phase 0 stopped too early.
+- [x] Re-read `original_notes/` and list the concrete methods Phase 0 did not
+  attempt.
+
+## WP0 - Deeper Diversity Necessity
+
+- [x] Reconstruct ST-NOD / synthesis-response descriptor rows from available
+  stage dumps, fitting artifacts, or Auto-BD sidecars.
+  Scoped: seed-3 source parquets expose generated-candidate rows for all
+  4,680 ST-NOD rows and all 4,680 SR random-ReLU PCA rows, but actual
+  non-empty descriptor/common-audit vectors are valid-PPA-scoped.
+  Artifact:
+  `exp/diversity_check/wp0_stnod_sr_reconstruction_20260621_040536_UTC/`.
+- [x] Search historical corpora for lineage-rich generation logs with parent,
+  operator, child, and descendant fields.
+  Scoped: ASP-DAC and broad RTLLM generation logs expose generation/operator
+  fields but no non-empty lineage; Auto-BD archive tables expose 271
+  lineage-capable files and 3,358 parent/lineage edges.
+  Artifact:
+  `exp/diversity_check/wp0_lineage_source_audit_20260621_055941_UTC/`.
+- [x] Run parent-child jump or descendant-yield analysis on every corpus that
+  exposes lineage; otherwise log the corpus search that proves none do.
+  Scoped: descendant-yield analysis was run on the Auto-BD archive tables
+  that exposed lineage. It recovered 3,358 edges, 2,233 parent-found edges,
+  and 779 positive child-quality deltas, but 0/8 method/table groups had
+  positive mean quality delta.
+  Artifact:
+  `exp/diversity_check/wp0_lineage_descendant_yield_20260621_060447_UTC/`.
+- [x] Compute diversity at 25%, 50%, 75%, and 100% of budget where generation
+  metadata exists.
+  Artifact:
+  `exp/diversity_check/wp0_budget_funnel_curves_20260621_062414_UTC/`.
+  Scoped: 203,944 candidates, 1,069 problem groups, 21,380 curve rows, and
+  budget checkpoints 0.25, 0.50, 0.75, and 1.00 across Auto-BD, RTLLM, and
+  ASP-DAC-release corpora.
+- [x] Add online-available replay policies separate from oracle
+  reconstructive replay.
+- [x] Add duplicate-suppression replay by canonical netlist hash and
+  near-identical motif signature.
+  Partial: `wp0_duplicate_suppression.csv` covers canonical netlist hash and
+  exact motif-signature hash for ST-NOD/SR seed-3 roots. Distance-based
+  near-motif suppression covers the 2,335 RTLLM valid-PPA rows with stored
+  motif vectors in the central audit; ASP-DAC and Auto-BD imports lack
+  distance-bearing motif vectors in this audit. Quality-gated novelty replay
+  is complete.
+  Artifact:
+  `exp/diversity_check/wp2_near_motif_suppression_20260621_072816_UTC/`.
+- [x] Report diversity through the generated, functional, synthesis-valid,
+  valid-PPA, and Pareto-front funnels for each descriptor family.
+  Artifact:
+  `exp/diversity_check/wp0_budget_funnel_curves_20260621_062414_UTC/`.
+- [x] Add common-audit comparisons that do not let each descriptor define an
+  easier archive space.
+  Scoped: the budget/funnel curves use shared candidate-audit fields rather
+  than descriptor-owned archive cells; ASP-DAC lacks recovered netlist hashes
+  in this post-hoc audit, so canonical/motif counts are zero there.
+
+## WP1 - Real Encoder Diagnostics
+
+- [x] Escalate Qwen3 dependencies before blocker status. Used an isolated
+  environment after avoiding repo lockfile churn.
+- [x] Create an isolated ignored encoder environment under
+  `exp/diversity_check/encoder_envs/` and record the command.
+- [x] Run real Qwen3-Embedding-0.6B extraction on a bounded corpus slice for
+  raw, comment-stripped, and identifier-normalized RTL.
+- [x] Add Yosys-normalized RTL to the Qwen3 probe.
+- [x] Record first Qwen device, model id, artifact path/hash, runtime, and
+  stability results.
+- [x] Try DeepGate3 setup through `uv add`, a documented source checkout, or
+  an isolated ignored environment before blocker status is accepted.
+- [x] Export AIG/Yosys graph inputs for a bounded corpus slice and record
+  whether sequential state is kept, cone-split, or dropped.
+- [x] Run DeepGate3 embeddings end to end or log exact graph/model/setup
+  blocker evidence.
+- [x] Create per-encoder method cards for Qwen3 and DeepGate3 with extraction,
+  stability, non-collapse, leakage, runtime, interpretability, and verdict.
+- [x] Consider larger Qwen, DeepSeq, NetTAG, CircuitFusion, or similar
+  encoders only if Qwen3/DeepGate3 are blocked or inconclusive with evidence.
+  Scoped: larger Qwen common-audit extraction ran on 768 candidates and
+  remained `diagnostic_only_no_proceed`; raw Qwen lost HV versus lexical
+  farthest-first and identifier-normalized Qwen gained only 3.35%, below the
+  10% replay utility gate. DeepGate3 collapsed on the bounded AIG/tokenizer
+  path. Any further DeepSeq, NetTAG, CircuitFusion, projection-head, LoRA, or
+  finetuning run must first name the utility target, fitting corpus, leakage
+  controls, and no-proceed threshold.
+  Escalation plan:
+  `rtl_diversity_check_encoder_escalation_plan.md`.
+
+## WP2 - Quality-Gated / Repair-Preserving Diversity Pressure
+
+- [x] Decide whether retrospective evidence requires a bounded replay-only
+  or live sampling experiment.
+  Scoped: replay-only evidence was expanded through quality-gated novelty,
+  budget funnels, near-motif suppression, learned-encoder probes, and Qwen
+  common-audit replay. Refreshed validation still passes only the
+  `B illumination_only` / diagnostic-only no-proceed claim; no offline utility
+  gate currently justifies live sampling.
+- [x] If live sampling is used, preflight `curl http://20.0.0.103:8000/v1/models`
+  and record served model id, max_model_len, token settings, subset, seed, and
+  command.
+  Scoped: no live sampling was launched because the offline restart evidence
+  did not pass a D1/D3/D4/D5 utility gate. The live-run preflight remains a
+  requirement only for a future live sampling branch.
+- [x] Implement or simulate a quality floor: non-dominated, HV contributor,
+  top-quartile valid candidate, above median valid fitness, or one PPA axis
+  improved without catastrophic regression.
+  Scoped: `wp0_quality_gated_novelty.csv` uses prefix median valid fitness.
+- [x] Run duplicate-suppression or quality-gated novelty replay before any
+  live run.
+  Scoped: replay-only evidence exists for ST-NOD/SR seed-3 roots.
+- [x] Run or schedule a novelty-parent sweep with fractions
+  `0.00`, `0.10`, `0.25`, and `0.50`, or log why budget forbids it.
+  Scoped: replay sweep emitted in
+  `exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC/`.
+- [x] Reject any method that loses valid-PPA coverage by more than 5
+  percentage points or repeats the ST-NOD-style robustness drop.
+  Scoped: the current report rejects method promotion for quality-gated
+  novelty replay, near-motif suppression, Qwen replay, DeepGate3, and
+  AURORA-style probes. No method with robustness loss or sub-threshold utility
+  is promoted beyond diagnostics.
+
+## WP3 - Learned / AURORA / VQ Escalation
+
+- [x] Decide from WP0-WP2 whether AURORA/VQ/learned netlist embeddings are
+  justified, diagnostic-only, or no-proceed.
+  Scoped: current restarted report keeps AURORA/VQ and learned encoders
+  conditional; they are not justified until a non-leaky utility gate appears.
+- [x] Run a bounded AURORA-style learned-encoder diagnostic before any
+  finetuning or in-loop method claim.
+  Scoped: NumPy-only linear autoencoder probes with latent dimensions 2 and 3
+  were trained on problem-split common-audit vectors with PPA fields excluded.
+  Both returned `diagnostic_only_no_proceed`.
+- [x] Run the richer AURORA-style diagnostic from the encoder escalation plan.
+  Scoped: rich AE8/AE16 bottlenecks were trained on 37 implementation-only
+  audit features over all 203,944 candidates with problem-held-out replay.
+  They were non-collapsed but did not improve held-out hypervolume or Pareto
+  retention over the implementation-feature baseline.
+  Artifact:
+  `exp/diversity_check/wp3_rich_encoder_20260621_070533_UTC/`.
+- [x] If justified beyond diagnostics, write the training/fitting corpus,
+  leakage policy,
+  checkpoint/hash, and common-audit evaluation before running training.
+  Current status: not justified as an in-loop method. AURORA-style or
+  finetuned-encoder work is eligible only as a diagnostic escalation unless it
+  targets a concrete D1/D3/D4/D5 gate.
+  Escalation plan:
+  `rtl_diversity_check_encoder_escalation_plan.md`.
+- [x] Do not revive VQ/codebook in-loop unless a continuous descriptor first
+  passes quality-gated robustness tests.
+  Scoped: VQ/codebook was not revived in-loop. Existing VQ/codebook evidence
+  remains prior negative/control context from the 20260618 Auto-BD work.
+
+## Restart Completion Gates
+
+- [x] The restarted Diversity Necessity Report is regenerated from artifacts.
+- [x] It contains a preliminary negative-result and plan-pivot section.
+- [x] It includes per-encoder method cards and centralized encoder
+  leaderboard rows for every attempted encoder.
+- [x] It includes D-gate and claim-level tables after WP0-WP2 evidence.
+- [x] It chooses one final recommendation: no-proceed, diagnostic-only,
+  quality-gated ST-NOD, learned-encoder diagnostic follow-up, or AURORA/VQ
+  escalation.
+  Scoped: current recommendation is diagnostic-only / no-proceed for method
+  promotion; Qwen projection-head diagnostics, stronger graph encoders, or
+  live sampling require a concrete D1/D3/D4/D5 target.
+- [x] The restarted adversarial prompt returns PASS, or FAIL findings are
+  resolved or logged as blockers with three concrete attempts.
+  Latest independent PASS covers implementation HEAD `375eb9ff4d` and artifact
+  `exp/diversity_check/restarted_report_20260621_075346_UTC/`, scoped only to
+  `B illumination_only` / diagnostic-only no-proceed.
