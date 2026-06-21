@@ -25,6 +25,7 @@ Start here when resuming the active goal.
 | `README.md` | This local navigation guide. |
 | `goal_template.md` | Compact goal body that fits the goal-tool limit. |
 | `useful_bd_push_plan.md` | Main contract: outcome, constraints, method families, gates, and completion criteria. |
+| `technique_lineage_ledger.md` | Skim-first lane/category map with result lineage, branch policy, and Mermaid process graph. |
 | `technique_lanes.md` | Lane-based process map with method families, lineage graph, decision ledger, branch guidance, and next actions. |
 | `useful_bd_push_implementation_todo.md` | Short checklist to keep the goal moving. |
 | `useful_bd_push_implementation_history.md` | Chronological evidence log for decisions, commands, runs, failures, and commits. |
@@ -50,6 +51,14 @@ Start here when resuming the active goal.
 | `techniques/technique_registry.csv` | Stable chronological index for all technique packages. |
 | `techniques/T##_slug/figures/` | Generated or copied PNG figures plus visual inspection notes for that method. |
 | `techniques/T##_slug/tables/` | Raw or summarized CSV tables needed to regenerate method claims. |
+
+## Process Tracking
+
+- `technique_lineage_ledger.md` is the fast orientation document: use it to
+  see category, result, lineage, and branch direction.
+- `technique_lanes.md` is the detailed research log: use it for rationale,
+  decision tags, and the longer lane notes.
+- `techniques/technique_registry.csv` is the chronological package index.
 
 ## Technique Package States
 

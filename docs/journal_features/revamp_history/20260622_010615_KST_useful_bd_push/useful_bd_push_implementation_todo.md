@@ -40,6 +40,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       front family, QD-score AUC, coverage AUC, and HV AUC metrics.
 - [x] Maintain `technique_lanes.md` as the lane-level decision ledger and
       lineage map for method families.
+- [x] Add `technique_lineage_ledger.md` as a skim-first lane/category,
+      lineage, result, and branch tracking guide.
 - [ ] Add figures that are readable enough for review.
 - [ ] Inspect generated figures with `view_image` or equivalent before marking
       any technique complete.

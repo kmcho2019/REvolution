@@ -736,3 +736,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   traffic-light synthesis-validity drop observed in T24.
 - Next action: run the T25 live command after code/tests pass, then package the
   comparison against T24 classic/manual/random/SR raw.
+
+## Technique Lineage Ledger - 2026-06-21 UTC
+
+- Added `technique_lineage_ledger.md` as the skim-first process map for the
+  useful-BD push.
+- The new ledger categorizes technique families by lane, records current
+  result status, gives branch/return conditions, and includes a Mermaid lineage
+  graph from prior negative diversity evidence through T25.
+- Kept `technique_lanes.md` as the detailed rationale and decision-ledger
+  document, while the new ledger serves as the compact navigation layer.
+- Updated the local README and TODO so future technique updates keep category,
+  result, lineage, and branch direction synchronized with the package reports.
