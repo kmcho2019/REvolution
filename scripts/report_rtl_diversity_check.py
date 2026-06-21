@@ -83,6 +83,13 @@ WP3_LEARNED_SUMMARIES = (
         "wp3_learned_encoder_summary.json"
     ),
 )
+WP3_RICH_SUMMARY = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp3_rich_encoder_20260621_070533_UTC/"
+        "wp3_rich_encoder_summary.json"
+    )
+)
 LINEAGE_AUDIT_SUMMARY = (
     REPO_ROOT
     / (
@@ -1477,9 +1484,49 @@ def learned_encoder_diagnostics() -> dict[str, Any]:
             }
         )
         summaries.append(summary)
+    if WP3_RICH_SUMMARY.is_file():
+        summary = load_json(WP3_RICH_SUMMARY)
+        comparison_rows = {
+            row["representation"]: row for row in summary["comparison"]["comparisons"]
+        }
+        for encoder in summary["encoders"]:
+            representation = encoder["representation"]
+            comparison = comparison_rows[representation]
+            rows.append(
+                {
+                    "family": representation,
+                    "stability": (
+                        f"problem split; train={summary['train_candidate_count']}, "
+                        f"holdout={summary['holdout_candidate_count']}, "
+                        f"input_dim={summary['input_dim']}"
+                    ),
+                    "non_collapse": (
+                        f"latent std={format_float_list(encoder['latent_std'])}; "
+                        "pairwise cosine mean="
+                        f"{encoder['pairwise_cosine']['mean']:.4g}; "
+                        "holdout MSE="
+                        f"{encoder['holdout_reconstruction_mse']:.4g}"
+                    ),
+                    "replay_signal": (
+                        "holdout d_hv="
+                        f"{comparison['hypervolume_gain_fraction']:.4g}, "
+                        "d_pareto="
+                        f"{comparison['pareto_gain_fraction']:.4g}, "
+                        "d_best="
+                        f"{comparison['best_fitness_delta']:.4g}"
+                    ),
+                    "cost": "NumPy SVD over implementation-only audit features",
+                    "verdict": comparison["verdict"],
+                    "artifact": summary["out_dir"],
+                }
+            )
+        summaries.append(summary)
     return {
         "status": "loaded" if rows else "not_found",
-        "summary_paths": [path.as_posix() for path in WP3_LEARNED_SUMMARIES],
+        "summary_paths": [
+            *(path.as_posix() for path in WP3_LEARNED_SUMMARIES),
+            WP3_RICH_SUMMARY.as_posix(),
+        ],
         "rows": rows,
         "summaries": summaries,
     }

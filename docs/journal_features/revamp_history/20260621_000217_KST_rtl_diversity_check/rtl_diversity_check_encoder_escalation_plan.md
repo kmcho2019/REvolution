@@ -1,6 +1,6 @@
 # RTL Diversity Encoder Escalation Plan
 
-Status: active next-step plan after the restarted WP1/WP3 diagnostics.
+Status: active escalation record after the restarted WP1/WP3 diagnostics.
 
 ## Current Result
 
@@ -88,14 +88,25 @@ duplicate-count, or descriptor-owned archive-space confounds.
 - D4/D5: fail if live or replay evidence repeats the ST-NOD-style robustness
   drop or does not beat the random descriptor control.
 
-## First Concrete Next Run
+## First Concrete Next Run - Completed
 
-Start with a richer AURORA-style diagnostic, not full finetuning:
+The first richer AURORA-style diagnostic has been run:
 
-- build a training table from candidate audit rows with recovered RTL,
-  canonical/motif hashes, synthesis-valid status, and synthesis-trajectory
-  features where present;
-- train on implementation-only features with held-out problems;
-- evaluate against common-audit and best-fitness replay controls;
-- record the encoder card before considering Qwen projection, LoRA, or live
-  sampling.
+- artifact: `exp/diversity_check/wp3_rich_encoder_20260621_070533_UTC/`;
+- training table: 203,944 candidate-audit rows with 37 implementation-only
+  features;
+- split: problem-held-out, 134,643 train candidates and 69,301 holdout
+  candidates;
+- encoders: frozen linear AE8 and AE16 bottlenecks;
+- result: both encoders were non-collapsed, but neither improved held-out
+  replay hypervolume or Pareto retention over the implementation-feature
+  baseline.
+
+The run therefore remains `diagnostic_only_no_proceed`.
+
+The next escalation should not be full finetuning until a specific remaining
+gap is named. The likely options are:
+
+- larger Qwen3 common-audit extraction with leakage controls;
+- a graph encoder retry with a sequential-state or cone-splitting policy;
+- bounded live sampling only after an offline utility gate passes.

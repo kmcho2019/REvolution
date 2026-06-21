@@ -171,6 +171,7 @@ def test_learned_encoder_diagnostics_reads_wp3_summaries(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     monkeypatch.setattr(mod, "WP3_LEARNED_SUMMARIES", (summary_path,))
+    monkeypatch.setattr(mod, "WP3_RICH_SUMMARY", tmp_path / "missing_rich.json")
 
     card = mod.learned_encoder_diagnostics()
 
@@ -178,6 +179,49 @@ def test_learned_encoder_diagnostics_reads_wp3_summaries(tmp_path, monkeypatch):
     assert card["rows"][0]["family"] == "aurora_linear_ae2"
     assert card["rows"][0]["verdict"] == "diagnostic_only_no_proceed"
     assert "holdout d_canon=0" in card["rows"][0]["replay_signal"]
+
+
+def test_learned_encoder_diagnostics_reads_rich_summary(tmp_path, monkeypatch):
+    rich_path = tmp_path / "wp3_rich_summary.json"
+    rich_path.write_text(
+        json.dumps(
+            {
+                "train_candidate_count": 10,
+                "holdout_candidate_count": 5,
+                "input_dim": 37,
+                "out_dir": "exp/wp3_rich",
+                "comparison": {
+                    "comparisons": [
+                        {
+                            "representation": "rich_ae8",
+                            "hypervolume_gain_fraction": -0.01,
+                            "pareto_gain_fraction": -0.02,
+                            "best_fitness_delta": 0.0,
+                            "verdict": "diagnostic_only_no_proceed",
+                        }
+                    ]
+                },
+                "encoders": [
+                    {
+                        "representation": "rich_ae8",
+                        "latent_std": [1.0, 0.8],
+                        "pairwise_cosine": {"mean": 0.4},
+                        "holdout_reconstruction_mse": 1.2,
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(mod, "WP3_LEARNED_SUMMARIES", ())
+    monkeypatch.setattr(mod, "WP3_RICH_SUMMARY", rich_path)
+
+    card = mod.learned_encoder_diagnostics()
+
+    assert card["status"] == "loaded"
+    assert card["rows"][0]["family"] == "rich_ae8"
+    assert card["rows"][0]["verdict"] == "diagnostic_only_no_proceed"
+    assert "d_hv=-0.01" in card["rows"][0]["replay_signal"]
 
 
 def test_lineage_diagnostics_reads_yield_artifacts(tmp_path, monkeypatch):

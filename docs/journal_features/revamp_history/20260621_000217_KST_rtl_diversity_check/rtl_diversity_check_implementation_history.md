@@ -1277,3 +1277,82 @@ validation evidence.
   evaluation, common-audit replay controls, and fixed no-proceed thresholds.
 - The plan records required gates, training/leakage rules, escalation order,
   and no-proceed thresholds before any new encoder training command is run.
+
+### WP3 Rich Implementation-Feature Encoder Diagnostic
+
+- Added `scripts/run_rtl_diversity_wp3_rich_encoder.py` with focused test
+  `tests/scripts/test_run_rtl_diversity_wp3_rich_encoder.py`.
+- The first full run was interrupted after 3:43 because pandas `iterrows()`
+  in the farthest-candidate novelty loop made the full replay too slow.
+  The selection rule was then vectorized with NumPy and rerun.
+- Ran the richer diagnostic:
+  `uv run python scripts/run_rtl_diversity_wp3_rich_encoder.py --candidate-audit exp/diversity_check/restarted_report_20260621_062641_UTC/candidate_audit.parquet --output-dir exp/diversity_check/wp3_rich_encoder_20260621_070533_UTC --latent-dims 8 16`.
+- Artifact:
+  `exp/diversity_check/wp3_rich_encoder_20260621_070533_UTC/`.
+- Training protocol: fixed problem-held-out split over all 203,944 candidate
+  audit rows. Inputs were 37 implementation-only features: RTL lexical
+  counts, syntax/functionality/synthesis stages, descriptor vector slots,
+  netlist motif ratios, style one-hots, and hash-availability flags.
+- Forbidden fitting inputs were area, power, timing, fitness,
+  hypervolume contribution, valid-PPA, Pareto membership, OpenROAD pass,
+  archive cell id, problem id, candidate id, prompt hash, model, and model id.
+- Result:
+  - AE8 latent pairwise cosine mean 0.4589; holdout reconstruction MSE 2.371;
+    held-out replay hypervolume gain fraction 0.0 and Pareto gain fraction
+    -0.001087 versus the implementation-feature baseline.
+  - AE16 latent pairwise cosine mean 0.3879; holdout reconstruction MSE 1.184;
+    held-out replay hypervolume gain fraction -0.000071 and Pareto gain
+    fraction -0.000362 versus the implementation-feature baseline.
+  - Verdict: `diagnostic_only_no_proceed`.
+- Artifact hashes:
+  - `wp3_rich_encoder_summary.json`:
+    `4fc3aef43b881716ebd24ac9c3a205ee3bf8416ef798599bc33424ea7a346605`
+  - `wp3_rich_encoder_replay.csv`:
+    `fd2dd16910be723d595cabbca1c2e732c5e6d1a26b25467381c28b42255de0dd`
+  - `wp3_rich_encoder_rows.parquet`:
+    `0cc30a8a00f0474dada0ab8147dfc082d3214d9b1d06c62a8c8056a8fee74d3c`
+  - `wp3_rich_encoder_feature_manifest.csv`:
+    `8853d7b2654387e9459f458b14ec2102db55f3ab69610019159bd05d217a3ec9`
+  - `wp3_rich_encoder_card.md`:
+    `4138f700b1d8d3f90bdd447fa79816d09e58ecc666565ceab3aadcdc5519b194`
+- Updated `scripts/report_rtl_diversity_check.py` so the central report loads
+  the richer WP3 summary and adds `rich_ae8` and `rich_ae16` rows to the WP3
+  diagnostics and encoder leaderboard.
+- Regenerated the central report:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/restarted_report_20260621_071339_UTC --aspdac-root exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp --wp0-artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --qwen-smoke-limit 64`.
+- Report artifact:
+  `exp/diversity_check/restarted_report_20260621_071339_UTC/`.
+- Report result remains `B illumination_only`.
+- Updated report hashes:
+  - `diversity_necessity_report.md`:
+    `5e41a1c25688368b37eec38539a392ce6809c4c5199477b36aaf9d5b70c2c302`
+  - `diversity_necessity_report.json`:
+    `0722b9d52a03664ed0f004c63dfc5bca7a779bd3febdfdd401f9950ed135bad1`
+  - `encoder_leaderboard.csv`:
+    `794ac49d1322d8190f5cb80b3c75f4d1968bf89147f48658c5025ad394a48c82`
+  - `d_gate_matrix.csv`:
+    `4bf52c6ab5db8a13bec254fd7373643c6fa9fb9cdd11d259b05204bd0d0c995d`
+  - `claim_levels.csv`:
+    `27e5ee31d38a9fd2a48d351bba9a9d9731be70da66ba3896cbf8371a92dd8826`
+  - `wp0_replay_summary.csv`:
+    `c2656cc1f41cbc7998c8a4ffff0ee0376d8fd88393385d85626ed7f95d3d102b`
+  - `case_studies.csv`:
+    `c42ff93e19ede55c72ad9bcbc8dab49af7432c7b5e7241d14e87582d35e1f5d4`
+- Interpretation: the richer AURORA-style diagnostic addressed the earlier
+  criticism that the 2D/3D probes only compressed four common-audit axes. It
+  still does not create a useful diversity signal under the held-out replay
+  utility gate, so it should not be promoted or finetuned in-loop.
+- Validation before commit:
+  - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_run_rtl_diversity_wp3_rich_encoder.py
+    tests/scripts/test_run_rtl_diversity_wp3_learned_encoder.py`: 12 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    scripts/run_rtl_diversity_wp3_rich_encoder.py
+    scripts/run_rtl_diversity_wp3_learned_encoder.py
+    tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_run_rtl_diversity_wp3_rich_encoder.py
+    tests/scripts/test_run_rtl_diversity_wp3_learned_encoder.py`: clean.
+  - `uv run pyright scripts/report_rtl_diversity_check.py
+    scripts/run_rtl_diversity_wp3_rich_encoder.py
+    scripts/run_rtl_diversity_wp3_learned_encoder.py`: 0 errors, 0 warnings.
+  - `git diff --check`: clean.

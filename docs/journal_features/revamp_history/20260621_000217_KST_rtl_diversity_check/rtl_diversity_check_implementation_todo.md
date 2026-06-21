@@ -263,6 +263,13 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   Scoped: NumPy-only linear autoencoder probes with latent dimensions 2 and 3
   were trained on problem-split common-audit vectors with PPA fields excluded.
   Both returned `diagnostic_only_no_proceed`.
+- [x] Run the richer AURORA-style diagnostic from the encoder escalation plan.
+  Scoped: rich AE8/AE16 bottlenecks were trained on 37 implementation-only
+  audit features over all 203,944 candidates with problem-held-out replay.
+  They were non-collapsed but did not improve held-out hypervolume or Pareto
+  retention over the implementation-feature baseline.
+  Artifact:
+  `exp/diversity_check/wp3_rich_encoder_20260621_070533_UTC/`.
 - [ ] If justified beyond diagnostics, write the training/fitting corpus,
   leakage policy,
   checkpoint/hash, and common-audit evaluation before running training.
