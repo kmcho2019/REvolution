@@ -237,7 +237,13 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   justified, diagnostic-only, or no-proceed.
   Scoped: current restarted report keeps AURORA/VQ and learned encoders
   conditional; they are not justified until a non-leaky utility gate appears.
-- [ ] If justified, write the training/fitting corpus, leakage policy,
+- [x] Run a bounded AURORA-style learned-encoder diagnostic before any
+  finetuning or in-loop method claim.
+  Scoped: NumPy-only linear autoencoder probes with latent dimensions 2 and 3
+  were trained on problem-split common-audit vectors with PPA fields excluded.
+  Both returned `diagnostic_only_no_proceed`.
+- [ ] If justified beyond diagnostics, write the training/fitting corpus,
+  leakage policy,
   checkpoint/hash, and common-audit evaluation before running training.
 - [ ] Do not revive VQ/codebook in-loop unless a continuous descriptor first
   passes quality-gated robustness tests.

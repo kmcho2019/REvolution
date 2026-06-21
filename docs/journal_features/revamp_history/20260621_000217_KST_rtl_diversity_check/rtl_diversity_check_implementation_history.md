@@ -980,3 +980,65 @@ validation evidence.
 - Remaining non-blocking gaps before any stronger claim: incomplete lineage,
   bounded Qwen3 coverage, collapsed/limited DeepGate3 graph evidence,
   distance-based near-identical motif suppression, and report-script size.
+
+### WP3 AURORA-Style Learned Encoder Diagnostic
+
+- Added `scripts/run_rtl_diversity_wp3_learned_encoder.py` with focused test
+  `tests/scripts/test_run_rtl_diversity_wp3_learned_encoder.py`.
+- This is a bounded diagnostic probe, not finetuning and not an in-loop
+  method. It trains a frozen linear reconstruction bottleneck over the
+  existing four-axis `common_audit_descriptor_vector`, using a deterministic
+  problem-level train/holdout split.
+- Leakage policy: fitting inputs exclude area, power, timing, fitness,
+  hypervolume contribution, validity labels, `problem_id`, and candidate IDs.
+  PPA and fitness are used only after fitting for replay evaluation.
+- Ran the 2D probe:
+  `uv run python scripts/run_rtl_diversity_wp3_learned_encoder.py --artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --output-dir exp/diversity_check/wp3_learned_encoder_20260621_053245_UTC_dim2_fixed --latent-dim 2`.
+- 2D artifact:
+  `exp/diversity_check/wp3_learned_encoder_20260621_053245_UTC_dim2_fixed/`.
+- 2D result: train candidates 2,120, holdout candidates 1,682, holdout
+  reconstruction MSE 0.018272, latent std `[1.1895, 0.8730]`, verdict
+  `diagnostic_only_no_proceed`.
+- 2D holdout replay at novelty fraction 0.50: learned latent versus
+  common-audit control has +0 unique canonical netlists, +0 motif signatures,
+  -1 occupied common-audit cell, +1 Pareto point, same best fitness, and
+  slightly lower mean fitness. Pareto gain fraction is 0.00358, below the 5%
+  threshold.
+- 2D artifact hashes:
+  - `wp3_learned_encoder_summary.json`:
+    `8e0e367d172d2e366707072ca2bedda6ec4ea648b647da8b284969ef54ec55de`
+  - `wp3_learned_encoder_replay.csv`:
+    `7a9898fbc37a8b2e65d524dcc909dd39bb9d4307047f1da3bebd22adacc09daa`
+  - `wp3_learned_encoder_rows.parquet`:
+    `4854cd5bf59400902c1528d3193eed1c69207efd40d793eebe1d44bf541397f0`
+  - `wp3_learned_encoder_card.md`:
+    `053b099ccb21207b54f353b2683f9d94b7e74ad2ac4ca7a869534377f8f4b91d`
+- Ran the 3D probe:
+  `uv run python scripts/run_rtl_diversity_wp3_learned_encoder.py --artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --output-dir exp/diversity_check/wp3_learned_encoder_20260621_053245_UTC_dim3_fixed --latent-dim 3`.
+- 3D artifact:
+  `exp/diversity_check/wp3_learned_encoder_20260621_053245_UTC_dim3_fixed/`.
+- 3D result: holdout reconstruction MSE 0.009623, latent std
+  `[1.1895, 0.8730, 1.5850]`, verdict `diagnostic_only_no_proceed`.
+- 3D holdout replay at novelty fraction 0.50 exactly matches common-audit on
+  unique canonical netlists, motif signatures, occupied cells, Pareto size,
+  and best fitness, with slightly lower mean fitness.
+- 3D artifact hashes:
+  - `wp3_learned_encoder_summary.json`:
+    `bcf43ec1c92212a81f1a131e2b95b86a3175f0d22614094274f6444dca20f90c`
+  - `wp3_learned_encoder_replay.csv`:
+    `1063bee779857f3844ea0cf7742c5547a9f66ff257a503a210539e34b667c6fe`
+  - `wp3_learned_encoder_rows.parquet`:
+    `f0305339afa690101e077b823d5d28e0b53aa37b5745f9bb10cce2555d75ee12`
+  - `wp3_learned_encoder_card.md`:
+    `2cd0995f51df076c3c07143da262998718d9dfd8e405070f7f56ccbac07d9dc0`
+- Interpretation: this bounded AURORA-style linear bottleneck does not create
+  a meaningful utility signal beyond the common-audit control. It should not
+  be finetuned or promoted without a richer non-PPA input space, a larger
+  train/holdout corpus, or a concrete D1/D3/D4/D5 target.
+- Validation:
+  - `uv run pytest -q tests/scripts/test_run_rtl_diversity_wp3_learned_encoder.py`:
+    1 passed.
+  - `uv run ruff check scripts/run_rtl_diversity_wp3_learned_encoder.py
+    tests/scripts/test_run_rtl_diversity_wp3_learned_encoder.py`: clean.
+  - `uv run pyright scripts/run_rtl_diversity_wp3_learned_encoder.py`:
+    0 errors, 0 warnings.
