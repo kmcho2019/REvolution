@@ -420,3 +420,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   decline by 16.67%.
 - Tier decision: `T0 diagnostic`, high-priority HV lead. The follow-up is a
   quality-safe SR ReLU plus local-Pareto live variant, not immediate promotion.
+
+## T20 SR Raw PCA Replay Package - 2026-06-21 UTC
+
+- Packaged the previously unrepresented `sr_raw_pca_qd` seed-1001 central
+  replay arm into `techniques/T20_sr_raw_pca_bd/`.
+- Used the same central replay JSON and the same read-only `/aux` source run as
+  the T19 package, but selected the plain raw-PCA synthesis-response arm.
+- Descriptor provenance: `synthesis_response_raw_v1` features, no random
+  feature map, descriptor version `sr_raw_pca_v1`, 205 fitting candidates, and
+  frozen axes `sr_pca_0..2`.
+- Gate 0 passes and validity is exactly preserved: functionality, synthesis,
+  and valid-PPA counts are 209 for both classic and SR raw PCA.
+- Positive signal: HV AUC improves from 0.0728 to 0.0904 (+24.24%),
+  PPA-front unique netlists improve from 12 to 14 (+16.67%), unique canonical
+  netlists improve from 70 to 74 (+5.71%), and motif signatures improve from 43
+  to 48 (+11.63%).
+- Blocking signal: final mean HV declines by 2.94%, final mean best fitness
+  declines by 9.97%, and common-audit QD score declines by 15.11%.
+- Tier decision: `T0 diagnostic`, projection ablation near-miss. Use it as the
+  raw synthesis-response baseline for SR-ReLU/SR-RFF and local-Pareto variants,
+  not as a standalone promotion candidate.

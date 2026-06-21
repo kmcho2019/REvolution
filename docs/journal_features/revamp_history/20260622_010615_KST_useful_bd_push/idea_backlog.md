@@ -102,6 +102,18 @@ a numbered `techniques/T##_slug/` package before running it.
 - Try an SR-RFF/SR-ReLU ensemble or ST-NOD plus SR-ReLU hybrid only if the live
   local-Pareto variant still loses front coverage.
 
+## From `T20_sr_raw_pca_bd` T0
+
+- Raw PCA preserves validity exactly and improves PPA-front unique netlists by
+  16.67%, unique canonical netlists by 5.71%, and motif signatures by 11.63%.
+  This is evidence that synthesis-response features contain useful diversity
+  signal before nonlinear random maps are added.
+- Do not promote raw PCA alone: final best fitness drops by 9.97% and
+  common-audit QD score drops by 15.11%.
+- Use raw PCA as the ablation baseline for SR-ReLU, SR-RFF, and local-Pareto
+  archive coupling. The target improvement is keeping raw PCA's front-material
+  gain while restoring best-fitness and passive-QD score.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

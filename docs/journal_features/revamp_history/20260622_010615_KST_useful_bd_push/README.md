@@ -13,8 +13,8 @@ Start here when resuming the active goal.
 - Holdout subset: `tables/holdout_screening_subset.csv`.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
-- Most recent packaged method: `techniques/T19_sr_relu_pca_bd/`
-  (`T0 diagnostic`, high-priority HV lead).
+- Most recent packaged method: `techniques/T20_sr_raw_pca_bd/`
+  (`T0 diagnostic`, projection ablation near-miss).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -72,6 +72,7 @@ Start here when resuming the active goal.
 | `T17` | `T17_mome_pareto_archive_bd` | Passive local-Pareto audit, `T0 diagnostic`; strong front-diversity signal but no decisive HV gain. |
 | `T18` | `T18_adaptive_emitter_cvt_bd` | Scaffolded. |
 | `T19` | `T19_sr_relu_pca_bd` | Replay result, `T0 diagnostic`; strong SR ReLU HV/AUC lead but quality and coverage tradeoffs. |
+| `T20` | `T20_sr_raw_pca_bd` | Replay result, `T0 diagnostic`; raw synthesis-response PCA ablation with front-diversity signal. |
 
 ## Validity-Gate Note
 

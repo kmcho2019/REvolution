@@ -93,6 +93,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       tier decision.
 - [x] `T19_sr_relu_pca_bd` has methodology, results, figures, tables, and tier
       decision.
+- [x] `T20_sr_raw_pca_bd` has methodology, results, figures, tables, and tier
+      decision.
 
 ## Minimum Goal Completion
 
