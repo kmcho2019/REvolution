@@ -262,6 +262,17 @@ Validate SR-RFF:
   --require-full-subset
 ```
 
+Validate random descriptor:
+
+```bash
+/workspace/.venv/bin/python scripts/validate_pareto_front_run.py \
+  --run-root exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T24_sr_pareto_live_validation/tables/live_screen_v0_subset.yaml \
+  --classic-mode classic_revolution/seed_1001/openai_gpt-oss-120b \
+  --pareto-qd-mode random_descriptor_qd/seed_1001/openai_gpt-oss-120b \
+  --require-full-subset
+```
+
 Validate SR ReLU:
 
 ```bash

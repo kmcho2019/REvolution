@@ -2,6 +2,9 @@
 
 Generated partial-result figures:
 
+- `live_completed_qd_vs_classic.png`: completed QD-arm best-score delta,
+  synthesis-PPA-rate delta, and global Pareto member comparison for random,
+  SR-RFF, SR ReLU, and SR raw.
 - `live_sr_family_vs_classic.png`: completed SR-family best-score delta,
   synthesis-PPA-rate delta, and global Pareto member comparison for SR-RFF,
   SR ReLU, and SR raw.

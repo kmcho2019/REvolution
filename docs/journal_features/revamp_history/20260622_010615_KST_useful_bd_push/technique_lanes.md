@@ -50,24 +50,24 @@ and the next artifact or branch. Use these tags consistently:
 
 | Lane | Purpose | Current Evidence | Next Action |
 | --- | --- | --- | --- |
-| `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report and T22 random control package now exist. | Keep random BD in every validation table before any positive claim. |
+| `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report, T22 replay control, and T24 live random control now exist. | Keep random BD in every validation table before any positive claim. |
 | `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`; T21 expands coverage but loses quality. | Stop pure concatenation; use feature selection, CVT, or local-Pareto retention. |
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Run random/manual T24 controls, then add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T06 Qwen is `T0`; identifier-normalized Qwen has HV signal but nuisance clustering. | Run Qwen3 preprocessing ladder before heavier fine-tuning or external graph-encoder branches. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T24 validates SR-RFF/SR-ReLU/SR-raw live mechanics but exposes quality and yield failures. | Test manual/random controls and design a quality/yield-guarded emitter variant. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T24 validates random/SR-RFF/SR-ReLU/SR-raw live mechanics but exposes quality and yield failures. | Test manual control and design a quality/yield-guarded emitter variant. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T12/T18 are scaffolded. | Use T17/T04 evidence to define exploit/explore/repair parent scheduling before live sampling. |
 
 ## Lane Scorecard
 
 | Lane | Best Current Lead | Status | Main Blocker | Branch Strategy |
 | --- | --- | --- | --- | --- |
-| `L0` | T22 random descriptor control | Required comparator. | Random can look strong on AUC/front material, so claims need metric-specific controls. | Keep in this branch and every validation table. |
+| `L0` | T22 replay and T24 live random descriptor controls | Required comparator. | Random can look strong on AUC/front material, so claims need metric-specific controls. | Keep in this branch and every validation table. |
 | `L1` | T03 ST-NOD near-miss | Hybrid source. | Direct transparent descriptors lose audit-QD or best quality. | Continue only as selected features inside T17/T24-style archives. |
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Finish random/manual T24 controls, then revise descriptor/archive coupling. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
 | `L4` | T06 Qwen normalized-view diagnostic | Needs preprocessing ladder. | Whole-file embeddings carry nuisance axes. | Split to a Qwen/encoder branch if dependencies or model runtime expand. |
-| `L5` | T17/T23 local-Pareto evidence and T24 live run | Partial SR-family live result. | SR-RFF, SR ReLU, and SR raw preserve coverage but regress quality or yield. | Run controls, then design quality/yield-guarded parent pressure. |
+| `L5` | T17/T23 local-Pareto evidence and T24 live run | Partial live result. | Random, SR-RFF, SR ReLU, and SR raw preserve coverage but regress quality or yield. | Run manual control, then design quality/yield-guarded parent pressure. |
 | `L6` | T12/T18 scaffolded emitter ideas | Not yet validated. | Needs concrete emitter schedule tied to observed failures. | Derive from the T24 multi-pipe failure rather than inventing another independent lane. |
 
 ## Current Lineage
@@ -177,8 +177,9 @@ flowchart TD
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
 | 2026-06-21 | `L5` archive coupling | T24 classic-vs-SR-RFF live result | `ablate` | SR-RFF local-Pareto runs end to end and preserves all three classic-covered problems, but the multi-pipe best-score and valid-PPA yield regression blocks promotion. | Compare with SR ReLU, then run SR raw/control arms before a family-level claim. |
-| 2026-06-21 | `L5` archive coupling | T24 SR ReLU live result | `ablate` | SR ReLU also runs end to end and preserves all three classic-covered problems, with more front material than SR-RFF on traffic light and multi-pipe, but still loses too much multi-pipe best quality. | Run SR raw and T22/manual controls, then design a quality/yield-guarded emitter variant. |
-| 2026-06-21 | `L5` archive coupling | T24 SR raw live result | `ablate` | SR raw runs end to end, preserves all three classic-covered problems, improves ALU best score, and has the strongest SR-family multi-pipe front material, but still loses too much multi-pipe best quality and violates the traffic-light synthesis-validity gate. | Run T22/manual controls, then design a quality/yield-guarded emitter variant. |
+| 2026-06-21 | `L5` archive coupling | T24 SR ReLU live result | `ablate` | SR ReLU also runs end to end and preserves all three classic-covered problems, with more front material than SR-RFF on traffic light and multi-pipe, but still loses too much multi-pipe best quality. | Compare with SR raw and live controls before a family-level claim. |
+| 2026-06-21 | `L5` archive coupling | T24 SR raw live result | `ablate` | SR raw runs end to end, preserves all three classic-covered problems, improves ALU best score, and has the strongest SR-family multi-pipe front material, but still loses too much multi-pipe best quality and violates the traffic-light synthesis-validity gate. | Run manual control, then design a quality/yield-guarded emitter variant. |
+| 2026-06-21 | `L0` common evaluation | T24 random live result | `control` | Random runs end to end and preserves all three classic-covered problems, but is weaker than SR raw on ALU and multi-pipe front material and weaker than SR-RFF on traffic-light best score. | Keep as the required live random comparator; run manual control next. |
 | 2026-06-21 | `L6` lineage and emitters | T12/T18 scaffolds plus T17 evidence | `hybridize` | Lineage/emitter methods should improve search dynamics around SR-RFF/SR-ReLU, not become generic descriptor resets. | Specify exploit/explore/repair scheduling after the first live local-Pareto run. |
 
 ## Lane Notes
@@ -204,6 +205,11 @@ PPA-front unique netlists by 75.00% versus classic, despite losing final HV,
 common-audit cells, and common-audit QD score. Future positive claims must
 therefore beat classic, manual BD, and random descriptor on the specific metric
 being claimed.
+
+T24 adds the same random descriptor as a live local-Pareto control. It preserves
+all three classic-covered problems but loses 71.33% best score on
+`Prob015_multi_pipe_8bit` and triggers a 73.33% relative traffic-light
+synthesis-validity drop. It is a required comparator, not a promotion lead.
 
 ### `L2` Synthesis-Response Automatic BDs
 
@@ -263,12 +269,12 @@ common-audit QD score and local front material while staying within the
 near-classic quality tolerance. SR ReLU PCA beats classic and random on final
 HV and HV AUC, but does not beat random on local front material.
 
-Current follow-up: continue T24 controls and do not promote SR-family
-local-Pareto as-is. SR-RFF loses 66.06% relative best score on
-`Prob015_multi_pipe_8bit`; SR ReLU loses 75.20% there; SR raw loses 57.09%
-there and also trips the traffic-light synthesis-validity gate. SR raw keeps
-the strongest multi-pipe front material and an ALU best-score win, so the next
-method idea should keep that front material but add quality/yield-guarded
+Current follow-up: run the remaining manual control and do not promote current
+local-Pareto as-is. Random loses 71.33% relative best score on
+`Prob015_multi_pipe_8bit`; SR-RFF loses 66.06%; SR ReLU loses 75.20%; SR raw
+loses 57.09% and also trips the traffic-light synthesis-validity gate. SR raw
+keeps the strongest multi-pipe front material and an ALU best-score win, so the
+next method idea should keep that front material but add quality/yield-guarded
 parent pressure or an adaptive emitter lane.
 
 ### `L6` Lineage And Emitters

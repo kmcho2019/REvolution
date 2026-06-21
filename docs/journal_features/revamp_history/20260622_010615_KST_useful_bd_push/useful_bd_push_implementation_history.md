@@ -657,3 +657,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Lane decision: keep the SR-family live result as `ablate`; run random and
   manual controls, then design a quality/yield-guarded emitter or parent
   pressure variant before expanding SR-family live sampling.
+
+## T24 Random Descriptor Live Control - 2026-06-21 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models` before the random
+  descriptor arm. The endpoint reported `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+- Completed the `random_descriptor_qd` arm under the same T24 live screen:
+  seed 1001, population 12, three generations, strict ablation evaluation, and
+  128000-token code/diff budgets.
+- Random completed in 798.64 seconds and solved all three fixed problems, so
+  the classic-covered design preservation gate passes.
+- Pareto archive validation passed with zero failures and max front size 3.
+- Packaged `tables/live_completed_qd_vs_classic.csv`,
+  `tables/live_random_pareto_validation.{json,md}`, and
+  `figures/live_completed_qd_vs_classic.png`.
+- Visual inspection found the completed-QD figure readable. The gray random
+  bars make the live random-control baseline visible beside the SR-family arms.
+- Best-score deltas versus classic: `Prob045_alu` +1.45%,
+  `Prob041_traffic_light` -10.82%, and `Prob015_multi_pipe_8bit` -71.33%.
+- Valid-PPA-rate deltas versus classic: `Prob045_alu` -4.17 absolute points,
+  `Prob041_traffic_light` -45.83 absolute points, and
+  `Prob015_multi_pipe_8bit` -10.42 absolute points.
+- Promotion decision: random is a required comparator, not a lead. It is weaker
+  than SR raw on ALU best score and multi-pipe front material, and weaker than
+  SR-RFF on traffic-light best score and valid-PPA rate.
+- Lane decision: keep T24 random as `control`; run the manual BD arm next, then
+  design a quality/yield-guarded emitter or parent-pressure variant before
+  expanding SR-family live sampling.

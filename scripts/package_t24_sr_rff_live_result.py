@@ -22,7 +22,7 @@ PROBLEMS = (
 
 CLASSIC_MODE = "classic_revolution/seed_1001/openai_gpt-oss-120b"
 
-ARMS = (
+SR_ARMS = (
     {
         "arm": "sr_rff_pca_qd",
         "label": "SR-RFF",
@@ -40,7 +40,16 @@ ARMS = (
     },
 )
 
+RANDOM_ARM = {
+    "arm": "random_descriptor_qd",
+    "label": "Random",
+    "mode": "random_descriptor_qd/seed_1001/openai_gpt-oss-120b",
+}
+
+COMPLETED_QD_ARMS = (RANDOM_ARM, *SR_ARMS)
+
 METHOD_COLORS = {
+    "Random": "#8c8c8c",
     "SR-RFF": "#4c78a8",
     "SR ReLU": "#f28e2b",
     "SR raw": "#59a14f",
@@ -57,17 +66,37 @@ def main(argv: list[str] | None = None) -> int:
     figure_dir = args.output_dir.parent / "figures"
     figure_dir.mkdir(parents=True, exist_ok=True)
 
-    rows = [
+    sr_rows = [
         _problem_row(args.run_root, arm, problem)
-        for arm in ARMS
+        for arm in SR_ARMS
         if (args.run_root / str(arm["mode"])).is_dir()
         for problem in PROBLEMS
     ]
-    assert rows
-    _write_csv(args.output_dir / "live_sr_family_vs_classic.csv", rows)
-    _plot_family(rows, figure_dir / "live_sr_family_vs_classic.png")
+    assert sr_rows
+    _write_csv(args.output_dir / "live_sr_family_vs_classic.csv", sr_rows)
+    _plot_family(
+        sr_rows,
+        figure_dir / "live_sr_family_vs_classic.png",
+        title="T24 Live Screen: Completed SR-Family Arms",
+    )
 
-    sr_rff_rows = [row for row in rows if row["arm"] == "sr_rff_pca_qd"]
+    completed_qd_rows = [
+        _problem_row(args.run_root, arm, problem)
+        for arm in COMPLETED_QD_ARMS
+        if (args.run_root / str(arm["mode"])).is_dir()
+        for problem in PROBLEMS
+    ]
+    assert completed_qd_rows
+    _write_csv(
+        args.output_dir / "live_completed_qd_vs_classic.csv", completed_qd_rows
+    )
+    _plot_family(
+        completed_qd_rows,
+        figure_dir / "live_completed_qd_vs_classic.png",
+        title="T24 Live Screen: Completed QD Arms",
+    )
+
+    sr_rff_rows = [row for row in sr_rows if row["arm"] == "sr_rff_pca_qd"]
     if sr_rff_rows:
         _write_csv(args.output_dir / "live_sr_rff_vs_classic.csv", sr_rff_rows)
         _plot_single(sr_rff_rows, figure_dir / "live_sr_rff_vs_classic.png")
@@ -187,7 +216,7 @@ def _plot_single(rows: list[dict[str, str]], output_path: Path) -> None:
     plt.close(fig)
 
 
-def _plot_family(rows: list[dict[str, str]], output_path: Path) -> None:
+def _plot_family(rows: list[dict[str, str]], output_path: Path, *, title: str) -> None:
     labels = [problem.replace("Prob", "P") for problem in PROBLEMS]
     x_positions = list(range(len(PROBLEMS)))
     methods = list(dict.fromkeys(row["method_label"] for row in rows))
@@ -235,7 +264,7 @@ def _plot_family(rows: list[dict[str, str]], output_path: Path) -> None:
         axis.set_xticklabels(labels, rotation=25, ha="right")
         axis.grid(axis="y", color="#e2e2e2", linewidth=0.8)
 
-    fig.suptitle("T24 Live Screen: Completed SR-Family Arms", y=1.02)
+    fig.suptitle(title, y=1.02)
     fig.tight_layout()
     fig.savefig(output_path, dpi=180, bbox_inches="tight")
     plt.close(fig)

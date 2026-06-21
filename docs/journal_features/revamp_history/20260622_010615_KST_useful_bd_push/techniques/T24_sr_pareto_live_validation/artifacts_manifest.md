@@ -1,7 +1,8 @@
 # T24 SR Pareto Live Validation Artifacts Manifest
 
-Status: partial live result. The classic, SR-RFF PCA, SR ReLU PCA, and SR raw
-PCA arms have completed; the full six-arm live matrix is still pending.
+Status: partial live result. The classic, random descriptor, SR-RFF PCA,
+SR ReLU PCA, and SR raw PCA arms have completed; the full six-arm live matrix
+is still pending.
 
 ## Preflight
 
@@ -42,6 +43,18 @@ Third live-arm preflight:
   `tables/preflight_models_20260621_195144_UTC.json`
 - sha256:
   `c37ae65f39a572fead377d75271da8d88fa74a6cd381c5c63eb4e1c62e65a01b`
+- model id: `openai/gpt-oss-120b`
+- max model length: `131072`
+- token-policy verdict: passes `>=128000` requirement
+
+Fourth live-arm preflight:
+
+- captured locally:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/preflight/models_20260621_201337_UTC.json`
+- committed mirror:
+  `tables/preflight_models_20260621_201337_UTC.json`
+- sha256:
+  `3b1be131ab2840dc18420af465cbdbf8e31817730720f2becc32872f89378892`
 - model id: `openai/gpt-oss-120b`
 - max model length: `131072`
 - token-policy verdict: passes `>=128000` requirement
@@ -124,6 +137,22 @@ Relevant implementation/tests:
   `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/logs/classic_revolution_seed_1001.log`
   - sha256:
     `63fa2fd96d5e3c503fa0ac5e49f3e369735487d71e516b0598d144e9b3e1208c`
+- random descriptor summary:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/random_descriptor_qd/seed_1001/openai_gpt-oss-120b/20260621_201359_revolution_summary_results.txt`
+  - sha256:
+    `1aadecb7635849805c0c5d7aac66ca0a95324434616f5d9acabb3f09af69ab6c`
+- random descriptor run log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/random_descriptor_qd/seed_1001/openai_gpt-oss-120b/20260621_201359_revolution_run_log.txt`
+  - sha256:
+    `e69115ba519d32c17ef9a2db1452e4db3e8cce2061e9b8b26a4edc007ec3d0a5`
+- random descriptor scheduler telemetry:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/random_descriptor_qd/seed_1001/openai_gpt-oss-120b/20260621_201359_revolution_scheduler_telemetry.json`
+  - sha256:
+    `e9cd63fcdb372b0bb3dea770c16b88f025611c08b6a5446feacc9164e963b02c`
+- random descriptor console log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/logs/random_descriptor_qd_seed_1001.log`
+  - sha256:
+    `44499e8a9af345eaaa53fe82c0b0b17083233e31dcffd8575e4a8d2ec36f9de8`
 - SR-RFF summary:
   `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/sr_rff_pca_qd/seed_1001/openai_gpt-oss-120b/20260621_190410_revolution_summary_results.txt`
   - sha256:
@@ -171,6 +200,10 @@ Relevant implementation/tests:
 
 ## Packaged Result Mirrors
 
+- completed-QD comparison table:
+  `tables/live_completed_qd_vs_classic.csv`
+  - sha256:
+    `3a2e0f3d3135e676fb139d56fbf572e251b4183ebac41c1076f2a5d5e78d3e7a`
 - completed SR-family comparison table:
   `tables/live_sr_family_vs_classic.csv`
   - sha256:
@@ -184,6 +217,13 @@ Relevant implementation/tests:
 - Pareto validator Markdown: `tables/live_sr_rff_pareto_validation.md`
   - sha256:
     `531c591e0d1ac50d9bd114a33efbff017625f4610e0c5df6884cbe2033d03ae3`
+- random Pareto validator JSON: `tables/live_random_pareto_validation.json`
+  - sha256:
+    `4272ad18e9a482a479b2ad65d568285f76ffac7588eece3e85d6f5fedf54893c`
+- random Pareto validator Markdown:
+  `tables/live_random_pareto_validation.md`
+  - sha256:
+    `2b2e9d09b9f7463c23ab2c76d6471c52a35f086955c620a23bb52602ed6a2806`
 - SR ReLU Pareto validator JSON: `tables/live_sr_relu_pareto_validation.json`
   - sha256:
     `cb4f6d76371657b680ae5d0f1ff90d16da180a8411421bffce5041e48b9ea3f5`
@@ -201,6 +241,9 @@ Relevant implementation/tests:
 - completed SR-family figure: `figures/live_sr_family_vs_classic.png`
   - sha256:
     `042383c5951f04aace7d7afe30fd1f999bfacbcdb4247f97314d7b2c894bd3c6`
+- completed-QD comparison figure: `figures/live_completed_qd_vs_classic.png`
+  - sha256:
+    `ff3f27235c95922dba823c7956b6fa440db6d1cece538942f0a0cda3524d139e`
 - SR-RFF comparison figure: `figures/live_sr_rff_vs_classic.png`
   - sha256:
     `adcc7ec52d50f551bd89cb912bc0575086530a5256f8d3ebd5bf201eb036e942`
@@ -216,7 +259,6 @@ produce valid results on all three fixed problems.
 The following T24 live arms are still missing:
 
 - `landing_smooth_qd_manual_bd`
-- `random_descriptor_qd`
 
-Until those arms land, T24 remains `pending_live_matrix` and no positive
+Until that arm lands, T24 remains `pending_live_matrix` and no positive
 T1/T2/T3 claim is allowed.

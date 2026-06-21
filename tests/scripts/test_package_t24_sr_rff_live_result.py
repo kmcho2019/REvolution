@@ -29,6 +29,15 @@ def test_package_t24_sr_family_live_result(tmp_path: Path) -> None:
         )
         _write_problem(
             run_root=run_root,
+            mode="random_descriptor_qd/seed_1001/openai_gpt-oss-120b",
+            problem=problem,
+            best_score=0.5,
+            synthesis_rate=0.125,
+            archive_members=8,
+            global_pareto_members=9,
+        )
+        _write_problem(
+            run_root=run_root,
             mode="sr_random_relu_pca_qd/seed_1001/openai_gpt-oss-120b",
             problem=problem,
             best_score=0.75,
@@ -49,8 +58,12 @@ def test_package_t24_sr_family_live_result(tmp_path: Path) -> None:
     assert main(["--run-root", str(run_root), "--output-dir", str(output_dir)]) == 0
 
     family_csv = output_dir / "live_sr_family_vs_classic.csv"
+    completed_csv = output_dir / "live_completed_qd_vs_classic.csv"
     rff_csv = output_dir / "live_sr_rff_vs_classic.csv"
     family_figure = output_dir.parent / "figures" / "live_sr_family_vs_classic.png"
+    completed_figure = (
+        output_dir.parent / "figures" / "live_completed_qd_vs_classic.png"
+    )
     rff_figure = output_dir.parent / "figures" / "live_sr_rff_vs_classic.png"
     rows = list(csv.DictReader(family_csv.read_text(encoding="utf-8").splitlines()))
     assert len(rows) == 9
@@ -64,8 +77,16 @@ def test_package_t24_sr_family_live_result(tmp_path: Path) -> None:
     assert rows[6]["best_score_delta"] == "0.500000"
     assert rows[6]["archive_members"] == "6"
     assert rows[6]["global_pareto_members"] == "7"
+    completed_rows = list(
+        csv.DictReader(completed_csv.read_text(encoding="utf-8").splitlines())
+    )
+    assert len(completed_rows) == 12
+    assert completed_rows[0]["arm"] == "random_descriptor_qd"
+    assert completed_rows[0]["best_score_delta"] == "-0.500000"
+    assert completed_rows[0]["archive_members"] == "8"
     assert len(list(csv.DictReader(rff_csv.read_text(encoding="utf-8").splitlines()))) == 3
     assert family_figure.stat().st_size > 0
+    assert completed_figure.stat().st_size > 0
     assert rff_figure.stat().st_size > 0
 
 
