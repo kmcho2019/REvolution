@@ -103,8 +103,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       and tier decision.
 - [x] `T23_sr_pareto_validation_matrix` has methodology, results, figures,
       tables, and tier decision.
-- [ ] `T24_sr_pareto_live_validation` live command matrix is executed,
-      packaged with results, figures, tables, and tier decision.
+- [ ] `T24_sr_pareto_live_validation` full live matrix is executed and
+      packaged; classic-vs-SR-RFF is done, remaining arms are pending.
 
 ## Minimum Goal Completion
 
@@ -130,15 +130,14 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 
 ## Validation
 
-- [ ] Run focused pytest for touched scripts.
 - [x] Run focused pytest for touched scripts.
 - [x] Run `ruff check` on touched files.
 - [x] Run `python -m pyright` on touched source/report scripts.
-- [ ] Run `git diff --check`.
+- [x] Run `git diff --check`.
 - [ ] Record blocked dependency or live-run smoke results explicitly.
 - [ ] For dependency blockers, try `uv add`, isolated uv env, source checkout,
       and submodule decision before stopping a method.
-- [ ] Record vLLM endpoint, model id, token budgets, and timeout/preflight
+- [x] Record vLLM endpoint, model id, token budgets, and timeout/preflight
       status for live runs.
 - [ ] Run adversarial validation and write
       `useful_bd_push_subagent_validation_report.md`.

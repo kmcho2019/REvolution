@@ -567,3 +567,32 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   second Mermaid flow for the expected idea-to-replay-to-live-to-branch loop.
 - Kept chronological artifact ownership in the `Txx` technique packages; this
   guide tracks process lineage, not raw run outputs.
+
+## T24 Classic vs SR-RFF Live Result - 2026-06-21 UTC
+
+- Completed the T24 classic baseline arm and SR-RFF PCA Pareto-QD arm under
+  the fixed three-problem RTLLM live screen.
+- Both arms used `openai/gpt-oss-120b`, seed 1001, population 12, three
+  generations, strict ablation evaluation, and 128000-token code/diff budgets.
+- Classic completed in 637.13 seconds and solved all three problems.
+- SR-RFF completed in 748.20 seconds and also solved all three problems, so the
+  minimum classic-covered design preservation gate passes.
+- Ran `scripts/validate_pareto_front_run.py` for SR-RFF without the
+  manual-profile-only hard-subset flag. The Pareto archive validator passed
+  with zero failures and max front size 4.
+- Packaged `tables/live_sr_rff_vs_classic.csv`,
+  `tables/live_sr_rff_pareto_validation.{json,md}`, and
+  `figures/live_sr_rff_vs_classic.png`.
+- Visual inspection found the figure readable and supportive of the cautious
+  conclusion: SR-RFF has front material and one best-score gain, but the
+  multi-pipe regression dominates the result.
+- Best-score deltas: `Prob045_alu` -0.57%, `Prob041_traffic_light` +1.58%,
+  and `Prob015_multi_pipe_8bit` -66.06%.
+- Valid-PPA-rate deltas: `Prob045_alu` +6.25 absolute points,
+  `Prob041_traffic_light` -25.00 absolute points, and
+  `Prob015_multi_pipe_8bit` -25.00 absolute points.
+- Promotion decision: do not promote SR-RFF local-Pareto as-is. The multi-pipe
+  valid-PPA drop is 60% relative with 20 classic valid-PPA samples, so this is
+  not a small-denominator artifact.
+- Lane decision: mark T24 SR-RFF as `ablate`. Continue with SR ReLU live or a
+  quality/yield guarded SR-RFF variant before expanding the matrix.

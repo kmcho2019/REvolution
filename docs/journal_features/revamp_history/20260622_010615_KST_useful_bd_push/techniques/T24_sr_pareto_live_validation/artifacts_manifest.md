@@ -1,6 +1,7 @@
 # T24 SR Pareto Live Validation Artifacts Manifest
 
-Status: ready-to-run live validation package for SR-family local-Pareto QD.
+Status: partial live result. The classic and SR-RFF PCA arms have completed;
+the full six-arm live matrix is still pending.
 
 ## Preflight
 
@@ -85,10 +86,62 @@ Relevant implementation/tests:
 - `tests/revolution/test_qd_engine.py`
 - `tests/scripts/test_validate_pareto_front_run.py`
 
+## Completed Live Result Artifacts
+
+- classic summary:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/classic_revolution/seed_1001/openai_gpt-oss-120b/20260621_185250_revolution_summary_results.txt`
+  - sha256:
+    `fa30592847b46e137c9262b49b37cebba224351b171ee6ade3089ab9936861ff`
+- classic run log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/classic_revolution/seed_1001/openai_gpt-oss-120b/20260621_185250_revolution_run_log.txt`
+  - sha256:
+    `02ea064f903998b6f5b7097f4c68c8896cbd8ef8d4ae2ab28f0727bf31b9f13d`
+- classic console log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/logs/classic_revolution_seed_1001.log`
+  - sha256:
+    `63fa2fd96d5e3c503fa0ac5e49f3e369735487d71e516b0598d144e9b3e1208c`
+- SR-RFF summary:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/sr_rff_pca_qd/seed_1001/openai_gpt-oss-120b/20260621_190410_revolution_summary_results.txt`
+  - sha256:
+    `547c773906a2b6a2b206a18a11fc41eb40f64ff88e62d168813a4b6e04e606f0`
+- SR-RFF run log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/sr_rff_pca_qd/seed_1001/openai_gpt-oss-120b/20260621_190410_revolution_run_log.txt`
+  - sha256:
+    `6dffd506f63339617638540dbd1b54bad9baf94366be99c9a2de898ea46cc35c`
+- SR-RFF console log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/logs/sr_rff_pca_qd_seed_1001.log`
+  - sha256:
+    `9ab82a45bf5e7b76c7f294258696240343b3d115a8b309c4254aab20939310dd`
+
+## Packaged Result Mirrors
+
+- comparison table: `tables/live_sr_rff_vs_classic.csv`
+  - sha256:
+    `71e5b57abc19e222e3a79761ab1f6ec512efbda326a57df62e1e36de1c0959d3`
+- Pareto validator JSON: `tables/live_sr_rff_pareto_validation.json`
+  - sha256:
+    `45e136a600d2ab8187145cdea79ba1f2d31c27f9bcb3a454c54a59c17f08a9e5`
+- Pareto validator Markdown: `tables/live_sr_rff_pareto_validation.md`
+  - sha256:
+    `531c591e0d1ac50d9bd114a33efbff017625f4610e0c5df6884cbe2033d03ae3`
+- figure: `figures/live_sr_rff_vs_classic.png`
+  - sha256:
+    `adcc7ec52d50f551bd89cb912bc0575086530a5256f8d3ebd5bf201eb036e942`
+- packaging script: `scripts/package_t24_sr_rff_live_result.py`
+
+The validator was run without `--acceptance-hard-subset` because that flag
+currently asserts the manual-BD descriptor profile. Classic-covered design
+preservation was checked from the summary files instead: both completed arms
+produce valid results on all three fixed problems.
+
 ## Missing Results
 
-No live T24 run has completed in this package yet. Until it does:
+The following T24 live arms are still missing:
 
-- `results_report.md` is a readiness report, not a results claim;
-- tier remains `pending_live_run`;
-- no T1/T2/T3 conclusion is allowed.
+- `landing_smooth_qd_manual_bd`
+- `random_descriptor_qd`
+- `sr_raw_pca_qd`
+- `sr_random_relu_pca_qd`
+
+Until those arms land, T24 remains `pending_live_matrix` and no positive
+T1/T2/T3 claim is allowed.

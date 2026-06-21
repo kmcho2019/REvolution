@@ -6,7 +6,13 @@
   profiles, and command references.
 - `live_screen_v0_subset.yaml`: subset config consumed by
   `scripts/validate_pareto_front_run.py` after live execution.
+- `live_sr_rff_vs_classic.csv`: completed classic-vs-SR-RFF live comparison
+  for the first T24 arm pair.
+- `live_sr_rff_pareto_validation.json`: validator payload for the SR-RFF
+  Pareto archive.
+- `live_sr_rff_pareto_validation.md`: human-readable validator summary.
 
-After live execution, add central comparison CSVs for validity funnel, global
-PPA hypervolume, HV AUC, archive QD score/coverage, global Pareto points,
-unique front families, duplicate accounting, and per-problem deltas.
+Still needed after the remaining live arms run: central comparison CSVs for
+validity funnel, global PPA hypervolume, HV AUC, archive QD score/coverage,
+global Pareto points, unique front families, duplicate accounting, and
+per-problem deltas.
