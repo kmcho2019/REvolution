@@ -27,6 +27,7 @@ Start here when resuming the active goal.
 | `technique_lanes.md` | Lane-based process map showing method families, lineage, current evidence, and next actions. |
 | `useful_bd_push_implementation_todo.md` | Short checklist to keep the goal moving. |
 | `useful_bd_push_implementation_history.md` | Chronological evidence log for decisions, commands, runs, failures, and commits. |
+| `current_results_matrix.md` | Interim cross-method matrix after ten real packages; compares current leads, controls, and next actions. |
 | `useful_bd_push_adversarial_prompt.md` | Independent validation prompt for final sign-off. |
 | `useful_bd_push_subagent_validation_report.md` | Placeholder for the final adversarial validation report. |
 | `metrics_and_acceptance.md` | Glossary, primary QD metrics, tier definitions, validity gates, and anti-loophole rules. |

@@ -463,3 +463,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   the current push to ten real result packages, but broad sign-off still
   requires central comparison, deeper validation of T1+ leads, and adversarial
   review.
+
+## Current Results Matrix - 2026-06-21 UTC
+
+- Added `current_results_matrix.md` as the local comparison table after the
+  minimum ten real result packages were reached.
+- The matrix separates central seed-1001 replay methods, the Qwen diagnostic,
+  and the passive local-Pareto audit so unlike evidence types are not merged
+  into one misleading score.
+- Current read: `T04` SR-RFF remains the cleanest `T1 near_classic` validation
+  candidate, `T19` SR ReLU is the strongest HV/HV-AUC source but has quality
+  and coverage regressions, and `T20`/`T21` provide front-material ablations
+  rather than promotion candidates.
+- The random descriptor control is explicitly flagged because it has nontrivial
+  HV-AUC and front-net behavior. Future positive claims should compare against
+  random descriptor, not only classic and manual BD.
