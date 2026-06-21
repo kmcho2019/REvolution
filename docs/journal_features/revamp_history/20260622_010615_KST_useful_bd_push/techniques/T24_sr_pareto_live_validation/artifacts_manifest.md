@@ -1,7 +1,7 @@
 # T24 SR Pareto Live Validation Artifacts Manifest
 
-Status: partial live result. The classic, SR-RFF PCA, and SR ReLU PCA arms
-have completed; the full six-arm live matrix is still pending.
+Status: partial live result. The classic, SR-RFF PCA, SR ReLU PCA, and SR raw
+PCA arms have completed; the full six-arm live matrix is still pending.
 
 ## Preflight
 
@@ -30,6 +30,18 @@ Second live-arm preflight:
   `tables/preflight_models_20260621_192641_UTC.json`
 - sha256:
   `c43da529f2e1f9d6b8d94e232fe6ab24b787b984fceb274f58b58caeb50ae0cb`
+- model id: `openai/gpt-oss-120b`
+- max model length: `131072`
+- token-policy verdict: passes `>=128000` requirement
+
+Third live-arm preflight:
+
+- captured locally:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/preflight/models_20260621_195144_UTC.json`
+- committed mirror:
+  `tables/preflight_models_20260621_195144_UTC.json`
+- sha256:
+  `c37ae65f39a572fead377d75271da8d88fa74a6cd381c5c63eb4e1c62e65a01b`
 - model id: `openai/gpt-oss-120b`
 - max model length: `131072`
 - token-policy verdict: passes `>=128000` requirement
@@ -140,13 +152,29 @@ Relevant implementation/tests:
   `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/logs/sr_random_relu_pca_qd_seed_1001.log`
   - sha256:
     `ac12c721dbe2fedfedb8538412ce8fa2dc328cd9a7aa67e666b91306dbf316a6`
+- SR raw summary:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/sr_raw_pca_qd/seed_1001/openai_gpt-oss-120b/20260621_195210_revolution_summary_results.txt`
+  - sha256:
+    `08b1abaf3e80b54b89a051432a45ae2288820e4e582c5252b4076192cfbdd44f`
+- SR raw run log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/sr_raw_pca_qd/seed_1001/openai_gpt-oss-120b/20260621_195210_revolution_run_log.txt`
+  - sha256:
+    `901bec42d3f4d58f9536f91f7fc29062c21e8669dddf0de2fefe762ace5c754f`
+- SR raw scheduler telemetry:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/sr_raw_pca_qd/seed_1001/openai_gpt-oss-120b/20260621_195210_revolution_scheduler_telemetry.json`
+  - sha256:
+    `17ffc3603ab1a8ccd55ecc6111cd869c8f9fd2515824c4dcddea68074f11ece9`
+- SR raw console log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/logs/sr_raw_pca_qd_seed_1001.log`
+  - sha256:
+    `e08ae4a2e232d93692dd8128aab49493d46ece7be2d1324adf3854ef1e12c2c5`
 
 ## Packaged Result Mirrors
 
 - completed SR-family comparison table:
   `tables/live_sr_family_vs_classic.csv`
   - sha256:
-    `e59399c108fccc7a4e39a4c520b5914589494a57a974400e26c6f93d914aeeff`
+    `59037a8fa9124f035df9c57766937cdb1dd8c76dc733460a43a45a017d42aa96`
 - comparison table: `tables/live_sr_rff_vs_classic.csv`
   - sha256:
     `5716714c5c63b70a34ffb5e876ea38ec8bf12ed87a2ccb3a94667cdf8d385359`
@@ -163,9 +191,16 @@ Relevant implementation/tests:
   `tables/live_sr_relu_pareto_validation.md`
   - sha256:
     `03550cd366121937907fbd084784264b69f3d233aef969441aab57034e446367`
+- SR raw Pareto validator JSON: `tables/live_sr_raw_pareto_validation.json`
+  - sha256:
+    `078685386da062f85d34b0c8505beaa4fa07d47db7af8c8207b3eaa377698d1d`
+- SR raw Pareto validator Markdown:
+  `tables/live_sr_raw_pareto_validation.md`
+  - sha256:
+    `e3e6ae6eaa79d97f9a32107f759b725793d4c37d38eadb05f812c50e5c2007ce`
 - completed SR-family figure: `figures/live_sr_family_vs_classic.png`
   - sha256:
-    `1706f4e70d32fc7faa967f104fefb70de88c47e1d1fd45fc3185d12b8e812a82`
+    `042383c5951f04aace7d7afe30fd1f999bfacbcdb4247f97314d7b2c894bd3c6`
 - SR-RFF comparison figure: `figures/live_sr_rff_vs_classic.png`
   - sha256:
     `adcc7ec52d50f551bd89cb912bc0575086530a5256f8d3ebd5bf201eb036e942`
@@ -182,7 +217,6 @@ The following T24 live arms are still missing:
 
 - `landing_smooth_qd_manual_bd`
 - `random_descriptor_qd`
-- `sr_raw_pca_qd`
 
 Until those arms land, T24 remains `pending_live_matrix` and no positive
 T1/T2/T3 claim is allowed.

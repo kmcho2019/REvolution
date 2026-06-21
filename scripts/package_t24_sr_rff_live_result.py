@@ -33,11 +33,17 @@ ARMS = (
         "label": "SR ReLU",
         "mode": "sr_random_relu_pca_qd/seed_1001/openai_gpt-oss-120b",
     },
+    {
+        "arm": "sr_raw_pca_qd",
+        "label": "SR raw",
+        "mode": "sr_raw_pca_qd/seed_1001/openai_gpt-oss-120b",
+    },
 )
 
 METHOD_COLORS = {
     "SR-RFF": "#4c78a8",
     "SR ReLU": "#f28e2b",
+    "SR raw": "#59a14f",
 }
 
 
@@ -186,7 +192,7 @@ def _plot_family(rows: list[dict[str, str]], output_path: Path) -> None:
     x_positions = list(range(len(PROBLEMS)))
     methods = list(dict.fromkeys(row["method_label"] for row in rows))
     rows_by_key = {(row["method_label"], row["problem"]): row for row in rows}
-    width = 0.34
+    width = 0.76 / len(methods)
 
     fig, axes = plt.subplots(1, 3, figsize=(14.2, 4.5))
     _grouped_delta_bars(
@@ -254,7 +260,7 @@ def _grouped_delta_bars(
             width,
             label=method,
             color=METHOD_COLORS[method],
-            alpha=0.82 if method_index == 0 else 0.58,
+            alpha=0.78,
         )
     axis.axhline(0.0, color="#404040", linewidth=0.8)
     axis.set_title(title)

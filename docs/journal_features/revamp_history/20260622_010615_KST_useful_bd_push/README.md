@@ -15,7 +15,7 @@ Start here when resuming the active goal.
   (`T0 diagnostic`).
 - Most recent package:
   `techniques/T24_sr_pareto_live_validation/` (`pending_live_matrix`; partial
-  SR-family live result, remaining comparator arms still pending).
+  SR-family live result, manual/random comparator arms still pending).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -78,7 +78,7 @@ Start here when resuming the active goal.
 | `T21` | `T21_stnod_motif_hybrid_bd` | Replay result, `T0 diagnostic`; ST-NOD+motif expands archive coverage but loses quality. |
 | `T22` | `T22_random_descriptor_control` | Replay result, `T0 control`; random archive partitioning is a strong required comparator. |
 | `T23` | `T23_sr_pareto_validation_matrix` | Passive validation matrix, `T0 diagnostic`; compares T04/T19 against classic, manual BD, and T22. |
-| `T24` | `T24_sr_pareto_live_validation` | Partial SR-family live result; no final tier until remaining arms complete. |
+| `T24` | `T24_sr_pareto_live_validation` | Partial SR-family live result; classic plus SR-RFF/SR ReLU/SR raw complete, controls pending. |
 
 ## Validity-Gate Note
 

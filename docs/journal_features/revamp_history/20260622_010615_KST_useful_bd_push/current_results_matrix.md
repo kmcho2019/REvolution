@@ -25,8 +25,8 @@ Real result packages:
 - `T24_sr_pareto_live_validation` partial SR-family live result
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
-`T24` is not a final live-matrix result yet because three comparator arms are
-still missing.
+`T24` is not a final live-matrix result yet because the manual and random
+comparator arms are still missing.
 The ten-package minimum is satisfied, but the goal is still active because
 validation of leads and adversarial sign-off are not done.
 
@@ -70,11 +70,12 @@ classic, manual BD, T22 random, T19 SR ReLU PCA, and T04 SR-RFF PCA. It is the
 current bridge from replay evidence to the next live local-Pareto experiment.
 
 `T24_sr_pareto_live_validation` fixes that next live experiment and now has
-partial SR-family live results for SR-RFF and SR ReLU. Both preserve all three
-classic-covered problems and pass Pareto-archive validation. Neither is
-promoted: SR-RFF loses 66.06% relative best score on
-`Prob015_multi_pipe_8bit`, and SR ReLU loses 75.20% there. The full six-arm
-live matrix is still pending.
+partial SR-family live results for SR-RFF, SR ReLU, and SR raw. All three
+preserve all classic-covered problems and pass Pareto-archive validation. None
+is promoted: SR-RFF loses 66.06% relative best score on
+`Prob015_multi_pipe_8bit`, SR ReLU loses 75.20% there, and SR raw still loses
+57.09% there while also triggering a 60% relative synthesis-validity drop on
+`Prob041_traffic_light`. The full six-arm live matrix is still pending.
 
 ## Current Conclusions
 
@@ -92,17 +93,17 @@ live matrix is still pending.
 5. A broad negative sign-off is not justified because `T04` and `T19` remain
    active leads.
 6. The completed T24 SR-family arms say the archive mechanism works, but
-   SR-RFF/SR-ReLU local-Pareto parent pressure is not sufficient as-is.
+   SR-RFF/SR-ReLU/SR-raw local-Pareto parent pressure is not sufficient as-is.
 
 ## Next Decisions
 
-- Continue T24 with SR raw PCA, random descriptor, and manual BD before
-  spending budget on a larger matrix.
+- Continue T24 with random descriptor and manual BD before spending budget on a
+  larger matrix.
 - Add a quality/yield guard or adaptive emitter variant before expanding the
-  SR-family live run, because both SR-RFF and SR ReLU lose too much best
+  SR-family live run, because SR-RFF, SR ReLU, and SR raw lose too much best
   quality on `Prob015_multi_pipe_8bit`.
-- Keep the remaining manual, random, and SR raw arms in the T24 matrix
-  before making any positive QD/MAP-Elites claim.
+- Keep the remaining manual and random arms in the T24 matrix before making
+  any positive QD/MAP-Elites claim.
 - Keep `T22` in validation tables as a required comparator for any positive
   claim.
 - Run deeper per-problem analysis on `Prob011_multi_16bit`,

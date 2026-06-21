@@ -36,6 +36,15 @@ def test_package_t24_sr_family_live_result(tmp_path: Path) -> None:
             archive_members=4,
             global_pareto_members=5,
         )
+        _write_problem(
+            run_root=run_root,
+            mode="sr_raw_pca_qd/seed_1001/openai_gpt-oss-120b",
+            problem=problem,
+            best_score=1.5,
+            synthesis_rate=0.875,
+            archive_members=6,
+            global_pareto_members=7,
+        )
 
     assert main(["--run-root", str(run_root), "--output-dir", str(output_dir)]) == 0
 
@@ -44,13 +53,17 @@ def test_package_t24_sr_family_live_result(tmp_path: Path) -> None:
     family_figure = output_dir.parent / "figures" / "live_sr_family_vs_classic.png"
     rff_figure = output_dir.parent / "figures" / "live_sr_rff_vs_classic.png"
     rows = list(csv.DictReader(family_csv.read_text(encoding="utf-8").splitlines()))
-    assert len(rows) == 6
+    assert len(rows) == 9
     assert rows[0]["arm"] == "sr_rff_pca_qd"
     assert rows[0]["best_score_delta"] == "0.250000"
     assert rows[0]["archive_members"] == "3"
     assert rows[3]["arm"] == "sr_random_relu_pca_qd"
     assert rows[3]["best_score_delta"] == "-0.250000"
     assert rows[3]["global_pareto_members"] == "5"
+    assert rows[6]["arm"] == "sr_raw_pca_qd"
+    assert rows[6]["best_score_delta"] == "0.500000"
+    assert rows[6]["archive_members"] == "6"
+    assert rows[6]["global_pareto_members"] == "7"
     assert len(list(csv.DictReader(rff_csv.read_text(encoding="utf-8").splitlines()))) == 3
     assert family_figure.stat().st_size > 0
     assert rff_figure.stat().st_size > 0

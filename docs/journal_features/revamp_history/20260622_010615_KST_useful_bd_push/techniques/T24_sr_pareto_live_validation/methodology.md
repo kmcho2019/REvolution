@@ -100,7 +100,7 @@ Required downstream artifacts:
 
 Current tier: `pending_live_matrix`.
 
-T24 has completed the classic, SR-RFF, and SR ReLU arms. It is not a positive
-result until the remaining arms in `commands/live_screen_v0.md` have produced
-complete comparable artifacts and those artifacts pass the visual/reporting and
-anti-gaming gates.
+T24 has completed the classic, SR-RFF, SR ReLU, and SR raw arms. It is not a
+positive result until the remaining manual and random arms in
+`commands/live_screen_v0.md` have produced complete comparable artifacts and
+those artifacts pass the visual/reporting and anti-gaming gates.

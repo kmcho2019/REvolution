@@ -624,3 +624,36 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Lane decision: keep the SR-family live result as `ablate`; run SR raw and
   random/manual controls, then design a quality/yield-guarded emitter or parent
   pressure variant before expanding SR-family live sampling.
+
+## T24 SR Raw Live Result - 2026-06-21 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models` before the SR raw arm.
+  The endpoint reported `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Completed the `sr_raw_pca_qd` arm under the same T24 live screen: seed 1001,
+  population 12, three generations, strict ablation evaluation, and
+  128000-token code/diff budgets.
+- SR raw completed in 800.80 seconds and solved all three fixed problems, so
+  the classic-covered design preservation gate passes.
+- Pareto archive validation passed with zero failures and max front size 4.
+- Packaged the three completed SR-family arms into
+  `tables/live_sr_family_vs_classic.csv`,
+  `tables/live_sr_raw_pareto_validation.{json,md}`, and the regenerated
+  `figures/live_sr_family_vs_classic.png`.
+- Visual inspection found the regenerated three-method figure readable. Fixed
+  colors, rotated labels, and the zero line make the SR raw ALU gain and
+  multi-pipe quality loss easy to see.
+- Best-score deltas versus classic: `Prob045_alu` +1.85%,
+  `Prob041_traffic_light` -5.60%, and `Prob015_multi_pipe_8bit` -57.09%.
+- Valid-PPA-rate deltas versus classic: `Prob045_alu` +4.17 absolute points,
+  `Prob041_traffic_light` -37.50 absolute points, and
+  `Prob015_multi_pipe_8bit` -2.08 absolute points.
+- SR raw has the strongest completed SR-family multi-pipe front material:
+  17 archive members and 10 global Pareto members on
+  `Prob015_multi_pipe_8bit`.
+- Promotion decision: do not promote SR raw local-Pareto as-is. It keeps useful
+  front material but fails the multi-pipe best-quality bar and violates the
+  traffic-light synthesis-validity gate by a 60% relative drop with a large
+  classic denominator.
+- Lane decision: keep the SR-family live result as `ablate`; run random and
+  manual controls, then design a quality/yield-guarded emitter or parent
+  pressure variant before expanding SR-family live sampling.
