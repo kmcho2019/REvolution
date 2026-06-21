@@ -315,6 +315,6 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   live sampling require a concrete D1/D3/D4/D5 target.
 - [x] The restarted adversarial prompt returns PASS, or FAIL findings are
   resolved or logged as blockers with three concrete attempts.
-  Current PASS covers HEAD `e63f73da83` and artifact
+  Latest independent PASS covers implementation HEAD `375eb9ff4d` and artifact
   `exp/diversity_check/restarted_report_20260621_075346_UTC/`, scoped only to
   `B illumination_only` / diagnostic-only no-proceed.

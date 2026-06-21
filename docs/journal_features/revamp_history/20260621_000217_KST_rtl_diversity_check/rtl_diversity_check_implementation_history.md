@@ -1596,3 +1596,32 @@ validation evidence.
 - Marked the VQ/codebook guard complete because VQ/codebook was not revived
   in-loop; it remains prior 20260618 negative/control context unless a future
   continuous descriptor passes quality-gated robustness tests.
+
+### Final Validation After Checklist Closure
+
+- Ran the independent adversarial validation prompt again after commit
+  `375eb9ff4d58ccc8bf9dfa310f2245fdefeb8a39`
+  (`docs(diversity): Close scoped checklist`).
+- Validation report:
+  `docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_subagent_validation_report.md`.
+- Validator verdict: PASS.
+- Scope:
+  - implementation HEAD `375eb9ff4d58ccc8bf9dfa310f2245fdefeb8a39`;
+  - report artifact
+    `exp/diversity_check/restarted_report_20260621_075346_UTC/`;
+  - claim bounded to `B illumination_only` and diagnostic-only/no-proceed.
+- Validator checks:
+  - branch and HEAD matched the request; only unrelated untracked
+    `.devcontainer/devcontainer-lock.json` was present;
+  - `/aux/revolution-history` remained read-only;
+  - focused pytest over touched report/reconstruction/budget/lineage/WP3/
+    near-motif/Qwen tests returned 19 passed;
+  - ruff on touched scripts/tests was clean;
+  - pyright on touched scripts returned 0 errors;
+  - `git diff --check` was clean before editing the report;
+  - no unchecked active checklist items remained.
+- Validator specifically confirmed that closing the conditional checklist
+  items was justified: no live sampling was launched because no offline
+  utility gate passed; no finetuning or in-loop learned encoder is justified;
+  VQ/codebook was not revived; and sub-threshold or collapsed methods remain
+  diagnostic-only/no-proceed.
