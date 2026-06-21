@@ -79,6 +79,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   had only generic vLLM guidance. The new guide records known endpoint
   patterns, `/v1/models` preflight commands, the 128000-token research policy,
   smoke harnesses, live command shape, and run artifact requirements.
+- Strengthened dependency policy after user clarification: repo `.venv` or uv
+  lock conflicts must not stop a proposed method. Future runs should use
+  per-technique/per-run isolated uv environments, source checkouts, or
+  submodules as needed, with exact commands and commits captured in manifests.
+- Verified the shared GPT-OSS endpoint with
+  `curl --max-time 15 http://20.0.0.103:8000/v1/models`. It returned
+  `openai/gpt-oss-120b` with `max_model_len=131072`, so the runtime guide now
+  treats `20.0.0.103:8000` as an active live API target instead of only an
+  older Auto-BD reference.
 - Added six extra method packages from the literature/architecture search:
   `aurora_incremental_autoencoder_bd`, `dehnn_hypergraph_bd`,
   `masterrtl_sog_bd`, `deepcell_multiview_bd`, `mome_pareto_archive_bd`, and

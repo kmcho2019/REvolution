@@ -12,7 +12,7 @@ record the returned model metadata.
 | shared host endpoint | `http://host.docker.internal:8000/v1` | `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` | Used by prior long-token QD/REvolution runs from this workspace. Prefer this when working inside the devcontainer and the model server runs on the host. |
 | compose vLLM service | `http://vllm:8888/v1` | `/models/openai-gpt-oss-120b` | Used when `.devcontainer/docker-compose.yml --profile vllm` starts the vLLM service on the compose network. |
 | host-local vLLM | `http://localhost:8888/v1` | server-dependent | Used by host-side scripts or manual local runs outside the devcontainer. |
-| historical Auto-BD endpoint | `http://20.0.0.103:8000/v1` | server-dependent | Recorded in older Auto-BD artifacts. Verify reachability and model metadata before reuse. |
+| verified GPT-OSS endpoint | `http://20.0.0.103:8000/v1` | `openai/gpt-oss-120b` | Verified from this workspace on 2026-06-21 UTC with `max_model_len=131072`. Prefer this when the shared host endpoint is reachable and the goal needs a live GPT-OSS-120B API. |
 
 Do not assume a model path from the endpoint name. Query `/v1/models` and use
 the returned `id` unless a run policy explicitly locks `--model_name`.
@@ -24,6 +24,7 @@ Run one of these before live experiments:
 ```bash
 curl -sS --max-time 10 http://host.docker.internal:8000/v1/models
 curl -sS --max-time 10 http://vllm:8888/v1/models
+curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
 ```
 
 The preflight record must include:

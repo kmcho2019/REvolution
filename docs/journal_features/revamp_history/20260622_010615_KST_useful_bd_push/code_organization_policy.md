@@ -43,6 +43,11 @@ Each technique should provide only the descriptor extractor and a small method
 configuration. If a method needs a special dependency or training step, isolate
 that in the technique package and keep the common evaluator unchanged.
 
+If a method's dependencies conflict with the repo uv environment, use a
+method-local or run-local uv environment under `exp/useful_bd_push/envs/`.
+Technique-only packages should not become global imports in `src/revolution/`
+unless the method graduates into a maintained feature.
+
 ## No Messy Experiment Exceptions
 
 Do not add:
@@ -57,6 +62,10 @@ Do not add:
 If a dependency or old artifact layout blocks a method, record the blocker and
 write a small one-time conversion/reporting script rather than complicating the
 core pipeline.
+
+External research repos should live under `exp/useful_bd_push/sources/` unless
+there is a clear reproducibility reason to add a submodule. Record the source
+commit and local patches either way.
 
 ## Testing Expectations
 

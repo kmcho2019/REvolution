@@ -31,7 +31,9 @@ scaffold time, but the copied source archive exists under `exp/diversity_check`.
 Use `vllm_runtime_guide.md` for endpoint selection, preflight commands, smoke
 harnesses, and live command templates. Known targets include the shared host
 endpoint `host.docker.internal:8000`, the compose service `vllm:8888`, and
-older historical endpoints that must be revalidated before reuse.
+the verified GPT-OSS-120B endpoint `20.0.0.103:8000`. Re-run the `/v1/models`
+preflight before every live sampling batch even when an endpoint was recently
+verified.
 
 ## Fixed Variables
 
@@ -72,10 +74,32 @@ Dependency failure is not a stopping condition until these have been tried and
 logged:
 
 1. use existing `.venv`;
-2. `uv add <dependency>` if it fits the repo;
-3. isolated env under `exp/useful_bd_push/envs/<technique>/`;
-4. source checkout or submodule under `exp/useful_bd_push/sources/<technique>/`;
-5. faithful surrogate with exact differences recorded.
+2. `uv add <dependency>` if it fits the repo and does not add broad dependency
+   churn;
+3. isolated uv env under
+   `exp/useful_bd_push/envs/<technique>/<timestamp>/`;
+4. source checkout under `exp/useful_bd_push/sources/<technique>/`;
+5. git submodule only when the external repo should become versioned
+   reproducibility material;
+6. faithful surrogate with exact differences recorded.
+
+The current repo uv environment is not allowed to block progress on a proposed
+method. If dependencies conflict with the repo lockfile, create a method-local
+or run-local uv environment instead of forcing compatibility into the main
+codebase. A typical isolated setup is:
+
+```bash
+uv venv exp/useful_bd_push/envs/<technique>/<timestamp>
+exp/useful_bd_push/envs/<technique>/<timestamp>/bin/python -m pip install -U pip
+exp/useful_bd_push/envs/<technique>/<timestamp>/bin/python -m pip install <deps>
+```
+
+When cloning external method repos, record the remote URL, commit SHA, license
+status, install command, local patches, and whether the checkout is a disposable
+source cache or a deliberate submodule. Keep core `src/revolution/` imports
+free of technique-only dependencies; call isolated tools from scripts or
+adapter modules so failed dependency experiments do not clutter the shared
+pipeline.
 
 ## Reproducibility Artifacts
 
@@ -84,6 +108,8 @@ Each run root must contain:
 - `run_config.json`;
 - `candidate_manifest.csv` or equivalent;
 - descriptor fit files and hashes;
+- isolated environment path, installed package list, and external source commit
+  hashes when applicable;
 - passive archive config;
 - raw tables needed to regenerate figures;
 - generated figures;

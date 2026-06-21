@@ -15,6 +15,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Add code organization policy for clean experiment implementation.
 - [x] Add visualization/reporting policy for figure inspection and conclusions.
 - [x] Add local vLLM runtime guide for endpoint preflight and live commands.
+- [x] Verify `http://20.0.0.103:8000/v1/models` returns live
+      `openai/gpt-oss-120b` metadata.
 - [ ] Confirm branch, HEAD, dirty state, data mounts, GPU visibility, and
       output roots at goal start.
 - [ ] Read the 20260618 Auto-BD negative decision and the 20260621 compiled
@@ -22,8 +24,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Verify the copied ASP-DAC release source and any available
       `aspdac2026-paper` ref.
 - [ ] Create `exp/useful_bd_push/` output convention and central run ledger.
-- [ ] Preflight selected vLLM endpoint and record `/v1/models` metadata before
-      live sampling.
+- [ ] Re-preflight the selected vLLM endpoint and record `/v1/models` metadata
+      before each live sampling batch.
+- [ ] Create `exp/useful_bd_push/envs/` and `exp/useful_bd_push/sources/`
+      conventions for isolated dependencies and external method repos.
 
 ## Common Evaluation Surface
 
@@ -116,6 +120,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Run `python -m pyright` on touched source/report scripts.
 - [ ] Run `git diff --check`.
 - [ ] Record blocked dependency or live-run smoke results explicitly.
+- [ ] For dependency blockers, try `uv add`, isolated uv env, source checkout,
+      and submodule decision before stopping a method.
 - [ ] Record vLLM endpoint, model id, token budgets, and timeout/preflight
       status for live runs.
 - [ ] Run adversarial validation and write

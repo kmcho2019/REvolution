@@ -137,6 +137,11 @@ deserves deeper analysis and a method package.
 - New code must follow `code_organization_policy.md` and `GUIDELINES.md`: clean
   shared evaluators, typed simple modules, and no broad fallback/back-compat
   clutter.
+- The main uv environment is not a hard dependency gate. If a proposed method
+  conflicts with the repo environment, create an isolated uv environment under
+  `exp/useful_bd_push/envs/<technique>/<timestamp>/` or clone the external repo
+  under `exp/useful_bd_push/sources/<technique>/`; use submodules only when a
+  source repo must become versioned reproducibility material.
 - New code must include docstrings for non-obvious helpers and keep docs,
   comments, and report guidance updated with each implementation batch.
 - Figures and reports must follow `visualization_reporting_policy.md`; inspect
@@ -309,8 +314,8 @@ After each `T0`, add at least one follow-up idea, ablation, or hybrid to
 ## Risks And Blockers
 
 - Encoders may be hard to install or may not expose usable checkpoints.
-  Dependency failure is not a blocker until `uv add`, isolated `exp/` env, or
-  documented source checkout has been tried.
+  Dependency failure is not a blocker until `uv add`, an isolated per-method
+  uv env, source checkout, and submodule decision have been tried and logged.
 - Live sampling may be expensive. Use replay first, then run a bounded D4-style
   live experiment only for candidates that reach `T1` or `T2`.
 - A method can game diversity by producing invalid or duplicate designs.

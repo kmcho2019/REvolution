@@ -46,6 +46,9 @@ Check:
 - For live LLM-backed runs, did the implementer follow
   `vllm_runtime_guide.md`: endpoint preflight, served model metadata,
   `128000` token budgets for research evidence, and blocked-run logging?
+- For dependency-heavy methods, did the implementer avoid stopping at repo
+  `.venv` or uv-lock conflicts by trying isolated uv envs, source checkouts,
+  and a submodule decision when appropriate?
 - Are code changes simple, typed, modular, and aligned with `GUIDELINES.md`,
   `AGENTS.md`, and `code_organization_policy.md`?
 - Are docstrings, comments, and docs updated for new code paths?

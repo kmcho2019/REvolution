@@ -75,10 +75,17 @@ For the overall push:
 For each blocked method:
 
 1. try existing environment;
-2. try `uv add`;
-3. try isolated env;
-4. try source checkout or submodule;
-5. implement faithful surrogate and record differences.
+2. try `uv add` when it does not create broad repo dependency churn;
+3. try an isolated uv env under
+   `exp/useful_bd_push/envs/<technique>/<timestamp>/`;
+4. try source checkout under `exp/useful_bd_push/sources/<technique>/`;
+5. decide whether the external repo should be pinned as a submodule;
+6. implement faithful surrogate and record differences.
+
+The current repo uv environment is not a valid reason to abandon a method. A
+blocked report must include the isolated-env or source-checkout command that
+was attempted, or explain why the method is impossible without unavailable
+external artifacts such as missing checkpoints.
 
 ## Idea Generation Rule
 
