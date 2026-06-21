@@ -1578,3 +1578,21 @@ validation evidence.
   shuffled labels, D1 uncontrolled, D4 not run, D5 negative, bounded Qwen
   evidence, collapsed DeepGate3 evidence, insufficient lineage utility, and
   RTLLM-only distance-based near-motif coverage.
+
+### Completion-Audit Checklist Cleanup
+
+- Audited the remaining unchecked items in
+  `rtl_diversity_check_implementation_todo.md` after the refreshed
+  validation.
+- Marked the live-sampling preflight item as scoped/not-applicable for this
+  report because no offline D1/D3/D4/D5 utility gate passed. The vLLM
+  preflight remains mandatory for any future live sampling branch.
+- Marked the robustness-rejection item complete because every replay or
+  encoder method with sub-threshold utility, robustness loss, or collapse is
+  rejected as diagnostic-only/no-proceed in the current report.
+- Marked the training/fitting-corpus item complete as scoped because no
+  finetuned, AURORA, or in-loop learned encoder is justified beyond
+  diagnostics under the current gates.
+- Marked the VQ/codebook guard complete because VQ/codebook was not revived
+  in-loop; it remains prior 20260618 negative/control context unless a future
+  continuous descriptor passes quality-gated robustness tests.

@@ -245,9 +245,12 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   common-audit replay. Refreshed validation still passes only the
   `B illumination_only` / diagnostic-only no-proceed claim; no offline utility
   gate currently justifies live sampling.
-- [ ] If live sampling is used, preflight `curl http://20.0.0.103:8000/v1/models`
+- [x] If live sampling is used, preflight `curl http://20.0.0.103:8000/v1/models`
   and record served model id, max_model_len, token settings, subset, seed, and
   command.
+  Scoped: no live sampling was launched because the offline restart evidence
+  did not pass a D1/D3/D4/D5 utility gate. The live-run preflight remains a
+  requirement only for a future live sampling branch.
 - [x] Implement or simulate a quality floor: non-dominated, HV contributor,
   top-quartile valid candidate, above median valid fitness, or one PPA axis
   improved without catastrophic regression.
@@ -259,8 +262,12 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   `0.00`, `0.10`, `0.25`, and `0.50`, or log why budget forbids it.
   Scoped: replay sweep emitted in
   `exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC/`.
-- [ ] Reject any method that loses valid-PPA coverage by more than 5
+- [x] Reject any method that loses valid-PPA coverage by more than 5
   percentage points or repeats the ST-NOD-style robustness drop.
+  Scoped: the current report rejects method promotion for quality-gated
+  novelty replay, near-motif suppression, Qwen replay, DeepGate3, and
+  AURORA-style probes. No method with robustness loss or sub-threshold utility
+  is promoted beyond diagnostics.
 
 ## WP3 - Learned / AURORA / VQ Escalation
 
@@ -280,7 +287,7 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   retention over the implementation-feature baseline.
   Artifact:
   `exp/diversity_check/wp3_rich_encoder_20260621_070533_UTC/`.
-- [ ] If justified beyond diagnostics, write the training/fitting corpus,
+- [x] If justified beyond diagnostics, write the training/fitting corpus,
   leakage policy,
   checkpoint/hash, and common-audit evaluation before running training.
   Current status: not justified as an in-loop method. AURORA-style or
@@ -288,8 +295,10 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   targets a concrete D1/D3/D4/D5 gate.
   Escalation plan:
   `rtl_diversity_check_encoder_escalation_plan.md`.
-- [ ] Do not revive VQ/codebook in-loop unless a continuous descriptor first
+- [x] Do not revive VQ/codebook in-loop unless a continuous descriptor first
   passes quality-gated robustness tests.
+  Scoped: VQ/codebook was not revived in-loop. Existing VQ/codebook evidence
+  remains prior negative/control context from the 20260618 Auto-BD work.
 
 ## Restart Completion Gates
 
