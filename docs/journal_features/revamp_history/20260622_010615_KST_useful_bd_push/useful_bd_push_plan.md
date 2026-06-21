@@ -40,6 +40,7 @@ The desired end state is one of:
 - Anti-reward-hacking policy: `anti_reward_hacking_policy.md`
 - Code organization policy: `code_organization_policy.md`
 - Visualization/reporting policy: `visualization_reporting_policy.md`
+- Local vLLM runtime guide: `vllm_runtime_guide.md`
 - Continuing idea backlog: `idea_backlog.md`
 - Technique packages: `techniques/<technique_slug>/`
 
@@ -110,6 +111,8 @@ deserves deeper analysis and a method package.
 - Keep model, benchmark subset, seeds, prompts, operators, budget, timeouts,
   and evaluation flow fixed across methods unless the plan records a versioned
   exception before running.
+- For live LLM runs, use `vllm_runtime_guide.md` to select and preflight the
+  endpoint, record served model metadata, and keep long-context token budgets.
 - Do not use final PPA, reference PPA, fitness, hypervolume, or test pass rate
   as in-loop BD inputs. They may be evaluation labels, controls, or offline
   analysis outputs.
@@ -251,6 +254,8 @@ Required metrics:
 - archive occupancy, entropy, QD score, and common-audit coverage;
 - duplicate and near-duplicate suppression impact;
 - runtime, dependency cost, and fitting/inference cost;
+- vLLM endpoint metadata, token budgets, and blocked live-run status where
+  applicable;
 - per-seed and per-problem deltas against classic and landing Smooth-QD.
 
 ## Iteration Policy

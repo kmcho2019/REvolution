@@ -26,6 +26,13 @@ At goal start, verify whether a remote or archived `aspdac2026-paper` ref is
 available. The exact local branch ref is not present in this worktree at
 scaffold time, but the copied source archive exists under `exp/diversity_check`.
 
+## vLLM Runtime
+
+Use `vllm_runtime_guide.md` for endpoint selection, preflight commands, smoke
+harnesses, and live command templates. Known targets include the shared host
+endpoint `host.docker.internal:8000`, the compose service `vllm:8888`, and
+older historical endpoints that must be revalidated before reuse.
+
 ## Fixed Variables
 
 Before a method run, record:
@@ -43,6 +50,7 @@ Before a method run, record:
 
 For reasoning-model vLLM experiments, `max_tokens` and `diff_max_tokens` must
 be `128000` unless the run is explicitly labeled a tiny smoke.
+Record the `/v1/models` response and resolved model id for every live run.
 
 ## Method Run Order
 
@@ -81,6 +89,7 @@ Each run root must contain:
 - generated figures;
 - visual inspection notes for generated figures;
 - stdout/stderr or run log;
+- vLLM preflight capture for live LLM runs;
 - `README.md` stating the command and commit hash.
 
 Each technique package must mirror the key paths in `artifacts_manifest.md`.

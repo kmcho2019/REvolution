@@ -14,6 +14,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       policy docs.
 - [x] Add code organization policy for clean experiment implementation.
 - [x] Add visualization/reporting policy for figure inspection and conclusions.
+- [x] Add local vLLM runtime guide for endpoint preflight and live commands.
 - [ ] Confirm branch, HEAD, dirty state, data mounts, GPU visibility, and
       output roots at goal start.
 - [ ] Read the 20260618 Auto-BD negative decision and the 20260621 compiled
@@ -21,6 +22,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Verify the copied ASP-DAC release source and any available
       `aspdac2026-paper` ref.
 - [ ] Create `exp/useful_bd_push/` output convention and central run ledger.
+- [ ] Preflight selected vLLM endpoint and record `/v1/models` metadata before
+      live sampling.
 
 ## Common Evaluation Surface
 
@@ -113,6 +116,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Run `python -m pyright` on touched source/report scripts.
 - [ ] Run `git diff --check`.
 - [ ] Record blocked dependency or live-run smoke results explicitly.
+- [ ] Record vLLM endpoint, model id, token budgets, and timeout/preflight
+      status for live runs.
 - [ ] Run adversarial validation and write
       `useful_bd_push_subagent_validation_report.md`.
 

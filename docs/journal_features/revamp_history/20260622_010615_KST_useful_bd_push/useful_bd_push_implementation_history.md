@@ -75,6 +75,10 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Added `visualization_reporting_policy.md` so generated figures are manually
   inspected for clarity and result reports contain precise conclusions,
   limitations, and next steps.
+- Added `vllm_runtime_guide.md` after auditing the scaffold and finding that it
+  had only generic vLLM guidance. The new guide records known endpoint
+  patterns, `/v1/models` preflight commands, the 128000-token research policy,
+  smoke harnesses, live command shape, and run artifact requirements.
 - Added six extra method packages from the literature/architecture search:
   `aurora_incremental_autoencoder_bd`, `dehnn_hypergraph_bd`,
   `masterrtl_sog_bd`, `deepcell_multiview_bd`, `mome_pareto_archive_bd`, and

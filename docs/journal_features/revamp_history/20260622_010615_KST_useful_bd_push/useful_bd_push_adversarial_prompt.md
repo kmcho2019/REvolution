@@ -43,6 +43,9 @@ Check:
   manually inspected, and tied to claims?
 - Do per-technique reports and the central report explain the method,
   terminology, result, conclusion, limitations, and next step precisely?
+- For live LLM-backed runs, did the implementer follow
+  `vllm_runtime_guide.md`: endpoint preflight, served model metadata,
+  `128000` token budgets for research evidence, and blocked-run logging?
 - Are code changes simple, typed, modular, and aligned with `GUIDELINES.md`,
   `AGENTS.md`, and `code_organization_policy.md`?
 - Are docstrings, comments, and docs updated for new code paths?
