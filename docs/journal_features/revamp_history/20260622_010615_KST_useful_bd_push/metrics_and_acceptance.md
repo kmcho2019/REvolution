@@ -1,0 +1,175 @@
+# Metrics And Acceptance
+
+Average fitness and average best PPA are not primary comparison metrics for
+this push. They hide the reason to use QD: finding a broader set of valid,
+high-quality implementation alternatives. They may be reported as secondary
+diagnostics only.
+
+## Core Terms
+
+- `candidate`: one generated RTL design attempt.
+- `syntax-valid`: parses under the fixed frontend.
+- `functional`: passes the benchmark functional test.
+- `synthesis-valid`: produces a mapped netlist under the fixed synthesis flow.
+- `valid-PPA`: has usable area, power, and timing metrics.
+- `canonical netlist`: normalized synthesized netlist used for duplicate
+  accounting.
+- `BD`: behavior descriptor used for archive cell assignment.
+- `active archive`: the archive used by the method during search.
+- `passive archive`: a common audit archive filled after the fact by all
+  methods, including classic REvolution, with identical cell definitions.
+- `PPA front`: nondominated set over normalized area, power, and timing
+  objectives after functional and synthesis validity.
+
+## Mandatory Funnels
+
+Every result table must report counts for:
+
+1. generated;
+2. syntax-valid;
+3. functional;
+4. synthesis-valid;
+5. valid-PPA;
+6. unique canonical netlists among valid-PPA candidates;
+7. Pareto-front candidates among unique valid-PPA netlists.
+
+No method may claim useful diversity from invalid candidates, duplicate
+netlists, or candidates without PPA.
+
+## Primary QD Metrics
+
+Use these as the headline metrics:
+
+- `global_ppa_hypervolume`: hypervolume of the global nondominated PPA front
+  after converting area, power, and timing to normalized maximize objectives.
+- `passive_archive_qd_score`: sum of nonnegative normalized quality over
+  occupied cells in the same passive archive for every method.
+- `passive_archive_coverage`: fraction of passive archive cells occupied by
+  unique valid-PPA netlists.
+- `pareto_cell_count`: number of passive archive cells containing at least one
+  PPA-front candidate.
+- `pareto_spread`: normalized descriptor-space spread of PPA-front candidates,
+  reported with nearest-neighbor distance and convex-hull or bounding-box
+  volume when dimensions permit.
+- `unique_front_families`: count of distinct canonical netlist, motif, or
+  codebook families represented on the PPA front.
+- `valid_ppa_yield`: valid-PPA candidates per generated candidate and per wall
+  clock hour.
+- `retained_classic_coverage`: fraction of problems where the method preserves
+  at least one classic-covered valid-PPA solution.
+- `functionality_rate`: functional candidates divided by generated candidates.
+- `synthesis_valid_rate`: synthesis-valid candidates divided by generated
+  candidates.
+
+## Secondary Metrics
+
+Report these but do not use them alone for promotion:
+
+- best fitness / best quality;
+- mean fitness among valid-PPA candidates;
+- mean best area, power, or timing;
+- archive entropy;
+- duplicate rate;
+- wall-clock runtime and descriptor extraction cost;
+- model dependency/setup cost.
+
+## Efficiency Metrics
+
+For live runs, report curves against valid-PPA evaluations and wall time:
+
+- hypervolume AUC;
+- QD-score AUC;
+- coverage AUC;
+- best-quality AUC;
+- valid-PPA yield AUC.
+
+This prevents a method from looking good only because it eventually catches up
+after spending much more evaluation budget.
+
+## Continuous / Grid-Free Audit
+
+For descriptors where grid resolution can bias results, compute at least one
+grid-free audit:
+
+- Continuous QD score over sampled target descriptor points;
+- objective-distance hypervolume over target tolerance tradeoffs;
+- Vendi score or nearest-neighbor diversity over PPA-front descriptors.
+
+These audits are secondary to the fixed passive archive, but they help argue
+that a method explores a broader Pareto region rather than a lucky grid.
+
+## Effectiveness Tiers
+
+`T0 diagnostic`:
+
+- method runs and produces interpretable artifacts;
+- loses clearly on primary metrics or fails validity/duplicate guardrails.
+
+`T1 near_classic`:
+
+- within 2 percent relative loss, or within paired noise, on global PPA
+  hypervolume and best quality;
+- preserves every classic-covered design in the fixed compared subset: if
+  classic has at least one valid functional PPA candidate for that design under
+  the same evolutionary budget, the method must also have at least one;
+- avoids catastrophic validity collapse: functionality rate and
+  synthesis-valid rate must not drop by 50 percent or more relative to
+  classic;
+- improves or matches at least one diversity metric such as coverage,
+  Pareto-cell count, or unique front families.
+
+`T2 useful_bd`:
+
+- produces a reproducible positive delta on at least one primary QD metric
+  against classic or landing Smooth-QD;
+- does not regress global PPA hypervolume or best quality beyond the `T1`
+  tolerance;
+- has no unaccounted duplicate, invalid-candidate, or leakage issue.
+
+`T3 strong_win`:
+
+- improves a primary metric by at least 10 percent or wins across multiple
+  seeds/problems with paired statistical support;
+- passes all guardrails and has a clean methodology package.
+
+## Anti-Loophole Rules
+
+- A method cannot be promoted from one cherry-picked problem.
+- A method cannot be promoted by improving only average fitness.
+- A method cannot be promoted by filling cells with duplicate canonical
+  netlists.
+- A method cannot be promoted if it loses any classic-covered design in the
+  fixed compared subset.
+- A method cannot be promoted if its functionality rate or synthesis-valid rate
+  falls by 50 percent or more relative to classic under the same budget.
+- A method cannot use PPA, fitness, hypervolume, Pareto rank, reference PPA, or
+  test pass rate as an in-loop descriptor input.
+- A method cannot change subset, budget, prompts, model, token budget, or
+  synthesis flow after seeing results unless the change is recorded as a new
+  version and prior results remain visible.
+
+## Required Tables
+
+The central comparison report must include:
+
+- one row per method/problem/seed with all primary metrics;
+- one row per method/problem/seed for the validity funnel;
+- passive archive metrics for classic, landing Smooth-QD, and each BD method;
+- per-problem deltas versus classic and landing Smooth-QD;
+- aggregate paired summaries with confidence intervals or bootstrap intervals;
+- a holdout subset table if screening subsets were used.
+
+## What Counts As A Useful Gain
+
+After the strict functionality and catastrophic-validity guardrails are met, a
+method may be useful even if average fitness does not improve. A `T2` claim may
+come from any clearly documented primary metric improvement:
+
+- larger global PPA hypervolume;
+- broader passive archive coverage;
+- higher passive archive QD score;
+- more Pareto-front cells;
+- broader PPA-front descriptor spread;
+- more unique implementation families on the front;
+- better hypervolume, QD-score, or coverage AUC at the same evaluation budget;
+- better valid-PPA yield without losing classic-covered designs.
