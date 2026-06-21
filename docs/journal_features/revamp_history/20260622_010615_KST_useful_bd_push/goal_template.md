@@ -1,22 +1,66 @@
 # Goal Template
 
-Use this as a draft for `/goal` after reviewing the local plan. Keep the
-activated goal under 4000 characters when possible.
+Use this text for `/goal`. It intentionally omits the literal `/goal` prefix so
+the same body can be passed directly to the goal tool. Keep the detailed plan,
+method list, and policies in the sibling docs as the full contract.
 
 ```text
-/goal Objective: on branch feat/journal-useful-bd-exp-20260622, make a wide-net, persistent push to find useful behavior descriptors for QD/MAP-Elites in RTL netlist evolution and PPA optimization. Use docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/useful_bd_push_plan.md as the contract, useful_bd_push_implementation_todo.md as the checklist, useful_bd_push_implementation_history.md as the audit log, and metrics_and_acceptance.md / anti_reward_hacking_policy.md / code_organization_policy.md / visualization_reporting_policy.md / vllm_runtime_guide.md as binding guardrails.
+Objective: on branch feat/journal-useful-bd-exp-20260622, make a wide-net,
+persistent push to find useful behavior descriptors for QD/MAP-Elites in RTL
+netlist evolution and PPA optimization. Use
+docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/ as the
+revamp root. The plan is the contract, TODO is the checklist, history is the
+audit log, and the metrics, anti-gaming, code, visualization, and vLLM docs are
+binding guardrails.
 
-Outcome: find at least one descriptor/archive-coupling technique that is near-classic or better, or produce a rigorous negative map of failed technique families. Treat the previous 10% utility threshold as a strong-win tier, not the first filter. A method may continue if it matches classic within a small tolerance, preserves classic-covered valid-PPA problems, or shows any reproducible positive delta in HV, best fitness, valid-PPA count, Pareto spread, or lineage yield.
+Outcome: find at least one descriptor/archive-coupling technique that is
+near-classic or better, or produce a rigorous negative map of failed technique
+families. Treat the old 10% utility threshold as a strong-win tier, not the
+first filter. Keep investigating any method that matches classic within a
+small tolerance, preserves classic-covered valid-PPA problems, or shows a
+reproducible positive delta in HV, valid-PPA count, Pareto spread, archive
+coverage, or lineage yield.
 
-Metrics: do not use average fitness or average best PPA as primary evidence. Compare classic, landing Smooth-QD, and every method with a common passive archive and report global PPA hypervolume, passive archive QD score/coverage, Pareto-cell count, Pareto spread, unique front families, valid-PPA yield, duplicate accounting, and AUC metrics for live runs. Best quality is secondary unless paired with archive/front evidence.
+Metrics: do not use average fitness or average best PPA as primary evidence.
+Compare classic, landing Smooth-QD/manual-BD, and every method with a common
+passive archive. Report global PPA hypervolume, passive archive QD
+score/coverage, Pareto-cell count, Pareto spread, unique front families,
+valid-PPA yield, duplicate accounting, and AUC metrics for live runs.
 
-Required scope: attempt at least 10 current technique packages before any broad negative sign-off, including one simple control, one synthesis/netlist descriptor, one learned/projection descriptor, and one archive-coupling/Pareto variant. Candidate packages live under techniques/<slug>/ and include simple_yosys_stat_bd, motif_pathlet_bd, synthesis_delta_stnod_bd, autoqd_mmd_synthesis_bd, vq_elites_codebook_bd, qwen_projection_bd, deepgate_family_bd, sequential_deepseq_bd, nettag_text_graph_bd, circuitfusion_multimodal_bd, mgvga_contrastive_bd, lineage_repair_bd, aurora_incremental_autoencoder_bd, dehnn_hypergraph_bd, masterrtl_sog_bd, deepcell_multiview_bd, mome_pareto_archive_bd, and adaptive_emitter_cvt_bd. Add more only with method cards.
+Required scope: attempt at least 10 current technique packages from
+techniques/<slug>/ before any broad negative sign-off, including one simple
+control, one synthesis/netlist descriptor, one learned/projection descriptor,
+and one archive-coupling/Pareto variant. Add extra methods only with method
+cards. Every attempted package must have paper-grade methodology,
+artifacts_manifest with commands/paths/hashes, figures, tables, results report,
+visual inspection notes, and a T0/T1/T2/T3 tier decision.
 
-Technique package rule: every attempted technique must have methodology.md detailed enough for a paper method section and recreation, artifacts_manifest.md with commands/paths/hashes, figures/, tables/, results_report.md with validity/PPA/HV/archive/runtime tables and readable figures, visual inspection notes, and a T0/T1/T2/T3 tier decision.
+Constraints: keep model, subset, seeds, prompts, operators, budget, timeouts,
+and evaluation flow fixed unless a versioned exception is recorded before
+running. For live vLLM runs, preflight the endpoint, record /v1/models
+metadata, and use 128000 max_tokens/diff_max_tokens except for tiny smokes.
+Freeze the screening subset before interpreting outcomes. Do not use final PPA,
+reference PPA, fitness, hypervolume, Pareto rank, or test pass rate as in-loop
+BD inputs. Do not count duplicates or invalid candidates as useful diversity.
+Any T1+ method must preserve every classic-covered design under the same budget
+and must not have a 50% or larger relative functionality/synthesis-validity
+decline versus classic.
 
-Constraints: compare against classic REvolution and landing Smooth-QD/manual-BD when artifacts or live runs allow. Keep model, subset, seeds, prompts, operators, budget, timeouts, and evaluation flow fixed unless a versioned exception is recorded before running. For live vLLM runs, preflight the endpoint, record /v1/models metadata, and use 128000 max_tokens/diff_max_tokens unless the run is explicitly a tiny smoke. Freeze the screening subset by screening_subset_selection.md before interpreting outcomes. Do not use final PPA, reference PPA, fitness, hypervolume, Pareto rank, or test pass rate as in-loop BD inputs. Do not count duplicate netlists or invalid candidates as useful diversity. Any T1+ method must preserve every design where classic has at least one valid functional PPA result under the same budget and must not have a 50% or larger relative functionality/synthesis-validity decline versus classic.
+Iteration policy: start from common reporting and prior evidence, then cheap
+deterministic controls, synthesis/netlist descriptors, projection/codebook
+descriptors, MOME/adaptive CVT variants, and encoder adaptations such as Qwen,
+DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, MasterRTL
+SOG, or AURORA. Keep code modular and skimmable, update docs/docstrings, avoid
+broad fallback/back-compat clutter, and use isolated uv envs, source checkouts,
+or submodules when the main uv env blocks a method. After each method, update
+its package and central history. Every T0 needs a follow-up idea, ablation,
+hybrid, or retirement rationale. Commit regularly and inspect every commit
+message.
 
-Iteration policy: start from common reporting and prior evidence, then cheap deterministic controls, then synthesis/netlist descriptors, then projection/codebook descriptors, then MOME/adaptive CVT archive variants, then encoder adaptations such as Qwen projection, DeepGate family, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, MasterRTL SOG, or AURORA. Keep new code modular and skimmable under shared descriptor/evaluator/reporting surfaces, update docstrings/docs/comments for new code, and avoid broad fallback/back-compat clutter. Do not let the main uv environment block a method: use per-technique/per-run isolated uv envs under exp/useful_bd_push/envs/ and source checkouts or submodules under exp/useful_bd_push/sources/ when needed, with exact commands and commits in artifacts_manifest.md. After each method, update its package and central history before moving on. Every T0 result must produce a follow-up idea, ablation, hybrid, or retirement rationale. Commit regularly and inspect every commit message.
-
-Blocked stop condition: stop only after three concrete attempts hit the same blocker, with commands, artifacts, missing resource/input, and exact next decision needed. Do not end because one method is weak. Completion requires focused tests/checks, intuitive inspected figures, precise per-method and central conclusions, no overclaimed tier, no anti-loophole violation, and PASS from useful_bd_push_adversarial_prompt.md written to useful_bd_push_subagent_validation_report.md.
+Blocked stop condition: stop only after three concrete attempts hit the same
+blocker, with commands, artifacts, missing resource/input, and exact next
+decision needed. Do not end because one method is weak. Completion requires
+focused tests/checks, inspected intuitive figures, precise conclusions, no
+overclaimed tier, no anti-loophole violation, and PASS from the adversarial
+prompt written to the validation report.
 ```

@@ -92,3 +92,6 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `aurora_incremental_autoencoder_bd`, `dehnn_hypergraph_bd`,
   `masterrtl_sog_bd`, `deepcell_multiview_bd`, `mome_pareto_archive_bd`, and
   `adaptive_emitter_cvt_bd`.
+- Compressed `goal_template.md` so the activated goal body is safely under the
+  4000-character goal-tool limit while keeping the sibling plan and policy
+  files as the detailed contract.
