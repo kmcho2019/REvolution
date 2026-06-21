@@ -1,35 +1,37 @@
 # Technique Package Index
 
-Each subdirectory is a method package for the useful-BD push. A package is
-ready to run when `methodology.md` fixes the algorithm, commands, descriptor
-inputs, leakage exclusions, archive mapping, and expected artifacts. A package
-is complete only after `results_report.md`, `artifacts_manifest.md`,
-`figures/`, and `tables/` contain measured evidence.
+Each numbered subdirectory is a method package for the useful-BD push. The
+visible `T##_` prefix is the chronological tracking index. A package is ready
+to run when `methodology.md` fixes the algorithm, commands, descriptor inputs,
+leakage exclusions, archive mapping, and expected artifacts. A package is
+complete only after `results_report.md`, `artifacts_manifest.md`, `figures/`,
+and `tables/` contain measured evidence.
 
 At least 10 current packages must be attempted with real results before the
 push can sign off a broad negative map.
 
-The packages intentionally include simple controls, deterministic netlist
-descriptors, learned/projection descriptors, and archive-coupling variants:
+The canonical machine-readable index is `technique_registry.csv`.
 
-- `simple_yosys_stat_bd`
-- `motif_pathlet_bd`
-- `synthesis_delta_stnod_bd`
-- `autoqd_mmd_synthesis_bd`
-- `vq_elites_codebook_bd`
-- `qwen_projection_bd`
-- `deepgate_family_bd`
-- `sequential_deepseq_bd`
-- `nettag_text_graph_bd`
-- `circuitfusion_multimodal_bd`
-- `mgvga_contrastive_bd`
-- `lineage_repair_bd`
-- `aurora_incremental_autoencoder_bd`
-- `dehnn_hypergraph_bd`
-- `masterrtl_sog_bd`
-- `deepcell_multiview_bd`
-- `mome_pareto_archive_bd`
-- `adaptive_emitter_cvt_bd`
+| ID | Directory | Family | State |
+| --- | --- | --- | --- |
+| `T01` | `T01_simple_yosys_stat_bd` | Simple control | `T0 diagnostic` |
+| `T02` | `T02_motif_pathlet_bd` | Deterministic netlist descriptor | `T0 diagnostic` |
+| `T03` | `T03_synthesis_delta_stnod_bd` | Synthesis/netlist descriptor | Scaffolded |
+| `T04` | `T04_autoqd_mmd_synthesis_bd` | Automatic QD descriptor | Scaffolded |
+| `T05` | `T05_vq_elites_codebook_bd` | Codebook/archive descriptor | Scaffolded |
+| `T06` | `T06_qwen_projection_bd` | Learned/projection descriptor | Scaffolded |
+| `T07` | `T07_deepgate_family_bd` | Circuit encoder descriptor | Scaffolded |
+| `T08` | `T08_sequential_deepseq_bd` | Sequential encoder descriptor | Scaffolded |
+| `T09` | `T09_nettag_text_graph_bd` | Text-attributed graph descriptor | Scaffolded |
+| `T10` | `T10_circuitfusion_multimodal_bd` | Multimodal descriptor | Scaffolded |
+| `T11` | `T11_mgvga_contrastive_bd` | Contrastive graph descriptor | Scaffolded |
+| `T12` | `T12_lineage_repair_bd` | Lineage/yield descriptor | Scaffolded |
+| `T13` | `T13_aurora_incremental_autoencoder_bd` | Learned AURORA descriptor | Scaffolded |
+| `T14` | `T14_dehnn_hypergraph_bd` | Hypergraph descriptor | Scaffolded |
+| `T15` | `T15_masterrtl_sog_bd` | RTL operator-graph descriptor | Scaffolded |
+| `T16` | `T16_deepcell_multiview_bd` | Multiview circuit descriptor | Scaffolded |
+| `T17` | `T17_mome_pareto_archive_bd` | Archive-coupling/Pareto variant | Scaffolded |
+| `T18` | `T18_adaptive_emitter_cvt_bd` | Archive-coupling/emitter variant | Scaffolded |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

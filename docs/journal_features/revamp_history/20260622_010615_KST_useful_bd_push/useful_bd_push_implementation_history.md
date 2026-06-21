@@ -92,9 +92,9 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   treats `20.0.0.103:8000` as an active live API target instead of only an
   older Auto-BD reference.
 - Added six extra method packages from the literature/architecture search:
-  `aurora_incremental_autoencoder_bd`, `dehnn_hypergraph_bd`,
-  `masterrtl_sog_bd`, `deepcell_multiview_bd`, `mome_pareto_archive_bd`, and
-  `adaptive_emitter_cvt_bd`.
+  `T13_aurora_incremental_autoencoder_bd`, `T14_dehnn_hypergraph_bd`,
+  `T15_masterrtl_sog_bd`, `T16_deepcell_multiview_bd`,
+  `T17_mome_pareto_archive_bd`, and `T18_adaptive_emitter_cvt_bd`.
 - Compressed `goal_template.md` so the activated goal body is safely under the
   4000-character goal-tool limit while keeping the sibling plan and policy
   files as the detailed contract.
@@ -146,7 +146,7 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `development_preliminary_seed1`, seed `1001`, writing ignored artifacts to
   `exp/useful_bd_push/central_replay_20260621_165000_UTC/`.
 - Packaged committed tables and figures under
-  `techniques/simple_yosys_stat_bd/`.
+  `techniques/T01_simple_yosys_stat_bd/`.
 - Tier decision: `T0 diagnostic`. Simple Yosys-stat passes Gate 0 and loses no
   classic-covered problem, has mean HV within -0.24% of classic, and improves
   PPA-front unique netlists from 12 to 16. It does not reach `T1` because mean
@@ -165,3 +165,36 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   baseline has at least 10 passing samples for the corresponding stage. Smaller
   denominators must be reported as `small_n_validity` rather than used as a
   hard accept/reject signal.
+
+## Technique Index Rename - 2026-06-21 UTC
+
+- Renamed all technique package subdirectories to visible chronological
+  `T##_slug` names so method tracking does not depend on remembering scaffold
+  order.
+- Added `techniques/technique_registry.csv` as the stable machine-readable
+  index. `T01` is the simple Yosys-stat control, `T02` is the motif/pathlet
+  family replay, and `T03` through `T18` preserve the original scaffold order.
+- Updated the root README, technique README, TODO, plan, and literature-method
+  map to refer to numbered package directories.
+
+## T02 Motif Pathlet Replay - 2026-06-21 UTC
+
+- Added `scripts/package_useful_bd_replay_method.py` to package one method from
+  the existing central Auto-BD replay JSON into a numbered technique directory.
+  The script writes method-local CSV tables, small-n-aware validity-gate rows,
+  and PNG figures with readable labels.
+- Ran the packager on
+  `exp/useful_bd_push/central_replay_20260621_165000_UTC/auto_bd_seed1_central_report.json`
+  for method `netlist_motif_occupancy`, writing committed artifacts under
+  `techniques/T02_motif_pathlet_bd/`.
+- Visual inspection completed for all generated T02 figures. Notes are in
+  `techniques/T02_motif_pathlet_bd/figures/visual_inspection_notes.md`.
+- Tier decision: `T0 diagnostic`. Gate 0 passes and the 50 percent validity
+  collapse gate passes because functionality/synthesis/valid-PPA rate drops by
+  only 8.13% relative to classic with 209 classic passing samples. However,
+  mean hypervolume drops by 51.35%, mean best fitness drops by 12.00%,
+  common-audit occupied cells drop from 12 to 8, and common-audit QD score
+  drops from 2.3163 to -3.0274.
+- Follow-up rationale: coarse motif occupancy alone is too weak. The next
+  netlist-family attempt should add pathlets/reconvergence or combine motif
+  axes with synthesis-trajectory deltas before retrying archive pressure.

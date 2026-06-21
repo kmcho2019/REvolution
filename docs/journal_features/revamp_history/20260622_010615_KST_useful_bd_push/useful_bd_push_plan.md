@@ -181,40 +181,40 @@ was answered, what was not answered, and what should be tried next.
 
 Start with these packages and add more only with a method card:
 
-- `simple_yosys_stat_bd`: strong simple control over deterministic synthesis
+- `T01_simple_yosys_stat_bd`: strong simple control over deterministic synthesis
   statistics.
-- `motif_pathlet_bd`: netlist motifs, pathlets, fanout, reconvergence, and
+- `T02_motif_pathlet_bd`: netlist motifs, pathlets, fanout, reconvergence, and
   sequential cone balance.
-- `synthesis_delta_stnod_bd`: stage-to-stage synthesis response, not just
+- `T03_synthesis_delta_stnod_bd`: stage-to-stage synthesis response, not just
   final netlist counts.
-- `autoqd_mmd_synthesis_bd`: AutoQD-inspired random Fourier features over
+- `T04_autoqd_mmd_synthesis_bd`: AutoQD-inspired random Fourier features over
   synthesis/event occupancy vectors.
-- `vq_elites_codebook_bd`: VQ/codebook archive over non-PPA implementation
+- `T05_vq_elites_codebook_bd`: VQ/codebook archive over non-PPA implementation
   vectors.
-- `qwen_projection_bd`: Qwen3 embeddings with projection heads, contrastive
+- `T06_qwen_projection_bd`: Qwen3 embeddings with projection heads, contrastive
   positives/negatives, and identifier/comment stability controls.
-- `deepgate_family_bd`: DeepGate2/3/4-style AIG encoders with cone splitting
+- `T07_deepgate_family_bd`: DeepGate2/3/4-style AIG encoders with cone splitting
   and non-collapse tests.
-- `sequential_deepseq_bd`: DeepSeq/DeepSeq2-style sequential netlist features
+- `T08_sequential_deepseq_bd`: DeepSeq/DeepSeq2-style sequential netlist features
   and state-aware handcrafted controls.
-- `nettag_text_graph_bd`: text-attributed graph descriptors over mapped gates
+- `T09_nettag_text_graph_bd`: text-attributed graph descriptors over mapped gates
   and Boolean-expression summaries.
-- `circuitfusion_multimodal_bd`: multimodal RTL text, graph, and functionality
+- `T10_circuitfusion_multimodal_bd`: multimodal RTL text, graph, and functionality
   summary descriptors.
-- `mgvga_contrastive_bd`: masked-gate and Verilog-AIG alignment style
+- `T11_mgvga_contrastive_bd`: masked-gate and Verilog-AIG alignment style
   self-supervised descriptor.
-- `lineage_repair_bd`: descriptors based on parent-child repair, operator
+- `T12_lineage_repair_bd`: descriptors based on parent-child repair, operator
   yield, and descendant utility.
-- `aurora_incremental_autoencoder_bd`: AURORA-style learned descriptors with
+- `T13_aurora_incremental_autoencoder_bd`: AURORA-style learned descriptors with
   fixed refresh checkpoints and passive-archive audit.
-- `dehnn_hypergraph_bd`: directed hypergraph netlist representation for
+- `T14_dehnn_hypergraph_bd`: directed hypergraph netlist representation for
   long-range multi-pin interactions.
-- `masterrtl_sog_bd`: bit-level simple operator graph descriptor before full
+- `T15_masterrtl_sog_bd`: bit-level simple operator graph descriptor before full
   synthesis.
-- `deepcell_multiview_bd`: post-mapping plus AIG multiview descriptor.
-- `mome_pareto_archive_bd`: multi-objective QD with local Pareto fronts inside
+- `T16_deepcell_multiview_bd`: post-mapping plus AIG multiview descriptor.
+- `T17_mome_pareto_archive_bd`: multi-objective QD with local Pareto fronts inside
   descriptor cells.
-- `adaptive_emitter_cvt_bd`: CVT archive with fixed explore/exploit/repair
+- `T18_adaptive_emitter_cvt_bd`: CVT archive with fixed explore/exploit/repair
   emitter mixture.
 
 At least 10 technique packages must be attempted with real results before the

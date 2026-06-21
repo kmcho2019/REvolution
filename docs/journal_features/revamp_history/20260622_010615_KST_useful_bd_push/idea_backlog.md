@@ -1,15 +1,25 @@
 # Idea Backlog
 
 Use this backlog to keep generating methods during the goal. Move an idea into
-`techniques/<slug>/` before running it.
+a numbered `techniques/T##_slug/` package before running it.
 
-## From `simple_yosys_stat_bd` T0
+## From `T01_simple_yosys_stat_bd` T0
 
 - Keep simple Yosys-stat as the transparent CAD-native lower bound rather than
   a promoted method.
 - Next descriptor should preserve the same validity/coverage guardrails while
   adding motif/pathlet or synthesis-delta information to recover common-audit
   QD score and best fitness.
+
+## From `T02_motif_pathlet_bd` T0
+
+- Coarse motif occupancy alone is not enough: it preserved Gate 0 but lost
+  mean HV, common-audit coverage, and common-audit QD score.
+- Retry the family only with richer non-PPA structure: pathlet histograms,
+  reconvergence density, fanout buckets, or sequential cone balance.
+- Prefer a hybrid with `T03_synthesis_delta_stnod_bd` before another pure
+  motif-only archive, because the T02 failure suggests static motif ratios
+  miss stage-response signal.
 
 ## Near-Term Hybrids
 

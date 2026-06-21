@@ -55,41 +55,41 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 
 ## Technique Packages
 
-- [x] `simple_yosys_stat_bd` has methodology, results, figures, tables, and
+- [x] `T01_simple_yosys_stat_bd` has methodology, results, figures, tables, and
       tier decision.
-- [ ] `motif_pathlet_bd` has methodology, results, figures, tables, and tier
+- [x] `T02_motif_pathlet_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `synthesis_delta_stnod_bd` has methodology, results, figures, tables,
+- [ ] `T03_synthesis_delta_stnod_bd` has methodology, results, figures, tables,
       and tier decision.
-- [ ] `autoqd_mmd_synthesis_bd` has methodology, results, figures, tables,
+- [ ] `T04_autoqd_mmd_synthesis_bd` has methodology, results, figures, tables,
       and tier decision.
-- [ ] `vq_elites_codebook_bd` has methodology, results, figures, tables, and
+- [ ] `T05_vq_elites_codebook_bd` has methodology, results, figures, tables, and
       tier decision.
-- [ ] `qwen_projection_bd` has methodology, results, figures, tables, and tier
+- [ ] `T06_qwen_projection_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `deepgate_family_bd` has methodology, results, figures, tables, and tier
+- [ ] `T07_deepgate_family_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `sequential_deepseq_bd` has methodology, results, figures, tables, and
+- [ ] `T08_sequential_deepseq_bd` has methodology, results, figures, tables, and
       tier decision.
-- [ ] `nettag_text_graph_bd` has methodology, results, figures, tables, and
+- [ ] `T09_nettag_text_graph_bd` has methodology, results, figures, tables, and
       tier decision.
-- [ ] `circuitfusion_multimodal_bd` has methodology, results, figures, tables,
+- [ ] `T10_circuitfusion_multimodal_bd` has methodology, results, figures, tables,
       and tier decision.
-- [ ] `mgvga_contrastive_bd` has methodology, results, figures, tables, and
+- [ ] `T11_mgvga_contrastive_bd` has methodology, results, figures, tables, and
       tier decision.
-- [ ] `lineage_repair_bd` has methodology, results, figures, tables, and tier
+- [ ] `T12_lineage_repair_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `aurora_incremental_autoencoder_bd` has methodology, results, figures,
+- [ ] `T13_aurora_incremental_autoencoder_bd` has methodology, results, figures,
       tables, and tier decision.
-- [ ] `dehnn_hypergraph_bd` has methodology, results, figures, tables, and tier
+- [ ] `T14_dehnn_hypergraph_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `masterrtl_sog_bd` has methodology, results, figures, tables, and tier
+- [ ] `T15_masterrtl_sog_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `deepcell_multiview_bd` has methodology, results, figures, tables, and
+- [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
-- [ ] `mome_pareto_archive_bd` has methodology, results, figures, tables, and
+- [ ] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and
       tier decision.
-- [ ] `adaptive_emitter_cvt_bd` has methodology, results, figures, tables, and
+- [ ] `T18_adaptive_emitter_cvt_bd` has methodology, results, figures, tables, and
       tier decision.
 
 ## Minimum Goal Completion

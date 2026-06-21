@@ -38,6 +38,24 @@ Compute a sparse vector containing:
 Use log1p counts, benchmark-level robust scaling, and an explicit unknown motif
 bucket. Store the hash salt and motif vocabulary.
 
+## Current Replay Scope
+
+The completed `T02` package currently evaluates the historical
+`netlist_motif_occupancy` arm from the 20260618 Auto-BD run. That arm is the
+first deterministic member of the motif/pathlet family, but it is narrower than
+the full method above:
+
+- implemented axes: logic-family ratio, control/mux-family ratio,
+  arithmetic-family ratio, and cell-type entropy;
+- not yet implemented in this result: rooted pathlet histograms,
+  reconvergence markers, fanout buckets, sequential cone balance, SVD, or CVT;
+- archive used in the replay: grid-quantile over the four motif-occupancy
+  axes with the same search budget as classic and manual BD.
+
+Treat the current result as a lower-bound diagnostic for motif/pathlet
+structure. A later `T02` follow-up or hybrid should only claim the full
+pathlet method after those missing features are extracted and audited.
+
 ## Archive Mapping
 
 Evaluate two archive views:

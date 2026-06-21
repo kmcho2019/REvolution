@@ -9,7 +9,7 @@ This setup makes the next push repeatable and auditable before live sampling.
   `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/`.
 - Replay/live output root: `exp/useful_bd_push/<technique>/<timestamp>/`.
 - Technique packages:
-  `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/<slug>/`.
+  `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T##_slug/`.
 
 ## Replay Sources
 

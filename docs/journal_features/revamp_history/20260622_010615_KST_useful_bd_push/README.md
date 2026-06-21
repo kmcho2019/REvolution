@@ -11,7 +11,9 @@ Start here when resuming the active goal.
 - Append-only evidence log: `useful_bd_push_implementation_history.md`.
 - Frozen screening subset: `tables/frozen_screening_subset.csv`.
 - Holdout subset: `tables/holdout_screening_subset.csv`.
-- First completed method package: `techniques/simple_yosys_stat_bd/`
+- First completed method package: `techniques/T01_simple_yosys_stat_bd/`
+  (`T0 diagnostic`).
+- Most recent packaged method: `techniques/T02_motif_pathlet_bd/`
   (`T0 diagnostic`).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
@@ -41,32 +43,33 @@ Start here when resuming the active goal.
 | Directory | Contents |
 | --- | --- |
 | `tables/` | Small committed setup tables: replay source inventory, scored screening candidates, frozen screening subset, and holdout subset. |
-| `techniques/` | One subdirectory per attempted or planned BD/QD technique. Each package owns its methodology, artifacts manifest, results report, tables, and figures. |
-| `techniques/<slug>/figures/` | Generated or copied PNG figures plus visual inspection notes for that method. |
-| `techniques/<slug>/tables/` | Raw or summarized CSV tables needed to regenerate method claims. |
+| `techniques/` | One numbered subdirectory per attempted or planned BD/QD technique. The visible `T##_` prefix is chronological. |
+| `techniques/technique_registry.csv` | Stable chronological index for all technique packages. |
+| `techniques/T##_slug/figures/` | Generated or copied PNG figures plus visual inspection notes for that method. |
+| `techniques/T##_slug/tables/` | Raw or summarized CSV tables needed to regenerate method claims. |
 
 ## Technique Package States
 
-| Package | State |
-| --- | --- |
-| `simple_yosys_stat_bd` | Current replay result, `T0 diagnostic`; use as simple CAD-native lower bound. |
-| `motif_pathlet_bd` | Scaffolded; next likely deterministic netlist descriptor. |
-| `synthesis_delta_stnod_bd` | Scaffolded; next likely synthesis-response descriptor. |
-| `autoqd_mmd_synthesis_bd` | Scaffolded. |
-| `vq_elites_codebook_bd` | Scaffolded. |
-| `qwen_projection_bd` | Scaffolded. |
-| `deepgate_family_bd` | Scaffolded. |
-| `sequential_deepseq_bd` | Scaffolded. |
-| `nettag_text_graph_bd` | Scaffolded. |
-| `circuitfusion_multimodal_bd` | Scaffolded. |
-| `mgvga_contrastive_bd` | Scaffolded. |
-| `lineage_repair_bd` | Scaffolded. |
-| `aurora_incremental_autoencoder_bd` | Scaffolded. |
-| `dehnn_hypergraph_bd` | Scaffolded. |
-| `masterrtl_sog_bd` | Scaffolded. |
-| `deepcell_multiview_bd` | Scaffolded. |
-| `mome_pareto_archive_bd` | Scaffolded. |
-| `adaptive_emitter_cvt_bd` | Scaffolded. |
+| ID | Package | State |
+| --- | --- | --- |
+| `T01` | `T01_simple_yosys_stat_bd` | Replay result, `T0 diagnostic`; simple CAD-native lower bound. |
+| `T02` | `T02_motif_pathlet_bd` | Replay result, `T0 diagnostic`; partial motif-occupancy member of the motif/pathlet family. |
+| `T03` | `T03_synthesis_delta_stnod_bd` | Scaffolded; next likely synthesis-response descriptor. |
+| `T04` | `T04_autoqd_mmd_synthesis_bd` | Scaffolded. |
+| `T05` | `T05_vq_elites_codebook_bd` | Scaffolded. |
+| `T06` | `T06_qwen_projection_bd` | Scaffolded. |
+| `T07` | `T07_deepgate_family_bd` | Scaffolded. |
+| `T08` | `T08_sequential_deepseq_bd` | Scaffolded. |
+| `T09` | `T09_nettag_text_graph_bd` | Scaffolded. |
+| `T10` | `T10_circuitfusion_multimodal_bd` | Scaffolded. |
+| `T11` | `T11_mgvga_contrastive_bd` | Scaffolded. |
+| `T12` | `T12_lineage_repair_bd` | Scaffolded. |
+| `T13` | `T13_aurora_incremental_autoencoder_bd` | Scaffolded. |
+| `T14` | `T14_dehnn_hypergraph_bd` | Scaffolded. |
+| `T15` | `T15_masterrtl_sog_bd` | Scaffolded. |
+| `T16` | `T16_deepcell_multiview_bd` | Scaffolded. |
+| `T17` | `T17_mome_pareto_archive_bd` | Scaffolded. |
+| `T18` | `T18_adaptive_emitter_cvt_bd` | Scaffolded. |
 
 ## Validity-Gate Note
 

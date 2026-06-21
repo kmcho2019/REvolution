@@ -43,10 +43,10 @@ the paper story.
 
 | tier | methods | reason |
 | --- | --- | --- |
-| P0 controls | `simple_yosys_stat_bd`, `motif_pathlet_bd`, `synthesis_delta_stnod_bd` | Cheap, deterministic, interpretable, and needed to avoid over-crediting learned models. |
-| P1 practical QD | `vq_elites_codebook_bd`, `autoqd_mmd_synthesis_bd`, `mome_pareto_archive_bd`, `adaptive_emitter_cvt_bd` | Directly targets QD archive quality, Pareto-front spread, and broader illumination. |
-| P2 representation lift | `masterrtl_sog_bd`, `dehnn_hypergraph_bd`, `deepcell_multiview_bd`, `nettag_text_graph_bd`, `circuitfusion_multimodal_bd` | More reviewer-interesting if they produce useful BDs or explain why structural controls are enough. |
-| P3 expensive encoders | `qwen_projection_bd`, `deepgate_family_bd`, `sequential_deepseq_bd`, `mgvga_contrastive_bd`, `aurora_incremental_autoencoder_bd` | Worth trying after cheap/replay diagnostics, but must pass collapse and leakage checks. |
+| P0 controls | `T01_simple_yosys_stat_bd`, `T02_motif_pathlet_bd`, `T03_synthesis_delta_stnod_bd` | Cheap, deterministic, interpretable, and needed to avoid over-crediting learned models. |
+| P1 practical QD | `T05_vq_elites_codebook_bd`, `T04_autoqd_mmd_synthesis_bd`, `T17_mome_pareto_archive_bd`, `T18_adaptive_emitter_cvt_bd` | Directly targets QD archive quality, Pareto-front spread, and broader illumination. |
+| P2 representation lift | `T15_masterrtl_sog_bd`, `T14_dehnn_hypergraph_bd`, `T16_deepcell_multiview_bd`, `T09_nettag_text_graph_bd`, `T10_circuitfusion_multimodal_bd` | More reviewer-interesting if they produce useful BDs or explain why structural controls are enough. |
+| P3 expensive encoders | `T06_qwen_projection_bd`, `T07_deepgate_family_bd`, `T08_sequential_deepseq_bd`, `T11_mgvga_contrastive_bd`, `T13_aurora_incremental_autoencoder_bd` | Worth trying after cheap/replay diagnostics, but must pass collapse and leakage checks. |
 
 ## Hybrid Ideas To Generate During The Goal
 
@@ -67,5 +67,5 @@ the paper story.
 - Passive-archive retrospective scoring of every classic run so classic is not
   penalized for lacking an explicit QD archive during search.
 
-Every new hybrid that is actually attempted must get a `techniques/<slug>/`
-package before results are interpreted.
+Every new hybrid that is actually attempted must get a numbered
+`techniques/T##_slug/` package before results are interpreted.

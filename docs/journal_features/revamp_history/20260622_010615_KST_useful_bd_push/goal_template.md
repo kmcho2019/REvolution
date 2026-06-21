@@ -28,7 +28,7 @@ score/coverage, Pareto-cell count, Pareto spread, unique front families,
 valid-PPA yield, duplicate accounting, and AUC metrics for live runs.
 
 Required scope: attempt at least 10 current technique packages from
-techniques/<slug>/ before any broad negative sign-off, including one simple
+techniques/T##_slug/ before any broad negative sign-off, including one simple
 control, one synthesis/netlist descriptor, one learned/projection descriptor,
 and one archive-coupling/Pareto variant. Add extra methods only with method
 cards. Every attempted package must have paper-grade methodology,
