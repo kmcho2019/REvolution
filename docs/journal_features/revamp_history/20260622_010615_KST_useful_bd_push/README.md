@@ -14,8 +14,8 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent package:
-  `techniques/T25_guarded_sr_raw_pareto_qd/` (`T0 diagnostic`; guarded SR raw
-  live follow-up completed but not promoted).
+  `techniques/T26_sr_raw_conservative_exploit_qd/` (`planned`; conservative
+  fill plus champion-exploit SR raw follow-up to T25).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -89,6 +89,7 @@ Start here when resuming the active goal.
 | `T23` | `T23_sr_pareto_validation_matrix` | Passive validation matrix, `T0 diagnostic`; compares T04/T19 against classic, manual BD, and T22. |
 | `T24` | `T24_sr_pareto_live_validation` | Complete six-arm live development-screen result, `T0 diagnostic`; all QD arms preserve covered designs but lose too much multi-pipe best quality. |
 | `T25` | `T25_guarded_sr_raw_pareto_qd` | Live result, `T0 diagnostic`; preserves all classic-covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. |
+| `T26` | `T26_sr_raw_conservative_exploit_qd` | Planned conservative fill plus champion-exploit SR raw follow-up; removes crossover and keeps T24-style fail/seed pressure. |
 
 ## Validity-Gate Note
 

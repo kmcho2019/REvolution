@@ -93,6 +93,9 @@ score falls by 75.20% versus classic. The guard reduces SR raw's multi-pipe
 global Pareto material from 10 to 6 and worsens best quality, so the next
 variant needs an explicit exploit/explore/repair emitter or stronger
 quality-preserving parent source rather than more tuning of this guard alone.
+`T26_sr_raw_conservative_exploit_qd` is pre-registered as that next
+parent-source test: restore T24-style fill pressure, remove crossover, and bias
+archive parents toward the current champion.
 
 ## Current Conclusions
 
@@ -117,9 +120,9 @@ quality-preserving parent source rather than more tuning of this guard alone.
 
 ## Next Decisions
 
-- Specify a T26-style emitter or parent-source variant instead of only tuning
-  T25's guard. It should keep SR raw front material while explicitly restoring
-  multi-pipe best quality and traffic-light valid-PPA yield.
+- Run T26 before changing descriptor family. It should keep SR raw front
+  material while explicitly testing whether conservative fill plus champion
+  exploit restores multi-pipe best quality or traffic-light valid-PPA yield.
 - Use manual BD as the traffic-light quality control, SR raw as the
   front-material control, and random as the live partitioning control for the
   next T24/T25-derived variant.

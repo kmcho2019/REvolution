@@ -66,6 +66,7 @@ flowchart LR
     T23[T23 SR validation matrix]
     T24[T24 live six-arm matrix]
     T25[T25 guarded SR raw]
+    T26[T26 conservative exploit SR raw]
   end
 
   subgraph emitters[L6 lineage/emitter]
@@ -92,6 +93,7 @@ flowchart LR
   T22 --> T24
   manual --> T24
   T24 --> T25
+  T25 --> T26
   T06 --> qwen
   qwen --> enc
   T17 --> T12
@@ -111,6 +113,7 @@ flowchart LR
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
 | T25 | `L2/L5` | Guarded SR raw: lower fill target, lower improve backfill, lower two-parent fusion. | Completed `T0 diagnostic`; preserves covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. | `ablate` | Use as negative evidence for T26 emitter/parent-source design. |
+| T26 | `L2/L5/L6` | Conservative fill plus champion-exploit SR raw: restore T24 fill pressure, remove crossover, bias archive parents to the best candidate. | Planned live run. | `advance` pending result | Compare against T24 classic/manual/random/SR raw and T25. |
 | T12/T18 | `L6` | Lineage repair and adaptive emitter scheduling. | Scaffolded follow-ups informed by T24/T25 failure modes. | `hybridize` | Define exploit/explore/repair schedule with SR raw/manual/random controls. |
 
 ## Branching Rule

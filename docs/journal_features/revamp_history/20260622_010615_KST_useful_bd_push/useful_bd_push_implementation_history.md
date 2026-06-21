@@ -780,3 +780,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Lane decision: keep T25 as negative evidence. The next live method should
   change parent-source structure with explicit exploit/explore/repair emitter
   scheduling rather than only tuning the guarded schedule.
+
+## T26 Conservative Exploit Method Card - 2026-06-21 UTC
+
+- Pre-registered `T26_sr_raw_conservative_exploit_qd` as the next live
+  parent-source variant after T25.
+- T26 keeps the SR raw PCA descriptor, `grid_quantile` archive, local Pareto
+  cells, NSGA-II parent selection, and T24/T25 budget/model/subset.
+- T26 restores the T24-style fill target (`qd_fill_target_fraction=0.25`) so
+  fail-pool and seed pressure remain active longer than in T25.
+- T26 removes two-parent crossover (`qd_two_parent_probability=0.00`) and
+  raises the champion lane (`qd_champion_lane_fraction=0.80`) so archive-parent
+  requests mostly refine the current best candidate while keeping some
+  nonchampion NSGA-II parent draws.
+- Pre-registered run root:
+  `exp/useful_bd_push/t26_sr_raw_conservative_exploit_qd_20260621_213249_UTC/`.
+- Rationale: test whether the T24/T25 failure came from disruptive archive
+  parent mixing rather than the SR raw BD itself.
+- Next action: run the T26 live command and package the result against T24
+  classic/manual/random/SR raw plus T25.
