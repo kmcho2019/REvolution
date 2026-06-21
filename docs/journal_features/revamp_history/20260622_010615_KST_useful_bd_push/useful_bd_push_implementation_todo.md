@@ -99,6 +99,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       tier decision.
 - [x] `T22_random_descriptor_control` has methodology, results, figures, tables,
       and tier decision.
+- [x] `T23_sr_pareto_validation_matrix` has methodology, results, figures,
+      tables, and tier decision.
 
 ## Minimum Goal Completion
 
@@ -125,8 +127,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 ## Validation
 
 - [ ] Run focused pytest for touched scripts.
-- [ ] Run `ruff check` on touched files.
-- [ ] Run `python -m pyright` on touched source/report scripts.
+- [x] Run focused pytest for touched scripts.
+- [x] Run `ruff check` on touched files.
+- [x] Run `python -m pyright` on touched source/report scripts.
 - [ ] Run `git diff --check`.
 - [ ] Record blocked dependency or live-run smoke results explicitly.
 - [ ] For dependency blockers, try `uv add`, isolated uv env, source checkout,

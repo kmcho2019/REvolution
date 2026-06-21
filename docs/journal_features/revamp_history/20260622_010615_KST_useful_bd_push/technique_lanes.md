@@ -14,7 +14,7 @@ tried, what it taught us, and where the next iteration should go.
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04 SR-RFF PCA is the first `T1 near_classic` lead; T19 SR ReLU has the strongest HV/AUC lead; T20 raw PCA is the ablation near-miss. | Validate RFF/ReLU/raw PCA and ST-NOD+RFF variants under the same passive archive. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T06 Qwen is `T0`; identifier-normalized Qwen has HV signal but nuisance clustering. | Run Qwen3 preprocessing ladder and normalized-view projection before raw embedding is retired. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T17 passive MOME audit is `T0`; strong front-diversity signal, tiny HV delta. | Run a bounded Smooth-QD-v2-style live variant on SR-RFF or SR-ReLU with local Pareto fronts. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T17 passive MOME audit is `T0`; T23 validates SR-RFF/SR-ReLU against T22 random control. | Run a bounded Smooth-QD-v2-style live variant on SR-RFF or SR-ReLU with local Pareto fronts. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T12/T18 are scaffolded. | Use T17/T04 evidence to define exploit/explore/repair parent scheduling before live sampling. |
 
 ## Current Lineage
@@ -37,6 +37,8 @@ flowchart TD
   G --> H[Live Smooth-QD-v2 Pareto-biased parent sampling]
   E --> H
   N --> H
+  G --> R[T23 SR Pareto validation matrix]
+  R --> H
 
   A --> I[T06 Qwen whole-RTL diagnostic]
   I --> J[Qwen3 preprocessing ladder]
@@ -123,6 +125,11 @@ sampling higher-quality parents and hill-climbs. The passive local-Pareto audit
 keeps nondominated candidates inside each descriptor cell rather than one scalar
 elite. It recovers more PPA-front netlists and Pareto points, especially for
 SR-RFF PCA, but its own HV delta is too small for promotion.
+
+T23 narrows the next live target. SR-RFF PCA beats classic and T22 random on
+common-audit QD score and local front material while staying within the
+near-classic quality tolerance. SR ReLU PCA beats classic and random on final
+HV and HV AUC, but does not beat random on local front material.
 
 Current follow-up: run a live Smooth-QD-v2-style variant with non-PPA descriptor
 cell assignment and evaluated-PPA parent sampling only after archive insertion:

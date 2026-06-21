@@ -13,8 +13,8 @@ Start here when resuming the active goal.
 - Holdout subset: `tables/holdout_screening_subset.csv`.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
-- Most recent packaged method: `techniques/T22_random_descriptor_control/`
-  (`T0 control`, required negative comparator).
+- Most recent packaged method: `techniques/T23_sr_pareto_validation_matrix/`
+  (`T0 diagnostic`, passive validation support for T04/T19).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -76,6 +76,7 @@ Start here when resuming the active goal.
 | `T20` | `T20_sr_raw_pca_bd` | Replay result, `T0 diagnostic`; raw synthesis-response PCA ablation with front-diversity signal. |
 | `T21` | `T21_stnod_motif_hybrid_bd` | Replay result, `T0 diagnostic`; ST-NOD+motif expands archive coverage but loses quality. |
 | `T22` | `T22_random_descriptor_control` | Replay result, `T0 control`; random archive partitioning is a strong required comparator. |
+| `T23` | `T23_sr_pareto_validation_matrix` | Passive validation matrix, `T0 diagnostic`; compares T04/T19 against classic, manual BD, and T22. |
 
 ## Validity-Gate Note
 

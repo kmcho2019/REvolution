@@ -497,3 +497,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   by 26.57%, and the descriptor has no semantic hardware meaning.
 - Tier decision: `T0 control`, required comparator. Future positive claims must
   beat T22 on the metric being claimed, not only classic or manual BD.
+
+## T23 SR Pareto Validation Matrix - 2026-06-21 UTC
+
+- Added `scripts/package_useful_bd_validation_matrix.py` and
+  `tests/scripts/test_package_useful_bd_validation_matrix.py`.
+- Generated focused validation artifacts under
+  `exp/useful_bd_push/t23_sr_pareto_validation_matrix_20260621_183200_UTC/`
+  and mirrored the CSV/PNG outputs into
+  `techniques/T23_sr_pareto_validation_matrix/`.
+- Inputs: central seed-1001 replay JSON plus T17 passive local-Pareto aggregate
+  table. Focus methods: classic, manual BD, T22 random, T19 SR ReLU PCA, and
+  T04 SR-RFF PCA.
+- Main read: SR ReLU PCA beats classic and random on final HV and HV AUC, but
+  does not beat random on local front material. SR-RFF PCA stays near classic on
+  final HV/best fitness, beats classic and random on common-audit QD score, and
+  has the strongest local PPA-front netlist and global Pareto point counts.
+- Validation: focused pytest passed, ruff passed, and pyright passed when run
+  with `--pythonpath .venv/bin/python` so it resolved the local plotting/data
+  packages.
+- Tier decision: `T0 diagnostic`, passive validation support. The next
+  experiment should be a bounded live local-Pareto variant for SR-RFF and/or
+  SR ReLU, with T22 included as a required comparator.

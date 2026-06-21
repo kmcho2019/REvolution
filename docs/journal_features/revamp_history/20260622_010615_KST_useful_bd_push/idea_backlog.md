@@ -136,6 +136,19 @@ a numbered `techniques/T##_slug/` package before running it.
 - Any SR-RFF, SR-ReLU, local-Pareto, Qwen, or encoder follow-up should compare
   against T22 on the metric being claimed.
 
+## From `T23_sr_pareto_validation_matrix` T0
+
+- SR-RFF is the cleaner live archive-coupling candidate: it is within the
+  near-classic quality tolerance, improves common-audit QD versus classic and
+  random, and has the strongest local-Pareto front material in the focused
+  matrix.
+- SR ReLU is the stronger HV candidate: it beats classic and random on final HV
+  and HV AUC, but it needs a parent/retention rule that recovers local front
+  material versus random BD.
+- The next live variant should compare SR-RFF-local-Pareto and SR-ReLU-local-
+  Pareto against classic, manual BD, and T22 random descriptor under the same
+  budget.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

@@ -21,6 +21,7 @@ Real result packages:
 - `T20_sr_raw_pca_bd`
 - `T21_stnod_motif_hybrid_bd`
 - `T22_random_descriptor_control`
+- `T23_sr_pareto_validation_matrix`
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
 The ten-package minimum is satisfied, but the goal is still active because
@@ -60,6 +61,10 @@ same-problem and same-corpus clustering.
 new live method. It shows that local nondominated sets recover much more front
 material than one scalar elite per cell, especially for `sr_rff_pca_qd`, but
 the standalone HV delta is too small for promotion.
+
+`T23_sr_pareto_validation_matrix` is a focused passive validation matrix over
+classic, manual BD, T22 random, T19 SR ReLU PCA, and T04 SR-RFF PCA. It is the
+current bridge from replay evidence to the next live local-Pareto experiment.
 
 ## Current Conclusions
 

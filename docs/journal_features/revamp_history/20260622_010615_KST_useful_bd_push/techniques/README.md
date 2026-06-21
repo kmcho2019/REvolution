@@ -36,6 +36,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T20` | `T20_sr_raw_pca_bd` | Automatic QD descriptor | `T0 diagnostic`, projection ablation near-miss |
 | `T21` | `T21_stnod_motif_hybrid_bd` | Deterministic netlist descriptor | `T0 diagnostic`, archive-coverage ablation |
 | `T22` | `T22_random_descriptor_control` | Negative control | `T0 control`, required comparator |
+| `T23` | `T23_sr_pareto_validation_matrix` | Archive-coupling validation | `T0 diagnostic`, passive live-candidate matrix |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
