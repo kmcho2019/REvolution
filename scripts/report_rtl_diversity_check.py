@@ -168,7 +168,7 @@ def build_report(
     claim_rows, verdict = claim_levels_and_verdict(gate_rows)
     encoder_rows = encoder_leaderboard(qwen_card, deepgate_card, gate_rows)
     common_audit_rows = common_audit_metrics(rtllm_analysis, problem_metrics)
-    case_rows = representative_cases(rtllm_analysis, cluster_rows, replay_rows)
+    case_rows = representative_cases(evolution_analysis, cluster_rows, replay_rows)
 
     figure_paths = make_figures(
         figures_dir=figures_dir,
@@ -1773,6 +1773,11 @@ def write_markdown_report(
         f"- Status: `{wp0_replay['status']}`",
         f"- Source artifact directory: `{wp0_replay['artifact_dir']}`",
         f"- Summary CSV: `{payload['artifacts']['wp0_replay_summary_csv']}`",
+        "- Quality gate: valid-PPA candidates at or above the prefix median "
+        "valid fitness.",
+        "- Novelty metric: nearest-selected Euclidean distance over the "
+        "artifact's existing four-axis `common_audit_descriptor_vector`; the "
+        "replay does not fit a new scaler or use PPA-derived normalization.",
         "",
         markdown_table(wp0_replay["rows"][:20]),
         "",

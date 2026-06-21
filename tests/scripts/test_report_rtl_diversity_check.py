@@ -147,6 +147,48 @@ def test_wp0_restart_replay_summary_reads_quality_artifact(tmp_path):
     }
 
 
+def test_representative_cases_uses_replay_problem_candidate_path():
+    candidates = pd.DataFrame(
+        [
+            {
+                "problem_id": "aspdac/ProbA",
+                "valid_ppa": True,
+                "fitness": 0.8,
+                "rtl_path": "real_candidate.sv",
+                "style_cluster": "control_if",
+            },
+            {
+                "problem_id": "RTLLM/ProbB",
+                "valid_ppa": False,
+                "fitness": 0.0,
+                "rtl_path": "",
+                "style_cluster": "",
+            },
+        ]
+    )
+    cluster_rows = pd.DataFrame(
+        [
+            {"problem_id": "aspdac/ProbA", "pareto_count": 3},
+            {"problem_id": "RTLLM/ProbB", "pareto_count": 1},
+        ]
+    )
+    replay_rows = pd.DataFrame(
+        [
+            {
+                "policy": "oracle_style_diversity",
+                "problem_id": "aspdac/ProbA",
+                "hypervolume": 1.0,
+            }
+        ]
+    )
+
+    rows = mod.representative_cases(candidates, cluster_rows, replay_rows)
+
+    best = rows.loc[rows["case_type"].eq("best_supported")].iloc[0]
+    assert best["representative_path"] == "real_candidate.sv"
+    assert best["cluster"] == "control_if"
+
+
 def _candidate(
     candidate_id: str,
     cluster: str,

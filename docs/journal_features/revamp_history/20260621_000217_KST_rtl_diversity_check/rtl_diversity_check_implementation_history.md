@@ -915,3 +915,53 @@ validation evidence.
     tests/scripts/test_reconstruct_rtl_diversity_wp0.py`: clean.
   - `uv run pyright scripts/report_rtl_diversity_check.py
     scripts/reconstruct_rtl_diversity_wp0.py`: 0 errors, 0 warnings.
+
+### Restarted Report Residual Cleanup
+
+- The first independent restarted adversarial validation returned PASS for the
+  `B illumination_only` claim but noted two paper-facing cleanup items:
+  `case_studies.csv` used the negative-control document path for two selected
+  ASP-DAC cases even though `implementation_gallery.md` resolved real
+  candidate snippets, and the WP0/WP2 replay section did not state the novelty
+  distance metric explicitly.
+- Updated `representative_cases` to use the same broad evolution-analysis
+  candidate table as the gallery. This makes the generated `case_studies.csv`
+  and `implementation_gallery.md` agree on candidate paths and clusters.
+- Added report text stating that the quality gate uses valid-PPA candidates at
+  or above prefix median valid fitness, and that the novelty lane uses
+  nearest-selected Euclidean distance over the artifact's existing four-axis
+  `common_audit_descriptor_vector` without fitting a new scaler or using
+  PPA-derived normalization.
+- Ran:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/restarted_report_20260621_051025_UTC --aspdac-root exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp --wp0-artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --qwen-smoke-limit 64`.
+- Artifact directory:
+  `exp/diversity_check/restarted_report_20260621_051025_UTC/`.
+- Spot checks:
+  - `case_studies.csv` now points `best_supported` to
+    `Prob050_square_wave_M-E_sample9.sv` with cluster `register_sequential`.
+  - `case_studies.csv` now points `null_or_median` to
+    `Prob130_circuit5_C-F_sample8.sv` with cluster `control_case`.
+  - `diversity_necessity_report.md` includes the quality-gate and novelty
+    metric bullets in the `Restart WP0/WP2 Replay Evidence` section.
+- Artifact hashes:
+  - `diversity_necessity_report.md`:
+    `c8dd164d1779bcd178e82b1add8a941f664dd3353fc71026643d6cf4e9994e59`
+  - `diversity_necessity_report.json`:
+    `edde0925ab865c4205ee30413e691d56cef0608419c3da8c7cb777a64e495705`
+  - `case_studies.csv`:
+    `c42ff93e19ede55c72ad9bcbc8dab49af7432c7b5e7241d14e87582d35e1f5d4`
+  - `wp0_replay_summary.csv`:
+    `c2656cc1f41cbc7998c8a4ffff0ee0376d8fd88393385d85626ed7f95d3d102b`
+  - `encoder_leaderboard.csv`:
+    `3b09ffa9927b3f877f4ae76b54ff44a16d659e023071e068720a27ea5b4896b4`
+  - `d_gate_matrix.csv`:
+    `4bf52c6ab5db8a13bec254fd7373643c6fa9fb9cdd11d259b05204bd0d0c995d`
+  - `claim_levels.csv`:
+    `92551a1f6ebe2432089d1a3389333b2fbc46c18da857d245825bbf43963a23a5`
+- Validation:
+  - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py`:
+    6 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    tests/scripts/test_report_rtl_diversity_check.py`: clean.
+  - `uv run pyright scripts/report_rtl_diversity_check.py`: 0 errors,
+    0 warnings.
