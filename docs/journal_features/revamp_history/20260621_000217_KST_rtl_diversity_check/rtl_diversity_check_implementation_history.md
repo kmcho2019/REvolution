@@ -965,3 +965,18 @@ validation evidence.
     tests/scripts/test_report_rtl_diversity_check.py`: clean.
   - `uv run pyright scripts/report_rtl_diversity_check.py`: 0 errors,
     0 warnings.
+
+### Restarted Adversarial Validation PASS
+
+- Refreshed the independent adversarial validation after the residual cleanup.
+- Validator output:
+  `docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_subagent_validation_report.md`.
+- Verdict: PASS for current HEAD
+  `b4383b5cc5a9028096bcfc85e6f5b43885e0a4c4` and artifact
+  `exp/diversity_check/restarted_report_20260621_051025_UTC/`.
+- Scope of PASS: only the `B illumination_only` / diagnostic-only claim. It
+  is not final TCAD sign-off, predictive evidence, reconstructive evidence,
+  active diversity evidence, or Auto-BD method promotion.
+- Remaining non-blocking gaps before any stronger claim: incomplete lineage,
+  bounded Qwen3 coverage, collapsed/limited DeepGate3 graph evidence,
+  distance-based near-identical motif suppression, and report-script size.

@@ -255,5 +255,7 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   Scoped: current recommendation is diagnostic-only / no-proceed for method
   promotion; larger Qwen, stronger graph encoders, or live sampling require a
   concrete D1/D3/D4/D5 target.
-- [ ] The restarted adversarial prompt returns PASS, or FAIL findings are
+- [x] The restarted adversarial prompt returns PASS, or FAIL findings are
   resolved or logged as blockers with three concrete attempts.
+  PASS covers current HEAD `b4383b5cc5` and artifact
+  `exp/diversity_check/restarted_report_20260621_051025_UTC/`.
