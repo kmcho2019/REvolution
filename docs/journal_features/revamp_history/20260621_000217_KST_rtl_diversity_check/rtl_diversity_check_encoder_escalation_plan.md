@@ -88,7 +88,7 @@ duplicate-count, or descriptor-owned archive-space confounds.
 - D4/D5: fail if live or replay evidence repeats the ST-NOD-style robustness
   drop or does not beat the random descriptor control.
 
-## First Concrete Next Run - Completed
+## Completed Escalations
 
 The first richer AURORA-style diagnostic has been run:
 
@@ -104,9 +104,25 @@ The first richer AURORA-style diagnostic has been run:
 
 The run therefore remains `diagnostic_only_no_proceed`.
 
+The larger Qwen3 common-audit diagnostic has also been run:
+
+- artifact: `exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/`;
+- sample: 768 valid-PPA candidates, balanced across ASP-DAC, Auto-BD, and
+  RTLLM with at most six candidates per problem;
+- embeddings: frozen `Qwen/Qwen3-Embedding-0.6B` over raw,
+  comment-stripped, and identifier-normalized RTL;
+- replay policy: 50% farthest-first retention compared against lexical
+  farthest-first, random, generation-prefix, and fitness-top controls;
+- result: raw Qwen farthest-first had -1.25% hypervolume delta versus lexical
+  farthest-first; identifier-normalized Qwen had +3.35%, below the 10% D3
+  replay utility gate.
+
+This run also remains `diagnostic_only_no_proceed`.
+
 The next escalation should not be full finetuning until a specific remaining
 gap is named. The likely options are:
 
-- larger Qwen3 common-audit extraction with leakage controls;
+- a frozen projection-head or LoRA diagnostic over Qwen only if it declares
+  augmentation positives, hard negatives, leakage controls, and a D1/D3 target;
 - a graph encoder retry with a sequential-state or cone-splitting policy;
 - bounded live sampling only after an offline utility gate passes.

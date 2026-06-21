@@ -224,12 +224,15 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   blocker evidence.
 - [x] Create per-encoder method cards for Qwen3 and DeepGate3 with extraction,
   stability, non-collapse, leakage, runtime, interpretability, and verdict.
-- [ ] Consider larger Qwen, DeepSeq, NetTAG, CircuitFusion, or similar
+- [x] Consider larger Qwen, DeepSeq, NetTAG, CircuitFusion, or similar
   encoders only if Qwen3/DeepGate3 are blocked or inconclusive with evidence.
-  Next eligible escalation: Qwen3 produced real embeddings but only
-  diagnostic signal, and DeepGate3 collapsed on the bounded AIG/tokenizer
-  path. Any larger encoder or finetuning run must first name the utility
-  target, fitting corpus, leakage controls, and no-proceed threshold.
+  Scoped: larger Qwen common-audit extraction ran on 768 candidates and
+  remained `diagnostic_only_no_proceed`; raw Qwen lost HV versus lexical
+  farthest-first and identifier-normalized Qwen gained only 3.35%, below the
+  10% replay utility gate. DeepGate3 collapsed on the bounded AIG/tokenizer
+  path. Any further DeepSeq, NetTAG, CircuitFusion, projection-head, LoRA, or
+  finetuning run must first name the utility target, fitting corpus, leakage
+  controls, and no-proceed threshold.
   Escalation plan:
   `rtl_diversity_check_encoder_escalation_plan.md`.
 

@@ -63,6 +63,13 @@ QWEN_YOSYS_SUMMARY = (
     REPO_ROOT
     / "exp/diversity_check/qwen3_yosys_probe_20260621_033323_UTC/qwen3_yosys_summary.json"
 )
+QWEN_COMMON_AUDIT_SUMMARY = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/"
+        "qwen_common_audit_summary.json"
+    )
+)
 DEEPGATE_AIG_SUMMARY = (
     REPO_ROOT
     / "exp/diversity_check/deepgate3_aig_probe_20260621_034421_UTC/deepgate3_aig_summary.json"
@@ -1243,7 +1250,7 @@ def encoder_leaderboard(
             "non_collapse": qwen_card["coverage_summary"],
             "predictive_signal": "not tested without real embeddings",
             "pareto_cluster_signal": "not promoted",
-            "replay_signal": "not promoted",
+            "replay_signal": qwen_card["replay_signal"],
             "cost": qwen_card["runtime_summary"],
             "verdict": qwen_card["verdict"],
         },
@@ -1311,6 +1318,7 @@ def qwen_diagnostics(
     }
     artifact_summary = {}
     yosys_summary = {}
+    common_summary = {}
     if QWEN_PROBE_SUMMARY.is_file() and QWEN_YOSYS_SUMMARY.is_file():
         artifact_summary = load_json(QWEN_PROBE_SUMMARY)
         yosys_summary = load_json(QWEN_YOSYS_SUMMARY)
@@ -1324,6 +1332,8 @@ def qwen_diagnostics(
             "yosys_output_path": str(yosys_summary["out_dir"]),
             "yosys_shape": yosys_summary["embedding_shape"],
         }
+    if QWEN_COMMON_AUDIT_SUMMARY.is_file():
+        common_summary = load_json(QWEN_COMMON_AUDIT_SUMMARY)
     if real_smoke:
         real_result = qwen_real_embedding_smoke(rtl, output_dir)
     if artifact_summary:
@@ -1354,6 +1364,45 @@ def qwen_diagnostics(
             if real_result["status"] != "ok"
             else "diagnostic only"
         )
+    replay_signal = "not promoted"
+    common_audit_rows: list[dict[str, Any]] = []
+    common_audit_status = "not_loaded"
+    common_audit_evidence = ""
+    if common_summary:
+        common_audit_status = common_summary["verdict"]
+        common_audit_rows = common_summary["aggregate"]
+        qwen_raw = aggregate_row(common_audit_rows, "qwen_raw_farthest")
+        qwen_identifier = aggregate_row(
+            common_audit_rows,
+            "qwen_identifier_farthest",
+        )
+        replay_signal = (
+            "qwen_raw d_hv_vs_lexical="
+            f"{float(qwen_raw['vs_lexical_hv_gain_fraction']):.4g}; "
+            "qwen_id d_hv_vs_lexical="
+            f"{float(qwen_identifier['vs_lexical_hv_gain_fraction']):.4g}; "
+            f"{common_summary['verdict']}"
+        )
+        coverage_summary = (
+            f"{coverage_summary}; common-audit candidates="
+            f"{common_summary['candidate_count']}"
+        )
+        stability = (
+            f"{stability}; common raw/comment="
+            f"{common_summary['stability']['raw_to_comment_cosine_mean']:.3f}, "
+            "raw/id="
+            f"{common_summary['stability']['raw_to_identifier_cosine_mean']:.3f}"
+        )
+        runtime = f"{runtime}; common-audit artifact loaded"
+        verdict = "diagnostic only; common-audit no-proceed"
+        common_audit_evidence = (
+            f"{common_summary['candidate_count']} candidates, "
+            f"{common_summary['problem_count']} problems, "
+            f"raw Qwen HV delta vs lexical "
+            f"{float(qwen_raw['vs_lexical_hv_gain_fraction']):.4g}, "
+            f"identifier-normalized Qwen HV delta vs lexical "
+            f"{float(qwen_identifier['vs_lexical_hv_gain_fraction']):.4g}"
+        )
     return {
         "family": "qwen3_embedding_0p6b",
         "model": "Qwen/Qwen3-Embedding-0.6B",
@@ -1367,9 +1416,20 @@ def qwen_diagnostics(
         "stability_summary": stability,
         "runtime_summary": runtime,
         "real_smoke": real_result,
+        "replay_signal": replay_signal,
+        "common_audit_status": common_audit_status,
+        "common_audit_evidence": common_audit_evidence,
+        "common_audit_rows": common_audit_rows,
         "leakage_policy": "frozen_pretrained; no PPA fields used as inputs",
         "verdict": verdict,
     }
+
+
+def aggregate_row(rows: list[dict[str, Any]], representation: str) -> dict[str, Any]:
+    for row in rows:
+        if row["representation"] == representation:
+            return row
+    raise AssertionError(f"missing aggregate row: {representation}")
 
 
 def qwen_real_embedding_smoke(candidates: pd.DataFrame, output_dir: Path) -> dict[str, Any]:
@@ -1985,11 +2045,19 @@ def write_markdown_report(
             "reconstructive, predictive, active, or Auto-BD method claims."
         )
     if payload["qwen_card"]["real_smoke"]["status"] == "artifact_loaded":
-        qwen_limit = (
-            "- Qwen3 real embeddings were extracted in the restarted WP1 "
-            "probe, but remain diagnostic-only because predictive, replay, "
-            "and common-audit utility were not established."
-        )
+        if payload["qwen_card"]["common_audit_status"] != "not_loaded":
+            qwen_limit = (
+                "- Qwen3 real embeddings were extracted and a larger "
+                "common-audit replay was run. The result remains "
+                "diagnostic-only because Qwen did not clear the replay "
+                "utility threshold over lexical controls."
+            )
+        else:
+            qwen_limit = (
+                "- Qwen3 real embeddings were extracted in the restarted WP1 "
+                "probe, but remain diagnostic-only because predictive, "
+                "replay, and common-audit utility were not established."
+            )
     else:
         qwen_limit = (
             "- Qwen3 real embeddings were not extracted unless the optional "
@@ -2030,12 +2098,13 @@ def write_markdown_report(
         "increases unique structural coverage, but it remains replay-only "
         "diagnostic evidence.",
         "- Qwen3 is no longer dependency-blocked and should be treated as a "
-        "larger common-audit diagnostic candidate, while the bounded DeepGate3 "
-        "tokenizer probe is no-proceed in its current collapsed form.",
+        "diagnostic-only encoder after the larger common-audit replay, while "
+        "the bounded DeepGate3 tokenizer probe is no-proceed in its current "
+        "collapsed form.",
         "- Recommendation: keep the current claim at diagnostic-only / "
-        "no-proceed for method promotion; escalate to larger common-audit "
-        "Qwen, stronger graph encoders, or bounded live sampling only if the "
-        "next pass targets a concrete D1/D3/D4/D5 utility gate.",
+        "no-proceed for method promotion; escalate to a Qwen projection-head "
+        "diagnostic, stronger graph encoders, or bounded live sampling only "
+        "if the next pass targets a concrete D1/D3/D4/D5 utility gate.",
         "- A bounded AURORA-style learned-encoder replay was attempted after "
         "WP0-WP2, but it did not improve meaningfully over the common-audit "
         "control and remains no-proceed for method promotion.",
@@ -2075,6 +2144,15 @@ def write_markdown_report(
         "replay does not fit a new scaler or use PPA-derived normalization.",
         "",
         markdown_table(wp0_replay["rows"][:20]),
+        "",
+        "## WP1 Qwen Common-Audit Diagnostic",
+        "",
+        f"- Status: `{payload['qwen_card']['common_audit_status']}`",
+        f"- Evidence: {payload['qwen_card']['common_audit_evidence'] or 'not loaded'}",
+        "- Policy: frozen Qwen embeddings; PPA fields are used only after "
+        "selection for replay evaluation.",
+        "",
+        markdown_table(payload["qwen_card"]["common_audit_rows"]),
         "",
         "## WP3 Learned Encoder Diagnostics",
         "",

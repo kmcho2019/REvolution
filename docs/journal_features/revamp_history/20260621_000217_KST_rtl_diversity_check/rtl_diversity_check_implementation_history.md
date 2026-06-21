@@ -1427,3 +1427,101 @@ validation evidence.
     `c2656cc1f41cbc7998c8a4ffff0ee0376d8fd88393385d85626ed7f95d3d102b`
   - `case_studies.csv`:
     `c42ff93e19ede55c72ad9bcbc8dab49af7432c7b5e7241d14e87582d35e1f5d4`
+
+### WP1 Larger Qwen3 Common-Audit Replay
+
+- User asked whether Qwen3 and DeepGate3 returned good results and whether
+  AURORA-style training or finetuning should be tried. Current evidence before
+  this step was:
+  - Qwen3 real embeddings were successful but only diagnostic.
+  - DeepGate3 reached the bounded AIG/tokenizer path but collapsed.
+  - AURORA-style AE2/AE3 and richer AE8/AE16 probes were non-collapsed but
+    no-proceed under replay utility.
+- Added `scripts/run_rtl_diversity_wp1_qwen_common_audit.py` with focused
+  test `tests/scripts/test_run_rtl_diversity_wp1_qwen_common_audit.py`.
+- The script keeps Qwen frozen, embeds raw/comment-stripped/
+  identifier-normalized RTL, and evaluates farthest-first retention after
+  selection against lexical farthest-first, random, generation-prefix, and
+  fitness-top controls. PPA fields are excluded from embedding and selection
+  and used only for replay evaluation.
+- The isolated Qwen environment had model dependencies but lacked pandas and
+  pyarrow. Installed those into the ignored environment:
+  `uv pip install --python exp/diversity_check/encoder_envs/qwen3_probe/bin/python pandas==2.3.1 pyarrow==24.0.0`.
+- First real run attempt failed because the isolated environment did not have
+  the repo package path:
+  `ModuleNotFoundError: No module named 'revolution'`.
+- Second attempt with `PYTHONPATH=src` failed because importing
+  `revolution.qd.pareto_analysis` pulled in unrelated package-level
+  dependencies:
+  `ModuleNotFoundError: No module named 'openai'`.
+- Patched the script so it imports `src/revolution/qd/pareto_analysis.py`
+  directly as a fallback in isolated encoder environments.
+- Ran the larger Qwen common-audit diagnostic:
+  `PYTHONPATH=src exp/diversity_check/encoder_envs/qwen3_probe/bin/python scripts/run_rtl_diversity_wp1_qwen_common_audit.py --candidate-audit exp/diversity_check/restarted_report_20260621_072933_UTC/candidate_audit.parquet --output-dir exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC --max-candidates 768 --per-problem-limit 6 --batch-size 16 --text-max-chars 4096 --retention-fraction 0.5`.
+- Artifact:
+  `exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/`.
+- Coverage:
+  - 768 valid-PPA candidates across 127 problems.
+  - Corpus split: 521 ASP-DAC release, 78 Auto-BD standard-results, 169 RTLLM.
+  - Embedding shapes: 768 x 1024 for raw, comment-stripped, and
+    identifier-normalized RTL.
+  - Truncated text count: 5.
+- Stability and nearest-neighbor checks:
+  - raw/comment cosine mean: 0.9493.
+  - raw/identifier cosine mean: 0.6389.
+  - nearest-neighbor cosine mean: 0.9798.
+  - nearest-neighbor same-problem fraction: 0.9336.
+  - nearest-neighbor same-corpus fraction: 0.9479.
+  - same canonical netlist nearest-neighbor count: 108.
+  - same motif-signature nearest-neighbor count: 145.
+- Replay result at 50% retention over 114 replay problem groups:
+  - lexical farthest-first retained HV 3.7018 and Pareto size 283.
+  - raw Qwen farthest-first retained HV 3.6555 and Pareto size 294
+    (`-1.25%` HV versus lexical).
+  - identifier-normalized Qwen farthest-first retained HV 3.8258 and Pareto
+    size 289 (`+3.35%` HV versus lexical).
+  - random retained HV 3.0742.
+  - fitness-top retained HV 3.8232.
+- Interpretation: Qwen3 is useful as a non-collapsed text diagnostic, but the
+  larger common-audit replay still does not clear the 10% D3 utility gate.
+  Finetuning or LoRA is not justified as an in-loop method; it is eligible
+  only as a labeled diagnostic if it declares augmentation positives,
+  hard negatives, leakage controls, and a D1/D3 no-proceed threshold.
+- Artifact hashes:
+  - `qwen_common_audit_summary.json`:
+    `6d96ccb5fdc0138a4e79156448fc0fd22cdd9f6443bc0dc0e0aa0f281fd5ef81`
+  - `qwen_common_audit_aggregate.csv`:
+    `b540e92f555bc7a94d834a216feb5624b3f2db5791ebade19d2fe93be32bed61`
+  - `qwen_common_audit_replay.csv`:
+    `0cbb407e76641cd6d89518b91359d76416a632dbe67b4dc162b90b451555d498`
+  - `qwen_raw_embeddings.npy`:
+    `0b23b5213b3177e9e72db1084a7799ccafe8c4f69dafaa6b296c0755e09f53d3`
+  - `qwen_identifier_normalized_embeddings.npy`:
+    `98e469cf0754b5347170e69c1dc0344296f2d7f781439cdd49e41de74e44f412`
+  - `qwen_comment_stripped_embeddings.npy`:
+    `96201a45ae3a1492c586ec34efc202e32a789a0c14dbf7211f1e073118e597b9`
+- Updated `scripts/report_rtl_diversity_check.py` so the central Diversity
+  Necessity Report loads the larger Qwen common-audit summary and reports the
+  Qwen replay signal in the encoder leaderboard.
+- Regenerated the central report:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/restarted_report_20260621_075346_UTC --aspdac-root exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp --wp0-artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --qwen-smoke-limit 64`.
+- Report artifact:
+  `exp/diversity_check/restarted_report_20260621_075346_UTC/`.
+- Report result remains `B illumination_only`.
+- Updated report hashes:
+  - `diversity_necessity_report.md`:
+    `d521e2c00dbb750a4e7e3be2d116a94b90c4d2d56f1370cc323b5ae9038c5d94`
+  - `diversity_necessity_report.json`:
+    `4584cb075028b95da4bb0e68a7d76f9102eca80336d58dcb394c063d4e460ff1`
+  - `encoder_leaderboard.csv`:
+    `f90aa79760f7d7066dbe90b67ae69c3bdf35cd626eeab717448384896017f72c`
+- Validation before commit:
+  - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_run_rtl_diversity_wp1_qwen_common_audit.py`: 12 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    scripts/run_rtl_diversity_wp1_qwen_common_audit.py
+    tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_run_rtl_diversity_wp1_qwen_common_audit.py`: clean.
+  - `uv run pyright scripts/report_rtl_diversity_check.py
+    scripts/run_rtl_diversity_wp1_qwen_common_audit.py`: 0 errors,
+    0 warnings.
