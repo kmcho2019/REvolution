@@ -301,6 +301,22 @@ that would make the current branch hard to review. Suggested branch suffixes:
 Any branch split must keep the same revamp root, append to this file, and point
 back to the source technique packages.
 
+## Branch And Iteration Queue
+
+Use this table to decide whether a lane stays on the current branch, gets a
+focused follow-up branch, or is parked until another lane creates evidence that
+unblocks it.
+
+| Lane | Source IDs | Current Branch State | Next Iteration | Return Condition |
+| --- | --- | --- | --- | --- |
+| `L0` common evaluation | T22, T24 random | Stays on current branch as a comparator. | Keep random/manual controls in every claim table. | Comparator rows are present for any method marked `advance` or better. |
+| `L1` transparent CAD descriptors | T03, T21 | Stays on current branch for hybrids. | Select a small ST-NOD/motif subset for a guarded archive variant. | Hybrid beats direct T21 on best quality without losing archive coverage. |
+| `L2` synthesis-response automatic BDs | T04, T19, T20, T24 | Stays on current branch until T24 closes. | Add quality/yield-guarded parent pressure after manual control. | Same-budget run keeps all classic-covered designs and improves front/HV metrics over random. |
+| `L3` codebook/discrete archives | T05 | Parked. | Reopen only as side archive or local-Pareto cell partition. | A non-codebook lane shows local front material worth discretizing. |
+| `L4` learned encoders | T06-T16 | Candidate split branch. | Run Qwen3 preprocessing ladder before fine-tuning or external graph encoders. | Normalized embedding diagnostics separate useful structure without problem-ID clustering. |
+| `L5` archive coupling | T17, T23, T24 | Active on current branch. | Finish T24, then define guarded emitter/local-Pareto variant. | Variant beats random and manual controls on the claimed QD metric without yield collapse. |
+| `L6` lineage and emitters | T12, T18 | Candidate follow-up after T24. | Convert observed failures into exploit/explore/repair emitter schedule. | Better valid-yield recovery or multi-pipe quality than unguarded T24. |
+
 ## Branch Split Checklist
 
 A branch split is justified when the next step needs a long live vLLM run, a
@@ -312,3 +328,18 @@ would make this branch harder to review. Before creating that branch, record:
 - run output root under `exp/useful_bd_push/`;
 - required comparator set, including T22 when a positive claim is possible;
 - return condition for merging the result back into this revamp directory.
+
+## Result Update Template
+
+When a technique lands new evidence, update the package docs and this lane file
+with the same compact shape:
+
+| Field | Required Content |
+| --- | --- |
+| Lane | `L#` lane plus the chronological `T##` package. |
+| Evidence | Replay, live run, validation matrix, diagnostic, or failed setup. |
+| Comparator | Classic, manual BD, random BD, and any lane-specific ablation. |
+| Main signal | Best score, HV/AUC, front material, archive coverage, validity, or synthesis yield. |
+| Failure mode | What blocks promotion or what must be guarded in the next variant. |
+| Decision | One of `advance`, `ablate`, `hybridize`, `park`, `control`, or `retire`. |
+| Next artifact | Exact technique package, branch, command file, table, or figure to update next. |
