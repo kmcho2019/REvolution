@@ -87,17 +87,17 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       decision.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
-- [ ] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and
+- [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and
       tier decision.
 - [ ] `T18_adaptive_emitter_cvt_bd` has methodology, results, figures, tables, and
       tier decision.
 
 ## Minimum Goal Completion
 
-- [ ] At least one simple control, one synthesis/netlist descriptor, one
+- [x] At least one simple control, one synthesis/netlist descriptor, one
       learned/projection descriptor, and one archive-coupling method are run.
 - [ ] At least 10 technique packages contain real results.
-- [ ] At least one method attempts a multi-objective/Pareto-front archive or
+- [x] At least one method attempts a multi-objective/Pareto-front archive or
       passive Pareto audit.
 - [ ] Every `T1` or higher method preserves every classic-covered design in the
       fixed compared subset.

@@ -30,7 +30,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T14` | `T14_dehnn_hypergraph_bd` | Hypergraph descriptor | Scaffolded |
 | `T15` | `T15_masterrtl_sog_bd` | RTL operator-graph descriptor | Scaffolded |
 | `T16` | `T16_deepcell_multiview_bd` | Multiview circuit descriptor | Scaffolded |
-| `T17` | `T17_mome_pareto_archive_bd` | Archive-coupling/Pareto variant | Scaffolded |
+| `T17` | `T17_mome_pareto_archive_bd` | Archive-coupling/Pareto variant | `T0 diagnostic`, passive live-candidate |
 | `T18` | `T18_adaptive_emitter_cvt_bd` | Archive-coupling/emitter variant | Scaffolded |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from

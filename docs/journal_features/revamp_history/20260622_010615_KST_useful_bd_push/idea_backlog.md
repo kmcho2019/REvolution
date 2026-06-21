@@ -75,6 +75,19 @@ a numbered `techniques/T##_slug/` package before running it.
   decision is which view and pooling rule produces a whole-design embedding that
   improves QD/Pareto replay metrics without increasing same-problem collapse.
 
+## From `T17_mome_pareto_archive_bd` T0
+
+- Passive local-Pareto retention is promising as an archive-coupling direction:
+  it substantially increases retained nondominated points, PPA-front unique
+  netlists, and PPA-grid cells, but its own HV delta is tiny.
+- Do not promote T17 from passive evidence alone. The next attempt should be a
+  bounded live variant on `sr_rff_pca_qd` or `sr_random_relu_pca_qd` with local
+  Pareto cell fronts and a frozen parent schedule that samples crowded local
+  fronts, underfilled cells, and the global nondominated front.
+- Keep scalar weighted-sum fitness out of descriptor construction. Fitness and
+  PPA can be used only after evaluation for archive insertion and parent
+  selection within the already evaluated Pareto archive.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live
@@ -83,6 +96,10 @@ a numbered `techniques/T##_slug/` package before running it.
   post-synthesis structural counts.
 - VQ codebook plus MOME: codebook cells keep local PPA Pareto fronts instead
   of one elite.
+- Smooth-QD-v2 Pareto-biased parent sampling: keep MAP-Elites cell assignment
+  on a non-PPA descriptor, but upsample evaluated nondominated candidates from
+  local cell fronts and underfilled cells so the search can hill-climb without
+  collapsing into a single scalar-fitness population.
 - AutoQD over synthesis-event distributions: random Fourier features over
   stage occupancy and fixed-stimulus sketches.
 - Lineage repair plus adaptive emitters: one emitter explores repair-prone

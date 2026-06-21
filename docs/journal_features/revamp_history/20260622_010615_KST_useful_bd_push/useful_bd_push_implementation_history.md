@@ -348,3 +348,33 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated `idea_backlog.md` so this lower-cost Qwen3 ladder remains available
   as a future replay before projection-head training, with same-problem collapse
   and duplicate/motif alignment as hard filters.
+
+## T17 Passive Local-Pareto Audit - 2026-06-21 UTC
+
+- User noted that classic's advantage partly comes from repeatedly sampling
+  higher-quality parents, while QD should retain diversity without degenerating
+  into scalar weighted-sum fitness sampling.
+- Added `scripts/package_useful_bd_mome_pareto_audit.py` and
+  `tests/scripts/test_package_useful_bd_mome_pareto_audit.py` to audit bounded
+  local Pareto retention against one scalar elite per common-audit cell.
+- Used `/aux/revolution-history/.worktrees/journal-auto-bd-exp-20260618/...`
+  only as read-only source evidence. New generated outputs were written under
+  `exp/useful_bd_push/t17_mome_pareto_audit_20260621_175500_UTC/`.
+- Mirrored generated tables and figures into
+  `techniques/T17_mome_pareto_archive_bd/` for the committed journal package.
+- Audit rule: valid-PPA candidates with finite objective improvements and finite
+  fitness; scalar mode keeps one highest-fitness candidate per common-audit cell;
+  bounded local-Pareto mode keeps up to four nondominated candidates per cell,
+  pruned by crowding distance.
+- Visual inspection completed for all generated T17 figures. Notes are in
+  `techniques/T17_mome_pareto_archive_bd/figures/visual_inspection_notes.md`.
+- Tier decision: `T0 diagnostic`. Local Pareto retention increases front
+  material but does not itself create a decisive HV gain.
+- Strongest signal: `sr_rff_pca_qd` retained candidates increase from 10 to 23,
+  global Pareto points from 6 to 19, PPA-front unique netlists from 6 to 14,
+  PPA-grid cells from 7 to 9, and unique canonical netlists from 10 to 18; mean
+  HV increases only from 0.122151 to 0.122184.
+- Follow-up rationale: run a bounded live Smooth-QD-v2-style variant on
+  `sr_rff_pca_qd` or `sr_random_relu_pca_qd` with local Pareto fronts, underfilled
+  cell exploration, and global nondominated-front sampling. Do not promote T17
+  from passive retention evidence alone.

@@ -13,8 +13,8 @@ Start here when resuming the active goal.
 - Holdout subset: `tables/holdout_screening_subset.csv`.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
-- Most recent packaged method: `techniques/T06_qwen_projection_bd/`
-  (`T0 diagnostic`).
+- Most recent packaged method: `techniques/T17_mome_pareto_archive_bd/`
+  (`T0 diagnostic`, passive local-Pareto audit).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -68,7 +68,7 @@ Start here when resuming the active goal.
 | `T14` | `T14_dehnn_hypergraph_bd` | Scaffolded. |
 | `T15` | `T15_masterrtl_sog_bd` | Scaffolded. |
 | `T16` | `T16_deepcell_multiview_bd` | Scaffolded. |
-| `T17` | `T17_mome_pareto_archive_bd` | Scaffolded. |
+| `T17` | `T17_mome_pareto_archive_bd` | Passive local-Pareto audit, `T0 diagnostic`; strong front-diversity signal but no decisive HV gain. |
 | `T18` | `T18_adaptive_emitter_cvt_bd` | Scaffolded. |
 
 ## Validity-Gate Note
