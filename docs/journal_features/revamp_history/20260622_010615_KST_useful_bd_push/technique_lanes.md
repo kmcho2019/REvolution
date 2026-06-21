@@ -5,15 +5,30 @@ chronological technique ID. Use it with `techniques/technique_registry.csv`:
 the registry says what exists, while this file explains why each method was
 tried, what it taught us, and where the next iteration should go.
 
+## Maintenance Rule
+
+Update this file whenever a technique package changes the search direction.
+Each update should identify the lane, the evidence source, the decision tag,
+and the next artifact or branch. Use these tags consistently:
+
+| Tag | Meaning |
+| --- | --- |
+| `advance` | Run a live validation, holdout validation, or stronger ablation. |
+| `ablate` | Keep the idea, but isolate which component caused the signal. |
+| `hybridize` | Reuse the useful part inside another lane. |
+| `park` | Keep the package as evidence, but do not spend live budget yet. |
+| `control` | Keep as a required comparator or sanity check. |
+| `retire` | Stop this direct variant unless new evidence changes the premise. |
+
 ## Lane Summary
 
 | Lane | Purpose | Current Evidence | Next Action |
 | --- | --- | --- | --- |
 | `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report and T22 random control package now exist. | Keep random BD in every validation table before any positive claim. |
 | `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`; T21 expands coverage but loses quality. | Stop pure concatenation; use feature selection, CVT, or local-Pareto retention. |
-| `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04 SR-RFF PCA is the first `T1 near_classic` lead; T19 SR ReLU has the strongest HV/AUC lead; T20 raw PCA is the ablation near-miss. | Validate RFF/ReLU/raw PCA and ST-NOD+RFF variants under the same passive archive. |
+| `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04 SR-RFF PCA is the first `T1 near_classic` lead; T19 SR ReLU has the strongest HV/AUC lead; T20 raw PCA is the ablation near-miss. | Promote T04/T19 into a bounded live local-Pareto run, with T20 as ablation evidence. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
-| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T06 Qwen is `T0`; identifier-normalized Qwen has HV signal but nuisance clustering. | Run Qwen3 preprocessing ladder and normalized-view projection before raw embedding is retired. |
+| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T06 Qwen is `T0`; identifier-normalized Qwen has HV signal but nuisance clustering. | Run Qwen3 preprocessing ladder before heavier fine-tuning or external graph-encoder branches. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T17 passive MOME audit is `T0`; T23 validates SR-RFF/SR-ReLU against T22 random control. | Run a bounded Smooth-QD-v2-style live variant on SR-RFF or SR-ReLU with local Pareto fronts. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T12/T18 are scaffolded. | Use T17/T04 evidence to define exploit/explore/repair parent scheduling before live sampling. |
 
@@ -39,6 +54,7 @@ flowchart TD
   N --> H
   G --> R[T23 SR Pareto validation matrix]
   R --> H
+  H --> S[Next live local-Pareto validation branch]
 
   A --> I[T06 Qwen whole-RTL diagnostic]
   I --> J[Qwen3 preprocessing ladder]
@@ -48,6 +64,21 @@ flowchart TD
   K --> L
   G --> M[T18 adaptive emitter CVT]
 ```
+
+## Decision Ledger
+
+| Date | Lane | Evidence | Tag | Decision | Next Artifact |
+| --- | --- | --- | --- | --- | --- |
+| 2026-06-21 | `L0` common evaluation | T22 random descriptor control | `control` | Random archive partitioning is a nontrivial comparator, so positive claims must beat it on the claimed metric. | Keep T22 in every validation table and central report. |
+| 2026-06-21 | `L1` transparent CAD descriptors | T01/T02/T03/T21 replay packages | `hybridize` | Transparent features are useful for interpretation and ablations, but direct cells lose too much quality or passive-QD score. | Feed selected ST-NOD/motif features into local-Pareto or feature-selection variants. |
+| 2026-06-21 | `L2` synthesis-response automatic BDs | T04 SR-RFF PCA | `advance` | Strongest near-classic automatic-BD lead; improves common-audit QD and front material while staying close on HV/best. | Bounded live SR-RFF local-Pareto validation. |
+| 2026-06-21 | `L2` synthesis-response automatic BDs | T19 SR ReLU PCA | `advance` | Strongest final-HV and HV-AUC source, but it needs quality-safe parent pressure. | Live or passive ablation paired with local-Pareto retention and T22 comparator. |
+| 2026-06-21 | `L2` synthesis-response automatic BDs | T20 raw PCA | `ablate` | Raw synthesis-response PCA preserves validity and front material, but loses too much best quality. | Use as the no-RFF/no-ReLU ablation in SR-family reports. |
+| 2026-06-21 | `L3` codebook/discrete archives | T05 VQ codebook | `park` | Direct codebook pressure loses quality and yield; the codebook may still help as a side archive. | Revisit only after local-Pareto retention is live. |
+| 2026-06-21 | `L4` learned encoders | T06 Qwen diagnostic | `ablate` | Raw whole-RTL embeddings are not enough; preprocessing and projection remain open. | Qwen3 canonical-RTL/netlist preprocessing ladder on an isolated env branch if needed. |
+| 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
+| 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
+| 2026-06-21 | `L6` lineage and emitters | T12/T18 scaffolds plus T17 evidence | `hybridize` | Lineage/emitter methods should improve search dynamics around SR-RFF/SR-ReLU, not become generic descriptor resets. | Specify exploit/explore/repair scheduling after the first live local-Pareto run. |
 
 ## Lane Notes
 
@@ -91,10 +122,11 @@ common-audit occupied cells, increases PPA-front unique netlists by 16.67%, and
 increases motif signatures by 11.63%. It remains `T0 diagnostic` because final
 best fitness falls by 9.97% and common-audit QD score falls by 15.11%.
 
-Current follow-up: run a same-budget validation matrix for SR-RFF PCA, SR ReLU
-PCA, SR raw PCA, and ST-NOD+RFF. The T17 audit suggests the RFF/ReLU family may
-benefit from local Pareto fronts because many useful tradeoff candidates are
-discarded by scalar-cell retention.
+Current follow-up: use T23 to specify a same-budget live local-Pareto validation
+for SR-RFF PCA and SR ReLU PCA, with SR raw PCA retained as the SR-family
+ablation. The T17 audit suggests the RFF/ReLU family may benefit from local
+Pareto fronts because many useful tradeoff candidates are discarded by
+scalar-cell retention.
 
 ### `L3` Codebook/Discrete Archives
 
@@ -159,3 +191,15 @@ that would make the current branch hard to review. Suggested branch suffixes:
 
 Any branch split must keep the same revamp root, append to this file, and point
 back to the source technique packages.
+
+## Branch Split Checklist
+
+A branch split is justified when the next step needs a long live vLLM run, a
+new dependency stack, an external source checkout, or a method-specific env that
+would make this branch harder to review. Before creating that branch, record:
+
+- lane and source technique IDs;
+- intended technique package ID;
+- run output root under `exp/useful_bd_push/`;
+- required comparator set, including T22 when a positive claim is possible;
+- return condition for merging the result back into this revamp directory.

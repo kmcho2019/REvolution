@@ -519,3 +519,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Tier decision: `T0 diagnostic`, passive validation support. The next
   experiment should be a bounded live local-Pareto variant for SR-RFF and/or
   SR ReLU, with T22 included as a required comparator.
+
+## Technique Lane Ledger Refinement - 2026-06-21 UTC
+
+- Expanded `technique_lanes.md` from a lane summary into a maintainable
+  decision ledger for the current useful-BD push.
+- Added explicit result tags: `advance`, `ablate`, `hybridize`, `park`,
+  `control`, and `retire`.
+- Added a decision ledger tying T01-T06, T17, and T19-T23 to lane-level
+  decisions, next artifacts, and the likely Pareto-live branch split.
+- Updated the Mermaid lineage graph so T23 points into the next live
+  local-Pareto validation branch.
+- Updated `current_results_matrix.md` because T23 now exists; the next decision
+  is no longer to build the validation matrix, but to use it to specify a live
+  SR-RFF/SR-ReLU local-Pareto run.

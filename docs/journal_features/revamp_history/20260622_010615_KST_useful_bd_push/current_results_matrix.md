@@ -84,8 +84,8 @@ current bridge from replay evidence to the next live local-Pareto experiment.
 
 ## Next Decisions
 
-- Build a validation matrix for `T04` SR-RFF and `T19` SR ReLU with local
-  Pareto fronts from `T17`.
+- Use `T23` to specify a bounded live local-Pareto validation for `T04` SR-RFF
+  and `T19` SR ReLU, with `T20` raw PCA as the SR-family ablation.
 - Keep `T22` in validation tables as a required comparator for any positive
   claim.
 - Run deeper per-problem analysis on `Prob011_multi_16bit`,
