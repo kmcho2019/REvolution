@@ -191,6 +191,25 @@ a numbered `techniques/T##_slug/` package before running it.
   traffic-light yield or weak front material, branch to a repair-emitter or
   per-problem emitter schedule with T26 as the direct comparator.
 
+## From `T27_t26_live_qd_audit`
+
+- T26 now has live HV/HV-AUC support: +11.62% mean HV, +17.62% HV AUC, and
+  +3.02% mean best score versus classic on the fixed screen. The next step
+  should validate this signal, not discard it for another descriptor reset.
+- Front material is still the blocker. T26 has 9 PPA-front points versus
+  classic's 18 and SR raw's 16, so the next variant must either recover front
+  material or make a narrower HV/best-quality claim.
+- Canonical duplicate/family audit is mandatory. Unique PPA tuples are only a
+  proxy; they cannot prove distinct implementation families.
+- Holdout audit should be the next package before repair emitters. If T26
+  keeps HV/HV-AUC on holdout but loses front material, then branch to an
+  emitter schedule that reintroduces SR raw exploration while preserving the
+  champion lane.
+- Potential T28: `t26_holdout_family_audit`, a replay/live-audit package that
+  extracts canonical netlist hashes or motif-family signatures where available,
+  recomputes common passive archive metrics, and decides whether T26 advances
+  to a longer live confirmation branch.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

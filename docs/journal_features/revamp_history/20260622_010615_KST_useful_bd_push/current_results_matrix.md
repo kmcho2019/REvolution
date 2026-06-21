@@ -27,15 +27,17 @@ Real result packages:
 - `T25_guarded_sr_raw_pareto_qd` guarded live follow-up result
 - `T26_sr_raw_conservative_exploit_qd` conservative exploit live follow-up
   result
+- `T27_t26_live_qd_audit` live QD audit over T24, T25, and T26 runs
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
-results. T24 and T25 remain negative diagnostics. T26 is a `T0 diagnostic`
-active lead because it recovers ALU and multi-pipe best-score pressure while
-passing the covered-design and catastrophic-validity gates, but it still needs
-passive HV/QD, front-spread, and holdout validation before promotion. The
-ten-package minimum is satisfied, but the goal is still active because lead
-validation and adversarial sign-off are not done.
+results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
+lead because it recovers ALU and multi-pipe best-score pressure while passing
+the covered-design and catastrophic-validity gates. T27 upgrades the evidence
+for T26 to `T1 near_classic` audit support on live HV and HV-AUC, but it still
+blocks final promotion until canonical duplicate/family accounting, common
+passive archive scoring, holdout behavior, and adversarial sign-off are done.
+The ten-package minimum is satisfied, but the goal remains active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -106,6 +108,13 @@ classic. Traffic-light best score remains 3.48% below classic, and SR raw still
 retains more multi-pipe global Pareto members, so T26 is an active lead for
 passive audit rather than a promoted result.
 
+`T27_t26_live_qd_audit` is the completed live audit over T24, T25, and T26.
+It shows that T26 beats classic on mean live PPA hypervolume (+11.62%),
+hypervolume AUC (+17.62%), and mean best score (+3.02%). T26 also beats random
+on every audited aggregate metric. The caveat is front material: T26 has 9
+PPA-front points versus classic's 18 and SR raw's 16, and the audit can only
+deduplicate unique PPA tuples, not canonical implementation families.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -127,13 +136,14 @@ passive audit rather than a promoted result.
    improve-phase backfill and two-parent fusion preserves coverage but does
    not recover the failing multi-pipe quality/yield behavior.
 8. T26 is the first live parent-source variant that recovers best-quality
-   pressure on the screen. It should be audited before another descriptor
-   reset or larger live claim.
+   pressure on the screen.
+9. T27 shows that the T26 signal extends to live HV and HV-AUC, not only final
+   best score. It is enough to continue validation, but not enough to claim a
+   final useful-BD win.
 
 ## Next Decisions
 
-- Recompute T26 passive HV/QD, front spread, unique implementation families,
-  and holdout behavior before any promotion claim.
+- Run a canonical-family and holdout audit for T26 before any promotion claim.
 - Use manual BD as the traffic-light quality control, SR raw as the
   front-material control, and random as the live partitioning control for the
   next T24/T25/T26-derived audit.

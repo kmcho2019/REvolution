@@ -831,3 +831,41 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   SR raw keeps stronger multi-pipe front material.
 - Lane decision: package passive HV/QD, front spread, unique implementation
   families, and holdout evidence before promotion or a repair-emitter branch.
+
+## T27 T26 Live QD Audit - 2026-06-21 UTC
+
+- Added `scripts/package_t27_t26_live_qd_audit.py` and
+  `tests/scripts/test_package_t27_t26_live_qd_audit.py`.
+- Packaged `techniques/T27_t26_live_qd_audit/` from the completed T24, T25,
+  and T26 live run roots under `exp/useful_bd_push/`.
+- The audit compares classic, manual BD, random descriptor, SR raw, guarded SR
+  raw, and conservative exploit SR raw on the fixed three-problem development
+  screen.
+- Generated `tables/live_qd_problem_metrics.csv`,
+  `tables/live_qd_aggregate_metrics.csv`,
+  `tables/live_qd_comparison_deltas.csv`, and
+  `tables/live_qd_method_manifest.csv`.
+- Generated `figures/live_qd_problem_metrics.png` and
+  `figures/live_qd_aggregate_metrics.png`; visual inspection accepted both
+  figures and recorded the front-material caveat.
+- T26 versus classic aggregate deltas: mean live HV +11.62%, HV-AUC +17.62%,
+  mean best score +3.02%, valid-PPA count -13.64%, PPA-front points -50.00%,
+  unique PPA points tied, and mean front nearest-neighbor spread +29.23%.
+- T26 versus random aggregate deltas: mean live HV +58.60%, HV-AUC +87.55%,
+  mean best score +26.60%, valid-PPA count +54.05%, PPA-front points +28.57%,
+  unique PPA points +70.97%, and active global Pareto members +28.57%.
+- T26 versus SR raw aggregate deltas: mean live HV +21.55%, HV-AUC +13.24%,
+  mean best score +18.97%, valid-PPA count +16.33%, and unique PPA points
+  +20.45%, but active global Pareto members fall from 16 to 9 and PPA-front
+  points fall from 16 to 9.
+- Tier read: T27 supports T26 as a `T1 near_classic` validation candidate for
+  live HV/HV-AUC, not as a final `T2` useful-QD win.
+- Limitation: the live logs do not expose canonical netlist hashes or
+  implementation-family hashes, so T27 reports unique PPA tuples only as a
+  proxy duplicate metric. Canonical duplicate/family and holdout audit remain
+  required before promotion.
+- Updated `README.md`, `current_results_matrix.md`, `technique_lanes.md`,
+  `technique_lineage_ledger.md`, `techniques/README.md`,
+  `techniques/technique_registry.csv`, `idea_backlog.md`, and this checklist
+  surface so the technique lane, lineage, result, and branch decisions all
+  point to the same next action.

@@ -40,6 +40,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T24` | `T24_sr_pareto_live_validation` | Archive-coupling live validation | `T0 diagnostic`, complete six-arm live matrix |
 | `T25` | `T25_guarded_sr_raw_pareto_qd` | Archive-coupling guarded live variant | `T0 diagnostic` |
 | `T26` | `T26_sr_raw_conservative_exploit_qd` | Archive-coupling parent-source variant | `T0 diagnostic`, active lead |
+| `T27` | `T27_t26_live_qd_audit` | Live QD audit | `T1 near_classic` audit support for T26 |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
