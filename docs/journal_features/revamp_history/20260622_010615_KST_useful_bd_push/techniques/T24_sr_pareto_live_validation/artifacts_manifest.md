@@ -1,7 +1,7 @@
 # T24 SR Pareto Live Validation Artifacts Manifest
 
-Status: partial live result. The classic and SR-RFF PCA arms have completed;
-the full six-arm live matrix is still pending.
+Status: partial live result. The classic, SR-RFF PCA, and SR ReLU PCA arms
+have completed; the full six-arm live matrix is still pending.
 
 ## Preflight
 
@@ -18,6 +18,18 @@ curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
   `tables/preflight_models_20260621_184346_UTC.json`
 - sha256:
   `7286fa860e28d21680352c03d8352b44523fe651bb4c11378a607c391f9422b9`
+- model id: `openai/gpt-oss-120b`
+- max model length: `131072`
+- token-policy verdict: passes `>=128000` requirement
+
+Second live-arm preflight:
+
+- captured locally:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/preflight/models_20260621_192641_UTC.json`
+- committed mirror:
+  `tables/preflight_models_20260621_192641_UTC.json`
+- sha256:
+  `c43da529f2e1f9d6b8d94e232fe6ab24b787b984fceb274f58b58caeb50ae0cb`
 - model id: `openai/gpt-oss-120b`
 - max model length: `131072`
 - token-policy verdict: passes `>=128000` requirement
@@ -112,26 +124,56 @@ Relevant implementation/tests:
   `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/logs/sr_rff_pca_qd_seed_1001.log`
   - sha256:
     `9ab82a45bf5e7b76c7f294258696240343b3d115a8b309c4254aab20939310dd`
+- SR ReLU summary:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/sr_random_relu_pca_qd/seed_1001/openai_gpt-oss-120b/20260621_192708_revolution_summary_results.txt`
+  - sha256:
+    `7bf550bc2d58e54b3732eb7fbb2182bf8fcc92b0607e1aba13940a7231c0b6f6`
+- SR ReLU run log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/sr_random_relu_pca_qd/seed_1001/openai_gpt-oss-120b/20260621_192708_revolution_run_log.txt`
+  - sha256:
+    `c76ca1bc3e54e086ef6369ca6d84e76eccadfe9522a67f655f9653425b2f25d4`
+- SR ReLU scheduler telemetry:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/sr_random_relu_pca_qd/seed_1001/openai_gpt-oss-120b/20260621_192708_revolution_scheduler_telemetry.json`
+  - sha256:
+    `d6a2de9d77c309f848bdd5f125f3f1bce505ed7112e3d45f70687aa6feea7fc1`
+- SR ReLU console log:
+  `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/logs/sr_random_relu_pca_qd_seed_1001.log`
+  - sha256:
+    `ac12c721dbe2fedfedb8538412ce8fa2dc328cd9a7aa67e666b91306dbf316a6`
 
 ## Packaged Result Mirrors
 
+- completed SR-family comparison table:
+  `tables/live_sr_family_vs_classic.csv`
+  - sha256:
+    `e59399c108fccc7a4e39a4c520b5914589494a57a974400e26c6f93d914aeeff`
 - comparison table: `tables/live_sr_rff_vs_classic.csv`
   - sha256:
-    `71e5b57abc19e222e3a79761ab1f6ec512efbda326a57df62e1e36de1c0959d3`
+    `5716714c5c63b70a34ffb5e876ea38ec8bf12ed87a2ccb3a94667cdf8d385359`
 - Pareto validator JSON: `tables/live_sr_rff_pareto_validation.json`
   - sha256:
     `45e136a600d2ab8187145cdea79ba1f2d31c27f9bcb3a454c54a59c17f08a9e5`
 - Pareto validator Markdown: `tables/live_sr_rff_pareto_validation.md`
   - sha256:
     `531c591e0d1ac50d9bd114a33efbff017625f4610e0c5df6884cbe2033d03ae3`
-- figure: `figures/live_sr_rff_vs_classic.png`
+- SR ReLU Pareto validator JSON: `tables/live_sr_relu_pareto_validation.json`
+  - sha256:
+    `cb4f6d76371657b680ae5d0f1ff90d16da180a8411421bffce5041e48b9ea3f5`
+- SR ReLU Pareto validator Markdown:
+  `tables/live_sr_relu_pareto_validation.md`
+  - sha256:
+    `03550cd366121937907fbd084784264b69f3d233aef969441aab57034e446367`
+- completed SR-family figure: `figures/live_sr_family_vs_classic.png`
+  - sha256:
+    `1706f4e70d32fc7faa967f104fefb70de88c47e1d1fd45fc3185d12b8e812a82`
+- SR-RFF comparison figure: `figures/live_sr_rff_vs_classic.png`
   - sha256:
     `adcc7ec52d50f551bd89cb912bc0575086530a5256f8d3ebd5bf201eb036e942`
 - packaging script: `scripts/package_t24_sr_rff_live_result.py`
 
 The validator was run without `--acceptance-hard-subset` because that flag
 currently asserts the manual-BD descriptor profile. Classic-covered design
-preservation was checked from the summary files instead: both completed arms
+preservation was checked from the summary files instead: all completed arms
 produce valid results on all three fixed problems.
 
 ## Missing Results
@@ -141,7 +183,6 @@ The following T24 live arms are still missing:
 - `landing_smooth_qd_manual_bd`
 - `random_descriptor_qd`
 - `sr_raw_pca_qd`
-- `sr_random_relu_pca_qd`
 
 Until those arms land, T24 remains `pending_live_matrix` and no positive
 T1/T2/T3 claim is allowed.

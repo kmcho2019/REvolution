@@ -104,7 +104,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T23_sr_pareto_validation_matrix` has methodology, results, figures,
       tables, and tier decision.
 - [ ] `T24_sr_pareto_live_validation` full live matrix is executed and
-      packaged; classic-vs-SR-RFF is done, remaining arms are pending.
+      packaged; SR-RFF and SR ReLU are done, remaining arms are pending.
 
 ## Minimum Goal Completion
 

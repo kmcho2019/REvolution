@@ -596,3 +596,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   not a small-denominator artifact.
 - Lane decision: mark T24 SR-RFF as `ablate`. Continue with SR ReLU live or a
   quality/yield guarded SR-RFF variant before expanding the matrix.
+
+## T24 SR ReLU Live Result - 2026-06-21 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models` before the SR ReLU arm.
+  The endpoint still reported `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+- Completed the `sr_random_relu_pca_qd` arm under the same T24 live screen:
+  seed 1001, population 12, three generations, strict ablation evaluation, and
+  128000-token code/diff budgets.
+- SR ReLU completed in 742.59 seconds and solved all three fixed problems, so
+  the classic-covered design preservation gate passes.
+- Pareto archive validation passed with zero failures and max front size 5.
+- Packaged `tables/live_sr_family_vs_classic.csv`,
+  `tables/live_sr_relu_pareto_validation.{json,md}`, and
+  `figures/live_sr_family_vs_classic.png`.
+- Visual inspection found the combined SR-family figure readable. Fixed method
+  colors and a zero line make the loss/gain direction clear.
+- Best-score deltas versus classic: `Prob045_alu` -0.02%,
+  `Prob041_traffic_light` -2.53%, and `Prob015_multi_pipe_8bit` -75.20%.
+- Valid-PPA-rate deltas versus classic: `Prob045_alu` 0.00 absolute points,
+  `Prob041_traffic_light` -27.08 absolute points, and
+  `Prob015_multi_pipe_8bit` -8.33 absolute points.
+- SR ReLU retains more local-front material than SR-RFF on traffic light and
+  multi-pipe, but it still fails the near-classic quality bar on multi-pipe.
+- Promotion decision: do not promote SR ReLU local-Pareto as-is.
+- Lane decision: keep the SR-family live result as `ablate`; run SR raw and
+  random/manual controls, then design a quality/yield-guarded emitter or parent
+  pressure variant before expanding SR-family live sampling.

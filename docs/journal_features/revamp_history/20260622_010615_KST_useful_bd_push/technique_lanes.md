@@ -52,10 +52,10 @@ and the next artifact or branch. Use these tags consistently:
 | --- | --- | --- | --- |
 | `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report and T22 random control package now exist. | Keep random BD in every validation table before any positive claim. |
 | `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`; T21 expands coverage but loses quality. | Stop pure concatenation; use feature selection, CVT, or local-Pareto retention. |
-| `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04 SR-RFF PCA is the first `T1 near_classic` lead; T19 SR ReLU has the strongest HV/AUC lead; T20 raw PCA is the ablation near-miss. | Promote T04/T19 into a bounded live local-Pareto run, with T20 as ablation evidence. |
+| `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19 replay leads survive as live diagnostics but not as promoted methods. | Run SR raw live as the ablation, then add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T06 Qwen is `T0`; identifier-normalized Qwen has HV signal but nuisance clustering. | Run Qwen3 preprocessing ladder before heavier fine-tuning or external graph-encoder branches. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T17 passive MOME audit is `T0`; T23 validates SR-RFF/SR-ReLU against T22 random control. | Run a bounded Smooth-QD-v2-style live variant on SR-RFF or SR-ReLU with local Pareto fronts. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T24 validates SR-RFF/SR-ReLU live mechanics but exposes a multi-pipe quality failure. | Test SR raw/manual/random controls and design a quality/yield-guarded emitter variant. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T12/T18 are scaffolded. | Use T17/T04 evidence to define exploit/explore/repair parent scheduling before live sampling. |
 
 ## Lane Scorecard
@@ -64,10 +64,10 @@ and the next artifact or branch. Use these tags consistently:
 | --- | --- | --- | --- | --- |
 | `L0` | T22 random descriptor control | Required comparator. | Random can look strong on AUC/front material, so claims need metric-specific controls. | Keep in this branch and every validation table. |
 | `L1` | T03 ST-NOD near-miss | Hybrid source. | Direct transparent descriptors lose audit-QD or best quality. | Continue only as selected features inside T17/T24-style archives. |
-| `L2` | T04 SR-RFF PCA and T19 SR ReLU PCA | Active lead lane. | Needs live evidence that descriptor signal survives parent selection. | Continue on current branch until long live runs justify a split. |
+| `L2` | T04 SR-RFF PCA and T19 SR ReLU PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Finish SR raw live ablation, then revise descriptor/archive coupling. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
 | `L4` | T06 Qwen normalized-view diagnostic | Needs preprocessing ladder. | Whole-file embeddings carry nuisance axes. | Split to a Qwen/encoder branch if dependencies or model runtime expand. |
-| `L5` | T17/T23 local-Pareto evidence and T24 live run | Partial SR-RFF live result. | SR-RFF preserves coverage but regresses multi-pipe quality/yield. | Continue with SR ReLU live or a quality-safer SR-RFF variant. |
+| `L5` | T17/T23 local-Pareto evidence and T24 live run | Partial SR-family live result. | SR-RFF and SR ReLU preserve coverage but regress multi-pipe quality. | Run controls, then design quality/yield-guarded parent pressure. |
 | `L6` | T12/T18 scaffolded emitter ideas | Not yet validated. | Needs concrete emitter schedule tied to observed failures. | Derive from the T24 multi-pipe failure rather than inventing another independent lane. |
 
 ## Current Lineage
@@ -176,7 +176,8 @@ flowchart TD
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
-| 2026-06-21 | `L5` archive coupling | T24 classic-vs-SR-RFF live result | `ablate` | SR-RFF local-Pareto runs end to end and preserves all three classic-covered problems, but the multi-pipe best-score and valid-PPA yield regression blocks promotion. | Run SR ReLU live or add a quality/yield guard before expanding SR-RFF. |
+| 2026-06-21 | `L5` archive coupling | T24 classic-vs-SR-RFF live result | `ablate` | SR-RFF local-Pareto runs end to end and preserves all three classic-covered problems, but the multi-pipe best-score and valid-PPA yield regression blocks promotion. | Compare with SR ReLU, then run SR raw/control arms before a family-level claim. |
+| 2026-06-21 | `L5` archive coupling | T24 SR ReLU live result | `ablate` | SR ReLU also runs end to end and preserves all three classic-covered problems, with more front material than SR-RFF on traffic light and multi-pipe, but still loses too much multi-pipe best quality. | Run SR raw and T22/manual controls, then design a quality/yield-guarded emitter variant. |
 | 2026-06-21 | `L6` lineage and emitters | T12/T18 scaffolds plus T17 evidence | `hybridize` | Lineage/emitter methods should improve search dynamics around SR-RFF/SR-ReLU, not become generic descriptor resets. | Specify exploit/explore/repair scheduling after the first live local-Pareto run. |
 
 ## Lane Notes
@@ -221,11 +222,10 @@ common-audit occupied cells, increases PPA-front unique netlists by 16.67%, and
 increases motif signatures by 11.63%. It remains `T0 diagnostic` because final
 best fitness falls by 9.97% and common-audit QD score falls by 15.11%.
 
-Current follow-up: use T23 to specify a same-budget live local-Pareto validation
-for SR-RFF PCA and SR ReLU PCA, with SR raw PCA retained as the SR-family
-ablation. The T17 audit suggests the RFF/ReLU family may benefit from local
-Pareto fronts because many useful tradeoff candidates are discarded by
-scalar-cell retention.
+Current follow-up: finish the live SR raw PCA ablation in T24, then revise the
+SR-family archive coupling. The completed SR-RFF and SR ReLU live arms show
+that local-Pareto retention produces valid front material, but both arms lose
+too much `Prob015_multi_pipe_8bit` best quality for promotion.
 
 ### `L3` Codebook/Discrete Archives
 
@@ -262,12 +262,12 @@ common-audit QD score and local front material while staying within the
 near-classic quality tolerance. SR ReLU PCA beats classic and random on final
 HV and HV AUC, but does not beat random on local front material.
 
-Current follow-up: continue T24, but do not promote SR-RFF local-Pareto as-is.
-The completed classic-vs-SR-RFF arm validates the archive mechanics and
-preserves all three classic-covered problems, yet it loses 66.06% relative best
-score and 60% valid-PPA yield on `Prob015_multi_pipe_8bit`. The next L5 step
-should either run SR ReLU PCA live, because T19 had the stronger replay HV
-signal, or add a quality/yield guard before spending more budget on SR-RFF.
+Current follow-up: continue T24 controls and do not promote SR-family
+local-Pareto as-is. SR-RFF loses 66.06% relative best score on
+`Prob015_multi_pipe_8bit`; SR ReLU loses 75.20% there. SR ReLU avoids the
+multi-pipe valid-PPA collapse better than SR-RFF and retains more local-front
+members, so the next method idea should keep the front material but add
+quality/yield-guarded parent pressure or an adaptive emitter lane.
 
 ### `L6` Lineage And Emitters
 

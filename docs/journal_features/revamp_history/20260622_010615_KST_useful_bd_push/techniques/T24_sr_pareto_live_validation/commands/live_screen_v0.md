@@ -247,6 +247,10 @@ After the matrix finishes, validate each Pareto QD candidate against the
 classic mode. The model directory is `openai_gpt-oss-120b` because
 `run_backend.py` replaces `/` with `_` in the model id.
 
+Do not use `--acceptance-hard-subset` for SR-family descriptors: that validator
+flag currently asserts the manual-BD descriptor profile. Check classic-covered
+problem preservation from the summary files for SR arms.
+
 Validate SR-RFF:
 
 ```bash
@@ -255,8 +259,7 @@ Validate SR-RFF:
   --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T24_sr_pareto_live_validation/tables/live_screen_v0_subset.yaml \
   --classic-mode classic_revolution/seed_1001/openai_gpt-oss-120b \
   --pareto-qd-mode sr_rff_pca_qd/seed_1001/openai_gpt-oss-120b \
-  --require-full-subset \
-  --acceptance-hard-subset
+  --require-full-subset
 ```
 
 Validate SR ReLU:
@@ -267,6 +270,5 @@ Validate SR ReLU:
   --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T24_sr_pareto_live_validation/tables/live_screen_v0_subset.yaml \
   --classic-mode classic_revolution/seed_1001/openai_gpt-oss-120b \
   --pareto-qd-mode sr_random_relu_pca_qd/seed_1001/openai_gpt-oss-120b \
-  --require-full-subset \
-  --acceptance-hard-subset
+  --require-full-subset
 ```

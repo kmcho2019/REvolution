@@ -1,7 +1,10 @@
 # T24 Figures
 
-Generated partial-result figure:
+Generated partial-result figures:
 
+- `live_sr_family_vs_classic.png`: completed SR-family best-score delta,
+  synthesis-PPA-rate delta, and global Pareto member comparison for SR-RFF and
+  SR ReLU.
 - `live_sr_rff_vs_classic.png`: classic-vs-SR-RFF best-score delta,
   synthesis-PPA-rate delta, and SR-RFF front material for the first completed
   T24 live arm pair.
