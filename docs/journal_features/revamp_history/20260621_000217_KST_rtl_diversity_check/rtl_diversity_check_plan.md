@@ -166,6 +166,7 @@ useful.
 - Copy/paste goal text: `goal_template.md`
 - Validator prompt: `rtl_diversity_check_adversarial_prompt.md`
 - Validator output: `rtl_diversity_check_subagent_validation_report.md`
+- Encoder escalation: `rtl_diversity_check_encoder_escalation_plan.md`
 
 ## Research Questions
 

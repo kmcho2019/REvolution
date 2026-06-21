@@ -1261,3 +1261,19 @@ validation evidence.
     scripts/audit_rtl_diversity_lineage_sources.py
     scripts/analyze_rtl_diversity_lineage_yield.py`: 0 errors, 0 warnings.
   - `git diff --check`: clean.
+
+### Encoder Escalation Plan After Qwen3/DeepGate3 Diagnostics
+
+- Added `rtl_diversity_check_encoder_escalation_plan.md`.
+- Linked it from `rtl_diversity_check_plan.md` and the WP1/WP3 todo items.
+- Reason: Qwen3 produced real embeddings and is no longer dependency-blocked,
+  but current evidence is diagnostic-only; DeepGate3 was attempted end to end
+  through the bounded AIG/tokenizer path, but the embedding collapsed and the
+  graph-state policy is still combinational-only.
+- Decision: AURORA-style training or finetuning is allowed as the next
+  diagnostic escalation, not as an in-loop method by default. The first
+  concrete run should be a richer AURORA-style diagnostic over
+  implementation-only D_code/D_struct/D_synth features with problem-held-out
+  evaluation, common-audit replay controls, and fixed no-proceed thresholds.
+- The plan records required gates, training/leakage rules, escalation order,
+  and no-proceed thresholds before any new encoder training command is run.

@@ -225,6 +225,8 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   diagnostic signal, and DeepGate3 collapsed on the bounded AIG/tokenizer
   path. Any larger encoder or finetuning run must first name the utility
   target, fitting corpus, leakage controls, and no-proceed threshold.
+  Escalation plan:
+  `rtl_diversity_check_encoder_escalation_plan.md`.
 
 ## WP2 - Quality-Gated / Repair-Preserving Diversity Pressure
 
@@ -267,6 +269,8 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   Current status: not justified as an in-loop method. AURORA-style or
   finetuned-encoder work is eligible only as a diagnostic escalation unless it
   targets a concrete D1/D3/D4/D5 gate.
+  Escalation plan:
+  `rtl_diversity_check_encoder_escalation_plan.md`.
 - [ ] Do not revive VQ/codebook in-loop unless a continuous descriptor first
   passes quality-gated robustness tests.
 
