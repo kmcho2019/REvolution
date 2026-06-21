@@ -554,3 +554,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `qd_champion_lane_fraction=0.5`.
 - Tier remains `pending_live_run`. No T1/T2/T3 claim is allowed until the
   commands complete, validator outputs exist, and figures/tables are inspected.
+
+## Technique Lane Process Guide - 2026-06-21 UTC
+
+- Strengthened `technique_lanes.md` into the durable lane-level process guide
+  for the useful-BD push.
+- Added a lane taxonomy that states the core question, technique family,
+  promotion signal, and recycle/stop signal for L0-L6.
+- Added a lane scorecard so the current best lead, blocker, and branch strategy
+  are visible without reading every `Txx` package.
+- Reworked the Mermaid lineage graph into lane-grouped subgraphs, then added a
+  second Mermaid flow for the expected idea-to-replay-to-live-to-branch loop.
+- Kept chronological artifact ownership in the `Txx` technique packages; this
+  guide tracks process lineage, not raw run outputs.

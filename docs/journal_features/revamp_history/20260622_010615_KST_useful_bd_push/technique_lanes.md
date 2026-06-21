@@ -5,6 +5,20 @@ chronological technique ID. Use it with `techniques/technique_registry.csv`:
 the registry says what exists, while this file explains why each method was
 tried, what it taught us, and where the next iteration should go.
 
+## How To Use This File
+
+Read the lane summary first, then jump to the lane note for the active method.
+Every technique package should be traceable in three directions:
+
+- backward to the evidence or failed method that motivated it;
+- sideways to required controls and ablations;
+- forward to the next run, branch, or parking decision.
+
+The chronological `Txx` index remains the source of truth for artifact paths.
+This file is the source of truth for research lineage and process decisions.
+When a technique changes direction, update the decision ledger in the same
+commit as the technique package or run-result report.
+
 ## Maintenance Rule
 
 Update this file whenever a technique package changes the search direction.
@@ -20,6 +34,18 @@ and the next artifact or branch. Use these tags consistently:
 | `control` | Keep as a required comparator or sanity check. |
 | `retire` | Stop this direct variant unless new evidence changes the premise. |
 
+## Lane Taxonomy
+
+| Lane | Core Question | Typical Techniques | Promotion Signal | Recycle Or Stop Signal |
+| --- | --- | --- | --- | --- |
+| `L0` common evaluation | Are we comparing methods on a fair QD surface? | Common passive archives, random BD, validation gates. | Comparator exposes a real baseline or prevents overclaiming. | Metric can be gamed or does not separate classic/manual/random. |
+| `L1` transparent CAD descriptors | Can simple hardware structure describe useful exploration axes? | Yosys stats, motif/pathlet counts, ST-NOD trajectories. | Near-classic PPA with better archive coverage or interpretable fronts. | Pure concatenation broadens cells while losing quality. |
+| `L2` synthesis-response automatic BDs | Can non-PPA implementation response produce useful automatic BDs? | Raw/RFF/ReLU synthesis-response PCA, AutoQD-style transforms. | Beats classic and random on HV/AUC, front material, or audit QD without yield collapse. | Projection keeps diversity but loses best-PPA pressure. |
+| `L3` codebook/discrete archives | Can vector quantization or discrete cells stabilize exploration? | VQ/codebook cells over synthesis-response or graph features. | Codebook improves local front recovery when paired with Pareto retention. | Direct codebook parent pressure loses quality or valid yield. |
+| `L4` learned encoders | Can pretrained or trained circuit encoders reveal stronger BDs? | Qwen3, DeepGate, DeepSeq, NetTAG, CircuitFusion, AURORA. | Encoder separates behavioral/structural axes after normalization and beats non-learned controls. | Embeddings cluster by identifiers, problem identity, or corpus artifacts. |
+| `L5` archive coupling | Can archive mechanics preserve diversity while retaining hill-climbing pressure? | Local Pareto cells, NSGA-II parent selection, Smooth-QD-style champion lanes. | Same-budget live run improves front/hypervolume metrics while preserving classic-covered designs. | Archive keeps many candidates but does not improve live optimization. |
+| `L6` lineage and emitters | Can we bias search by repair dynamics and operator history? | Parent-child repair features, emitter mixtures, adaptive CVT. | Better valid-yield recovery or underexplored-cell improvement without reward leakage. | Lineage axes duplicate scalar fitness or become post-hoc reward proxies. |
+
 ## Lane Summary
 
 | Lane | Purpose | Current Evidence | Next Action |
@@ -32,37 +58,108 @@ and the next artifact or branch. Use these tags consistently:
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T17 passive MOME audit is `T0`; T23 validates SR-RFF/SR-ReLU against T22 random control. | Run a bounded Smooth-QD-v2-style live variant on SR-RFF or SR-ReLU with local Pareto fronts. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T12/T18 are scaffolded. | Use T17/T04 evidence to define exploit/explore/repair parent scheduling before live sampling. |
 
+## Lane Scorecard
+
+| Lane | Best Current Lead | Status | Main Blocker | Branch Strategy |
+| --- | --- | --- | --- | --- |
+| `L0` | T22 random descriptor control | Required comparator. | Random can look strong on AUC/front material, so claims need metric-specific controls. | Keep in this branch and every validation table. |
+| `L1` | T03 ST-NOD near-miss | Hybrid source. | Direct transparent descriptors lose audit-QD or best quality. | Continue only as selected features inside T17/T24-style archives. |
+| `L2` | T04 SR-RFF PCA and T19 SR ReLU PCA | Active lead lane. | Needs live evidence that descriptor signal survives parent selection. | Continue on current branch until long live runs justify a split. |
+| `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
+| `L4` | T06 Qwen normalized-view diagnostic | Needs preprocessing ladder. | Whole-file embeddings carry nuisance axes. | Split to a Qwen/encoder branch if dependencies or model runtime expand. |
+| `L5` | T17/T23 local-Pareto evidence and T24 live run | Active live validation. | Same-budget live results are still pending. | Split only for long vLLM matrices or incompatible archive code. |
+| `L6` | T12/T18 scaffolded emitter ideas | Not yet validated. | Needs concrete emitter schedule tied to observed failures. | Derive after first T24 live result rather than inventing another independent lane. |
+
 ## Current Lineage
 
 ```mermaid
-flowchart TD
-  A[Old diversity-check negative map] --> B[T01 simple Yosys stats]
-  A --> Q[T22 random descriptor control]
-  B --> C[T02 motif occupancy]
-  B --> D[T03 synthesis trajectory NOD]
-  C --> P[T21 ST-NOD+motif hybrid]
+flowchart LR
+  A[Older diversity-check negative map]
+
+  subgraph L0[L0 common evaluation]
+    Q[T22 random descriptor control]
+    V[Common passive archive and gates]
+  end
+
+  subgraph L1[L1 transparent CAD descriptors]
+    B[T01 simple Yosys stats]
+    C[T02 motif occupancy]
+    D[T03 synthesis trajectory NOD]
+    P[T21 ST-NOD plus motif hybrid]
+  end
+
+  subgraph L2[L2 synthesis-response automatic BDs]
+    O[T20 SR raw PCA ablation]
+    E[T04 AutoQD SR-RFF PCA]
+    N[T19 SR ReLU PCA]
+  end
+
+  subgraph L3[L3 codebook archives]
+    F[T05 VQ codebook]
+  end
+
+  subgraph L4[L4 learned encoders]
+    I[T06 Qwen diagnostic]
+    J[Qwen3 preprocessing ladder]
+    K[Encoder projection or fine-tuning]
+    L[T07-T16 graph and multimodal scaffolds]
+  end
+
+  subgraph L5[L5 archive coupling]
+    G[T17 passive local-Pareto audit]
+    R[T23 SR Pareto validation matrix]
+    H[Smooth-QD-style Pareto-biased parent sampling]
+    S[T24 SR Pareto live validation]
+  end
+
+  subgraph L6[L6 lineage and emitters]
+    M[T18 adaptive emitter CVT]
+    W[T12 lineage repair descriptors]
+  end
+
+  A --> Q
+  A --> B
+  A --> I
+  B --> C
+  B --> D
+  C --> P
   D --> P
-  D --> O[T20 SR raw PCA ablation]
-  O --> E[T04 AutoQD SR-RFF PCA]
-  D --> F[T05 VQ codebook]
-  O --> N[T19 SR ReLU PCA HV lead]
-  E --> G[T17 bounded local-Pareto audit]
+  D --> O
+  D --> F
+  O --> E
+  O --> N
+  E --> G
   N --> G
   F --> G
-  G --> H[Live Smooth-QD-v2 Pareto-biased parent sampling]
+  G --> R
+  R --> H
   E --> H
   N --> H
-  G --> R[T23 SR Pareto validation matrix]
-  R --> H
-  H --> S[T24 SR Pareto live validation]
-
-  A --> I[T06 Qwen whole-RTL diagnostic]
-  I --> J[Qwen3 preprocessing ladder]
-  J --> K[Qwen normalized-view projection]
-
-  A --> L[T07-T16 encoder scaffolds]
+  H --> S
+  I --> J
+  J --> K
   K --> L
-  G --> M[T18 adaptive emitter CVT]
+  G --> M
+  G --> W
+```
+
+## Iteration Flow
+
+```mermaid
+flowchart TD
+  idea[New BD idea] --> spec[Technique package methodology]
+  spec --> replay[Replay or bounded diagnostic]
+  replay --> controls[Compare with classic, manual BD, and T22 when relevant]
+  controls --> tier[T0/T1/T2/T3 decision]
+  tier -->|T0| followup[Record ablation or hybrid idea]
+  tier -->|T1 or T2| live[Same-budget live validation]
+  tier -->|T3| holdout[Holdout or multi-seed confirmation]
+  followup --> lanes[Update lane ledger and backlog]
+  live --> lanes
+  holdout --> lanes
+  lanes --> branch{Needs isolated branch?}
+  branch -->|No| current[Continue current revamp branch]
+  branch -->|Yes| split[Create lane-specific branch and record return condition]
 ```
 
 ## Decision Ledger
