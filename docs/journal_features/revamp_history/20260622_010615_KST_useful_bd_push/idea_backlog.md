@@ -32,6 +32,18 @@ a numbered `techniques/T##_slug/` package before running it.
   only if common-audit QD score improves rather than merely increasing motif
   signatures.
 
+## From `T04_autoqd_mmd_synthesis_bd` T1
+
+- RFF-PCA is the first `T1 near_classic` lead: final HV and best fitness are
+  within 2% of classic, HV AUC improves, common-audit QD score improves, and
+  PPA-front unique netlists increase.
+- The immediate validation should compare RFF-PCA, ReLU-PCA, raw PCA, and an
+  ST-NOD plus RFF hybrid under the same passive archive before any seed-3 or
+  live-run promotion.
+- Do not frame the current win as broad archive fill. Common-audit occupied
+  cells and unique canonical netlists still decline, so the next variant needs
+  quality-safe diversity pressure or local Pareto retention.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

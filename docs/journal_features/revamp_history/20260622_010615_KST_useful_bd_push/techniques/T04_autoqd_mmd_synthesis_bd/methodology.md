@@ -41,6 +41,25 @@ The descriptor coordinates are the first two to eight fixed random-feature
 axes or a frozen PCA projection over the random-feature matrix. Keep random
 seeds in the manifest.
 
+## Current Replay Scope
+
+The completed `T04` package evaluates the historical `sr_rff_pca_qd` arm from
+the 20260618 Auto-BD run. It is the random Fourier feature kernel-control arm
+of the synthesis-response PCA family:
+
+- raw feature schema: `synthesis_response_raw_v1`;
+- descriptor version: `sr_rff_pca_v1`;
+- training corpus: 205 valid candidates from the seed-1 ST-NOD development
+  replay;
+- random feature map: 128 RFF dimensions with seed `20260618`;
+- archive used in the replay: grid-quantile over frozen PCA coordinates
+  derived from the RFF-transformed synthesis-response feature matrix.
+
+This package should be interpreted as an AutoQD-style automatic descriptor
+diagnostic rather than a full MMD optimizer. The RFF map approximates a kernel
+over implementation-response observations; MMD remains an analysis motivation,
+not an in-loop objective or PPA proxy.
+
 ## Archive Mapping
 
 Run a small sweep over:

@@ -17,7 +17,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T01` | `T01_simple_yosys_stat_bd` | Simple control | `T0 diagnostic` |
 | `T02` | `T02_motif_pathlet_bd` | Deterministic netlist descriptor | `T0 diagnostic` |
 | `T03` | `T03_synthesis_delta_stnod_bd` | Synthesis/netlist descriptor | `T0 diagnostic`, near-miss |
-| `T04` | `T04_autoqd_mmd_synthesis_bd` | Automatic QD descriptor | Scaffolded |
+| `T04` | `T04_autoqd_mmd_synthesis_bd` | Automatic QD descriptor | `T1 near_classic`, validation candidate |
 | `T05` | `T05_vq_elites_codebook_bd` | Codebook/archive descriptor | Scaffolded |
 | `T06` | `T06_qwen_projection_bd` | Learned/projection descriptor | Scaffolded |
 | `T07` | `T07_deepgate_family_bd` | Circuit encoder descriptor | Scaffolded |

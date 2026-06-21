@@ -221,3 +221,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Follow-up rationale: do not retire ST-NOD. Try archive coupling around
   ST-NOD, especially local Pareto fronts or a stronger exploitation lane, so
   the near-classic HV behavior is preserved while passive QD score improves.
+
+## T04 AutoQD MMD Synthesis Replay - 2026-06-21 UTC
+
+- Ran `scripts/package_useful_bd_replay_method.py` on
+  `exp/useful_bd_push/central_replay_20260621_165000_UTC/auto_bd_seed1_central_report.json`
+  for method `sr_rff_pca_qd`, writing artifacts under
+  `techniques/T04_autoqd_mmd_synthesis_bd/`.
+- The replay maps T04 to the 20260618 synthesis-response RFF-PCA kernel
+  control: `synthesis_response_raw_v1`, descriptor `sr_rff_pca_v1`, 128 RFF
+  dimensions, seed `20260618`, and frozen PCA projection over 205 valid ST-NOD
+  development candidates.
+- Visual inspection completed for all generated T04 figures. Notes are in
+  `techniques/T04_autoqd_mmd_synthesis_bd/figures/visual_inspection_notes.md`.
+- Tier decision: `T1 near_classic`, validation candidate. Gate 0 passes, all
+  six classic-covered problems remain covered, and the 50 percent validity
+  collapse gate passes because functionality, synthesis, and valid-PPA rates
+  drop by only 5.74% relative to classic with 209 classic passing samples.
+- Key signal: mean HV is only 1.24% below classic, mean best fitness is only
+  1.53% below classic, HV AUC improves by 10.06%, common-audit QD score
+  improves by 21.36%, and PPA-front unique netlists increase from 12 to 20.
+- Caveat: common-audit occupied cells drop from 12 to 10, unique canonical
+  netlists drop from 70 to 63, and per-problem HV only ties five problems and
+  loses one. This is a near-classic lead for validation, not a final
+  journal-positive claim.
+- Follow-up rationale: compare `sr_rff_pca_qd`, `sr_random_relu_pca_qd`,
+  `sr_raw_pca_qd`, and an ST-NOD plus RFF hybrid under the same passive
+  archive. If the RFF signal survives a second seed or holdout replay, use it
+  as the first candidate for MOME-style local-Pareto archive coupling.

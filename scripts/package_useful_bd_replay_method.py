@@ -23,8 +23,13 @@ METHOD_LABELS = {
     "classic_revolution": "Classic",
     "landing_smooth_qd_manual_bd": "Manual BD",
     "netlist_motif_occupancy": "Motif occupancy",
+    "random_descriptor_qd": "Random BD",
     "synthesis_trajectory_nod": "ST-NOD",
     "synthesis_trajectory_motif_nod": "ST-NOD+motif",
+    "sr_raw_pca_qd": "SR raw PCA",
+    "sr_random_relu_pca_qd": "SR ReLU PCA",
+    "sr_rff_pca_qd": "SR-RFF PCA",
+    "sr_vq_codebook_qd": "SR VQ",
 }
 METRIC_LABELS = {
     "mean_hypervolume": "Mean HV",
