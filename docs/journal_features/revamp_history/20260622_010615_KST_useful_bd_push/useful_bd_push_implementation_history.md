@@ -249,3 +249,30 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `sr_raw_pca_qd`, and an ST-NOD plus RFF hybrid under the same passive
   archive. If the RFF signal survives a second seed or holdout replay, use it
   as the first candidate for MOME-style local-Pareto archive coupling.
+
+## T05 VQ-Elites Codebook Replay - 2026-06-21 UTC
+
+- Ran `scripts/package_useful_bd_replay_method.py` on
+  `exp/useful_bd_push/central_replay_20260621_165000_UTC/auto_bd_seed1_central_report.json`
+  for method `sr_vq_codebook_qd`, writing artifacts under
+  `techniques/T05_vq_elites_codebook_bd/`.
+- The replay maps T05 to the 20260618 fixed VQ codebook arm:
+  descriptor `sr_vq_codebook_v1`, 16 centroids, k-means seed `20260618`, and
+  frozen centroid-layout coordinates over 205 valid ST-NOD development
+  candidates.
+- Visual inspection completed for all generated T05 figures. Notes are in
+  `techniques/T05_vq_elites_codebook_bd/figures/visual_inspection_notes.md`.
+- Tier decision: `T0 diagnostic`. Gate 0 passes and all six classic-covered
+  problems remain covered. The 50 percent validity collapse gate passes
+  because functionality, synthesis, and valid-PPA rates drop by 16.75%
+  relative to classic, not 50% or more, with 209 classic passing samples.
+- Key signal: SR VQ has one per-problem HV win on
+  `VerilogEval-Spec-to-RTL/Prob030_popcount255` and increases PPA-front unique
+  netlists from 12 to 13.
+- Blocking issue: mean HV drops by 10.82%, mean best fitness by 21.18%,
+  valid-PPA candidates by 16.75%, unique canonical netlists by 35.71%, motif
+  signatures by 30.23%, common-audit occupied cells by 25.00%, and
+  common-audit QD score by 63.37%.
+- Follow-up rationale: do not run direct fixed-codebook parent pressure next.
+  If the codebook family is revisited, use local Pareto fronts, residual-norm
+  auxiliary axes, or side-archive coupling with a stronger exploitation lane.

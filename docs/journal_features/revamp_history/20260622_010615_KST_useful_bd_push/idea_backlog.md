@@ -44,6 +44,17 @@ a numbered `techniques/T##_slug/` package before running it.
   cells and unique canonical netlists still decline, so the next variant needs
   quality-safe diversity pressure or local Pareto retention.
 
+## From `T05_vq_elites_codebook_bd` T0
+
+- A fixed 16-centroid codebook preserves classic-covered problems but loses
+  too much PPA quality, valid-PPA yield, motif diversity, and passive QD score.
+- Do not retry direct codebook parent pressure as the next live method.
+  Codebook ideas should move to archive coupling: local Pareto fronts inside
+  codebook cells, residual-norm auxiliary axes, or a codebook side archive
+  paired with a classic/RFF exploitation lane.
+- Keep `Prob030_popcount255` in mind for diagnostics because SR VQ produced
+  one per-problem HV win there despite failing the global comparison.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

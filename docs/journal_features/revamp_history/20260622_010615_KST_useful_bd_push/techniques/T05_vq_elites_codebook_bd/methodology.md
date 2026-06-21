@@ -38,6 +38,24 @@ For a 2D grid, use codebook id bucketed on one axis and residual norm bucketed
 on the other. For CVT-style archives, use centroid coordinates and residual
 features directly.
 
+## Current Replay Scope
+
+The completed `T05` package evaluates the historical `sr_vq_codebook_qd` arm
+from the 20260618 Auto-BD run. It is the fixed VQ-Elites-style codebook arm of
+the synthesis-response family:
+
+- descriptor version: `sr_vq_codebook_v1`;
+- training corpus: 205 valid candidates from the seed-1 ST-NOD development
+  replay;
+- codebook size: 16 centroids;
+- k-means seed: `20260618`;
+- archive used in the replay: grid-quantile over fixed centroid-layout
+  coordinates from the frozen codebook artifact.
+
+This package evaluates the codebook as an in-loop descriptor, not as a
+post-hoc visualization. The codebook fitting excludes final PPA, reference
+PPA, fitness, hypervolume, Pareto labels, and test outcomes.
+
 ## Archive Mapping
 
 Evaluate codebook sizes 16, 32, 64, and 128 only if data volume supports them.

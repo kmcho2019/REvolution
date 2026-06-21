@@ -63,7 +63,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       and tier decision.
 - [x] `T04_autoqd_mmd_synthesis_bd` has methodology, results, figures, tables,
       and tier decision.
-- [ ] `T05_vq_elites_codebook_bd` has methodology, results, figures, tables, and
+- [x] `T05_vq_elites_codebook_bd` has methodology, results, figures, tables, and
       tier decision.
 - [ ] `T06_qwen_projection_bd` has methodology, results, figures, tables, and tier
       decision.

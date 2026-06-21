@@ -13,8 +13,8 @@ Start here when resuming the active goal.
 - Holdout subset: `tables/holdout_screening_subset.csv`.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
-- Most recent packaged method: `techniques/T04_autoqd_mmd_synthesis_bd/`
-  (`T1 near_classic`, validation candidate).
+- Most recent packaged method: `techniques/T05_vq_elites_codebook_bd/`
+  (`T0 diagnostic`).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -56,7 +56,7 @@ Start here when resuming the active goal.
 | `T02` | `T02_motif_pathlet_bd` | Replay result, `T0 diagnostic`; partial motif-occupancy member of the motif/pathlet family. |
 | `T03` | `T03_synthesis_delta_stnod_bd` | Replay result, `T0 diagnostic`; prioritized near-miss for synthesis-response descriptors. |
 | `T04` | `T04_autoqd_mmd_synthesis_bd` | Replay result, `T1 near_classic`; strongest current automatic-descriptor lead. |
-| `T05` | `T05_vq_elites_codebook_bd` | Scaffolded. |
+| `T05` | `T05_vq_elites_codebook_bd` | Replay result, `T0 diagnostic`; fixed codebook descriptor loses quality and passive-QD score. |
 | `T06` | `T06_qwen_projection_bd` | Scaffolded. |
 | `T07` | `T07_deepgate_family_bd` | Scaffolded. |
 | `T08` | `T08_sequential_deepseq_bd` | Scaffolded. |
