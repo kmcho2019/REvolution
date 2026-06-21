@@ -637,3 +637,13 @@ validation evidence.
     `64b74d6f2e50c0f0a6816910d281173764e9db18f7f733b5128dba232d1d57e8`
   - `deepgate3_tokenizer_rows.csv`:
     `fca404c9ed17615571b68f3de1932045575d9d6e40eb3966e5a888f6cba0b5d2`
+
+### WP1 Encoder Method Cards
+
+- Added `rtl_diversity_check_encoder_method_cards.md`.
+- Current card verdicts:
+  - Qwen3: diagnostic-only proceed to larger common audit with leakage
+    controls; do not promote in-loop.
+  - DeepGate3: diagnostic-only no-proceed in current form because the bounded
+    checkpoint-compatible embedding smoke collapsed and sequential RTL needs a
+    better FF/cone policy.

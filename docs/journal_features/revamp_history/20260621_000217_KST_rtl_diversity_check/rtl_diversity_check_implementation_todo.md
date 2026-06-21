@@ -188,7 +188,7 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   whether sequential state is kept, cone-split, or dropped.
 - [x] Run DeepGate3 embeddings end to end or log exact graph/model/setup
   blocker evidence.
-- [ ] Create per-encoder method cards for Qwen3 and DeepGate3 with extraction,
+- [x] Create per-encoder method cards for Qwen3 and DeepGate3 with extraction,
   stability, non-collapse, leakage, runtime, interpretability, and verdict.
 - [ ] Consider larger Qwen, DeepSeq, NetTAG, CircuitFusion, or similar
   encoders only if Qwen3/DeepGate3 are blocked or inconclusive with evidence.
