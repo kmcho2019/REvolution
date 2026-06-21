@@ -67,8 +67,10 @@ a numbered `techniques/T##_slug/` package before running it.
   stage occupancy and fixed-stimulus sketches.
 - Lineage repair plus adaptive emitters: one emitter explores repair-prone
   regions while one preserves classic exploitation.
-- Qwen structural-summary projection: embed canonical structural summaries,
-  not raw full files, then train contrastive projection on non-PPA pairs.
+- Qwen normalized-view projection: embed canonical RTL, Yosys-normalized
+  netlist text, and compact structural summaries; pool chunks to whole-design
+  embeddings, then train contrastive or structural-bucket projections on
+  non-PPA pairs.
 - DeepGate/DE-HNN cone fusion: combine AIG cone embeddings with hypergraph
   long-range net summaries.
 - DeepCell-style multiview: post-mapping cell features plus AIG summaries with

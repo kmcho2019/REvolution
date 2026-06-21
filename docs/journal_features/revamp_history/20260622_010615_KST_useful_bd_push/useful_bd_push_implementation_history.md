@@ -276,3 +276,29 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Follow-up rationale: do not run direct fixed-codebook parent pressure next.
   If the codebook family is revisited, use local Pareto fronts, residual-norm
   auxiliary axes, or side-archive coupling with a stronger exploitation lane.
+
+## T06 Qwen Normalized-View Plan Update - 2026-06-21 UTC
+
+- User suggested a simpler future technique using Qwen3 embedding models while
+  acknowledging that RTL/netlist preprocessing and whole-design BD extraction
+  remain open.
+- Updated `techniques/T06_qwen_projection_bd/methodology.md` to make raw
+  whole-file embedding an ablation only. The planned primary views are now
+  `canonical_rtl_view`, `yosys_netlist_view`, and `structural_summary_view`.
+- Added whole-design pooling guidance: chunk at stable syntactic boundaries,
+  embed with fixed prompt/tokenizer settings, L2-normalize chunks, and pool by
+  deterministic PPA-free weights such as token count, cell count, or signal
+  count.
+- Added projection and collapse gates: PCA/whitened PCA, contrastive
+  view-pair projection, structural-bucket projection, CVT/grid archive
+  mapping, and checks against identifier churn, text length, same-problem
+  clustering, canonical netlist hash, motif signature hash, and problem id.
+- Recorded prior Qwen evidence in the T06 manifest. The old diagnostic used
+  `Qwen/Qwen3-Embedding-0.6B` on 768 candidates across 127 problems; raw to
+  comment-stripped cosine mean was 0.9493, raw to identifier-normalized cosine
+  mean was 0.6389, same-problem nearest-neighbor fraction was 0.9336, and
+  identifier-normalized Qwen farthest-first improved HV by 3.35% over lexical
+  farthest-first but remained `diagnostic_only_no_proceed`.
+- This is a plan/spec update, not a completed T06 technique package. T06 still
+  needs a current run, tables, figures, visual notes, and tier decision before
+  the TODO can be checked.

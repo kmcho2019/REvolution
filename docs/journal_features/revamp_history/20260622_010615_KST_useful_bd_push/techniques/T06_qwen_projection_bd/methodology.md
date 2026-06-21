@@ -20,25 +20,62 @@ fitness, hypervolume, Pareto labels, or test pass labels.
 
 ## Preprocessing
 
-1. Strip comments and normalize identifiers for the primary view.
-2. Keep a second raw-text view for an ablation.
-3. Generate structural summary text with cell families, stage deltas, motif
-   counts, and sequential boundary counts.
-4. Embed each view with fixed prompt templates and fixed batch settings.
-5. Record model name, revision, tokenizer, pooling rule, and max length.
+Do not make raw full-file text the primary descriptor. Prior Qwen3 diagnostics
+showed raw/comment-stripped embeddings were stable, but nearest neighbors were
+mostly same-problem and identifier normalization changed the embedding space
+substantially. The next attempt should therefore embed normalized design views
+and then learn or fit a hardware-specific projection.
+
+Use three frozen text views:
+
+1. `canonical_rtl_view`: strip comments and non-semantic whitespace, format the
+   parsed module deterministically, normalize generated identifiers to
+   role-based names, preserve port names only as roles, and keep widths,
+   signedness, operators, always/assign structure, clock/reset polarity, and
+   parameter values.
+2. `yosys_netlist_view`: run a fixed non-PPA Yosys normalization script, then
+   write a canonical gate/netlist text where cells are sorted by topological
+   level and each row records cell type, input roles, output role, bit width,
+   fanout bucket, and sequential boundary tag. Strip attributes and generated
+   temporary names.
+3. `structural_summary_view`: write a compact deterministic summary with
+   module I/O shape, operator histogram, cell-family histogram, stage-delta
+   buckets, motif ratios, pathlet/reconvergence counts, sequential-state
+   counts, and optional fixed random-simulation sketches. Exclude PPA,
+   reference PPA, fitness, hypervolume, Pareto labels, and pass/fail labels.
+
+For large designs, chunk each view at stable syntactic boundaries, embed the
+chunks with the same prompt and tokenizer settings, L2-normalize chunk
+embeddings, and pool to a whole-design embedding by deterministic weighted
+mean. Weights are PPA-free counts such as token count, cell count, or signal
+count. Record the chunk policy, max characters, truncation count, model id,
+revision, tokenizer, pooling rule, and embedding hashes.
 
 ## Descriptor
 
 Compare three descriptors:
 
-- raw Qwen embedding projected by frozen PCA;
-- supervised-free projection trained with SimCLR-style positives and negatives
-  from structural equivalence and benchmark splits;
-- small linear/MLP projection trained to predict non-PPA structural buckets
-  such as motif cluster, codebook id, or stage-delta cluster.
+- frozen PCA/whitened PCA over the pooled embeddings from each view;
+- contrastive projection trained with positives from same-candidate view pairs,
+  same canonical-netlist duplicates, and deterministic formatting
+  augmentations, with negatives from different canonical netlists and different
+  structural clusters;
+- small linear projection trained only on non-PPA structural buckets such as
+  motif cluster, codebook id, stage-delta cluster, or sequential-state bucket.
+
+Extract behavior descriptors from the projected space, not the raw language
+embedding. Candidate BD choices are:
+
+- CVT over 8, 16, or 32 projected dimensions;
+- 2D grid over the first two leakage-checked PCA axes;
+- hybrid grid pairing one Qwen projection axis with one deterministic
+  synthesis-response axis from T03/T04.
 
 Collapse checks are mandatory: embedding norm distribution, pairwise distance
-histogram, identifier/comment sensitivity, and duplicate-netlist alignment.
+histogram, identifier/comment sensitivity, raw-vs-canonical stability,
+same-problem nearest-neighbor fraction, duplicate-netlist alignment, and
+correlation with text length, identifier churn, canonical-netlist hash,
+motif-signature hash, and problem id.
 
 ## Archive Mapping
 
@@ -57,6 +94,11 @@ or diagnostic result.
 If dependencies are missing, first try `uv add` in the project environment.
 If that conflicts with the repo, create an isolated `exp/useful_bd_push/envs/`
 environment and record the lockfile or install command in the manifest.
+
+The prior diversity-check run used an isolated Qwen environment successfully,
+so dependency friction is not a valid stopping point for T06 unless the new
+embedding model or tokenizer fails in both the repo environment and an
+isolated uv environment.
 
 ## Expected Outputs
 
