@@ -91,7 +91,8 @@ tiers instead:
   or collapses.
 - `T1 near_classic`: within 2% relative HV/best-fitness loss or within noise
   of classic on at least one seed, with no classic-covered design loss and no
-  catastrophic functionality/synthesis-validity collapse.
+  catastrophic functionality/synthesis-validity collapse on comparison units
+  where the classic baseline has at least 10 passing samples.
 - `T2 useful_bd`: any positive reproducible delta over classic or landing
   Smooth-QD on global PPA hypervolume, passive archive QD score, passive
   archive coverage, Pareto-cell count, Pareto spread, unique front families,
@@ -128,8 +129,10 @@ deserves deeper analysis and a method package.
   higher.
 - Do not accept a method with catastrophic validity collapse. A 50 percent or
   larger relative decline in functionality rate or synthesis-valid rate versus
-  classic is a `T0` result unless it is isolated to a known hard-control
-  stratum and fixed before promotion.
+  classic is a `T0` result only when classic has at least 10 passing samples
+  for the corresponding stage in the compared unit. Below that count, report
+  raw counts as `small_n_validity` and do not promote or reject the method from
+  the relative rate alone.
 - Freeze the screening subset before method outcomes are reviewed. Replacement
   must follow `screening_subset_selection.md`.
 - Do not stop the push early unless the stop condition in

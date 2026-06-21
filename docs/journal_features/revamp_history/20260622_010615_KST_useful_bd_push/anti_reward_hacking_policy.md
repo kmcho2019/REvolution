@@ -46,7 +46,8 @@ Reject or downgrade a method when:
 - the method loses any design where classic has at least one valid functional
   PPA candidate under the same budget on the fixed compared subset;
 - functionality rate or synthesis-valid rate declines by 50 percent or more
-  relative to classic;
+  relative to classic on a comparison unit where classic has at least 10
+  passing samples for the corresponding stage;
 - the result depends on changing token budgets, prompt style, or subset after
   seeing outcomes;
 - only average fitness improves while hypervolume, Pareto spread, and passive
@@ -110,3 +111,13 @@ Use the weakest claim supported by evidence:
 - `strong`: descriptor wins substantially or across multiple seeds/problems.
 
 Never phrase diagnostic-only evidence as optimization improvement.
+
+## Small-N Validity Caveat
+
+Do not let a tiny classic baseline denominator create a false regression. The
+50 percent relative functionality/synthesis-validity decline rule is a hard
+gate only when classic has at least 10 passing samples for the corresponding
+stage in the compared unit. If classic has fewer than 10 passing samples,
+report the raw generated/pass counts and tag the unit `small_n_validity`;
+continue judging the method with coverage retention, valid-PPA yield,
+hypervolume, archive metrics, and follow-up evidence.

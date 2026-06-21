@@ -69,7 +69,10 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   one.
 - Catastrophic validity collapse is not acceptable: a 50 percent or larger
   relative decline in functionality rate or synthesis-valid rate versus classic
-  downgrades the method unless fixed before promotion.
+  downgrades the method unless fixed before promotion. User later clarified the
+  denominator caveat: enforce this as a hard gate only when classic has at
+  least 10 passing samples for the corresponding stage; below that, report
+  `small_n_validity` instead of rejecting on a noisy relative rate alone.
 - Added `code_organization_policy.md` so new scripts and source modules stay
   small, typed, modular, and aligned with `GUIDELINES.md`.
 - Added `visualization_reporting_policy.md` so generated figures are manually
@@ -151,3 +154,14 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Follow-up idea from this `T0`: keep Yosys-stat as the transparent lower
   bound, then test motif/pathlet and synthesis-delta descriptors for whether
   they preserve the near-classic HV while recovering QD score and best fitness.
+
+## Local Navigation And Gate Clarification - 2026-06-21 UTC
+
+- Added `README.md` as a local index for this revamp-history directory. It
+  maps the top-level docs, committed tables, technique-package structure, and
+  current technique states.
+- Clarified the 50 percent functionality/synthesis-validity regression rule
+  after user feedback: enforce it as a hard gate only where the classic
+  baseline has at least 10 passing samples for the corresponding stage. Smaller
+  denominators must be reported as `small_n_validity` rather than used as a
+  hard accept/reject signal.

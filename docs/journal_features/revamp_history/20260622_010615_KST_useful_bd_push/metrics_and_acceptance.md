@@ -60,6 +60,9 @@ Use these as the headline metrics:
 - `functionality_rate`: functional candidates divided by generated candidates.
 - `synthesis_valid_rate`: synthesis-valid candidates divided by generated
   candidates.
+- `validity_gate_min_baseline_passes`: minimum classic baseline passing
+  samples needed before relative functionality/synthesis-validity decline is
+  treated as a hard promotion gate. This push uses `10`.
 
 ## Secondary Metrics
 
@@ -114,7 +117,8 @@ that a method explores a broader Pareto region rather than a lucky grid.
   the same evolutionary budget, the method must also have at least one;
 - avoids catastrophic validity collapse: functionality rate and
   synthesis-valid rate must not drop by 50 percent or more relative to
-  classic;
+  classic on comparison units where the classic baseline has at least 10
+  passing samples for the corresponding stage;
 - improves or matches at least one diversity metric such as coverage,
   Pareto-cell count, or unique front families.
 
@@ -140,8 +144,13 @@ that a method explores a broader Pareto region rather than a lucky grid.
   netlists.
 - A method cannot be promoted if it loses any classic-covered design in the
   fixed compared subset.
-- A method cannot be promoted if its functionality rate or synthesis-valid rate
-  falls by 50 percent or more relative to classic under the same budget.
+- A method cannot be promoted if its functionality rate or synthesis-valid
+  rate falls by 50 percent or more relative to classic under the same budget on
+  comparison units where classic has at least 10 passing samples for the
+  corresponding stage.
+- If classic has fewer than 10 passing samples for that stage, the relative
+  decline gate is too sensitive to noise. Report raw counts and mark the unit
+  `small_n_validity`; do not promote or reject a method from that rate alone.
 - A method cannot use PPA, fitness, hypervolume, Pareto rank, reference PPA, or
   test pass rate as an in-loop descriptor input.
 - A method cannot change subset, budget, prompts, model, token budget, or

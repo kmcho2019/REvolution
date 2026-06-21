@@ -102,7 +102,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Every `T1` or higher method preserves every classic-covered design in the
       fixed compared subset.
 - [ ] No promoted method has a 50 percent or larger relative decline in
-      functionality or synthesis-valid rate versus classic.
+      functionality or synthesis-valid rate versus classic when the classic
+      passing denominator is at least 10 for that stage.
 - [ ] Any `T1` or `T2` method gets deeper per-problem and per-seed analysis.
 - [ ] Central comparison report states whether QD/MAP-Elites is useful,
       near-classic, or still negative.
