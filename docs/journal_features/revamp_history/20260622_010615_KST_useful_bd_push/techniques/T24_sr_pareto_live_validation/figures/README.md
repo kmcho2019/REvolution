@@ -15,11 +15,14 @@ Generated complete live-matrix figures:
 Future larger-screen or holdout reports should add:
 
 - anytime global PPA hypervolume and HV AUC;
-- global Pareto point and PPA-grid coverage comparison;
 - validity funnel by arm;
 - duplicate accounting by arm;
 - local-Pareto cell/front-size heatmap;
 - per-problem delta plot for classic, manual BD, random BD, SR raw, SR ReLU,
   and SR-RFF across a larger subset.
+
+Direct PPA-front scatter plots for the completed T24 live arms are now in the
+cross-method audit:
+`../../../visualization_audits/20260621_direct_ppa_fronts/`.
 
 Every figure must be manually inspected before T24 receives a tier decision.

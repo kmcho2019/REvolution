@@ -126,6 +126,14 @@ raw. The blocker is front families: T26 has 9, while classic has 19 and SR raw
 has 16. The package now includes direct raw and normalized PPA-front plots plus
 a scoped Phase 03.1 HTML viewer for Classic versus T26.
 
+`visualization_audits/20260621_direct_ppa_fronts` is a cross-cutting figure
+bundle over T24, T25, and T26 live methods. It adds the missing straightforward
+area-power Pareto/front scatter plots, including candidate-zoomed raw PPA views
+and normalized improvement-space views. The direct front plots make the current
+T26 blocker visually obvious: Conservative exploit has strong best-PPA points,
+but on `Prob015_multi_pipe_8bit` it has 6 candidate-level rank-1 front points
+while SR raw has 10 and Classic has 14.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -158,6 +166,8 @@ a scoped Phase 03.1 HTML viewer for Classic versus T26.
 
 - Run a holdout audit or a front-recovery T26 variant before any promotion
   claim.
+- Use the direct PPA-front audit figures when deciding whether a candidate has
+  improved front shape, not only HV, best score, or aggregate front counts.
 - Use manual BD as the traffic-light quality control, SR raw as the
   front-material control, and random as the live partitioning control for the
   next T24/T25/T26-derived audit.

@@ -913,3 +913,33 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   technique lane ledger, lineage ledger, idea backlog, TODO, technique index,
   and T28 package docs so future techniques include direct PPA-front figures
   and the Phase 03.1 viewer when feasible.
+
+## Direct PPA Front Visualization Audit - 2026-06-21 UTC
+
+- Added `scripts/package_useful_bd_direct_ppa_fronts.py` and
+  `tests/scripts/test_package_useful_bd_direct_ppa_fronts.py`.
+- Packaged `visualization_audits/20260621_direct_ppa_fronts/` from the
+  completed T24, T25, and T26 live run roots under `exp/useful_bd_push/`.
+- Generated candidate-level source tables:
+  `tables/candidate_ppa_points.csv`, `tables/problem_front_counts.csv`, and
+  `tables/method_manifest.csv`.
+- Generated direct PPA-front figures:
+  `figures/live_key_ppa_fronts_area_power_zoom.png`,
+  `figures/live_key_ppa_fronts_area_power.png`,
+  `figures/live_key_ppa_fronts_improvement.png`,
+  `figures/live_all_ppa_fronts_area_power_zoom.png`,
+  `figures/live_all_ppa_fronts_area_power.png`,
+  `figures/live_all_ppa_fronts_improvement.png`, and
+  `figures/live_front_count_summary.png`.
+- Visual inspection accepted the key-method candidate-zoom and normalized
+  improvement plots as the clearest direct answer to the missing PPA-front
+  concern.
+- The raw reference-context plots are retained for scale, but the
+  `Prob045_alu` reference point stretches the y-axis; use the zoomed raw plots
+  for front geometry.
+- The first front-count summary image had a title/legend overlap and was
+  regenerated with the legend below the panels.
+- Candidate-level front-count read: on `Prob015_multi_pipe_8bit`,
+  Conservative exploit has 6 rank-1 front points, SR raw has 10, and Classic
+  has 14. This agrees with the T28 family-level blocker and strengthens the
+  case for a front-recovery variant before any promotion claim.

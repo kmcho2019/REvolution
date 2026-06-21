@@ -38,11 +38,14 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Add passive archive scoring for classic and every QD method.
 - [ ] Add global PPA hypervolume, Pareto-cell count, Pareto spread, unique
       front family, QD-score AUC, coverage AUC, and HV AUC metrics.
+- [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live
+      methods.
 - [x] Maintain `technique_lanes.md` as the lane-level decision ledger and
       lineage map for method families.
 - [x] Add `technique_lineage_ledger.md` as a skim-first lane/category,
       lineage, result, and branch tracking guide.
-- [ ] Add figures that are readable enough for review.
+- [ ] Add readable figures for every completed result package and cross-method
+      audit.
 - [ ] Inspect generated figures with `view_image` or equivalent before marking
       any technique complete.
 - [ ] Add tests for any new report/packaging code.

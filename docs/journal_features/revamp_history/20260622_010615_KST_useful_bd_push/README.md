@@ -17,6 +17,9 @@ Start here when resuming the active goal.
   `techniques/T28_t26_family_audit/` (canonical/family audit for T26; removes
   duplicate-collapse concern for valid candidates but confirms the front-family
   deficit versus classic and SR raw).
+- Most recent cross-cutting visualization:
+  `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
+  normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -49,6 +52,7 @@ Start here when resuming the active goal.
 | --- | --- |
 | `tables/` | Small committed setup tables: replay source inventory, scored screening candidates, frozen screening subset, and holdout subset. |
 | `techniques/` | One numbered subdirectory per attempted or planned BD/QD technique. The visible `T##_` prefix is chronological. |
+| `visualization_audits/` | Cross-method figure bundles when a visualization compares several technique packages rather than one method. |
 | `techniques/technique_registry.csv` | Stable chronological index for all technique packages. |
 | `techniques/T##_slug/figures/` | Generated or copied PNG figures plus visual inspection notes for that method. |
 | `techniques/T##_slug/tables/` | Raw or summarized CSV tables needed to regenerate method claims. |
@@ -61,6 +65,8 @@ Start here when resuming the active goal.
 - `technique_lanes.md` is the detailed research log: use it for rationale,
   decision tags, and the longer lane notes.
 - `techniques/technique_registry.csv` is the chronological package index.
+- `visualization_audits/20260621_direct_ppa_fronts/` is the fast way to inspect
+  direct PPA Pareto/front geometry across the completed live methods.
 
 ## Technique Package States
 
