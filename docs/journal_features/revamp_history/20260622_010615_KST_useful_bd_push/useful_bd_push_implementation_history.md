@@ -395,3 +395,28 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   source-checkout-heavy encoder work.
 - Linked the lane map from the local `README.md` so future resumes can follow
   both the chronological technique registry and the lane-level thought process.
+
+## T19 SR ReLU PCA Replay Package - 2026-06-21 UTC
+
+- Packaged the previously unrepresented `sr_random_relu_pca_qd` seed-1001
+  central replay arm into
+  `techniques/T19_sr_relu_pca_bd/`.
+- Used the central replay JSON at
+  `exp/useful_bd_push/central_replay_20260621_165000_UTC/auto_bd_seed1_central_report.json`
+  and read `/aux/revolution-history/.worktrees/journal-auto-bd-exp-20260618/...`
+  only as source evidence.
+- Descriptor provenance: `synthesis_response_raw_v1` features, fixed random
+  ReLU map with 128 features and seed `20260618`, descriptor version
+  `sr_random_relu_pca_v1`, and frozen axes `sr_pca_0..2`.
+- Gate 0 passes: all six classic-covered problems remain covered. The
+  functionality, synthesis, and valid-PPA collapse gates are enforced and pass;
+  SR ReLU has 197 valid-PPA candidates versus 209 for classic, a 5.74% relative
+  decline.
+- Main positive signal: final mean HV improves from 0.1245 to 0.1454
+  (+16.82%) and HV AUC improves from 0.0728 to 0.1202 (+65.24%). Per-problem HV
+  wins occur on `Prob021_mux256to1v` and `Prob030_popcount255`.
+- Main blocking signal: final mean best fitness declines by 5.04%,
+  PPA-front unique netlists decline by 8.33%, and common-audit occupied cells
+  decline by 16.67%.
+- Tier decision: `T0 diagnostic`, high-priority HV lead. The follow-up is a
+  quality-safe SR ReLU plus local-Pareto live variant, not immediate promotion.

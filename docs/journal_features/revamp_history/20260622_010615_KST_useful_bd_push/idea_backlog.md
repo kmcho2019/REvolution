@@ -88,6 +88,20 @@ a numbered `techniques/T##_slug/` package before running it.
   PPA can be used only after evaluation for archive insertion and parent
   selection within the already evaluated Pareto archive.
 
+## From `T19_sr_relu_pca_bd` T0
+
+- SR ReLU PCA is a high-priority HV lead, not a promoted method: final mean HV
+  improves by 16.82% and HV AUC by 65.24%, but final best fitness,
+  PPA-front unique netlists, and common-audit occupied cells decline.
+- Validate the two per-problem HV wins, especially
+  `VerilogEval-Spec-to-RTL/Prob021_mux256to1v`, under another seed or holdout
+  subset before relying on the aggregate HV gain.
+- The next live variant should pair SR ReLU with bounded local-Pareto cell
+  fronts from `T17` and a quality-safe parent schedule. The goal is to keep the
+  HV lead while recovering best-fitness and audit-coverage losses.
+- Try an SR-RFF/SR-ReLU ensemble or ST-NOD plus SR-ReLU hybrid only if the live
+  local-Pareto variant still loses front coverage.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

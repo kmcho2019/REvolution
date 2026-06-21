@@ -9,9 +9,9 @@ tried, what it taught us, and where the next iteration should go.
 
 | Lane | Purpose | Current Evidence | Next Action |
 | --- | --- | --- | --- |
-| `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report and T01-T06/T17 packages exist. | Build the final cross-method comparison once at least 10 packages have real results. |
+| `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report and T01-T06/T17/T19 packages exist. | Build the final cross-method comparison once at least 10 packages have real results. |
 | `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`. | Hybridize ST-NOD with richer pathlet/reconvergence axes instead of pure motif occupancy. |
-| `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04 SR-RFF PCA is the first `T1 near_classic` lead. | Validate RFF/ReLU/raw PCA and ST-NOD+RFF variants under the same passive archive. |
+| `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04 SR-RFF PCA is the first `T1 near_classic` lead; T19 SR ReLU has the strongest HV/AUC lead but remains `T0`. | Validate RFF/ReLU/raw PCA and ST-NOD+RFF variants under the same passive archive. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T06 Qwen is `T0`; identifier-normalized Qwen has HV signal but nuisance clustering. | Run Qwen3 preprocessing ladder and normalized-view projection before raw embedding is retired. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T17 passive MOME audit is `T0`; strong front-diversity signal, tiny HV delta. | Run a bounded Smooth-QD-v2-style live variant on SR-RFF or SR-ReLU with local Pareto fronts. |
@@ -27,10 +27,13 @@ flowchart TD
   C --> D
   D --> E[T04 AutoQD SR-RFF PCA]
   D --> F[T05 VQ codebook]
+  D --> N[T19 SR ReLU PCA HV lead]
   E --> G[T17 bounded local-Pareto audit]
+  N --> G
   F --> G
   G --> H[Live Smooth-QD-v2 Pareto-biased parent sampling]
   E --> H
+  N --> H
 
   A --> I[T06 Qwen whole-RTL diagnostic]
   I --> J[Qwen3 preprocessing ladder]
@@ -60,6 +63,12 @@ This is the strongest lane. T04 SR-RFF PCA is `T1 near_classic`: it remains
 within a small quality tolerance, improves HV AUC and common-audit QD score, and
 increases PPA-front unique netlists. It still loses some final HV and audit
 occupancy, so it is not a finished positive claim.
+
+T19 SR ReLU PCA is a different kind of lead. It improves final mean HV by
+16.82% and HV AUC by 65.24% versus classic on the seed-1001 replay, with two
+per-problem HV wins and no validity collapse. It stays `T0 diagnostic` because
+final best fitness falls by 5.04%, PPA-front unique netlists fall by 8.33%, and
+common-audit occupied cells fall by 16.67%.
 
 Current follow-up: run a same-budget validation matrix for SR-RFF PCA, SR ReLU
 PCA, SR raw PCA, and ST-NOD+RFF. The T17 audit suggests the RFF/ReLU family may

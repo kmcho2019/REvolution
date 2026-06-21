@@ -91,6 +91,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       tier decision.
 - [ ] `T18_adaptive_emitter_cvt_bd` has methodology, results, figures, tables, and
       tier decision.
+- [x] `T19_sr_relu_pca_bd` has methodology, results, figures, tables, and tier
+      decision.
 
 ## Minimum Goal Completion
 
