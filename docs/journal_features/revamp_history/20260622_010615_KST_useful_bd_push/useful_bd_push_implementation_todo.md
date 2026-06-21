@@ -109,7 +109,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       packaged; result is `T0 diagnostic`.
 - [x] `T25_guarded_sr_raw_pareto_qd` guarded live variant is executed and
       packaged.
-- [ ] `T26_sr_raw_conservative_exploit_qd` parent-source variant is executed
+- [x] `T26_sr_raw_conservative_exploit_qd` parent-source variant is executed
       and packaged.
 
 ## Minimum Goal Completion

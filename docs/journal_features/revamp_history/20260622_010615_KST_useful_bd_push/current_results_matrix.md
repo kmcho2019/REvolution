@@ -25,14 +25,17 @@ Real result packages:
 - `T24_sr_pareto_live_validation` complete six-arm live development-screen
   result
 - `T25_guarded_sr_raw_pareto_qd` guarded live follow-up result
+- `T26_sr_raw_conservative_exploit_qd` conservative exploit live follow-up
+  result
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
-`T24` and `T25` are complete three-problem live development-screen results,
-but both remain `T0 diagnostic`: T24 because every QD arm loses too much
-`Prob015_multi_pipe_8bit` best quality, and T25 because the guarded SR raw
-schedule worsens that multi-pipe quality loss while failing the traffic-light
-valid-PPA gate. The ten-package minimum is satisfied, but the goal is still
-active because validation of leads and adversarial sign-off are not done.
+`T24`, `T25`, and `T26` are complete three-problem live development-screen
+results. T24 and T25 remain negative diagnostics. T26 is a `T0 diagnostic`
+active lead because it recovers ALU and multi-pipe best-score pressure while
+passing the covered-design and catastrophic-validity gates, but it still needs
+passive HV/QD, front-spread, and holdout validation before promotion. The
+ten-package minimum is satisfied, but the goal is still active because lead
+validation and adversarial sign-off are not done.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -93,9 +96,15 @@ score falls by 75.20% versus classic. The guard reduces SR raw's multi-pipe
 global Pareto material from 10 to 6 and worsens best quality, so the next
 variant needs an explicit exploit/explore/repair emitter or stronger
 quality-preserving parent source rather than more tuning of this guard alone.
-`T26_sr_raw_conservative_exploit_qd` is pre-registered as that next
-parent-source test: restore T24-style fill pressure, remove crossover, and bias
-archive parents toward the current champion.
+
+`T26_sr_raw_conservative_exploit_qd` is the completed conservative exploit
+parent-source test. It restores T24-style fill pressure, removes crossover, and
+biases archive parents toward the current champion. It preserves all three
+classic-covered designs, passes Pareto validation, improves ALU best score by
+3.73% versus classic, and improves multi-pipe best score by 14.34% versus
+classic. Traffic-light best score remains 3.48% below classic, and SR raw still
+retains more multi-pipe global Pareto members, so T26 is an active lead for
+passive audit rather than a promoted result.
 
 ## Current Conclusions
 
@@ -112,20 +121,22 @@ archive parents toward the current champion.
    claim should compare against classic, manual BD, and random descriptor.
 5. A broad negative sign-off is not justified because `T04` and `T19` remain
    active leads.
-6. The completed T24 matrix says the archive mechanism works, but current
+6. The completed T24 matrix says the archive mechanism works, but unguarded
    local-Pareto parent pressure is not sufficient as-is.
 7. T25 shows that a simple guarded SR raw schedule is not enough: lowering
    improve-phase backfill and two-parent fusion preserves coverage but does
    not recover the failing multi-pipe quality/yield behavior.
+8. T26 is the first live parent-source variant that recovers best-quality
+   pressure on the screen. It should be audited before another descriptor
+   reset or larger live claim.
 
 ## Next Decisions
 
-- Run T26 before changing descriptor family. It should keep SR raw front
-  material while explicitly testing whether conservative fill plus champion
-  exploit restores multi-pipe best quality or traffic-light valid-PPA yield.
+- Recompute T26 passive HV/QD, front spread, unique implementation families,
+  and holdout behavior before any promotion claim.
 - Use manual BD as the traffic-light quality control, SR raw as the
   front-material control, and random as the live partitioning control for the
-  next T24/T25-derived variant.
+  next T24/T25/T26-derived audit.
 - Keep `T22` in validation tables as a required comparator for any positive
   claim.
 - Run deeper per-problem analysis on `Prob011_multi_16bit`,

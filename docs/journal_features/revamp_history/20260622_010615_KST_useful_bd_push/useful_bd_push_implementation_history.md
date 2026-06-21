@@ -799,3 +799,35 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   parent mixing rather than the SR raw BD itself.
 - Next action: run the T26 live command and package the result against T24
   classic/manual/random/SR raw plus T25.
+
+## T26 Conservative Exploit Live Result - 2026-06-21 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models`; the endpoint returned
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Completed T26 under
+  `exp/useful_bd_push/t26_sr_raw_conservative_exploit_qd_20260621_213249_UTC/`
+  with seed 1001, population 12, three generations, strict ablation
+  evaluation, and 128000-token code/diff budgets.
+- Runtime was 715.08 seconds. The run solved all three fixed problems, so the
+  classic-covered design preservation gate passes.
+- Pareto archive validation passed with zero failures. Archive members:
+  `Prob045_alu` 22, `Prob041_traffic_light` 17,
+  `Prob015_multi_pipe_8bit` 14. Max local front size was 4.
+- Packaged `tables/live_conservative_vs_t24_t25_controls.csv`,
+  `tables/live_conservative_pareto_validation.{json,md}`,
+  `tables/preflight_models_20260621_213249_UTC.json`, and
+  `figures/live_conservative_vs_t24_t25_controls.png`.
+- Visual inspection found the generated figure readable: grouped colors are
+  distinct, zero lines expose regressions, labels fit, and the T26 bar is easy
+  to compare against T24/T25 controls.
+- T26 best-score deltas versus classic: `Prob045_alu` +3.73%,
+  `Prob041_traffic_light` -3.48%, and `Prob015_multi_pipe_8bit` +14.34%.
+- T26 valid-PPA deltas versus classic: `Prob045_alu` +14.58 absolute points,
+  `Prob041_traffic_light` -25.00 absolute points, and
+  `Prob015_multi_pipe_8bit` -8.33 absolute points.
+- Promotion decision: `T0 diagnostic`, active lead for follow-up audit. T26
+  beats classic on ALU and multi-pipe best score and avoids the catastrophic
+  validity gate, but traffic-light quality still trails classic/manual BD and
+  SR raw keeps stronger multi-pipe front material.
+- Lane decision: package passive HV/QD, front spread, unique implementation
+  families, and holdout evidence before promotion or a repair-emitter branch.

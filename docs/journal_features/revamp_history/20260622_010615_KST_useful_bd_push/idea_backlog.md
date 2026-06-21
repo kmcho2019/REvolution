@@ -176,6 +176,21 @@ a numbered `techniques/T##_slug/` package before running it.
   random BD, SR raw, and T25. The next result should beat T25 on multi-pipe
   best quality or traffic-light valid-PPA yield before claiming progress.
 
+## From `T26_sr_raw_conservative_exploit_qd` T0
+
+- Conservative fill plus champion exploit is the first live parent-source
+  variant that recovers best-quality pressure on the screen: ALU improves by
+  3.73% and multi-pipe improves by 14.34% versus classic.
+- Do not promote from this live screen alone. Traffic-light best score still
+  trails classic and manual BD, and SR raw still keeps stronger multi-pipe
+  front material.
+- Next step should be an audit package, not another blind scheduler nudge:
+  recompute passive HV/QD, front spread, unique implementation families,
+  front-material retention versus SR raw, and holdout behavior.
+- If the audit keeps the ALU/multi-pipe best-quality signal but shows weak
+  traffic-light yield or weak front material, branch to a repair-emitter or
+  per-problem emitter schedule with T26 as the direct comparator.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live
