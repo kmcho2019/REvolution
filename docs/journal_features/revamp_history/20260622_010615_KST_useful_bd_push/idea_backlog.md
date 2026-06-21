@@ -55,6 +55,20 @@ a numbered `techniques/T##_slug/` package before running it.
 - Keep `Prob030_popcount255` in mind for diagnostics because SR VQ produced
   one per-problem HV win there despite failing the global comparison.
 
+## From `T06_qwen_projection_bd` T0
+
+- Whole-RTL Qwen embeddings have PPA-relevant signal but are not a clean BD:
+  identifier-normalized Qwen improves HV over lexical by 3.35%, while raw
+  Qwen loses 1.25%, and nearest neighbors are dominated by same-problem and
+  same-corpus clustering.
+- The next Qwen attempt should be normalized-view projection, not another raw
+  whole-file farthest-first replay: canonical RTL, Yosys-normalized netlist
+  text, structural-summary text, pooled whole-design embeddings, then
+  contrastive or structural-bucket projection.
+- Treat Qwen as an auxiliary descriptor or side archive unless nuisance-axis
+  diagnostics improve: same-problem nearest-neighbor fraction must fall, and
+  duplicate/motif alignment must rise, before any live-run promotion.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

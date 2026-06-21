@@ -302,3 +302,30 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - This is a plan/spec update, not a completed T06 technique package. T06 still
   needs a current run, tables, figures, visual notes, and tier decision before
   the TODO can be checked.
+
+## T06 Qwen Common-Audit Diagnostic Package - 2026-06-21 UTC
+
+- Added `scripts/package_useful_bd_qwen_audit.py` and a focused unit test to
+  package prior Qwen common-audit artifacts into the current useful-BD
+  technique layout.
+- Packaged
+  `docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/20260621_150407_UTC_compiled_results_bundle/stage_results/wp1_qwen/`
+  into `techniques/T06_qwen_projection_bd/`.
+- Source diagnostic: `Qwen/Qwen3-Embedding-0.6B`, 768 candidates across 127
+  problems, 682 valid-PPA candidates in replay, 341 retained candidates, and
+  114 problem groups.
+- Visual inspection completed for all generated T06 figures. Notes are in
+  `techniques/T06_qwen_projection_bd/figures/visual_inspection_notes.md`.
+- Tier decision: `T0 diagnostic`. Qwen identifier-normalized farthest-first
+  improves selected HV by 3.35% over lexical farthest-first and matches the
+  fitness-top selected best fitness, but this is an offline retention audit,
+  not a same-budget QD run.
+- Blocking issue: raw Qwen loses HV by 1.25% versus lexical, Qwen identifier
+  loses unique canonical netlists from 60 to 59 and motif signatures from 54 to
+  51, nearest-neighbor same-problem fraction is 0.9336, same-corpus fraction is
+  0.9479, same canonical-netlist fraction is only 0.1406, and same
+  motif-signature fraction is only 0.1888.
+- Follow-up rationale: do not promote raw or identifier-normalized whole-RTL
+  Qwen as a BD. Try the normalized-view projection plan next: canonical RTL,
+  Yosys-normalized netlist text, structural-summary text, pooled whole-design
+  embeddings, and explicit nuisance-axis checks before any live run.

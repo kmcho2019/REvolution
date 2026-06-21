@@ -83,6 +83,25 @@ Use 2D PCA/UMAP-for-visualization only for reports. Archive assignment should
 use either fixed PCA axes or CVT over 8 to 32 projected dimensions. UMAP must
 not be the only archive coordinate unless frozen and justified.
 
+## Current Diagnostic Scope
+
+The completed `T06` package does not yet run the full normalized-view
+projection method above. It packages the prior Qwen common-audit diagnostic as
+the first learned/projection evidence point:
+
+- model: `Qwen/Qwen3-Embedding-0.6B`;
+- corpus: 768 valid-PPA candidates across 127 problems;
+- views: raw RTL, comment-stripped RTL, and identifier-normalized RTL;
+- selection replay: farthest-first retention at 50% selection fraction,
+  compared with lexical farthest-first, random, generation-prefix, and
+  fitness-top controls;
+- leakage policy: Qwen and lexical selection use only RTL text/features; PPA
+  fields are used only after selection for replay evaluation.
+
+This scope is enough to decide whether raw or identifier-normalized whole-RTL
+Qwen embeddings are promising as-is. It is not enough to reject the planned
+canonical RTL, Yosys-netlist, structural-summary, or projection-head variants.
+
 ## Parent Selection Coupling
 
 Use projected embedding cells for exploration only. Do not use language-model
