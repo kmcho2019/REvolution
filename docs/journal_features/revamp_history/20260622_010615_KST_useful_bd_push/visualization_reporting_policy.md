@@ -9,7 +9,8 @@ images and conclusion have been inspected for clarity.
 Each completed technique should include:
 
 - validity funnel plot;
-- PPA/front comparison against classic and landing Smooth-QD;
+- direct PPA Pareto-front plots against classic and landing Smooth-QD;
+- PPA/front comparison tables against classic and landing Smooth-QD;
 - passive archive coverage or quality plot;
 - duplicate/canonical-netlist accounting plot;
 - method-specific diagnostic plot;
@@ -21,6 +22,21 @@ When applicable, live runs should also include:
 - QD score versus valid-PPA evaluations;
 - coverage versus valid-PPA evaluations;
 - archive heatmap or CVT projection at the final budget.
+- a local `visualizations/qd_ppa_viewer/index.html` bundle, generated with the
+  Phase 03.1 viewer when the run artifacts can be adapted to that schema.
+
+The direct PPA-front plots are required because aggregate HV, mean best score,
+and family-count bars can hide the actual Pareto shape. At minimum, include a
+raw area-power projection and a normalized improvement projection. For
+sequential designs, explicitly note when clock period is an active third
+objective and point readers to the HTML viewer for the 3D PPA view.
+
+The HTML viewer should use the existing `scripts/export_qd_ppa_visualization.py`
+schema when possible. If a scoped live-run adapter is needed, keep the adapter
+data under the technique directory or `exp/`, never under `/aux`. Record
+whether Classic is honestly projectable into the selected archive coordinates;
+if it is not, keep Classic in the PPA/Pareto pane and document why the archive
+pane is empty.
 
 ## Visual Quality Checklist
 
@@ -29,6 +45,8 @@ before a technique is marked complete. Check:
 
 - the figure has a direct title that states the comparison;
 - axes are labeled with units or normalized metric definitions;
+- PPA-front markers are visually distinct from non-front candidates;
+- the direction of improvement is explicit on raw and normalized plots;
 - classic, landing Smooth-QD, and the new method are visually distinguishable;
 - colors are readable and not a single-hue blur;
 - legends do not cover data;
@@ -37,6 +55,8 @@ before a technique is marked complete. Check:
 - important deltas are annotated or visible without guessing;
 - empty archives, invalid funnels, and duplicate collapse are shown honestly;
 - the raw table path needed to regenerate the figure is named in the report.
+- HTML screenshots are inspected when a viewer bundle is generated, and any
+  Playwright caveat is recorded rather than silently ignored.
 
 Reject or regenerate figures that are technically present but visually
 confusing.

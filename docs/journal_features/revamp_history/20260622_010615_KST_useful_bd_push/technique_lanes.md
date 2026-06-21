@@ -55,7 +55,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T06 Qwen is `T0`; identifier-normalized Qwen has HV signal but nuisance clustering. | Run Qwen3 preprocessing ladder before heavier fine-tuning or external graph-encoder branches. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T27 shows T26 beats classic on live HV/HV-AUC, but loses front-point count. | Run canonical-family and holdout audit before promotion. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T27 shows T26 beats classic on live HV/HV-AUC; T28 shows the signal is not duplicate collapse, but front-family coverage is still weak. | Run holdout or a front-recovery variant before promotion. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T26/T27 show champion-biased parent-source policy restores quality and HV pressure. | Escalate to explicit repair emitters only if holdout audit still lacks yield or front material. |
 
 ## Lane Scorecard
@@ -67,8 +67,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
 | `L4` | T06 Qwen normalized-view diagnostic | Needs preprocessing ladder. | Whole-file embeddings carry nuisance axes. | Split to a Qwen/encoder branch if dependencies or model runtime expand. |
-| `L5` | T17/T23/T24/T25/T26/T27 local-Pareto lineage | T27 supports T26 as a live audit lead. | Canonical duplicate/family and holdout evidence are still missing. | Keep the next audit on the current branch; branch only for longer live confirmation. |
-| `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy | T26/T27 give the first concrete positive schedule signal. | Need to know whether repair-specific emitters add value beyond champion-biased SR raw. | Use the holdout/canonical audit to decide whether to implement repair-specific emitters. |
+| `L5` | T17/T23/T24/T25/T26/T27/T28 local-Pareto lineage | T28 supports T26 as a non-duplicate live audit lead. | Holdout evidence and front-family recovery are still missing. | Keep the next audit on the current branch; branch only for longer live confirmation. |
+| `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy | T26/T27/T28 give the first concrete positive schedule signal. | Need to know whether repair-specific emitters add value beyond champion-biased SR raw. | Use holdout or front-recovery evidence to decide whether to implement repair-specific emitters. |
 
 ## Current Lineage
 
@@ -113,6 +113,7 @@ flowchart LR
     T[T25 guarded SR raw Pareto QD]
     U[T26 conservative exploit SR raw]
     X[T27 live QD audit]
+    Y[T28 canonical family audit]
   end
 
   subgraph L6[L6 lineage and emitters]
@@ -142,6 +143,7 @@ flowchart LR
   S --> T
   T --> U
   U --> X
+  X --> Y
   I --> J
   J --> K
   K --> L
@@ -191,8 +193,9 @@ flowchart TD
 | 2026-06-21 | `L5` archive coupling | T25 guarded SR raw method card | `advance` | T25 keeps the SR raw descriptor and local Pareto archive but reduces improve-phase backfill and two-parent fusion to test quality/yield recovery without changing the BD. | Result captured in the T25 live-result row below. |
 | 2026-06-21 | `L5` archive coupling | T25 guarded SR raw live result | `ablate` | T25 preserves all classic-covered designs and validates the Pareto archive, but traffic-light valid-PPA count falls from 30 to 9 and multi-pipe best score drops 75.20% versus classic, worse than unguarded SR raw. | Specify T26 emitter/parent-source variant using SR raw as front-material control and manual BD as traffic-light quality control. |
 | 2026-06-21 | `L5/L6` archive coupling and emitters | T26 conservative exploit method card | `advance` | T26 keeps SR raw/local Pareto but restores T24's fill/repair/seed pressure, removes two-parent crossover, and makes archive-parent draws mostly champion-biased. | Run `T26_sr_raw_conservative_exploit_qd/commands/live_screen_v0.md`. |
-| 2026-06-21 | `L5/L6` archive coupling and emitters | T26 conservative exploit live result | `advance` | T26 preserves all classic-covered designs, passes Pareto validation, improves ALU and multi-pipe best score versus classic, and recovers traffic-light valid-PPA count versus T25. Traffic-light quality and SR raw front-material gaps still block promotion. | T27 completed the live QD audit; next is canonical family and holdout evidence. |
-| 2026-06-21 | `L5/L6` archive coupling and emitters | T27 live QD audit | `advance` | T26 beats classic on mean live HV (+11.62%), HV-AUC (+17.62%), and best score (+3.02%), and beats random on every audited aggregate metric. It still loses PPA-front points versus classic and SR raw, and lacks canonical family accounting. | Run canonical duplicate/family and holdout audit before any promotion claim or repair-emitter branch. |
+| 2026-06-21 | `L5/L6` archive coupling and emitters | T26 conservative exploit live result | `advance` | T26 preserves all classic-covered designs, passes Pareto validation, improves ALU and multi-pipe best score versus classic, and recovers traffic-light valid-PPA count versus T25. Traffic-light quality and SR raw front-material gaps still block promotion. | T27 and T28 completed the live-QD and family audits; next is holdout or front recovery. |
+| 2026-06-21 | `L5/L6` archive coupling and emitters | T27 live QD audit | `advance` | T26 beats classic on mean live HV (+11.62%), HV-AUC (+17.62%), and best score (+3.02%), and beats random on every audited aggregate metric. It still loses PPA-front points versus classic and SR raw, and lacks canonical family accounting. | T28 completed canonical duplicate/family audit; next is holdout or front recovery before any promotion claim. |
+| 2026-06-21 | `L5/L6` archive coupling and emitters | T28 canonical family audit | `advance` | T26's valid-PPA pool is not duplicate collapse: it has the highest valid-family ratio and one more reference-beating family than classic. The blocker is real front-family coverage: T26 has 9 front families versus classic's 19 and SR raw's 16. | Run T26 holdout or an SR raw front-recovery variant with direct PPA-front figures and the Phase 03.1 viewer. |
 | 2026-06-21 | `L6` lineage and emitters | T12/T18 scaffolds plus T17/T24/T25 evidence | `hybridize` | Lineage/emitter methods should improve search dynamics around SR-family descriptors, not become generic descriptor resets. | Specify exploit/explore/repair scheduling from the observed T24/T25 failures. |
 
 ## Lane Notes
@@ -341,11 +344,11 @@ unblocks it.
 | --- | --- | --- | --- | --- |
 | `L0` common evaluation | T22, T24 random | Stays on current branch as a comparator. | Keep random/manual controls in every claim table. | Comparator rows are present for any method marked `advance` or better. |
 | `L1` transparent CAD descriptors | T03, T21 | Stays on current branch for hybrids. | Select a small ST-NOD/motif subset for a guarded archive variant. | Hybrid beats direct T21 on best quality without losing archive coverage. |
-| `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27 | Stays on current branch for follow-up audit packaging. | Add canonical family and holdout checks for T26. | Holdout confirms the HV/HV-AUC signal without hidden duplicate or front-material loss. |
+| `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27, T28 | Stays on current branch for follow-up audit packaging. | Add holdout checks or a front-recovery variant for T26. | Holdout confirms the HV/HV-AUC signal without hidden duplicate or front-material loss. |
 | `L3` codebook/discrete archives | T05 | Parked. | Reopen only as side archive or local-Pareto cell partition. | A non-codebook lane shows local front material worth discretizing. |
 | `L4` learned encoders | T06-T16 | Candidate split branch. | Run Qwen3 preprocessing ladder before fine-tuning or external graph encoders. | Normalized embedding diagnostics separate useful structure without problem-ID clustering. |
-| `L5` archive coupling | T17, T23, T24, T25, T26, T27 | Active on current branch. | Package canonical-family and holdout decision. | T26 beats controls on a documented primary metric without hidden duplicate/front-material loss. |
-| `L6` lineage and emitters | T12, T18, T26, T27 | Candidate follow-up after holdout audit. | Convert remaining T26 failures into explicit repair emitter only if needed. | Better valid-yield recovery or front material than T26 without losing its best-quality recovery. |
+| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28 | Active on current branch. | Package holdout decision or front-recovery variant. | T26 beats controls on a documented primary metric without hidden duplicate/front-material loss. |
+| `L6` lineage and emitters | T12, T18, T26, T27, T28 | Candidate follow-up after holdout/front audit. | Convert remaining T26 failures into explicit repair emitter only if needed. | Better valid-yield recovery or front material than T26 without losing its best-quality recovery. |
 
 ## Branch Split Checklist
 

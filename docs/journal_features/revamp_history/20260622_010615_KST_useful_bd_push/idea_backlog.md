@@ -199,16 +199,33 @@ a numbered `techniques/T##_slug/` package before running it.
 - Front material is still the blocker. T26 has 9 PPA-front points versus
   classic's 18 and SR raw's 16, so the next variant must either recover front
   material or make a narrower HV/best-quality claim.
-- Canonical duplicate/family audit is mandatory. Unique PPA tuples are only a
-  proxy; they cannot prove distinct implementation families.
+- Canonical duplicate/family audit is now covered by T28 on the development
+  screen. Unique PPA tuples remain only a proxy for any future screen until the
+  same audit is rerun there.
 - Holdout audit should be the next package before repair emitters. If T26
   keeps HV/HV-AUC on holdout but loses front material, then branch to an
   emitter schedule that reintroduces SR raw exploration while preserving the
   champion lane.
-- Potential T28: `t26_holdout_family_audit`, a replay/live-audit package that
+- Potential T29: `t26_holdout_family_audit`, a replay/live-audit package that
   extracts canonical netlist hashes or motif-family signatures where available,
   recomputes common passive archive metrics, and decides whether T26 advances
   to a longer live confirmation branch.
+
+## From `T28_t26_family_audit`
+
+- T26's valid candidates are not mostly duplicates: it has the best
+  valid-family ratio (0.912281) and only 5 family duplicates among 57 valid-PPA
+  candidates.
+- The front-family blocker is real: T26 has 9 front families versus classic's
+  19 and SR raw's 16. Do not claim broad QD/front illumination from T26 as-is.
+- Next live direction should either validate T26 on holdout as a narrow
+  HV/best-quality method or add front recovery while preserving the champion
+  lane.
+- Potential T29: `t26_holdout_audit`, same T28 family metrics on holdout tasks
+  if a bounded live holdout run is launched.
+- Potential T29 alternative: `sr_raw_exploit_front_recovery`, with a fixed
+  SR-raw exploration quota, repair emitter, or local-front parent quota to
+  recover front families while keeping T26's champion exploit pressure.
 
 ## Near-Term Hybrids
 

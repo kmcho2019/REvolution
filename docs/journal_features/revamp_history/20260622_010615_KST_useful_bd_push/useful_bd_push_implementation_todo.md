@@ -113,6 +113,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       and packaged.
 - [x] `T27_t26_live_qd_audit` is packaged with live HV/HV-AUC, front-spread,
       active archive, visual inspection, and lane-decision documentation.
+- [x] `T28_t26_family_audit` is packaged with RTL/netlist/family duplicate
+      accounting, direct PPA-front figures, scoped HTML viewer, visual
+      inspection, and lane-decision documentation.
 
 ## Minimum Goal Completion
 
@@ -127,8 +130,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       functionality or synthesis-valid rate versus classic when the classic
       passing denominator is at least 10 for that stage.
 - [ ] Any `T1` or `T2` method gets deeper per-problem and per-seed analysis.
-- [ ] T26/T27 gets canonical duplicate/family and holdout validation before
-      any `T2` useful-QD claim.
+- [x] T26/T27 gets canonical duplicate/family validation before any `T2`
+      useful-QD claim.
+- [ ] T26/T28 gets holdout or front-recovery validation before any `T2`
+      useful-QD claim.
 - [ ] Central comparison report states whether QD/MAP-Elites is useful,
       near-classic, or still negative.
 - [ ] Central and per-technique reports pass

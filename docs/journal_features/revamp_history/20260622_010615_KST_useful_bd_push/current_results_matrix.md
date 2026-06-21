@@ -28,6 +28,8 @@ Real result packages:
 - `T26_sr_raw_conservative_exploit_qd` conservative exploit live follow-up
   result
 - `T27_t26_live_qd_audit` live QD audit over T24, T25, and T26 runs
+- `T28_t26_family_audit` canonical/family duplicate audit over T24, T25, and
+  T26 runs
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
@@ -35,9 +37,10 @@ results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
 the covered-design and catastrophic-validity gates. T27 upgrades the evidence
 for T26 to `T1 near_classic` audit support on live HV and HV-AUC, but it still
-blocks final promotion until canonical duplicate/family accounting, common
-passive archive scoring, holdout behavior, and adversarial sign-off are done.
-The ten-package minimum is satisfied, but the goal remains active.
+blocks final promotion until family-front and holdout behavior improve. T28
+adds canonical/family duplicate accounting: T26 valid candidates are mostly
+distinct, but the front-family deficit versus classic and SR raw is real. The
+ten-package minimum is satisfied, but the goal remains active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -115,6 +118,14 @@ on every audited aggregate metric. The caveat is front material: T26 has 9
 PPA-front points versus classic's 18 and SR raw's 16, and the audit can only
 deduplicate unique PPA tuples, not canonical implementation families.
 
+`T28_t26_family_audit` is the completed canonical/family duplicate audit. It
+hashes normalized RTL, normalized synthesized netlists, and synthesized
+cell-histogram families. T26 has the best valid-family ratio (0.912281) and 37
+reference-beating families, one more than classic and fourteen more than SR
+raw. The blocker is front families: T26 has 9, while classic has 19 and SR raw
+has 16. The package now includes direct raw and normalized PPA-front plots plus
+a scoped Phase 03.1 HTML viewer for Classic versus T26.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -140,10 +151,13 @@ deduplicate unique PPA tuples, not canonical implementation families.
 9. T27 shows that the T26 signal extends to live HV and HV-AUC, not only final
    best score. It is enough to continue validation, but not enough to claim a
    final useful-BD win.
+10. T28 shows T26's valid candidates are not duplicate collapse, but also
+    confirms the front-family deficit is real.
 
 ## Next Decisions
 
-- Run a canonical-family and holdout audit for T26 before any promotion claim.
+- Run a holdout audit or a front-recovery T26 variant before any promotion
+  claim.
 - Use manual BD as the traffic-light quality control, SR raw as the
   front-material control, and random as the live partitioning control for the
   next T24/T25/T26-derived audit.

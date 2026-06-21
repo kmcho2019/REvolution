@@ -869,3 +869,47 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `techniques/technique_registry.csv`, `idea_backlog.md`, and this checklist
   surface so the technique lane, lineage, result, and branch decisions all
   point to the same next action.
+
+## T28 T26 Family Audit And PPA Viewer - 2026-06-21 UTC
+
+- Added `scripts/package_t28_t26_family_audit.py` and
+  `tests/scripts/test_package_t28_t26_family_audit.py`.
+- Packaged `techniques/T28_t26_family_audit/` from the completed T24, T25,
+  and T26 live run roots under `exp/useful_bd_push/`.
+- The audit hashes normalized RTL, normalized synthesized netlists, and
+  synthesized-cell histogram families for every valid-PPA candidate in the
+  three-problem development screen.
+- Generated `tables/family_candidate_rows.csv`,
+  `tables/family_problem_metrics.csv`,
+  `tables/family_aggregate_metrics.csv`,
+  `tables/family_comparison_deltas.csv`, and
+  `tables/family_method_manifest.csv`.
+- Generated family figures plus direct PPA Pareto-front figures:
+  `figures/family_aggregate_counts.png`,
+  `figures/family_problem_front_counts.png`,
+  `figures/ppa_pareto_fronts_area_power.png`, and
+  `figures/ppa_pareto_fronts_improvement.png`.
+- Generated a scoped Phase 03.1 viewer at
+  `visualizations/qd_ppa_viewer/index.html` with source CSVs under
+  `visualizations/qd_ppa_viewer_source/final_analysis/`.
+- Static viewer validation passed with
+  `scripts/validate_qd_ppa_visualization.py --viewer-root .../qd_ppa_viewer`.
+- Playwright loaded the viewer and generated screenshots, but reported one
+  expected archive-hover caveat: Classic has no honest projection into T26's
+  SR-PCA archive, so the Classic archive pane has no occupied cell. The PPA
+  pane and T26 native archive screenshots were visually inspected.
+- Visual inspection accepted the two new direct PPA-front figures after a
+  layout fix moved the legend away from the explanatory note.
+- Aggregate T28 read: T26 has 52 unique valid families from 57 valid-PPA
+  candidates, the best valid-family ratio (0.912281), and 37
+  reference-beating families, one more than classic.
+- Front-family blocker: T26 has 9 front families and 9 front netlists, while
+  classic has 19 front families and 21 front netlists, and SR raw has 16 front
+  families and 16 front netlists.
+- Tier read: T28 keeps T26 as `T1 near_classic` audit support. It removes the
+  duplicate-collapse concern for the valid pool but blocks a broad useful-QD
+  claim because front-family coverage is still weak.
+- Updated the local index, current-results matrix, visualization policy,
+  technique lane ledger, lineage ledger, idea backlog, TODO, technique index,
+  and T28 package docs so future techniques include direct PPA-front figures
+  and the Phase 03.1 viewer when feasible.

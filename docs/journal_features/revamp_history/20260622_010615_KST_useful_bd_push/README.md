@@ -14,9 +14,9 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent package:
-  `techniques/T27_t26_live_qd_audit/` (`T1 near_classic` audit support for
-  T26; live HV/HV-AUC evidence with front-material and duplicate-accounting
-  caveats).
+  `techniques/T28_t26_family_audit/` (canonical/family audit for T26; removes
+  duplicate-collapse concern for valid candidates but confirms the front-family
+  deficit versus classic and SR raw).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -52,6 +52,7 @@ Start here when resuming the active goal.
 | `techniques/technique_registry.csv` | Stable chronological index for all technique packages. |
 | `techniques/T##_slug/figures/` | Generated or copied PNG figures plus visual inspection notes for that method. |
 | `techniques/T##_slug/tables/` | Raw or summarized CSV tables needed to regenerate method claims. |
+| `techniques/T##_slug/visualizations/` | HTML viewers, screenshots, and source CSVs when a method has interactive visualization artifacts. |
 
 ## Process Tracking
 
@@ -91,7 +92,8 @@ Start here when resuming the active goal.
 | `T24` | `T24_sr_pareto_live_validation` | Complete six-arm live development-screen result, `T0 diagnostic`; all QD arms preserve covered designs but lose too much multi-pipe best quality. |
 | `T25` | `T25_guarded_sr_raw_pareto_qd` | Live result, `T0 diagnostic`; preserves all classic-covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. |
 | `T26` | `T26_sr_raw_conservative_exploit_qd` | Live result; beats classic on ALU and multi-pipe best score, preserves covered designs, and is supported by the T27 live audit. |
-| `T27` | `T27_t26_live_qd_audit` | Live audit package, supports T26 as `T1 near_classic` validation candidate on HV/HV-AUC but blocks final promotion until canonical duplicate and holdout evidence exist. |
+| `T27` | `T27_t26_live_qd_audit` | Live audit package, supports T26 as `T1 near_classic` validation candidate on HV/HV-AUC but blocks final promotion until T28-style family and holdout/front-recovery evidence improve. |
+| `T28` | `T28_t26_family_audit` | Canonical/family audit package with direct PPA-front figures and scoped HTML viewer; T26 valid candidates are mostly distinct, but front-family count remains below classic and SR raw. |
 
 ## Validity-Gate Note
 
