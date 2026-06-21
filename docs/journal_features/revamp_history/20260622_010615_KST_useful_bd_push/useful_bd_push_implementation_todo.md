@@ -95,12 +95,14 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       decision.
 - [x] `T20_sr_raw_pca_bd` has methodology, results, figures, tables, and tier
       decision.
+- [x] `T21_stnod_motif_hybrid_bd` has methodology, results, figures, tables, and
+      tier decision.
 
 ## Minimum Goal Completion
 
 - [x] At least one simple control, one synthesis/netlist descriptor, one
       learned/projection descriptor, and one archive-coupling method are run.
-- [ ] At least 10 technique packages contain real results.
+- [x] At least 10 technique packages contain real results.
 - [x] At least one method attempts a multi-objective/Pareto-front archive or
       passive Pareto audit.
 - [ ] Every `T1` or higher method preserves every classic-covered design in the

@@ -114,6 +114,17 @@ a numbered `techniques/T##_slug/` package before running it.
   archive coupling. The target improvement is keeping raw PCA's front-material
   gain while restoring best-fitness and passive-QD score.
 
+## From `T21_stnod_motif_hybrid_bd` T0
+
+- ST-NOD+motif is an archive-coverage ablation: it improves PPA-front unique
+  netlists by 66.67% and common-audit occupied cells by 33.33%, but loses
+  final best fitness by 10.90% and common-audit QD score by 25.98%.
+- Do not continue this family by blindly concatenating more deterministic axes.
+  The next deterministic descriptor should use feature selection, CVT, or
+  local-Pareto retention to keep coverage without lowering cell quality.
+- If this hybrid is reused, use it as a side archive or CVT source, not as the
+  main parent-pressure descriptor.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

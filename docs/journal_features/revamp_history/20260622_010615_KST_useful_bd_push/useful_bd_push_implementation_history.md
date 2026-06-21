@@ -441,3 +441,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Tier decision: `T0 diagnostic`, projection ablation near-miss. Use it as the
   raw synthesis-response baseline for SR-ReLU/SR-RFF and local-Pareto variants,
   not as a standalone promotion candidate.
+
+## T21 ST-NOD Motif Hybrid Replay Package - 2026-06-21 UTC
+
+- Packaged the previously unrepresented `synthesis_trajectory_motif_nod`
+  seed-1001 central replay arm into
+  `techniques/T21_stnod_motif_hybrid_bd/`.
+- Descriptor provenance: `stnod_motif_trajectory_9d`, no learned fitting,
+  final synthesized-netlist motif ratios plus five ST-NOD trajectory axes.
+- Gate 0 passes and the validity collapse gate passes. Functionality,
+  synthesis, and valid-PPA counts are 198 versus 209 for classic, a 5.26%
+  relative decline.
+- Positive signal: PPA-front unique netlists improve from 12 to 20 (+66.67%),
+  common-audit occupied cells improve from 12 to 16 (+33.33%), unique canonical
+  netlists improve from 70 to 77 (+10.00%), and HV AUC improves from 0.0728 to
+  0.0903 (+24.09%).
+- Blocking signal: final mean HV declines by 3.28%, final mean best fitness
+  declines by 10.90%, and common-audit QD score declines by 25.98%. The method
+  has no per-problem HV wins against classic.
+- Tier decision: `T0 diagnostic`, archive-coverage ablation. The package brings
+  the current push to ten real result packages, but broad sign-off still
+  requires central comparison, deeper validation of T1+ leads, and adversarial
+  review.

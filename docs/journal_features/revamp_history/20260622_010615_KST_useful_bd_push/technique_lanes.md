@@ -9,8 +9,8 @@ tried, what it taught us, and where the next iteration should go.
 
 | Lane | Purpose | Current Evidence | Next Action |
 | --- | --- | --- | --- |
-| `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report and T01-T06/T17/T19/T20 packages exist. | Build the final cross-method comparison once at least 10 packages have real results. |
-| `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`. | Hybridize ST-NOD with richer pathlet/reconvergence axes instead of pure motif occupancy. |
+| `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report and ten real packages now exist. | Build the final cross-method comparison before any broad sign-off. |
+| `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`; T21 expands coverage but loses quality. | Stop pure concatenation; use feature selection, CVT, or local-Pareto retention. |
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04 SR-RFF PCA is the first `T1 near_classic` lead; T19 SR ReLU has the strongest HV/AUC lead; T20 raw PCA is the ablation near-miss. | Validate RFF/ReLU/raw PCA and ST-NOD+RFF variants under the same passive archive. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T06 Qwen is `T0`; identifier-normalized Qwen has HV signal but nuisance clustering. | Run Qwen3 preprocessing ladder and normalized-view projection before raw embedding is retired. |
@@ -24,7 +24,8 @@ flowchart TD
   A[Old diversity-check negative map] --> B[T01 simple Yosys stats]
   B --> C[T02 motif occupancy]
   B --> D[T03 synthesis trajectory NOD]
-  C --> D
+  C --> P[T21 ST-NOD+motif hybrid]
+  D --> P
   D --> O[T20 SR raw PCA ablation]
   O --> E[T04 AutoQD SR-RFF PCA]
   D --> F[T05 VQ codebook]
@@ -56,7 +57,10 @@ ST-NOD remains close on HV while losing common-audit QD score. That makes T03 a
 source for hybrids, not a retired family.
 
 Current follow-up: combine ST-NOD with pathlet/reconvergence features or with
-the T17 local-Pareto retention rule.
+the T17 local-Pareto retention rule. T21 shows simple ST-NOD plus motif
+concatenation should not be the next deterministic live method: it increases
+PPA-front unique netlists by 66.67% and common-audit cells by 33.33%, but drops
+best fitness by 10.90% and common-audit QD score by 25.98%.
 
 ### `L2` Synthesis-Response Automatic BDs
 
