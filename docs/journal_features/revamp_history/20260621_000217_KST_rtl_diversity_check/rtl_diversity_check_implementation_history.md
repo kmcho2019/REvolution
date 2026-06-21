@@ -475,3 +475,69 @@ validation evidence.
   on any corpus that exposes it, and at least one duplicate-suppression or
   quality-gated novelty replay/live experiment before closing the research as
   illumination-only.
+
+## Restart Execution - 2026-06-21 UTC
+
+### Active Goal Reset
+
+- Confirmed the active `/goal` text matches `goal_template.md` in spirit and
+  includes the restarted work-package ladder, dependency-escalation rule,
+  live-policy guard, and completion gates.
+- The goal remains active. Phase 0 artifacts and commits are treated as
+  evidence only, not full research sign-off.
+
+### WP1 Qwen3 Dependency Escalation
+
+- Worktree before this probe: only unrelated
+  `.devcontainer/devcontainer-lock.json` was untracked.
+- Created an isolated ignored encoder environment:
+  `uv venv --python 3.11 exp/diversity_check/encoder_envs/qwen3_probe`.
+- Installed encoder dependencies into that environment:
+  `uv pip install --python exp/diversity_check/encoder_envs/qwen3_probe/bin/python
+  'torch' 'transformers>=4.51.0' 'accelerate' 'sentence-transformers'
+  'safetensors'`.
+- Initial import succeeded, but default `torch==2.12.1+cu130` could not use
+  the host NVIDIA 550.90.07 driver and reported `cuda_available False`.
+- Escalated instead of accepting the blocker:
+  `uv pip install --python exp/diversity_check/encoder_envs/qwen3_probe/bin/python
+  --force-reinstall --index-url https://download.pytorch.org/whl/cu124
+  'torch==2.6.0'`.
+- Re-check result: `torch 2.6.0+cu124`, `cuda_available True`,
+  device `NVIDIA RTX A6000`, `transformers 5.12.1`, and
+  `sentence_transformers 5.6.0`.
+
+### WP1 Qwen3 Bounded Embedding Probe
+
+- Ran a bounded real `Qwen/Qwen3-Embedding-0.6B` extraction over 15 valid-PPA
+  RTL candidates sampled as the first three usable rows from each available
+  `(corpus, benchmark)` stratum in
+  `exp/diversity_check/full_20260620/candidate_audit.csv`.
+- Strata covered:
+  `rtllm_gen20/RTLLM`, `auto_bd_standard_results/RTLLM`,
+  `auto_bd_standard_results/VerilogEval-Spec-to-RTL`,
+  `aspdac2026_release/RTLLM`, and
+  `aspdac2026_release/VerilogEval-Spec-to-RTL`.
+- Embedded raw, comment-stripped, and identifier-normalized RTL variants.
+  Yosys-normalized RTL remains open.
+- Artifact directory:
+  `exp/diversity_check/qwen3_probe_20260621_032811_UTC/`.
+- Outputs:
+  `qwen3_probe_candidates.csv`, `qwen3_probe_variant_stability.csv`,
+  `qwen3_probe_raw_nearest.csv`, `qwen3_probe_embeddings.npy`, and
+  `qwen3_probe_summary.json`.
+- Summary: 45 texts, embedding shape `[45, 1024]`, model load 24.673 s,
+  encode 0.816 s, `variant_stability_mean=0.7481`,
+  `variant_stability_min=0.512646`, raw pairwise cosine min/mean/max
+  `0.3860 / 0.5835 / 0.9862`.
+- Raw nearest-neighbor check: 9 of 15 nearest neighbors had the same canonical
+  netlist hash and 6 of 15 had the same normalized RTL hash.
+- Artifact hashes:
+  - `qwen3_probe_embeddings.npy`:
+    `4ce48422ea08957fee7ea42afd9768b3486d60dc42c1d92d3d1c6db0b9d1d2a2`
+  - `qwen3_probe_summary.json`:
+    `b4784a6c6b6017b7ed0689dd33c2cdac5156920f1977ede1bd7498069bf815dd`
+- Interpretation: Qwen3 extraction is no longer dependency-blocked. The small
+  smoke suggests useful duplicate/netlist proximity signal, but identifier
+  normalization can sharply change embeddings, so leakage/stability controls
+  and a larger common audit are required before any predictive or in-loop
+  claim.

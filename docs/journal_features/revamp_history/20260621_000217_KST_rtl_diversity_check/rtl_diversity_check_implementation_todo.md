@@ -173,16 +173,15 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 
 ## WP1 - Real Encoder Diagnostics
 
-- [ ] Try dependency setup for Qwen3 embeddings with `uv add` or the nearest
-  repo-local optional dependency mechanism; record commands and lockfile
-  impact before accepting blocker status.
-- [ ] If repo-local dependencies are too disruptive, create an isolated
-  ignored encoder environment under `exp/diversity_check/encoder_envs/` and
-  record the command.
-- [ ] Run real Qwen3-Embedding-0.6B extraction on a bounded corpus slice for
-  raw, comment-stripped, identifier-normalized, and Yosys-normalized RTL.
-- [ ] Record Qwen device, model id, batch size, max length, truncation rate,
-  embedding hash/path, runtime, and stability results.
+- [x] Escalate Qwen3 dependencies before blocker status. Used an isolated
+  environment after avoiding repo lockfile churn.
+- [x] Create an isolated ignored encoder environment under
+  `exp/diversity_check/encoder_envs/` and record the command.
+- [x] Run real Qwen3-Embedding-0.6B extraction on a bounded corpus slice for
+  raw, comment-stripped, and identifier-normalized RTL.
+- [ ] Add Yosys-normalized RTL to the Qwen3 probe.
+- [x] Record first Qwen device, model id, artifact path/hash, runtime, and
+  stability results.
 - [ ] Try DeepGate3 setup through `uv add`, a documented source checkout, or
   an isolated ignored environment before blocker status is accepted.
 - [ ] Export AIG/Yosys graph inputs for a bounded corpus slice and record
