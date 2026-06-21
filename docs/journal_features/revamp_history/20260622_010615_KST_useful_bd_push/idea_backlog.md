@@ -68,6 +68,12 @@ a numbered `techniques/T##_slug/` package before running it.
 - Treat Qwen as an auxiliary descriptor or side archive unless nuisance-axis
   diagnostics improve: same-problem nearest-neighbor fraction must fall, and
   duplicate/motif alignment must rise, before any live-run promotion.
+- Keep a simple Qwen3 preprocessing-ladder replay as a future low-cost check:
+  raw RTL, commentless RTL, role-normalized RTL, canonical RTL,
+  Yosys-normalized netlist text, and summary-plus-netlist text should be
+  embedded with the same frozen model before projection-head training. The open
+  decision is which view and pooling rule produces a whole-design embedding that
+  improves QD/Pareto replay metrics without increasing same-problem collapse.
 
 ## Near-Term Hybrids
 
@@ -85,6 +91,9 @@ a numbered `techniques/T##_slug/` package before running it.
   netlist text, and compact structural summaries; pool chunks to whole-design
   embeddings, then train contrastive or structural-bucket projections on
   non-PPA pairs.
+- Qwen3 preprocessing ladder: before training a head, compare preprocessing
+  strength and chunk-pooling rules directly against lexical farthest-first,
+  using collapse diagnostics as a hard filter.
 - DeepGate/DE-HNN cone fusion: combine AIG cone embeddings with hypergraph
   long-range net summaries.
 - DeepCell-style multiview: post-mapping cell features plus AIG summaries with

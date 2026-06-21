@@ -51,6 +51,54 @@ mean. Weights are PPA-free counts such as token count, cell count, or signal
 count. Record the chunk policy, max characters, truncation count, model id,
 revision, tokenizer, pooling rule, and embedding hashes.
 
+## Simpler Qwen3 Preprocessing Ladder
+
+Keep a cheaper Qwen3 whole-design experiment alive before any projection-head
+training. The open question is not merely whether Qwen3 embeddings contain
+signal; the unresolved part is which PPA-free text view suppresses identifier,
+problem-family, and corpus-style clustering while preserving behaviorally useful
+hardware structure.
+
+Run this ladder with the same frozen Qwen3 embedding model, tokenizer,
+selection replay, and collapse diagnostics:
+
+1. `raw_rtl`: original RTL text, kept only as the reference ablation.
+2. `commentless_rtl`: strip comments and collapse whitespace.
+3. `identifier_role_rtl`: replace internal identifiers by first-use role
+   classes such as `wire_0007`, `reg_0002`, `tmp_0012`, and preserve port roles,
+   widths, signedness, operators, always/assign blocks, and reset/clock
+   polarity.
+4. `canonical_rtl`: parse or format RTL deterministically, sort declarations,
+   normalize literals, and serialize procedural/continuous blocks in a stable
+   order without changing semantics.
+5. `canonical_yosys_netlist`: run fixed non-PPA Yosys normalization and emit
+   topologically sorted cell rows with cell type, fanin role, fanout bucket,
+   width, and sequential-boundary tags.
+6. `summary_plus_netlist`: concatenate compact structural-summary text with the
+   canonical netlist view so the embedding sees both global counts and local
+   connectivity.
+
+The default whole-design embedding should chunk by module, declaration block,
+continuous assignment block, always block, or topological netlist level;
+L2-normalize every chunk embedding; then use a deterministic weighted mean. Use
+square-root token count as the first pooling weight because it reduces domination
+by a single long block without making tiny blocks equal to full modules. Compare
+plain mean and cell-count weighted mean as ablations.
+
+Extract BD candidates from the whole-design embeddings with simple PPA-free
+transforms before trying learned heads:
+
+- whitened PCA axes over each view, then CVT over 8 or 16 dimensions;
+- a 2D grid over the two most stable leakage-checked PCA axes;
+- a hybrid descriptor pairing one Qwen3 axis with one deterministic
+  synthesis-response axis;
+- residual-norm buckets from reconstruction by the first `k` PCA axes, which
+  can capture candidates that are structurally unusual under the embedding.
+
+Promote this simpler path only if it beats lexical farthest-first on at least
+one QD/Pareto metric without worse duplicate collapse, and if same-problem
+nearest-neighbor fraction drops relative to the current T06 diagnostic.
+
 ## Descriptor
 
 Compare three descriptors:

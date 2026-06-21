@@ -329,3 +329,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   Qwen as a BD. Try the normalized-view projection plan next: canonical RTL,
   Yosys-normalized netlist text, structural-summary text, pooled whole-design
   embeddings, and explicit nuisance-axis checks before any live run.
+
+## T06 Qwen3 Preprocessing Ladder Note - 2026-06-21 UTC
+
+- User suggested keeping a simpler future technique based on Qwen3 embedding
+  models, while treating RTL/netlist normalization, whole-design pooling, and BD
+  extraction as unresolved research questions rather than solved details.
+- Updated `techniques/T06_qwen_projection_bd/methodology.md` with a concrete
+  preprocessing ladder: raw RTL, commentless RTL, role-normalized RTL,
+  canonical RTL, canonical Yosys netlist text, and summary-plus-netlist text.
+- Added the default whole-design embedding rule for the future replay: chunk at
+  module, declaration, assignment, always-block, or topological-netlist-level
+  boundaries; L2-normalize chunks; pool with square-root token count as the
+  first default; and compare plain mean and cell-count weighting as ablations.
+- Added simple BD extraction candidates before learned heads: whitened PCA plus
+  CVT, stable 2D PCA grid, one Qwen3 axis paired with a deterministic
+  synthesis-response axis, and PCA residual-norm buckets.
+- Updated `idea_backlog.md` so this lower-cost Qwen3 ladder remains available
+  as a future replay before projection-head training, with same-problem collapse
+  and duplicate/motif alignment as hard filters.
