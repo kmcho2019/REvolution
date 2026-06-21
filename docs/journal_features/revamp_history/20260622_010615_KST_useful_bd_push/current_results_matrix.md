@@ -22,11 +22,12 @@ Real result packages:
 - `T21_stnod_motif_hybrid_bd`
 - `T22_random_descriptor_control`
 - `T23_sr_pareto_validation_matrix`
-- `T24_sr_pareto_live_validation` partial live result
+- `T24_sr_pareto_live_validation` complete six-arm live development-screen
+  result
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
-`T24` is not a final live-matrix result yet because the manual comparator arm
-is still missing.
+`T24` is a complete three-problem live matrix, but it remains `T0 diagnostic`
+because every QD arm loses too much `Prob015_multi_pipe_8bit` best quality.
 The ten-package minimum is satisfied, but the goal is still active because
 validation of leads and adversarial sign-off are not done.
 
@@ -69,14 +70,15 @@ the standalone HV delta is too small for promotion.
 classic, manual BD, T22 random, T19 SR ReLU PCA, and T04 SR-RFF PCA. It is the
 current bridge from replay evidence to the next live local-Pareto experiment.
 
-`T24_sr_pareto_live_validation` fixes that next live experiment and now has
-partial live results for random, SR-RFF, SR ReLU, and SR raw. All four preserve
-all classic-covered problems and pass Pareto-archive validation. None is
-promoted: random loses 71.33% relative best score on
-`Prob015_multi_pipe_8bit`, SR-RFF loses 66.06%, SR ReLU loses 75.20%, and
-SR raw still loses 57.09% while also triggering a 60% relative
-synthesis-validity drop on `Prob041_traffic_light`. The full six-arm live
-matrix is still pending.
+`T24_sr_pareto_live_validation` fixes that next live experiment and has a
+complete six-arm three-problem live matrix: classic, manual BD, random, SR-RFF,
+SR ReLU, and SR raw. Every QD arm preserves all classic-covered problems and
+passes Pareto-archive validation. None is promoted: manual BD loses 73.16%
+relative best score on `Prob015_multi_pipe_8bit`, random loses 71.33%, SR-RFF
+loses 66.06%, SR ReLU loses 75.20%, and SR raw still loses 57.09%. Manual BD is
+strongest on traffic-light best score, and SR raw is strongest on ALU best
+score plus multi-pipe front material, so the next live method should preserve
+those strengths with explicit quality/yield guarding.
 
 ## Current Conclusions
 
@@ -93,17 +95,16 @@ matrix is still pending.
    claim should compare against classic, manual BD, and random descriptor.
 5. A broad negative sign-off is not justified because `T04` and `T19` remain
    active leads.
-6. The completed T24 random/SR arms say the archive mechanism works, but
-   current local-Pareto parent pressure is not sufficient as-is.
+6. The completed T24 matrix says the archive mechanism works, but current
+   local-Pareto parent pressure is not sufficient as-is.
 
 ## Next Decisions
 
-- Continue T24 with manual BD before spending budget on a larger matrix.
 - Add a quality/yield guard or adaptive emitter variant before expanding the
-  SR-family live run, because random, SR-RFF, SR ReLU, and SR raw lose too much
-  best quality on `Prob015_multi_pipe_8bit`.
-- Keep the remaining manual arm in the T24 matrix before making any positive
-  QD/MAP-Elites claim.
+  SR-family live run, because every T24 QD arm loses too much best quality on
+  `Prob015_multi_pipe_8bit`.
+- Use manual BD as the traffic-light quality control and SR raw as the
+  front-material control for the next T24-derived variant.
 - Keep `T22` in validation tables as a required comparator for any positive
   claim.
 - Run deeper per-problem analysis on `Prob011_multi_16bit`,

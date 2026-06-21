@@ -98,9 +98,9 @@ Required downstream artifacts:
 
 ## Tier Status
 
-Current tier: `pending_live_matrix`.
+Current tier: `T0 diagnostic`.
 
-T24 has completed the classic, random, SR-RFF, SR ReLU, and SR raw arms. It is
-not a positive result until the remaining manual arm in
-`commands/live_screen_v0.md` has produced complete comparable artifacts and
-those artifacts pass the visual/reporting and anti-gaming gates.
+T24 completed the full six-arm live development-screen matrix. It validates the
+archive mechanics and preserves all classic-covered designs, but it is not a
+positive result because every QD arm loses too much best quality on
+`Prob015_multi_pipe_8bit`.

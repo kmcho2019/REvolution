@@ -685,3 +685,33 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Lane decision: keep T24 random as `control`; run the manual BD arm next, then
   design a quality/yield-guarded emitter or parent-pressure variant before
   expanding SR-family live sampling.
+
+## T24 Manual BD And Complete Live Matrix - 2026-06-21 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models` before the manual BD arm.
+  The endpoint reported `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Completed the `landing_smooth_qd_manual_bd` arm under the same T24 live
+  screen: seed 1001, population 12, three generations, strict ablation
+  evaluation, and 128000-token code/diff budgets.
+- Manual BD completed in 717.36 seconds and solved all three fixed problems,
+  so the classic-covered design preservation gate passes.
+- Pareto archive validation passed with zero failures and max front size 5.
+- Packaged the full five-QD-arm comparison into
+  `tables/live_completed_qd_vs_classic.csv`,
+  `tables/live_manual_pareto_validation.{json,md}`,
+  `tables/preflight_models_20260621_203536_UTC.json`, and the regenerated
+  `figures/live_completed_qd_vs_classic.png`.
+- Visual inspection found the regenerated completed-QD figure readable. The
+  figure now shows manual BD, random, SR-RFF, SR ReLU, and SR raw with fixed
+  colors and no label overlap.
+- Manual BD best-score deltas versus classic: `Prob045_alu` +1.04%,
+  `Prob041_traffic_light` +4.58%, and `Prob015_multi_pipe_8bit` -73.16%.
+- Manual BD valid-PPA-rate deltas versus classic: `Prob045_alu` +12.50
+  absolute points, `Prob041_traffic_light` -8.33 absolute points, and
+  `Prob015_multi_pipe_8bit` -10.42 absolute points.
+- Completed T24 matrix decision: `T0 diagnostic`, not promoted. Every QD arm
+  preserves all classic-covered designs and validates the Pareto archive, but
+  every QD arm loses too much `Prob015_multi_pipe_8bit` best quality.
+- Lane decision: keep SR raw as the front-material control and manual BD as the
+  traffic-light quality control for a quality/yield-guarded emitter or
+  parent-pressure variant before larger live sampling.

@@ -29,6 +29,15 @@ def test_package_t24_sr_family_live_result(tmp_path: Path) -> None:
         )
         _write_problem(
             run_root=run_root,
+            mode="landing_smooth_qd_manual_bd/seed_1001/openai_gpt-oss-120b",
+            problem=problem,
+            best_score=1.125,
+            synthesis_rate=0.625,
+            archive_members=10,
+            global_pareto_members=11,
+        )
+        _write_problem(
+            run_root=run_root,
             mode="random_descriptor_qd/seed_1001/openai_gpt-oss-120b",
             problem=problem,
             best_score=0.5,
@@ -80,10 +89,13 @@ def test_package_t24_sr_family_live_result(tmp_path: Path) -> None:
     completed_rows = list(
         csv.DictReader(completed_csv.read_text(encoding="utf-8").splitlines())
     )
-    assert len(completed_rows) == 12
-    assert completed_rows[0]["arm"] == "random_descriptor_qd"
-    assert completed_rows[0]["best_score_delta"] == "-0.500000"
-    assert completed_rows[0]["archive_members"] == "8"
+    assert len(completed_rows) == 15
+    assert completed_rows[0]["arm"] == "landing_smooth_qd_manual_bd"
+    assert completed_rows[0]["best_score_delta"] == "0.125000"
+    assert completed_rows[0]["archive_members"] == "10"
+    assert completed_rows[3]["arm"] == "random_descriptor_qd"
+    assert completed_rows[3]["best_score_delta"] == "-0.500000"
+    assert completed_rows[3]["archive_members"] == "8"
     assert len(list(csv.DictReader(rff_csv.read_text(encoding="utf-8").splitlines()))) == 3
     assert family_figure.stat().st_size > 0
     assert completed_figure.stat().st_size > 0

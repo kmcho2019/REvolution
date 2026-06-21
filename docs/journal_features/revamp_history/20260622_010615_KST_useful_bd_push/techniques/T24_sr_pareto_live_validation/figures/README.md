@@ -1,10 +1,10 @@
 # T24 Figures
 
-Generated partial-result figures:
+Generated complete live-matrix figures:
 
 - `live_completed_qd_vs_classic.png`: completed QD-arm best-score delta,
-  synthesis-PPA-rate delta, and global Pareto member comparison for random,
-  SR-RFF, SR ReLU, and SR raw.
+  synthesis-PPA-rate delta, and global Pareto member comparison for manual BD,
+  random, SR-RFF, SR ReLU, and SR raw.
 - `live_sr_family_vs_classic.png`: completed SR-family best-score delta,
   synthesis-PPA-rate delta, and global Pareto member comparison for SR-RFF,
   SR ReLU, and SR raw.
@@ -12,7 +12,7 @@ Generated partial-result figures:
   synthesis-PPA-rate delta, and SR-RFF front material for the first completed
   T24 live arm pair.
 
-After the remaining live arms finish, add:
+Future larger-screen or holdout reports should add:
 
 - anytime global PPA hypervolume and HV AUC;
 - global Pareto point and PPA-grid coverage comparison;
@@ -20,6 +20,6 @@ After the remaining live arms finish, add:
 - duplicate accounting by arm;
 - local-Pareto cell/front-size heatmap;
 - per-problem delta plot for classic, manual BD, random BD, SR raw, SR ReLU,
-  and SR-RFF after the remaining control arms finish.
+  and SR-RFF across a larger subset.
 
 Every figure must be manually inspected before T24 receives a tier decision.

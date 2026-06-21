@@ -1,12 +1,12 @@
 # T24 Figure Visual Inspection Notes
 
-Status: partial live result inspected.
+Status: complete live development-screen matrix inspected.
 
 ## `live_sr_family_vs_classic.png`
 
 Inspected on 2026-06-21 UTC.
 
-- Labels are readable at the generated 2537 x 834 resolution.
+- Labels are readable at the generated 2789 x 852 resolution.
 - The three panels are visually distinct: best-score delta, synthesis-PPA rate
   delta, and global Pareto members.
 - SR-RFF, SR ReLU, and SR raw use fixed colors across panels; the zero line
@@ -31,19 +31,21 @@ Inspected on 2026-06-21 UTC.
   material and one best-score gain, but `Prob015_multi_pipe_8bit` has a large
   best-score and valid-PPA-rate regression.
 
-No T1/T2/T3 result should be assigned from this figure alone because the full
-T24 live matrix is still missing the manual control arm.
+No T1/T2/T3 result should be assigned from this figure alone because the
+completed T24 live matrix still fails the multi-pipe quality-retention gate.
 
 ## `live_completed_qd_vs_classic.png`
 
 Inspected on 2026-06-21 UTC.
 
-- Labels are readable at the generated 2537 x 834 resolution.
-- The four completed QD arms use fixed colors across panels: random in gray,
-  SR-RFF in blue, SR ReLU in orange, and SR raw in green.
+- Labels are readable at the generated 2789 x 852 resolution.
+- The five completed QD arms use fixed colors across panels: manual BD in
+  mauve, random in gray, SR-RFF in blue, SR ReLU in orange, and SR raw in
+  green.
 - The best-score and synthesis-PPA delta panels use a clear zero line, so gains
   and losses are easy to read without consulting the CSV first.
 - The long problem labels do not overlap after rotation.
-- The figure makes the current blocker easy to see: all completed QD arms lose
-  `Prob015_multi_pipe_8bit` best score, while SR raw retains the most
-  multi-pipe global Pareto material.
+- The figure makes the current blocker easy to see: all QD arms lose
+  `Prob015_multi_pipe_8bit` best score. SR raw retains the most multi-pipe
+  global Pareto material, and manual BD is strongest on traffic-light best
+  score.

@@ -2,107 +2,73 @@
 
 ## Status
 
-T24 now has partial live results: the classic baseline, random descriptor,
-SR-RFF PCA, SR ReLU PCA, and SR raw PCA Pareto-QD arms completed on the fixed
-three-problem RTLLM screen. The manual BD live arm is still pending.
+T24 has a complete live development-screen matrix. The classic baseline,
+manual BD, random descriptor, SR-RFF PCA, SR ReLU PCA, and SR raw PCA arms all
+completed on the fixed three-problem RTLLM screen.
 
-Tier decision: `pending_live_matrix`.
+Tier decision: `T0 diagnostic`.
 
-Completed-QD read: not promoted. Random and all three SR arms preserve all
-classic-covered problems and validate the local-Pareto archive mechanics, but
-none protects best quality on `Prob015_multi_pipe_8bit`. Random and SR raw
-also violate the synthesis-validity regression gate on
-`Prob041_traffic_light`.
+T24 is not promoted. Every QD arm preserves all three classic-covered designs
+and the Pareto-front archive validates structurally, but every QD arm loses too
+much best quality on `Prob015_multi_pipe_8bit`. SR raw keeps the strongest
+multi-pipe front material and improves ALU best score, while manual BD improves
+traffic-light best score. Neither solves the multi-pipe quality-retention
+failure.
 
-## Why This Is The Next Experiment
+## Why This Experiment Was Run
 
-T23 showed that the two best transformed SR-family leads have complementary
-strengths:
+T23 showed two complementary synthesis-response leads:
 
-- SR ReLU PCA beats classic and T22 random on final HV and HV AUC.
-- SR-RFF PCA stays near classic on final HV/best quality and beats classic and
-  T22 random on common-audit QD score and local front material.
+- SR-RFF PCA stayed near classic on final HV/best quality and improved
+  common-audit QD/front material.
+- SR ReLU PCA had the strongest final-HV and HV-AUC signal.
 
-T24 turns that passive signal into a live same-budget screen. The random
-descriptor arm is required because the earlier replay showed random partitioning
-can look strong on AUC and front material, so any positive QD claim must beat
-random on the metric being claimed.
+T24 tested whether those descriptor signals become useful when paired with
+bounded local Pareto retention and NSGA-II parent selection. The matrix includes
+manual BD and random descriptor controls because positive QD claims must beat
+both human-chosen descriptors and arbitrary archive partitioning on the claimed
+metric.
 
 ## Live Setup
 
 - output root:
   `exp/useful_bd_push/t24_sr_pareto_live_validation_20260621_184346_UTC/`
-- completed arms:
-  - `classic_revolution/seed_1001/openai_gpt-oss-120b`
-  - `random_descriptor_qd/seed_1001/openai_gpt-oss-120b`
-  - `sr_rff_pca_qd/seed_1001/openai_gpt-oss-120b`
-  - `sr_random_relu_pca_qd/seed_1001/openai_gpt-oss-120b`
-  - `sr_raw_pca_qd/seed_1001/openai_gpt-oss-120b`
 - model: `openai/gpt-oss-120b`
-- endpoint preflight: `max_model_len=131072`, satisfying the 128000-token
+- endpoint preflights: `max_model_len=131072`, satisfying the 128000-token
   policy requirement
-- population: 12
-- generations: 3
-- generated candidates per problem per arm: 48
+- seed: `1001`
+- population: `12`
+- generations: `3`
+- generated candidates per problem per arm: `48`
 - problems:
   - `RTLLM/Prob045_alu`
   - `RTLLM/Prob041_traffic_light`
   - `RTLLM/Prob015_multi_pipe_8bit`
+- completed arms:
+  - `classic_revolution/seed_1001/openai_gpt-oss-120b`
+  - `landing_smooth_qd_manual_bd/seed_1001/openai_gpt-oss-120b`
+  - `random_descriptor_qd/seed_1001/openai_gpt-oss-120b`
+  - `sr_rff_pca_qd/seed_1001/openai_gpt-oss-120b`
+  - `sr_random_relu_pca_qd/seed_1001/openai_gpt-oss-120b`
+  - `sr_raw_pca_qd/seed_1001/openai_gpt-oss-120b`
 
 ## Validator Results
 
-`scripts/validate_pareto_front_run.py` passed for the random descriptor and
-all three completed SR-family Pareto archives.
+`scripts/validate_pareto_front_run.py` passed for every QD arm.
 
-Random:
+| Arm | Valid | Failure count | Max front size | Archive members by problem |
+| --- | --- | ---: | ---: | --- |
+| Manual BD | `True` | 0 | 5 | ALU 18; traffic 21; multi-pipe 14 |
+| Random | `True` | 0 | 3 | ALU 13; traffic 8; multi-pipe 13 |
+| SR-RFF | `True` | 0 | 4 | ALU 17; traffic 16; multi-pipe 8 |
+| SR ReLU | `True` | 0 | 5 | ALU 15; traffic 17; multi-pipe 15 |
+| SR raw | `True` | 0 | 4 | ALU 16; traffic 11; multi-pipe 17 |
 
-- valid: `True`
-- failure count: `0`
-- problem invalid count: `0`
-- max front size seen: `3`
-- archive members:
-  - `Prob045_alu`: 13 members, max front size 2
-  - `Prob041_traffic_light`: 8 members, max front size 1
-  - `Prob015_multi_pipe_8bit`: 13 members, max front size 3
-
-SR-RFF:
-
-- valid: `True`
-- failure count: `0`
-- problem invalid count: `0`
-- max front size seen: `4`
-- archive members:
-  - `Prob045_alu`: 17 members, max front size 4
-  - `Prob041_traffic_light`: 16 members, max front size 2
-  - `Prob015_multi_pipe_8bit`: 8 members, max front size 1
-
-SR ReLU:
-
-- valid: `True`
-- failure count: `0`
-- problem invalid count: `0`
-- max front size seen: `5`
-- archive members:
-  - `Prob045_alu`: 15 members, max front size 4
-  - `Prob041_traffic_light`: 17 members, max front size 3
-  - `Prob015_multi_pipe_8bit`: 15 members, max front size 5
-
-SR raw:
-
-- valid: `True`
-- failure count: `0`
-- problem invalid count: `0`
-- max front size seen: `4`
-- archive members:
-  - `Prob045_alu`: 16 members, max front size 2
-  - `Prob041_traffic_light`: 11 members, max front size 1
-  - `Prob015_multi_pipe_8bit`: 17 members, max front size 4
-
-The validator was run without `--acceptance-hard-subset` because that option
-currently asserts the manual-BD descriptor profile. The classic-covered design
-preservation gate was checked from the run summaries instead: classic has a
-valid result for all three problems, and all completed QD arms also have valid
-results for all three problems.
+The validator was run without `--acceptance-hard-subset` for SR-family and
+random descriptors because that option currently asserts the manual-BD
+descriptor profile. Classic-covered design preservation was checked from the
+summary files: classic has a valid result for all three problems, and every QD
+arm also has a valid result for all three problems.
 
 ## Best-Score And Valid-PPA Comparison
 
@@ -111,6 +77,9 @@ the accumulated synthesis-PPA success rate over 48 generated candidates.
 
 | Arm | Problem | Classic best | Method best | Best delta | Classic valid-PPA | Method valid-PPA | Archive members | Global Pareto |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Manual BD | `Prob045_alu` | 0.397675 | 0.401828 | +1.04% | 33.33% | 45.83% | 18 | 1 |
+| Manual BD | `Prob041_traffic_light` | 0.414309 | 0.433294 | +4.58% | 62.50% | 54.17% | 21 | 4 |
+| Manual BD | `Prob015_multi_pipe_8bit` | 0.212917 | 0.057154 | -73.16% | 41.67% | 31.25% | 14 | 4 |
 | Random | `Prob045_alu` | 0.397675 | 0.403452 | +1.45% | 33.33% | 29.17% | 13 | 1 |
 | Random | `Prob041_traffic_light` | 0.414309 | 0.369479 | -10.82% | 62.50% | 16.67% | 8 | 1 |
 | Random | `Prob015_multi_pipe_8bit` | 0.212917 | 0.061050 | -71.33% | 41.67% | 31.25% | 13 | 5 |
@@ -126,55 +95,48 @@ the accumulated synthesis-PPA success rate over 48 generated candidates.
 
 ## Interpretation
 
-The positive evidence is real but narrow:
+Positive evidence:
 
-- All completed QD arms preserve all three classic-covered problems.
-- Random improves `Prob045_alu` best score by 1.45%, but loses its valid-PPA
-  rate and has little front material.
-- SR raw improves `Prob045_alu` best score by 1.85% and improves its valid-PPA
-  rate.
-- SR-RFF is the only completed QD arm that improves `Prob041_traffic_light`
-  best score.
-- SR raw has the best completed-QD `Prob015_multi_pipe_8bit` front material:
-  17 archive members and 10 global Pareto members.
-- The Pareto archive implementation is structurally valid for random and all
-  completed SR descriptors.
+- All QD arms preserve all three classic-covered problems.
+- Manual BD improves ALU best score by 1.04% and traffic-light best score by
+  4.58%, with no 50% relative valid-PPA collapse.
+- SR raw improves ALU best score by 1.85% and keeps the strongest multi-pipe
+  front material: 17 archive members and 10 global Pareto members.
+- SR-RFF is the best SR-family arm on traffic-light best score.
+- SR ReLU produces more multi-pipe front material than SR-RFF, but not more
+  best quality.
+- Random is weaker than SR raw on ALU best score and multi-pipe front material,
+  so the SR-family signals are not explained entirely by arbitrary cells.
 
-The blockers are stronger:
+Promotion blockers:
 
+- Manual BD loses 73.16% relative best score on `Prob015_multi_pipe_8bit`.
 - Random loses 71.33% relative best score on `Prob015_multi_pipe_8bit`.
 - SR-RFF loses 66.06% relative best score on `Prob015_multi_pipe_8bit`.
 - SR ReLU loses 75.20% relative best score on `Prob015_multi_pipe_8bit`.
-- SR raw still loses 57.09% relative best score on
-  `Prob015_multi_pipe_8bit`, so the raw descriptor does not solve quality
-  retention.
-- Random synthesis-PPA rate falls from 62.50% to 16.67% on
-  `Prob041_traffic_light`, a 73.33% relative drop.
-- SR raw synthesis-PPA rate falls from 62.50% to 25.00% on
-  `Prob041_traffic_light`, a 60% relative drop.
-- The manual BD live arm is not yet run, so no full T24 family-level claim can
-  be made from this partial matrix.
+- SR raw still loses 57.09% relative best score on `Prob015_multi_pipe_8bit`.
+- Random traffic-light synthesis-PPA rate falls from 62.50% to 16.67%, a
+  73.33% relative drop.
+- SR-RFF multi-pipe synthesis-PPA rate falls from 41.67% to 16.67%, a 60.00%
+  relative drop.
+- SR raw traffic-light synthesis-PPA rate falls from 62.50% to 25.00%, a
+  60.00% relative drop.
 
 ## Conclusion
 
-The completed T24 QD arms answer two narrow questions. First, the existing
-`pareto_front` cell mode and NSGA-II parent selection can run end to end with
-random, SR-RFF, SR ReLU, and SR raw descriptors on the local vLLM endpoint.
-Second, the random live control is not stronger than the SR-family arms on this
-three-problem screen. It is worse than SR raw on ALU best score and multi-pipe
-front material, and worse than SR-RFF on traffic-light best score and valid-PPA
-rate.
+T24 answers the immediate archive-coupling question negatively. Local
+Pareto-front cells and NSGA-II parent selection run end to end, preserve
+classic-covered designs, and expose useful front material, but the unguarded
+variant is not a convincing QD/MAP-Elites win for RTL PPA optimization.
 
-The paper question is still not answered positively. SR raw sharpens the next
-variant: keep its multi-pipe front material and ALU gain, but add
-quality/yield-guarded parent pressure or adaptive emitter scheduling so the
-search does not sacrifice traffic-light yield and multi-pipe best quality.
-
-The next T24 execution step should run the manual BD arm. Until that lands, T24
-stays `pending_live_matrix`.
+The most useful next lead is not a fresh descriptor reset. It is a guarded
+archive-coupling variant: keep SR raw's front material and ALU gain, keep
+manual BD's traffic-light quality signal as a control, and add quality/yield
+guarding or an adaptive exploit/explore/repair emitter so multi-pipe best
+quality is not sacrificed.
 
 ## Anti-Overclaim Note
 
-This package still does not prove QD/MAP-Elites usefulness for RTL PPA
-optimization. It records a measured partial live result and a promotion blocker
-that should shape the next archive-coupling variant.
+This package does not prove QD/MAP-Elites usefulness for RTL PPA optimization.
+It records a complete measured live development-screen result and a clear
+failure mode for the next T24-derived variant.

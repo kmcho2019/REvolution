@@ -46,9 +46,16 @@ RANDOM_ARM = {
     "mode": "random_descriptor_qd/seed_1001/openai_gpt-oss-120b",
 }
 
-COMPLETED_QD_ARMS = (RANDOM_ARM, *SR_ARMS)
+MANUAL_ARM = {
+    "arm": "landing_smooth_qd_manual_bd",
+    "label": "Manual BD",
+    "mode": "landing_smooth_qd_manual_bd/seed_1001/openai_gpt-oss-120b",
+}
+
+COMPLETED_QD_ARMS = (MANUAL_ARM, RANDOM_ARM, *SR_ARMS)
 
 METHOD_COLORS = {
+    "Manual BD": "#b07aa1",
     "Random": "#8c8c8c",
     "SR-RFF": "#4c78a8",
     "SR ReLU": "#f28e2b",
@@ -223,7 +230,7 @@ def _plot_family(rows: list[dict[str, str]], output_path: Path, *, title: str) -
     rows_by_key = {(row["method_label"], row["problem"]): row for row in rows}
     width = 0.76 / len(methods)
 
-    fig, axes = plt.subplots(1, 3, figsize=(14.2, 4.5))
+    fig, axes = plt.subplots(1, 3, figsize=(15.6, 4.6))
     _grouped_delta_bars(
         axes[0],
         methods,
