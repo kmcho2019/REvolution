@@ -1,6 +1,6 @@
 # Current Results Matrix
 
-Status: interim comparison after packaging ten real current results.
+Status: interim comparison after packaging at least ten real current results.
 
 This is not a final sign-off report. It is the navigation table for deciding
 which lanes deserve deeper validation now that the minimum package-count gate is
@@ -20,10 +20,11 @@ Real result packages:
 - `T19_sr_relu_pca_bd`
 - `T20_sr_raw_pca_bd`
 - `T21_stnod_motif_hybrid_bd`
+- `T22_random_descriptor_control`
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
-The ten-package minimum is satisfied, but the goal is still active because the
-central comparison, validation of leads, and adversarial sign-off are not done.
+The ten-package minimum is satisfied, but the goal is still active because
+validation of leads and adversarial sign-off are not done.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -37,7 +38,7 @@ The table below uses the central replay source:
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | baseline | `classic_revolution` | reference | 0.1245 | 0.0728 | 0.2671 | 209 | 12 | 12 | 2.3163 | Baseline to beat. |
 | baseline | `landing_smooth_qd_manual_bd` | reference | 0.1059 | 0.0643 | 0.2271 | 219 | 18 | 9 | 1.8526 | Manual BD loses quality and passive-QD score. |
-| control | `random_descriptor_qd` | unpackaged control | 0.1175 | 0.0987 | 0.2645 | 213 | 21 | 8 | 1.7008 | Strong enough control that positive claims must beat random, not only manual BD. |
+| `T22` | `random_descriptor_qd` | `T0` control | 0.1175 | 0.0987 | 0.2645 | 213 | 21 | 8 | 1.7008 | Strong enough control that positive claims must beat random, not only manual BD. |
 | `T01` | `simple_yosys_stat_bd` | `T0` | 0.1242 | 0.0919 | 0.2512 | 201 | 16 | 11 | 2.0779 | Nearly classic HV, but best quality and passive QD drop. |
 | `T02` | `netlist_motif_occupancy` | `T0` | 0.0606 | 0.0416 | 0.2350 | 192 | 13 | 8 | -3.0274 | Clear deterministic descriptor failure. |
 | `T03` | `synthesis_trajectory_nod` | `T0` near-miss | 0.1208 | 0.0789 | 0.2511 | 205 | 13 | 11 | -2.0643 | Hardware-native near-miss, but passive-QD quality is poor. |
@@ -80,8 +81,8 @@ the standalone HV delta is too small for promotion.
 
 - Build a validation matrix for `T04` SR-RFF and `T19` SR ReLU with local
   Pareto fronts from `T17`.
-- Package or explicitly demote the `random_descriptor_qd` control so the
-  control baseline is visible in the technique registry.
+- Keep `T22` in validation tables as a required comparator for any positive
+  claim.
 - Run deeper per-problem analysis on `Prob011_multi_16bit`,
   `Prob021_mux256to1v`, and `Prob030_popcount255`, because those problems
   explain much of the HV divergence.

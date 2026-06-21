@@ -9,7 +9,7 @@ tried, what it taught us, and where the next iteration should go.
 
 | Lane | Purpose | Current Evidence | Next Action |
 | --- | --- | --- | --- |
-| `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report and ten real packages now exist. | Build the final cross-method comparison before any broad sign-off. |
+| `L0` common evaluation | Keep every result on one passive archive and validity surface. | Central seed-1001 report and T22 random control package now exist. | Keep random BD in every validation table before any positive claim. |
 | `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`; T21 expands coverage but loses quality. | Stop pure concatenation; use feature selection, CVT, or local-Pareto retention. |
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04 SR-RFF PCA is the first `T1 near_classic` lead; T19 SR ReLU has the strongest HV/AUC lead; T20 raw PCA is the ablation near-miss. | Validate RFF/ReLU/raw PCA and ST-NOD+RFF variants under the same passive archive. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
@@ -22,6 +22,7 @@ tried, what it taught us, and where the next iteration should go.
 ```mermaid
 flowchart TD
   A[Old diversity-check negative map] --> B[T01 simple Yosys stats]
+  A --> Q[T22 random descriptor control]
   B --> C[T02 motif occupancy]
   B --> D[T03 synthesis trajectory NOD]
   C --> P[T21 ST-NOD+motif hybrid]
@@ -61,6 +62,14 @@ the T17 local-Pareto retention rule. T21 shows simple ST-NOD plus motif
 concatenation should not be the next deterministic live method: it increases
 PPA-front unique netlists by 66.67% and common-audit cells by 33.33%, but drops
 best fitness by 10.90% and common-audit QD score by 25.98%.
+
+### `L0` Common Evaluation
+
+T22 makes the control bar explicit. Random hash improves HV AUC by 35.69% and
+PPA-front unique netlists by 75.00% versus classic, despite losing final HV,
+common-audit cells, and common-audit QD score. Future positive claims must
+therefore beat classic, manual BD, and random descriptor on the specific metric
+being claimed.
 
 ### `L2` Synthesis-Response Automatic BDs
 

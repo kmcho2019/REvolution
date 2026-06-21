@@ -478,3 +478,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - The random descriptor control is explicitly flagged because it has nontrivial
   HV-AUC and front-net behavior. Future positive claims should compare against
   random descriptor, not only classic and manual BD.
+
+## T22 Random Descriptor Control Package - 2026-06-21 UTC
+
+- Packaged `random_descriptor_qd` into
+  `techniques/T22_random_descriptor_control/` so the required negative control
+  is visible in the same registry and report surface as descriptor candidates.
+- Descriptor provenance: `random_hash_3d`, deterministic pseudo-random axes
+  derived from canonical synthesized-netlist hash with seed
+  `20260618_auto_bd_random_descriptor`.
+- Gate 0 passes and validity is slightly above classic: functionality,
+  synthesis, and valid-PPA counts are 213 versus 209 for classic.
+- Control strength: HV AUC improves from 0.0728 to 0.0987 (+35.69%),
+  best-fitness AUC improves from 0.2327 to 0.2451 (+5.32%), and PPA-front
+  unique netlists improve from 12 to 21 (+75.00%).
+- Negative-control blockers: final mean HV declines by 5.61%,
+  common-audit occupied cells decline by 33.33%, common-audit QD score declines
+  by 26.57%, and the descriptor has no semantic hardware meaning.
+- Tier decision: `T0 control`, required comparator. Future positive claims must
+  beat T22 on the metric being claimed, not only classic or manual BD.

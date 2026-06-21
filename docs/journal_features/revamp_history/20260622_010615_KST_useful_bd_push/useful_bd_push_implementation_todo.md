@@ -97,6 +97,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       decision.
 - [x] `T21_stnod_motif_hybrid_bd` has methodology, results, figures, tables, and
       tier decision.
+- [x] `T22_random_descriptor_control` has methodology, results, figures, tables,
+      and tier decision.
 
 ## Minimum Goal Completion
 

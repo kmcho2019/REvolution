@@ -125,6 +125,17 @@ a numbered `techniques/T##_slug/` package before running it.
 - If this hybrid is reused, use it as a side archive or CVT source, not as the
   main parent-pressure descriptor.
 
+## From `T22_random_descriptor_control` T0
+
+- Random descriptor is a required comparator, not a candidate. It improves HV
+  AUC by 35.69%, valid-PPA count by 1.91%, and PPA-front unique netlists by
+  75.00% versus classic, so weak semantic descriptors cannot claim success by
+  beating manual BD only.
+- Do not improve random hash itself. Use it to calibrate whether apparent QD
+  gains are real descriptor value or random archive partitioning.
+- Any SR-RFF, SR-ReLU, local-Pareto, Qwen, or encoder follow-up should compare
+  against T22 on the metric being claimed.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live
