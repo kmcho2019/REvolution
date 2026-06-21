@@ -245,6 +245,9 @@ a numbered `techniques/T##_slug/` package before running it.
 - Potential T30 alternative: `sr_raw_repair_front_emitter`, keeping T26's
   champion lane while adding a bounded repair/yield/front-preserving emitter
   instead of generic two-parent exploration.
+- T30 selected: `t26_holdout_front_audit` compares classic versus exact T26
+  conservative-exploit SR raw on the frozen VerilogEval holdout screen. A new
+  repair/yield emitter should wait for this holdout evidence.
 
 ## Near-Term Hybrids
 

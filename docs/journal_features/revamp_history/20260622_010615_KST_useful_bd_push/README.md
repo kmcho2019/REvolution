@@ -17,9 +17,12 @@ Start here when resuming the active goal.
   `techniques/T29_sr_raw_front_recovery_qd/` (completed front-recovery
   parent-source ablation; `T0 diagnostic` because it loses multi-pipe final-PPA
   coverage and does not recover the front deficit).
-- Next direction:
-  hold out T26 directly or specify a repair/yield/front-preserving emitter as
-  T30; do not keep interpolating SR raw/T26 scheduler knobs blindly.
+- Next registered package:
+  `techniques/T30_t26_holdout_front_audit/` (classic versus T26 conservative
+  exploit on the frozen VerilogEval holdout screen).
+- Next direction after T30:
+  if T26 fails holdout, specify a repair/yield/front-preserving emitter; do
+  not keep interpolating SR raw/T26 scheduler knobs blindly.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
@@ -104,6 +107,7 @@ Start here when resuming the active goal.
 | `T27` | `T27_t26_live_qd_audit` | Live audit package, supports T26 as `T1 near_classic` validation candidate on HV/HV-AUC but blocks final promotion until T28-style family and holdout/front-recovery evidence improve. |
 | `T28` | `T28_t26_family_audit` | Canonical/family audit package with direct PPA-front figures and scoped HTML viewer; T26 valid candidates are mostly distinct, but front-family count remains below classic and SR raw. |
 | `T29` | `T29_sr_raw_front_recovery_qd` | Completed front-recovery live variant, `T0 diagnostic`; direct PPA-front plots show only two multi-pipe front points and no final multi-pipe best PPA. |
+| `T30` | `T30_t26_holdout_front_audit` | Pre-registered holdout audit; compares classic versus exact T26 conservative-exploit SR raw on the frozen VerilogEval holdout screen. |
 
 ## Validity-Gate Note
 

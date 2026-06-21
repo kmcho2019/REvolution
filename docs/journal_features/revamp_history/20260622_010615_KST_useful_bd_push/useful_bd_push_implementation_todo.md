@@ -121,6 +121,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       inspection, and lane-decision documentation.
 - [x] `T29_sr_raw_front_recovery_qd` is pre-registered, executed, packaged, and
       assigned a tier decision.
+- [ ] `T30_t26_holdout_front_audit` is pre-registered, executed, packaged, and
+      assigned a tier decision.
 
 ## Minimum Goal Completion
 

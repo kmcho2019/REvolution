@@ -993,7 +993,27 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   partial reversal of T26's champion-lane schedule.
 - Lane decision: retire this direct front-recovery variant. Do not continue
   blind interpolation between T24 SR raw and T26 scheduler settings; next
-  should be a T26 holdout audit or a T30 repair/yield/front-preserving emitter.
+  should be a T26 holdout audit or a T31 repair/yield/front-preserving emitter.
 - Validation: focused pytest and ruff passed for the new packager and test.
   Pyright reported only the pre-existing plotting-script environment noise:
   unresolved `matplotlib` imports, matching T27/T28 packaging scripts.
+
+## T30 T26 Holdout Front Audit Pre-Registration - 2026-06-21 UTC
+
+- Created `techniques/T30_t26_holdout_front_audit/` as the next evidence
+  package after T29.
+- T30 is a holdout audit, not a new descriptor: it compares classic REvolution
+  against exact T26 conservative-exploit SR raw on the frozen holdout screen.
+- Fixed holdout problems from `tables/holdout_screening_subset.csv`:
+  `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot`,
+  `VerilogEval-Spec-to-RTL/Prob098_circuit7`, and
+  `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b`.
+- Fixed runtime to the same model, endpoint, seed, population, generations,
+  token budgets, strict ablation evaluation, and worker settings used by the
+  development-screen live runs.
+- Added methodology, two-arm live command, holdout subset YAML, run matrix,
+  pending artifact manifest, pending results report, figure requirements,
+  visualization placeholder, and central lane/index updates before execution.
+- Rationale: T29 shows simple front-recovery interpolation fails. T30 checks
+  whether T26's current HV/HV-AUC/best-quality signal generalizes before
+  spending effort on a repair/yield/front-preserving emitter.

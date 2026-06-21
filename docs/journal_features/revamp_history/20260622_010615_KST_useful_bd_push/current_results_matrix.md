@@ -147,6 +147,12 @@ versus 9. The direct PPA-front plots show the core failure: on
 `Prob015_multi_pipe_8bit`, T29 has only two candidate-level front points and
 no final-population best PPA.
 
+`T30_t26_holdout_front_audit` is the pre-registered holdout audit for the
+current T26 lead. It will compare classic REvolution and exact T26
+conservative-exploit SR raw on the frozen VerilogEval holdout screen:
+`Prob150_review2015_fsmonehot`, `Prob098_circuit7`, and
+`Prob135_m2014_q6b`.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -179,8 +185,10 @@ no final-population best PPA.
 
 ## Next Decisions
 
-- Run a T26 holdout audit or specify a T30 repair/yield/front-preserving
-  emitter before any promotion claim.
+- Complete the T30 T26 holdout audit or specify a T31
+  repair/yield/front-preserving emitter before any promotion claim.
+- Execute the pre-registered T30 holdout package before designing a new
+  repair/yield emitter.
 - Do not continue blind interpolation between T24 SR raw and T26 scheduler
   settings; T29 is the measured negative result for that idea.
 - Use the direct PPA-front audit figures when deciding whether a candidate has

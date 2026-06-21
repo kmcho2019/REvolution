@@ -23,7 +23,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, and multimodal circuit embeddings. | Run preprocessing ladders before fine-tuning or heavier external envs. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T29 front-recovery is measured negative; T26 holdout or T30 repair/yield emitter is next. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T30 holdout audit is pre-registered after T29's measured negative result. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Use T26/T29 evidence to design bounded repair/front-preserving emitters. |
 
 ## Lineage Graph
@@ -70,6 +70,7 @@ flowchart LR
     T27[T27 live QD audit]
     T28[T28 canonical family audit]
     T29[T29 front recovery diagnostic]
+    T30[T30 T26 holdout audit]
   end
 
   subgraph emitters[L6 lineage/emitter]
@@ -100,6 +101,7 @@ flowchart LR
   T26 --> T27
   T27 --> T28
   T28 --> T29
+  T29 --> T30
   T06 --> qwen
   qwen --> enc
   T17 --> T12
@@ -122,7 +124,8 @@ flowchart LR
 | T26 | `L2/L5/L6` | Conservative fill plus champion-exploit SR raw: restore T24 fill pressure, remove crossover, bias archive parents to the best candidate. | Completed live result; beats classic on ALU (+3.73%) and multi-pipe (+14.34%) best score, passes validity gates, but traffic-light quality and SR raw front-material gaps remain. | `advance` via audit | T27 and T28 completed live-QD and family audits; next is holdout or front recovery. |
 | T27 | `L5/L6` | Live QD audit over T24, T25, and T26 results. | Supports T26 as `T1 near_classic` audit lead on live HV (+11.62%), HV-AUC (+17.62%), and best score (+3.02%) versus classic, but front-point blockers remain. | `advance` | T28 completed canonical family audit; next is holdout or front recovery. |
 | T28 | `L5/L6` | Canonical RTL/netlist/family audit plus direct PPA-front figures and scoped HTML viewer. | Valid candidates are not duplicate collapse, but front-family coverage is still weak: T26 has 9 front families versus classic's 19 and SR raw's 16. | `advance` | Run T26 holdout or an SR raw front-recovery variant before promotion. |
-| T29 | `L5/L6` | SR raw front-recovery parent-source variant. | Completed `T0 diagnostic`; mean HV, HV-AUC, valid PPA, front points, and multi-pipe final-PPA coverage regress versus T26. Direct PPA-front plots show only two multi-pipe front points. | `retire` direct variant | Do not continue blind schedule interpolation; run T26 holdout or specify T30 repair/yield/front-preserving emitter. |
+| T29 | `L5/L6` | SR raw front-recovery parent-source variant. | Completed `T0 diagnostic`; mean HV, HV-AUC, valid PPA, front points, and multi-pipe final-PPA coverage regress versus T26. Direct PPA-front plots show only two multi-pipe front points. | `retire` direct variant | Do not continue blind schedule interpolation; run T26 holdout or specify T31 repair/yield/front-preserving emitter. |
+| T30 | `L5/L6` | Classic versus exact T26 conservative-exploit SR raw on the frozen VerilogEval holdout screen. | Pre-registered; not yet executed. | `advance` | Run the two-arm holdout screen, then package direct-front and family-audit evidence before any new emitter. |
 | T12/T18 | `L6` | Lineage repair and adaptive emitter scheduling. | Scaffolded follow-ups now informed by T26/T27/T28's positive parent-source signal and T29's negative front-recovery result. | `hybridize` | Test repair emitters only if holdout still needs yield/front recovery; keep T26/T29 as controls. |
 
 ## Branching Rule
