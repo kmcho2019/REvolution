@@ -816,3 +816,47 @@ validation evidence.
     tests/scripts/test_reconstruct_rtl_diversity_wp0.py`: clean.
   - `uv run pyright scripts/reconstruct_rtl_diversity_wp0.py`: 0 errors,
     0 warnings.
+
+### WP2 Quality-Gated Novelty Replay Artifact
+
+- Extended `scripts/reconstruct_rtl_diversity_wp0.py` to emit
+  `wp0_quality_gated_novelty.csv`.
+- Replay policy: within each method/seed/problem/budget prefix, keep only
+  valid-PPA candidates above the prefix median valid fitness and use
+  `common_audit_descriptor_vector` distance for the novelty lane.
+- Swept `novelty_parent_fraction` values `0.00`, `0.10`, `0.25`, and `0.50`.
+  This is a bounded replay analogue of the requested novelty-parent sweep,
+  not a live search run.
+- Ran:
+  `uv run python scripts/reconstruct_rtl_diversity_wp0.py --output-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC`.
+- Artifact directory:
+  `exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC/`.
+- The novelty replay file has 1,248 rows:
+  two methods, three seeds, 13 problems, four budget checkpoints, and four
+  novelty-parent fractions.
+- Full-budget SR random-ReLU PCA:
+  - `0.00`: 492 selected, 228 unique canonical netlists, 172 motif
+    signatures, 70 common-audit cells, Pareto size 304, best fitness 0.683497.
+  - `0.50`: 492 selected, 248 unique canonical netlists, 201 motif
+    signatures, 82 common-audit cells, Pareto size 294, best fitness 0.683497.
+- Full-budget ST-NOD:
+  - `0.00`: 490 selected, 211 unique canonical netlists, 157 motif
+    signatures, 71 common-audit cells, Pareto size 336, best fitness 0.683497.
+  - `0.50`: 490 selected, 224 unique canonical netlists, 183 motif
+    signatures, 83 common-audit cells, Pareto size 327, best fitness 0.683497.
+- Interpretation: the median-fitness quality gate prevents best-fitness loss
+  on this replay, and increasing the novelty fraction modestly increases
+  unique canonical-netlist, motif-signature, and common-audit-cell counts.
+  The selected Pareto count drops slightly against pure quality selection, so
+  this supports "quality-gated novelty is a plausible diagnostic/replay
+  follow-up" rather than an active-method claim.
+- Artifact hash:
+  - `wp0_quality_gated_novelty.csv`:
+    `7182c1f4c6f4a4a9700417ccc799a6369d50fcac8949e609414ab9dfd9eeea2c`
+- Validation:
+  - `uv run pytest -q tests/scripts/test_reconstruct_rtl_diversity_wp0.py`:
+    1 passed.
+  - `uv run ruff check scripts/reconstruct_rtl_diversity_wp0.py
+    tests/scripts/test_reconstruct_rtl_diversity_wp0.py`: clean.
+  - `uv run pyright scripts/reconstruct_rtl_diversity_wp0.py`: 0 errors,
+    0 warnings.

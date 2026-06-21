@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pyright: reportArgumentType=false, reportGeneralTypeIssues=false, reportAttributeAccessIssue=false
+# pyright: reportArgumentType=false, reportCallIssue=false, reportGeneralTypeIssues=false, reportAttributeAccessIssue=false
 """Reconstruct WP0 ST-NOD/SR rows from Auto-BD standard results."""
 
 from __future__ import annotations
@@ -21,6 +21,7 @@ DEFAULT_AUTO_BD_ROOT = Path(
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "exp/diversity_check/wp0_stnod_sr_reconstruction"
 METHODS = ("synthesis_trajectory_nod", "sr_random_relu_pca_qd")
 CHECKPOINTS = (0.25, 0.50, 0.75, 1.00)
+NOVELTY_PARENT_FRACTIONS = (0.00, 0.10, 0.25, 0.50)
 REPLAY_KEYS = (
     ("canonical_netlist_hash", "canonical_netlist"),
     ("motif_signature_hash", "exact_motif_signature"),
@@ -58,6 +59,7 @@ def build_reconstruction(auto_bd_root: Path, output_dir: Path) -> dict[str, Any]
     budget = budget_curve_rows(candidates)
     operators = operator_yield_rows(candidates)
     duplicate = duplicate_suppression_rows(candidates)
+    novelty = quality_gated_novelty_rows(candidates)
 
     artifacts = {
         "reconstructed_rows_parquet": output_dir / "wp0_descriptor_rows.parquet",
@@ -65,6 +67,7 @@ def build_reconstruction(auto_bd_root: Path, output_dir: Path) -> dict[str, Any]
         "budget_curves_csv": output_dir / "wp0_budget_curves.csv",
         "operator_yield_csv": output_dir / "wp0_operator_yield.csv",
         "duplicate_suppression_csv": output_dir / "wp0_duplicate_suppression.csv",
+        "quality_gated_novelty_csv": output_dir / "wp0_quality_gated_novelty.csv",
         "qd_events_csv": output_dir / "wp0_qd_events.csv",
     }
     candidates.to_parquet(artifacts["reconstructed_rows_parquet"], index=False)
@@ -72,6 +75,7 @@ def build_reconstruction(auto_bd_root: Path, output_dir: Path) -> dict[str, Any]
     budget.to_csv(artifacts["budget_curves_csv"], index=False)
     operators.to_csv(artifacts["operator_yield_csv"], index=False)
     duplicate.to_csv(artifacts["duplicate_suppression_csv"], index=False)
+    novelty.to_csv(artifacts["quality_gated_novelty_csv"], index=False)
     events.to_csv(artifacts["qd_events_csv"], index=False)
 
     summary = {
@@ -83,6 +87,7 @@ def build_reconstruction(auto_bd_root: Path, output_dir: Path) -> dict[str, Any]
         "budget_rows": int(len(budget)),
         "operator_rows": int(len(operators)),
         "duplicate_suppression_rows": int(len(duplicate)),
+        "quality_gated_novelty_rows": int(len(novelty)),
         "methods": method_summaries(candidates),
         "artifacts": {key: path.as_posix() for key, path in artifacts.items()},
         "artifact_sha256": {
@@ -246,6 +251,110 @@ def duplicate_suppression_rows(candidates: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def quality_gated_novelty_rows(candidates: pd.DataFrame) -> pd.DataFrame:
+    rows: list[dict[str, object]] = []
+    groups = candidates.groupby(["method_name", "seed", "problem_id"], sort=True)
+    for (method, seed, problem), group in groups:
+        ordered = group.sort_values(["generation", "row_order"])
+        for fraction in CHECKPOINTS:
+            prefix = ordered.head(math.ceil(len(ordered) * fraction))
+            valid = prefix.loc[prefix["valid_ppa"].astype(bool)].copy()
+            eligible = quality_eligible(valid)
+            pool_size = min(len(eligible), math.ceil(len(valid) * 0.25))
+            quality_floor = numeric_median(valid, "fitness")
+            for novelty_fraction in NOVELTY_PARENT_FRACTIONS:
+                selected = novelty_selection(
+                    eligible,
+                    pool_size=pool_size,
+                    novelty_fraction=novelty_fraction,
+                )
+                rows.append(
+                    {
+                        "method_name": method,
+                        "seed": int(seed),
+                        "problem_id": problem,
+                        "budget_fraction": fraction,
+                        "novelty_parent_fraction": novelty_fraction,
+                        "quality_floor": "prefix_median_valid_fitness",
+                        "quality_floor_value": quality_floor,
+                        "novelty_space": "common_audit_descriptor_vector",
+                        "evaluated_count": int(len(prefix)),
+                        "valid_ppa_count": int(len(valid)),
+                        "eligible_count": int(len(eligible)),
+                        "selected_count": int(len(selected)),
+                        "selected_fraction_of_valid": safe_optional_rate(
+                            len(selected), len(valid)
+                        ),
+                        "unique_canonical_netlists": unique_nonempty(
+                            selected, "canonical_netlist_hash"
+                        ),
+                        "unique_motif_signatures": unique_nonempty(
+                            selected, "motif_signature_hash"
+                        ),
+                        "occupied_common_audit_cells": unique_nonempty(
+                            selected, "common_audit_cell_id"
+                        ),
+                        "pareto_size": pareto_size(selected),
+                        "best_fitness": numeric_max(selected, "fitness"),
+                        "mean_fitness": numeric_mean(selected, "fitness"),
+                        "baseline_pareto_size": pareto_size(valid),
+                        "baseline_best_fitness": numeric_max(valid, "fitness"),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+def quality_eligible(valid: pd.DataFrame) -> pd.DataFrame:
+    if valid.empty:
+        return valid
+    fitness = pd.to_numeric(valid["fitness"], errors="coerce")
+    floor = float(fitness.dropna().median())
+    eligible = valid.loc[fitness.ge(floor) & valid["common_audit_dim"].gt(0)].copy()
+    eligible["_fitness_rank"] = pd.to_numeric(
+        eligible["fitness"], errors="coerce"
+    ).fillna(-math.inf)
+    return eligible.sort_values(
+        ["_fitness_rank", "generation", "row_order"],
+        ascending=[False, True, True],
+    )
+
+
+def novelty_selection(
+    eligible: pd.DataFrame,
+    *,
+    pool_size: int,
+    novelty_fraction: float,
+) -> pd.DataFrame:
+    if eligible.empty or pool_size == 0:
+        return eligible.head(0).drop(columns=["_fitness_rank"], errors="ignore")
+    quality_slots = min(len(eligible), math.ceil(pool_size * (1.0 - novelty_fraction)))
+    selected = eligible.head(quality_slots).copy()
+    remaining = eligible.drop(index=selected.index)
+    while len(selected) < pool_size and not remaining.empty:
+        pick_index = farthest_candidate_index(selected, remaining)
+        selected = pd.concat([selected, remaining.loc[[pick_index]]])
+        remaining = remaining.drop(index=pick_index)
+    return selected.drop(columns=["_fitness_rank"], errors="ignore")
+
+
+def farthest_candidate_index(selected: pd.DataFrame, remaining: pd.DataFrame) -> object:
+    selected_vectors = np.vstack(
+        selected["common_audit_descriptor_vector"].map(vector_array).to_list()
+    )
+    best_index = remaining.index[0]
+    best_distance = -math.inf
+    best_fitness = -math.inf
+    for index, row in remaining.iterrows():
+        vector = vector_array(row["common_audit_descriptor_vector"])
+        distance = float(np.linalg.norm(selected_vectors - vector, axis=1).min())
+        fitness = float(row["_fitness_rank"])
+        if (distance, fitness) > (best_distance, best_fitness):
+            best_index = index
+            best_distance = distance
+            best_fitness = fitness
+    return best_index
+
+
 def best_per_key(frame: pd.DataFrame, key_column: str) -> pd.DataFrame:
     if frame.empty:
         return frame
@@ -300,6 +409,13 @@ def vector_dim(value: object) -> int:
     return len(loaded)
 
 
+def vector_array(value: object) -> np.ndarray:
+    text = str(value).strip()
+    loaded = json.loads(text)
+    assert isinstance(loaded, list), f"expected vector list: {text[:80]}"
+    return np.array(loaded, dtype=float)
+
+
 def nonempty_mask(series: pd.Series) -> pd.Series:
     return series.fillna("").astype(str).str.strip().ne("")
 
@@ -329,6 +445,15 @@ def numeric_mean(frame: pd.DataFrame, column: str) -> float | None:
     return float(values.mean())
 
 
+def numeric_median(frame: pd.DataFrame, column: str) -> float | None:
+    if frame.empty:
+        return None
+    values = pd.to_numeric(frame[column], errors="coerce").dropna()
+    if values.empty:
+        return None
+    return float(values.median())
+
+
 def pareto_size(valid: pd.DataFrame) -> int:
     metrics = valid[["area", "power", "timing_or_clock_period"]].apply(
         pd.to_numeric, errors="coerce"
@@ -347,6 +472,12 @@ def pareto_size(valid: pd.DataFrame) -> int:
 
 def safe_rate(numerator: int, denominator: int) -> float:
     assert denominator > 0
+    return numerator / denominator
+
+
+def safe_optional_rate(numerator: int, denominator: int) -> float | None:
+    if denominator == 0:
+        return None
     return numerator / denominator
 
 

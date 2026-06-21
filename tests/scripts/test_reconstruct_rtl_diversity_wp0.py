@@ -30,6 +30,7 @@ def test_build_reconstruction_keeps_generated_descriptors(tmp_path: Path) -> Non
     assert summary["event_rows"] == 2
     assert summary["budget_rows"] == 8
     assert summary["duplicate_suppression_rows"] == 16
+    assert summary["quality_gated_novelty_rows"] == 32
     methods = {row["method_name"]: row for row in summary["methods"]}
     assert methods["synthesis_trajectory_nod"]["descriptor_rows"] == 2
     assert methods["synthesis_trajectory_nod"]["valid_ppa_rows"] == 1
@@ -42,6 +43,9 @@ def test_build_reconstruction_keeps_generated_descriptors(tmp_path: Path) -> Non
         "canonical_netlist",
         "exact_motif_signature",
     }
+    novelty = pd.read_csv(tmp_path / "out" / "wp0_quality_gated_novelty.csv")
+    assert set(novelty["novelty_parent_fraction"]) == {0.0, 0.1, 0.25, 0.5}
+    assert set(novelty["quality_floor"]) == {"prefix_median_valid_fitness"}
 
 
 def _write_method(auto_bd_root: Path, method: str, cell_id: str) -> None:

@@ -209,18 +209,25 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 
 ## WP2 - Quality-Gated / Repair-Preserving Diversity Pressure
 
-- [ ] Decide whether retrospective evidence requires a bounded replay-only
+- [x] Decide whether retrospective evidence requires a bounded replay-only
   or live sampling experiment.
+  Scoped: run replay-only first; live sampling remains deferred until the
+  regenerated report and adversarial pass decide whether replay evidence is
+  still inconclusive.
 - [ ] If live sampling is used, preflight `curl http://20.0.0.103:8000/v1/models`
   and record served model id, max_model_len, token settings, subset, seed, and
   command.
-- [ ] Implement or simulate a quality floor: non-dominated, HV contributor,
+- [x] Implement or simulate a quality floor: non-dominated, HV contributor,
   top-quartile valid candidate, above median valid fitness, or one PPA axis
   improved without catastrophic regression.
-- [ ] Run duplicate-suppression or quality-gated novelty replay before any
+  Scoped: `wp0_quality_gated_novelty.csv` uses prefix median valid fitness.
+- [x] Run duplicate-suppression or quality-gated novelty replay before any
   live run.
-- [ ] Run or schedule a novelty-parent sweep with fractions
+  Scoped: replay-only evidence exists for ST-NOD/SR seed-3 roots.
+- [x] Run or schedule a novelty-parent sweep with fractions
   `0.00`, `0.10`, `0.25`, and `0.50`, or log why budget forbids it.
+  Scoped: replay sweep emitted in
+  `exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC/`.
 - [ ] Reject any method that loses valid-PPA coverage by more than 5
   percentage points or repeats the ST-NOD-style robustness drop.
 
