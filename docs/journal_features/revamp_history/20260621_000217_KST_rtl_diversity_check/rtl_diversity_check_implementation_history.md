@@ -1077,6 +1077,19 @@ validation evidence.
   - `case_studies.csv`:
     `c42ff93e19ede55c72ad9bcbc8dab49af7432c7b5e7241d14e87582d35e1f5d4`
 - Validation before commit:
+  - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_analyze_rtl_diversity_near_motif_suppression.py`:
+    12 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    scripts/analyze_rtl_diversity_near_motif_suppression.py
+    tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_analyze_rtl_diversity_near_motif_suppression.py`:
+    clean.
+  - `uv run pyright scripts/report_rtl_diversity_check.py
+    scripts/analyze_rtl_diversity_near_motif_suppression.py`: 0 errors,
+    0 warnings.
+  - `git diff --check`: clean.
+- Validation before commit:
   - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py`:
     7 passed.
   - `uv run ruff check scripts/report_rtl_diversity_check.py
@@ -1356,3 +1369,61 @@ validation evidence.
     scripts/run_rtl_diversity_wp3_rich_encoder.py
     scripts/run_rtl_diversity_wp3_learned_encoder.py`: 0 errors, 0 warnings.
   - `git diff --check`: clean.
+
+### WP2 Near-Identical Motif Suppression
+
+- Added `scripts/analyze_rtl_diversity_near_motif_suppression.py` with
+  focused test
+  `tests/scripts/test_analyze_rtl_diversity_near_motif_suppression.py`.
+- Ran the near-motif suppression analysis:
+  `uv run python scripts/analyze_rtl_diversity_near_motif_suppression.py --candidate-audit exp/diversity_check/restarted_report_20260621_071339_UTC/candidate_audit.parquet --output-dir exp/diversity_check/wp2_near_motif_suppression_20260621_072816_UTC`.
+- Artifact:
+  `exp/diversity_check/wp2_near_motif_suppression_20260621_072816_UTC/`.
+- Coverage: distance-based motif suppression covers 2,335 RTLLM valid-PPA
+  rows across 29 problem groups. ASP-DAC and Auto-BD imported rows do not
+  carry distance-bearing `motif_vector` JSON in this audit, so they remain
+  covered only by exact motif-signature hash and canonical-netlist duplicate
+  replay.
+- Aggregate result:
+  - threshold `0.00`: retained 246/2,335 rows, suppressed 2,089 near-motif
+    duplicates, retained HV 3.1507 vs baseline 3.1836, Pareto size 63 vs 793.
+  - threshold `0.01`: retained 203/2,335 rows, suppressed 2,132 rows,
+    retained HV 3.1384, Pareto size 61.
+  - threshold `0.025`: retained 166/2,335 rows, suppressed 2,169 rows,
+    retained HV 3.1266, Pareto size 53.
+  - threshold `0.05`: retained 124/2,335 rows, suppressed 2,211 rows,
+    retained HV 2.9510, Pareto size 50.
+- Interpretation: near-motif suppression preserves the best fitness in this
+  retrospective RTLLM slice, but it sharply reduces retained Pareto diversity
+  and slightly lowers hypervolume. It is not a utility-positive intervention.
+- Artifact hashes:
+  - `near_motif_suppression_summary.json`:
+    `48fff66d91151549efb48ef70234986add9598a007196672343a29f6140b2c20`
+  - `near_motif_suppression.csv`:
+    `239aa51992577f91e0d5e764e272f6a9bf72dd55329720e59d625760ac4370ae`
+  - `near_motif_suppression_aggregate.csv`:
+    `ac6f58ee5f8ce25203e447ffec989737b4e6a3425122a4e8e0f5f0a117c09a4b`
+  - `near_motif_suppression_report.md`:
+    `76d8f42a8dd8290fbec093ef7b4d2d6bf96de8a6343ae8cec6eb089fe7efa1ed`
+- Updated `scripts/report_rtl_diversity_check.py` so the central Diversity
+  Necessity Report loads the near-motif suppression summary and aggregate.
+- Regenerated the central report:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/restarted_report_20260621_072933_UTC --aspdac-root exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp --wp0-artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --qwen-smoke-limit 64`.
+- Report artifact:
+  `exp/diversity_check/restarted_report_20260621_072933_UTC/`.
+- Report result remains `B illumination_only`.
+- Updated report hashes:
+  - `diversity_necessity_report.md`:
+    `6027668d123332fb94df9739f8160c6e41b7ca1259d266e29e9826f12c95de8d`
+  - `diversity_necessity_report.json`:
+    `1b84602a9688d42f2b6357fd6d5eb34276e55364f3b214fadcf2e1c5dac84863`
+  - `encoder_leaderboard.csv`:
+    `794ac49d1322d8190f5cb80b3c75f4d1968bf89147f48658c5025ad394a48c82`
+  - `d_gate_matrix.csv`:
+    `4bf52c6ab5db8a13bec254fd7373643c6fa9fb9cdd11d259b05204bd0d0c995d`
+  - `claim_levels.csv`:
+    `27e5ee31d38a9fd2a48d351bba9a9d9731be70da66ba3896cbf8371a92dd8826`
+  - `wp0_replay_summary.csv`:
+    `c2656cc1f41cbc7998c8a4ffff0ee0376d8fd88393385d85626ed7f95d3d102b`
+  - `case_studies.csv`:
+    `c42ff93e19ede55c72ad9bcbc8dab49af7432c7b5e7241d14e87582d35e1f5d4`

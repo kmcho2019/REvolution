@@ -125,6 +125,20 @@ BUDGET_FUNNEL_AGGREGATE = (
         "budget_funnel_aggregate.csv"
     )
 )
+NEAR_MOTIF_SUMMARY = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp2_near_motif_suppression_20260621_072816_UTC/"
+        "near_motif_suppression_summary.json"
+    )
+)
+NEAR_MOTIF_AGGREGATE = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp2_near_motif_suppression_20260621_072816_UTC/"
+        "near_motif_suppression_aggregate.csv"
+    )
+)
 RANDOM_SEEDS = tuple(range(20))
 VERILOG_KEYWORDS = {
     "always",
@@ -216,6 +230,7 @@ def build_report(
     learned_card = learned_encoder_diagnostics()
     lineage_card = lineage_diagnostics()
     budget_funnel_card = budget_funnel_diagnostics()
+    near_motif_card = near_motif_diagnostics()
 
     problem_metrics = problem_level_metrics(evolution_analysis)
     cluster_rows = cluster_contribution_rows(evolution_analysis)
@@ -292,6 +307,7 @@ def build_report(
         "learned_card": learned_card,
         "lineage_card": lineage_card,
         "budget_funnel_card": budget_funnel_card,
+        "near_motif_card": near_motif_card,
         "auto_bd_controls": auto_bd_controls,
         "wp0_replay": wp0_replay,
         "gate_matrix": gate_rows,
@@ -312,6 +328,7 @@ def build_report(
         learned_card=learned_card,
         lineage_card=lineage_card,
         budget_funnel_card=budget_funnel_card,
+        near_motif_card=near_motif_card,
         case_rows=case_rows,
     )
     return payload
@@ -1607,6 +1624,32 @@ def budget_funnel_diagnostics() -> dict[str, Any]:
     }
 
 
+def near_motif_diagnostics() -> dict[str, Any]:
+    if not NEAR_MOTIF_SUMMARY.is_file() or not NEAR_MOTIF_AGGREGATE.is_file():
+        return {
+            "status": "not_found",
+            "summary_path": NEAR_MOTIF_SUMMARY.as_posix(),
+            "aggregate_path": NEAR_MOTIF_AGGREGATE.as_posix(),
+            "rows": [],
+            "evidence": "near-motif suppression artifacts were not loaded",
+        }
+    summary = load_json(NEAR_MOTIF_SUMMARY)
+    aggregate = pd.read_csv(NEAR_MOTIF_AGGREGATE)
+    evidence = (
+        f"near-motif suppression covers {summary['motif_vector_valid_count']} "
+        f"valid-PPA rows across {summary['group_count']} problem groups; "
+        f"{summary['coverage_note']}"
+    )
+    return {
+        "status": "loaded",
+        "summary_path": NEAR_MOTIF_SUMMARY.as_posix(),
+        "aggregate_path": NEAR_MOTIF_AGGREGATE.as_posix(),
+        "summary": summary,
+        "rows": aggregate.to_dict("records"),
+        "evidence": evidence,
+    }
+
+
 def common_audit_metrics(candidates: pd.DataFrame, problem_metrics: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for problem_id, group in candidates.groupby("problem_id", sort=True):
@@ -1918,6 +1961,7 @@ def write_markdown_report(
     learned_card: dict[str, Any],
     lineage_card: dict[str, Any],
     budget_funnel_card: dict[str, Any],
+    near_motif_card: dict[str, Any],
     case_rows: pd.DataFrame,
 ) -> None:
     verdict = payload["verdict"]
@@ -2053,6 +2097,13 @@ def write_markdown_report(
         f"- Evidence: {budget_funnel_card['evidence']}",
         "",
         markdown_table(budget_funnel_card["rows"]),
+        "",
+        "## WP2 Near-Motif Suppression",
+        "",
+        f"- Status: `{near_motif_card['status']}`",
+        f"- Evidence: {near_motif_card['evidence']}",
+        "",
+        markdown_table(near_motif_card["rows"]),
         "",
         "## Encoder Leaderboard",
         "",

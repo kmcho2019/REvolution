@@ -185,11 +185,16 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   ASP-DAC-release corpora.
 - [x] Add online-available replay policies separate from oracle
   reconstructive replay.
-- [ ] Add duplicate-suppression replay by canonical netlist hash and
+- [x] Add duplicate-suppression replay by canonical netlist hash and
   near-identical motif signature.
   Partial: `wp0_duplicate_suppression.csv` covers canonical netlist hash and
-  exact motif-signature hash for ST-NOD/SR seed-3 roots. Near-identical motif
-  distance remains open; quality-gated novelty replay is complete.
+  exact motif-signature hash for ST-NOD/SR seed-3 roots. Distance-based
+  near-motif suppression covers the 2,335 RTLLM valid-PPA rows with stored
+  motif vectors in the central audit; ASP-DAC and Auto-BD imports lack
+  distance-bearing motif vectors in this audit. Quality-gated novelty replay
+  is complete.
+  Artifact:
+  `exp/diversity_check/wp2_near_motif_suppression_20260621_072816_UTC/`.
 - [x] Report diversity through the generated, functional, synthesis-valid,
   valid-PPA, and Pareto-front funnels for each descriptor family.
   Artifact:

@@ -317,6 +317,41 @@ def test_budget_funnel_diagnostics_reads_curve_artifacts(tmp_path, monkeypatch):
     assert card["rows"][0]["mean_style_clusters"] == 2.0
 
 
+def test_near_motif_diagnostics_reads_suppression_artifacts(tmp_path, monkeypatch):
+    summary_path = tmp_path / "near_motif_suppression_summary.json"
+    aggregate_path = tmp_path / "near_motif_suppression_aggregate.csv"
+    summary_path.write_text(
+        json.dumps(
+            {
+                "motif_vector_valid_count": 3,
+                "group_count": 1,
+                "coverage_note": "only rows with motif vectors",
+            }
+        ),
+        encoding="utf-8",
+    )
+    pd.DataFrame(
+        [
+            {
+                "corpus": "toy",
+                "descriptor_family": "lexical",
+                "method": "classic",
+                "motif_distance_threshold": 0.01,
+                "suppressed_near_motif_count": 1,
+            }
+        ]
+    ).to_csv(aggregate_path, index=False)
+    monkeypatch.setattr(mod, "NEAR_MOTIF_SUMMARY", summary_path)
+    monkeypatch.setattr(mod, "NEAR_MOTIF_AGGREGATE", aggregate_path)
+
+    card = mod.near_motif_diagnostics()
+
+    assert card["status"] == "loaded"
+    assert len(card["rows"]) == 1
+    assert "3 valid-PPA rows" in card["evidence"]
+    assert card["rows"][0]["suppressed_near_motif_count"] == 1
+
+
 def test_representative_cases_uses_replay_problem_candidate_path():
     candidates = pd.DataFrame(
         [
