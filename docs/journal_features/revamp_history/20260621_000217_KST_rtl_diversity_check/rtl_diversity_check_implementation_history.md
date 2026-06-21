@@ -721,3 +721,56 @@ validation evidence.
   the source artifacts. The next WP0 implementation step should emit a
   reconstructed row-level artifact or replay table before changing any final
   claim level.
+
+### WP0 ST-NOD/SR Reconstruction Artifact
+
+- Added `scripts/reconstruct_rtl_diversity_wp0.py` with focused test
+  `tests/scripts/test_reconstruct_rtl_diversity_wp0.py`.
+- Ran:
+  `uv run python scripts/reconstruct_rtl_diversity_wp0.py --output-dir exp/diversity_check/wp0_stnod_sr_reconstruction_20260621_040536_UTC`.
+- Artifact directory:
+  `exp/diversity_check/wp0_stnod_sr_reconstruction_20260621_040536_UTC/`.
+- Outputs:
+  `wp0_descriptor_rows.parquet`, `wp0_descriptor_rows.csv`,
+  `wp0_budget_curves.csv`, `wp0_operator_yield.csv`,
+  `wp0_qd_events.csv`, and `wp0_reconstruction_summary.json`.
+- Summary: 9,360 generated-candidate rows, 3,802 QD event rows, 312
+  budget-curve rows, and 54 operator-yield rows.
+- ST-NOD rows: 4,680 generated, 1,896 valid-PPA, 1,896 non-empty descriptor
+  rows, zero non-empty parent IDs, and 718 unique canonical netlists.
+- SR random-ReLU PCA rows: 4,680 generated, 1,906 valid-PPA, 1,906 non-empty
+  descriptor rows, zero non-empty parent IDs, and 771 unique canonical
+  netlists.
+- Budget-curve aggregate at 100%:
+  - ST-NOD: 4,680 candidates, 1,896 valid-PPA, 852 unique canonical netlists,
+    1,044 duplicate valid canonical-netlist hits, and Pareto size 558.
+  - SR random-ReLU PCA: 4,680 candidates, 1,906 valid-PPA, 900 unique
+    canonical netlists, 1,006 duplicate valid canonical-netlist hits, and
+    Pareto size 496.
+- Budget-curve aggregate at 25%:
+  - ST-NOD: 1,170 candidates, 423 valid-PPA, 226 unique canonical netlists,
+    197 duplicate valid canonical-netlist hits, and Pareto size 196.
+  - SR random-ReLU PCA: 1,170 candidates, 433 valid-PPA, 227 unique canonical
+    netlists, 206 duplicate valid canonical-netlist hits, and Pareto size 219.
+- Highest valid-PPA-rate operators in this artifact are `C-D` and `C-F`.
+  Example top rows: ST-NOD seed 1001 `C-D` valid rate 0.755 and SR seed 1003
+  `C-D` valid rate 0.731. This is an operator-yield signal only; it is not
+  descendant-yield evidence because parent IDs remain absent.
+- Artifact hashes:
+  - `wp0_descriptor_rows.parquet`:
+    `0a545bc34622b6f5c4a54dffeb33427028bcc4b0cd14903d6a27916da47af28a`
+  - `wp0_descriptor_rows.csv`:
+    `0767e2d95a0af1154c791d8eecbf3d4b3985b41c4231cac2f7b07477d6ec1f14`
+  - `wp0_budget_curves.csv`:
+    `d155c084676cf0666fc37d2aa3129aa750da3df1c8fb44b5efbbef534bb0c35a`
+  - `wp0_operator_yield.csv`:
+    `99ab85adec2f0e5ccb7cca7b6d952e7377f5342443c4878136fd9f15b135876c`
+  - `wp0_qd_events.csv`:
+    `35527bc7a3566c19375a6c4fb4231993df5d21a17291b87f53da9f94acb1576e`
+- Validation:
+  - `uv run pytest -q tests/scripts/test_reconstruct_rtl_diversity_wp0.py`:
+    1 passed.
+  - `uv run ruff check scripts/reconstruct_rtl_diversity_wp0.py
+    tests/scripts/test_reconstruct_rtl_diversity_wp0.py`: clean.
+  - `uv run pyright scripts/reconstruct_rtl_diversity_wp0.py`: 0 errors,
+    0 warnings.

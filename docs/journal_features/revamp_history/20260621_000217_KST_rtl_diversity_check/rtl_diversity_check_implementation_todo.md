@@ -154,12 +154,13 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 
 ## WP0 - Deeper Diversity Necessity
 
-- [ ] Reconstruct ST-NOD / synthesis-response descriptor rows from available
+- [x] Reconstruct ST-NOD / synthesis-response descriptor rows from available
   stage dumps, fitting artifacts, or Auto-BD sidecars.
-  Partial: seed-3 source parquets expose generated-candidate rows for all
+  Scoped: seed-3 source parquets expose generated-candidate rows for all
   4,680 ST-NOD rows and all 4,680 SR random-ReLU PCA rows, but actual
   non-empty descriptor/common-audit vectors are valid-PPA-scoped.
-  Emit a reconstructed row-level artifact before checking this off.
+  Artifact:
+  `exp/diversity_check/wp0_stnod_sr_reconstruction_20260621_040536_UTC/`.
 - [ ] Search historical corpora for lineage-rich generation logs with parent,
   operator, child, and descendant fields.
   Partial: current audit and checked Auto-BD ST-NOD/SR parquets have zero
@@ -169,8 +170,9 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   exposes lineage; otherwise log the corpus search that proves none do.
 - [ ] Compute diversity at 25%, 50%, 75%, and 100% of budget where generation
   metadata exists.
-  Ready for ST-NOD/SR seed-3 roots via generations 0-5 and
-  `per_generation_metrics.parquet`.
+  Partial: computed for ST-NOD/SR seed-3 roots in
+  `wp0_budget_curves.csv`; broader RTLLM/ASP-DAC generation curves remain
+  open.
 - [ ] Add online-available replay policies separate from oracle
   reconstructive replay.
 - [ ] Add duplicate-suppression replay by canonical netlist hash and
