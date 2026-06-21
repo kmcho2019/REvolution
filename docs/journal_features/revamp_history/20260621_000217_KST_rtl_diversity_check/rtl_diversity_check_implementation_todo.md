@@ -156,12 +156,21 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 
 - [ ] Reconstruct ST-NOD / synthesis-response descriptor rows from available
   stage dumps, fitting artifacts, or Auto-BD sidecars.
+  Partial: seed-3 source parquets expose generated-candidate rows for all
+  4,680 ST-NOD rows and all 4,680 SR random-ReLU PCA rows, but actual
+  non-empty descriptor/common-audit vectors are valid-PPA-scoped.
+  Emit a reconstructed row-level artifact before checking this off.
 - [ ] Search historical corpora for lineage-rich generation logs with parent,
   operator, child, and descendant fields.
+  Partial: current audit and checked Auto-BD ST-NOD/SR parquets have zero
+  non-empty parent IDs; QD events preserve operator, origin pool, generation,
+  archive fields, and quality, but not parent candidate IDs.
 - [ ] Run parent-child jump or descendant-yield analysis on every corpus that
   exposes lineage; otherwise log the corpus search that proves none do.
 - [ ] Compute diversity at 25%, 50%, 75%, and 100% of budget where generation
   metadata exists.
+  Ready for ST-NOD/SR seed-3 roots via generations 0-5 and
+  `per_generation_metrics.parquet`.
 - [ ] Add online-available replay policies separate from oracle
   reconstructive replay.
 - [ ] Add duplicate-suppression replay by canonical netlist hash and

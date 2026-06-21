@@ -647,3 +647,77 @@ validation evidence.
   - DeepGate3: diagnostic-only no-proceed in current form because the bounded
     checkpoint-compatible embedding smoke collapsed and sequential RTL needs a
     better FF/cone policy.
+
+### Goal Template Fidelity Check
+
+- Re-read the canonical TCAD journal goal template at
+  `docs/journal_features/revamp_history/20260612_005012_KST_journal_revamp/goal_template.md`.
+- The active `/goal` object is the RTL-diversity restart objective, not the
+  TCAD revamp template verbatim. It intentionally adapts the same strict
+  pattern to this branch: active contract, checklist, audit log, hard evidence
+  requirements, dependency escalation, live-run policy, completion gates, and
+  signed atomic commits.
+- The current goal remains active. It must not be closed just because WP1
+  produced bounded diagnostic evidence; WP0-WP3 and the restarted completion
+  gates are still open.
+
+### WP0 ST-NOD, SR, And Lineage Inventory
+
+- Rechecked `exp/diversity_check/full_20260620/candidate_audit.csv`.
+  It has 203,944 rows and only one lineage-like column, `parent_id`.
+  Non-empty `parent_id` count is zero for every current audit stratum:
+  `aspdac2026_release/RTLLM`, `aspdac2026_release/VerilogEval-Spec-to-RTL`,
+  `auto_bd_standard_results/RTLLM`,
+  `auto_bd_standard_results/VerilogEval-Spec-to-RTL`, and
+  `rtllm_gen20/RTLLM`.
+- The audit already includes ST-NOD and synthesis-response descriptor-family
+  rows, but only valid-PPA rows retain non-empty descriptor vectors there:
+  `synthesis_trajectory_nod` has 1,896 five-dimensional vectors and 2,784
+  empty vectors; `sr_random_relu_pca_qd` has 1,906 three-dimensional vectors
+  and 2,774 empty vectors.
+- Inspected the original Auto-BD seed-3 standard-results roots under
+  `/aux/revolution-history/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/`.
+  For both `synthesis_trajectory_nod` and `sr_random_relu_pca_qd`, seeds
+  1001, 1002, and 1003 each expose
+  `candidates.parquet`, `descriptor_vectors.parquet`,
+  `per_generation_metrics.parquet`, `archive_snapshots.parquet`, and
+  `elites.parquet`.
+- Source `candidates.parquet` coverage is stronger than the Phase 0 audit
+  projection for generated-candidate reconstruction: each method has 4,680
+  rows total, 13 problems per seed, and generations 0-5. The descriptor and
+  common-audit columns exist for every generated row, but invalid rows store
+  `[]`; actual non-empty vectors are still limited to valid-PPA rows.
+- Valid-PPA coverage in the source candidates is 1,896 rows for ST-NOD and
+  1,906 rows for SR random-ReLU PCA. This matches the actual non-empty
+  descriptor counts, confirming that the available ST-NOD/SR descriptor
+  surface is valid-PPA-scoped while the generated-candidate row surface is
+  broader.
+- Source `candidates.parquet` preserves `operator_name` with
+  `initial`, `M-*`, and `C-*` operators, but `parent_id` is empty for all
+  checked ST-NOD and SR rows. This supports operator/generation/origin-pool
+  analysis, but not true parent-child jump attribution from these parquets.
+- Sampled per-candidate `qd_archive_event.json` files in the seed-3 SR root.
+  The events preserve `candidate_id`, `generation`, `generated_mode`,
+  `origin_pool`, archive insertion fields, descriptor values, objectives, PPA,
+  structural metrics, and quality score. They do not preserve parent IDs:
+  `parent_count` and `requested_parent_count` were `None`, and no other
+  parent-ID keys were present.
+- QD-event counts in the inspected seed-3 roots: ST-NOD has 1,896 events
+  with `generated_mode` 1,601 whole / 295 diff and origin pools 1,113
+  success / 534 fail / 249 initial; SR random-ReLU PCA has 1,906 events with
+  `generated_mode` 1,576 whole / 330 diff and origin pools 1,302 success /
+  344 fail / 260 initial.
+- `per_generation_metrics.parquet` gives 234 rows per method across 13
+  problems, three seeds, and generations 0-5. This is enough to compute
+  25%, 50%, 75%, and 100% budget curves for ST-NOD and SR, and to compare
+  those curves to descriptor occupancy, validity funnel, archive insertion,
+  duplicate suppression, and common-audit retention policies.
+- Current interpretation: WP0 is not blocked. True parent-child lineage
+  remains missing in the checked Auto-BD roots, and invalid-candidate
+  ST-NOD/SR descriptor values are not recoverable from these standard-results
+  files. However, generated-candidate row reconstruction, valid-PPA-scoped
+  descriptor analysis, operator-yield analysis, origin-pool analysis,
+  per-budget curves, and replay-style duplicate suppression are feasible from
+  the source artifacts. The next WP0 implementation step should emit a
+  reconstructed row-level artifact or replay table before changing any final
+  claim level.
