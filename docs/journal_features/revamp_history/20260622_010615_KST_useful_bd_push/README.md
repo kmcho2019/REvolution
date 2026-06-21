@@ -14,8 +14,8 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent package:
-  `techniques/T25_guarded_sr_raw_pareto_qd/` (`planned`; guarded SR raw
-  follow-up to the T24 failure mode).
+  `techniques/T25_guarded_sr_raw_pareto_qd/` (`T0 diagnostic`; guarded SR raw
+  live follow-up completed but not promoted).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -88,7 +88,7 @@ Start here when resuming the active goal.
 | `T22` | `T22_random_descriptor_control` | Replay result, `T0 control`; random archive partitioning is a strong required comparator. |
 | `T23` | `T23_sr_pareto_validation_matrix` | Passive validation matrix, `T0 diagnostic`; compares T04/T19 against classic, manual BD, and T22. |
 | `T24` | `T24_sr_pareto_live_validation` | Complete six-arm live development-screen result, `T0 diagnostic`; all QD arms preserve covered designs but lose too much multi-pipe best quality. |
-| `T25` | `T25_guarded_sr_raw_pareto_qd` | Planned guarded SR raw follow-up; lowers improve-phase backfill and two-parent fusion to test quality/yield recovery. |
+| `T25` | `T25_guarded_sr_raw_pareto_qd` | Live result, `T0 diagnostic`; preserves all classic-covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. |
 
 ## Validity-Gate Note
 

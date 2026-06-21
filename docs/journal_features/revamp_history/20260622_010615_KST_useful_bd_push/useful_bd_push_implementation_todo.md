@@ -107,7 +107,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       tables, and tier decision.
 - [x] `T24_sr_pareto_live_validation` full live matrix is executed and
       packaged; result is `T0 diagnostic`.
-- [ ] `T25_guarded_sr_raw_pareto_qd` guarded live variant is executed and
+- [x] `T25_guarded_sr_raw_pareto_qd` guarded live variant is executed and
       packaged.
 
 ## Minimum Goal Completion

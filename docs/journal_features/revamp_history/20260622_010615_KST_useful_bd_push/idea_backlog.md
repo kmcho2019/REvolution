@@ -161,6 +161,21 @@ a numbered `techniques/T##_slug/` package before running it.
   a quality/yield-guarded schedule that lowers improve-phase backfill and
   two-parent fusion before spending budget on learned encoders.
 
+## From `T25_guarded_sr_raw_pareto_qd` T0
+
+- A simple guarded schedule is not enough. T25 preserves all three
+  classic-covered designs and passes Pareto validation, but worsens the
+  multi-pipe best-score loss versus SR raw and still fails the traffic-light
+  valid-PPA gate.
+- Do not continue by only nudging `qd_improve_backfill_fraction` or
+  `qd_two_parent_probability`. The next live method should change parent-source
+  structure: explicit exploit/explore/repair emitters, per-problem yield
+  guardrails, or a champion lane that can recover best quality while keeping
+  SR raw front material.
+- Keep the T25 comparison set fixed for the next variant: classic, manual BD,
+  random BD, SR raw, and T25. The next result should beat T25 on multi-pipe
+  best quality or traffic-light valid-PPA yield before claiming progress.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

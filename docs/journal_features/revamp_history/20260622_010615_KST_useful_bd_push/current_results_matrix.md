@@ -24,12 +24,15 @@ Real result packages:
 - `T23_sr_pareto_validation_matrix`
 - `T24_sr_pareto_live_validation` complete six-arm live development-screen
   result
+- `T25_guarded_sr_raw_pareto_qd` guarded live follow-up result
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
-`T24` is a complete three-problem live matrix, but it remains `T0 diagnostic`
-because every QD arm loses too much `Prob015_multi_pipe_8bit` best quality.
-The ten-package minimum is satisfied, but the goal is still active because
-validation of leads and adversarial sign-off are not done.
+`T24` and `T25` are complete three-problem live development-screen results,
+but both remain `T0 diagnostic`: T24 because every QD arm loses too much
+`Prob015_multi_pipe_8bit` best quality, and T25 because the guarded SR raw
+schedule worsens that multi-pipe quality loss while failing the traffic-light
+valid-PPA gate. The ten-package minimum is satisfied, but the goal is still
+active because validation of leads and adversarial sign-off are not done.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -80,10 +83,16 @@ strongest on traffic-light best score, and SR raw is strongest on ALU best
 score plus multi-pipe front material, so the next live method should preserve
 those strengths with explicit quality/yield guarding.
 
-`T25_guarded_sr_raw_pareto_qd` is the pre-registered follow-up to T24. It keeps
-the SR raw descriptor and local Pareto archive but lowers improve-phase
-backfill and two-parent fusion to test whether quality/yield can recover
-without changing the BD or subset.
+`T25_guarded_sr_raw_pareto_qd` is the completed pre-registered follow-up to
+T24. It keeps the SR raw descriptor and local Pareto archive but lowers
+improve-phase backfill and two-parent fusion. It preserves all three
+classic-covered designs and passes Pareto archive validation, but it is not
+promoted: ALU remains positive (+1.23% best score versus classic),
+traffic-light valid-PPA falls from 30 to 9 passing samples, and multi-pipe best
+score falls by 75.20% versus classic. The guard reduces SR raw's multi-pipe
+global Pareto material from 10 to 6 and worsens best quality, so the next
+variant needs an explicit exploit/explore/repair emitter or stronger
+quality-preserving parent source rather than more tuning of this guard alone.
 
 ## Current Conclusions
 
@@ -102,13 +111,18 @@ without changing the BD or subset.
    active leads.
 6. The completed T24 matrix says the archive mechanism works, but current
    local-Pareto parent pressure is not sufficient as-is.
+7. T25 shows that a simple guarded SR raw schedule is not enough: lowering
+   improve-phase backfill and two-parent fusion preserves coverage but does
+   not recover the failing multi-pipe quality/yield behavior.
 
 ## Next Decisions
 
-- Run T25 before expanding the SR-family live run, because every T24 QD arm
-  loses too much best quality on `Prob015_multi_pipe_8bit`.
-- Use manual BD as the traffic-light quality control and SR raw as the
-  front-material control for the next T24-derived variant.
+- Specify a T26-style emitter or parent-source variant instead of only tuning
+  T25's guard. It should keep SR raw front material while explicitly restoring
+  multi-pipe best quality and traffic-light valid-PPA yield.
+- Use manual BD as the traffic-light quality control, SR raw as the
+  front-material control, and random as the live partitioning control for the
+  next T24/T25-derived variant.
 - Keep `T22` in validation tables as a required comparator for any positive
   claim.
 - Run deeper per-problem analysis on `Prob011_multi_16bit`,

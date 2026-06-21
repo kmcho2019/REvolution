@@ -748,3 +748,35 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   document, while the new ledger serves as the compact navigation layer.
 - Updated the local README and TODO so future technique updates keep category,
   result, lineage, and branch direction synchronized with the package reports.
+
+## T25 Guarded SR Raw Live Result - 2026-06-21 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models`; the endpoint returned
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Completed T25 under
+  `exp/useful_bd_push/t25_guarded_sr_raw_pareto_qd_20260621_210402_UTC/` with
+  seed 1001, population 12, three generations, strict ablation evaluation,
+  and 128000-token code/diff budgets.
+- Runtime was 750.54 seconds. The run solved all three fixed problems, so the
+  classic-covered design preservation gate passes.
+- Pareto archive validation passed with zero failures. Archive members:
+  `Prob045_alu` 16, `Prob041_traffic_light` 8,
+  `Prob015_multi_pipe_8bit` 13. Max local front size was 2.
+- Packaged `tables/live_guarded_vs_t24_controls.csv`,
+  `tables/live_guarded_pareto_validation.{json,md}`,
+  `tables/preflight_models_20260621_210402_UTC.json`, and
+  `figures/live_guarded_vs_t24_controls.png`.
+- Visual inspection found the generated figure readable: grouped colors are
+  distinct, zero lines expose regressions, labels fit, and the front-material
+  panel clearly shows T25 below unguarded SR raw on multi-pipe.
+- T25 best-score deltas versus classic: `Prob045_alu` +1.23%,
+  `Prob041_traffic_light` -3.48%, and `Prob015_multi_pipe_8bit` -75.20%.
+- T25 valid-PPA deltas versus classic: `Prob045_alu` +4.17 absolute points,
+  `Prob041_traffic_light` -43.75 absolute points, and
+  `Prob015_multi_pipe_8bit` -12.50 absolute points.
+- Promotion decision: `T0 diagnostic`, not promoted. T25 preserves coverage
+  but worsens multi-pipe best score versus unguarded SR raw and fails the
+  traffic-light valid-PPA gate with 9 passing samples versus classic's 30.
+- Lane decision: keep T25 as negative evidence. The next live method should
+  change parent-source structure with explicit exploit/explore/repair emitter
+  scheduling rather than only tuning the guarded schedule.

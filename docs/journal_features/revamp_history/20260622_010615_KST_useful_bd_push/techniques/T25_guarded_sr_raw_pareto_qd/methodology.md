@@ -101,7 +101,9 @@ Required artifacts:
 
 ## Current Status
 
-Current tier: `planned`.
+Current tier: `T0 diagnostic`.
 
-No result has been run yet. This package is a pre-registered method card and
-command specification for the next live experiment.
+The live screen has completed. The method preserved all three classic-covered
+designs and passed Pareto archive validation, but it did not recover the
+multi-pipe best-quality collapse or traffic-light valid-PPA regression. See
+`results_report.md` for the tier decision and comparison against T24 controls.

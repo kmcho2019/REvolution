@@ -23,8 +23,8 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, and multimodal circuit embeddings. | Run preprocessing ladders before fine-tuning or heavier external envs. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | Active T25 guarded SR raw live run. |
-| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Convert T24 failure modes into exploit/explore/repair schedules. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T25 is negative; move from simple guards to explicit emitter/parent-source variants. |
+| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Convert T24/T25 failure modes into exploit/explore/repair schedules. |
 
 ## Lineage Graph
 
@@ -110,8 +110,8 @@ flowchart LR
 | T07-T16 | `L4` | DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, AURORA, DE-HNN, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Start with Qwen preprocessing; use isolated uv envs or source checkouts as needed. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
-| T25 | `L2/L5` | Guarded SR raw: lower fill target, lower improve backfill, lower two-parent fusion. | Live run in progress. | `advance` pending results | Compare against T24 classic/manual/random/SR raw. |
-| T12/T18 | `L6` | Lineage repair and adaptive emitter scheduling. | Scaffolded follow-ups informed by T24 failure modes. | `hybridize` | Define exploit/explore/repair schedule after T25 evidence lands. |
+| T25 | `L2/L5` | Guarded SR raw: lower fill target, lower improve backfill, lower two-parent fusion. | Completed `T0 diagnostic`; preserves covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. | `ablate` | Use as negative evidence for T26 emitter/parent-source design. |
+| T12/T18 | `L6` | Lineage repair and adaptive emitter scheduling. | Scaffolded follow-ups informed by T24/T25 failure modes. | `hybridize` | Define exploit/explore/repair schedule with SR raw/manual/random controls. |
 
 ## Branching Rule
 

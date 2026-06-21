@@ -1,0 +1,138 @@
+from __future__ import annotations
+
+import csv
+import json
+from pathlib import Path
+
+from scripts.package_t25_guarded_sr_raw_result import main
+
+
+def test_package_t25_guarded_sr_raw_result(tmp_path: Path) -> None:
+    t24_root = tmp_path / "t24"
+    t25_root = tmp_path / "t25"
+    output_dir = tmp_path / "package" / "tables"
+    for problem in ("Prob045_alu", "Prob041_traffic_light", "Prob015_multi_pipe_8bit"):
+        _write_problem(
+            root=t24_root,
+            mode="classic_revolution/seed_1001/openai_gpt-oss-120b",
+            problem=problem,
+            best_score=1.0,
+            synthesis_rate=0.5,
+            total_candidates=48,
+        )
+        _write_problem(
+            root=t24_root,
+            mode="landing_smooth_qd_manual_bd/seed_1001/openai_gpt-oss-120b",
+            problem=problem,
+            best_score=1.125,
+            synthesis_rate=0.625,
+            total_candidates=48,
+            archive_members=10,
+            global_pareto_members=11,
+        )
+        _write_problem(
+            root=t24_root,
+            mode="random_descriptor_qd/seed_1001/openai_gpt-oss-120b",
+            problem=problem,
+            best_score=0.5,
+            synthesis_rate=0.125,
+            total_candidates=48,
+            archive_members=8,
+            global_pareto_members=9,
+        )
+        _write_problem(
+            root=t24_root,
+            mode="sr_raw_pca_qd/seed_1001/openai_gpt-oss-120b",
+            problem=problem,
+            best_score=1.5,
+            synthesis_rate=0.875,
+            total_candidates=48,
+            archive_members=6,
+            global_pareto_members=7,
+        )
+        _write_problem(
+            root=t25_root,
+            mode="guarded_sr_raw_pareto_qd/seed_1001/openai_gpt-oss-120b",
+            problem=problem,
+            best_score=1.25,
+            synthesis_rate=0.75,
+            total_candidates=48,
+            archive_members=5,
+            global_pareto_members=4,
+        )
+
+    assert (
+        main(
+            [
+                "--t24-run-root",
+                str(t24_root),
+                "--t25-run-root",
+                str(t25_root),
+                "--output-dir",
+                str(output_dir),
+            ]
+        )
+        == 0
+    )
+
+    csv_path = output_dir / "live_guarded_vs_t24_controls.csv"
+    figure_path = output_dir.parent / "figures" / "live_guarded_vs_t24_controls.png"
+    rows = list(csv.DictReader(csv_path.read_text(encoding="utf-8").splitlines()))
+    assert len(rows) == 12
+    assert rows[0]["method"] == "landing_smooth_qd_manual_bd"
+    assert rows[0]["best_score_relative_delta_vs_classic"] == "0.125000"
+    assert rows[3]["method"] == "random_descriptor_qd"
+    assert rows[3]["method_synthesis_ppa_count"] == "6"
+    assert rows[6]["method"] == "sr_raw_pca_qd"
+    assert rows[6]["best_score_delta_vs_sr_raw"] == "0.000000"
+    assert rows[9]["method"] == "guarded_sr_raw_pareto_qd"
+    assert rows[9]["best_score_delta_vs_sr_raw"] == "-0.250000"
+    assert rows[9]["global_pareto_members"] == "4"
+    assert figure_path.stat().st_size > 0
+
+
+def _write_problem(
+    *,
+    root: Path,
+    mode: str,
+    problem: str,
+    best_score: float,
+    synthesis_rate: float,
+    total_candidates: int,
+    archive_members: int | None = None,
+    global_pareto_members: int | None = None,
+) -> None:
+    problem_root = root / mode / "RTLLM" / problem
+    problem_root.mkdir(parents=True)
+    (problem_root / f"{problem}_summary.json").write_text(
+        json.dumps(
+            {
+                "final_population_ppa": {"best_score": best_score},
+                "accumulated_success_rates": {
+                    "functionality": synthesis_rate,
+                    "synthesis_ppa": synthesis_rate,
+                },
+                "total_candidates_generated": total_candidates,
+                "total_runtime_seconds": 10.0,
+                "total_llm_api_calls": 24,
+            }
+        ),
+        encoding="utf-8",
+    )
+    if archive_members is None:
+        return
+    assert global_pareto_members is not None
+    (problem_root / "archive_summary.json").write_text(
+        json.dumps(
+            {
+                "occupied_cells": 2,
+                "total_archive_members": archive_members,
+                "max_front_size": 2,
+            }
+        ),
+        encoding="utf-8",
+    )
+    (problem_root / "global_pareto_summary.json").write_text(
+        json.dumps({"total_global_pareto_members": global_pareto_members}),
+        encoding="utf-8",
+    )

@@ -1,8 +1,8 @@
 # T25 Guarded SR Raw Pareto QD Artifacts Manifest
 
-Status: planned, not yet run.
+Status: completed live development-screen run.
 
-## Pre-Registered Run Root
+## Run Root
 
 `exp/useful_bd_push/t25_guarded_sr_raw_pareto_qd_20260621_210402_UTC/`
 
@@ -33,14 +33,27 @@ Status: planned, not yet run.
 - run matrix: `tables/run_matrix.csv`
 - subset config: `tables/live_screen_v0_subset.yaml`
 
-## Expected Mirrors
+## Mirrored Result Artifacts
 
-After execution, mirror the following into `tables/`:
+| Artifact | SHA-256 |
+| --- | --- |
+| `tables/preflight_models_20260621_210402_UTC.json` | `4db45ca0673b7478b25b0406642abdefb66ed7f609bb5632f95a387aba6aeef6` |
+| `tables/live_guarded_pareto_validation.json` | `d62f3f38d4ca4b7e28fe7f558491fdfa5fd9bb6b349db4e3dbcbdb97cdf6d0cc` |
+| `tables/live_guarded_pareto_validation.md` | `80b1dc7ee0abedf5b053cb5021ce0ddea1eaa6525f939865d72e3a4d98647386` |
+| `tables/live_guarded_vs_t24_controls.csv` | `532b3339f752a4486ad030cbf9121bb66008cb34800cc96a9475a213e1fa053e` |
+| `figures/live_guarded_vs_t24_controls.png` | `9f834330c9de3ff29c9faebd341f7904f57df95773a74c5e060b208812c468eb` |
 
-- preflight `/v1/models` JSON;
-- Pareto validation JSON and Markdown;
-- comparison CSV against T24 classic/manual/random/SR raw.
+## Source Run Artifacts
 
-## Missing Results
+- run log:
+  `exp/useful_bd_push/t25_guarded_sr_raw_pareto_qd_20260621_210402_UTC/guarded_sr_raw_pareto_qd/seed_1001/openai_gpt-oss-120b/20260621_210908_revolution_run_log.txt`
+- summary results:
+  `exp/useful_bd_push/t25_guarded_sr_raw_pareto_qd_20260621_210402_UTC/guarded_sr_raw_pareto_qd/seed_1001/openai_gpt-oss-120b/20260621_210908_revolution_summary_results.txt`
+- scheduler telemetry:
+  `exp/useful_bd_push/t25_guarded_sr_raw_pareto_qd_20260621_210402_UTC/guarded_sr_raw_pareto_qd/seed_1001/openai_gpt-oss-120b/20260621_210908_revolution_scheduler_telemetry.json`
 
-All live result artifacts are missing because T25 has not run yet.
+## Validation Status
+
+- vLLM preflight passed: `openai/gpt-oss-120b`, `max_model_len=131072`.
+- Pareto validation passed: zero failures, max local front size 2.
+- Result decision: `T0 diagnostic`, not promoted.
