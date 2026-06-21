@@ -570,3 +570,70 @@ validation evidence.
   small slice and less stable to identifier erasure. This supports treating
   Qwen as a diagnostic encoder worth a larger common-audit run, but it still
   does not establish predictive utility or justify in-loop use.
+
+### WP1 DeepGate3 Setup, AIG Export, And Embedding Smoke
+
+- Cloned official DeepGate3 source into ignored path
+  `exp/diversity_check/encoder_sources/DeepGate3` at commit
+  `908516a4f5ca02f4530a452743d9a0dc15b13f08`.
+- Cloned `python-deepgate` into ignored path
+  `exp/diversity_check/encoder_sources/python-deepgate` at commit
+  `173db7529cefc97f7b9b2b3fa97ec1bd5773754d`.
+- Created isolated environment:
+  `uv venv --python 3.8 exp/diversity_check/encoder_envs/deepgate3_probe`.
+- Installed `torch==2.2.1+cu121`, PyG extension wheels, `deepgate==2.0.1`
+  from source, and missing runtime imports (`progress`, `matplotlib`,
+  `einops`, `seaborn`, `torchvision`) in the isolated environment.
+- `deepgate==2.0.1` was not resolvable from PyPI in this environment, so the
+  source install path from the DeepGate3 README was required.
+- Attempted `mamba-ssm==1.2.0.post1`; build isolation failed from undeclared
+  `torch`, no-build-isolation then failed until Python-3.8-compatible
+  `setuptools`, `wheel`, and `ninja` were installed, and the final build
+  failed because `nvcc` is absent. The plain/checkpoint-tokenizer probes stub
+  the unused `mamba_ssm.Mamba` import and record this caveat.
+- Import check passed with the Mamba stub:
+  `torch 2.2.1+cu121`, CUDA visible on `NVIDIA RTX A6000`,
+  `torch_geometric 2.5.2`, and `deepgate 2.0.1`.
+- A first AIG export attempt failed because `write_aiger -map` handled quoted
+  paths poorly. The corrected export removed map files and quotes.
+- Corrected AIG artifact directory:
+  `exp/diversity_check/deepgate3_aig_probe_20260621_034421_UTC/`.
+- Graph-state policy for this bounded probe: combinational AIG only;
+  latch-bearing AIGER rejected; no cone splitting yet.
+- Export result on the same 15-candidate Qwen slice: 9 AIGER exports, 6
+  latch-free DeepGate-compatible parses, 3 latch-bearing AIGER rejections, and
+  6 sequential/DFFE export failures.
+- Parsed nontrivial graphs were three Auto-BD RTLLM adder variants with
+  178 nodes and 241 edges each. The three ASP-DAC `Prob001_zero` graphs parsed
+  as zero-node constant-output AIGs and were skipped for embeddings.
+- Checkpoint inspection: `trained/dg2_100p.pth` contains DeepGate3 checkpoint
+  keys, while `trained/model_last.pth` and `model_last_workload.pth` contain
+  DeepGate2 tokenizer keys. The shipped DeepGate3 checkpoint has hop/path
+  transformer weights but no `transformer.*` weights for the `plain`
+  architecture.
+- A `plain` transformer smoke
+  `exp/diversity_check/deepgate3_embedding_probe_20260621_034803_UTC/`
+  ran, but it mixes loaded tokenizer weights with unpopulated plain-transformer
+  layers and is diagnostic-only.
+- Checkpoint-compatible tokenizer probe:
+  `exp/diversity_check/deepgate3_tokenizer_probe_20260621_034921_UTC/`.
+- Tokenizer probe result: 3 successful 256-dim embeddings, 3 zero-node skips,
+  model load 0.248 s, encode 0.381 s, pairwise cosine min/mean/max
+  `0.999968 / 0.999971 / 0.999976`.
+- Interpretation: DeepGate3 setup and AIG export are no longer unattempted.
+  The current bounded evidence is negative/inconclusive: sequential RTL needs
+  a better FF/cone policy, and the checkpoint-compatible embeddings collapse
+  on three same-problem adder variants.
+- Artifact hashes:
+  - `deepgate3_aig_export.csv`:
+    `fe042e5ff9d172a4d436f91d0db07c8771c6feab1f3bd27e8004877ab6b5bbb7`
+  - `deepgate3_aig_summary.json`:
+    `22735689550c9752ecfa382752cc0a3213c7d2becf4025707cb6a98e79a861d6`
+  - `deepgate3_graphs_latch_free.npz`:
+    `47c657e423c9500fdf74d0a3a3d3eb897d1be82172b700e49133b6c8d9986fef`
+  - `deepgate3_tokenizer_embeddings.npy`:
+    `61279be160dfbffc8c234775b29de22e57119c2a3672a8eea388df7a0c83e00b`
+  - `deepgate3_tokenizer_summary.json`:
+    `64b74d6f2e50c0f0a6816910d281173764e9db18f7f733b5128dba232d1d57e8`
+  - `deepgate3_tokenizer_rows.csv`:
+    `fca404c9ed17615571b68f3de1932045575d9d6e40eb3966e5a888f6cba0b5d2`

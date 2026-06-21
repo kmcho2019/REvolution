@@ -182,11 +182,11 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 - [x] Add Yosys-normalized RTL to the Qwen3 probe.
 - [x] Record first Qwen device, model id, artifact path/hash, runtime, and
   stability results.
-- [ ] Try DeepGate3 setup through `uv add`, a documented source checkout, or
+- [x] Try DeepGate3 setup through `uv add`, a documented source checkout, or
   an isolated ignored environment before blocker status is accepted.
-- [ ] Export AIG/Yosys graph inputs for a bounded corpus slice and record
+- [x] Export AIG/Yosys graph inputs for a bounded corpus slice and record
   whether sequential state is kept, cone-split, or dropped.
-- [ ] Run DeepGate3 embeddings end to end or log exact graph/model/setup
+- [x] Run DeepGate3 embeddings end to end or log exact graph/model/setup
   blocker evidence.
 - [ ] Create per-encoder method cards for Qwen3 and DeepGate3 with extraction,
   stability, non-collapse, leakage, runtime, interpretability, and verdict.
