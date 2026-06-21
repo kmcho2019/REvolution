@@ -533,3 +533,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated `current_results_matrix.md` because T23 now exists; the next decision
   is no longer to build the validation matrix, but to use it to specify a live
   SR-RFF/SR-ReLU local-Pareto run.
+
+## T24 SR Pareto Live Validation Package - 2026-06-21 UTC
+
+- Created `techniques/T24_sr_pareto_live_validation/` as the next live
+  validation package after T23.
+- Preflighted `http://20.0.0.103:8000/v1/models`; response reports
+  `openai/gpt-oss-120b` with `max_model_len=131072`, satisfying the 128000
+  token-policy requirement.
+- Mirrored the preflight JSON into
+  `tables/preflight_models_20260621_184346_UTC.json` with sha256
+  `7286fa860e28d21680352c03d8352b44523fe651bb4c11378a607c391f9422b9`.
+- Fixed the first live screen to three RTLLM problems from the frozen subset:
+  `Prob045_alu`, `Prob041_traffic_light`, and `Prob015_multi_pipe_8bit`.
+- Added the six-arm comparator matrix: classic, manual BD, T22 random, T20 SR
+  raw PCA, T19 SR ReLU PCA, and T04 SR-RFF PCA.
+- T24 uses existing live code paths rather than new archive code:
+  `qd_cell_mode=pareto_front`, `qd_max_elites_per_cell=5`,
+  `qd_parent_selection=nsga2_global_rank`, and
+  `qd_champion_lane_fraction=0.5`.
+- Tier remains `pending_live_run`. No T1/T2/T3 claim is allowed until the
+  commands complete, validator outputs exist, and figures/tables are inspected.

@@ -54,7 +54,7 @@ flowchart TD
   N --> H
   G --> R[T23 SR Pareto validation matrix]
   R --> H
-  H --> S[Next live local-Pareto validation branch]
+  H --> S[T24 SR Pareto live validation]
 
   A --> I[T06 Qwen whole-RTL diagnostic]
   I --> J[Qwen3 preprocessing ladder]
@@ -78,6 +78,7 @@ flowchart TD
 | 2026-06-21 | `L4` learned encoders | T06 Qwen diagnostic | `ablate` | Raw whole-RTL embeddings are not enough; preprocessing and projection remain open. | Qwen3 canonical-RTL/netlist preprocessing ladder on an isolated env branch if needed. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
+| 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
 | 2026-06-21 | `L6` lineage and emitters | T12/T18 scaffolds plus T17 evidence | `hybridize` | Lineage/emitter methods should improve search dynamics around SR-RFF/SR-ReLU, not become generic descriptor resets. | Specify exploit/explore/repair scheduling after the first live local-Pareto run. |
 
 ## Lane Notes
@@ -163,10 +164,10 @@ common-audit QD score and local front material while staying within the
 near-classic quality tolerance. SR ReLU PCA beats classic and random on final
 HV and HV AUC, but does not beat random on local front material.
 
-Current follow-up: run a live Smooth-QD-v2-style variant with non-PPA descriptor
-cell assignment and evaluated-PPA parent sampling only after archive insertion:
-50 percent local Pareto crowded tournament, 30 percent underfilled-cell
-exploration, and 20 percent global nondominated-front sampling.
+Current follow-up: execute T24. The package uses non-PPA descriptor assignment,
+bounded per-cell Pareto fronts, NSGA-II global parent sampling, and a
+50 percent champion lane. The package must remain `pending_live_run` until the
+full command matrix finishes and figures/tables are inspected.
 
 ### `L6` Lineage And Emitters
 

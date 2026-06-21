@@ -103,6 +103,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       and tier decision.
 - [x] `T23_sr_pareto_validation_matrix` has methodology, results, figures,
       tables, and tier decision.
+- [ ] `T24_sr_pareto_live_validation` live command matrix is executed,
+      packaged with results, figures, tables, and tier decision.
 
 ## Minimum Goal Completion
 

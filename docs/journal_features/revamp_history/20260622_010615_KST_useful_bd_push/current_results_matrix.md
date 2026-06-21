@@ -24,6 +24,8 @@ Real result packages:
 - `T23_sr_pareto_validation_matrix`
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
+`T24` is a ready-to-run live validation package and is not counted as a real
+result until live artifacts land.
 The ten-package minimum is satisfied, but the goal is still active because
 validation of leads and adversarial sign-off are not done.
 
@@ -66,6 +68,12 @@ the standalone HV delta is too small for promotion.
 classic, manual BD, T22 random, T19 SR ReLU PCA, and T04 SR-RFF PCA. It is the
 current bridge from replay evidence to the next live local-Pareto experiment.
 
+`T24_sr_pareto_live_validation` fixes that next live experiment: a
+three-problem RTLLM development screen for classic, manual BD, T22 random,
+T20 SR raw PCA, T19 SR ReLU PCA, and T04 SR-RFF PCA using live
+`qd_cell_mode=pareto_front`, max five elites per cell, NSGA-II global parent
+selection, and a 50 percent champion lane. It has no live result tier yet.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -86,6 +94,7 @@ current bridge from replay evidence to the next live local-Pareto experiment.
 
 - Use `T23` to specify a bounded live local-Pareto validation for `T04` SR-RFF
   and `T19` SR ReLU, with `T20` raw PCA as the SR-family ablation.
+- Execute the T24 command matrix before adding another passive SR-family table.
 - Keep `T22` in validation tables as a required comparator for any positive
   claim.
 - Run deeper per-problem analysis on `Prob011_multi_16bit`,
