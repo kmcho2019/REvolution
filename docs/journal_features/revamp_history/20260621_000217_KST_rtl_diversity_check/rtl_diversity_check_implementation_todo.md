@@ -177,6 +177,9 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   reconstructive replay.
 - [ ] Add duplicate-suppression replay by canonical netlist hash and
   near-identical motif signature.
+  Partial: `wp0_duplicate_suppression.csv` covers canonical netlist hash and
+  exact motif-signature hash for ST-NOD/SR seed-3 roots. Near-identical motif
+  distance and quality-gated novelty remain open.
 - [ ] Report diversity through the generated, functional, synthesis-valid,
   valid-PPA, and Pareto-front funnels for each descriptor family.
 - [ ] Add common-audit comparisons that do not let each descriptor define an

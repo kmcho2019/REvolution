@@ -29,6 +29,7 @@ def test_build_reconstruction_keeps_generated_descriptors(tmp_path: Path) -> Non
     assert summary["candidate_rows"] == 4
     assert summary["event_rows"] == 2
     assert summary["budget_rows"] == 8
+    assert summary["duplicate_suppression_rows"] == 16
     methods = {row["method_name"]: row for row in summary["methods"]}
     assert methods["synthesis_trajectory_nod"]["descriptor_rows"] == 2
     assert methods["synthesis_trajectory_nod"]["valid_ppa_rows"] == 1
@@ -36,6 +37,11 @@ def test_build_reconstruction_keeps_generated_descriptors(tmp_path: Path) -> Non
     assert (tmp_path / "out" / "wp0_descriptor_rows.parquet").is_file()
     budget = pd.read_csv(tmp_path / "out" / "wp0_budget_curves.csv")
     assert set(budget["budget_fraction"]) == {0.25, 0.5, 0.75, 1.0}
+    duplicate = pd.read_csv(tmp_path / "out" / "wp0_duplicate_suppression.csv")
+    assert set(duplicate["replay_key"]) == {
+        "canonical_netlist",
+        "exact_motif_signature",
+    }
 
 
 def _write_method(auto_bd_root: Path, method: str, cell_id: str) -> None:

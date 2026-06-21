@@ -774,3 +774,45 @@ validation evidence.
     tests/scripts/test_reconstruct_rtl_diversity_wp0.py`: clean.
   - `uv run pyright scripts/reconstruct_rtl_diversity_wp0.py`: 0 errors,
     0 warnings.
+
+### WP0 Duplicate-Suppression Replay Artifact
+
+- Extended `scripts/reconstruct_rtl_diversity_wp0.py` to emit
+  `wp0_duplicate_suppression.csv`.
+- Ran:
+  `uv run python scripts/reconstruct_rtl_diversity_wp0.py --output-dir exp/diversity_check/wp0_stnod_sr_replay_20260621_041018_UTC`.
+- Artifact directory:
+  `exp/diversity_check/wp0_stnod_sr_replay_20260621_041018_UTC/`.
+- The replay file has 624 rows:
+  two methods, three seeds, 13 problems, four budget checkpoints, and two
+  replay keys (`canonical_netlist` and `exact_motif_signature`).
+- Full-budget canonical-netlist replay:
+  - ST-NOD: 1,896 valid-PPA rows, 1,044 suppressed duplicate hits, 852
+    retained unique canonical netlists, online retained Pareto size 176, and
+    raw baseline Pareto size 558.
+  - SR random-ReLU PCA: 1,906 valid-PPA rows, 1,006 suppressed duplicate hits,
+    900 retained unique canonical netlists, online retained Pareto size 174,
+    and raw baseline Pareto size 496.
+- Full-budget exact-motif replay:
+  - ST-NOD: 1,292 suppressed duplicate hits, 604 retained exact motif
+    signatures, online retained Pareto size 112, and raw baseline Pareto size
+    558.
+  - SR random-ReLU PCA: 1,253 suppressed duplicate hits, 653 retained exact
+    motif signatures, online retained Pareto size 116, and raw baseline
+    Pareto size 496.
+- Interpretation: duplicate/equivalent candidates are numerous in both
+  descriptor arms, and raw Pareto counts can overstate unique structural
+  contribution because duplicate points are counted separately. This replay is
+  not a quality-gated novelty result yet; it is a prerequisite diagnostic for
+  a valid-only novelty lane and a reminder to report unique-front counts next
+  to raw Pareto counts.
+- Artifact hash:
+  - `wp0_duplicate_suppression.csv`:
+    `3a29b887dbfcbfdb682c8dfc81e39147ad3946120945c6cf4792d348ed4d8834`
+- Validation:
+  - `uv run pytest -q tests/scripts/test_reconstruct_rtl_diversity_wp0.py`:
+    1 passed.
+  - `uv run ruff check scripts/reconstruct_rtl_diversity_wp0.py
+    tests/scripts/test_reconstruct_rtl_diversity_wp0.py`: clean.
+  - `uv run pyright scripts/reconstruct_rtl_diversity_wp0.py`: 0 errors,
+    0 warnings.

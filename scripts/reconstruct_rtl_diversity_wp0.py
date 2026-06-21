@@ -21,6 +21,10 @@ DEFAULT_AUTO_BD_ROOT = Path(
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "exp/diversity_check/wp0_stnod_sr_reconstruction"
 METHODS = ("synthesis_trajectory_nod", "sr_random_relu_pca_qd")
 CHECKPOINTS = (0.25, 0.50, 0.75, 1.00)
+REPLAY_KEYS = (
+    ("canonical_netlist_hash", "canonical_netlist"),
+    ("motif_signature_hash", "exact_motif_signature"),
+)
 CANDIDATE_REQUIRED_COLUMNS = {
     "method_name",
     "problem_id",
@@ -53,18 +57,21 @@ def build_reconstruction(auto_bd_root: Path, output_dir: Path) -> dict[str, Any]
     events = load_qd_events(auto_bd_root)
     budget = budget_curve_rows(candidates)
     operators = operator_yield_rows(candidates)
+    duplicate = duplicate_suppression_rows(candidates)
 
     artifacts = {
         "reconstructed_rows_parquet": output_dir / "wp0_descriptor_rows.parquet",
         "reconstructed_rows_csv": output_dir / "wp0_descriptor_rows.csv",
         "budget_curves_csv": output_dir / "wp0_budget_curves.csv",
         "operator_yield_csv": output_dir / "wp0_operator_yield.csv",
+        "duplicate_suppression_csv": output_dir / "wp0_duplicate_suppression.csv",
         "qd_events_csv": output_dir / "wp0_qd_events.csv",
     }
     candidates.to_parquet(artifacts["reconstructed_rows_parquet"], index=False)
     candidates.to_csv(artifacts["reconstructed_rows_csv"], index=False)
     budget.to_csv(artifacts["budget_curves_csv"], index=False)
     operators.to_csv(artifacts["operator_yield_csv"], index=False)
+    duplicate.to_csv(artifacts["duplicate_suppression_csv"], index=False)
     events.to_csv(artifacts["qd_events_csv"], index=False)
 
     summary = {
@@ -75,6 +82,7 @@ def build_reconstruction(auto_bd_root: Path, output_dir: Path) -> dict[str, Any]
         "event_rows": int(len(events)),
         "budget_rows": int(len(budget)),
         "operator_rows": int(len(operators)),
+        "duplicate_suppression_rows": int(len(duplicate)),
         "methods": method_summaries(candidates),
         "artifacts": {key: path.as_posix() for key, path in artifacts.items()},
         "artifact_sha256": {
@@ -200,6 +208,56 @@ def operator_yield_rows(candidates: pd.DataFrame) -> pd.DataFrame:
             }
         )
     return pd.DataFrame(rows)
+
+
+def duplicate_suppression_rows(candidates: pd.DataFrame) -> pd.DataFrame:
+    rows: list[dict[str, object]] = []
+    groups = candidates.groupby(["method_name", "seed", "problem_id"], sort=True)
+    for (method, seed, problem), group in groups:
+        ordered = group.sort_values(["generation", "row_order"])
+        for fraction in CHECKPOINTS:
+            prefix = ordered.head(math.ceil(len(ordered) * fraction))
+            valid = prefix.loc[prefix["valid_ppa"].astype(bool)]
+            for key_column, key_name in REPLAY_KEYS:
+                keyed = valid.loc[nonempty_mask(valid[key_column])].copy()
+                online = keyed.drop_duplicates(key_column, keep="first")
+                oracle = best_per_key(keyed, key_column)
+                rows.append(
+                    {
+                        "method_name": method,
+                        "seed": int(seed),
+                        "problem_id": problem,
+                        "budget_fraction": fraction,
+                        "replay_key": key_name,
+                        "evaluated_count": int(len(prefix)),
+                        "valid_ppa_count": int(len(valid)),
+                        "keyed_valid_count": int(len(keyed)),
+                        "suppressed_duplicate_count": int(len(keyed) - len(online)),
+                        "online_retained_count": int(len(online)),
+                        "online_pareto_size": pareto_size(online),
+                        "online_best_fitness": numeric_max(online, "fitness"),
+                        "oracle_retained_count": int(len(oracle)),
+                        "oracle_pareto_size": pareto_size(oracle),
+                        "oracle_best_fitness": numeric_max(oracle, "fitness"),
+                        "baseline_pareto_size": pareto_size(valid),
+                        "baseline_best_fitness": numeric_max(valid, "fitness"),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+def best_per_key(frame: pd.DataFrame, key_column: str) -> pd.DataFrame:
+    if frame.empty:
+        return frame
+    ranked = frame.copy()
+    ranked["_fitness_rank"] = pd.to_numeric(
+        ranked["fitness"], errors="coerce"
+    ).fillna(-math.inf)
+    ranked = ranked.sort_values(
+        ["_fitness_rank", "generation", "row_order"],
+        ascending=[False, True, True],
+    )
+    return ranked.drop_duplicates(key_column, keep="first").drop(columns=["_fitness_rank"])
 
 
 def method_summaries(candidates: pd.DataFrame) -> list[dict[str, object]]:
