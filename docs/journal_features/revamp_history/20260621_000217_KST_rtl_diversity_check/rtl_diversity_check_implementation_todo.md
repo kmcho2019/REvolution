@@ -179,7 +179,7 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   `exp/diversity_check/encoder_envs/` and record the command.
 - [x] Run real Qwen3-Embedding-0.6B extraction on a bounded corpus slice for
   raw, comment-stripped, and identifier-normalized RTL.
-- [ ] Add Yosys-normalized RTL to the Qwen3 probe.
+- [x] Add Yosys-normalized RTL to the Qwen3 probe.
 - [x] Record first Qwen device, model id, artifact path/hash, runtime, and
   stability results.
 - [ ] Try DeepGate3 setup through `uv add`, a documented source checkout, or

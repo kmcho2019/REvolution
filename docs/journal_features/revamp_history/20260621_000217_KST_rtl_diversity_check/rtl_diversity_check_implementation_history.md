@@ -541,3 +541,32 @@ validation evidence.
   normalization can sharply change embeddings, so leakage/stability controls
   and a larger common audit are required before any predictive or in-loop
   claim.
+
+### WP1 Qwen3 Yosys-Normalized Probe
+
+- Reused the same 15-candidate bounded slice and converted each RTL file with
+  Yosys `read_verilog -sv`, `hierarchy -auto-top`, `proc`, `opt`, and
+  `write_verilog -noattr`.
+- Yosys version:
+  `Yosys 0.54+29 (git sha1 7b0c1fe49, g++ 11.4.0-1ubuntu1~22.04.3 -fPIC -O3)`.
+- Conversion result: 15 of 15 candidates produced normalized Verilog.
+- Artifact directory:
+  `exp/diversity_check/qwen3_yosys_probe_20260621_033323_UTC/`.
+- Outputs:
+  `qwen3_yosys_stability.csv`, `qwen3_yosys_embeddings.npy`,
+  `qwen3_yosys_summary.json`, and per-candidate Yosys scripts/Verilog under
+  `yosys_normalized/`.
+- Summary: 15 Yosys-normalized texts, embedding shape `[15, 1024]`,
+  Yosys conversion 0.275 s, model load 6.919 s, encode 0.662 s.
+- Raw-to-Yosys cosine min/mean/max: `0.7913 / 0.8624 / 0.9307`.
+- Artifact hashes:
+  - `qwen3_yosys_embeddings.npy`:
+    `a95923dc85037d252d55f5cdbc43885769df2e5fe1d4caec28c6162ae74ae9c7`
+  - `qwen3_yosys_summary.json`:
+    `0d0fafd95bf74f7c46e7a7f9b8c543563af7d5a6415e6cc5a1e825e3f1eb6a5f`
+  - `qwen3_yosys_stability.csv`:
+    `f50e218b9c11437d766480320a3b3f89f6bb896558f5cb478f8def80f1f52e89`
+- Interpretation: Qwen3 is moderately stable to Yosys normalization on this
+  small slice and less stable to identifier erasure. This supports treating
+  Qwen as a diagnostic encoder worth a larger common-audit run, but it still
+  does not establish predictive utility or justify in-loop use.
