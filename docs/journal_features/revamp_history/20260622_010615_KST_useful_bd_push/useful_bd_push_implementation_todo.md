@@ -17,16 +17,16 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Add local vLLM runtime guide for endpoint preflight and live commands.
 - [x] Verify `http://20.0.0.103:8000/v1/models` returns live
       `openai/gpt-oss-120b` metadata.
-- [ ] Confirm branch, HEAD, dirty state, data mounts, GPU visibility, and
+- [x] Confirm branch, HEAD, dirty state, data mounts, GPU visibility, and
       output roots at goal start.
-- [ ] Read the 20260618 Auto-BD negative decision and the 20260621 compiled
+- [x] Read the 20260618 Auto-BD negative decision and the 20260621 compiled
       diversity conclusion before implementing methods.
-- [ ] Verify the copied ASP-DAC release source and any available
+- [x] Verify the copied ASP-DAC release source and any available
       `aspdac2026-paper` ref.
-- [ ] Create `exp/useful_bd_push/` output convention and central run ledger.
-- [ ] Re-preflight the selected vLLM endpoint and record `/v1/models` metadata
+- [x] Create `exp/useful_bd_push/` output convention and central run ledger.
+- [x] Re-preflight the selected vLLM endpoint and record `/v1/models` metadata
       before each live sampling batch.
-- [ ] Create `exp/useful_bd_push/envs/` and `exp/useful_bd_push/sources/`
+- [x] Create `exp/useful_bd_push/envs/` and `exp/useful_bd_push/sources/`
       conventions for isolated dependencies and external method repos.
 
 ## Common Evaluation Surface
@@ -48,10 +48,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 
 ## Screening Subset
 
-- [ ] Generate subset selection table from replay data.
-- [ ] Freeze 8-12 screening problems before method outcomes are reviewed.
-- [ ] Freeze a holdout subset for any `T1` or `T2` candidate.
-- [ ] Record any replacement by the pre-registered rule.
+- [x] Generate subset selection table from replay data.
+- [x] Freeze 8-12 screening problems before method outcomes are reviewed.
+- [x] Freeze a holdout subset for any `T1` or `T2` candidate.
+- [x] Record any replacement by the pre-registered rule.
 
 ## Technique Packages
 

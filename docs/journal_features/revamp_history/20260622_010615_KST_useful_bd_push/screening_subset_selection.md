@@ -82,3 +82,44 @@ The central report must include:
 - why each included problem belongs to its stratum;
 - evidence that the subset was not changed after method outcomes were known;
 - per-problem results so aggregate wins cannot hide failures.
+
+## Frozen Subset - 2026-06-21 UTC
+
+The first active goal pass froze the screening subset from the compared
+Auto-BD replay slice before running new useful-BD methods. The scoring table is
+committed at `tables/screening_subset_candidates.csv`; the selected screening
+set is `tables/frozen_screening_subset.csv`; the holdout set is
+`tables/holdout_screening_subset.csv`.
+
+Replay sources:
+
+- candidate audit:
+  `exp/diversity_check/restarted_report_20260621_075346_UTC/candidate_audit.parquet`
+  (`sha256=45bf15f12ac23e429b89da8e168d7f4ad4404a9fcbb911f78c36de4af05d400f`);
+- WP0 descriptor rows:
+  `exp/diversity_check/wp0_stnod_sr_replay_20260621_041018_UTC/wp0_descriptor_rows.parquet`
+  (`sha256=0a545bc34622b6f5c4a54dffeb33427028bcc4b0cd14903d6a27916da47af28a`).
+
+Frozen screening problems:
+
+| Rank | Problem | Stratum | Reason |
+| --- | --- | --- | --- |
+| 1 | `VerilogEval-Spec-to-RTL/Prob153_gshare` | memory/interface | forced prior signal |
+| 2 | `RTLLM/Prob045_alu` | arithmetic/datapath | forced prior signal |
+| 3 | `RTLLM/Prob037_parallel2serial` | bit/vector | stratum seed |
+| 4 | `RTLLM/Prob041_traffic_light` | control/sequential | stratum seed |
+| 5 | `RTLLM/Prob015_multi_pipe_8bit` | arithmetic/datapath | score fill |
+| 6 | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | control/sequential | score fill |
+| 7 | `RTLLM/Prob024_fsm` | control/sequential | score fill |
+| 8 | `RTLLM/Prob004_adder_8bit` | arithmetic/datapath | score fill |
+| 9 | `RTLLM/Prob049_signal_generator` | arithmetic/datapath | score fill |
+| 10 | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | control/sequential | score fill |
+
+Holdout problems selected by the same rule:
+
+- `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot`;
+- `VerilogEval-Spec-to-RTL/Prob098_circuit7`;
+- `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b`.
+
+Replacement remains governed by the rule above. No replacement was applied in
+this setup pass.

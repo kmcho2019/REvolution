@@ -95,3 +95,40 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Compressed `goal_template.md` so the activated goal body is safely under the
   4000-character goal-tool limit while keeping the sibling plan and policy
   files as the detailed contract.
+
+## Active Goal Setup - 2026-06-21 UTC
+
+- Confirmed active branch `feat/journal-useful-bd-exp-20260622` at
+  `c1bc8e669907d4a80cb34c8ffaf3c2ca725a5612`.
+- Dirty state at setup contained only the unrelated untracked
+  `.devcontainer/devcontainer-lock.json` before new setup edits began.
+- GPU visibility: one RTX A4000 and three RTX A6000 devices were visible via
+  `nvidia-smi`.
+- Re-preflighted `http://20.0.0.103:8000/v1/models`; it returned
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Read the 20260621 compiled conclusion and the 20260618/20260621 negative
+  evidence trail. The key setup lesson is to reuse negative evidence without
+  treating prior Qwen/DeepGate/AURORA failures as a reason to stop this push.
+- Verified no local or remote branch named `aspdac2026-paper` is present in
+  this worktree, while the copied ASP-DAC source archive exists under
+  `exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/`.
+- Added `scripts/report_useful_bd_push_setup.py` and a focused test to create
+  setup artifacts from replay tables without touching core QD code.
+- Ran
+  `.venv/bin/python scripts/report_useful_bd_push_setup.py --timestamp 20260621_164500_UTC`.
+  The script created ignored raw artifacts under
+  `exp/useful_bd_push/setup_20260621_164500_UTC/`, initialized
+  `exp/useful_bd_push/run_ledger.jsonl`, and created `envs/` plus `sources/`
+  conventions for isolated dependencies.
+- Committed setup tables under `tables/`: `source_inventory.csv`,
+  `screening_subset_candidates.csv`, `frozen_screening_subset.csv`, and
+  `holdout_screening_subset.csv`.
+- Frozen screening subset: `VerilogEval-Spec-to-RTL/Prob153_gshare`,
+  `RTLLM/Prob045_alu`, `RTLLM/Prob037_parallel2serial`,
+  `RTLLM/Prob041_traffic_light`, `RTLLM/Prob015_multi_pipe_8bit`,
+  `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm`, `RTLLM/Prob024_fsm`,
+  `RTLLM/Prob004_adder_8bit`, `RTLLM/Prob049_signal_generator`, and
+  `VerilogEval-Spec-to-RTL/Prob116_m2014_q3`.
+- Holdout subset: `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot`,
+  `VerilogEval-Spec-to-RTL/Prob098_circuit7`, and
+  `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b`.
