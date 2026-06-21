@@ -83,6 +83,27 @@ WP3_LEARNED_SUMMARIES = (
         "wp3_learned_encoder_summary.json"
     ),
 )
+LINEAGE_AUDIT_SUMMARY = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp0_lineage_source_audit_20260621_055941_UTC/"
+        "lineage_source_summary.json"
+    )
+)
+LINEAGE_YIELD_SUMMARY = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp0_lineage_descendant_yield_20260621_060447_UTC/"
+        "lineage_yield_summary.json"
+    )
+)
+LINEAGE_YIELD_AGGREGATE = (
+    REPO_ROOT
+    / (
+        "exp/diversity_check/wp0_lineage_descendant_yield_20260621_060447_UTC/"
+        "lineage_aggregate.csv"
+    )
+)
 RANDOM_SEEDS = tuple(range(20))
 VERILOG_KEYWORDS = {
     "always",
@@ -172,13 +193,14 @@ def build_report(
     )
     deepgate_card = deepgate_diagnostics(output_dir)
     learned_card = learned_encoder_diagnostics()
+    lineage_card = lineage_diagnostics()
 
     problem_metrics = problem_level_metrics(evolution_analysis)
     cluster_rows = cluster_contribution_rows(evolution_analysis)
     replay_rows = replay_rows_for_candidates(evolution_analysis)
     early_rows = early_diversity_rows(evolution_analysis, problem_metrics)
     gate_rows = gate_matrix(cluster_rows, replay_rows, early_rows)
-    claim_rows, verdict = claim_levels_and_verdict(gate_rows)
+    claim_rows, verdict = claim_levels_and_verdict(gate_rows, lineage_card)
     encoder_rows = encoder_leaderboard(
         qwen_card,
         deepgate_card,
@@ -246,6 +268,7 @@ def build_report(
         "qwen_card": qwen_card,
         "deepgate_card": deepgate_card,
         "learned_card": learned_card,
+        "lineage_card": lineage_card,
         "auto_bd_controls": auto_bd_controls,
         "wp0_replay": wp0_replay,
         "gate_matrix": gate_rows,
@@ -264,6 +287,7 @@ def build_report(
         encoder_rows=encoder_rows,
         wp0_replay=wp0_replay,
         learned_card=learned_card,
+        lineage_card=lineage_card,
         case_rows=case_rows,
     )
     return payload
@@ -1091,7 +1115,10 @@ def replay_policy_summary(replay_rows: pd.DataFrame) -> dict[str, dict[str, floa
     return summary
 
 
-def claim_levels_and_verdict(gate_rows: list[dict[str, Any]]) -> tuple[list[dict[str, str]], str]:
+def claim_levels_and_verdict(
+    gate_rows: list[dict[str, Any]],
+    lineage_card: dict[str, Any],
+) -> tuple[list[dict[str, str]], str]:
     statuses = {row["gate"].split()[0]: row["status"] for row in gate_rows}
     d3_row = next(row for row in gate_rows if row["gate"].startswith("D3"))
     d2_row = next(row for row in gate_rows if row["gate"].startswith("D2"))
@@ -1135,7 +1162,7 @@ def claim_levels_and_verdict(gate_rows: list[dict[str, Any]]) -> tuple[list[dict
         {
             "level": "L3 mechanistic",
             "status": "NOT_SUPPORTED",
-            "evidence": "parent-child lineage was not recoverable in the selected corpus",
+            "evidence": lineage_card["mechanistic_evidence"],
         },
         {
             "level": "L4 active",
@@ -1438,6 +1465,51 @@ def learned_encoder_diagnostics() -> dict[str, Any]:
         "summary_paths": [path.as_posix() for path in WP3_LEARNED_SUMMARIES],
         "rows": rows,
         "summaries": summaries,
+    }
+
+
+def lineage_diagnostics() -> dict[str, Any]:
+    if not LINEAGE_AUDIT_SUMMARY.is_file() or not LINEAGE_YIELD_SUMMARY.is_file():
+        return {
+            "status": "not_found",
+            "mechanistic_evidence": (
+                "parent-child lineage artifacts were not loaded for this report"
+            ),
+            "aggregate_rows": [],
+            "audit_summary_path": LINEAGE_AUDIT_SUMMARY.as_posix(),
+            "yield_summary_path": LINEAGE_YIELD_SUMMARY.as_posix(),
+        }
+    audit = load_json(LINEAGE_AUDIT_SUMMARY)
+    yield_summary = load_json(LINEAGE_YIELD_SUMMARY)
+    aggregate_rows = (
+        pd.read_csv(LINEAGE_YIELD_AGGREGATE).to_dict("records")
+        if LINEAGE_YIELD_AGGREGATE.is_file()
+        else []
+    )
+    mean_deltas = [
+        finite_or_nan(row["mean_quality_delta"])
+        for row in aggregate_rows
+        if "mean_quality_delta" in row
+    ]
+    positive_mean_groups = sum(int(value > 0) for value in mean_deltas if not math.isnan(value))
+    mechanistic_evidence = (
+        f"lineage audit found {audit['lineage_file_count']} files with "
+        f"{audit['lineage_edge_count']} parent/lineage edges; descendant-yield "
+        f"analysis recovered {yield_summary['edge_count']} edges and "
+        f"{yield_summary['positive_quality_delta_edges']} positive child-quality "
+        f"deltas, but {positive_mean_groups}/{len(mean_deltas)} method/table "
+        "groups have positive mean quality delta"
+    )
+    return {
+        "status": "loaded",
+        "audit_summary_path": LINEAGE_AUDIT_SUMMARY.as_posix(),
+        "yield_summary_path": LINEAGE_YIELD_SUMMARY.as_posix(),
+        "aggregate_path": LINEAGE_YIELD_AGGREGATE.as_posix(),
+        "audit": audit,
+        "yield_summary": yield_summary,
+        "aggregate_rows": aggregate_rows,
+        "mechanistic_evidence": mechanistic_evidence,
+        "verdict": "mechanistic_not_supported",
     }
 
 
@@ -1750,6 +1822,7 @@ def write_markdown_report(
     encoder_rows: list[dict[str, Any]],
     wp0_replay: dict[str, Any],
     learned_card: dict[str, Any],
+    lineage_card: dict[str, Any],
     case_rows: pd.DataFrame,
 ) -> None:
     verdict = payload["verdict"]
@@ -1795,6 +1868,13 @@ def write_markdown_report(
             "- DeepGate3 is deferred because the package/checkpoint is absent; "
             "Yosys is available for future AIG/JSON export."
         )
+    lineage_limit = (
+        "- Parent-child lineage was recovered in Auto-BD archive tables, but "
+        "method-level descendant-yield quality deltas remain negative on "
+        "average, so L3 mechanistic utility is not supported."
+        if lineage_card["status"] == "loaded"
+        else "- Parent-child lineage artifacts were not loaded for this report."
+    )
     lines = [
         "# Diversity Necessity Report",
         "",
@@ -1865,6 +1945,13 @@ def write_markdown_report(
         "",
         markdown_table(learned_card["rows"]),
         "",
+        "## WP0 Lineage Diagnostics",
+        "",
+        f"- Status: `{lineage_card['status']}`",
+        f"- Evidence: {lineage_card['mechanistic_evidence']}",
+        "",
+        markdown_table(lineage_card["aggregate_rows"]),
+        "",
         "## Encoder Leaderboard",
         "",
         markdown_table(encoder_rows),
@@ -1924,9 +2011,7 @@ def write_markdown_report(
             "",
             "## Limits",
             "",
-            "- Parent-child lineage was not recoverable from the selected broad "
-            "RTLLM artifacts, so D3 descendants and L3 mechanistic claims are "
-            "not supported.",
+            lineage_limit,
             qwen_limit,
             deepgate_limit,
             diversity_limit,

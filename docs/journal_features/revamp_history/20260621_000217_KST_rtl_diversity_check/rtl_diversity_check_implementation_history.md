@@ -1088,3 +1088,92 @@ validation evidence.
   `exp/diversity_check/restarted_report_20260621_051025_UTC/`. The
   WP3-integrated report needs refreshed adversarial validation after this
   report integration is committed.
+
+### WP0 Lineage Source Audit And Descendant Yield
+
+- Added `scripts/audit_rtl_diversity_lineage_sources.py` with focused test
+  `tests/scripts/test_audit_rtl_diversity_lineage_sources.py`.
+- Ran the source audit:
+  `uv run python scripts/audit_rtl_diversity_lineage_sources.py --output-dir exp/diversity_check/wp0_lineage_source_audit_20260621_055941_UTC`.
+- Audit artifact:
+  `exp/diversity_check/wp0_lineage_source_audit_20260621_055941_UTC/`.
+- Audit result: 3/5 roots existed, 9,564 files were readable, 9,548 files
+  exposed generation fields, 9,356 exposed operator fields, and 271 files had
+  non-empty lineage fields with 3,358 parent/lineage edges. The lineage-capable
+  files were in the Auto-BD archive CSVs; ASP-DAC and broad RTLLM generation
+  logs had generation/operator summaries but no non-empty lineage fields.
+- Missing roots logged explicitly:
+  `/home/kmcho/1_RESEARCH/2026_Revolution_Journal_Ext/code_repo/REvolution`
+  and
+  `/home/kmcho/1_RESEARCH/2026_REvolution_Journal_Ext/code_repo/REvolution`.
+- Audit artifact hashes:
+  - `lineage_source_summary.json`:
+    `e5a9c73cca5285db85bbe29e4eb7d8d6c697b535704426fef2b0c7357953d199`
+  - `lineage_source_files.csv`:
+    `6e35872e7a5c548c5de10ea111ad04c3243bb8204ff47568a6919e742b3b4647`
+  - `lineage_source_roots.csv`:
+    `52c9b57389c7c28a5c3d9c56d08006652bfe19f11100b9650f3b4befa784bd84`
+  - `lineage_source_audit.md`:
+    `c81beace593ac35146588fa1ca1ea7a1a5df2198411fd4b2ebe7ece3d0af7ac6`
+- Added `scripts/analyze_rtl_diversity_lineage_yield.py` with focused test
+  `tests/scripts/test_analyze_rtl_diversity_lineage_yield.py`.
+- Ran descendant-yield analysis:
+  `uv run python scripts/analyze_rtl_diversity_lineage_yield.py --lineage-files-csv exp/diversity_check/wp0_lineage_source_audit_20260621_055941_UTC/lineage_source_files.csv --output-dir exp/diversity_check/wp0_lineage_descendant_yield_20260621_060447_UTC`.
+- Yield artifact:
+  `exp/diversity_check/wp0_lineage_descendant_yield_20260621_060447_UTC/`.
+- Yield result: 3,358 parent-child edges, 2,233 parent-found edges, 1,829
+  new-cell edges, 779 positive child-quality deltas, and 2,063 parent-yield
+  rows. Every method/table aggregate had negative mean quality delta, so the
+  result does not support an L3 mechanistic or descendant-yield claim.
+- Yield artifact hashes:
+  - `lineage_yield_summary.json`:
+    `c502241e102259b988b6bfa7dcbdcee3bb390d312750375b080329928e89b016`
+  - `lineage_edges.csv`:
+    `1bb780b2a8b841949dc054d295a5c8e6db214c38cab2debac020c13a671e61e4`
+  - `lineage_parent_yield.csv`:
+    `06dad87c166341461d63ec328a0cb62c5c0f1f9d2e7c8041c4df9a18312834a3`
+  - `lineage_aggregate.csv`:
+    `db5426bcf69df05fcf8be27a390ef92f5efb765a7e44dd0ef36b63970e7e9e2a`
+  - `lineage_yield_report.md`:
+    `25368c732ac21104975cf76a734fc4e5391185a220147a46e36f35b5e097988b`
+- Updated `scripts/report_rtl_diversity_check.py` to load the lineage audit
+  and yield summaries into the central report. The L3 claim now states that
+  lineage was recovered but mechanistic utility remains unsupported because
+  0/8 method/table groups had positive mean quality delta.
+- Regenerated the central report:
+  `uv run python scripts/report_rtl_diversity_check.py --output-dir exp/diversity_check/restarted_report_20260621_060721_UTC --aspdac-root exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp --wp0-artifact-dir exp/diversity_check/wp0_quality_gated_novelty_20260621_041500_UTC --qwen-smoke-limit 64`.
+- Report artifact:
+  `exp/diversity_check/restarted_report_20260621_060721_UTC/`.
+- Updated report hashes:
+  - `diversity_necessity_report.md`:
+    `a5f09173b1e3ff35578b6c8b95ead01831e7f122ae4837bb560182147bb4563e`
+  - `diversity_necessity_report.json`:
+    `567283390da1e2a4937d3c8697a931bab5d110c754ce66251e67c6fdfefbaa9d`
+  - `encoder_leaderboard.csv`:
+    `38a138fb098198f12b8334837a7186aa6ea5e38ac9027369995a433b2ad71d32`
+  - `d_gate_matrix.csv`:
+    `4bf52c6ab5db8a13bec254fd7373643c6fa9fb9cdd11d259b05204bd0d0c995d`
+  - `claim_levels.csv`:
+    `27e5ee31d38a9fd2a48d351bba9a9d9731be70da66ba3896cbf8371a92dd8826`
+  - `wp0_replay_summary.csv`:
+    `c2656cc1f41cbc7998c8a4ffff0ee0376d8fd88393385d85626ed7f95d3d102b`
+  - `case_studies.csv`:
+    `c42ff93e19ede55c72ad9bcbc8dab49af7432c7b5e7241d14e87582d35e1f5d4`
+- Interpretation: this corrects the previous "lineage absent" finding. The
+  rigorous statement is now: lineage exists in Auto-BD archive tables, but the
+  observed descendant-yield signal is not strong enough to promote diversity
+  as mechanistically useful or to justify AURORA/finetuning in-loop.
+- Validation before commit:
+  - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_audit_rtl_diversity_lineage_sources.py
+    tests/scripts/test_analyze_rtl_diversity_lineage_yield.py`: 10 passed.
+  - `uv run ruff check scripts/report_rtl_diversity_check.py
+    scripts/audit_rtl_diversity_lineage_sources.py
+    scripts/analyze_rtl_diversity_lineage_yield.py
+    tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_audit_rtl_diversity_lineage_sources.py
+    tests/scripts/test_analyze_rtl_diversity_lineage_yield.py`: clean.
+  - `uv run pyright scripts/report_rtl_diversity_check.py
+    scripts/audit_rtl_diversity_lineage_sources.py
+    scripts/analyze_rtl_diversity_lineage_yield.py`: 0 errors, 0 warnings.
+  - `git diff --check`: clean.

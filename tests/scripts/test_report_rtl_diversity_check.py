@@ -180,6 +180,54 @@ def test_learned_encoder_diagnostics_reads_wp3_summaries(tmp_path, monkeypatch):
     assert "holdout d_canon=0" in card["rows"][0]["replay_signal"]
 
 
+def test_lineage_diagnostics_reads_yield_artifacts(tmp_path, monkeypatch):
+    audit_path = tmp_path / "lineage_source_summary.json"
+    yield_path = tmp_path / "lineage_yield_summary.json"
+    aggregate_path = tmp_path / "lineage_aggregate.csv"
+    audit_path.write_text(
+        json.dumps(
+            {
+                "lineage_file_count": 2,
+                "lineage_edge_count": 5,
+            }
+        ),
+        encoding="utf-8",
+    )
+    yield_path.write_text(
+        json.dumps(
+            {
+                "edge_count": 5,
+                "positive_quality_delta_edges": 1,
+            }
+        ),
+        encoding="utf-8",
+    )
+    pd.DataFrame(
+        [
+            {
+                "source_table": "archive_cells.csv",
+                "method_name": "method_a",
+                "mean_quality_delta": -0.1,
+            },
+            {
+                "source_table": "archive_cells.csv",
+                "method_name": "method_b",
+                "mean_quality_delta": 0.2,
+            },
+        ]
+    ).to_csv(aggregate_path, index=False)
+    monkeypatch.setattr(mod, "LINEAGE_AUDIT_SUMMARY", audit_path)
+    monkeypatch.setattr(mod, "LINEAGE_YIELD_SUMMARY", yield_path)
+    monkeypatch.setattr(mod, "LINEAGE_YIELD_AGGREGATE", aggregate_path)
+
+    card = mod.lineage_diagnostics()
+
+    assert card["status"] == "loaded"
+    assert len(card["aggregate_rows"]) == 2
+    assert "5 parent/lineage edges" in card["mechanistic_evidence"]
+    assert "1/2 method/table groups" in card["mechanistic_evidence"]
+
+
 def test_representative_cases_uses_replay_problem_candidate_path():
     candidates = pd.DataFrame(
         [

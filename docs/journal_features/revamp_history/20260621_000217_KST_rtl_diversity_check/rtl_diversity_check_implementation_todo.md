@@ -161,13 +161,21 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   non-empty descriptor/common-audit vectors are valid-PPA-scoped.
   Artifact:
   `exp/diversity_check/wp0_stnod_sr_reconstruction_20260621_040536_UTC/`.
-- [ ] Search historical corpora for lineage-rich generation logs with parent,
+- [x] Search historical corpora for lineage-rich generation logs with parent,
   operator, child, and descendant fields.
-  Partial: current audit and checked Auto-BD ST-NOD/SR parquets have zero
-  non-empty parent IDs; QD events preserve operator, origin pool, generation,
-  archive fields, and quality, but not parent candidate IDs.
-- [ ] Run parent-child jump or descendant-yield analysis on every corpus that
+  Scoped: ASP-DAC and broad RTLLM generation logs expose generation/operator
+  fields but no non-empty lineage; Auto-BD archive tables expose 271
+  lineage-capable files and 3,358 parent/lineage edges.
+  Artifact:
+  `exp/diversity_check/wp0_lineage_source_audit_20260621_055941_UTC/`.
+- [x] Run parent-child jump or descendant-yield analysis on every corpus that
   exposes lineage; otherwise log the corpus search that proves none do.
+  Scoped: descendant-yield analysis was run on the Auto-BD archive tables
+  that exposed lineage. It recovered 3,358 edges, 2,233 parent-found edges,
+  and 779 positive child-quality deltas, but 0/8 method/table groups had
+  positive mean quality delta.
+  Artifact:
+  `exp/diversity_check/wp0_lineage_descendant_yield_20260621_060447_UTC/`.
 - [ ] Compute diversity at 25%, 50%, 75%, and 100% of budget where generation
   metadata exists.
   Partial: computed for ST-NOD/SR seed-3 roots in
