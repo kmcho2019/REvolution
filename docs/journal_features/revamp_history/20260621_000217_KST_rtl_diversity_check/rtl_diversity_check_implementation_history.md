@@ -1525,3 +1525,56 @@ validation evidence.
   - `uv run pyright scripts/report_rtl_diversity_check.py
     scripts/run_rtl_diversity_wp1_qwen_common_audit.py`: 0 errors,
     0 warnings.
+
+### Refreshed Restarted Adversarial Validation For Current HEAD
+
+- Ran the independent adversarial validation prompt after the Qwen
+  common-audit, near-motif, rich-encoder, and budget-funnel commits.
+- Validation report:
+  `docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/rtl_diversity_check_subagent_validation_report.md`.
+- Validator verdict: PASS.
+- Scope:
+  - HEAD `e63f73da83643768e6fa3b549cad2205e3babc6d`
+    (`feat(diversity): Add Qwen replay`).
+  - Report artifact:
+    `exp/diversity_check/restarted_report_20260621_075346_UTC/`.
+  - Claim validated only as `B illumination_only` and
+    diagnostic-only/no-proceed, not reconstructive, predictive, mechanistic,
+    active, or Auto-BD method evidence.
+- Validator commands:
+  - `git status --short --branch && git log --oneline -5`: branch and HEAD
+    matched the request; only unrelated untracked
+    `.devcontainer/devcontainer-lock.json` was present.
+  - `findmnt -T /aux/revolution-history -o TARGET,SOURCE,FSTYPE,OPTIONS`:
+    historical mount was NFS4 with read-only options; write test exited `1`.
+  - `uv run pytest -q tests/scripts/test_report_rtl_diversity_check.py
+    tests/scripts/test_reconstruct_rtl_diversity_wp0.py
+    tests/scripts/test_analyze_rtl_diversity_budget_funnels.py
+    tests/scripts/test_audit_rtl_diversity_lineage_sources.py
+    tests/scripts/test_analyze_rtl_diversity_lineage_yield.py
+    tests/scripts/test_run_rtl_diversity_wp3_learned_encoder.py
+    tests/scripts/test_run_rtl_diversity_wp3_rich_encoder.py
+    tests/scripts/test_analyze_rtl_diversity_near_motif_suppression.py
+    tests/scripts/test_run_rtl_diversity_wp1_qwen_common_audit.py`: 19 passed.
+  - `uv run ruff check` on the same touched scripts/tests: clean.
+  - `uv run pyright` on the touched scripts: 0 errors, 0 warnings.
+  - `git diff --check`: clean.
+- Validator checked current restart evidence:
+  - D1/D2/D3/D5 FAIL, D4 NOT_RUN, D6 PASS, with final verdict
+    `B illumination_only`.
+  - Budget funnels cover 203,944 candidates and 1,069 problem groups.
+  - Quality-gated novelty replay covers novelty fractions 0, 0.1, 0.25, and
+    0.5 with a prefix-median valid-fitness floor.
+  - Near-motif replay covers 2,335 RTLLM valid-PPA rows with motif vectors and
+    does not improve HV or Pareto retention.
+  - Qwen common-audit replay remains diagnostic-only because raw Qwen loses HV
+    versus lexical farthest-first and identifier-normalized Qwen gains only
+    3.35%, below the 10% D3 gate.
+  - DeepGate3 remains no-proceed because the bounded embedding slice collapsed
+    and the state policy is combinational-only.
+  - AURORA-style learned encoders remain no-proceed because the problem-split
+    probes do not improve held-out HV or Pareto retention.
+- Residual blockers for stronger claims remain D3 below threshold, D2 failing
+  shuffled labels, D1 uncontrolled, D4 not run, D5 negative, bounded Qwen
+  evidence, collapsed DeepGate3 evidence, insufficient lineage utility, and
+  RTLLM-only distance-based near-motif coverage.

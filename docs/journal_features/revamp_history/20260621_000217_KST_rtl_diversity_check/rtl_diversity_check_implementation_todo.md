@@ -240,9 +240,11 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
 
 - [x] Decide whether retrospective evidence requires a bounded replay-only
   or live sampling experiment.
-  Scoped: run replay-only first; live sampling remains deferred until the
-  regenerated report and adversarial pass decide whether replay evidence is
-  still inconclusive.
+  Scoped: replay-only evidence was expanded through quality-gated novelty,
+  budget funnels, near-motif suppression, learned-encoder probes, and Qwen
+  common-audit replay. Refreshed validation still passes only the
+  `B illumination_only` / diagnostic-only no-proceed claim; no offline utility
+  gate currently justifies live sampling.
 - [ ] If live sampling is used, preflight `curl http://20.0.0.103:8000/v1/models`
   and record served model id, max_model_len, token settings, subset, seed, and
   command.
@@ -300,13 +302,10 @@ Adversarial rubric: `rtl_diversity_check_adversarial_prompt.md`.
   quality-gated ST-NOD, learned-encoder diagnostic follow-up, or AURORA/VQ
   escalation.
   Scoped: current recommendation is diagnostic-only / no-proceed for method
-  promotion; larger Qwen, stronger graph encoders, or live sampling require a
-  concrete D1/D3/D4/D5 target.
+  promotion; Qwen projection-head diagnostics, stronger graph encoders, or
+  live sampling require a concrete D1/D3/D4/D5 target.
 - [x] The restarted adversarial prompt returns PASS, or FAIL findings are
   resolved or logged as blockers with three concrete attempts.
-  PASS covers current HEAD `b4383b5cc5` and artifact
-  `exp/diversity_check/restarted_report_20260621_051025_UTC/`.
-  The WP3-integrated report artifact
-  `exp/diversity_check/restarted_report_20260621_054009_UTC/` is regenerated
-  and awaits refreshed adversarial validation after the report integration
-  commit.
+  Current PASS covers HEAD `e63f73da83` and artifact
+  `exp/diversity_check/restarted_report_20260621_075346_UTC/`, scoped only to
+  `B illumination_only` / diagnostic-only no-proceed.
