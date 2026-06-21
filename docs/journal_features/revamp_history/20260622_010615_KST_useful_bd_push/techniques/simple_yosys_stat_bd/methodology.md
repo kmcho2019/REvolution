@@ -41,6 +41,24 @@ Construct a vector with:
 Normalize per benchmark using the baseline corpus median and median absolute
 deviation. Clip normalized coordinates to fixed bounds before binning.
 
+## Current Replay Variant
+
+The first active-goal replay packages the historical
+`development_preliminary_seed1/simple_yosys_stat_bd/seed_1001` standard-result
+artifacts from the 20260618 Auto-BD worktree. That run used the compact
+Yosys-stat profile:
+
+- `cell_count_log`;
+- `seq_ratio`;
+- `mux_ratio`.
+
+The archive substrate was `grid_quantile` with Pareto-front cells,
+`nsga2_global_rank` parent selection, eight warmup successes, and the same
+model/budget/prompt policy as the seed-1 classic and landing manual-BD
+baselines. The replay report in this package does not refit or change the
+descriptor; it re-scores the existing artifacts under the useful-BD tier rules
+and central metric vocabulary.
+
 ## Archive Mapping
 
 Run both mappings:
@@ -60,8 +78,13 @@ existing QD objective.
 
 ## Expected Outputs
 
-- `tables/stat_features.csv`
-- `tables/archive_cells.csv`
-- `figures/stat_feature_projection.png`
-- `figures/archive_coverage_heatmap.png`
+- `tables/validity_funnel.csv`
+- `tables/leaderboard_comparison.csv`
+- `tables/archive_metrics.csv`
+- `tables/per_problem_deltas_vs_classic.csv`
+- `tables/metric_deltas_vs_classic.csv`
+- `figures/seed1_mean_hypervolume.png`
+- `figures/seed1_common_audit_coverage.png`
+- `figures/seed1_ppa_grid_coverage.png`
+- `figures/seed1_common_audit_cells_heatmap.png`
 - `results_report.md` with tier decision and per-problem deltas

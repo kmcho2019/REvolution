@@ -132,3 +132,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Holdout subset: `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot`,
   `VerilogEval-Spec-to-RTL/Prob098_circuit7`, and
   `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b`.
+
+## Simple Yosys-Stat Replay - 2026-06-21 UTC
+
+- Located historical seed-1 `simple_yosys_stat_bd` standard-result artifacts
+  under the 20260618 Auto-BD worktree. This provides a real simple-control
+  method attempt even though the frozen 10-problem screening subset will be
+  used for later current runs.
+- Ran `scripts/report_auto_bd_standard_results.py` on
+  `development_preliminary_seed1`, seed `1001`, writing ignored artifacts to
+  `exp/useful_bd_push/central_replay_20260621_165000_UTC/`.
+- Packaged committed tables and figures under
+  `techniques/simple_yosys_stat_bd/`.
+- Tier decision: `T0 diagnostic`. Simple Yosys-stat passes Gate 0 and loses no
+  classic-covered problem, has mean HV within -0.24% of classic, and improves
+  PPA-front unique netlists from 12 to 16. It does not reach `T1` because mean
+  best fitness drops by 5.93% and common-audit QD score drops by 10.29%.
+- Follow-up idea from this `T0`: keep Yosys-stat as the transparent lower
+  bound, then test motif/pathlet and synthesis-delta descriptors for whether
+  they preserve the near-classic HV while recovering QD score and best fitness.

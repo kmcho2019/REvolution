@@ -3,6 +3,14 @@
 Use this backlog to keep generating methods during the goal. Move an idea into
 `techniques/<slug>/` before running it.
 
+## From `simple_yosys_stat_bd` T0
+
+- Keep simple Yosys-stat as the transparent CAD-native lower bound rather than
+  a promoted method.
+- Next descriptor should preserve the same validity/coverage guardrails while
+  adding motif/pathlet or synthesis-delta information to recover common-audit
+  QD score and best fitness.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

@@ -55,7 +55,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 
 ## Technique Packages
 
-- [ ] `simple_yosys_stat_bd` has methodology, results, figures, tables, and
+- [x] `simple_yosys_stat_bd` has methodology, results, figures, tables, and
       tier decision.
 - [ ] `motif_pathlet_bd` has methodology, results, figures, tables, and tier
       decision.
