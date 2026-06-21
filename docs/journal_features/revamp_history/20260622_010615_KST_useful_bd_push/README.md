@@ -24,6 +24,7 @@ Start here when resuming the active goal.
 | `README.md` | This local navigation guide. |
 | `goal_template.md` | Compact goal body that fits the goal-tool limit. |
 | `useful_bd_push_plan.md` | Main contract: outcome, constraints, method families, gates, and completion criteria. |
+| `technique_lanes.md` | Lane-based process map showing method families, lineage, current evidence, and next actions. |
 | `useful_bd_push_implementation_todo.md` | Short checklist to keep the goal moving. |
 | `useful_bd_push_implementation_history.md` | Chronological evidence log for decisions, commands, runs, failures, and commits. |
 | `useful_bd_push_adversarial_prompt.md` | Independent validation prompt for final sign-off. |

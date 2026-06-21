@@ -378,3 +378,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `sr_rff_pca_qd` or `sr_random_relu_pca_qd` with local Pareto fronts, underfilled
   cell exploration, and global nondominated-front sampling. Do not promote T17
   from passive retention evidence alone.
+
+## Technique Lane Map - 2026-06-21 UTC
+
+- User requested a clearer way to track technique categories, lineage, promising
+  branches, and how each BD idea developed from previous results.
+- Added `technique_lanes.md` at the revamp root. It groups current and planned
+  techniques into lanes for common evaluation, transparent CAD descriptors,
+  synthesis-response automatic BDs, codebook archives, learned encoders,
+  archive coupling, and lineage/emitter methods.
+- Added a Mermaid lineage graph showing how T01/T02/T03 led to T04, how T04/T05
+  feed T17, and how T06 feeds the Qwen3 preprocessing/projection path.
+- Recorded branch-splitting guidance: continue lightweight replay/docs/scripts
+  on `feat/journal-useful-bd-exp-20260622`, and create lane-specific branches
+  only for long-running live vLLM runs, incompatible dependency stacks, or
+  source-checkout-heavy encoder work.
+- Linked the lane map from the local `README.md` so future resumes can follow
+  both the chronological technique registry and the lane-level thought process.
