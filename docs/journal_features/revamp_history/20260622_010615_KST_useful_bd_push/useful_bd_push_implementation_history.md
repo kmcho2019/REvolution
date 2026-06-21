@@ -959,3 +959,41 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Added methodology, command, run matrix, pending artifact manifest, pending
   results report, figure requirements, visualization placeholder, and central
   lane/index updates before executing the live run.
+
+## T29 SR Raw Front Recovery Live Result - 2026-06-21 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models`; the endpoint returned
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Completed T29 under
+  `exp/useful_bd_push/t29_sr_raw_front_recovery_qd_20260621_225827_UTC/` with
+  seed 1001, population 12, three generations, strict ablation evaluation,
+  and 128000-token code/diff budgets.
+- Runtime was 769.10 seconds. `Prob045_alu` and `Prob041_traffic_light` had
+  final-population best PPA, but `Prob015_multi_pipe_8bit` did not.
+- Pareto archive validation passed structurally with zero failures, but the
+  validator also reported zero active archive members for
+  `Prob015_multi_pipe_8bit`.
+- Added `scripts/package_t29_front_recovery_audit.py` and
+  `tests/scripts/test_package_t29_front_recovery_audit.py`.
+- Packaged `techniques/T29_sr_raw_front_recovery_qd/` from the completed T24,
+  T25, T26, and T29 live run roots under `exp/useful_bd_push/`.
+- Generated direct PPA-front figures:
+  `figures/t29_ppa_fronts_area_power_zoom.png` and
+  `figures/t29_ppa_fronts_improvement.png`, plus count/aggregate/family plots.
+- Visual inspection accepted the direct-front plots. Open-circle front markers
+  are clear, raw axes state the lower-is-better inversion, and the normalized
+  plot gives a higher-is-better view for cross-problem comparison.
+- Aggregate T29 read versus T26: mean HV -22.12%, HV-AUC -18.06%, valid PPA
+  -26.32%, total front points -11.11%, and final-best problem count drops from
+  three to two.
+- Direct-front read: on `Prob015_multi_pipe_8bit`, T29 has six candidate-level
+  valid PPA samples, two rank-1 PPA-front points, zero reference-beating
+  candidates, zero active archive members, and no final best PPA.
+- Tier read: `T0 diagnostic`. T29 is measured negative evidence for simple
+  partial reversal of T26's champion-lane schedule.
+- Lane decision: retire this direct front-recovery variant. Do not continue
+  blind interpolation between T24 SR raw and T26 scheduler settings; next
+  should be a T26 holdout audit or a T30 repair/yield/front-preserving emitter.
+- Validation: focused pytest and ruff passed for the new packager and test.
+  Pyright reported only the pre-existing plotting-script environment noise:
+  unresolved `matplotlib` imports, matching T27/T28 packaging scripts.

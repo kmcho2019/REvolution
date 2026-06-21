@@ -30,10 +30,9 @@ Real result packages:
 - `T27_t26_live_qd_audit` live QD audit over T24, T25, and T26 runs
 - `T28_t26_family_audit` canonical/family duplicate audit over T24, T25, and
   T26 runs
+- `T29_sr_raw_front_recovery_qd` front-recovery live follow-up result
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
-`T29_sr_raw_front_recovery_qd` is pre-registered as the next live
-front-recovery variant.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -42,7 +41,9 @@ for T26 to `T1 near_classic` audit support on live HV and HV-AUC, but it still
 blocks final promotion until family-front and holdout behavior improve. T28
 adds canonical/family duplicate accounting: T26 valid candidates are mostly
 distinct, but the front-family deficit versus classic and SR raw is real. The
-ten-package minimum is satisfied, but the goal remains active.
+T29 front-recovery variant is also negative: it does not recover the front
+deficit and loses multi-pipe final-PPA coverage. The ten-package minimum is
+satisfied, but the goal remains active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -136,11 +137,15 @@ T26 blocker visually obvious: Conservative exploit has strong best-PPA points,
 but on `Prob015_multi_pipe_8bit` it has 6 candidate-level rank-1 front points
 while SR raw has 10 and Classic has 14.
 
-`T29_sr_raw_front_recovery_qd` is the pre-registered next live variant. It
+`T29_sr_raw_front_recovery_qd` is the completed front-recovery live variant. It
 keeps SR raw PCA, local Pareto cells, the T26 fill target, and NSGA-II parent
 selection, but lowers champion-lane pressure from 0.80 to 0.60 and restores
-limited two-parent archive fusion at 0.20. The test is whether this recovers
-front material versus T26 without losing T26's HV/HV-AUC signal.
+limited two-parent archive fusion at 0.20. It is `T0 diagnostic`: mean HV
+falls to 0.139295 versus T26's 0.178862, HV-AUC falls to 0.118396 versus
+0.144485, valid PPA falls to 42 versus 57, and total front points fall to 8
+versus 9. The direct PPA-front plots show the core failure: on
+`Prob015_multi_pipe_8bit`, T29 has only two candidate-level front points and
+no final-population best PPA.
 
 ## Current Conclusions
 
@@ -169,12 +174,15 @@ front material versus T26 without losing T26's HV/HV-AUC signal.
    final useful-BD win.
 10. T28 shows T26's valid candidates are not duplicate collapse, but also
     confirms the front-family deficit is real.
+11. T29 shows that simply backing off T26's champion lane and restoring limited
+    two-parent fusion is not the right front-recovery path.
 
 ## Next Decisions
 
-- Run a holdout audit or a front-recovery T26 variant before any promotion
-  claim.
-- Execute and package T29 before changing these front-recovery parameters.
+- Run a T26 holdout audit or specify a T30 repair/yield/front-preserving
+  emitter before any promotion claim.
+- Do not continue blind interpolation between T24 SR raw and T26 scheduler
+  settings; T29 is the measured negative result for that idea.
 - Use the direct PPA-front audit figures when deciding whether a candidate has
   improved front shape, not only HV, best score, or aggregate front counts.
 - Use manual BD as the traffic-light quality control, SR raw as the

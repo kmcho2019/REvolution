@@ -119,7 +119,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T28_t26_family_audit` is packaged with RTL/netlist/family duplicate
       accounting, direct PPA-front figures, scoped HTML viewer, visual
       inspection, and lane-decision documentation.
-- [ ] `T29_sr_raw_front_recovery_qd` is pre-registered, executed, packaged, and
+- [x] `T29_sr_raw_front_recovery_qd` is pre-registered, executed, packaged, and
       assigned a tier decision.
 
 ## Minimum Goal Completion
@@ -137,7 +137,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Any `T1` or `T2` method gets deeper per-problem and per-seed analysis.
 - [x] T26/T27 gets canonical duplicate/family validation before any `T2`
       useful-QD claim.
-- [ ] T26/T28 gets holdout or front-recovery validation before any `T2`
+- [x] T26/T28 gets holdout or front-recovery validation before any `T2`
       useful-QD claim.
 - [ ] Central comparison report states whether QD/MAP-Elites is useful,
       near-classic, or still negative.

@@ -62,3 +62,10 @@ Run T29:
 
 Record the resolved `RUN_ROOT` in `tables/run_matrix.csv` and
 `results_report.md` after execution.
+
+Resolved run root:
+
+`exp/useful_bd_push/t29_sr_raw_front_recovery_qd_20260621_225827_UTC/`
+
+The run completed in 769.10 seconds. Package and validation commands are in
+`package_t29_audit.md`.

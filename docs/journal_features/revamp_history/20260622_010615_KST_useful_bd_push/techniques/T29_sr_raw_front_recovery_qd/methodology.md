@@ -119,8 +119,10 @@ Required artifacts:
 
 ## Current Status
 
-Current tier: pending.
+Current tier: `T0 diagnostic`.
 
-This package is pre-registered before the live run. Do not change the parameter
-values above after seeing T29 results; create a T30 package for any follow-up
-variant.
+This package was pre-registered before the live run. The parameter values above
+remain the measured T29 method definition. T29 did not recover the front
+deficit and lost `Prob015_multi_pipe_8bit` final-PPA coverage, so any follow-up
+parameter or emitter change must become a T30 package rather than editing this
+method after the fact.

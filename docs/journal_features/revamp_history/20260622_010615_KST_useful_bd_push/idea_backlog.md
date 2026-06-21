@@ -231,6 +231,21 @@ a numbered `techniques/T##_slug/` package before running it.
   fusion. Any further schedule tweak should become T30 after the T29 result is
   measured.
 
+## From `T29_sr_raw_front_recovery_qd`
+
+- T29 is a measured negative for simple schedule interpolation. Lowering
+  champion pressure to 0.60 and restoring 0.20 two-parent fusion reduces mean
+  HV, HV-AUC, valid PPA, total front points, and multi-pipe final-PPA coverage
+  versus T26.
+- Direct PPA-front plots are now mandatory evidence for any follow-up. The
+  multi-pipe panel shows only two T29 front points, so aggregate bars alone
+  would overstate the method.
+- Potential T30: `t26_holdout_family_audit`, using the same direct-front and
+  family-audit tables before adding a new live mechanism.
+- Potential T30 alternative: `sr_raw_repair_front_emitter`, keeping T26's
+  champion lane while adding a bounded repair/yield/front-preserving emitter
+  instead of generic two-parent exploration.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live
