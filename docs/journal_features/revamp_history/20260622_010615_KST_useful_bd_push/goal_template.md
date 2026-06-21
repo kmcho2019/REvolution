@@ -1,11 +1,10 @@
 # Goal Template
 
-Use this text for `/goal`. It intentionally omits the literal `/goal` prefix so
-the same body can be passed directly to the goal tool. Keep the detailed plan,
-method list, and policies in the sibling docs as the full contract.
+Use this text for `/goal`. It omits the literal `/goal` prefix. Keep the
+detailed plan, method list, and policies in sibling docs as the full contract.
 
 ```text
-Objective: on branch feat/journal-useful-bd-exp-20260622, make a wide-net,
+Objective: on branch feat/journal-useful-bd-exp-20260622, make a wide-net
 persistent push to find useful behavior descriptors for QD/MAP-Elites in RTL
 netlist evolution and PPA optimization. Use
 docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/ as the
@@ -16,7 +15,7 @@ binding guardrails.
 Outcome: find at least one descriptor/archive-coupling technique that is
 near-classic or better, or produce a rigorous negative map of failed technique
 families. Treat the old 10% utility threshold as a strong-win tier, not the
-first filter. Keep investigating any method that matches classic within a
+first filter. Keep any method that matches classic within a
 small tolerance, preserves classic-covered valid-PPA problems, or shows a
 reproducible positive delta in HV, valid-PPA count, Pareto spread, archive
 coverage, or lineage yield.
@@ -48,7 +47,7 @@ decline versus classic when classic has at least 10 passing samples for that
 stage; below that count, report raw counts as small-n/noisy and do not decide
 from the relative rate alone.
 
-Iteration policy: start from common reporting and prior evidence, then cheap
+Iteration policy: start from prior evidence, then cheap
 deterministic controls, synthesis/netlist descriptors, projection/codebook
 descriptors, MOME/adaptive CVT variants, and encoder adaptations such as Qwen,
 DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, MasterRTL
@@ -60,8 +59,8 @@ hybrid, or retirement rationale. Commit regularly and inspect every commit
 message.
 
 Blocked stop condition: stop only after three concrete attempts hit the same
-blocker, with commands, artifacts, missing resource/input, and exact next
-decision needed. Do not end because one method is weak. Completion requires
+blocker, with commands, artifacts, missing input, and exact next decision
+needed. Do not end because one method is weak. Completion requires
 focused tests/checks, inspected intuitive figures, precise conclusions, no
 overclaimed tier, no anti-loophole violation, and PASS from the adversarial
 prompt written to the validation report.

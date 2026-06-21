@@ -23,6 +23,8 @@ METHOD_LABELS = {
     "classic_revolution": "Classic",
     "landing_smooth_qd_manual_bd": "Manual BD",
     "netlist_motif_occupancy": "Motif occupancy",
+    "synthesis_trajectory_nod": "ST-NOD",
+    "synthesis_trajectory_motif_nod": "ST-NOD+motif",
 }
 METRIC_LABELS = {
     "mean_hypervolume": "Mean HV",

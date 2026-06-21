@@ -13,8 +13,8 @@ Start here when resuming the active goal.
 - Holdout subset: `tables/holdout_screening_subset.csv`.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
-- Most recent packaged method: `techniques/T02_motif_pathlet_bd/`
-  (`T0 diagnostic`).
+- Most recent packaged method: `techniques/T03_synthesis_delta_stnod_bd/`
+  (`T0 diagnostic`, prioritized near-miss).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -54,7 +54,7 @@ Start here when resuming the active goal.
 | --- | --- | --- |
 | `T01` | `T01_simple_yosys_stat_bd` | Replay result, `T0 diagnostic`; simple CAD-native lower bound. |
 | `T02` | `T02_motif_pathlet_bd` | Replay result, `T0 diagnostic`; partial motif-occupancy member of the motif/pathlet family. |
-| `T03` | `T03_synthesis_delta_stnod_bd` | Scaffolded; next likely synthesis-response descriptor. |
+| `T03` | `T03_synthesis_delta_stnod_bd` | Replay result, `T0 diagnostic`; prioritized near-miss for synthesis-response descriptors. |
 | `T04` | `T04_autoqd_mmd_synthesis_bd` | Scaffolded. |
 | `T05` | `T05_vq_elites_codebook_bd` | Scaffolded. |
 | `T06` | `T06_qwen_projection_bd` | Scaffolded. |

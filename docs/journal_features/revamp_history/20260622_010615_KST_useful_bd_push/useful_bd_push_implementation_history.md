@@ -198,3 +198,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Follow-up rationale: coarse motif occupancy alone is too weak. The next
   netlist-family attempt should add pathlets/reconvergence or combine motif
   axes with synthesis-trajectory deltas before retrying archive pressure.
+
+## T03 Synthesis Delta ST-NOD Replay - 2026-06-21 UTC
+
+- Ran `scripts/package_useful_bd_replay_method.py` on
+  `exp/useful_bd_push/central_replay_20260621_165000_UTC/auto_bd_seed1_central_report.json`
+  for method `synthesis_trajectory_nod`, writing committed artifacts under
+  `techniques/T03_synthesis_delta_stnod_bd/`.
+- Visual inspection completed for all generated T03 figures. Notes are in
+  `techniques/T03_synthesis_delta_stnod_bd/figures/visual_inspection_notes.md`.
+- Tier decision: `T0 diagnostic`, prioritized near-miss. Gate 0 passes and the
+  50 percent validity collapse gate passes because functionality, synthesis,
+  and valid-PPA rates drop by only 1.91% relative to classic with 209 classic
+  passing samples.
+- Key signal: mean hypervolume is only 2.94% below classic; ST-NOD wins HV on
+  two problems, ties three, and loses one. Unique canonical netlists increase
+  from 70 to 72, PPA-front unique netlists from 12 to 13, and motif signatures
+  from 43 to 52.
+- Blocking issue: common-audit occupied cells drop from 12 to 11 and
+  common-audit QD score drops from 2.3163 to -2.0643. The descriptor finds more
+  structure but fills lower-quality common-audit cells.
+- Follow-up rationale: do not retire ST-NOD. Try archive coupling around
+  ST-NOD, especially local Pareto fronts or a stronger exploitation lane, so
+  the near-classic HV behavior is preserved while passive QD score improves.

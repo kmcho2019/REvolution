@@ -21,6 +21,17 @@ a numbered `techniques/T##_slug/` package before running it.
   motif-only archive, because the T02 failure suggests static motif ratios
   miss stage-response signal.
 
+## From `T03_synthesis_delta_stnod_bd` T0
+
+- ST-NOD is a prioritized near-miss: validity and HV are close enough to keep
+  investigating, but common-audit QD score is much worse than classic.
+- Next archive-coupling attempt should preserve ST-NOD's early HV behavior
+  while preventing low-quality archive fill, for example by MOME-style local
+  Pareto fronts or a stronger classic-exploitation lane.
+- A richer hybrid can add pathlet/reconvergence features as auxiliary axes, but
+  only if common-audit QD score improves rather than merely increasing motif
+  signatures.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

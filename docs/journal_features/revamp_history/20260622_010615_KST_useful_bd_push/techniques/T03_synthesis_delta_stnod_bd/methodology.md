@@ -38,6 +38,25 @@ For every adjacent stage pair, compute:
 Concatenate stage features and deltas. Normalize within benchmark and seed
 using a frozen baseline fit.
 
+## Current Replay Scope
+
+The completed `T03` package evaluates the historical
+`synthesis_trajectory_nod` arm from the 20260618 Auto-BD run. That arm is a
+concrete ST-NOD implementation, but it is narrower than the full planned
+stage-delta descriptor above:
+
+- implemented axes: `stnod_cell_growth_log`, `stnod_logic_swing`,
+  `stnod_control_swing`, `stnod_arith_swing`, and `stnod_diversity_swing`;
+- sidecar stages: `00_read`, `01_synth`, `02_opt`, `03_arithmap`,
+  `04_dffmap`, `05_abc`, `06_clean`, and `07_buffered`;
+- archive used in the replay: grid-quantile over the five ST-NOD trajectory
+  axes with the same search budget as classic and manual BD.
+
+This result should be interpreted as the base synthesis-trajectory diagnostic.
+The earlier `synthesis_trajectory_motif_nod` ablation is not packaged as `T03`
+because it adds final motif occupancy and should be treated as a future hybrid
+or separate package if revisited.
+
 ## Archive Mapping
 
 Use two descriptors:
