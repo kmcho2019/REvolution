@@ -96,4 +96,27 @@ uv run python scripts/run_backend.py \
   --save_path "${RUN_ROOT}/sr_raw_conservative_exploit_low_fusion_qd/seed_1001"
 ```
 
+T26.1 mid-fusion extension:
+
+```bash
+uv run python scripts/run_backend.py \
+  "${COMMON_ARGS[@]}" \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_fill_target_fraction 0.25 \
+  --qd_improve_backfill_fraction 0.20 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.80 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.05 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile sr_pca_3d \
+  --qd_descriptor_file docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/descriptor_profile.yaml \
+  --save_path "${RUN_ROOT}/sr_raw_conservative_exploit_mid_fusion_qd/seed_1001"
+```
+
 Gated T26.1 is intentionally omitted until the gate is implemented and tested.

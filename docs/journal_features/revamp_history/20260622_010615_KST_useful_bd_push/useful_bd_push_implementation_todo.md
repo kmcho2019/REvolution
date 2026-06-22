@@ -220,9 +220,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       passive Pareto audit.
 - [ ] Every `T1` or higher method preserves every classic-covered design in the
       fixed compared subset.
-- [ ] No promoted method has a 50 percent or larger relative decline in
-      functionality or synthesis-valid rate versus classic when the classic
-      passing denominator is at least 10 for that stage.
+- [ ] Any promoted method with a 50 percent or larger relative decline in
+      functionality or synthesis-valid rate versus classic is labeled with a
+      yield warning when the classic passing denominator is at least 10.
 - [ ] Any `T1` or `T2` method gets deeper per-problem and per-seed analysis.
 - [x] T26/T27 gets canonical duplicate/family validation before any `T2`
       useful-QD claim.

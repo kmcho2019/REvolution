@@ -211,12 +211,12 @@ deserves deeper analysis and a method package.
   PPA candidate for a design, the new method must also produce at least one
   valid functional PPA candidate for that design before it can be `T1` or
   higher.
-- Do not accept a method with catastrophic validity collapse. A 50 percent or
-  larger relative decline in functionality rate or synthesis-valid rate versus
-  classic is a `T0` result only when classic has at least 10 passing samples
-  for the corresponding stage in the compared unit. Below that count, report
-  raw counts as `small_n_validity` and do not promote or reject the method from
-  the relative rate alone.
+- For the deadline RTLLM milestone, treat a 50 percent or larger relative
+  decline in functionality rate or synthesis-valid rate as a yield warning
+  rather than an automatic rejection, as long as every classic-covered design
+  still has at least one valid QD PPA candidate. Below 10 classic passing
+  samples, report raw counts as `small_n_validity` and do not promote or reject
+  the method from the relative rate alone.
 - Freeze the screening subset before method outcomes are reviewed. Replacement
   must follow `screening_subset_selection.md`.
 - Do not stop the push early unless the stop condition in

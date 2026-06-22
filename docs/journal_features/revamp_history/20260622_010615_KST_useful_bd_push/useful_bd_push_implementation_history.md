@@ -2321,3 +2321,13 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated the milestone docs to keep the statistical caveat: one seed can
   support paired engineering evidence across problems, but not seed-stable or
   statistical-significance claims.
+
+## RTLLM Yield Gate Relaxation - 2026-06-22 UTC
+
+- User clarified that the primary milestone objective is PPA optimization, not
+  matching classic's valid-PPA rate. Updated current policy so the hard launch
+  gate is classic-covered retention: if classic has at least one valid PPA
+  candidate for a design, the selected QD arm must also have at least one.
+- A 50 percent or larger valid-PPA or synthesis-valid drop is now a reported
+  yield warning for this deadline milestone, not an automatic full-run blocker.
+  Reports must still show the yield tradeoff clearly.

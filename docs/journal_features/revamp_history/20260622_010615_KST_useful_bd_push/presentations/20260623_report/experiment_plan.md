@@ -39,8 +39,9 @@ Screen before full RTLLM:
 Selection metrics:
 
 - preserves every classic-covered design;
-- no catastrophic valid-PPA or synthesis-valid decline where classic has at
-  least 10 passing samples;
+- valid-PPA and synthesis-valid declines are reported as yield warnings, not
+  launch blockers, as long as every classic-covered design still has at least
+  one valid QD PPA sample;
 - paired HV and HV-AUC;
 - raw area-power front hits;
 - unique front families and duplicate accounting;

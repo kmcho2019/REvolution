@@ -6,7 +6,7 @@ is useful for RTL PPA evolution.
 | Gate | Required Evidence | Failure Meaning |
 | --- | --- | --- |
 | Classic-covered retention | Every problem where classic has at least one valid functional PPA candidate must also have a valid QD candidate. | QD cannot be promoted on that comparison. |
-| Validity collapse | No 50% or larger valid-PPA or synthesis-valid decline where classic has at least 10 passing samples. | Label as yield-blocked unless small-n rules apply. |
+| Yield warning | Valid-PPA and synthesis-valid rates are reported per problem, with 50% or larger drops labeled when classic has at least 10 passing samples. | Not a launch blocker if classic-covered retention passes, but the report must show the tradeoff. |
 | Paired HV | Per-problem and aggregate HV deltas versus classic. | Aggregate-only wins are insufficient. |
 | HV-AUC | AUC over generation history, not only final population. | Final-only gains may be unstable. |
 | Direct PPA fronts | Raw area-power front points and representative plots. | BD-space visuals cannot substitute for PPA evidence. |
@@ -20,9 +20,9 @@ is useful for RTL PPA evolution.
 ## Allowed Claim Levels
 
 - `diagnostic`: useful for method selection, but not a QD-effectiveness claim.
-- `near_classic`: close to classic and passes retention/yield gates.
+- `near_classic`: close to classic and passes the retention gate.
 - `useful_qd`: positive paired evidence on HV/HV-AUC/front/family/archive
-  metrics while passing retention/yield gates.
+  metrics while passing retention and reporting any yield warnings.
 - `strong_win`: at least 10% positive paired evidence plus independent
   stability evidence. The one-seed RTLLM milestone cannot claim this alone.
 

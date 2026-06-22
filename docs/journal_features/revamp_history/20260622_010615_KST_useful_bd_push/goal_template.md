@@ -50,11 +50,13 @@ metadata, and use 128000 max_tokens/diff_max_tokens except for tiny smokes.
 Freeze the screening subset before interpreting outcomes. Do not use final PPA,
 reference PPA, fitness, hypervolume, Pareto rank, or test pass rate as in-loop
 BD inputs. Do not count duplicates or invalid candidates as useful diversity.
-Any T1+ method must preserve every classic-covered design under the same budget
-and must not have a 50% or larger relative functionality/synthesis-validity
-decline versus classic when classic has at least 10 passing samples for that
-stage; below that count, report raw counts as small-n/noisy and do not decide
-from the relative rate alone.
+Any T1+ method must preserve every classic-covered design under the same budget.
+For the deadline RTLLM milestone, a 50% or larger relative
+functionality/synthesis-validity decline is a visible yield warning, not an
+automatic launch blocker, when the selected method still has at least one valid
+PPA sample for every classic-covered design. Below 10 classic passing samples,
+report raw counts as small-n/noisy and do not decide from the relative rate
+alone.
 
 Iteration policy: start from prior evidence, then cheap
 deterministic controls, synthesis/netlist descriptors, projection/codebook

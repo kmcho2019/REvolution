@@ -53,6 +53,9 @@ The report can argue that QD/MAP-Elites should not be dropped only if the full
 RTLLM package shows positive paired evidence on PPA-centered metrics without
 hiding invalid samples, duplicate collapse, front-family loss, or
 classic-covered design loss.
+For the deadline run, lower valid-PPA yield is a visible warning rather than a
+selection blocker when the selected method still has at least one valid PPA
+candidate for every classic-covered design.
 
 ## Required Final Figures
 

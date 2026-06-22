@@ -34,9 +34,11 @@ Check:
   figures, tables, result report, and tier decision?
 - Does every `T1` or higher method preserve every design where classic has at
   least one valid functional PPA candidate under the same budget?
-- Does every promoted method avoid a 50 percent or larger relative decline in
-  functionality rate or synthesis-valid rate versus classic on comparison
+- Does every promoted method report any 50 percent or larger relative decline
+  in functionality rate or synthesis-valid rate versus classic on comparison
   units where classic has at least 10 passing samples for that stage?
+- If a method with a yield warning is promoted for PPA, is the tradeoff
+  visible and justified instead of hidden?
 - Are any smaller-denominator validity rates reported as `small_n_validity`
   instead of used as hard accept/reject evidence?
 - Is any `T1`, `T2`, or `T3` claim supported by per-problem and per-seed
