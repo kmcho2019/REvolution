@@ -994,13 +994,24 @@ function drawArchive(label, sceneName, technique) {
   clear(ctx, canvas);
   const projector = makeProjector(canvas, camera, 1.36);
   const sceneObjects = [];
+  const renderedCellIds = new Set();
   forEachCell(shape, (indices) => {
     const cellId = indices.join(',');
     const summary = cells[cellId];
     const center = archivePoint(indices, shape);
     const hot = state.highlightedCellId === cellId;
     sceneObjects.push({kind: 'wireCell', cellId, center, indices, summary, hot});
-    if (summary) sceneObjects.push({kind: 'filledCell', cellId, center, indices, summary, hot});
+    if (summary) {
+      sceneObjects.push({kind: 'filledCell', cellId, center, indices, summary, hot});
+      renderedCellIds.add(cellId);
+    }
+  });
+  Object.values(cells).forEach((summary) => {
+    if (renderedCellIds.has(summary.cell_id)) return;
+    const indices = summary.cell_id.split(',').map(Number);
+    const center = archivePoint(indices, shape);
+    const hot = state.highlightedCellId === summary.cell_id;
+    sceneObjects.push({kind: 'filledCell', cellId: summary.cell_id, center, indices, summary, hot});
   });
   const sorted = sceneObjects.sort((a, b) => depthOf(b.center, camera) - depthOf(a.center, camera));
   drawArchiveAxes(ctx, projector, shape, axes);

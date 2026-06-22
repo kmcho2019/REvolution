@@ -221,6 +221,7 @@ def test_export_writes_projected_classic_dataset(tmp_path: Path) -> None:
     assert "setPpaScaleMode" in html
     assert "setPpaViewMode" in html
     assert "drawPpaAreaPowerFront(" in html
+    assert "renderedCellIds.has(summary.cell_id)" in html
     dataset = json.loads(result.dataset_paths[0].read_text(encoding="utf-8"))
     classic = next(sample for sample in dataset["samples"] if sample["technique"] == "classic")
     qd = next(sample for sample in dataset["samples"] if sample["technique"] != "classic")
