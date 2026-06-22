@@ -156,11 +156,14 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
         "scoap_cc0_bin_0_pct",
         "scoap_cc1_bin_0_pct",
     ]
-    assert profiles["t11_runtime_top8_graph"] == [
+    assert profiles["t11_runtime_top4_graph"] == [
         "hyper_mean_fanout",
         "edge_per_node",
         "log_edge_count",
         "hyper_directed_edge_count",
+    ]
+    assert profiles["t11_runtime_top8_graph"] == [
+        *profiles["t11_runtime_top4_graph"],
         "hyper_fanout_entropy",
         "hyper_driven_net_count",
         "hyper_sink_net_count",

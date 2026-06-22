@@ -21,9 +21,9 @@ Start here when resuming the active goal.
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  compress or select fewer T11 runtime graph axes before trying top-16/top-64
-  fitted projection. A T45-style top-3/top-4 or frozen non-PPA projection
-  should keep the same T44 viewer and direct-PPA gates.
+  run `techniques/T45_t11_runtime_top4_graph/`, a pre-registered compact
+  top-4 T11 runtime graph profile that keeps T44 settings and visualization
+  gates fixed while reducing descriptor dimensionality.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -52,6 +52,9 @@ Start here when resuming the active goal.
   `techniques/T44_t11_runtime_graph_bridge/` (runtime bridge for the T11 graph
   descriptor lead; full live screen, direct PPA supplement, and Phase 03.1
   viewer are packaged).
+- Current planned live technique:
+  `techniques/T45_t11_runtime_top4_graph/` (compact T11 graph-axis ablation;
+  live result pending).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs

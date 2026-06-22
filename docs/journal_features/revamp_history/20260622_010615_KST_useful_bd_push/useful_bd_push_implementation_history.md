@@ -2262,3 +2262,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Tier decision: `T0 mixed_diagnostic`. The next method should compress or
   select fewer T11 runtime graph axes, such as a top-3/top-4 profile or frozen
   non-PPA projection, before trying top-16/top-64 fitted projection.
+
+## T45 Compact T11 Runtime Graph Pre-Registration - 2026-06-22 UTC
+
+- Added descriptor profile `t11_runtime_top4_graph`, using the first four
+  axes from T44's pre-registered top-8 T11 runtime graph profile:
+  `hyper_mean_fanout`, `edge_per_node`, `log_edge_count`, and
+  `hyper_directed_edge_count`.
+- Pre-registered `techniques/T45_t11_runtime_top4_graph/` as the direct T44
+  dimensionality ablation. It keeps model, subset, seed, budget, archive
+  substrate, parent selection, operator, and reporting gates fixed.
+- Added `scripts/package_t45_t11_runtime_top4_graph.py` and a focused unit
+  test so T45 can package direct raw-PPA figures, summary tables,
+  `metrics.json`, and the direct HTML supplement against matched T45 runs and
+  frozen T44/T43/T39 references.
+- T45 remains pending until the full three-problem live screen, Pareto
+  validation, direct-PPA package, Phase 03.1 viewer export, strict Playwright
+  validation, visual inspection, and tier decision are complete.

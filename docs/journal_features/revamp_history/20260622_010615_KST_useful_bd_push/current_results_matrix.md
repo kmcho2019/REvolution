@@ -52,6 +52,8 @@ Real result packages:
 - `T43_staged_sparse_yield_gate_qd` staged sparse-yield champion-pressure
   follow-up
 - `T44_t11_runtime_graph_bridge` live-safe T11 runtime graph descriptor bridge
+- `T45_t11_runtime_top4_graph` compact top-4 T11 runtime graph bridge
+  pre-registration
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -133,6 +135,13 @@ full Phase 03.1 viewer is packaged at
 `techniques/T44_t11_runtime_graph_bridge/visualizations/qd_ppa_viewer/index.html`;
 the direct raw-PPA supplement is packaged at
 `techniques/T44_t11_runtime_graph_bridge/visualizations/direct_ppa_pareto/index.html`.
+
+T45 is pre-registered as the immediate T44 ablation. It keeps T44's archive
+substrate, model, subset, seed, budget, operator, and Phase 03.1/direct-PPA
+visualization gates, but reduces `t11_runtime_top8_graph` to
+`t11_runtime_top4_graph`. The purpose is to test whether T44's
+traffic-light/multi-pipe HV and front signal survives with less sparse archive
+geometry and better valid-PPA yield.
 
 ## Comparable Seed-1001 Replay Metrics
 
