@@ -6,8 +6,8 @@ Status: hard/tuning packaged; diagnostic.
 
 `diagnostic_t26_not_holdout_ready`.
 
-T47 is a guardrail package, not completed evidence. It exists to make the next
-T26-family experiment answer the strongest current objections:
+T47 is completed diagnostic evidence, not positive final evidence. It exists to
+make the next T26-family experiment answer the strongest current objections:
 
 - default-reference `Prob040_synchronizer` cannot carry a headline HV win;
 - paired HV must not be net-negative after default-reference quarantine;

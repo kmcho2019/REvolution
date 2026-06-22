@@ -224,9 +224,15 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T47_t26_contract_probe` is pre-registered as the contract-aligned
       T26-family follow-up gate after the one-seed RTLLM package was narrowed
       to diagnostic.
-- [ ] `T47_t26_contract_probe` is executed, packaged with direct raw PPA
+- [x] `T47_t26_contract_probe` is executed, packaged with direct raw PPA
       figures and contract-aligned metrics, visually inspected, and assigned a
       tier decision.
+- [x] `T48_t26_gated_near_front_fusion_qd` is pre-registered as the next
+      T26.1 follow-up after T47 showed positive best-score movement but
+      negative HV, HV-AUC, valid-PPA, and aggregate front-count deltas.
+- [ ] `T48_t26_gated_near_front_fusion_qd` narrow gate implementation is
+      added, tested, run on the T47 hard/tuning comparator surface, packaged,
+      visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
 

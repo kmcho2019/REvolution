@@ -2693,3 +2693,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - There are no classic-covered valid-PPA losses, but there are `4` yield
   warnings and `4` small-n labels. The next step should be a narrow T26.1
   variant or another lane, not exact T26 held-out escalation.
+
+## T48 Gated Near-Front Fusion Pre-Registration - 2026-06-22 UTC
+
+- Updated the central TODO, technique registry, lane ledger, lineage ledger,
+  and technique index so T47 is discoverable as a completed `T0` diagnostic,
+  not a pending pre-registration.
+- Added `techniques/T48_t26_gated_near_front_fusion_qd/` as the next T26.1
+  follow-up before any held-out exact-T26 spend.
+- T48 keeps the T47 SR raw descriptor, local Pareto archive, champion lane,
+  hard/tuning subset, and two seeds, but adds a planned
+  `qd_two_parent_gate=near_front_descriptor` option with
+  `qd_two_parent_probability=0.10`.
+- The planned gate accepts two-parent fusion only when both parents are valid
+  archive members, both are NSGA-II rank `1` or `2`, and their squared
+  `sr_pca_3d` descriptor distance is at most `6.75`. Otherwise it falls back
+  to the existing one-parent success path and records the fallback.
+- No live T48 result is claimed yet. The next step is a narrow implementation
+  plus focused tests before launching the hard/tuning QD arm.

@@ -4,8 +4,8 @@ Status: hard/tuning package generated; held-out launch blocked.
 
 ## Current Files
 
-- `methodology.md`: pre-registered T47 method card.
-- `results_report.md`: run-status report and decision placeholder.
+- `methodology.md`: completed hard/tuning diagnostic method card.
+- `results_report.md`: completed hard/tuning diagnostic report.
 - `commands/probe_plan.md`: command plan and execution checklist.
 - `commands/hard_tuning_sanity_20260622_203146_UTC.md`: exact preflighted
   hard/tuning launch commands for the current run root.
@@ -21,7 +21,7 @@ Status: hard/tuning package generated; held-out launch blocked.
 - `tables/preflight_models_20260622_203146_UTC.json`: local vLLM model
   preflight showing `openai/gpt-oss-120b` with `max_model_len=131072`.
 - `tables/README.md`: table semantics and regeneration command.
-- `figures/README.md`: required visual outputs and inspection rule.
+- `figures/README.md`: figure index and inspection rule.
 - `hard_tuning_package/`: generated two-seed hard/tuning analysis package with
   tables, raw PPA candidate data, inspected figures, and package README.
 

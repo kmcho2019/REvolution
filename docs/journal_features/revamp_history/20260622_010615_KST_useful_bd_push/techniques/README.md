@@ -58,6 +58,10 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T42` | `T42_initial_sparse_yield_gate_qd` | Archive-coupling initial warmup variant | `T0 mixed_diagnostic`; generation-0 gate adds ALU/multi-pipe pooled hits but loses T41 traffic-light |
 | `T43` | `T43_staged_sparse_yield_gate_qd` | Archive-coupling staged warmup variant | `T0 mixed_diagnostic`; staged branch did not activate and direct PPA front has zero pooled hits |
 | `T44` | `T44_t11_runtime_graph_bridge` | Learned graph descriptor runtime bridge | `T0 mixed_diagnostic`; HV/front signal, yield-gate blocker |
+| `T45` | `T45_t11_runtime_top4_graph` | Learned graph descriptor runtime bridge | `T0 mixed_diagnostic`; compact graph axes preserve coverage but lose mean HV, valid-PPA, and best score |
+| `T46` | `T46_t11_runtime_pca4_graph` | Learned graph descriptor runtime projection | `T0 mixed_diagnostic`; ALU HV signal, but direct graph-axis primary lane retired |
+| `T47` | `T47_t26_contract_probe` | Archive-coupling contract probe | `T0 diagnostic`; exact T26 has positive best-score delta but is not held-out-ready |
+| `T48` | `T48_t26_gated_near_front_fusion_qd` | Archive-coupling parent gate | Pre-registered T26.1 low-fusion gate; implementation and live result pending |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

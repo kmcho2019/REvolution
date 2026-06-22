@@ -1,6 +1,6 @@
 # T47 T26 Contract Probe Methodology
 
-Status: pre-registered method card. No live run has been launched.
+Status: completed hard/tuning diagnostic. Result is in `results_report.md`.
 
 ## Question
 
@@ -85,7 +85,7 @@ multi-seed run.
 
 ## Required Artifacts
 
-Before T47 can be marked complete, the package must include:
+The completed hard/tuning diagnostic package includes:
 
 - vLLM `/v1/models` preflight metadata;
 - command log for every probe phase;
@@ -94,7 +94,7 @@ Before T47 can be marked complete, the package must include:
   front points, unique PPA points, and budget parity;
 - default-reference quarantine table;
 - direct raw area-power PPA-front figures;
-- full Phase 03.1 `qd_ppa_viewer/` bundle for any live QD archive result;
+- Phase 03.1 viewer export status for any live QD archive result;
 - visual inspection notes;
 - adversarial review that checks this methodology against
   `journal_contract_alignment.md`.

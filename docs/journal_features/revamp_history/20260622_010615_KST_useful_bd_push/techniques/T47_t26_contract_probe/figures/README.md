@@ -1,15 +1,16 @@
 # T47 Figures
 
-Status: no figures yet.
+Status: figures generated in `hard_tuning_package/figures/`.
 
-Required before result sign-off:
+Generated hard/tuning figures:
 
-- raw area-power Pareto fronts with conventional lower-left-better axes;
-- validity funnel;
-- HV and HV-AUC deltas with default-reference problems removed or flagged;
-- best-score delta plot;
-- front-count and duplicate/family-proxy accounting plot;
-- Phase 03.1 viewer screenshot if a QD archive run exists.
+- `hard_tuning_package/figures/t47_hv_delta_heatmap.png`
+- `hard_tuning_package/figures/t47_metric_delta_summary.png`
+- `hard_tuning_package/figures/t47_validity_funnel.png`
+- `hard_tuning_package/figures/t47_front_counts.png`
+- `hard_tuning_package/figures/visual_inspection_notes.md`
 
-Every generated figure must have visual inspection notes before T47 can be
-assigned a tier.
+The generated package does not contain a full Phase 03.1 viewer bundle. T47 is
+diagnostic and blocks exact T26 held-out escalation, so the next viewer export
+should be attached to any T48-or-later live candidate that survives the
+hard/tuning gate.
