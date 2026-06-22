@@ -1842,3 +1842,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   PPA-front plots, but the current warmup policy fails the sparse-yield
   multi-pipe case. Next iteration should keep the one-slot rule and ablate
   sparse-yield archive warmup/fallback before broad controls.
+
+## T39 Sparse-Yield Warmup Pre-Registration - 2026-06-22 UTC
+
+- Pre-registered `techniques/T39_sparse_yield_warmup_qd/` as the direct T38
+  warmup ablation before broad controls.
+- T39 keeps the T38 live descriptor, seed, subset, model, budget, parent
+  selection, `elite_pareto_slot` mode, and `max_elites_per_cell=2`.
+- The only method delta is `--qd_grid_quantile_warmup_successes 4` instead of
+  `8`, so designs with four to seven valid PPA samples can initialize an active
+  quantile archive during the run.
+- The method card records the leakage guard: PPA/front/HV/test labels are not
+  descriptor inputs, and the lower warmup threshold alone cannot justify
+  promotion without direct PPA/front and classic-covered-design evidence.

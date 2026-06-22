@@ -100,6 +100,19 @@ a numbered `techniques/T##_slug/` package before running it.
   PPA can be used only after evaluation for archive insertion and parent
   selection within the already evaluated Pareto archive.
 
+## From `T38_elite_pareto_slot_live_qd` T0
+
+- T38 validates the live champion-plus-one-front-slot code path, but the
+  grid-quantile warmup threshold of eight leaves sparse-yield multi-pipe with
+  seven valid PPA points, three global/front points, and zero active archive
+  members.
+- The immediate follow-up is T39: keep every T38 setting fixed except lower
+  `--qd_grid_quantile_warmup_successes` from `8` to `4`.
+- If T39 still leaves multi-pipe archive-empty, do not keep lowering the
+  threshold blindly. The next ablation should be a run-end or generation-end
+  replay of already-valid global Pareto members into a reporting archive, kept
+  separate from in-loop descriptor construction.
+
 ## From `T19_sr_relu_pca_bd` T0
 
 - SR ReLU PCA is a high-priority HV lead, not a promoted method: final mean HV

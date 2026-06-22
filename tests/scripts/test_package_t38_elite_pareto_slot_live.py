@@ -1,11 +1,11 @@
 import json
 from pathlib import Path
 
-from scripts.package_t38_elite_pareto_slot_live import main
+from scripts.package_t38_elite_pareto_slot_live import MODE_ROOT, main
 
 
-def _write_problem(root: Path, problem: str, *, sequential: bool) -> None:
-    problem_root = root / "elite_pareto_slot_qd/seed_1001/openai_gpt-oss-120b/RTLLM" / problem
+def _write_problem(root: Path, problem: str, *, sequential: bool, mode_root: Path) -> None:
+    problem_root = root / mode_root / problem
     problem_root.mkdir(parents=True)
     ref = {"power": 10.0, "area": 100.0, "eff_clk_period": 5.0 if sequential else 0.0}
     (problem_root / f"{problem}_summary.json").write_text(
@@ -67,8 +67,13 @@ def _write_problem(root: Path, problem: str, *, sequential: bool) -> None:
 
 def test_package_t38_elite_pareto_slot_live(tmp_path):
     for problem in ("Prob045_alu", "Prob041_traffic_light"):
-        _write_problem(tmp_path, problem, sequential=False)
-    _write_problem(tmp_path, "Prob015_multi_pipe_8bit", sequential=True)
+        _write_problem(tmp_path, problem, sequential=False, mode_root=MODE_ROOT)
+    _write_problem(
+        tmp_path,
+        "Prob015_multi_pipe_8bit",
+        sequential=True,
+        mode_root=MODE_ROOT,
+    )
     output_dir = tmp_path / "package"
 
     assert main(["--run-root", str(tmp_path), "--output-dir", str(output_dir)]) == 0
@@ -79,3 +84,44 @@ def test_package_t38_elite_pareto_slot_live(tmp_path):
         encoding="utf-8"
     )
     assert "T38 Elite Pareto Slot Direct PPA Fronts" in html
+
+
+def test_package_t38_script_accepts_t39_labels(tmp_path):
+    mode_root = Path("sparse_warmup_elite_slot_qd/seed_1001/openai_gpt-oss-120b/RTLLM")
+    for problem in ("Prob045_alu", "Prob041_traffic_light"):
+        _write_problem(tmp_path, problem, sequential=False, mode_root=mode_root)
+    _write_problem(
+        tmp_path,
+        "Prob015_multi_pipe_8bit",
+        sequential=True,
+        mode_root=mode_root,
+    )
+    output_dir = tmp_path / "package"
+
+    assert (
+        main(
+            [
+                "--run-root",
+                str(tmp_path),
+                "--output-dir",
+                str(output_dir),
+                "--mode-root",
+                str(mode_root),
+                "--file-prefix",
+                "t39_live",
+                "--plot-title-prefix",
+                "T39 Sparse-Yield Warmup",
+                "--viewer-title",
+                "T39 Sparse-Yield Direct PPA Fronts",
+            ]
+        )
+        == 0
+    )
+
+    assert (output_dir / "tables" / "t39_live_candidate_ppa_points.csv").is_file()
+    assert (output_dir / "figures" / "t39_live_raw_area_power_fronts.png").is_file()
+    html = (output_dir / "visualizations" / "direct_ppa_pareto" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    assert "T39 Sparse-Yield Direct PPA Fronts" in html
+    assert "t39_live_raw_area_power_fronts.png" in html

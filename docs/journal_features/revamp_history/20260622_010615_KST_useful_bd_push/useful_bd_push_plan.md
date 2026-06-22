@@ -61,6 +61,12 @@ front/archive material on ALU and traffic-light, but it is `T0 diagnostic`
 because multi-pipe has valid/global front PPA and zero active archive members
 under grid-quantile warmup `8`.
 
+T39 is the pre-registered T38 ablation. It keeps the same one-slot archive
+rule, descriptor, seed, subset, model, budget, and operators, but lowers
+grid-quantile warmup from `8` to `4` so sparse-yield designs can form an
+archive during the run. It is not a descriptor reset and cannot be promoted
+without the same direct PPA/front and classic-covered-design gates.
+
 T35 remains important negative/upper-bound evidence. Full cell-local Pareto
 retention improves direct front hits but loses too much HV, while the
 front-seeded arm proves the fixed candidate pool contains recoverable front
@@ -71,9 +77,8 @@ top-64/weighted structural contrastive descriptors beat lexical HV by
 `+1.82%` and keep `186` unique PPA points, but direct front hits still miss
 lexical (`120` versus `122`). T36 is the measured bounded-front follow-up. The
 T37 is the measured slot-count ablation. T38 is the first live validation
-package for exactly one bounded local-front slot. The next T11-family step is
-not wider local-Pareto retention; it is a sparse-yield archive warmup/fallback
-fix that keeps descriptor novelty intact.
+package for exactly one bounded local-front slot. T39 is the sparse-yield
+archive warmup/fallback fix that keeps descriptor novelty intact.
 
 T30 remains the most recent positive holdout support for exact T26
 conservative-exploit SR raw: it preserves all three classic-covered

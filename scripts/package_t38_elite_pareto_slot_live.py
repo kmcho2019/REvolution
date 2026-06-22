@@ -30,6 +30,14 @@ MODE_ROOT = Path("elite_pareto_slot_qd/seed_1001/openai_gpt-oss-120b/RTLLM")
 
 
 @dataclass(frozen=True)
+class PackageConfig:
+    mode_root: Path
+    file_prefix: str
+    plot_title_prefix: str
+    viewer_title: str
+
+
+@dataclass(frozen=True)
 class Candidate:
     problem: str
     candidate_id: str
@@ -53,7 +61,20 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-root", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--mode-root", type=Path, default=MODE_ROOT)
+    parser.add_argument("--file-prefix", default="t38_live")
+    parser.add_argument("--plot-title-prefix", default="T38 Elite Pareto Slot")
+    parser.add_argument(
+        "--viewer-title",
+        default="T38 Elite Pareto Slot Direct PPA Fronts",
+    )
     args = parser.parse_args(argv)
+    config = PackageConfig(
+        mode_root=args.mode_root,
+        file_prefix=args.file_prefix,
+        plot_title_prefix=args.plot_title_prefix,
+        viewer_title=args.viewer_title,
+    )
 
     table_dir = args.output_dir / "tables"
     figure_dir = args.output_dir / "figures"
@@ -65,18 +86,38 @@ def main(argv: list[str] | None = None) -> int:
     candidates: list[Candidate] = []
     archive_rows: list[dict[str, str]] = []
     for problem in PROBLEMS:
-        problem_root = args.run_root / MODE_ROOT / problem
+        problem_root = args.run_root / config.mode_root / problem
         problem_candidates = collect_candidates(problem_root, problem)
         candidates.extend(problem_candidates)
-        archive_rows.append(archive_summary_row(problem_root, problem, problem_candidates))
+        archive_rows.append(
+            archive_summary_row(problem_root, problem, problem_candidates)
+        )
 
-    write_csv(table_dir / "t38_live_candidate_ppa_points.csv", candidate_rows(candidates))
-    write_csv(table_dir / "t38_live_problem_summary.csv", problem_summary_rows(candidates, archive_rows))
-    write_csv(table_dir / "t38_live_archive_summary.csv", archive_rows)
-    plot_raw_fronts(candidates, figure_dir / "t38_live_raw_area_power_fronts.png")
-    plot_improvement_fronts(candidates, figure_dir / "t38_live_improvement_fronts.png")
-    plot_counts(archive_rows, figure_dir / "t38_live_archive_counts.png")
-    write_viewer(viewer_dir / "index.html", archive_rows)
+    write_csv(
+        table_dir / f"{config.file_prefix}_candidate_ppa_points.csv",
+        candidate_rows(candidates),
+    )
+    write_csv(
+        table_dir / f"{config.file_prefix}_problem_summary.csv",
+        problem_summary_rows(candidates, archive_rows),
+    )
+    write_csv(table_dir / f"{config.file_prefix}_archive_summary.csv", archive_rows)
+    plot_raw_fronts(
+        candidates,
+        figure_dir / f"{config.file_prefix}_raw_area_power_fronts.png",
+        config,
+    )
+    plot_improvement_fronts(
+        candidates,
+        figure_dir / f"{config.file_prefix}_improvement_fronts.png",
+        config,
+    )
+    plot_counts(
+        archive_rows,
+        figure_dir / f"{config.file_prefix}_archive_counts.png",
+        config,
+    )
+    write_viewer(viewer_dir / "index.html", archive_rows, config)
     write_json(viewer_dir / "metrics.json", archive_rows)
     return 0
 
@@ -248,29 +289,43 @@ def problem_summary_rows(
             {
                 **archive_row,
                 "reference_beating_count": str(
-                    sum(candidate.g_a > 0.0 and candidate.g_p > 0.0 for candidate in subset)
+                    sum(
+                        candidate.g_a > 0.0 and candidate.g_p > 0.0
+                        for candidate in subset
+                    )
                 ),
-                "best_score": fmt(max((candidate.score for candidate in subset), default=None)),
-                "min_area": fmt(min((candidate.area for candidate in subset), default=None)),
-                "min_power": fmt(min((candidate.power for candidate in subset), default=None)),
+                "best_score": fmt(
+                    max((candidate.score for candidate in subset), default=None)
+                ),
+                "min_area": fmt(
+                    min((candidate.area for candidate in subset), default=None)
+                ),
+                "min_power": fmt(
+                    min((candidate.power for candidate in subset), default=None)
+                ),
             }
         )
     return rows
 
 
-def plot_raw_fronts(candidates: list[Candidate], path: Path) -> None:
+def plot_raw_fronts(
+    candidates: list[Candidate],
+    path: Path,
+    config: PackageConfig,
+) -> None:
     fig, axes = plt.subplots(1, len(PROBLEMS), figsize=(17.5, 5.4), sharey=False)
     for axis, problem in zip(axes, PROBLEMS, strict=True):
         subset = [candidate for candidate in candidates if candidate.problem == problem]
         draw_problem(axis, subset, raw=True)
         axis.set_title(problem.replace("Prob", "P"))
     axes[0].set_ylabel("Power (lower is better; axis inverted)")
-    fig.suptitle("T38 Elite Pareto Slot: Direct Raw Area-Power Fronts", y=0.98)
+    fig.suptitle(f"{config.plot_title_prefix}: Direct Raw Area-Power Fronts", y=0.98)
     fig.text(
         0.5,
         0.02,
         "Open circles mark local active-objective rank-1 points. "
-        "Orange crosses mark global Pareto archive members; green squares mark active archive members.",
+        "Orange crosses mark global Pareto archive members; "
+        "green squares mark active archive members.",
         ha="center",
         fontsize=9,
         color="#444444",
@@ -280,14 +335,18 @@ def plot_raw_fronts(candidates: list[Candidate], path: Path) -> None:
     plt.close(fig)
 
 
-def plot_improvement_fronts(candidates: list[Candidate], path: Path) -> None:
+def plot_improvement_fronts(
+    candidates: list[Candidate],
+    path: Path,
+    config: PackageConfig,
+) -> None:
     fig, axes = plt.subplots(1, len(PROBLEMS), figsize=(17.5, 5.4), sharey=False)
     for axis, problem in zip(axes, PROBLEMS, strict=True):
         subset = [candidate for candidate in candidates if candidate.problem == problem]
         draw_problem(axis, subset, raw=False)
         axis.set_title(problem.replace("Prob", "P"))
     axes[0].set_ylabel("Power improvement g_P (higher is better)")
-    fig.suptitle("T38 Elite Pareto Slot: Normalized Improvement Fronts", y=0.98)
+    fig.suptitle(f"{config.plot_title_prefix}: Normalized Improvement Fronts", y=0.98)
     fig.tight_layout(rect=(0, 0.06, 1, 0.92))
     fig.savefig(path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -301,10 +360,41 @@ def draw_problem(axis: Any, candidates: list[Candidate], *, raw: bool) -> None:
         return
     x_values = [candidate.area if raw else candidate.g_a for candidate in candidates]
     y_values = [candidate.power if raw else candidate.g_p for candidate in candidates]
-    axis.scatter(x_values, y_values, s=36, color="#64748b", alpha=0.35, label="Valid PPA")
-    draw_subset(axis, candidates, raw=raw, attr="is_front", marker="o", color="#2563eb", label="Local front")
-    draw_subset(axis, candidates, raw=raw, attr="is_global_front", marker="x", color="#f97316", label="Global front")
-    draw_subset(axis, candidates, raw=raw, attr="is_archive_member", marker="s", color="#16a34a", label="Archive")
+    axis.scatter(
+        x_values,
+        y_values,
+        s=36,
+        color="#64748b",
+        alpha=0.35,
+        label="Valid PPA",
+    )
+    draw_subset(
+        axis,
+        candidates,
+        raw=raw,
+        attr="is_front",
+        marker="o",
+        color="#2563eb",
+        label="Local front",
+    )
+    draw_subset(
+        axis,
+        candidates,
+        raw=raw,
+        attr="is_global_front",
+        marker="x",
+        color="#f97316",
+        label="Global front",
+    )
+    draw_subset(
+        axis,
+        candidates,
+        raw=raw,
+        attr="is_archive_member",
+        marker="s",
+        color="#16a34a",
+        label="Archive",
+    )
     axis.grid(color="#e5e7eb", linewidth=0.8)
     axis.set_xlabel("Area (lower is better; axis inverted)" if raw else "Area improvement g_A")
     if raw:
@@ -328,12 +418,24 @@ def draw_subset(
     xs = [candidate.area if raw else candidate.g_a for candidate in subset]
     ys = [candidate.power if raw else candidate.g_p for candidate in subset]
     if marker == "o":
-        axis.scatter(xs, ys, s=90, facecolors="none", edgecolors=color, linewidths=1.8, label=label)
+        axis.scatter(
+            xs,
+            ys,
+            s=90,
+            facecolors="none",
+            edgecolors=color,
+            linewidths=1.8,
+            label=label,
+        )
         return
     axis.scatter(xs, ys, s=70, marker=marker, color=color, alpha=0.9, label=label)
 
 
-def plot_counts(rows: list[dict[str, str]], path: Path) -> None:
+def plot_counts(
+    rows: list[dict[str, str]],
+    path: Path,
+    config: PackageConfig,
+) -> None:
     problems = [row["problem"].replace("Prob", "P") for row in rows]
     metrics = (
         ("valid_ppa_count", "Valid PPA"),
@@ -354,7 +456,7 @@ def plot_counts(rows: list[dict[str, str]], path: Path) -> None:
     axis.set_xticks(x_positions)
     axis.set_xticklabels(problems)
     axis.set_ylabel("Candidates")
-    axis.set_title("T38 Live Arm: Valid PPA and Front Material")
+    axis.set_title(f"{config.plot_title_prefix}: Valid PPA and Front Material")
     axis.grid(axis="y", color="#e5e7eb", linewidth=0.8)
     axis.legend(frameon=False, ncol=4, loc="upper center", bbox_to_anchor=(0.5, -0.12))
     fig.tight_layout()
@@ -362,7 +464,11 @@ def plot_counts(rows: list[dict[str, str]], path: Path) -> None:
     plt.close(fig)
 
 
-def write_viewer(path: Path, rows: list[dict[str, str]]) -> None:
+def write_viewer(
+    path: Path,
+    rows: list[dict[str, str]],
+    config: PackageConfig,
+) -> None:
     table_rows = "\n".join(
         "<tr>"
         f"<td>{row['problem']}</td>"
@@ -379,7 +485,7 @@ def write_viewer(path: Path, rows: list[dict[str, str]]) -> None:
 <html lang=\"en\">
 <head>
   <meta charset=\"utf-8\">
-  <title>T38 Direct PPA Pareto Viewer</title>
+  <title>{config.viewer_title}</title>
   <style>
     body {{ font-family: Inter, system-ui, sans-serif; margin: 28px; color: #111827; }}
     img {{ max-width: 100%; border: 1px solid #d1d5db; }}
@@ -389,8 +495,8 @@ def write_viewer(path: Path, rows: list[dict[str, str]]) -> None:
   </style>
 </head>
 <body>
-  <h1>T38 Elite Pareto Slot Direct PPA Fronts</h1>
-  <img src=\"../../figures/t38_live_raw_area_power_fronts.png\" alt=\"T38 raw area-power Pareto fronts\">
+  <h1>{config.viewer_title}</h1>
+  <img src=\"../../figures/{config.file_prefix}_raw_area_power_fronts.png\" alt=\"{config.viewer_title}\">
   <table>
     <thead>
       <tr><th>Problem</th><th>Valid PPA</th><th>Local front</th><th>Global front</th><th>Archive</th><th>Best quality</th></tr>

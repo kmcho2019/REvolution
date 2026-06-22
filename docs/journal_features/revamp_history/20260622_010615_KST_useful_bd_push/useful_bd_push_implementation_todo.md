@@ -150,9 +150,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T38_elite_pareto_slot_live_qd` bounded arm is executed, validated,
       packaged with direct raw PPA Pareto figures, and assigned `T0
       diagnostic`.
-- [ ] T39 sparse-yield warmup/fallback variant is specified before broad T38
+- [x] T39 sparse-yield warmup/fallback variant is specified before broad T38
       controls, because T38 multi-pipe has valid/front PPA but no active
       archive members.
+- [ ] `T39_sparse_yield_warmup_qd` bounded arm is executed, validated,
+      packaged with direct raw PPA Pareto figures, and assigned a tier
+      decision.
 
 ## Minimum Goal Completion
 
