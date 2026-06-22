@@ -77,7 +77,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       tier decision.
 - [x] `T06_qwen_projection_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `T07_deepgate_family_bd` has methodology, results, figures, tables, and tier
+- [x] `T07_deepgate_family_bd` has methodology, results, figures, tables, and tier
       decision.
 - [ ] `T08_sequential_deepseq_bd` has methodology, results, figures, tables, and
       tier decision.

@@ -14,20 +14,22 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T34_qwen_pca_residual_bd/` (completed label-free Qwen
-  PCA-residual replay; `T0 diagnostic` because it preserves T33's RTL HV signal
-  but does not reduce nuisance collapse for those high-HV views).
-- Most recent pre-registered package: none beyond the scaffolded T07-T16/T18
-  encoder and emitter candidates.
+  `techniques/T07_deepgate_family_bd/` (completed graph-surrogate replay;
+  `T1 near_classic_replay_lead` because graph WL/combo barely beat lexical HV
+  and improve unique PPA points, but direct front hits remain below lexical).
+- Most recent pre-registered package: none beyond the remaining scaffolded
+  T08-T16/T18 encoder and emitter candidates.
 - Next direction:
-  move L4 to graph encoders or define a separate bounded repair/local-rank-1
+  advance L4 from the T07 graph surrogate to a true graph/AIG encoder or
+  contrastive graph objective, or define a separate bounded repair/local-rank-1
   emitter if returning to the SR raw family.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T34_qwen_pca_residual_bd/figures/t34_raw_area_power_pareto_front.png`
-  (raw area-power Pareto front with full-range and lower-left zoom panels).
+  `techniques/T07_deepgate_family_bd/figures/deepgate_multi_problem_ppa_pareto_fronts.png`
+  (four representative raw area-power Pareto-front panels with all-valid,
+  lexical, random, and graph-combo overlays).
 - Most recent interactive visualization refresh:
   `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
   now has a `raw A-P front` PPA mode, with screenshot
@@ -94,7 +96,7 @@ Start here when resuming the active goal.
 | `T04` | `T04_autoqd_mmd_synthesis_bd` | Replay result, `T1 near_classic`; strongest current automatic-descriptor lead. |
 | `T05` | `T05_vq_elites_codebook_bd` | Replay result, `T0 diagnostic`; fixed codebook descriptor loses quality and passive-QD score. |
 | `T06` | `T06_qwen_projection_bd` | Diagnostic result, `T0 diagnostic`; raw/identifier Qwen has HV signal but nuisance-axis clustering. |
-| `T07` | `T07_deepgate_family_bd` | Scaffolded. |
+| `T07` | `T07_deepgate_family_bd` | Completed replay diagnostic, `T1 near_classic_replay_lead`; graph WL/combo barely beat lexical HV but do not beat lexical direct front hits. |
 | `T08` | `T08_sequential_deepseq_bd` | Scaffolded. |
 | `T09` | `T09_nettag_text_graph_bd` | Scaffolded. |
 | `T10` | `T10_circuitfusion_multimodal_bd` | Scaffolded. |

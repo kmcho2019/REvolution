@@ -45,12 +45,16 @@ The desired end state is one of:
 
 ## Current Research State
 
-T32 is the most recent completed package. T30 remains the most recent positive
-holdout support for exact T26 conservative-exploit SR raw: it preserves all
-three classic-covered VerilogEval holdout designs and improves mean final-best
-score by 9.91%. It is not a QD-front promotion because valid-PPA yield drops,
-P098 has a per-problem yield warning, and front/netlist breadth does not
-improve.
+T07 is the most recent completed package. It is a graph-surrogate learned
+encoder replay result: graph WL/combo barely beats lexical HV (`+0.07%`) and
+improves unique PPA points, but it does not beat lexical direct PPA-front hits.
+It is a graph-encoder lead, not a promoted useful-BD claim.
+
+T30 remains the most recent positive holdout support for exact T26
+conservative-exploit SR raw: it preserves all three classic-covered
+VerilogEval holdout designs and improves mean final-best score by 9.91%. It is
+not a QD-front promotion because valid-PPA yield drops, P098 has a per-problem
+yield warning, and front/netlist breadth does not improve.
 
 T31 is completed and retired as `T0 diagnostic`. Same-budget failure feedback
 kept final-best coverage alive, but it did not repair P098 yield, did not
@@ -67,6 +71,11 @@ preserve T26's P135 quality/HV signal and mean HV/HV-AUC remain zero. The next
 same-family method should not keep nudging champion fraction or two-parent
 probability alone; it needs a stronger role-separated emitter or a branch to a
 different descriptor family.
+
+The learned-encoder lane should now continue with a true graph/AIG encoder,
+contrastive graph objective, or fine-tuned circuit encoder rather than more
+label-free whole-design Qwen projection. Any such follow-up must include
+straightforward raw PPA Pareto figures before BD-space projections are used.
 
 ## Prior Evidence To Reuse
 

@@ -66,3 +66,25 @@ submodule. Record exact commands and blockers.
 - `tables/collapse_diagnostics.csv`
 - `figures/deepgate_projection.png`
 - `figures/graph_size_vs_embedding.png`
+
+## Completed Replay Route
+
+The completed T07 replay records the full DeepGate-family dependency blocker
+and uses a standard-cell graph surrogate instead of stopping at the blocker.
+The surrogate parses every synthesized netlist into a directed cell graph,
+extracts WL-hashed graph colors and graph statistics, and replays
+farthest-first retention at the same 50% budget used by the T33/T34 common
+audit.
+
+Generated primary artifacts:
+
+- `tables/netlist_graph_manifest.csv`;
+- `tables/ppa_comparison.csv`;
+- `tables/ppa_front_metrics.csv`;
+- `tables/ppa_front_plot_points.csv`;
+- `figures/deepgate_multi_problem_ppa_pareto_fronts.png`;
+- `figures/deepgate_raw_area_power_pareto_front.png`.
+
+The surrogate is not labeled as a full DeepGate checkpoint result. It is a
+graph-encoder diagnostic that tests whether graph-structured descriptors are
+more useful than whole-design text embeddings on the common replay surface.

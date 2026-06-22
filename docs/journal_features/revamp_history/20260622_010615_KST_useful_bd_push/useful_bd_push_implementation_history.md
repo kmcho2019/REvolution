@@ -1462,3 +1462,53 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `uv tool run ty check scripts/analyze_t34_qwen_pca_residual.py tests/scripts/test_analyze_t34_qwen_pca_residual.py`
   all passed before the real replay and again after the report artifacts were
   generated. `git diff --check` also passed.
+
+## T07 DeepGate-Family Graph-Surrogate Replay - 2026-06-22 UTC
+
+- Revisited the DeepGate-family lane after T34 closed the bounded label-free
+  Qwen residual path. Prior DeepGate3 probes were not enough for a full replay:
+  the AIG probe had 9 exports, 6 latch-free parses, and 3 latch-bearing
+  rejects; the tokenizer embedding probe had pairwise cosine mean
+  `0.999970734`, which is too collapsed for a useful descriptor.
+- Checked the existing isolated environment evidence. It can import
+  `deepgate 2.0.1` and `torch`, but not `deepgate3` or `dgl`. Instead of
+  stopping, T07 used a standard-cell graph surrogate over all 768 synthesized
+  netlists from the T33/T34 common candidate surface.
+- Added `scripts/analyze_t07_deepgate_surrogate.py` and a focused test. The
+  script parses mapped cell instances, builds directed producer-consumer cell
+  graphs, extracts WL-hashed graph features and graph statistics, replays
+  farthest-first retention at 50%, computes PPA/front/collapse diagnostics,
+  and writes direct raw PPA-front figures.
+- Ran the replay command:
+  `uv run python scripts/analyze_t07_deepgate_surrogate.py --candidates-csv exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/qwen_common_audit_candidates.csv --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T07_deepgate_family_bd --retention-fraction 0.5 --random-seed 0`.
+- Primary result: `t07_graph_wl_farthest` and
+  `t07_graph_combo_farthest` both select HV `3.704413`, a `+0.07%` gain over
+  lexical (`3.701827`) and far above random (`3.074167`). They improve unique
+  PPA points from lexical's `183` to `185` and keep the same best fitness as
+  `fitness_top`.
+- Front evidence blocks a stronger claim. Lexical has `122` selected all-valid
+  front hits, while graph WL/combo have `120`. Graph WL has `126` area-power
+  front points and graph combo has `125`, versus lexical's `127`.
+- Collapse diagnostics are better than the Qwen whole-design pattern but not
+  sufficient alone: graph WL nearest-neighbor same-problem fraction is
+  `0.635417`, same-corpus fraction is `0.761719`, same-netlist fraction is
+  `0.694010`, and same-motif fraction is `0.723958`.
+- Added a new straightforward multi-problem raw area-power PPA-front figure:
+  `techniques/T07_deepgate_family_bd/figures/deepgate_multi_problem_ppa_pareto_fronts.png`.
+  It overlays all-valid, lexical, random, and graph-combo selections on
+  conventional lower-left-better axes. The plotted data are committed in
+  `tables/ppa_front_plot_points.csv`.
+- Visual inspection passed for the multi-problem raw PPA-front figure, the
+  one-problem raw PPA-front zoom, hypervolume bar chart, graph projection, and
+  graph-size diagnostic. Notes are in
+  `techniques/T07_deepgate_family_bd/figures/visual_inspection_notes.md`.
+- Tier decision: `T1 near_classic_replay_lead`, not a promoted useful-BD win.
+  T07 is worth advancing to a true DeepGate/AIG dependency path or contrastive
+  graph encoder, but this exact surrogate should not consume live budget alone.
+- Validation run:
+  `uv run pytest tests/scripts/test_analyze_t07_deepgate_surrogate.py`,
+  `uv run ruff check scripts/analyze_t07_deepgate_surrogate.py tests/scripts/test_analyze_t07_deepgate_surrogate.py`,
+  `uv run python -m pyright scripts/analyze_t07_deepgate_surrogate.py tests/scripts/test_analyze_t07_deepgate_surrogate.py`,
+  and
+  `uv tool run ty check scripts/analyze_t07_deepgate_surrogate.py tests/scripts/test_analyze_t07_deepgate_surrogate.py`
+  all passed after adding the direct PPA-front outputs.

@@ -34,8 +34,11 @@ Real result packages:
 - `T30_t26_holdout_front_audit` classic-versus-T26 VerilogEval holdout audit
 - `T31_sr_raw_fail_feedback_repair_qd` failure-feedback repair holdout arm
 - `T32_sr_raw_front_preserving_emitter_qd` front-preserving emitter holdout arm
+- `T33_qwen3_preprocessing_ladder_bd` Qwen preprocessing replay diagnostic
+- `T34_qwen_pca_residual_bd` Qwen residual replay diagnostic
+- `T07_deepgate_family_bd` graph-surrogate encoder replay diagnostic
 
-Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
+Scaffolded but not yet real-result packages remain `T08` to `T16` and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -190,6 +193,21 @@ P135 final-best score or HV: mean final-best score stays at T31's 0.201770,
 and mean HV/HV-AUC remain zero. The direct raw PPA Pareto figure is
 `figures/t32_holdout_ppa_pareto_area_power_candidate_zoom.png`.
 
+`T33_qwen3_preprocessing_ladder_bd` and `T34_qwen_pca_residual_bd` are the
+completed Qwen L4 replay diagnostics. They show that normalized RTL views
+carry a small HV signal, but label-free whole-design Qwen projections do not
+align reduced nuisance collapse with PPA-front utility.
+
+`T07_deepgate_family_bd` is the completed graph-surrogate L4 replay diagnostic.
+The full DeepGate-family checkpoint path remains blocked for a full replay, so
+T07 uses parsed standard-cell graphs with WL-hashed and graph-stat descriptors.
+Graph WL/combo barely improves HV versus lexical (`+0.07%`) and improves
+unique PPA points from 183 to 185, while same-problem nearest-neighbor collapse
+is lower than in the Qwen probes. The direct PPA-front evidence blocks a
+stronger claim: graph WL/combo keep 120 all-valid front hits versus lexical's
+122. The primary figure is
+`techniques/T07_deepgate_family_bd/figures/deepgate_multi_problem_ppa_pareto_fronts.png`.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -229,6 +247,9 @@ and mean HV/HV-AUC remain zero. The direct raw PPA Pareto figure is
 15. The next result must be read from direct raw PPA Pareto/front geometry
     before aggregate bars or BD-space visualizations, because the T30/T31/T32
     holdout panels expose front collapse that summary metrics can obscure.
+16. T07 shows graph-structured learned-encoder features are more promising
+    than label-free whole-design Qwen projections, but the current surrogate is
+    still not a front win.
 
 ## Next Decisions
 

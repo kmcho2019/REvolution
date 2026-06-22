@@ -39,6 +39,12 @@ higher is better on both axes. For sequential designs, explicitly note when
 clock period is an active third objective and point readers to the HTML viewer
 for the 3D PPA view.
 
+For replay diagnostics that cover many problem groups, include more than a
+single focus problem. The package should provide either a multi-problem raw
+PPA-front panel or a clearly documented representative-set front figure, plus
+the raw point table used to draw it. A one-problem zoom is a supporting figure,
+not the only direct PPA-front evidence.
+
 The direct raw PPA figure should be the first PPA/front figure linked from the
 technique `figures/README.md` and the first figure discussed in
 `results_report.md`. The committed tables must include enough candidate-level
