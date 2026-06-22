@@ -4,6 +4,10 @@ Every technique must produce figures and reports that make the finding easy to
 understand without reading raw CSV files. A result is not complete until the
 images and conclusion have been inspected for clarity.
 
+For live QD techniques, the concrete Phase 03.1 file contract lives in
+`phase_03_1_visualization_contract.md`. This policy explains what to inspect
+and report; the contract defines the mandatory viewer layout and commands.
+
 ## Figure Requirements
 
 Each completed technique should include:

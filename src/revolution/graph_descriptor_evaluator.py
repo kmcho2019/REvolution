@@ -87,6 +87,8 @@ class GraphModel:
     directed_connections: tuple[DirectedConnection, ...]
     module_input_bits: frozenset[int]
     module_output_bits: frozenset[int]
+    net_driver_counts: tuple[int, ...]
+    net_sink_counts: tuple[int, ...]
     sequential_output_bits: frozenset[int]
     sequential_input_bits: frozenset[int]
     signal_bits: frozenset[int]
@@ -243,6 +245,7 @@ class GraphDescriptorEvaluator:
         cells_payload = module_raw.get("cells", {})
         if not isinstance(ports, dict) or not isinstance(cells_payload, dict):
             return self._empty_graph_model()
+        ltp_length_raw = payload.get("__ltp_length__")
 
         cells: dict[str, CellModel] = {}
         bit_drivers: dict[int, list[tuple[str | None, str]]] = defaultdict(list)
@@ -364,13 +367,15 @@ class GraphDescriptorEvaluator:
             directed_connections=tuple(directed_connections),
             module_input_bits=frozenset(module_input_bits),
             module_output_bits=frozenset(module_output_bits),
+            net_driver_counts=tuple(len(bit_drivers.get(bit, ())) for bit in sorted(signal_bits)),
+            net_sink_counts=tuple(len(bit_users.get(bit, ())) for bit in sorted(signal_bits)),
             sequential_output_bits=frozenset(sequential_output_bits),
             sequential_input_bits=frozenset(sequential_input_bits),
             signal_bits=frozenset(signal_bits),
             combinational_output_to_inputs=combinational_output_to_inputs,
             bit_output_cell=bit_output_cell,
             cell_output_bits=cell_output_bits,
-            ltp_length=(payload.get("__ltp_length__") if isinstance(payload.get("__ltp_length__"), int) else None),
+            ltp_length=ltp_length_raw if isinstance(ltp_length_raw, int) else None,
         )
 
     def _empty_graph_model(self) -> GraphModel:
@@ -382,6 +387,8 @@ class GraphDescriptorEvaluator:
             directed_connections=(),
             module_input_bits=frozenset(),
             module_output_bits=frozenset(),
+            net_driver_counts=(),
+            net_sink_counts=(),
             sequential_output_bits=frozenset(),
             sequential_input_bits=frozenset(),
             signal_bits=frozenset(),
@@ -417,11 +424,107 @@ class GraphDescriptorEvaluator:
             "comb_width_log": math.log1p(float(combinational_cells)),
             "combinational_cells": float(combinational_cells),
         }
+        metrics.update(self._extract_t11_runtime_metrics(graph))
         if graph.ltp_length is not None:
             # Online cross-check: yosys ltp counts buffers, ours skips them.
             metrics["logic_depth_ltp"] = float(graph.ltp_length)
             metrics["logic_depth_ltp_delta"] = float(graph.ltp_length) - logic_depth
         return metrics
+
+    def _extract_t11_runtime_metrics(self, graph: GraphModel) -> dict[str, float]:
+        """Extract the live-safe graph features closest to T11's top replay axes."""
+
+        node_count = len(graph.partition_nodes)
+        edge_count = sum(len(sinks) for sinks in graph.directed_adjacency.values())
+        net_count = len(graph.signal_bits)
+        levels = self._cell_levels(graph)
+        level_deltas = [
+            max(levels[sink] - levels[source], 0)
+            for source, sinks in graph.directed_adjacency.items()
+            for sink in sinks
+        ]
+        families = [self._t11_cell_family(cell.cell_type) for cell in graph.cells.values()]
+        family_total = max(len(families), 1)
+        fanouts = tuple(float(value) for value in graph.net_sink_counts)
+
+        return {
+            "hyper_mean_fanout": self._mean(fanouts),
+            "edge_per_node": float(edge_count) / max(float(node_count), 1.0),
+            "log_edge_count": float(edge_count),
+            "hyper_directed_edge_count": float(edge_count),
+            "hyper_fanout_entropy": self._entropy(fanouts),
+            "hyper_driven_net_count": float(sum(1 for value in graph.net_driver_counts if value > 0)),
+            "hyper_sink_net_count": float(sum(1 for value in graph.net_sink_counts if value > 0)),
+            "log_net_count": float(net_count),
+            "hyper_net_count": float(net_count),
+            "hyper_cell_count": float(node_count),
+            "log_node_count": float(node_count),
+            "hyper_max_fanout": max(fanouts, default=0.0),
+            "hyper_max_level": max((float(value) for value in levels.values()), default=0.0),
+            "log_max_level": max((float(value) for value in levels.values()), default=0.0),
+            "hyper_max_level_delta": max((float(value) for value in level_deltas), default=0.0),
+            "share_family_inv": float(sum(1 for family in families if family == "inv")) / family_total,
+        }
+
+    def _cell_levels(self, graph: GraphModel) -> dict[str, int]:
+        indegree = {node: 0 for node in graph.partition_nodes}
+        for sinks in graph.directed_adjacency.values():
+            for sink in sinks:
+                indegree[sink] += 1
+        ready = sorted(node for node, count in indegree.items() if count == 0)
+        levels = {node: 0 for node in graph.partition_nodes}
+        while ready:
+            source = ready.pop(0)
+            for sink in graph.directed_adjacency[source]:
+                levels[sink] = max(levels[sink], levels[source] + 1)
+                indegree[sink] -= 1
+                if indegree[sink] == 0:
+                    ready.append(sink)
+            ready.sort()
+        return levels
+
+    def _t11_cell_family(self, cell_type: str) -> str:
+        normalized = cell_type.upper()
+        if "DFF" in normalized or "LATCH" in normalized:
+            return "dff"
+        if "INV" in normalized or "$NOT" in normalized:
+            return "inv"
+        if "BUF" in normalized:
+            return "buf"
+        if "NAND" in normalized:
+            return "nand"
+        if "NOR" in normalized:
+            return "nor"
+        if "XNOR" in normalized:
+            return "xnor"
+        if "XOR" in normalized:
+            return "xor"
+        if "AND" in normalized:
+            return "and"
+        if "OR" in normalized:
+            return "or"
+        if "MUX" in normalized:
+            return "mux"
+        if "ADD" in normalized:
+            return "add"
+        return "other"
+
+    def _mean(self, values: tuple[float, ...]) -> float:
+        if not values:
+            return 0.0
+        return float(sum(values) / len(values))
+
+    def _entropy(self, values: tuple[float, ...]) -> float:
+        total = sum(values)
+        if total <= 0.0:
+            return 0.0
+        entropy = 0.0
+        for value in values:
+            if value <= 0.0:
+                continue
+            probability = value / total
+            entropy -= probability * math.log2(probability)
+        return float(entropy)
 
     def _extract_logic_depth(self, graph: GraphModel) -> int:
         """Count non-buffer combinational cells between PI/FF-Q and PO/FF-D boundaries.

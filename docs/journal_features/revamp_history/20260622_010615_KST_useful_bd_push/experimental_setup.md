@@ -134,7 +134,8 @@ useful.
 
 ## Visualization And Reporting
 
-Follow `visualization_reporting_policy.md` for every technique package and the
-central comparison report. Generated figures must be inspected for readability,
-clear labels, baseline comparison, and claim support before a technique is
-marked complete.
+Follow `phase_03_1_visualization_contract.md` for every live QD technique and
+`visualization_reporting_policy.md` for every technique package and the central
+comparison report. Generated figures must be inspected for readability, clear
+labels, baseline comparison, and claim support before a technique is marked
+complete.

@@ -57,6 +57,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T41` | `T41_adaptive_sparse_yield_gate_qd` | Archive-coupling adaptive warmup variant | `T0 mixed_diagnostic`; traffic-light win, but ALU and multi-pipe block promotion |
 | `T42` | `T42_initial_sparse_yield_gate_qd` | Archive-coupling initial warmup variant | `T0 mixed_diagnostic`; generation-0 gate adds ALU/multi-pipe pooled hits but loses T41 traffic-light |
 | `T43` | `T43_staged_sparse_yield_gate_qd` | Archive-coupling staged warmup variant | `T0 mixed_diagnostic`; staged branch did not activate and direct PPA front has zero pooled hits |
+| `T44` | `T44_t11_runtime_graph_bridge` | Learned graph descriptor runtime bridge | Pre-registered and smoke-tested; full live screen pending |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

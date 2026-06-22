@@ -22,7 +22,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L1` | Transparent CAD descriptors | Use reviewer-readable features such as Yosys stats, motifs, pathlets, and ST-NOD. | Reuse selected features in guarded hybrids; stop pure concatenation. |
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
-| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T37 confirms the T11-family replay lead is exactly one bounded local-front slot; T43 does not close the runtime descriptor gap because its staged branch never activates. |
+| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T44 begins the exact-T11 follow-up with a live-safe runtime graph bridge; full screen pending. |
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T43 is `T0 mixed_diagnostic`; it preserves designs but adds zero pooled raw-front hits and blocks another trigger-only tweak. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T31/T32 show repair/front tweaks need stronger role separation. |
 
@@ -86,6 +86,7 @@ flowchart LR
     T41[T41 adaptive sparse-yield gate]
     T42[T42 initial sparse-yield gate]
     T43[T43 staged sparse-yield gate]
+    T44[T44 T11 runtime graph bridge]
   end
 
   subgraph emitters[L6 lineage/emitter]
@@ -134,6 +135,7 @@ flowchart LR
   T40 --> T41
   T41 --> T42
   T42 --> T43
+  T43 --> T44
   T39 --> enc
   T17 --> T12
   T17 --> T18
@@ -163,6 +165,7 @@ flowchart LR
 | T41 | `L5` | Adaptive sparse-yield gate: keep warmup 8 but allow generation-1 fallback to 4 valid PPA successes when the archive is still empty. | `T0 mixed_diagnostic`: traffic-light gets 7 pooled hits and best score `0.473631`, but ALU loses to classic and multi-pipe loses the T39 signal. | `ablate` earlier trigger | T42 completed the generation-0 trigger check. |
 | T42 | `L5` | Initial sparse-yield gate: keep T41 settings but trigger fallback at generation 0 after initial population. | `T0 mixed_diagnostic`: direct PPA front adds one ALU pooled hit and one multi-pipe pooled hit, but loses T41 traffic-light and misses T39 multi-pipe best score. | `ablate` staged gate | T43 completed the staged sparse-yield follow-up. |
 | T43 | `L5` | Staged sparse-yield gate: keep T42 settings but lower champion pressure only after adaptive sparse initialization. | `T0 mixed_diagnostic`: all archives used strict warmup, the staged branch never activated, and direct PPA fronts show zero pooled hits. | `ablate` trigger lane | Use a bounded sparse-trigger screen or branch exact T11 runtime projection. |
+| T44 | `L4/L5` | Live-safe top-8 subset of T11 structural graph features on the T39 one-slot sparse-warmup substrate. | Pre-registered and smoke-tested: profile/CLI/archive metadata path works, but the smoke has no valid PPA and is not a tier result. | `advance` full live screen | Run the full three-problem live screen before implementing fitted top-16/top-64 T11 projection. |
 | T08-T10/T12/T15-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, lineage repair, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |

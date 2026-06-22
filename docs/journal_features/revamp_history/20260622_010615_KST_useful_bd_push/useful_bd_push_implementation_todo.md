@@ -15,6 +15,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Add code organization policy for clean experiment implementation.
 - [x] Add visualization/reporting policy for figure inspection and conclusions.
 - [x] Add local vLLM runtime guide for endpoint preflight and live commands.
+- [x] Add Phase 03.1 live-technique visualization contract requiring both the
+      full `qd_ppa_viewer/` bundle and the `direct_ppa_pareto/` supplement.
 - [x] Verify `http://20.0.0.103:8000/v1/models` returns live
       `openai/gpt-oss-120b` metadata.
 - [x] Confirm branch, HEAD, dirty state, data mounts, GPU visibility, and
@@ -174,6 +176,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       pressure after adaptive sparse archive initialization.
 - [x] `T43_staged_sparse_yield_gate_qd` is executed, validated, packaged,
       visually inspected, and assigned a tier decision.
+- [x] `T44_t11_runtime_graph_bridge` is pre-registered and smoke-tested with
+      the live `t11_runtime_top8_graph` descriptor profile.
+- [ ] `T44_t11_runtime_graph_bridge` full three-problem live screen is
+      executed, validated, packaged with Phase 03.1 `qd_ppa_viewer/` and
+      `direct_ppa_pareto/`, visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
 
@@ -223,6 +230,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T43 staged sparse-yield gate gets a follow-up direction: stop blind
       champion-lane tuning unless a run actually enters sparse fallback; next
       try a bounded sparse-trigger screen or exact T11 runtime projection.
+- [x] T44 starts the exact-T11 follow-up by wiring T11-style graph features
+      into the live descriptor registry without claiming the full T11 replay
+      projection.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

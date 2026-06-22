@@ -68,6 +68,14 @@ archive during the run. It fixes the T38 multi-pipe empty-archive gap and is
 recorded as `T0 positive_ablation`, not a promoted useful-BD claim. The next
 step is same-budget classic/manual/random/full-Pareto controls.
 
+T44 is the current pre-registered follow-up after T43. It stops
+champion-lane-only tuning and wires a live-safe top-8 subset of T11's
+structural graph features into the runtime descriptor registry as
+`t11_runtime_top8_graph`. A one-problem smoke completed and wrote the expected
+archive metadata, but produced no valid PPA and is not a tier result. The next
+step is the full three-problem live screen on the T39 one-slot sparse-warmup
+substrate.
+
 T35 remains important negative/upper-bound evidence. Full cell-local Pareto
 retention improves direct front hits but loses too much HV, while the
 front-seeded arm proves the fixed candidate pool contains recoverable front

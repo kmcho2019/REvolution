@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from revolution.graph_descriptor_evaluator import GraphDescriptorEvaluator
+from revolution.qd.descriptors import extract_descriptor_values
 
 
 def test_graph_descriptor_evaluator_extracts_theory_metrics(tmp_path: Path):
@@ -72,6 +73,38 @@ def test_graph_descriptor_evaluator_extracts_journal_comb_chain(tmp_path: Path):
     assert metrics["ff_depth"] == pytest.approx(0.0)
     assert metrics["combinational_cells"] == pytest.approx(3.0)
     assert metrics["comb_width_log"] == pytest.approx(math.log1p(3.0))
+
+
+def test_graph_descriptor_evaluator_extracts_t11_runtime_bridge(tmp_path: Path):
+    code_path = tmp_path / "t11_bridge.sv"
+    code_path.write_text(
+        "\n".join(
+            [
+                "module t11_bridge(input logic a, input logic b, input logic c, output logic y);",
+                "  logic n1;",
+                "  logic n2;",
+                "  assign n1 = ~a;",
+                "  assign n2 = n1 & b;",
+                "  assign y = n2 | c;",
+                "endmodule",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=code_path,
+        top_module_name="t11_bridge",
+    )
+    axes = ("hyper_mean_fanout", "edge_per_node", "log_edge_count", "share_family_inv")
+    values = extract_descriptor_values(metrics, axes)
+
+    assert metrics["hyper_mean_fanout"] > 0.0
+    assert metrics["edge_per_node"] > 0.0
+    assert metrics["hyper_directed_edge_count"] == pytest.approx(metrics["log_edge_count"])
+    assert values["log_edge_count"] == pytest.approx(math.log1p(metrics["log_edge_count"]))
+    assert 0.0 <= values["share_family_inv"] <= 1.0
 
 
 def test_graph_descriptor_evaluator_extracts_journal_register_wrapper(tmp_path: Path):

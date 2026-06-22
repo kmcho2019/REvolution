@@ -2180,3 +2180,46 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Strict schema/control validation and strict Playwright smoke both passed.
   Classic projection coverage is 35/35 for ALU, 12/12 for traffic-light, and
   14/14 for multi-pipe.
+
+## T44 T11 Runtime Graph Bridge Pre-Registration - 2026-06-22 UTC
+
+- Added live-safe T11-inspired graph descriptor axes to
+  `GraphDescriptorEvaluator` and registered `t11_runtime_top8_graph` plus
+  `t11_runtime_top16_graph` in `data/configs/qd_descriptor_profiles.yaml`.
+- T44 is intentionally scoped as a runtime bridge, not a full replay-exact
+  T11 projection. It exposes T11's highest-ranked graph count/share features
+  online without using PPA, reference PPA, fitness, hypervolume, Pareto rank,
+  functional pass labels, or problem identity.
+- Pre-registered
+  `techniques/T44_t11_runtime_graph_bridge/` as the next L4/L5 follow-up after
+  T43. The full run will use the T39 one-slot sparse-warmup substrate and
+  replace only the descriptor profile with `t11_runtime_top8_graph`.
+- Verified the shared vLLM endpoint:
+  `curl --max-time 15 http://20.0.0.103:8000/v1/models` returned
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Ran a bounded smoke on `RTLLM/Prob041_traffic_light`, population `4`,
+  generation `0`, seed `1001`, and `t11_runtime_top8_graph`. The run completed
+  under
+  `exp/useful_bd_push/t44_t11_runtime_graph_bridge_20260622_113144_UTC/` in
+  42.29 seconds and wrote archive metadata with the expected descriptor axes.
+- Smoke caveat: all four candidates failed functionality, so no valid PPA or
+  archive-initialization evidence exists. Treat the smoke as a wiring check
+  only; T44 still needs the full three-problem live screen before any tier
+  decision.
+
+## Phase 03.1 Contract For New Live Techniques - 2026-06-22 UTC
+
+- Added `phase_03_1_visualization_contract.md` as the concise live-technique
+  visualization contract. Completed live QD methods with archive artifacts now
+  require both the full `visualizations/qd_ppa_viewer/` bundle and the
+  reader-facing `visualizations/direct_ppa_pareto/` supplement.
+- Updated the local index, experimental setup, visualization policy, and TODO
+  to make the Phase 03.1 viewer mandatory rather than treating simple direct
+  raw-PPA HTML as the full linked archive/PPA viewer.
+- Added `scripts/package_t44_t11_runtime_graph_bridge.py` plus a focused test
+  so the next T44 full run can generate direct raw area-power PPA figures,
+  summary tables, `metrics.json`, and the direct HTML supplement from the
+  matched T44 run plus frozen T43/T39 references.
+- Updated T44 commands and reports to require the full viewer export, strict
+  validation, Playwright inspection, honest classic archive projection notes,
+  and separate direct-PPA screenshots before any tier decision.

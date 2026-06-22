@@ -156,6 +156,40 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
         "scoap_cc0_bin_0_pct",
         "scoap_cc1_bin_0_pct",
     ]
+    assert profiles["t11_runtime_top8_graph"] == [
+        "hyper_mean_fanout",
+        "edge_per_node",
+        "log_edge_count",
+        "hyper_directed_edge_count",
+        "hyper_fanout_entropy",
+        "hyper_driven_net_count",
+        "hyper_sink_net_count",
+        "log_net_count",
+    ]
+    assert profiles["t11_runtime_top16_graph"] == [
+        *profiles["t11_runtime_top8_graph"],
+        "hyper_net_count",
+        "hyper_cell_count",
+        "log_node_count",
+        "hyper_max_fanout",
+        "hyper_max_level",
+        "log_max_level",
+        "hyper_max_level_delta",
+        "share_family_inv",
+    ]
+
+
+def test_t11_runtime_profile_requires_graph_metrics():
+    requirements = descriptor_requirements(
+        [
+            "hyper_mean_fanout",
+            "edge_per_node",
+            "log_edge_count",
+            "share_family_inv",
+        ]
+    )
+    assert requirements["requires_graph_metrics"] is True
+    assert requirements["requires_ppa"] is False
 
 
 def test_load_descriptor_profiles_includes_hard_iteration_large_profile():

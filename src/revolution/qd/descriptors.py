@@ -76,6 +76,22 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "logic_depth": DescriptorDefinition("logic_depth", "yosys_graph", requires_synthesis=True),
     "ff_depth": DescriptorDefinition("ff_depth", "yosys_graph", requires_synthesis=True),
     "comb_width_log": DescriptorDefinition("comb_width_log", "yosys_graph", requires_synthesis=True),
+    "hyper_mean_fanout": DescriptorDefinition("hyper_mean_fanout", "yosys_graph"),
+    "edge_per_node": DescriptorDefinition("edge_per_node", "yosys_graph"),
+    "log_edge_count": DescriptorDefinition("log_edge_count", "yosys_graph", transform="log1p"),
+    "hyper_directed_edge_count": DescriptorDefinition("hyper_directed_edge_count", "yosys_graph"),
+    "hyper_fanout_entropy": DescriptorDefinition("hyper_fanout_entropy", "yosys_graph"),
+    "hyper_driven_net_count": DescriptorDefinition("hyper_driven_net_count", "yosys_graph"),
+    "hyper_sink_net_count": DescriptorDefinition("hyper_sink_net_count", "yosys_graph"),
+    "log_net_count": DescriptorDefinition("log_net_count", "yosys_graph", transform="log1p"),
+    "hyper_net_count": DescriptorDefinition("hyper_net_count", "yosys_graph"),
+    "hyper_cell_count": DescriptorDefinition("hyper_cell_count", "yosys_graph"),
+    "log_node_count": DescriptorDefinition("log_node_count", "yosys_graph", transform="log1p"),
+    "hyper_max_fanout": DescriptorDefinition("hyper_max_fanout", "yosys_graph"),
+    "hyper_max_level": DescriptorDefinition("hyper_max_level", "yosys_graph"),
+    "log_max_level": DescriptorDefinition("log_max_level", "yosys_graph", transform="log1p"),
+    "hyper_max_level_delta": DescriptorDefinition("hyper_max_level_delta", "yosys_graph"),
+    "share_family_inv": DescriptorDefinition("share_family_inv", "yosys_graph"),
     "scoap_cc0_bin_0_pct": DescriptorDefinition("scoap_cc0_bin_0_pct", "yosys_graph"),
     "scoap_cc0_bin_1_pct": DescriptorDefinition("scoap_cc0_bin_1_pct", "yosys_graph"),
     "scoap_cc0_bin_2_pct": DescriptorDefinition("scoap_cc0_bin_2_pct", "yosys_graph"),
@@ -347,6 +363,32 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 64.0)
     if axis == "comb_width_log":
         return (0.0, 16.0)
+    if axis in {
+        "log_edge_count",
+        "log_net_count",
+        "log_node_count",
+        "log_max_level",
+    }:
+        return (0.0, 16.0)
+    if axis in {
+        "hyper_directed_edge_count",
+        "hyper_driven_net_count",
+        "hyper_sink_net_count",
+        "hyper_net_count",
+        "hyper_cell_count",
+    }:
+        return (0.0, 8192.0)
+    if axis in {
+        "hyper_mean_fanout",
+        "edge_per_node",
+        "hyper_fanout_entropy",
+        "hyper_max_fanout",
+    }:
+        return (0.0, 32.0)
+    if axis in {"hyper_max_level", "hyper_max_level_delta"}:
+        return (0.0, 64.0)
+    if axis.startswith("share_family_"):
+        return (0.0, 1.0)
     if axis == "toggle_count_log_est":
         return (0.0, 16.0)
     if axis in {
