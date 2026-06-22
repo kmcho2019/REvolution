@@ -2655,3 +2655,12 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Validated the matched seed-1001 pair with
   `scripts/validate_pareto_front_run.py --require-full-subset` before
   launching any seed-1002 spend.
+
+## T47 Classic Seed 1002 Completion - 2026-06-22 UTC
+
+- Launched the hard/tuning sanity `classic_revolution` arm for seed `1002`
+  under the same T47 run root.
+- The run completed with return code `0` at `2026-06-22T21:52:23Z` and
+  produced 13 of 13 expected problem summaries.
+- The remaining hard/tuning live spend is exact T26 QD seed `1002`, after
+  which the two-seed T47 comparison can be validated and packaged.

@@ -1,7 +1,7 @@
 # T47 Hard/Tuning Sanity Commands
 
-Status: preflight complete; seed `1001` classic and exact T26 QD arms are
-complete. Seed `1002` arms are not launched yet.
+Status: preflight complete; both `classic_revolution` seeds and exact T26 QD
+seed `1001` are complete. Exact T26 QD seed `1002` is not launched yet.
 
 Run timestamp: `20260622_203146_UTC`
 

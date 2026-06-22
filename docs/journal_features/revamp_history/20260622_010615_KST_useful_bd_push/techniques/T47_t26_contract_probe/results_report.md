@@ -34,6 +34,8 @@ headline-reference failure mode from the one-seed RTLLM package.
 `classic_revolution` seed `1001` completed with return code `0` at
 `2026-06-22T20:57:52Z`. It produced 13 of 13 expected problem summaries under
 `exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/`.
+`classic_revolution` seed `1002` completed with return code `0` at
+`2026-06-22T21:52:23Z` and produced 13 of 13 expected problem summaries.
 `sr_raw_conservative_exploit_qd` seed `1001` completed with return code `0` at
 `2026-06-22T21:26:45Z` and produced 13 of 13 expected archive summaries.
 
@@ -48,7 +50,7 @@ uv run python scripts/validate_pareto_front_run.py \
   --require-full-subset
 ```
 
-Seed `1002` hard/tuning arms are still pending.
+Exact T26 QD seed `1002` is still pending.
 
 ## Completion Gate
 
