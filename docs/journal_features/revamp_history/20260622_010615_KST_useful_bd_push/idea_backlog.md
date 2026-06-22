@@ -118,8 +118,11 @@ a numbered `techniques/T##_slug/` package before running it.
 - T39 fixes the T38 multi-pipe active-archive gap without changing descriptor
   inputs, but it is not a promoted useful-QD result because same-budget
   classic/manual/random/full-Pareto controls are not in this package.
-- The next package should keep warmup `4` and run the controls needed to tell
-  whether the sparse-warmup one-slot rule is useful beyond the T38 ablation.
+- T40 is that next package: keep warmup `4` and run the controls needed to
+  tell whether the sparse-warmup one-slot rule is useful beyond the T38
+  ablation.
+- The T40 report must lead with straightforward raw area-power PPA fronts:
+  area on x, power on y, no inverted axes, and lower-left marked as better.
 - If controls show ALU quality loss is systematic, try an adaptive warmup rule
   that initializes at four successes only for designs still archive-empty
   after the first generation, or pair sparse warmup with a stronger champion

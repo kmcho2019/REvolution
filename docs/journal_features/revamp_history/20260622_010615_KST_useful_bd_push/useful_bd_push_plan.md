@@ -357,6 +357,14 @@ starting the next method. Commit regularly.
 After each `T0`, add at least one follow-up idea, ablation, or hybrid to
 `idea_backlog.md` or the implementation history before moving on.
 
+## Current Validation Target
+
+T40 is the active next package. It keeps the frozen T39 sparse-warmup one-slot
+candidate and runs matched classic, manual-BD, random-descriptor, and full
+local-Pareto controls under the same subset, seed, model, budget, and warmup.
+The first accepted figure must be a direct raw area-power PPA Pareto front with
+conventional non-inverted axes and lower-left marked as better.
+
 ## Completion Gates
 
 - [ ] At least 10 technique packages have real results, not placeholders,

@@ -22,8 +22,8 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L1` | Transparent CAD descriptors | Use reviewer-readable features such as Yosys stats, motifs, pathlets, and ST-NOD. | Reuse selected features in guarded hybrids; stop pure concatenation. |
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
-| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T37 confirms the T11-family replay lead is exactly one bounded local-front slot; T39 fixes the immediate sparse-yield live warmup gap. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T39 is a positive sparse-yield ablation and now needs same-budget controls. |
+| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T37 confirms the T11-family replay lead is exactly one bounded local-front slot; T40 controls come before runtime T11 projection. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T40 is the active sparse-yield control matrix for T39. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T31/T32 show repair/front tweaks need stronger role separation. |
 
 ## Lineage Graph
@@ -82,6 +82,7 @@ flowchart LR
     T30[T30 T26 holdout audit]
     T31[T31 repair yield front emitter]
     T32[T32 front-preserving emitter]
+    T40[T40 sparse-warmup controls]
   end
 
   subgraph emitters[L6 lineage/emitter]
@@ -126,6 +127,7 @@ flowchart LR
   T36 --> T37
   T37 --> T38
   T38 --> T39
+  T39 --> T40
   T39 --> enc
   T17 --> T12
   T17 --> T18
@@ -150,7 +152,8 @@ flowchart LR
 | T36 | `L4/L5` | T11 structural contrastive descriptor with one bounded descriptor-cell local-front slot. | `T2 replay_candidate`: HV reaches 3.851344 (+4.04% versus lexical) and direct front hits reach 126, beating lexical, T11, and fitness-top on the claimed replay metrics. | `advance` | T37 completed the slot-count ablation; next is one-slot live validation before any final useful-BD claim. |
 | T37 | `L4/L5` | Explicit zero/one/two/three slot ablation for the T36 bounded local-front lane. | `T2 replay_candidate`: one slot keeps the T36 win; two or more slots lose HV and should not advance. | `advance` one-slot live validation | Run same-budget live validation of exactly one bounded local-front slot with direct raw PPA-front plots as the primary visual gate. |
 | T38 | `L5` | Live archive mode for the T37 one-slot boundary: scalar champion plus one local Pareto slot per cell. | `T0 diagnostic`: ALU and traffic-light retain front/archive material, but multi-pipe has 7 valid PPA and 3 front points with zero active archive members under warmup 8. | `ablate` warmup | T39 is pre-registered as the sparse-yield warmup follow-up. |
-| T39 | `L5` | Sparse-yield warmup ablation of T38: keep the one-slot rule and lower grid-quantile warmup from 8 to 4. | `T0 positive_ablation`: fixes multi-pipe active archive coverage and improves front material, but ALU quality drops and controls are missing. | `advance` controls | Run the bounded control matrix before any `T1` or `T2` claim. |
+| T39 | `L5` | Sparse-yield warmup ablation of T38: keep the one-slot rule and lower grid-quantile warmup from 8 to 4. | `T0 positive_ablation`: fixes multi-pipe active archive coverage and improves front material, but ALU quality drops and controls are missing. | `advance` controls | T40 is pre-registered as the bounded control matrix before any `T1` or `T2` claim. |
+| T40 | `L0/L5` | Matched sparse-warmup controls for the frozen T39 candidate. | Pre-registered: classic, manual-BD, random-descriptor, and full local-Pareto controls share T39's subset, seed, model, budget, warmup, and scheduler. | `run` | Execute controls, validate QD archives, and package conventional lower-left-better raw PPA-front figures. |
 | T08-T10/T12/T15-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, lineage repair, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |

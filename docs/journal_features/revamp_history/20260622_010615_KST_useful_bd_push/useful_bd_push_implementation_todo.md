@@ -156,6 +156,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T39_sparse_yield_warmup_qd` bounded arm is executed, validated,
       packaged with direct raw PPA Pareto figures, and assigned a tier
       decision.
+- [x] `T40_sparse_warmup_control_matrix` is pre-registered with matched
+      classic/manual/random/full-Pareto controls and a mandatory conventional
+      lower-left-better raw area-power PPA-front visual gate.
+- [ ] `T40_sparse_warmup_control_matrix` controls are executed, validated,
+      packaged, visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
 

@@ -14,22 +14,23 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T38_elite_pareto_slot_live_qd/` (completed bounded live arm;
-  `T0 diagnostic` because multi-pipe has valid/front PPA but zero active
-  archive members under warmup 8).
-- Most recent pre-registered package: none beyond the remaining scaffolded
-  T08-T10/T12/T15-T16/T18 encoder and emitter candidates.
+  `techniques/T39_sparse_yield_warmup_qd/` (completed bounded live arm;
+  `T0 positive_ablation` because sparse warmup fixes T38's multi-pipe archive
+  gap but same-budget controls are still missing).
+- Most recent pre-registered package:
+  `techniques/T40_sparse_warmup_control_matrix/` (classic, manual-BD, random,
+  and full local-Pareto controls for the frozen T39 arm).
 - Next direction:
-  use T38's multi-pipe warmup/archive gap to define the next bounded-slot
-  variant before running broad controls.
+  execute T40 and package conventional lower-left-better raw area-power PPA
+  fronts before assigning any promotion tier.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T38_elite_pareto_slot_live_qd/figures/t38_live_raw_area_power_fronts.png`
-  (raw area-power front panels for the T38 bounded live arm).
+  `techniques/T39_sparse_yield_warmup_qd/figures/t39_live_raw_area_power_fronts.png`
+  (raw area-power front panels for the T39 bounded live arm).
 - Most recent direct PPA HTML viewer:
-  `techniques/T38_elite_pareto_slot_live_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T39_sparse_yield_warmup_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto viewer with summary table and
   Playwright screenshot).
 - Most recent interactive visualization refresh:

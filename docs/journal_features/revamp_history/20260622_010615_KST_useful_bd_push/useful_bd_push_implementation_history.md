@@ -1903,3 +1903,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   summary table without overlap.
 - Updated T38/T39 figure notes and results reports to state that the primary
   direct PPA figure uses conventional lower-left-better axes.
+
+## T40 Sparse-Warmup Control Matrix - 2026-06-22 UTC
+
+- Pre-registered `techniques/T40_sparse_warmup_control_matrix/` as the matched
+  control matrix for the frozen T39 candidate arm.
+- T40 keeps the same RTLLM three-problem subset, seed `1001`, model
+  `openai/gpt-oss-120b`, 128000-token caps, population `12`, generations `3`,
+  `strict_ablation`, grid-quantile warmup `4`, NSGA-II parent selection,
+  champion lane `0.80`, zero two-parent probability, `eoh_strategies`, and
+  code-individual representation.
+- Planned controls are `classic_revolution`, `manual_sparse_pareto_qd`,
+  `random_sparse_elite_slot_qd`, and `graph_full_pareto_sparse_qd`; the T39
+  candidate arm is referenced from
+  `exp/useful_bd_push/t39_sparse_yield_warmup_qd_20260622_062937_UTC/`.
+- The T40 visual gate is explicit: the first accepted comparison figure must
+  be a direct raw area-power PPA Pareto plot with area on x, power on y, no
+  axis inversion, and lower-left marked as better. Archive heatmaps,
+  descriptor-space views, and normalized improvement plots are supporting
+  artifacts, not substitutes.

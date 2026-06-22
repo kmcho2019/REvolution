@@ -54,8 +54,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`; T21 expands coverage but loses quality. | Stop pure concatenation; use feature selection, CVT, or local-Pareto retention. |
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
-| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T37 confirms the T36/T11 structural signal is strongest with exactly one bounded local-front slot; T39 fixes the immediate live warmup gap. | Run controls before exact T11 runtime projection. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T39 lowers T38's grid-quantile warmup from 8 to 4 and fixes multi-pipe active archive coverage. | Run same-budget controls for the sparse-warmup one-slot rule. |
+| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T37 confirms the T36/T11 structural signal is strongest with exactly one bounded local-front slot; T39 fixes the immediate live warmup gap. | Finish T40 controls before exact T11 runtime projection. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T39 lowers T38's grid-quantile warmup from 8 to 4 and fixes multi-pipe active archive coverage; T40 is pre-registered to control it. | Execute T40 and judge raw PPA fronts before promotion. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T26/T27/T30 show champion-biased parent-source policy restores quality and holdout pressure; T31 direct repair and T32 small near-front sampling are insufficient. | Split champion, near-front, and bounded-repair roles more sharply. |
 
 ## Lane Scorecard
@@ -66,8 +66,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L1` | T03 ST-NOD near-miss | Hybrid source. | Direct transparent descriptors lose audit-QD or best quality. | Continue only as selected features inside T17/T24-style archives. |
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
-| `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, and T38/T39 live hooks | T39 fixes the sparse-yield warmup gap without changing descriptor inputs. | Exact T11 projection is premature until the sparse-warmup one-slot rule has controls. | Run controls first; keep T35 front-seeded only as an upper bound. |
-| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39 local-Pareto lineage | T39 is a positive warmup ablation but not a promoted useful-QD result. | Need classic/manual/random/full-Pareto controls under the same budget. | Run a sparse-warmup control matrix. |
+| `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, and T38/T39 live hooks | T39 fixes the sparse-yield warmup gap without changing descriptor inputs. | Exact T11 projection is premature until the sparse-warmup one-slot rule has controls. | Run T40 first; keep T35 front-seeded only as an upper bound. |
+| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40 local-Pareto lineage | T40 is the pre-registered sparse-warmup control matrix. | Controls must include direct raw PPA-front comparisons, not only archive counts. | Execute and package T40 before another archive variant. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter | T32 shows a small near-front success-parent lane is not enough. | Need a bounded repair/local-rank-1 lane that cannot replace T26 champion quality pressure. | Specify a true role-separated emitter before another holdout run. |
 
 ## Current Lineage
@@ -127,6 +127,7 @@ flowchart LR
     AA[T30 T26 holdout audit]
     AB[T31 repair yield front emitter]
     AC[T32 front-preserving emitter]
+    AM[T40 sparse-warmup controls]
   end
 
   subgraph L6[L6 lineage and emitters]
@@ -172,6 +173,7 @@ flowchart LR
   AI --> AJ
   AJ --> AK
   AK --> AL
+  AL --> AM
   AL --> L
   G --> M
   G --> W
@@ -220,6 +222,7 @@ flowchart TD
 | 2026-06-22 | `L4/L5` learned encoders and archive coupling | T37 explicit slot-count replay | `advance` | Slot zero reproduces T11, one slot reproduces the T36 win, and two or more local-front slots lose too much HV. The one-slot setting is the useful replay boundary. | Run same-budget live validation of exactly one bounded local-front slot with direct raw PPA-front figures as the first visual gate. |
 | 2026-06-22 | `L5` archive coupling | T38 elite Pareto slot live arm | `ablate` | The runtime retains ALU and traffic-light archive/front material, but multi-pipe has 7 valid PPA and 3 front points with zero active archive members because warmup needs 8 successes. | Create a T39 sparse-yield warmup/fallback variant before broad controls. |
 | 2026-06-22 | `L5` archive coupling | T39 sparse-yield warmup live arm | `advance` | T39 fixes T38's multi-pipe archive gap: 11 valid PPA, 8 local-front points, 6 global-front points, and 10 active archive members, while ALU best quality drops versus T38. | Run same-budget classic/manual/random/full-Pareto controls before promotion. |
+| 2026-06-22 | `L0/L5` common evaluation and archive coupling | T40 sparse-warmup control matrix | `run` | T40 freezes the T39 candidate and pre-registers same-budget classic, manual-BD, random-descriptor, and full local-Pareto controls. The first visual gate is a conventional raw area-power PPA Pareto front where lower-left is better. | Execute T40, validate each QD arm, package candidate/front tables, and visually inspect the direct PPA fronts. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
@@ -416,8 +419,8 @@ unblocks it.
 | `L1` transparent CAD descriptors | T03, T21 | Stays on current branch for hybrids. | Select a small ST-NOD/motif subset for a guarded archive variant. | Hybrid beats direct T21 on best quality without losing archive coverage. |
 | `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27, T28, T29, T30, T31, T32 | Stays on current branch; T29/T31/T32 are measured negative, while T30 is mixed holdout support for T26. | Pause simple SR raw schedule tuning. | New method improves front/yield without losing T26 quality pressure. |
 | `L3` codebook/discrete archives | T05 | Parked. | Reopen only as side archive or local-Pareto cell partition. | A non-codebook lane shows local front material worth discretizing. |
-| `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T38 | Candidate split branch; T37 proves the T11-family replay lead is one bounded local-front slot, while T38 shows live warmup needs repair. | Fix sparse-yield warmup before exact T11 runtime projection. | Learned features improve PPA-front/HV metrics without problem-ID collapse. |
-| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T38 | Active on current branch; T38 is a completed diagnostic for champion-plus-one-slot retention. | Specify T39 sparse-yield warmup/fallback and then compare controls. | A candidate beats controls on documented direct-front/HV metrics without hidden duplicate loss. |
+| `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T40 | Candidate split branch; T37 proves the T11-family replay lead is one bounded local-front slot, while T40 controls the T39 live warmup fix. | Finish T40 before exact T11 runtime projection. | Learned features improve PPA-front/HV metrics without problem-ID collapse. |
+| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T40 | Active on current branch; T40 is pre-registered for sparse-warmup controls. | Execute T40 and compare controls with direct raw PPA fronts. | A candidate beats controls on documented direct-front/HV metrics without hidden duplicate loss. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32 | T31 and T32 show single repair/front-preserving tweaks are insufficient. | Restore T26 champion pressure and isolate bounded repair/local-rank-1 roles. | Better valid-yield recovery or front material than T26/T29/T30 without losing T26 best-quality recovery. |
 
 ## Branch Split Checklist

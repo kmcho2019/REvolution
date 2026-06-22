@@ -46,6 +46,7 @@ Real result packages:
 - `T37_t36_slot_count_ablation` T36 explicit slot-count replay ablation
 - `T38_elite_pareto_slot_live_qd` champion-plus-one-slot live diagnostic
 - `T39_sparse_yield_warmup_qd` sparse-yield warmup live ablation
+- `T40_sparse_warmup_control_matrix` pre-registered T39 control matrix
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -74,8 +75,9 @@ local-front slot: two or more slots collapse toward the weaker T35
 cell-Pareto HV regime. T38 validates the live code path but exposes a
 multi-pipe warmup archive gap. T39 fixes that specific gap by lowering
 grid-quantile warmup from 8 to 4, but it remains a `T0 positive_ablation`
-until same-budget controls are run. The ten-package minimum is satisfied, but
-the goal remains active.
+until same-budget controls are run. T40 is the pre-registered control matrix
+for that question. The ten-package minimum is satisfied, but the goal remains
+active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -320,6 +322,13 @@ material but best quality fell from 0.416377 to 0.402072. T39 is therefore a
 `T0 positive_ablation`: it fixes the T38 archive gap, but it is not promoted
 until same-budget classic/manual/random/full-Pareto controls are run.
 
+`T40_sparse_warmup_control_matrix` is the active next package. It freezes the
+completed T39 arm and runs matched classic, manual-BD, random-descriptor, and
+full local-Pareto controls under the same subset, seed, model, budget, warmup,
+and scheduler settings. Its first accepted figure must be a straightforward
+raw area-power PPA Pareto comparison with conventional non-inverted axes and
+lower-left marked as better.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -417,8 +426,8 @@ until same-budget classic/manual/random/full-Pareto controls are run.
 - For the T11 lineage, do not promote front-seeded evidence as a method. Use it
   only to justify a gentler replay or live variant that preserves T11's
   farthest/HV behavior while reserving a small front-recovery lane.
-- For T39, run same-budget classic/manual/random/full-Pareto controls before
-  any useful-QD claim.
-- For the T36/T37/T38/T39 lineage, keep the one-slot rule fixed during the
-  next control matrix. If controls expose a new sparse-yield failure, test a
+- For T39, execute the T40 same-budget classic/manual/random/full-Pareto
+  controls before any useful-QD claim.
+- For the T36/T37/T38/T39/T40 lineage, keep the one-slot rule fixed during the
+  control matrix. If controls expose a new sparse-yield failure, test a
   separate global-Pareto fallback without changing descriptor inputs.
