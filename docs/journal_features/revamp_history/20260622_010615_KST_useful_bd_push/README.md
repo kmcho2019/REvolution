@@ -14,22 +14,22 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T07_deepgate_family_bd/` (completed graph-surrogate replay;
-  `T1 near_classic_replay_lead` because graph WL/combo barely beat lexical HV
-  and improve unique PPA points, but direct front hits remain below lexical).
+  `techniques/T13_aurora_incremental_autoencoder_bd/` (completed
+  implementation-feature/AURORA replay; raw implementation features are a
+  `T1 near_classic_replay_lead`, while compressed bottlenecks remain `T0`).
 - Most recent pre-registered package: none beyond the remaining scaffolded
-  T08-T16/T18 encoder and emitter candidates.
+  T08-T12/T14-T16/T18 encoder and emitter candidates.
 - Next direction:
-  advance L4 from the T07 graph surrogate to a true graph/AIG encoder or
-  contrastive graph objective, or define a separate bounded repair/local-rank-1
-  emitter if returning to the SR raw family.
+  reuse the T13 implementation-feature signal inside a feature-selection,
+  local-Pareto archive, or contrastive graph objective; do not continue simple
+  PCA/RFF compression as the next learned-BD step.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T07_deepgate_family_bd/figures/deepgate_multi_problem_ppa_pareto_fronts.png`
+  `techniques/T13_aurora_incremental_autoencoder_bd/figures/aurora_multi_problem_ppa_pareto_fronts.png`
   (four representative raw area-power Pareto-front panels with all-valid,
-  lexical, random, and graph-combo overlays).
+  lexical, random, and implementation-feature overlays).
 - Most recent interactive visualization refresh:
   `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
   now has a `raw A-P front` PPA mode, with screenshot
@@ -102,7 +102,7 @@ Start here when resuming the active goal.
 | `T10` | `T10_circuitfusion_multimodal_bd` | Scaffolded. |
 | `T11` | `T11_mgvga_contrastive_bd` | Scaffolded. |
 | `T12` | `T12_lineage_repair_bd` | Scaffolded. |
-| `T13` | `T13_aurora_incremental_autoencoder_bd` | Scaffolded. |
+| `T13` | `T13_aurora_incremental_autoencoder_bd` | Completed replay diagnostic; raw implementation features are `T1 near_classic_replay_lead`, but PCA/RFF/incremental bottlenecks are `T0 diagnostic`. |
 | `T14` | `T14_dehnn_hypergraph_bd` | Scaffolded. |
 | `T15` | `T15_masterrtl_sog_bd` | Scaffolded. |
 | `T16` | `T16_deepcell_multiview_bd` | Scaffolded. |

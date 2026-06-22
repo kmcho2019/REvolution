@@ -45,10 +45,11 @@ The desired end state is one of:
 
 ## Current Research State
 
-T07 is the most recent completed package. It is a graph-surrogate learned
-encoder replay result: graph WL/combo barely beats lexical HV (`+0.07%`) and
-improves unique PPA points, but it does not beat lexical direct PPA-front hits.
-It is a graph-encoder lead, not a promoted useful-BD claim.
+T13 is the most recent completed package. It is an implementation-feature and
+AURORA-style learned-BD replay: raw implementation features beat lexical HV
+by `+1.06%` and improve unique PPA points, but compressed PCA/RFF/incremental
+bottlenecks lose HV and raw features still miss lexical direct front hits. It
+is a feature-input lead, not a promoted useful-BD claim.
 
 T30 remains the most recent positive holdout support for exact T26
 conservative-exploit SR raw: it preserves all three classic-covered
@@ -72,9 +73,10 @@ same-family method should not keep nudging champion fraction or two-parent
 probability alone; it needs a stronger role-separated emitter or a branch to a
 different descriptor family.
 
-The learned-encoder lane should now continue with a true graph/AIG encoder,
-contrastive graph objective, or fine-tuned circuit encoder rather than more
-label-free whole-design Qwen projection. Any such follow-up must include
+The learned-encoder lane should preserve the T13 raw implementation-feature
+signal while adding feature selection, local-Pareto coupling, a contrastive
+graph objective, or a true graph/AIG encoder. Do not spend the next attempt on
+plain unsupervised PCA/RFF compression. Any follow-up must include
 straightforward raw PPA Pareto figures before BD-space projections are used.
 
 ## Prior Evidence To Reuse

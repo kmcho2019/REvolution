@@ -1512,3 +1512,48 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   and
   `uv tool run ty check scripts/analyze_t07_deepgate_surrogate.py tests/scripts/test_analyze_t07_deepgate_surrogate.py`
   all passed after adding the direct PPA-front outputs.
+
+## T13 AURORA-Style Implementation Replay - 2026-06-22 UTC
+
+- Added `scripts/analyze_t13_aurora_autoencoder.py` and a focused test. The
+  script combines RTL count features with T07's parsed standard-cell graph
+  manifest, fits PCA, RFF-PCA, and incremental PCA bottlenecks, and replays
+  farthest-first retention on the same 768-candidate common surface.
+- Descriptor fitting excludes final PPA, reference PPA, fitness, hypervolume,
+  Pareto labels, validity labels, problem id, corpus, model, method, seed, and
+  candidate id. The committed `tables/feature_manifest.csv` records the 36
+  structural input features.
+- Ran the replay command:
+  `uv run python scripts/analyze_t13_aurora_autoencoder.py --candidates-csv exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/qwen_common_audit_candidates.csv --graph-manifest-csv docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T07_deepgate_family_bd/tables/netlist_graph_manifest.csv --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T13_aurora_incremental_autoencoder_bd --retention-fraction 0.5 --random-seed 0 --latent-dims 2 4 8`.
+- Main result: raw implementation features (`t13_impl_z_farthest`) select HV
+  `3.740943`, a `+1.06%` gain over lexical (`3.701827`) and a stronger L4
+  replay lead than T07's graph WL/combo `+0.07%`. Unique PPA points improve
+  from lexical's `183` to `186`, and selected area-power front points improve
+  from `127` to `129`.
+- Promotion blocker: front hits still do not improve. Lexical has `122`
+  selected all-valid front hits; raw implementation features have `120`.
+- Compression result: the AURORA-style PCA/RFF/incremental bottlenecks are
+  negative on HV. PCA-4 loses `2.06%`, incremental PCA-4 loses `6.05%`, and
+  RFF-PCA variants lose `5.67%` to `8.57%` versus lexical.
+- Collapse diagnostics explain the tradeoff. RFF-PCA reduces same-problem and
+  same-corpus nearest-neighbor collapse, but the lower-collapse bottlenecks
+  lose HV. The raw feature space keeps high same-problem collapse (`0.867188`)
+  but carries the useful HV signal.
+- Added the primary raw PPA-front figure:
+  `techniques/T13_aurora_incremental_autoencoder_bd/figures/aurora_multi_problem_ppa_pareto_fronts.png`.
+  The source points are in `tables/ppa_front_plot_points.csv`.
+- Tier decision: mixed. The package is `T1 near_classic_replay_lead` for the
+  raw implementation-feature input space and `T0 diagnostic` for compressed
+  bottlenecks. Next L4 work should use feature selection, local-Pareto
+  coupling, or contrastive graph training rather than another plain
+  unsupervised bottleneck.
+- Final validation run:
+  `uv run pytest tests/scripts/test_analyze_t13_aurora_autoencoder.py`,
+  `uv run ruff check scripts/analyze_t13_aurora_autoencoder.py tests/scripts/test_analyze_t13_aurora_autoencoder.py`,
+  `uv run python -m pyright scripts/analyze_t13_aurora_autoencoder.py tests/scripts/test_analyze_t13_aurora_autoencoder.py`,
+  and
+  `uv tool run ty check scripts/analyze_t13_aurora_autoencoder.py tests/scripts/test_analyze_t13_aurora_autoencoder.py`
+  all passed. `git diff --check` passed.
+- Re-ran the real replay with the final script after the focused checks. The
+  table and figure hashes stayed stable; the final code hash is recorded in
+  `techniques/T13_aurora_incremental_autoencoder_bd/artifacts_manifest.md`.

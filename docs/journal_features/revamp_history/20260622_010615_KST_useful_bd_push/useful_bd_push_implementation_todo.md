@@ -89,7 +89,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       tier decision.
 - [ ] `T12_lineage_repair_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `T13_aurora_incremental_autoencoder_bd` has methodology, results, figures,
+- [x] `T13_aurora_incremental_autoencoder_bd` has methodology, results, figures,
       tables, and tier decision.
 - [ ] `T14_dehnn_hypergraph_bd` has methodology, results, figures, tables, and tier
       decision.

@@ -53,6 +53,34 @@ text features are present, and holdout metric deltas.
 
 - `tables/autoencoder_training.csv`
 - `tables/latent_diagnostics.csv`
-- `tables/passive_archive_metrics.csv`
-- `figures/latent_projection.png`
-- `figures/reconstruction_vs_archive_quality.png`
+- `tables/archive_metrics.csv`
+- `tables/ppa_comparison.csv`
+- `tables/ppa_front_metrics.csv`
+- `tables/ppa_front_plot_points.csv`
+- `figures/aurora_multi_problem_ppa_pareto_fronts.png`
+- `figures/aurora_raw_area_power_pareto_front.png`
+- `figures/aurora_latent_projection.png`
+- `figures/aurora_reconstruction_vs_hv.png`
+
+## Completed Replay Route
+
+The completed bounded replay uses the T07 parsed graph manifest plus RTL count
+features as implementation-only inputs. It fits frozen PCA bottlenecks,
+RFF-PCA nonlinear bottlenecks, and an incremental PCA-4 refresh schedule using
+stable problem splits. PPA, fitness, validity labels, problem id, corpus,
+model, method, seed, and candidate id are excluded from descriptor fitting and
+recorded in `tables/feature_manifest.csv` as forbidden inputs.
+
+Generated primary artifacts:
+
+- `tables/feature_manifest.csv`;
+- `tables/autoencoder_training.csv`;
+- `tables/ppa_comparison.csv`;
+- `tables/ppa_front_metrics.csv`;
+- `tables/ppa_front_plot_points.csv`;
+- `figures/aurora_multi_problem_ppa_pareto_fronts.png`;
+- `figures/aurora_raw_area_power_pareto_front.png`.
+
+The completed result distinguishes the raw implementation-feature input space
+from the compressed bottlenecks. The input space is a near-classic replay lead;
+the compressed AURORA-style bottlenecks are diagnostic failures on HV.

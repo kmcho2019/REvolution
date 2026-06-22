@@ -37,8 +37,11 @@ Real result packages:
 - `T33_qwen3_preprocessing_ladder_bd` Qwen preprocessing replay diagnostic
 - `T34_qwen_pca_residual_bd` Qwen residual replay diagnostic
 - `T07_deepgate_family_bd` graph-surrogate encoder replay diagnostic
+- `T13_aurora_incremental_autoencoder_bd` implementation-feature/AURORA replay
+  diagnostic
 
-Scaffolded but not yet real-result packages remain `T08` to `T16` and `T18`.
+Scaffolded but not yet real-result packages remain `T08` to `T12`,
+`T14` to `T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -208,6 +211,16 @@ stronger claim: graph WL/combo keep 120 all-valid front hits versus lexical's
 122. The primary figure is
 `techniques/T07_deepgate_family_bd/figures/deepgate_multi_problem_ppa_pareto_fronts.png`.
 
+`T13_aurora_incremental_autoencoder_bd` is the completed AURORA-style
+implementation-feature replay. Raw implementation features are the current
+best L4 replay lead: selected HV is `3.740943`, `+1.06%` over lexical
+(`3.701827`), and unique PPA points improve from 183 to 186. The compressed
+PCA, RFF-PCA, and incremental PCA bottlenecks are negative; all lose HV versus
+lexical. Direct front-hit evidence still blocks promotion: raw implementation
+features keep 120 all-valid front hits versus lexical's 122. The primary
+figure is
+`techniques/T13_aurora_incremental_autoencoder_bd/figures/aurora_multi_problem_ppa_pareto_fronts.png`.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -250,6 +263,9 @@ stronger claim: graph WL/combo keep 120 all-valid front hits versus lexical's
 16. T07 shows graph-structured learned-encoder features are more promising
     than label-free whole-design Qwen projections, but the current surrogate is
     still not a front win.
+17. T13 shows raw implementation features are a better L4 signal than
+    unsupervised AURORA-style compression. The next L4 step should preserve
+    that signal and target front hits explicitly.
 
 ## Next Decisions
 

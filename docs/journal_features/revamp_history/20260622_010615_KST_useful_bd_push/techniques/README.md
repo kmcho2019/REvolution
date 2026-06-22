@@ -26,7 +26,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T10` | `T10_circuitfusion_multimodal_bd` | Multimodal descriptor | Scaffolded |
 | `T11` | `T11_mgvga_contrastive_bd` | Contrastive graph descriptor | Scaffolded |
 | `T12` | `T12_lineage_repair_bd` | Lineage/yield descriptor | Scaffolded |
-| `T13` | `T13_aurora_incremental_autoencoder_bd` | Learned AURORA descriptor | Scaffolded |
+| `T13` | `T13_aurora_incremental_autoencoder_bd` | Learned AURORA descriptor | mixed: raw implementation features `T1 near_classic_replay_lead`, compressed bottlenecks `T0 diagnostic` |
 | `T14` | `T14_dehnn_hypergraph_bd` | Hypergraph descriptor | Scaffolded |
 | `T15` | `T15_masterrtl_sog_bd` | RTL operator-graph descriptor | Scaffolded |
 | `T16` | `T16_deepcell_multiview_bd` | Multiview circuit descriptor | Scaffolded |
