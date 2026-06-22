@@ -1,6 +1,6 @@
 # T48 Artifacts Manifest
 
-Status: seed `1001` complete. Seed `1002` is pending.
+Status: seed `1001` complete. Seed `1002` is in progress.
 
 ## Method Sources
 
@@ -26,7 +26,7 @@ Focused validation:
 
 - completed seed:
   `1001`
-- pending seed:
+- launched seed:
   `1002`
 - run root:
   `exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning`
@@ -40,6 +40,8 @@ Focused validation:
   `commands/hard_tuning_sanity.md`
 - preflight:
   `preflight/models_20260622_225714_UTC.json`
+- seed-1002 preflight:
+  `preflight/models_seed1002_20260622_232737_UTC.json`
 - seed-1001 summary:
   `t26_gated_near_front_fusion_qd/seed_1001/openai_gpt-oss-120b/20260622_225715_revolution_summary_results.txt`
 - seed-1001 scheduler telemetry:

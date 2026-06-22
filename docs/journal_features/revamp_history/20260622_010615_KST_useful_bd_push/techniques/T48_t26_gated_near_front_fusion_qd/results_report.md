@@ -1,6 +1,6 @@
 # T48 Gated Near-Front Fusion Results
 
-Status: seed `1001` complete; seed `1002` pending.
+Status: seed `1001` complete; seed `1002` in progress.
 
 T48 seed `1001` was launched at run root:
 
@@ -31,8 +31,12 @@ The two summary-level failures need package-level handling rather than a
 simple failure label. `Prob024_fsm` has two global-Pareto PPA candidates and
 matches the T47 classic best score. `Prob151_review2015_fsm` has one
 global-Pareto PPA candidate, but its best quality is worse than the T47
-classic seed-1001 best score. Do not assign a T48 tier until seed `1002`,
-paired candidate-level packaging, and direct PPA-front inspection are done.
+classic seed-1001 best score.
+
+Seed `1002` was launched in the same run root with a fresh vLLM preflight at
+`preflight/models_seed1002_20260622_232737_UTC.json`. Do not assign a T48
+tier until seed `1002`, paired candidate-level packaging, and direct
+PPA-front inspection are done.
 
 T48 was implemented because T47 exact T26 was diagnostic but not
 held-out-ready:

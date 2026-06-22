@@ -2767,3 +2767,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   and `16` one-parent fallbacks after two-parent requests.
 - No T48 tier is assigned yet. The next step is seed `1002`, then paired
   packaging with direct PPA-front inspection and validity-gate analysis.
+
+## T48 Gated Near-Front Fusion Seed 1002 Launch - 2026-06-22 UTC
+
+- Launched seed `1002` in the same T48 run root:
+  `exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning`.
+- The preflight snapshot is
+  `preflight/models_seed1002_20260622_232737_UTC.json`; the in-command
+  vLLM preflight again accepted `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+- Runtime arguments match seed `1001` except for `--seed 1002` and
+  `--save_path .../seed_1002`.
+- The seed is in progress and has created the expected config, run-log, and
+  Gen0 problem directories. Do not package T48 until it exits.
