@@ -130,6 +130,7 @@ class QDEngine(EoHEngine):
         qd_grid_quantile_warmup_max_buffer: int = 0,
         qd_grid_quantile_adaptive_warmup_successes: int = 0,
         qd_grid_quantile_adaptive_warmup_generation: int = 1,
+        qd_adaptive_warmup_champion_lane_fraction: float | None = None,
         qd_descriptor_profile: str | None = None,
         qd_descriptor_axes: tuple[str, ...] = (),
         qd_descriptor_file: str | None = None,
@@ -255,6 +256,17 @@ class QDEngine(EoHEngine):
         )
         self.qd_grid_quantile_adaptive_warmup_generation = int(
             qd_grid_quantile_adaptive_warmup_generation
+        )
+        if qd_adaptive_warmup_champion_lane_fraction is not None and not (
+            0.0 <= float(qd_adaptive_warmup_champion_lane_fraction) <= 1.0
+        ):
+            raise ValueError(
+                "qd_adaptive_warmup_champion_lane_fraction must be in [0, 1]."
+            )
+        self.qd_adaptive_warmup_champion_lane_fraction = (
+            None
+            if qd_adaptive_warmup_champion_lane_fraction is None
+            else float(qd_adaptive_warmup_champion_lane_fraction)
         )
         self.qd_descriptor_profile = qd_descriptor_profile
         self.qd_descriptor_axes = tuple(qd_descriptor_axes)
@@ -1247,6 +1259,9 @@ class QDEngine(EoHEngine):
             "qd_grid_quantile_adaptive_warmup_generation": (
                 self.qd_grid_quantile_adaptive_warmup_generation
             ),
+            "qd_adaptive_warmup_champion_lane_fraction": (
+                self.qd_adaptive_warmup_champion_lane_fraction
+            ),
             "representation_kind": self.representation_kind,
             "code_samples_per_thought": self.code_samples_per_thought,
             "thought_population_size": self.thought_population_size,
@@ -1595,17 +1610,21 @@ class QDEngine(EoHEngine):
         ]
 
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
+        champion_lane_fraction = self._champion_lane_fraction()
         if self.qd_parent_selection == "nsga2_global_rank":
             pool = self._nsga2_global_pool()
             if pool:
                 champion = (
                     self._global_best_success_member()
-                    if self.qd_champion_lane_fraction > 0.0
+                    if champion_lane_fraction > 0.0
                     else None
                 )
                 parents: list[Heuristic] = []
                 for _ in range(count):
-                    if champion is not None and random.random() < self.qd_champion_lane_fraction:
+                    if (
+                        champion is not None
+                        and random.random() < champion_lane_fraction
+                    ):
                         parents.append(champion)  # champion lane: refine the best
                     else:
                         parents.append(random.choice(pool))
@@ -1616,12 +1635,15 @@ class QDEngine(EoHEngine):
                 cell_ids = sorted(by_cell)
                 champion = (
                     self._global_best_success_member()
-                    if self.qd_champion_lane_fraction > 0.0
+                    if champion_lane_fraction > 0.0
                     else None
                 )
                 parents: list[Heuristic] = []
                 for _ in range(count):
-                    if champion is not None and random.random() < self.qd_champion_lane_fraction:
+                    if (
+                        champion is not None
+                        and random.random() < champion_lane_fraction
+                    ):
                         parents.append(champion)  # champion lane: refine the best
                     else:
                         cell_id = random.choice(cell_ids)
@@ -1633,6 +1655,15 @@ class QDEngine(EoHEngine):
         base = min(c.score for c in success_view)
         weights = [max(c.score - base + 0.1, 1e-6) for c in success_view]
         return random.choices(success_view, weights=weights, k=count)
+
+    def _champion_lane_fraction(self) -> float:
+        if (
+            self.qd_adaptive_warmup_champion_lane_fraction is not None
+            and isinstance(self.success_archive, GridQuantileArchive)
+            and self.success_archive.initialization_mode == "adaptive_sparse_yield_fallback"
+        ):
+            return self.qd_adaptive_warmup_champion_lane_fraction
+        return self.qd_champion_lane_fraction
 
     def _ranked_success_members_by_cell(self) -> dict[str, list[RankedArchiveMember]]:
         by_cell: dict[str, list[RankedArchiveMember]] = defaultdict(list)

@@ -1419,6 +1419,23 @@ def test_qd_engine_initial_adaptive_grid_quantile_warmup(tmp_path, monkeypatch):
     assert not any(cell_id.startswith("warmup:") for cell_id in engine.success_reservoir)
 
 
+def test_qd_engine_adaptive_warmup_champion_lane(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_champion_lane_fraction=0.8,
+        qd_adaptive_warmup_champion_lane_fraction=0.6,
+    )
+    assert engine._champion_lane_fraction() == 0.8
+
+    assert isinstance(engine.success_archive, GridQuantileArchive)
+    engine.success_archive.initialization_mode = "adaptive_sparse_yield_fallback"
+
+    assert engine._champion_lane_fraction() == 0.6
+
+
 def test_qd_engine_writes_grid_quantile_artifacts(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "revolution.algorithm.EoHEngine.load_problem_description",
