@@ -2357,3 +2357,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   not automatic rejection. Below 10, the rate is labeled small-n/noisy.
 - The active full RTLLM experiment remains pre-registered; this change aligns
   the broader policy docs with the already-packaged milestone gate.
+
+## Full RTLLM Milestone Package - 2026-06-22 UTC
+
+- Completed the one-seed full RTLLM milestone package under
+  `presentations/20260623_report/full_rtllm/` using the merged analysis root
+  `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_ref_default_fix_v0`.
+- Exact T26 QD passes the relaxed PPA-first hard gate with `0`
+  classic-covered retention failures. It has `4` yield warnings and `6`
+  small-n validity labels.
+- Aggregate all-RTLLM results are positive for PPA-centered QD evidence:
+  mean HV delta `+0.010562`, mean HV-AUC delta `+0.012397`, and PPA-front
+  points `69` versus `61`.
+- The report records the main caveats: lower valid-PPA yield (`879` versus
+  `1056`), fewer unique PPA points (`318` versus `352`), and outlier
+  sensitivity around `Prob040_synchronizer`.
+- Updated `report.md`, `slides.md`, command provenance, and visual inspection
+  notes so the milestone can be presented as reviewable one-seed engineering
+  evidence rather than seed-stable proof.

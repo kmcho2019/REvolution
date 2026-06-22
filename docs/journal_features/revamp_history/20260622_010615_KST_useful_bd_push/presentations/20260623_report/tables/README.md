@@ -15,6 +15,7 @@ Planned tables:
 - `full_rtllm/data/full_ppa_candidates.csv`: raw valid-PPA candidate points
   used to regenerate direct PPA-front figures.
 - `method_lineage_selection.md`: why exact T26 or a T26.1 variant was selected.
-- `budget_parity.csv`: evaluation counts, LLM-call counts, and runtime by arm.
+- `full_rtllm/tables/full_method_manifest.csv`: method labels and run roots
+  used by the generated package.
 
 Tables must be reproducible from committed scripts or documented commands.

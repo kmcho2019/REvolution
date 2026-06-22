@@ -4,70 +4,88 @@
 
 - Does diversity matter for RTL/Verilog evolution?
 - Which diversity matters?
-- Can QD/MAP-Elites beat classic REvolution on PPA-centered metrics?
+- Can QD/MAP-Elites improve PPA-centered search versus classic REvolution?
 
 ## Slide 2 - Short Answer
 
-- Diversity is useful only when it is implementation-aware.
-- Naive diversity often preserves novelty while losing valid PPA or quality.
-- The best current lead is T26-family SR raw QD with conservative exploit
-  pressure, currently `T1 near_classic`.
+- Yes, but only for implementation-aware diversity.
+- Exact T26 QD passes the PPA-first retention gate on full RTLLM.
+- It improves aggregate HV, HV-AUC, and front count.
+- It is not yet a broad decisive win because yield drops and outlier
+  sensitivity remain.
 
-## Slide 3 - What Failed
+## Slide 3 - Terms
 
-- Identifier-heavy embeddings cluster by problem/corpus artifacts.
+- Valid PPA: a candidate with usable synthesis/PPA metrics.
+- HV: hypervolume of nondominated normalized PPA-improvement points.
+- HV-AUC: area under the HV-over-generations curve.
+- PPA-front point: a nondominated valid PPA candidate.
+- Yield warning: at least 50% count drop when classic has 10 or more samples.
+
+## Slide 4 - What Failed
+
+- Identifier-heavy embeddings cluster by corpus artifacts.
 - Random or weak descriptors can look broad without improving PPA.
 - Aggressive local Pareto archives can disrupt hill climbing.
-- High-dimensional graph axes can create archive sparsity and yield loss.
+- Sparse graph axes can create archive sparsity and yield loss.
 
-## Slide 4 - What Worked Best So Far
+## Slide 5 - What Worked Best
 
-- SR raw descriptors capture non-PPA implementation response.
-- Local Pareto archive material is useful when champion pressure remains.
-- T26 restores hill-climbing pressure while preserving QD archive behavior.
-- T27/T30 provide the current near-classic support.
-- T28 still warns that exact T26 loses front-family breadth versus classic.
+- SR raw descriptors capture implementation response.
+- Pareto-front archive cells preserve alternate PPA tradeoffs.
+- T26 keeps champion-style exploit pressure active.
+- This is QD plus quality pressure, not novelty alone.
 
-## Slide 5 - Why Full RTLLM Is Needed
+## Slide 6 - Full RTLLM Setup
 
-- Three-problem screens are not enough for colleagues or reviewers.
-- RTLLM has 50 benchmark problems from `bench/RTLLM/*_prompt.txt`.
-- We need paired, same-budget classic versus QD evidence across the suite.
+- Benchmark: all 50 RTLLM problems.
+- Seed and budget: seed 1001, population 12, generations 3.
+- Model: local `openai/gpt-oss-120b`, 128k token budgets.
+- Classic: `classic_revolution` with `eoh_strategies`.
+- QD: exact T26, `sr_raw_conservative_exploit_qd`.
 
-## Slide 6 - Experiment Design
+## Slide 7 - PPA-First Gate
 
-- Classic arm: REvolution baseline with `eoh_strategies`.
-- QD arm: selected T26-family variant after screening.
-- Budget: seed 1001, population 12, generations 3.
-- Model: `openai/gpt-oss-120b`, 128k token budgets.
-- Metrics: HV, HV-AUC, valid-PPA yield, front/family breadth, archive metrics.
+- Hard gate: no classic-covered design loss.
+- If classic has at least one valid PPA sample, QD must also have one.
+- Functionality and valid-PPA rate drops are visible warnings.
+- This fits the milestone goal: optimize PPA while preserving design coverage.
 
-## Slide 7 - Screening Before Full Run
+## Slide 8 - Headline Result
 
-- Exact T26 is the fallback.
-- T26.1 low-fusion tests `qd_two_parent_probability=0.10`.
-- Gated T26.1 is allowed only after narrow code and tests.
-- Selection happens before seeing full RTLLM results.
+| Metric | Classic | Exact T26 QD | Delta |
+| --- | ---: | ---: | ---: |
+| Mean HV | 0.094435 | 0.104997 | +0.010562 |
+| Mean HV-AUC | 0.080956 | 0.093353 | +0.012397 |
+| Valid PPA | 1056 | 879 | -177 |
+| PPA-front points | 61 | 69 | +8 |
 
-## Slide 8 - Presentation Figures
+## Slide 9 - Gate Result
 
-- Paired HV delta distribution.
-- HV-AUC delta distribution.
-- Win/loss heatmap.
-- Valid-PPA funnel.
-- Classic-vs-QD HV scatter.
-- Representative raw area-power Pareto fronts.
+- Hard retention failures: 0.
+- Yield warnings: 4.
+- Small-n labels: 6.
+- `Prob006_adder_pipe_64bit` has no valid PPA in either arm.
 
-## Slide 9 - Claim Guardrails
+## Slide 10 - Why This Is Not Overclaiming
 
-- No average-fitness-only claim.
-- No invalid or duplicate samples counted as useful diversity.
-- No hidden classic-covered design loss.
-- Small-n validity rates are labeled, not overinterpreted.
-- One-seed results cannot be presented as seed-stable significance.
+- Per-problem HV: 4 QD wins, 15 losses, 31 ties.
+- Per-problem HV-AUC: 5 QD wins, 16 losses, 29 ties.
+- The aggregate HV win is strongly affected by `Prob040_synchronizer`.
+- QD has fewer unique PPA points: 318 versus 352.
 
-## Slide 10 - Decision
+## Slide 11 - Answer The Two Questions
 
-- If T26-family wins paired PPA metrics safely: continue QD/MAP-Elites line.
-- If it only wins narrow cases: report scoped usefulness.
-- If it fails broadly: keep the negative map and pivot method families.
+- Does diversity matter?
+- Yes, enough to continue the QD/MAP-Elites line.
+- Which diversity matters?
+- Implementation-response diversity with quality-safe champion pressure.
+- Which diversity does not suffice?
+- Lexical, random, sparse, or unguarded novelty.
+
+## Slide 12 - Decision
+
+- Continue the QD/MAP-Elites research direction.
+- Present the result as reviewable one-seed engineering evidence.
+- Do not claim seed-stable significance yet.
+- Next: multi-seed replication and T26.1 variants that reduce yield loss.

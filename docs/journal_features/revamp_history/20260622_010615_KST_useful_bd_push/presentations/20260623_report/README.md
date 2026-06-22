@@ -6,9 +6,8 @@ useful-BD push. It has two responsibilities:
 1. Answer whether diversity matters for RTL/Verilog PPA evolution.
 2. Answer which kind of diversity appears to matter for RTL.
 
-It also pre-registers the broad RTLLM comparison that should decide whether a
-T26-family QD/MAP-Elites method can beat the classic REvolution conference
-baseline on PPA-centered metrics.
+It also packages the broad one-seed RTLLM comparison between classic
+REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
 
 ## Files
 
@@ -24,18 +23,23 @@ baseline on PPA-centered metrics.
 | `figures/` | Presentation-ready plots after packaging and visual inspection. |
 | `tables/` | Claim gates, planned metric schema, and generated result tables. |
 | `reviews/` | Sub-agent, Claude, and manual adversarial review logs. |
+| `full_rtllm/` | Generated full RTLLM tables, figures, raw PPA data, and package summary. |
 
 ## Current Status
 
-- Milestone package: scaffolded.
+- Milestone package: full one-seed RTLLM result packaged.
 - RTLLM 50-problem manifest: frozen from `bench/RTLLM/*_prompt.txt`.
 - Full-run method: exact T26, `sr_raw_conservative_exploit_qd`, selected by
   the screening package.
 - Screening ladder: classic, exact T26, T26.1 low-fusion, and T26.1
   mid-fusion completed. Gated T26.1 stayed omitted because it was not
   implemented for the deadline screen.
-- Full RTLLM launch: blocked only until pre-launch adversarial review artifacts
-  are recorded.
+- Full RTLLM launch: completed and packaged under `full_rtllm/`.
+- Claim status: `reviewable`.
+- Aggregate all-RTLLM result: exact T26 improves mean HV by `0.010562` and
+  mean HV-AUC by `0.012397`, with `0` hard retention failures.
+- Main caveat: exact T26 has lower valid-PPA yield (`879` versus `1056`) and
+  the aggregate HV gain is outlier-sensitive.
 - Replication policy: one seed is the deadline-driven first milestone. Package
   those results into plots, tables, and slides before starting costly
   multi-seed replication.
@@ -44,6 +48,7 @@ baseline on PPA-centered metrics.
 
 Do not claim QD usefulness from average fitness alone. The report must use
 paired HV, HV-AUC, valid-PPA yield, front/family breadth, archive coverage, and
-duplicate accounting. A result is useful only if it preserves classic-covered
-problems and reports yield loss, validity collapse, or invalid diversity
-instead of hiding it.
+duplicate accounting. For this PPA-first milestone, the hard gate is
+classic-covered retention: if classic has at least one valid PPA sample for a
+problem, QD must also have one. Yield loss remains a visible warning, not an
+automatic blocker.

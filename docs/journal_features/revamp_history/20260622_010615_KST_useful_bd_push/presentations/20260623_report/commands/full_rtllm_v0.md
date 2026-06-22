@@ -1,7 +1,8 @@
 # Full RTLLM V0 Commands
 
-Do not run this until screening and adversarial pre-launch review select the
-QD arm.
+This file records the intended command shape and the completed milestone
+commands. The completed package uses a merged analysis root because three QD
+problems needed a repair run after missing-reference PPA handling was fixed.
 
 ```bash
 RUN_TS="$(date -u +%Y%m%d_%H%M%S_UTC)"
@@ -104,3 +105,36 @@ uv run python scripts/package_rtllm_milestone_full.py \
 
 Then inspect every PNG under `full_rtllm/figures/` before moving figures into
 the slide deck or report.
+
+## Completed Run
+
+Primary run root:
+
+```text
+exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC
+```
+
+Merged package root:
+
+```text
+exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_ref_default_fix_v0
+```
+
+Repair source for `Prob013_multi_booth_8bit`, `Prob018_float_multi`, and
+`Prob040_synchronizer`:
+
+```text
+exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/sr_raw_conservative_exploit_qd_ref_default_fix/seed_1001/openai_gpt-oss-120b
+```
+
+Completed packaging command:
+
+```bash
+uv run python scripts/package_rtllm_milestone_full.py \
+  --run-root exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_ref_default_fix_v0 \
+  --manifest docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/data/rtllm_50_problem_manifest.csv \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/full_rtllm
+```
+
+The final package has `0` hard retention failures, `4` yield warnings, and
+claim status `reviewable`.

@@ -6,6 +6,8 @@ is useful for RTL PPA evolution.
 Policy: this milestone is PPA-first. A QD arm can remain acceptable with a lower
 functionality or synthesis rate if it keeps at least one valid functional PPA
 candidate on every classic-covered design and improves the paired PPA evidence.
+Once that hard coverage gate passes, yield-rate loss is a warning and analysis
+topic, not a hidden rejection rule.
 
 | Gate | Required Evidence | Failure Meaning |
 | --- | --- | --- |
