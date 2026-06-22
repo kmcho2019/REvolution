@@ -1,7 +1,7 @@
 # T33 Tables
 
-T33a source-inventory, T33b preprocessing-view, T33c embedding-cache, and T33d
-collapse-diagnostic tables are committed. They are not replay or PPA results.
+T33a source-inventory, T33b preprocessing-view, T33c embedding-cache, T33d
+collapse-diagnostic, and T33e replay/PPA-front tables are committed.
 
 Current tables:
 
@@ -26,13 +26,16 @@ Current tables:
   pair with same-problem/corpus/hash/style flags.
 - `t33_view_stability.csv`: pairwise cosine stability between preprocessing
   views for the same candidate.
-
-Required tables after the first run:
-
-- `t33_nuisance_axis_diagnostics.csv`
-- `t33_replay_aggregate.csv`
-- `t33_qwen_ladder_vs_controls.csv`
-- `t33_ppa_front_metrics.csv`
+- `t33_replay_rows.csv`: per-problem replay metrics for lexical, random,
+  generation-prefix, fitness-top, and six T33 Qwen descriptor selections.
+- `t33_replay_aggregate.csv`: aggregate selected-HV, Pareto-size, best-fitness,
+  and duplicate-accounting metrics by representation.
+- `t33_selected_candidates.csv`: selected candidate ids and PPA/hash fields used
+  to regenerate direct PPA-front accounting.
+- `t33_ppa_front_metrics.csv`: direct area-power front counts, all-valid front
+  hits, and unique PPA counts by representation.
+- `t33_qwen_ladder_vs_controls.csv`: long-form deltas versus lexical and random
+  controls for the primary replay metrics.
 
 Tables must include enough raw ids and hashes to regenerate all reported
 figures and replay scores.

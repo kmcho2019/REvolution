@@ -1,6 +1,6 @@
 # T33 Preprocessing Ladder Commands
 
-Status: T33a, T33b, and T33c commands are implemented and run.
+Status: T33a through T33e commands are implemented and run.
 
 ## Preflight
 
@@ -59,14 +59,27 @@ uv run python scripts/analyze_t33_qwen_embedding_diagnostics.py \
   --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd
 ```
 
-The next script generated collapse diagnostics. Replay scoring is still pending
-and must not use PPA fields until the evaluation stage.
+The diagnostic script generated collapse diagnostics. Replay scoring uses PPA
+fields only after descriptor selection, for evaluation and visualization.
+
+T33e replay and direct PPA-front scoring:
+
+```bash
+uv run python scripts/analyze_t33_qwen_replay.py \
+  --embedding-manifest docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd/tables/t33_embedding_cache_manifest.csv \
+  --candidates-csv exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/qwen_common_audit_candidates.csv \
+  --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd \
+  --retention-fraction 0.5 \
+  --random-seed 0
+```
 
 ## Required Post-Run Checks
 
 ```bash
-uv run python scripts/package_t33_qwen3_preprocessing_ladder.py \
-  --run-root exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_YYYYMMDD_HHMMSS_UTC
+uv run pytest tests/scripts/test_analyze_t33_qwen_replay.py
+uv run ruff check scripts/analyze_t33_qwen_replay.py tests/scripts/test_analyze_t33_qwen_replay.py
+uv run python -m pyright scripts/analyze_t33_qwen_replay.py tests/scripts/test_analyze_t33_qwen_replay.py
+uv tool run ty check scripts/analyze_t33_qwen_replay.py tests/scripts/test_analyze_t33_qwen_replay.py
 
 git diff --check
 ```

@@ -14,24 +14,22 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T32_sr_raw_front_preserving_emitter_qd/` (completed same-budget
-  front-preserving emitter arm; `T0 diagnostic` because it improves P098 valid
-  PPA and unique PPA breadth versus T31, but loses T26's P135 HV/quality
-  signal).
-- Most recent pre-registered package:
-  `techniques/T33_qwen3_preprocessing_ladder_bd/` (Qwen3 normalized RTL/netlist
-  preprocessing ladder that follows T06's nuisance-axis failure mode; T33a
-  source inventory, T33b preprocessing cache, T33c embeddings, and T33d
-  collapse diagnostics are packaged).
+  `techniques/T33_qwen3_preprocessing_ladder_bd/` (completed Qwen3
+  preprocessing-ladder replay; `T0 diagnostic` because RTL views modestly beat
+  lexical on selected HV, while the netlist views that reduce nuisance
+  clustering do not improve PPA-front/HV metrics).
+- Most recent pre-registered package: none beyond the scaffolded T07-T16/T18
+  encoder and emitter candidates.
 - Next direction:
-  run T33 before heavier learned-encoder fine-tuning, or specify a separate
+  either specify a bounded Qwen projection/head ablation that penalizes
+  problem/corpus collapse, move to graph encoders, or define a separate
   bounded repair/local-rank-1 emitter if returning to the SR raw family.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T32_sr_raw_front_preserving_emitter_qd/figures/t32_holdout_ppa_pareto_area_power_candidate_zoom.png`
-  (straightforward raw area-power Pareto front, no inverted axes).
+  `techniques/T33_qwen3_preprocessing_ladder_bd/figures/t33_raw_area_power_pareto_front.png`
+  (raw area-power Pareto front with full-range and lower-left zoom panels).
 - Most recent interactive visualization refresh:
   `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
   now has a `raw A-P front` PPA mode, with screenshot
@@ -124,7 +122,7 @@ Start here when resuming the active goal.
 | `T30` | `T30_t26_holdout_front_audit` | Completed holdout audit; `T1 near-classic` support with a P098 yield warning, direct raw PPA Pareto figures, and no front-breadth win. |
 | `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Completed holdout live arm, `T0 diagnostic`; preserves final-best coverage but loses yield, P135 HV/quality, and unique PPA breadth. |
 | `T32` | `T32_sr_raw_front_preserving_emitter_qd` | Completed holdout live arm, `T0 diagnostic`; repairs some P098 yield and unique PPA breadth versus T31 but loses T26's P135 HV/quality signal. |
-| `T33` | `T33_qwen3_preprocessing_ladder_bd` | Learned-descriptor follow-up with collapse diagnostics; canonical Yosys netlist reduces T06 same-problem clustering, but replay/PPA scoring is pending. |
+| `T33` | `T33_qwen3_preprocessing_ladder_bd` | Completed replay diagnostic, `T0 diagnostic`; canonical RTL/identifier-role RTL modestly beat lexical HV, but canonical Yosys netlist's collapse improvement does not transfer to HV/PPA-front metrics. |
 
 ## Validity-Gate Note
 

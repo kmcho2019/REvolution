@@ -131,9 +131,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T32_sr_raw_front_preserving_emitter_qd` is executed, packaged with
       direct raw PPA Pareto figures and regeneration tables, and assigned a
       tier decision.
-- [ ] `T33_qwen3_preprocessing_ladder_bd` has source inventory and
-      preprocessing/embedding caches plus collapse diagnostics; needs replay
-      and PPA-front diagnostics.
+- [x] `T33_qwen3_preprocessing_ladder_bd` has source inventory,
+      preprocessing/embedding caches, collapse diagnostics, replay scoring,
+      direct PPA-front figures, visual inspection notes, and a tier decision.
 
 ## Minimum Goal Completion
 

@@ -1374,3 +1374,40 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   and
   `uv tool run ty check scripts/analyze_t33_qwen_embedding_diagnostics.py tests/scripts/test_analyze_t33_qwen_embedding_diagnostics.py`
   all passed.
+
+## T33e Qwen Replay And Direct PPA Fronts - 2026-06-22 UTC
+
+- Added `scripts/analyze_t33_qwen_replay.py` and a focused test. The script
+  replays lexical farthest-first, random, generation-prefix, fitness-top, and
+  six T33 Qwen descriptor matrices under the same `0.5` retention fraction as
+  the T06 common audit.
+- The script writes `tables/t33_replay_rows.csv`,
+  `tables/t33_replay_aggregate.csv`, `tables/t33_selected_candidates.csv`,
+  `tables/t33_ppa_front_metrics.csv`, and
+  `tables/t33_qwen_ladder_vs_controls.csv`.
+- The primary figure is now a direct raw area-power PPA front:
+  `figures/t33_raw_area_power_pareto_front.png`. It has full-range and
+  lower-left zoom panels for `Prob018_float_multi`, the richest valid-PPA
+  representative group selected by unique PPA/front richness.
+- Main result: canonical RTL and identifier-role RTL each improve selected HV
+  versus lexical by about `+2.63%`; commentless RTL improves by `+1.91%`.
+  Canonical Yosys netlist, the best collapse-diagnostic view, loses `-3.34%`
+  selected HV versus lexical, and summary-plus-netlist loses `-0.43%`.
+- Direct PPA-front accounting does not promote T33: commentless RTL has `123`
+  unique all-valid front hits, lexical and fitness-top have `122`, summary
+  plus netlist has `121`, canonical RTL and identifier-role RTL have `120`,
+  and canonical Yosys netlist has `119`. Netlist views increase unique netlist
+  and motif counts, but not HV or direct front hits.
+- Tier decision: `T0 diagnostic`. Do not promote direct Qwen whole-design
+  farthest-first. Follow up only with a small projection/head or hybrid
+  ablation that combines the RTL-view HV source with an explicit
+  anti-problem/corpus objective learned from the netlist collapse diagnostic.
+- Visual inspection passed for the direct PPA front, hypervolume bar chart, and
+  uniqueness bar chart; notes are in
+  `techniques/T33_qwen3_preprocessing_ladder_bd/figures/visual_inspection_notes.md`.
+- Validation run:
+  `uv run pytest tests/scripts/test_package_t33_qwen_ladder_inventory.py tests/scripts/test_generate_t33_qwen_preprocessing_views.py tests/scripts/test_embed_t33_qwen_preprocessing_views.py tests/scripts/test_analyze_t33_qwen_embedding_diagnostics.py tests/scripts/test_analyze_t33_qwen_replay.py`,
+  `uv run ruff check` over the T33 scripts/tests,
+  `uv run python -m pyright` over the T33 scripts/tests,
+  `uv tool run ty check` over the T33 scripts/tests, and `git diff --check`
+  all passed.

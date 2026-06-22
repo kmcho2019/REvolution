@@ -146,11 +146,13 @@ External source checkouts, if needed, belong under:
 Dependency friction is not a valid stopping point until the repo env, isolated
 uv env, and source-checkout routes have all been tried or explicitly ruled out.
 
-## Planned Stages
+## Stages
 
 1. `T33a`: inventory prior T06 artifacts and freeze candidate ids.
 2. `T33b`: generate preprocessing-view caches and manifests.
 3. `T33c`: embed all views and pool whole-design vectors.
-4. `T33d`: run collapse diagnostics, replay selection, and QD/Pareto scoring.
-5. `T33e`: if a view is promising, branch to projection-head or live side
+4. `T33d`: run collapse diagnostics.
+5. `T33e`: run replay selection, QD/Pareto scoring, and direct raw PPA-front
+   visualization.
+6. Follow-up: if a view is promising, branch to projection-head or live side
    archive validation.
