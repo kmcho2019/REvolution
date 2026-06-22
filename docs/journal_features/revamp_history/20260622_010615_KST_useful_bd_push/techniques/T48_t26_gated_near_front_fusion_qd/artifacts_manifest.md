@@ -1,6 +1,6 @@
 # T48 Artifacts Manifest
 
-Status: seed `1001` live run in progress.
+Status: seed `1001` complete. Seed `1002` is pending.
 
 ## Method Sources
 
@@ -24,8 +24,10 @@ Focused validation:
 
 ## Live Run
 
-- launched seed:
+- completed seed:
   `1001`
+- pending seed:
+  `1002`
 - run root:
   `exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning`
 - candidate backend:
@@ -38,12 +40,16 @@ Focused validation:
   `commands/hard_tuning_sanity.md`
 - preflight:
   `preflight/models_20260622_225714_UTC.json`
+- seed-1001 summary:
+  `t26_gated_near_front_fusion_qd/seed_1001/openai_gpt-oss-120b/20260622_225715_revolution_summary_results.txt`
+- seed-1001 scheduler telemetry:
+  `t26_gated_near_front_fusion_qd/seed_1001/openai_gpt-oss-120b/20260622_225715_revolution_scheduler_telemetry.json`
 
 ## Required Result Artifacts
 
-- vLLM `/v1/models` preflight metadata;
-- T48 live command log;
-- per-problem/seed metrics table;
+- vLLM `/v1/models` preflight metadata: present for seed `1001`;
+- T48 live command log: present for seed `1001`;
+- per-problem/seed metrics table: pending package script;
 - aggregate metrics table;
 - validity gate table;
 - candidate-level PPA data;

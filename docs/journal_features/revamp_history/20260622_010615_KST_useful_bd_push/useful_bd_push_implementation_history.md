@@ -2746,3 +2746,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `qd_two_parent_gate=near_front_descriptor`.
 - The run is still in progress. Do not package or tier T48 until the process
   exits cleanly and the archive summaries are validated.
+
+## T48 Gated Near-Front Fusion Seed 1001 Completion - 2026-06-22 UTC
+
+- Seed `1001` completed with exit code `0` after `1572.27` seconds.
+- The run produced `13/13` `archive_summary.json` files and `13/13`
+  `qd_metrics.json` files.
+- The runner's summary best-status count is `11` success and `2` failed, but
+  both summary-level failed problems still have valid PPA artifacts and
+  global-Pareto candidates.
+- Against T47 classic seed `1001`, the summary best-score comparison is
+  `3` wins, `3` losses, `5` ties, and `2` missing summary best scores.
+  The two missing summary best scores are `Prob024_fsm` and
+  `Prob151_review2015_fsm`.
+- `Prob024_fsm` has two T48 global-Pareto PPA candidates and matches the
+  T47 classic best score. `Prob151_review2015_fsm` has one T48 global-Pareto
+  PPA candidate, but it is worse than the T47 classic best score.
+- Gate counters from `qd_metrics.json` latest snapshots: `21` two-parent
+  attempts, `6` near-front gate attempts, `5` gate accepts, `1` gate reject,
+  and `16` one-parent fallbacks after two-parent requests.
+- No T48 tier is assigned yet. The next step is seed `1002`, then paired
+  packaging with direct PPA-front inspection and validity-gate analysis.
