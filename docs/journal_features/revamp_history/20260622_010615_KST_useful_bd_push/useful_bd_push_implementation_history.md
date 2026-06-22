@@ -1171,3 +1171,48 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   Pareto figures. The package must include the primary candidate-only raw
   Pareto plot, reference-context raw plot if useful, visual inspection notes,
   and a candidate-level raw PPA/front table that can regenerate the figures.
+
+## T32 SR Raw Front-Preserving Emitter QD Live Result - 2026-06-22 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models`; the endpoint returned
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Completed the T32 holdout run under
+  `exp/useful_bd_push/t32_sr_raw_front_preserving_emitter_qd_20260622_010749_UTC/`.
+  Runtime was 651.99 seconds.
+- T32 final-best scores:
+  `Prob150_review2015_fsmonehot` 0.329686,
+  `Prob098_circuit7` 0.012006, and
+  `Prob135_m2014_q6b` 0.263617.
+- Pareto archive validation passed structurally for the T32 holdout arm:
+  valid `True`, failure count `0`, problem-invalid count `0`, and max front
+  size seen `3`.
+- Added `scripts/package_t32_front_preserving_emitter_audit.py` and
+  `tests/scripts/test_package_t32_front_preserving_emitter_audit.py`; updated
+  the shared T30 holdout count plot to use dynamic grouped-bar widths so the
+  four-arm T32 comparison is readable.
+- Packaged T32 tables for live metrics, T32/T31/T26-vs-classic deltas,
+  canonical RTL/netlist/family accounting, method manifest, vLLM preflight
+  metadata, and T32 Pareto validation.
+- Added direct raw PPA Pareto figures:
+  `figures/t32_holdout_ppa_pareto_area_power_candidate_zoom.png` uses raw area
+  and power with no inverted axes, and
+  `figures/t32_holdout_ppa_pareto_area_power.png` adds reference stars.
+- Visual inspection accepted the candidate-zoom raw PPA Pareto plot as the
+  primary front figure. It shows T32 mostly overlaps T31 and does not recover
+  T26's P135 low-area/low-power point.
+- Aggregate read: T32 valid PPA is 67 versus classic's 103, T26's 68, and
+  T31's 56. Mean final-best score is 0.201770, matching T31 and below T26's
+  0.246463. Mean HV and HV-AUC are both 0. Total front points tie at 3.
+  Unique PPA points improve to 9 versus T26's 8 and T31's 6, but remain below
+  classic's 11.
+- Per-problem read: P098 valid PPA improves to 19 versus T26's 15 and T31's
+  14, but remains below classic's 31. P135 valid PPA improves to 31, but
+  reference-beating count is 0 and final-best score stays at T31's weaker
+  0.263617.
+- Tier read: `T0 diagnostic`. T32 is a useful P098-yield hint, but it fails
+  the primary requirement to preserve T26's P135 quality/HV signal and does
+  not visibly widen the useful raw PPA Pareto front.
+- Lane decision: stop simple champion-fraction/two-parent-probability tuning
+  as the next T26 follow-up. A same-family follow-up needs stronger
+  role-separated champion, local-rank-1/front-preserving, and bounded-repair
+  lanes, or the push should branch to another descriptor family.

@@ -117,4 +117,5 @@ as `T0 diagnostic` and use it to design a narrower repair lane.
 
 ## Current Status
 
-Pre-registered, pending live execution.
+Completed as `T0 diagnostic`. The method preserves final-best coverage, but it
+does not repair P098 yield and does not preserve T26's P135 quality/HV signal.

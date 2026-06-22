@@ -508,13 +508,13 @@ def plot_problem_counts(rows: list[dict[str, str]], output_path: Path) -> None:
     labels = [method["label"] for method in METHODS]
     by_key = {(row["method_label"], row["problem"]): row for row in rows}
     x_positions = list(range(len(PROBLEMS)))
-    width = 0.34
+    width = min(0.72 / len(labels), 0.34)
     fig, axes = plt.subplots(1, 3, figsize=(16.4, 4.8))
     metrics = ("ppa_front_points", "reference_beating_count", "valid_ppa_count")
     titles = ("Front Points", "Reference-Beating", "Valid PPA")
     for axis, metric, title in zip(axes, metrics, titles, strict=True):
         for index, label in enumerate(labels):
-            offset = (index - 0.5) * width
+            offset = (index - (len(labels) - 1) / 2) * width
             values = [parse_optional(by_key[(label, problem)][metric]) or 0.0 for problem in PROBLEMS]
             axis.bar(
                 [position + offset for position in x_positions],
@@ -529,7 +529,7 @@ def plot_problem_counts(rows: list[dict[str, str]], output_path: Path) -> None:
         axis.set_xticklabels(short_problem_names(), rotation=25, ha="right")
         axis.grid(axis="y", color="#e5e5e5", linewidth=0.8)
     handles, legend_labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, legend_labels, loc="lower center", ncol=2, frameon=False)
+    fig.legend(handles, legend_labels, loc="lower center", ncol=min(len(labels), 4), frameon=False)
     fig.suptitle(f"{FIGURE_TITLE_PREFIX} Counts By Problem", y=1.02)
     fig.tight_layout(rect=(0, 0.12, 1, 0.94))
     fig.savefig(output_path, dpi=180, bbox_inches="tight")

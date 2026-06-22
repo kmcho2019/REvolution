@@ -70,5 +70,17 @@ After execution, validate the T32 Pareto archive:
   --pareto-qd-mode sr_raw_front_preserving_emitter_qd/seed_1001/openai_gpt-oss-120b
 ```
 
-Package with a T32 extension of the T31 packager or a T32-specific packager
-that compares T30 classic, T30 T26, T31, and the resolved T32 run root.
+Package T32:
+
+```bash
+T30_ROOT="exp/useful_bd_push/t30_t26_holdout_front_audit_20260621_233506_UTC"
+T31_ROOT="exp/useful_bd_push/t31_sr_raw_fail_feedback_repair_qd_20260622_002953_UTC"
+T32_ROOT="${RUN_ROOT}"
+
+PYTHONPATH=.:src /workspace/.venv/bin/python \
+  scripts/package_t32_front_preserving_emitter_audit.py \
+  --t30-run-root "${T30_ROOT}" \
+  --t31-run-root "${T31_ROOT}" \
+  --t32-run-root "${T32_ROOT}" \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T32_sr_raw_front_preserving_emitter_qd
+```

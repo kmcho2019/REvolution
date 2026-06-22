@@ -121,4 +121,5 @@ or direct front breadth, mark it at least `T1 near_classic` for deeper audit.
 
 ## Current Status
 
-Pre-registered, pending live execution.
+Completed as `T0 diagnostic`. The method improves P098 valid-PPA count versus
+T26/T31, but it does not preserve T26's P135 quality/HV signal.

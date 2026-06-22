@@ -300,6 +300,22 @@ a numbered `techniques/T##_slug/` package before running it.
   raw area-power PPA Pareto plot and candidate table, not aggregate bars or
   BD/archive visualizations.
 
+## From `T32_sr_raw_front_preserving_emitter_qd`
+
+- T32 is a measured negative for small near-front success-parent tuning. It
+  improves P098 valid PPA to 19 versus T26's 15 and T31's 14, and improves
+  unique PPA points to 9 versus T26's 8 and T31's 6.
+- The useful P135 signal still collapses: T32 mean final-best score is
+  0.201770, matching T31 and below T26's 0.246463, while mean HV/HV-AUC remain
+  zero.
+- Do not continue by only nudging `qd_champion_lane_fraction` or
+  `qd_two_parent_probability`. The next same-family attempt needs genuinely
+  separate roles: a T26-style champion lane, a local rank-1/front-preserving
+  lane, and a bounded repair/yield lane that cannot replace champion pressure.
+- Keep T32 as a P098-yield hint and direct-front control. The raw area-power
+  Pareto plot is mandatory evidence for any follow-up because aggregate valid
+  counts alone would overstate the result.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

@@ -1,20 +1,17 @@
 # T32 Figures
 
-Status: pending live execution.
+Status: generated and visually inspected.
 
-Required figures:
+| Figure | Purpose |
+| --- | --- |
+| `t32_holdout_ppa_pareto_area_power_candidate_zoom.png` | Primary direct raw PPA Pareto view. Area on x, power on y, no inverted axes, lower-left is better, candidate-only zoom. |
+| `t32_holdout_ppa_pareto_area_power.png` | Same conventional raw PPA view with reference stars included. |
+| `t32_holdout_ppa_fronts_improvement.png` | Normalized area/power improvement view where higher is better on both axes. |
+| `t32_holdout_ppa_fronts_area_power_zoom.png` | Secondary continuity plot with inverted raw axes. Do not use as the primary figure. |
+| `t32_holdout_live_aggregate.png` | Aggregate HV, HV AUC, and candidate-level front-point summary. |
+| `t32_holdout_problem_counts.png` | Per-problem front-point, reference-beating, and valid-PPA counts. |
+| `t32_holdout_family_counts.png` | Canonical family/netlist accounting for front candidates. |
 
-- straightforward raw area-power PPA Pareto front PNG with conventional
-  non-inverted axes, lower-left marked as better, and rank-1 front points
-  visually distinct from non-front candidates;
-- candidate-only raw PPA-front zoom if the reference design stretches scale;
-- normalized area/power improvement-front plot;
-- per-problem valid-PPA and front-count comparison versus classic, T26, and
-  T31;
-- family/netlist front-breadth plot;
-- compact aggregate HV/HV-AUC/yield plot.
-
-Do not mark T32 complete until the images have been inspected and
-`visual_inspection_notes.md` records readability, axis direction, legend
-placement, and whether the front plot honestly shows the P098 yield/front
-effect.
+Use `t32_holdout_ppa_pareto_area_power_candidate_zoom.png` first when judging
+whether T32 changes the raw PPA Pareto front. It shows T32 mostly overlapping
+T31 and failing to recover T26's useful P135 low-area/low-power point.

@@ -45,8 +45,7 @@ The desired end state is one of:
 
 ## Current Research State
 
-T31 is the most recent completed package. T32 is pre-registered as the next
-holdout run, but it is not a result yet. T30 remains the most recent positive
+T32 is the most recent completed package. T30 remains the most recent positive
 holdout support for exact T26 conservative-exploit SR raw: it preserves all
 three classic-covered VerilogEval holdout designs and improves mean final-best
 score by 9.91%. It is not a QD-front promotion because valid-PPA yield drops,
@@ -62,11 +61,12 @@ fail-feedback repair. Any T32-style follow-up must
 include straightforward raw PPA Pareto figures with conventional
 lower-left-better axes.
 
-The concrete T32 follow-up keeps the T26/T30 SR raw archive substrate, lowers
-champion pressure only to `0.72`, adds a small `0.08` two-parent
-success-parent lane, and removes T31's direct fail-feedback text. Its package
-must include a candidate-level raw PPA/front table so the primary
-area-power Pareto plot can be regenerated without rerunning the LLM.
+T32 is completed and retired as `T0 diagnostic`. It improves P098 valid PPA
+versus T26/T31 and improves unique PPA points versus T31, but it does not
+preserve T26's P135 quality/HV signal and mean HV/HV-AUC remain zero. The next
+same-family method should not keep nudging champion fraction or two-parent
+probability alone; it needs a stronger role-separated emitter or a branch to a
+different descriptor family.
 
 ## Prior Evidence To Reuse
 

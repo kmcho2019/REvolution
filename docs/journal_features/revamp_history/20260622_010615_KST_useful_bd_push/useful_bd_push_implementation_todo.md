@@ -126,7 +126,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       assigned a tier decision.
 - [x] `T31_sr_raw_fail_feedback_repair_qd` is pre-registered, executed,
       packaged, and assigned a tier decision.
-- [ ] `T32_sr_raw_front_preserving_emitter_qd` is executed, packaged with
+- [x] `T32_sr_raw_front_preserving_emitter_qd` is executed, packaged with
       direct raw PPA Pareto figures and regeneration tables, and assigned a
       tier decision.
 

@@ -1,12 +1,12 @@
 # T31 Visualizations
 
-Status: pending live execution.
+Status: static figures generated; HTML viewer not generated.
 
-Static raw area-power PPA Pareto-front PNGs are required before any HTML
-viewer. The HTML viewer is useful for archive-space and 3D inspection, but it
-does not replace a straightforward lower-left-better PPA scatter plot. If the
-T31 artifacts can be adapted to the Phase 03.1 QD/PPA viewer, add a local
-`qd_ppa_viewer/index.html` bundle after packaging the basic figures.
+The required primary visualization is present in
+`../figures/t31_holdout_ppa_pareto_area_power_candidate_zoom.png`. It is a
+straightforward raw area-power PPA Pareto view with conventional axes and
+lower-left marked as better.
 
-If Classic cannot be honestly projected into T31's archive coordinates, keep
-Classic visible in the PPA/front pane and document the archive-pane limitation.
+No Phase 03.1 HTML viewer was generated for this result batch. If the T31
+artifacts are adapted later, keep Classic visible in the PPA/front pane and
+document any archive-pane limitation.

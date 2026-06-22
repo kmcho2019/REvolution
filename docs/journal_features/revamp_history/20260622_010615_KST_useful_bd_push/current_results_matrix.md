@@ -33,11 +33,9 @@ Real result packages:
 - `T29_sr_raw_front_recovery_qd` front-recovery live follow-up result
 - `T30_t26_holdout_front_audit` classic-versus-T26 VerilogEval holdout audit
 - `T31_sr_raw_fail_feedback_repair_qd` failure-feedback repair holdout arm
+- `T32_sr_raw_front_preserving_emitter_qd` front-preserving emitter holdout arm
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
-`T32_sr_raw_front_preserving_emitter_qd` is pre-registered but is not counted
-as a real-result package until the live run, direct raw PPA Pareto figures, and
-candidate/source tables are packaged.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -51,7 +49,10 @@ deficit and loses multi-pipe final-PPA coverage. T30 gives T26 holdout support:
 it preserves all three classic-covered VerilogEval holdout designs and improves
 mean best score, but it has a P098 yield warning and does not broaden the raw
 PPA/front-family evidence. T31 is a negative same-budget repair result: it
-does not repair P098 yield and loses T26's P135 HV/quality signal. The
+does not repair P098 yield and loses T26's P135 HV/quality signal. T32 is also
+negative: it improves P098 valid PPA versus T26/T31 and recovers some unique
+PPA/front-netlist breadth, but it still loses T26's P135 HV/quality signal and
+has zero mean HV/HV-AUC. The
 ten-package minimum is satisfied, but the goal remains active.
 
 ## Comparable Seed-1001 Replay Metrics
@@ -179,13 +180,15 @@ but valid PPA falls to 56 versus classic's 103 and T26's 68, P098 falls to
 and mean HV/HV-AUC return to zero. The direct raw PPA Pareto figure is
 `figures/t31_holdout_ppa_pareto_area_power_candidate_zoom.png`.
 
-`T32_sr_raw_front_preserving_emitter_qd` is pre-registered as the next holdout
-arm, not a result. It keeps the T26/T30 SR raw archive substrate, lowers
+`T32_sr_raw_front_preserving_emitter_qd` is the completed front-preserving
+emitter holdout arm. It keeps the T26/T30 SR raw archive substrate, lowers
 champion pressure only to 0.72, adds a small 0.08 two-parent success-parent
-lane, and removes T31's direct fail-feedback text. Its package cannot be
-accepted without a straightforward raw area-power Pareto figure, candidate-only
-zoom, normalized improvement-front support plot, and the candidate-level table
-needed to regenerate those figures.
+lane, and removes T31's direct fail-feedback text. It is `T0 diagnostic`.
+T32 improves P098 valid PPA to 19 versus T26's 15 and T31's 14, and improves
+unique PPA points to 9 versus T26's 8 and T31's 6. It does not preserve T26's
+P135 final-best score or HV: mean final-best score stays at T31's 0.201770,
+and mean HV/HV-AUC remain zero. The direct raw PPA Pareto figure is
+`figures/t32_holdout_ppa_pareto_area_power_candidate_zoom.png`.
 
 ## Current Conclusions
 
@@ -221,18 +224,22 @@ needed to regenerate those figures.
 13. T31 shows same-budget fail-pool feedback is not the missing repair
     mechanism: it preserves coverage but worsens yield, unique PPA breadth,
     P135 HV/quality, and reference-beating count.
-14. The next result must be read from direct raw PPA Pareto/front geometry
-    before aggregate bars or BD-space visualizations, because the T30/T31
+14. T32 shows a small near-front success-parent lane can recover some P098
+    yield and unique PPA breadth, but not the T26 P135 quality/HV signal.
+15. The next result must be read from direct raw PPA Pareto/front geometry
+    before aggregate bars or BD-space visualizations, because the T30/T31/T32
     holdout panels expose front collapse that summary metrics can obscure.
 
 ## Next Decisions
 
 - Do not continue direct fail-feedback repair as the next T26 follow-up.
-- Execute the pre-registered T32 front-preserving emitter/archive variant that
-  keeps most T26 champion pressure while adding a small success-parent front
-  lane.
-- Use the T30 P098 yield warning, T30/T31 direct raw PPA-front plots, and T31
-  failure modes as acceptance controls for the next emitter.
+- Do not continue simple champion-fraction/two-parent-probability tuning as
+  the next T26 follow-up.
+- Use the T30 P098 yield warning, T30/T31/T32 direct raw PPA-front plots, and
+  T31/T32 failure modes as acceptance controls for the next emitter.
+- If staying in this lane, separate emitter roles more sharply: restore T26
+  champion pressure, add a bounded local-rank-1 or repair lane, and prevent
+  the repair/front lane from replacing the P135 quality source.
 - Do not continue blind interpolation between T24 SR raw and T26 scheduler
   settings; T29 is the measured negative result for that idea.
 - Use the direct PPA-front audit figures when deciding whether a candidate has
