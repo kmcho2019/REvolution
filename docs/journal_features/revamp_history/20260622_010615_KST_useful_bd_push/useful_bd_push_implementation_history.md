@@ -1809,3 +1809,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Full touched-file `pyright`/`ty` still report the pre-existing
   `scripts/run_backend.py` evaluator union mismatch at lines 305 and 339.
   This commit only changes the CLI `--qd_cell_mode` choices in that file.
+- Ran a bounded one-problem smoke after the implementation commit:
+  `RTLLM/Prob045_alu`, population `4`, generation `1`, full 128000 token caps,
+  `grid_quantile`, `journal_graph_testability_3d`, and
+  `elite_pareto_slot` with `max_elites_per_cell=2`.
+- Smoke root:
+  `exp/useful_bd_push/t38_elite_pareto_slot_live_qd_20260622_054857_UTC/`.
+  The vLLM preflight reported `openai/gpt-oss-120b` with `max_model_len`
+  131072. Runtime completed in 82 seconds and wrote archive artifacts with
+  `cell_mode=elite_pareto_slot`.
+- Smoke validator passed with `failure_count=0`, but
+  `max_front_size_seen=0`, `occupied_cells=0`, and `total_archive_members=0`.
+  The smoke generated 8 candidates but had zero functionality and synthesis-PPA
+  successes, so it is a CLI/runtime contract check only and not a PPA-front
+  result.
