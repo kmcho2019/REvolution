@@ -92,3 +92,15 @@ uv run python scripts/run_backend.py \
   --qd_descriptor_file docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/descriptor_profile.yaml \
   --save_path "${RUN_ROOT}/sr_raw_conservative_exploit_qd/seed_1001"
 ```
+
+Package completed arms:
+
+```bash
+uv run python scripts/package_rtllm_milestone_full.py \
+  --run-root "${RUN_ROOT}" \
+  --manifest docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/data/rtllm_50_problem_manifest.csv \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/full_rtllm
+```
+
+Then inspect every PNG under `full_rtllm/figures/` before moving figures into
+the slide deck or report.
