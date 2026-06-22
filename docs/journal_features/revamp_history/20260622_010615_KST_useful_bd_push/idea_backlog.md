@@ -377,6 +377,13 @@ a numbered `techniques/T##_slug/` package before running it.
   runtime graph/testability descriptor because exact T11 projection is not yet
   available online. If T38 helps, implement the exact T11 runtime projection
   next; if it fails, do not blame the T11 descriptor without that follow-up.
+- T38 live result: ALU and traffic-light retain active archive/front material,
+  but multi-pipe has seven valid PPA candidates and three front points with
+  zero active archive members because `grid_quantile` warmup needs eight
+  successes. Next idea: T39 sparse-yield warmup/fallback keeps
+  `elite_pareto_slot` but initializes when a problem has at least 4-7 valid
+  PPA candidates or replays global Pareto members into the active archive at
+  run end for low-yield problems.
 
 ## Near-Term Hybrids
 

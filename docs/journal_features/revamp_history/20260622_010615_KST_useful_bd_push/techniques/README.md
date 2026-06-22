@@ -51,7 +51,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T35` | `T35_t11_pareto_coupling_bd` | Archive-coupled contrastive descriptor | mixed `T0/T1 diagnostic`; cell-local Pareto improves front hits but loses HV, front-seeded is only an upper bound |
 | `T36` | `T36_t11_bounded_front_lane_bd` | Archive-coupled contrastive descriptor | `T2 replay_candidate`; one local-front slot gives +4.04% HV and +4 front hits vs lexical |
 | `T37` | `T37_t36_slot_count_ablation` | Archive-coupled contrastive descriptor | `T2 replay_candidate`; one-slot T37 matches T36, two-plus slots collapse HV |
-| `T38` | `T38_elite_pareto_slot_live_qd` | Archive-coupling live validation | Pre-registered; champion plus one local Pareto slot per cell |
+| `T38` | `T38_elite_pareto_slot_live_qd` | Archive-coupling live validation | `T0 diagnostic`; runs end to end but multi-pipe active archive stays empty under warmup 8 |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

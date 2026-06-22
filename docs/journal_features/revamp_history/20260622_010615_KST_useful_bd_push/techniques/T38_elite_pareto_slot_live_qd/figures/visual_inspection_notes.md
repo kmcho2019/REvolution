@@ -1,7 +1,22 @@
 # T38 Visual Inspection Notes
 
-No live figures are available yet.
+Inspected:
 
-Before assigning a tier, inspect direct raw PPA Pareto PNGs and the HTML
-viewer screenshot for readable labels, lower-left-better orientation, visible
-rank-1 fronts, and no broken or misleading overlays.
+- `t38_live_raw_area_power_fronts.png`
+- `t38_live_improvement_fronts.png`
+- `t38_live_archive_counts.png`
+- `visualizations/direct_ppa_pareto/screenshot.png`
+
+The raw area-power figure is readable and marks local rank-1 points, global
+front points, and active archive members with distinct markers. The inverted
+area and power axes make lower-is-better movement visually consistent toward
+the upper-right. The multi-pipe panel clearly shows three front/global points
+but no active archive squares.
+
+The normalized improvement figure is readable and makes the multi-pipe
+negative power/timing tradeoff visible. The count summary is readable and
+shows the central blocker: multi-pipe has seven valid PPA points and three
+front points, but zero active archive members.
+
+The HTML screenshot rendered correctly with the raw PPA figure and summary
+table visible. No overlap or broken image was observed.

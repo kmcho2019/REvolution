@@ -292,12 +292,16 @@ The primary PNG is
 The filesystem-openable direct raw PPA viewer is
 `techniques/T37_t36_slot_count_ablation/visualizations/direct_ppa_pareto/index.html`.
 
-`T38_elite_pareto_slot_live_qd` is the pre-registered live validation method
-for the T37 one-slot boundary. It adds `elite_pareto_slot`, a runtime cell mode
-that keeps the scalar quality champion plus one local PPA Pareto slot when
-`--qd_max_elites_per_cell 2` is used. The planned live screen compares classic,
-the same runtime graph/testability descriptor with full `pareto_front` cells,
-and the bounded T38 cell mode. T38 is pending live results and has no tier yet.
+`T38_elite_pareto_slot_live_qd` is the first live validation of the T37
+one-slot boundary. It adds `elite_pareto_slot`, a runtime cell mode that keeps
+the scalar quality champion plus one local PPA Pareto slot when
+`--qd_max_elites_per_cell 2` is used. The bounded arm completed on the three
+RTLLM screen problems and produced direct PPA figures. ALU has 25 valid PPA
+points, 2 local/global front points, and 19 active archive members.
+Traffic-light has 8 valid PPA points, 2 local/global front points, and 7
+active archive members. Multi-pipe has 7 valid PPA points and 3 global/local
+front points, but zero active archive members because the grid-quantile
+warmup threshold is 8. T38 is therefore `T0 diagnostic`, not a useful-BD win.
 
 ## Current Conclusions
 
@@ -360,9 +364,10 @@ and the bounded T38 cell mode. T38 is pending live results and has no tier yet.
 22. T37 confirms the T36 result is a one-slot boundary, not a broad quota
     sweep. Adding a second or third local-front slot over-replaces the T11
     selector and loses HV.
-23. T38 is the live test derived from T37. It is intentionally narrower than a
-    new descriptor claim: the first question is whether champion-plus-one-slot
-    retention improves direct PPA-front evidence under the same budget.
+23. T38 proves the champion-plus-one-slot cell mode can run live and retain
+    front material on ALU/traffic-light, but it also exposes a sparse-yield
+    warmup failure: multi-pipe has valid/global front candidates and no active
+    archive members.
 
 ## Next Decisions
 
@@ -392,6 +397,7 @@ and the bounded T38 cell mode. T38 is pending live results and has no tier yet.
 - For the T11 lineage, do not promote front-seeded evidence as a method. Use it
   only to justify a gentler replay or live variant that preserves T11's
   farthest/HV behavior while reserving a small front-recovery lane.
-- For T36/T37, run the T38 same-budget live validation of the one-slot bounded
-  front lane next. Do not widen the local-front lane unless new evidence
-  changes the T37 slot-count conclusion.
+- For T36/T37/T38, keep the one-slot rule but fix sparse-yield archive warmup
+  before running broad controls. A next variant should allow a small valid-PPA
+  count below 8 to initialize or should use global Pareto fallback evidence
+  without changing descriptor inputs.

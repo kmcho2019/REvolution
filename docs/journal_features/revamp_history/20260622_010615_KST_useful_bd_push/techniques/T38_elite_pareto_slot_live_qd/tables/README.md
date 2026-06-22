@@ -8,7 +8,13 @@
   evidence because no candidate reached functional/synthesis PPA.
 - `smoke_pareto_front_validation.json` and `.md`: validator output for the
   smoke archive contract; valid with `max_front_size_seen=0`.
+- `t38_live_candidate_ppa_points.csv`: valid-PPA candidate table with raw PPA,
+  normalized improvements, local/global front flags, and archive-member flags.
+- `t38_live_problem_summary.csv`: per-problem live-arm summary.
+- `t38_live_archive_summary.csv`: active archive and global-front counts.
+- `t38_live_pareto_front_validation.json` and `.md`: validator output for the
+  full bounded arm; valid with `max_front_size_seen=2`.
 
-Raw live analysis tables are pending and should include candidate-level PPA
-points, direct Pareto-front flags, archive metrics, validity/yield counts,
-hypervolume/HV-AUC, and family/netlist breadth.
+Comparator-arm tables are still pending. Hypervolume/HV-AUC and
+family/netlist breadth need the classic/full-Pareto controls before any
+positive claim.

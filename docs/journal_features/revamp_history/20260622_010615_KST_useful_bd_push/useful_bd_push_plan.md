@@ -54,12 +54,12 @@ weaker T35 cell-Pareto HV regime. It is a `T2 replay_candidate`, not a final
 useful-BD promotion, because no same-budget live run has tested
 generation-time validity and coverage.
 
-T38 is the current pre-registered live follow-up. It adds `elite_pareto_slot`,
-which keeps the scalar quality champion and one local PPA Pareto slot per
-descriptor cell when `--qd_max_elites_per_cell 2` is used. T38 uses an existing
-runtime graph/testability descriptor as the first online test of the T37
-archive rule; exact T11 runtime projection remains a follow-up if the archive
-rule helps.
+T38 is the completed first live follow-up. It adds `elite_pareto_slot`, which
+keeps the scalar quality champion and one local PPA Pareto slot per descriptor
+cell when `--qd_max_elites_per_cell 2` is used. T38 runs end to end and retains
+front/archive material on ALU and traffic-light, but it is `T0 diagnostic`
+because multi-pipe has valid/global front PPA and zero active archive members
+under grid-quantile warmup `8`.
 
 T35 remains important negative/upper-bound evidence. Full cell-local Pareto
 retention improves direct front hits but loses too much HV, while the
@@ -70,9 +70,10 @@ T11 remains the strongest pure descriptor-only L4 replay selector so far. Its
 top-64/weighted structural contrastive descriptors beat lexical HV by
 `+1.82%` and keep `186` unique PPA points, but direct front hits still miss
 lexical (`120` versus `122`). T36 is the measured bounded-front follow-up. The
-T37 is the measured slot-count ablation. T38 is the live validation package for
-exactly one bounded local-front slot; do not replace descriptor novelty
-outright with local Pareto retention.
+T37 is the measured slot-count ablation. T38 is the first live validation
+package for exactly one bounded local-front slot. The next T11-family step is
+not wider local-Pareto retention; it is a sparse-yield archive warmup/fallback
+fix that keeps descriptor novelty intact.
 
 T30 remains the most recent positive holdout support for exact T26
 conservative-exploit SR raw: it preserves all three classic-covered

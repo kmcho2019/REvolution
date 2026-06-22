@@ -1823,3 +1823,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   The smoke generated 8 candidates but had zero functionality and synthesis-PPA
   successes, so it is a CLI/runtime contract check only and not a PPA-front
   result.
+- Ran the full bounded T38 arm on the pre-registered three RTLLM screen
+  problems with population `12`, generations `3`, seed `1001`, full 128000
+  token caps, `grid_quantile`, `journal_graph_testability_3d`, and
+  `elite_pareto_slot` with `max_elites_per_cell=2`.
+- Full bounded-arm root:
+  `exp/useful_bd_push/t38_elite_pareto_slot_live_qd_20260622_054857_UTC/elite_pareto_slot_qd/seed_1001/openai_gpt-oss-120b/`.
+  Runtime completed in 771 seconds.
+- Validator passed with `failure_count=0` and `max_front_size_seen=2`.
+  Packaged direct PPA figures, candidate/front tables, validator output, and a
+  simple HTML viewer under `techniques/T38_elite_pareto_slot_live_qd/`.
+- Main measured result: `Prob045_alu` has 25 valid PPA, 2 local/global front
+  points, and 19 active archive members. `Prob041_traffic_light` has 8 valid
+  PPA, 2 local/global front points, and 7 active archive members.
+  `Prob015_multi_pipe_8bit` has 7 valid PPA and 3 front points, but zero active
+  archive members because the configured grid-quantile warmup threshold is 8.
+- Tier decision: `T0 diagnostic`. The cell mode runs and produces usable direct
+  PPA-front plots, but the current warmup policy fails the sparse-yield
+  multi-pipe case. Next iteration should keep the one-slot rule and ablate
+  sparse-yield archive warmup/fallback before broad controls.

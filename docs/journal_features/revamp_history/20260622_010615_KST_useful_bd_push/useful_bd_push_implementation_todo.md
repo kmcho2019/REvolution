@@ -147,8 +147,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       decision for the one-slot arm.
 - [x] `T38_elite_pareto_slot_live_qd` is pre-registered with the live
       champion-plus-one-local-Pareto-slot archive rule and exact command card.
-- [ ] `T38_elite_pareto_slot_live_qd` is executed, validated, packaged with
-      direct raw PPA Pareto figures, and assigned a tier decision.
+- [x] `T38_elite_pareto_slot_live_qd` bounded arm is executed, validated,
+      packaged with direct raw PPA Pareto figures, and assigned `T0
+      diagnostic`.
+- [ ] T39 sparse-yield warmup/fallback variant is specified before broad T38
+      controls, because T38 multi-pipe has valid/front PPA but no active
+      archive members.
 
 ## Minimum Goal Completion
 
@@ -184,8 +188,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       rationale before the next method starts.
 - [x] T36 bounded front lane gets a slot-count ablation before any final
       useful-BD claim.
-- [ ] T37 one-slot bounded front lane gets T38 same-budget live validation
-      before any final useful-BD claim.
+- [x] T37 one-slot bounded front lane gets T38 same-budget live validation.
+- [ ] T38 warmup/archive gap is ablated before any final useful-BD claim.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

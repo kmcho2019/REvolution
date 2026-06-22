@@ -14,25 +14,23 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T37_t36_slot_count_ablation/` (completed T36 slot-count
-  ablation; one local-front slot is the best deployable replay arm, while two
-  or more slots collapse toward weaker cell-Pareto HV).
+  `techniques/T38_elite_pareto_slot_live_qd/` (completed bounded live arm;
+  `T0 diagnostic` because multi-pipe has valid/front PPA but zero active
+  archive members under warmup 8).
 - Most recent pre-registered package: none beyond the remaining scaffolded
-  `techniques/T38_elite_pareto_slot_live_qd/` now defines the live bounded
-  one-slot archive test for the T37 result.
+  T08-T10/T12/T15-T16/T18 encoder and emitter candidates.
 - Next direction:
-  run the T38 live screen and package direct raw PPA Pareto-front figures
-  before reading aggregate metrics.
+  use T38's multi-pipe warmup/archive gap to define the next bounded-slot
+  variant before running broad controls.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T37_t36_slot_count_ablation/figures/t37_multi_problem_ppa_pareto_fronts.png`
-  (four representative raw area-power Pareto-front panels with all-valid,
-  lexical, T11, T35, and T37 slot-count overlays).
+  `techniques/T38_elite_pareto_slot_live_qd/figures/t38_live_raw_area_power_fronts.png`
+  (raw area-power front panels for the T38 bounded live arm).
 - Most recent direct PPA HTML viewer:
-  `techniques/T37_t36_slot_count_ablation/visualizations/direct_ppa_pareto/index.html`
-  (filesystem-openable raw area-power Pareto viewer with front-hit summary and
+  `techniques/T38_elite_pareto_slot_live_qd/visualizations/direct_ppa_pareto/index.html`
+  (filesystem-openable raw area-power Pareto viewer with summary table and
   Playwright screenshot).
 - Most recent interactive visualization refresh:
   `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
@@ -131,7 +129,7 @@ Start here when resuming the active goal.
 | `T35` | `T35_t11_pareto_coupling_bd` | Completed replay diagnostic, mixed `T0/T1 diagnostic`; T11 cell-local Pareto retention improves direct front hits but loses HV, while front-seeded retention is only an upper-bound diagnostic. |
 | `T36` | `T36_t11_bounded_front_lane_bd` | Completed replay diagnostic, `T2 replay_candidate`; one local-front slot improves HV by +4.04% over lexical and recovers direct front hits to 126. |
 | `T37` | `T37_t36_slot_count_ablation` | Completed replay diagnostic, `T2 replay_candidate`; confirms one local-front slot is the useful boundary and rejects two-plus slots. |
-| `T38` | `T38_elite_pareto_slot_live_qd` | Pre-registered live archive-coupling method; adds a bounded champion-plus-one-Pareto-slot cell mode for same-budget validation. |
+| `T38` | `T38_elite_pareto_slot_live_qd` | Completed bounded live arm, `T0 diagnostic`; ALU/traffic-light retain front material, but multi-pipe has zero active archive members under warmup 8. |
 
 ## Validity-Gate Note
 
