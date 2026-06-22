@@ -52,8 +52,9 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T36` | `T36_t11_bounded_front_lane_bd` | Archive-coupled contrastive descriptor | `T2 replay_candidate`; one local-front slot gives +4.04% HV and +4 front hits vs lexical |
 | `T37` | `T37_t36_slot_count_ablation` | Archive-coupled contrastive descriptor | `T2 replay_candidate`; one-slot T37 matches T36, two-plus slots collapse HV |
 | `T38` | `T38_elite_pareto_slot_live_qd` | Archive-coupling live validation | `T0 diagnostic`; runs end to end but multi-pipe active archive stays empty under warmup 8 |
-| `T39` | `T39_sparse_yield_warmup_qd` | Archive-coupling warmup ablation | `T0 positive_ablation`; fixes T38 multi-pipe archive gap but needs same-budget controls |
+| `T39` | `T39_sparse_yield_warmup_qd` | Archive-coupling warmup ablation | `T0 positive_ablation`; fixes T38 multi-pipe archive gap, but T40 blocks broad promotion |
 | `T40` | `T40_sparse_warmup_control_matrix` | Archive-coupling control matrix | `T0 mixed_control`; classic wins ALU/traffic pooled fronts, T39 only wins multi-pipe |
+| `T41` | `T41_adaptive_sparse_yield_gate_qd` | Archive-coupling adaptive warmup variant | Pre-registered; strict warmup 8 with generation-1 fallback to 4 valid PPA successes |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

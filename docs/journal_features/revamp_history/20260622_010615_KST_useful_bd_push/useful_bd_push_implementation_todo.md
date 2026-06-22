@@ -161,6 +161,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       lower-left-better raw area-power PPA-front visual gate.
 - [x] `T40_sparse_warmup_control_matrix` controls are executed, validated,
       packaged, visually inspected, and assigned a tier decision.
+- [x] `T41_adaptive_sparse_yield_gate_qd` is pre-registered with an adaptive
+      sparse-yield warmup fallback and mandatory direct raw PPA-front
+      packaging.
+- [ ] `T41_adaptive_sparse_yield_gate_qd` is executed, validated, packaged,
+      visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
 

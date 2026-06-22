@@ -1033,6 +1033,31 @@ def test_grid_quantile_warmup_patience_default_off_buffers_forever():
     assert archive.warmup_buffer_size() == 50
 
 
+def test_grid_quantile_adaptive_warmup_initializes_when_ready():
+    archive = GridQuantileArchive(
+        ("logic_depth", "ff_depth", "comb_width_log"),
+        warmup_successes=8,
+    )
+    for index in range(4):
+        _insert(
+            archive,
+            f"cand-{index}",
+            (float(index), 0.0, float(index + 1)),
+            float(index),
+            {"id": index},
+        )
+
+    results = archive.initialize_from_warmup_if_ready(
+        min_successes=4,
+        initialization_mode="adaptive_sparse_yield_fallback",
+    )
+
+    assert archive.is_initialized is True
+    assert archive.initialization_mode == "adaptive_sparse_yield_fallback"
+    assert len(results) == 4
+    assert archive.occupied_count() > 0
+
+
 def test_grid_quantile_warmup_max_buffer_validation():
     with pytest.raises(ValueError, match="warmup_max_buffer"):
         GridQuantileArchive(("a",), warmup_successes=5, warmup_max_buffer=3)

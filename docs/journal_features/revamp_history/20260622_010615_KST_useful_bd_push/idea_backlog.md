@@ -123,6 +123,9 @@ a numbered `techniques/T##_slug/` package before running it.
   only for designs still archive-empty after the first generation, or when
   direct front recovery is explicitly weak. Keep the classic/champion lane
   stronger on designs that already have healthy front and yield behavior.
+- T41 pre-registers the first version: primary warmup `8`, generation-1
+  fallback `4`, same T40 subset/model/seed/budget, matched live classic, and
+  frozen T40 manual/random/full-Pareto controls.
 - Any adaptive follow-up must lead with straightforward raw area-power PPA
   fronts: area on x, power on y, no inverted axes, and lower-left marked as
   better.

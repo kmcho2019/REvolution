@@ -128,6 +128,8 @@ class QDEngine(EoHEngine):
         qd_cvt_warmup_successes: int | None = None,
         qd_grid_quantile_warmup_successes: int = 20,
         qd_grid_quantile_warmup_max_buffer: int = 0,
+        qd_grid_quantile_adaptive_warmup_successes: int = 0,
+        qd_grid_quantile_adaptive_warmup_generation: int = 1,
         qd_descriptor_profile: str | None = None,
         qd_descriptor_axes: tuple[str, ...] = (),
         qd_descriptor_file: str | None = None,
@@ -244,6 +246,16 @@ class QDEngine(EoHEngine):
         self.qd_cvt_warmup_successes = qd_cvt_warmup_successes
         self.qd_grid_quantile_warmup_successes = int(qd_grid_quantile_warmup_successes)
         self.qd_grid_quantile_warmup_max_buffer = int(qd_grid_quantile_warmup_max_buffer)
+        if qd_grid_quantile_adaptive_warmup_successes < 0:
+            raise ValueError("qd_grid_quantile_adaptive_warmup_successes must be >= 0.")
+        if qd_grid_quantile_adaptive_warmup_generation < 0:
+            raise ValueError("qd_grid_quantile_adaptive_warmup_generation must be >= 0.")
+        self.qd_grid_quantile_adaptive_warmup_successes = int(
+            qd_grid_quantile_adaptive_warmup_successes
+        )
+        self.qd_grid_quantile_adaptive_warmup_generation = int(
+            qd_grid_quantile_adaptive_warmup_generation
+        )
         self.qd_descriptor_profile = qd_descriptor_profile
         self.qd_descriptor_axes = tuple(qd_descriptor_axes)
         self.qd_descriptor_file = qd_descriptor_file
@@ -1229,6 +1241,12 @@ class QDEngine(EoHEngine):
             "last_rebin_axes": list(self._qd_last_rebin_axes),
             "rebin_recent_sample_count": len(self._recent_rebin_samples()),
             "rebin_replay_member_count": len(self._qd_rebin_replay_pool),
+            "qd_grid_quantile_adaptive_warmup_successes": (
+                self.qd_grid_quantile_adaptive_warmup_successes
+            ),
+            "qd_grid_quantile_adaptive_warmup_generation": (
+                self.qd_grid_quantile_adaptive_warmup_generation
+            ),
             "representation_kind": self.representation_kind,
             "code_samples_per_thought": self.code_samples_per_thought,
             "thought_population_size": self.thought_population_size,
@@ -3233,6 +3251,25 @@ class QDEngine(EoHEngine):
         self.success_pool = self._success_view()
         return inserted, replaced
 
+    def _maybe_adaptive_warmup_fallback(self) -> tuple[int, int]:
+        if self.qd_grid_quantile_adaptive_warmup_successes <= 0:
+            return 0, 0
+        if self.current_generation < self.qd_grid_quantile_adaptive_warmup_generation:
+            return 0, 0
+        if not isinstance(self.success_archive, GridQuantileArchive):
+            return 0, 0
+        results = self.success_archive.initialize_from_warmup_if_ready(
+            min_successes=self.qd_grid_quantile_adaptive_warmup_successes,
+            initialization_mode="adaptive_sparse_yield_fallback",
+        )
+        if not results:
+            return 0, 0
+        inserted = sum(1 for result in results.values() if result.inserted)
+        replaced = sum(1 for result in results.values() if result.replaced)
+        self._drop_warmup_reservoir()
+        self.success_pool = self._success_view()
+        return inserted, replaced
+
     def evolve_one_generation(self):
         if self.representation_kind == "thought_only":
             return self._evolve_one_thought_generation()
@@ -3587,6 +3624,9 @@ class QDEngine(EoHEngine):
         self._evaluate_candidates(new_offspring)
         inserted, replaced = self._insert_successes([cand for cand in new_offspring if cand.status == "success"])
         self._update_fail_pool([cand for cand in new_offspring if cand.status != "success"])
+        fallback_inserted, fallback_replaced = self._maybe_adaptive_warmup_fallback()
+        inserted += fallback_inserted
+        replaced += fallback_replaced
         self._maybe_adaptive_rebin()
 
         for cand in new_offspring:

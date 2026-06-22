@@ -20,15 +20,22 @@ Start here when resuming the active goal.
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
+- Most recent pre-registered package:
+  `techniques/T41_adaptive_sparse_yield_gate_qd/` (strict warmup `8` with a
+  generation-1 fallback to `4` valid PPA successes when the grid-quantile
+  archive is still empty and geometry is ready).
 - Next direction:
-  test adaptive or per-design sparse-yield gating rather than promoting the
-  uniform T39 one-slot rule.
+  execute T41, then judge it first from direct raw PPA Pareto-front geometry.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
+- Next required per-technique direct PPA visualization:
+  `techniques/T41_adaptive_sparse_yield_gate_qd/figures/t41_raw_area_power_fronts.png`
+  (generated after the T41 live run by
+  `scripts/package_t41_adaptive_sparse_yield_gate.py`).
 - Most recent direct PPA HTML viewer:
   `techniques/T40_sparse_warmup_control_matrix/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto viewer with summary table and
@@ -131,6 +138,9 @@ Start here when resuming the active goal.
 | `T36` | `T36_t11_bounded_front_lane_bd` | Completed replay diagnostic, `T2 replay_candidate`; one local-front slot improves HV by +4.04% over lexical and recovers direct front hits to 126. |
 | `T37` | `T37_t36_slot_count_ablation` | Completed replay diagnostic, `T2 replay_candidate`; confirms one local-front slot is the useful boundary and rejects two-plus slots. |
 | `T38` | `T38_elite_pareto_slot_live_qd` | Completed bounded live arm, `T0 diagnostic`; ALU/traffic-light retain front material, but multi-pipe has zero active archive members under warmup 8. |
+| `T39` | `T39_sparse_yield_warmup_qd` | Completed sparse-yield warmup live ablation, `T0 positive_ablation`; fixes the T38 multi-pipe archive gap. |
+| `T40` | `T40_sparse_warmup_control_matrix` | Completed control matrix, `T0 mixed_control`; classic wins ALU/traffic pooled fronts while T39 wins multi-pipe. |
+| `T41` | `T41_adaptive_sparse_yield_gate_qd` | Pre-registered adaptive sparse-yield gate; requires matched live classic plus direct raw PPA-front packaging before tiering. |
 
 ## Validity-Gate Note
 

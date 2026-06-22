@@ -53,6 +53,8 @@ class RevolutionBackendConfig:
     qd_cvt_warmup_successes: int | None = None
     qd_grid_quantile_warmup_successes: int = 20
     qd_grid_quantile_warmup_max_buffer: int = 0
+    qd_grid_quantile_adaptive_warmup_successes: int = 0
+    qd_grid_quantile_adaptive_warmup_generation: int = 1
     qd_quality_mode: str = "auto"
     qd_alpha: float | None = None
     qd_beta: float | None = None
@@ -168,6 +170,12 @@ class RevolutionBackend(EvolutionBackend):
                 qd_cvt_warmup_successes=self.config.qd_cvt_warmup_successes,
                 qd_grid_quantile_warmup_successes=self.config.qd_grid_quantile_warmup_successes,
                 qd_grid_quantile_warmup_max_buffer=self.config.qd_grid_quantile_warmup_max_buffer,
+                qd_grid_quantile_adaptive_warmup_successes=(
+                    self.config.qd_grid_quantile_adaptive_warmup_successes
+                ),
+                qd_grid_quantile_adaptive_warmup_generation=(
+                    self.config.qd_grid_quantile_adaptive_warmup_generation
+                ),
                 qd_descriptor_profile=self.config.qd_descriptor_profile,
                 qd_descriptor_axes=self.config.qd_descriptor_axes,
                 qd_descriptor_file=self.config.qd_descriptor_file,
@@ -245,6 +253,12 @@ class RevolutionBackend(EvolutionBackend):
                     "quality_mode": self.config.qd_quality_mode,
                     "grid_quantile_warmup_successes": self.config.qd_grid_quantile_warmup_successes,
                     "grid_quantile_warmup_max_buffer": self.config.qd_grid_quantile_warmup_max_buffer,
+                    "grid_quantile_adaptive_warmup_successes": (
+                        self.config.qd_grid_quantile_adaptive_warmup_successes
+                    ),
+                    "grid_quantile_adaptive_warmup_generation": (
+                        self.config.qd_grid_quantile_adaptive_warmup_generation
+                    ),
                     "descriptor_profile": self.config.qd_descriptor_profile,
                     "descriptor_axes": list(self.config.qd_descriptor_axes),
                     "grid_axes": list(self.config.qd_grid_axes),

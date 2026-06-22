@@ -120,13 +120,28 @@ def main(argv: list[str] | None = None) -> int:
         for candidate in collect_candidates(roots, method, problem)
     ]
     candidates = mark_pooled_fronts(candidates)
-    summary_rows = problem_summary_rows(candidates)
+    summary_rows = problem_summary_rows(candidates, METHODS)
     write_csv(table_dir / "t40_candidate_ppa_points.csv", candidate_rows(candidates))
     write_csv(table_dir / "t40_problem_method_summary.csv", summary_rows)
-    write_csv(table_dir / "t40_method_manifest.csv", manifest_rows(roots))
-    plot_raw_fronts(candidates, figure_dir / "t40_raw_area_power_fronts.png")
-    plot_count_summary(summary_rows, figure_dir / "t40_front_count_summary.png")
-    write_viewer(viewer_dir / "index.html", summary_rows)
+    write_csv(table_dir / "t40_method_manifest.csv", manifest_rows(roots, METHODS))
+    plot_raw_fronts(
+        candidates,
+        figure_dir / "t40_raw_area_power_fronts.png",
+        METHODS,
+        "T40 Sparse-Warmup Control Matrix",
+    )
+    plot_count_summary(
+        summary_rows,
+        figure_dir / "t40_front_count_summary.png",
+        METHODS,
+        "T40 Sparse-Warmup Control Matrix",
+    )
+    write_viewer(
+        viewer_dir / "index.html",
+        summary_rows,
+        title="T40 Direct PPA Fronts",
+        image_name="t40_raw_area_power_fronts.png",
+    )
     (viewer_dir / "metrics.json").write_text(
         json.dumps(summary_rows, indent=2) + "\n",
         encoding="utf-8",
@@ -313,9 +328,12 @@ def candidate_rows(candidates: list[Candidate]) -> list[dict[str, str]]:
     ]
 
 
-def problem_summary_rows(candidates: list[Candidate]) -> list[dict[str, str]]:
+def problem_summary_rows(
+    candidates: list[Candidate],
+    methods: tuple[MethodSpec, ...],
+) -> list[dict[str, str]]:
     rows = []
-    for method in METHODS:
+    for method in methods:
         for problem in PROBLEMS:
             subset = [
                 candidate
@@ -346,7 +364,10 @@ def problem_summary_rows(candidates: list[Candidate]) -> list[dict[str, str]]:
     return rows
 
 
-def manifest_rows(roots: dict[str, Path]) -> list[dict[str, str]]:
+def manifest_rows(
+    roots: dict[str, Path],
+    methods: tuple[MethodSpec, ...],
+) -> list[dict[str, str]]:
     return [
         {
             "method": method.method,
@@ -354,15 +375,20 @@ def manifest_rows(roots: dict[str, Path]) -> list[dict[str, str]]:
             "source_run_root": str(roots[method.source]),
             "mode": method.mode,
         }
-        for method in METHODS
+        for method in methods
     ]
 
 
-def plot_raw_fronts(candidates: list[Candidate], path: Path) -> None:
+def plot_raw_fronts(
+    candidates: list[Candidate],
+    path: Path,
+    methods: tuple[MethodSpec, ...],
+    title: str,
+) -> None:
     fig, axes = plt.subplots(1, len(PROBLEMS), figsize=(18.4, 6.4), sharey=False)
     for axis, problem in zip(axes, PROBLEMS, strict=True):
         subset = [candidate for candidate in candidates if candidate.problem == problem]
-        for method in METHODS:
+        for method in methods:
             method_points = [candidate for candidate in subset if candidate.method == method.method]
             axis.scatter(
                 [candidate.area for candidate in method_points],
@@ -397,7 +423,7 @@ def plot_raw_fronts(candidates: list[Candidate], path: Path) -> None:
         axis.grid(color="#e5e7eb", linewidth=0.8)
     axes[0].set_ylabel("Power (lower is better)")
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.suptitle("T40 Sparse-Warmup Control Matrix: Raw Area-Power Fronts", y=0.985)
+    fig.suptitle(f"{title}: Raw Area-Power Fronts", y=0.985)
     fig.legend(
         handles,
         labels,
@@ -420,17 +446,22 @@ def plot_raw_fronts(candidates: list[Candidate], path: Path) -> None:
     plt.close(fig)
 
 
-def plot_count_summary(rows: list[dict[str, str]], path: Path) -> None:
+def plot_count_summary(
+    rows: list[dict[str, str]],
+    path: Path,
+    methods: tuple[MethodSpec, ...],
+    title: str,
+) -> None:
     x_positions = list(range(len(PROBLEMS)))
-    width = 0.84 / len(METHODS)
+    width = 0.84 / len(methods)
     fig, axes = plt.subplots(1, 2, figsize=(17.8, 5.2), sharey=False)
     row_by_key = {(row["method"], row["problem"]): row for row in rows}
-    for axis, metric, title in (
+    for axis, metric, panel_title in (
         (axes[0], "valid_ppa_count", "Valid PPA Candidates"),
         (axes[1], "pooled_area_power_front_count", "Pooled Front Hits"),
     ):
-        for method_index, method in enumerate(METHODS):
-            offset = (method_index - (len(METHODS) - 1) / 2) * width
+        for method_index, method in enumerate(methods):
+            offset = (method_index - (len(methods) - 1) / 2) * width
             axis.bar(
                 [position + offset for position in x_positions],
                 [float(row_by_key[(method.method, problem)][metric]) for problem in PROBLEMS],
@@ -439,7 +470,7 @@ def plot_count_summary(rows: list[dict[str, str]], path: Path) -> None:
                 alpha=0.82,
                 label=method.label,
             )
-        axis.set_title(title)
+        axis.set_title(panel_title)
         axis.set_xticks(x_positions)
         axis.set_xticklabels([problem.replace("Prob", "P") for problem in PROBLEMS])
         axis.grid(axis="y", color="#e5e7eb", linewidth=0.8)
@@ -453,13 +484,19 @@ def plot_count_summary(rows: list[dict[str, str]], path: Path) -> None:
         ncol=5,
         frameon=False,
     )
-    fig.suptitle("T40 Sparse-Warmup Control Matrix: Direct PPA Counts", y=0.98)
+    fig.suptitle(f"{title}: Direct PPA Counts", y=0.98)
     fig.tight_layout(rect=(0, 0.13, 1, 0.90))
     fig.savefig(path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
 
-def write_viewer(path: Path, rows: list[dict[str, str]]) -> None:
+def write_viewer(
+    path: Path,
+    rows: list[dict[str, str]],
+    *,
+    title: str,
+    image_name: str,
+) -> None:
     table_rows = "\n".join(
         "<tr>"
         f"<td>{row['method_label']}</td>"
@@ -476,7 +513,7 @@ def write_viewer(path: Path, rows: list[dict[str, str]]) -> None:
 <html lang=\"en\">
 <head>
   <meta charset=\"utf-8\">
-  <title>T40 Direct PPA Fronts</title>
+  <title>{title}</title>
   <style>
     body {{ font-family: Inter, system-ui, sans-serif; margin: 28px; color: #111827; }}
     img {{ max-width: 100%; border: 1px solid #d1d5db; }}
@@ -486,8 +523,8 @@ def write_viewer(path: Path, rows: list[dict[str, str]]) -> None:
   </style>
 </head>
 <body>
-  <h1>T40 Direct PPA Fronts</h1>
-  <img src=\"../../figures/t40_raw_area_power_fronts.png\" alt=\"T40 raw area-power fronts\">
+  <h1>{title}</h1>
+  <img src=\"../../figures/{image_name}\" alt=\"{title}\">
   <table>
     <thead>
       <tr><th>Method</th><th>Problem</th><th>Valid PPA</th><th>Method front</th><th>Pooled front</th><th>Best score</th></tr>

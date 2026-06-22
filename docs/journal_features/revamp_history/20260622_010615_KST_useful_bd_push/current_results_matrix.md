@@ -48,6 +48,10 @@ Real result packages:
 - `T39_sparse_yield_warmup_qd` sparse-yield warmup live ablation
 - `T40_sparse_warmup_control_matrix` completed T39 control matrix
 
+Pre-registered but not yet real-result packages:
+
+- `T41_adaptive_sparse_yield_gate_qd` adaptive sparse-yield warmup fallback
+
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
@@ -79,6 +83,13 @@ and keeps T39/T40 at `T0`: T39 wins multi-pipe best score and contributes
 multi-pipe pooled-front points, but classic still owns ALU and traffic-light
 pooled raw area-power fronts. The ten-package minimum is satisfied, but the
 goal remains active.
+
+T41 is the pre-registered follow-up to T40, not a result yet. It keeps the
+strict primary grid-quantile warmup threshold of `8`, but permits a
+generation-1 fallback to `4` valid PPA successes only when the archive is still
+empty and descriptor geometry is ready. Its first required artifact is
+`techniques/T41_adaptive_sparse_yield_gate_qd/figures/t41_raw_area_power_fronts.png`,
+a conventional lower-left-better raw area-power PPA Pareto comparison.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -439,6 +450,7 @@ the best ALU and traffic-light scores.
 - Do not promote T39 as a general useful-QD method after T40. It is a useful
   multi-pipe signal and sparse-yield ablation, not a same-budget win across
   the three-problem screen.
-- For the T36/T37/T38/T39/T40 lineage, test an adaptive sparse-yield policy
-  next: keep the one-slot rule available, but gate it by per-design archive
-  activation/front-recovery evidence instead of applying it uniformly.
+- For the T36/T37/T38/T39/T40 lineage, execute T41 next: keep the one-slot
+  rule available, but gate it by per-design archive activation with strict
+  warmup `8`, fallback `4`, and direct raw PPA-front figures as the first
+  reporting artifact.

@@ -1040,6 +1040,20 @@ class GridQuantileArchive:
             return {}
         return self._initialize_from_warmup("run_finalization_fallback")
 
+    def initialize_from_warmup_if_ready(
+        self,
+        *,
+        min_successes: int,
+        initialization_mode: str,
+    ) -> dict[str, QDArchiveInsertResult]:
+        if min_successes <= 0:
+            raise ValueError("min_successes must be > 0.")
+        if self.initialized or len(self._warmup_buffer) < min_successes:
+            return {}
+        if not self._warmup_geometry_ready():
+            return {}
+        return self._initialize_from_warmup(initialization_mode)
+
     def rebuild_from_records(
         self,
         records: list[ArchiveMember],

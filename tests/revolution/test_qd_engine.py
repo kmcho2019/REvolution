@@ -1328,6 +1328,50 @@ def test_qd_engine_grid_quantile_warmup_budget_keeps_success_share(tmp_path, mon
     assert budget.refine_budget == 10
 
 
+def test_qd_engine_adaptive_grid_quantile_warmup(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=8,
+        qd_grid_quantile_adaptive_warmup_successes=4,
+        qd_grid_quantile_adaptive_warmup_generation=1,
+    )
+    candidates = []
+    for index in range(4):
+        cand = Heuristic(
+            f"success-{index}",
+            "module m; endmodule",
+            "",
+            score=float(index),
+            generation=0,
+            status="success",
+        )
+        cand.ppa_success = True
+        cand.ppa_metrics = {"power": 0.9, "area": 90.0 - index, "eff_clk_period": 0.8}
+        cand.graph_metrics = {
+            "logic_depth": float(index + 1),
+            "ff_depth": 0.0,
+            "comb_width_log": float(index + 2),
+        }
+        candidates.append(cand)
+
+    engine._insert_successes(candidates)
+    assert isinstance(engine.success_archive, GridQuantileArchive)
+    assert engine.success_archive.is_initialized is False
+
+    assert engine._maybe_adaptive_warmup_fallback() == (0, 0)
+    engine.current_generation = 1
+    inserted, replaced = engine._maybe_adaptive_warmup_fallback()
+
+    assert inserted > 0
+    assert replaced == 0
+    assert engine.success_archive.is_initialized is True
+    assert engine.success_archive.initialization_mode == "adaptive_sparse_yield_fallback"
+    assert not any(cell_id.startswith("warmup:") for cell_id in engine.success_reservoir)
+
+
 def test_qd_engine_writes_grid_quantile_artifacts(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "revolution.algorithm.EoHEngine.load_problem_description",

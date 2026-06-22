@@ -1962,3 +1962,30 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   preserve classic/champion pressure on designs with healthy yield/fronts, and
   activate the one-slot sparse-yield lane only where archive activation or hard
   front recovery is the bottleneck.
+
+## T41 Adaptive Sparse-Yield Gate Pre-Registration - 2026-06-22 UTC
+
+- Added opt-in grid-quantile adaptive warmup support for T41. The default is
+  off; when enabled, generation-end fallback can initialize an archive from
+  buffered valid PPA samples only if the archive is still empty and descriptor
+  geometry is ready.
+- Pre-registered `techniques/T41_adaptive_sparse_yield_gate_qd/` as the next
+  live same-surface test after T40: primary warmup `8`, fallback `4`, trigger
+  generation `1`, same T40 three-problem RTLLM subset, seed `1001`, model
+  `openai/gpt-oss-120b`, 128000-token caps, population `12`, generations `3`,
+  and `strict_ablation`.
+- Added a matched T41 classic command. Frozen T40 manual/random/full-Pareto
+  controls and the frozen T39 one-slot arm remain comparators, but T41's own
+  live classic arm is the baseline for the new run.
+- Added `scripts/package_t41_adaptive_sparse_yield_gate.py` so the first T41
+  report artifact is a straightforward raw area-power PPA Pareto comparison:
+  `figures/t41_raw_area_power_fronts.png`, plus candidate rows, method summary
+  rows, count summary, and a filesystem-openable direct-PPA HTML viewer.
+- Updated central indexes, lane docs, backlog, plan, and current results
+  matrix so T41 is discoverable as pre-registered only, not a measured result.
+- Validation: focused pytest passed for archive initialization, engine
+  fallback behavior, backend and CLI plumbing, and the T40/T41 direct-PPA
+  packagers. Ruff passed on touched source, scripts, and tests. Pyright and ty
+  passed for the changed QD/backend modules and T40/T41 packagers. Pyright and
+  ty still report the pre-existing `scripts/run_backend.py` evaluator union
+  mismatch at lines 305 and 339.

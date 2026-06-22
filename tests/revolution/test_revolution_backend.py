@@ -92,6 +92,8 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
             qd_cvt_axes=("seq_ratio", "g_A", "g_T"),
             qd_cvt_warmup_successes=9,
             qd_grid_quantile_warmup_successes=8,
+            qd_grid_quantile_adaptive_warmup_successes=4,
+            qd_grid_quantile_adaptive_warmup_generation=1,
             qd_descriptor_profile="hybrid_seq_default",
             qd_cell_mode="pareto_front",
             qd_max_elites_per_cell=5,
@@ -110,6 +112,8 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     assert captured["kwargs"]["qd_cvt_axes"] == ("seq_ratio", "g_A", "g_T")
     assert captured["kwargs"]["qd_cvt_warmup_successes"] == 9
     assert captured["kwargs"]["qd_grid_quantile_warmup_successes"] == 8
+    assert captured["kwargs"]["qd_grid_quantile_adaptive_warmup_successes"] == 4
+    assert captured["kwargs"]["qd_grid_quantile_adaptive_warmup_generation"] == 1
     assert captured["kwargs"]["qd_descriptor_profile"] == "hybrid_seq_default"
     assert captured["kwargs"]["qd_cell_reservoir"] == 2
     assert captured["kwargs"]["qd_cell_mode"] == "pareto_front"
