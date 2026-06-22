@@ -61,8 +61,8 @@ REPRESENTATIVE_PROBLEMS = (
     "Prob045_alu",
     "Prob041_traffic_light",
     "Prob015_multi_pipe_8bit",
-    "Prob006_adder_pipe_64bit",
-    "Prob013_multi_booth_8bit",
+    "Prob027_LIFObuffer",
+    "Prob009_div_16bit",
     "Prob043_RAM",
 )
 
