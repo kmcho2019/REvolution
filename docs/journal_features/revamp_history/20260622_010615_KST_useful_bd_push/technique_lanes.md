@@ -55,7 +55,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T46 preserves coverage and finds a narrow ALU HV/front signal, but classic still wins mean HV, reference-beating count, valid-PPA samples, and traffic-light quality. | Move graph features out of the primary live archive role unless a trained encoder or secondary-lane mechanism is specified. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T43 preserved designs but had zero pooled raw-front hits; all archives used strict eight-success warmup. | Use a bounded sparse-trigger screen only if it really enters fallback, otherwise pause this trigger lane. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T43 preserved designs but had zero pooled raw-front hits; all archives used strict eight-success warmup. The full RTLLM exact-T26 package is now diagnostic, not useful-QD proof. | Use T47 as the contract-aligned gate before any further T26-family final-style spend. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T26/T27/T30 show champion-biased parent-source policy restores quality and holdout pressure; T31 direct repair and T32 small near-front sampling are insufficient. | Split champion, near-front, and bounded-repair roles more sharply. |
 
 ## Lane Scorecard
@@ -67,7 +67,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, and T46 PCA4 projection | T46 is measured and `T0 mixed_diagnostic`: it preserves coverage and wins ALU HV, but loses aggregate HV and traffic-light quality. | Stop direct graph-axis dimensionality variants; use graph descriptors only as a secondary archive/reporting lane or trained-encoder input. | Keep T35 front-seeded only as an upper bound. |
-| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43 local-Pareto lineage | T43 blocks another global trigger-only variant: zero pooled hits and no staged activation. | Only continue sparse-trigger work with a bounded warmup buffer/patience rule that actually creates fallback evidence. | A candidate must beat controls on documented direct-front/HV metrics without hidden duplicate loss. |
+| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47 local-Pareto lineage | T47 is pre-registered as the contract-aligned gate after exact T26's one-seed RTLLM result was downgraded to diagnostic. | Run the T47 hard/tuning sanity probe before any held-out or final-style T26-family spend. | A candidate must beat controls on documented direct-front/HV metrics without hidden duplicate loss and without default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter | T32 shows a small near-front success-parent lane is not enough. | Need a bounded repair/local-rank-1 lane that cannot replace T26 champion quality pressure. | Specify a true role-separated emitter before another holdout run. |
 
 ## Current Lineage
@@ -134,6 +134,7 @@ flowchart LR
     AQ[T44 T11 runtime graph bridge]
     AR[T45 T11 top-4 graph bridge]
     AS[T46 T11 PCA4 graph projection]
+    AT[T47 T26 contract probe]
   end
 
   subgraph L6[L6 lineage and emitters]
@@ -186,6 +187,8 @@ flowchart LR
   AP --> AQ
   AQ --> AR
   AR --> AS
+  U --> AT
+  AA --> AT
   AL --> L
   G --> M
   G --> W
@@ -441,7 +444,7 @@ unblocks it.
 | `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27, T28, T29, T30, T31, T32 | Stays on current branch; T29/T31/T32 are measured negative, while T30 is mixed holdout support for T26. | Pause simple SR raw schedule tuning. | New method improves front/yield without losing T26 quality pressure. |
 | `L3` codebook/discrete archives | T05 | Parked. | Reopen only as side archive or local-Pareto cell partition. | A non-codebook lane shows local front material worth discretizing. |
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43 | Candidate split branch; T37 proves the T11-family replay lead is one bounded local-front slot, and T43 does not close the runtime descriptor gap. | Split exact T11 runtime projection or another encoder branch. | Learned features improve PPA-front/HV metrics without problem-ID collapse. |
-| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43 | Active on current branch; T43 blocks another global trigger-only variant. | Continue only with a sparse-trigger screen that actually enters fallback, or pause this lane. | A candidate beats controls on documented direct-front/HV metrics without hidden duplicate loss. |
+| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47 | Active on current branch; T47 is the pre-registered contract gate for exact T26/T26.1 follow-up. | Run T47 hard/tuning sanity before held-out or final-style spend. | A candidate beats controls on documented direct-front/HV metrics without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32 | T31 and T32 show single repair/front-preserving tweaks are insufficient. | Restore T26 champion pressure and isolate bounded repair/local-rank-1 roles. | Better valid-yield recovery or front material than T26/T29/T30 without losing T26 best-quality recovery. |
 
 ## Branch Split Checklist

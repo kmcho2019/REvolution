@@ -221,6 +221,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T46_t11_runtime_pca4_graph` full three-problem live screen is executed,
       validated, packaged with Phase 03.1 `qd_ppa_viewer/` and
       `direct_ppa_pareto/`, visually inspected, and assigned a tier decision.
+- [x] `T47_t26_contract_probe` is pre-registered as the contract-aligned
+      T26-family follow-up gate after the one-seed RTLLM package was narrowed
+      to diagnostic.
+- [ ] `T47_t26_contract_probe` is executed, packaged with direct raw PPA
+      figures and contract-aligned metrics, visually inspected, and assigned a
+      tier decision.
 
 ## Minimum Goal Completion
 

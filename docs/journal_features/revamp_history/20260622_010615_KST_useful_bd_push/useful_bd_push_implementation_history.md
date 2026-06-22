@@ -2602,3 +2602,14 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - The note keeps the diagnostic value: exact T26 preserves classic-covered
   problems and adds front points, but it cannot support Branch A/B/C or a
   positive useful-QD claim without the contract-aligned follow-up evidence.
+
+## T47 Contract-Aligned T26 Probe Pre-Registration - 2026-06-22 UTC
+
+- Added `techniques/T47_t26_contract_probe/` as the next T26-family gate after
+  the full RTLLM package was narrowed to diagnostic.
+- T47 is not a result package yet. It pre-registers a hard/tuning sanity probe,
+  a blocked held-out dry-run phase, default-reference quarantine rules, and
+  acceptance signals for exact T26 or a narrow T26.1 role-separated variant.
+- Updated the technique registry, TODO, lane ledger, and lineage ledger so the
+  next live spend is tied to the frozen `journal_narrative.md` contract rather
+  than the one-seed full-RTLLM diagnostic package.
