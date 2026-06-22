@@ -178,7 +178,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       visually inspected, and assigned a tier decision.
 - [x] `T44_t11_runtime_graph_bridge` is pre-registered and smoke-tested with
       the live `t11_runtime_top8_graph` descriptor profile.
-- [ ] `T44_t11_runtime_graph_bridge` full three-problem live screen is
+- [x] `T44_t11_runtime_graph_bridge` full three-problem live screen is
       executed, validated, packaged with Phase 03.1 `qd_ppa_viewer/` and
       `direct_ppa_pareto/`, visually inspected, and assigned a tier decision.
 
@@ -216,6 +216,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       makes both mandatory for live QD archive methods.
 - [x] T43 has a full Phase 03.1 `qd_ppa_viewer/` bundle with strict
       validation, Playwright screenshot, and honest classic projection.
+- [x] T44 has a full Phase 03.1 `qd_ppa_viewer/` bundle with strict
+      validation, Playwright screenshot, honest classic projection, and a
+      direct raw-PPA supplement.
+- [x] Fix Phase 03.1 archive hover/rendering for high-dimensional occupied
+      archive cells before accepting T44's full viewer.
 - [ ] Conclusions distinguish `T0`, `T1`, `T2`, and `T3`.
 - [ ] Every `T0` result adds a follow-up idea, ablation, hybrid, or retirement
       rationale before the next method starts.
@@ -233,6 +238,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T44 starts the exact-T11 follow-up by wiring T11-style graph features
       into the live descriptor registry without claiming the full T11 replay
       projection.
+- [x] T44 gets a follow-up direction: compress or select fewer T11 runtime
+      graph axes, such as a top-3/top-4 profile or frozen non-PPA projection,
+      before trying top-16/top-64 fitted projection.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

@@ -51,6 +51,7 @@ Real result packages:
 - `T42_initial_sparse_yield_gate_qd` initial sparse-yield warmup fallback
 - `T43_staged_sparse_yield_gate_qd` staged sparse-yield champion-pressure
   follow-up
+- `T44_t11_runtime_graph_bridge` live-safe T11 runtime graph descriptor bridge
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -117,6 +118,21 @@ traffic-light valid-PPA count versus matched classic (`26` versus `12`) and
 has seven traffic-light method-front points, but those points are dominated in
 the pooled comparison. T41 still owns the traffic-light pooled front, and
 T39/T42 remain stronger multi-pipe controls.
+
+T44 is complete and remains `T0 mixed_diagnostic`. It replaces the
+`journal_graph_testability_3d` descriptor with a live-safe top-8 subset of
+T11 structural graph axes on the T39 one-slot sparse-warmup substrate. It has
+real signal: traffic-light and multi-pipe win final-analysis HV versus matched
+classic, mean Pareto point count rises from 3.333 to 3.667, and the direct raw
+PPA front adds one traffic-light pooled hit plus one multi-pipe pooled hit.
+The blockers are also clear. Aggregate mean HV falls from 0.163787 to
+0.154221, mean reference-beating count falls from 16.333 to 6.333, ALU valid
+PPA drops from 35 to 16, and traffic-light valid PPA drops from 25 to 7. Those
+two yield drops exceed the 50% gate with classic denominators above 10. T44's
+full Phase 03.1 viewer is packaged at
+`techniques/T44_t11_runtime_graph_bridge/visualizations/qd_ppa_viewer/index.html`;
+the direct raw-PPA supplement is packaged at
+`techniques/T44_t11_runtime_graph_bridge/visualizations/direct_ppa_pareto/index.html`.
 
 ## Comparable Seed-1001 Replay Metrics
 

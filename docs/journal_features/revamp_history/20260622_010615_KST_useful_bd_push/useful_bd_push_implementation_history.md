@@ -2223,3 +2223,42 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated T44 commands and reports to require the full viewer export, strict
   validation, Playwright inspection, honest classic archive projection notes,
   and separate direct-PPA screenshots before any tier decision.
+
+## T44 Live Result And Phase 03.1 Viewer - 2026-06-22 UTC
+
+- Ran T44 under
+  `exp/useful_bd_push/t44_t11_runtime_graph_bridge_20260622_114838_UTC/`.
+  The vLLM preflight reported `openai/gpt-oss-120b` with `max_model_len`
+  131072.
+- Completed matched arms: `classic_revolution` in 643 seconds and
+  `t11_runtime_top8_graph_qd` in 702 seconds.
+- Pareto archive validation passed with `valid=True`, `failure_count=0`,
+  `problem_invalid_count=0`, `acceptance_error_count=0`, and
+  `max_front_size_seen=2`.
+- Packaged direct raw-PPA artifacts under
+  `techniques/T44_t11_runtime_graph_bridge/`, including candidate rows,
+  method summaries, raw area-power front PNG, count summary PNG, direct HTML
+  supplement, and screenshot.
+- Built the full Phase 03.1 viewer at
+  `techniques/T44_t11_runtime_graph_bridge/visualizations/qd_ppa_viewer/`.
+  The baseline key is `classic`, and classic candidates project honestly into
+  the T44 archive: 35/35 ALU, 25/25 traffic-light, and 16/16 multi-pipe.
+- Strict Playwright validation initially found that high-dimensional archive
+  cells rendered samples but not filled-cell hover targets. Updated
+  `src/revolution/qd/ppa_visualization_viewer.py` to render occupied cells
+  from actual cell summaries, then re-exported T44 and passed strict
+  validation.
+- Visual inspection passed for `figures/t44_raw_area_power_fronts.png`,
+  `figures/t44_front_count_summary.png`,
+  `visualizations/direct_ppa_pareto/screenshot.png`, and
+  `visualizations/qd_ppa_viewer/screenshot.png`.
+- Main result: T44 preserves all classic-covered designs, wins HV on
+  traffic-light and multi-pipe, and adds one pooled raw-front hit on each of
+  those two problems. Mean Pareto point count rises from 3.333 to 3.667.
+- Promotion blockers: aggregate mean HV falls from 0.163787 to 0.154221,
+  reference-beating count falls from 16.333 to 6.333, ALU valid PPA drops from
+  35 to 16, and traffic-light valid PPA drops from 25 to 7. The two yield
+  drops exceed the 50% gate with classic denominators above 10.
+- Tier decision: `T0 mixed_diagnostic`. The next method should compress or
+  select fewer T11 runtime graph axes, such as a top-3/top-4 profile or frozen
+  non-PPA projection, before trying top-16/top-64 fitted projection.

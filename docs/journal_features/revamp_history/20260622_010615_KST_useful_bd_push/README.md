@@ -14,18 +14,16 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T43_staged_sparse_yield_gate_qd/` (`T0 mixed_diagnostic`;
-  staged sparse-yield champion pressure did not activate because all three
-  archives completed strict eight-success warmup; T43 has zero pooled raw
-  PPA-front hits).
+  `techniques/T44_t11_runtime_graph_bridge/` (`T0 mixed_diagnostic`; top-8
+  T11 graph axes produce traffic-light/multi-pipe HV/front signal but lose too
+  much ALU and traffic-light valid-PPA yield).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  avoid another blind champion-lane tweak. Either force a true sparse-trigger
-  condition with a bounded warmup buffer/patience rule, or branch the exact
-  T11 runtime projection so the descriptor changes rather than only parent
-  pressure.
+  compress or select fewer T11 runtime graph axes before trying top-16/top-64
+  fitted projection. A T45-style top-3/top-4 or frozen non-PPA projection
+  should keep the same T44 viewer and direct-PPA gates.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -34,15 +32,15 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T43_staged_sparse_yield_gate_qd/figures/t43_raw_area_power_fronts.png`
-  (straightforward raw area-power fronts; T43 broadens the traffic-light
-  method front but adds no pooled-front hits).
+  `techniques/T44_t11_runtime_graph_bridge/figures/t44_raw_area_power_fronts.png`
+  (straightforward raw area-power fronts; T44 adds traffic-light and
+  multi-pipe pooled hits but loses valid-PPA yield).
 - Most recent direct PPA HTML viewer:
-  `techniques/T43_staged_sparse_yield_gate_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T44_t11_runtime_graph_bridge/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary table and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T43_staged_sparse_yield_gate_qd/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T44_t11_runtime_graph_bridge/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
   raw/improvement/normalized PPA modes, raw A-P front mode, strict validation,
   and `screenshot.png`).
@@ -50,9 +48,10 @@ Start here when resuming the active goal.
   `phase_03_1_visualization_contract.md` (every completed live QD technique
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
-- Most recent pre-registered live technique:
+- Most recent live technique:
   `techniques/T44_t11_runtime_graph_bridge/` (runtime bridge for the T11 graph
-  descriptor lead; smoke-tested, full live screen and viewer bundles pending).
+  descriptor lead; full live screen, direct PPA supplement, and Phase 03.1
+  viewer are packaged).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -155,7 +154,7 @@ Start here when resuming the active goal.
 | `T41` | `T41_adaptive_sparse_yield_gate_qd` | Completed adaptive sparse-yield gate, `T0 mixed_diagnostic`; traffic-light win, but ALU and multi-pipe block promotion. |
 | `T42` | `T42_initial_sparse_yield_gate_qd` | Completed initial sparse-yield gate, `T0 mixed_diagnostic`; direct PPA front shows ALU/multi-pipe pooled hits but traffic-light regression. |
 | `T43` | `T43_staged_sparse_yield_gate_qd` | Completed staged sparse-yield gate, `T0 mixed_diagnostic`; strict warmup path prevented staged activation and T43 contributes zero pooled raw-front hits. |
-| `T44` | `T44_t11_runtime_graph_bridge` | Pre-registered and smoke-tested; live-safe T11 graph axes wired into the runtime descriptor registry, full three-problem result pending. |
+| `T44` | `T44_t11_runtime_graph_bridge` | Completed live result, `T0 mixed_diagnostic`; T11 graph axes show HV/front signal but top-8 archive sparsity and yield loss block promotion. |
 
 ## Validity-Gate Note
 

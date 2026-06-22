@@ -462,6 +462,25 @@ a numbered `techniques/T##_slug/` package before running it.
   fallback evidence, or change the descriptor by implementing exact T11 runtime
   projection.
 
+## From `T44_t11_runtime_graph_bridge`
+
+- T44 proves the live T11 graph bridge is not empty evidence: traffic-light and
+  multi-pipe win final-analysis HV, and the direct raw PPA front adds one
+  pooled hit on each of those problems.
+- The top-8 axis archive is too sparse for promotion. ALU valid PPA drops from
+  35 to 16 and traffic-light valid PPA drops from 25 to 7, both beyond the
+  50% gate with classic denominators above 10.
+- Candidate follow-up: `T45_t11_runtime_compact_graph_qd`. Keep the T39/T44
+  one-slot sparse-warmup substrate, but use a smaller pre-registered top-3 or
+  top-4 axis subset, or a frozen non-PPA projection fitted only from descriptor
+  geometry. Do not use PPA, score, reference PPA, Pareto rank, pass/fail label,
+  or problem identity in the projection.
+- Do not jump to top-16/top-64 fitted T11 projection until the compact version
+  shows that the yield drop was caused by avoidable archive sparsity rather
+  than by the graph descriptor itself.
+- Required visual gates remain unchanged: full Phase 03.1 `qd_ppa_viewer/`,
+  direct raw PPA supplement, strict validation, and inspected screenshots.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

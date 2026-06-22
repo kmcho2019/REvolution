@@ -1,6 +1,7 @@
 # T44 T11 Runtime Graph Bridge Methodology
 
-Status: pre-registered and smoke-tested; full live screen pending.
+Status: methodology fixed; full live screen complete. See `results_report.md`
+for the tier decision.
 
 ## Question
 
@@ -85,7 +86,7 @@ T44 can advance only if it:
   valid-PPA count, Pareto spread, archive coverage, or unique front families;
 - includes a direct raw area-power PPA-front figure, the
   `visualizations/direct_ppa_pareto/` supplement, and the full Phase 03.1
-  `visualizations/qd_ppa_viewer/` bundle after the full live run.
+  `visualizations/qd_ppa_viewer/` bundle.
 
 ## Smoke Result
 

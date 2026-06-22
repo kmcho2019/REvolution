@@ -1,65 +1,145 @@
 # T44 Results Report
 
-Status: pre-registered; one-problem smoke completed; full live result pending.
+Status: complete live screen; `T0 mixed_diagnostic`.
 
-Tier: pending. The smoke is not a tier decision.
+## Question
 
-## Smoke Summary
+Can a live-safe top-8 subset of the T11 structural graph features improve the
+T39 one-slot sparse-warmup QD substrate without losing classic-covered designs
+or valid-PPA yield?
 
-Run root:
-`exp/useful_bd_push/t44_t11_runtime_graph_bridge_20260622_113144_UTC/`.
+## Definitions
 
-Smoke arm:
-`t11_runtime_top8_smoke_qd/seed_1001/openai_gpt-oss-120b/RTLLM/Prob041_traffic_light/`.
+- Raw PPA point: one candidate with valid synthesized area and power.
+- Method raw front: nondominated raw area-power points within one method for
+  one problem. Lower area and lower power are both better.
+- Pooled raw front: nondominated raw area-power points after pooling all
+  compared methods for one problem.
+- Hypervolume: normalized PPA dominated volume from the final-analysis Pareto
+  report. Higher is better.
+- Valid-PPA yield gate: a relative drop of 50% or more is a promotion blocker
+  when the matched classic arm has at least 10 passing samples.
 
-The smoke completed in `42.29` seconds with model
-`openai/gpt-oss-120b` and `max_model_len=131072`. It generated four initial
-candidates and wrote the expected QD archive files:
+## Evidence
 
-- `archive_summary.json`
-- `archive_space.json`
-- `archive_cells.csv`
-- `archive_history.jsonl`
+- Runtime root:
+  `exp/useful_bd_push/t44_t11_runtime_graph_bridge_20260622_114838_UTC/`.
+- vLLM preflight: `openai/gpt-oss-120b` served with `max_model_len=131072`.
+- Matched arms: `classic_revolution` ran in 643 seconds;
+  `t11_runtime_top8_graph_qd` ran in 702 seconds.
+- Pareto archive validation passed with `valid=True`, `failure_count=0`,
+  `problem_invalid_count=0`, `acceptance_error_count=0`, and
+  `max_front_size_seen=2`.
+- Full Phase 03.1 viewer:
+  `visualizations/qd_ppa_viewer/index.html`.
+- Full viewer validation:
+  `visualizations/qd_ppa_viewer/validation.json` reports `passed` with zero
+  errors after strict schema/control validation and Playwright smoke.
+- Direct raw-PPA supplement:
+  `visualizations/direct_ppa_pareto/index.html`.
+- Primary raw PPA figure:
+  `figures/t44_raw_area_power_fronts.png`.
+- Regeneration data:
+  `tables/t44_candidate_ppa_points.csv`,
+  `tables/t44_problem_method_summary.csv`, and
+  `visualizations/qd_ppa_viewer_source/final_analysis/`.
 
-The archive summary records descriptor profile `t11_runtime_top8_graph` and
-the expected eight axes. No candidate passed functionality or synthesis-PPA,
-so the archive did not initialize and the smoke cannot support any PPA claim.
+## Direct Raw PPA Results
 
-## Visualization Status
+| Method | Problem | Valid PPA | Method raw front | Pooled raw front | Best score |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Classic | Prob045_alu | 35 | 1 | 1 | 0.419778 |
+| T44 T11 graph | Prob045_alu | 16 | 2 | 0 | 0.404449 |
+| Classic | Prob041_traffic_light | 25 | 4 | 2 | 0.389132 |
+| T44 T11 graph | Prob041_traffic_light | 7 | 2 | 1 | 0.389132 |
+| Classic | Prob015_multi_pipe_8bit | 16 | 1 | 0 | 0.037911 |
+| T44 T11 graph | Prob015_multi_pipe_8bit | 13 | 1 | 1 | 0.116397 |
 
-- Full Phase 03.1 viewer: not present yet. The required final path is
-  `visualizations/qd_ppa_viewer/`.
-- Direct raw PPA supplement: not present yet. The required final path is
-  `visualizations/direct_ppa_pareto/`.
-- Classic projection into the QD archive: not attempted for the smoke. The
-  smoke has no matched classic arm and no valid PPA candidates, so projection
-  would be meaningless.
-- Direct raw PPA-front figure/table: not present yet because the smoke has no
-  valid PPA candidates.
+T44 preserves all three classic-covered designs. It also improves the
+multi-pipe best score and contributes one multi-pipe pooled raw-front point.
+Traffic-light has one pooled raw-front point and ties the matched classic best
+score.
 
-The full result must follow
-`../../phase_03_1_visualization_contract.md`: keep the direct raw PPA view as
-the reader-facing supplement and generate the full linked archive/PPA viewer
-with `scripts/export_qd_ppa_visualization.py`.
+The blocker is yield and aggregate breadth. T44 drops valid PPA from 35 to 16
+on ALU and from 25 to 7 on traffic-light. Those classic denominators are above
+the promotion-gate threshold, and both drops exceed 50%.
 
-## Interpretation
+## Pareto And Hypervolume
 
-The runtime bridge is wired, but it is unmeasured as a BD method. The next
-step is the full three-problem live screen in `commands/live_screen_v0.md`.
-That run should be compared against matched classic plus the frozen T39/T40
-controls before any T44 tier is assigned.
+| Metric | Classic | T44 T11 graph |
+| --- | ---: | ---: |
+| Mean hypervolume | 0.163787 | 0.154221 |
+| Hypervolume win count | 1 | 2 |
+| Mean Pareto point count | 3.333333 | 3.666667 |
+| Mean reference-beating count | 16.333333 | 6.333333 |
 
-## Required Full-Run Outputs
+Per-problem hypervolume:
 
-After full execution, this report must be replaced with:
+| Problem | Classic | T44 T11 graph | Read |
+| --- | ---: | ---: | --- |
+| Prob045_alu | 0.264929 | 0.220117 | Classic wins. |
+| Prob041_traffic_light | 0.226431 | 0.242407 | T44 wins, but yield falls. |
+| Prob015_multi_pipe_8bit | 0.000000 | 0.000138 | T44 wins with a small nonzero front. |
 
-- direct raw area-power PPA-front figure interpretation;
-- validity funnel and valid-PPA yield comparison;
-- global PPA HV/HV-AUC comparison;
-- archive coverage/QD score and active archive readout;
-- duplicate/front-family accounting when data is available;
-- Phase 03.1 `qd_ppa_viewer/` location, validation status, and screenshot;
-- direct `direct_ppa_pareto/` location, metric table, and screenshot;
-- explicit note on whether classic candidates project honestly into the QD
-  archive cells, or why projection failed;
-- final `T0` to `T3` tier decision.
+This is a real signal, not a blank run: T44 wins hypervolume on two of three
+problems and has a slightly larger mean Pareto point count. It is still not a
+promotion candidate because aggregate HV, reference-beating count, and valid
+PPA yield regress.
+
+## Phase 03.1 Viewer Status
+
+The full viewer exists at `visualizations/qd_ppa_viewer/`. It is the required
+Phase 03.1 linked archive/PPA viewer, not the simpler direct-PPA wrapper.
+
+Classic projection is honest. The viewer aliases the baseline as `classic`,
+recovers descriptor values from the same top-8 runtime graph axes, and projects
+classic candidates into the T44 QD archive posthoc:
+
+| Problem | Classic projected | T44 projected |
+| --- | ---: | ---: |
+| Prob045_alu | 35/35 | 16/16 |
+| Prob041_traffic_light | 25/25 | 7/7 |
+| Prob015_multi_pipe_8bit | 16/16 | 13/13 |
+
+The eight descriptor axes are:
+
+- `hyper_mean_fanout`
+- `edge_per_node`
+- `log_edge_count`
+- `hyper_directed_edge_count`
+- `hyper_fanout_entropy`
+- `hyper_driven_net_count`
+- `hyper_sink_net_count`
+- `log_net_count`
+
+Strict Playwright validation initially exposed a viewer bug: occupied archive
+cells with more than three descriptor coordinates were rendered as samples but
+not as filled-cell hover targets. `src/revolution/qd/ppa_visualization_viewer.py`
+now renders occupied high-dimensional cells from the actual cell summaries.
+After re-export, strict validation passed.
+
+## Visual Inspection
+
+`figures/t44_raw_area_power_fronts.png` is readable, uses raw area on x and
+raw power on y, marks lower-left as better, and keeps pooled-front stars
+visible. The direct HTML screenshot renders the same figure and table without
+overlap.
+
+`visualizations/qd_ppa_viewer/screenshot.png` renders compare mode, linked
+classic and QD archive panes, timeline state, and the PPA pane without a blank
+canvas or obvious overlap. Use the full viewer for archive/PPA inspection and
+the direct viewer for paper-readable raw area-power fronts.
+
+## Conclusion
+
+T44 is a valid live result and a useful diagnostic, but it is `T0
+mixed_diagnostic`. It answers the immediate T11-runtime question with a mixed
+result: the graph descriptor has real front/HV signal on traffic-light and
+multi-pipe, but the top-8 high-dimensional archive is too sparse and loses too
+much valid-PPA yield on ALU and traffic-light.
+
+Do not escalate directly to top-16 or top-64 runtime graph axes yet. The next
+method should compress or select fewer T11 runtime graph axes first, for
+example a pre-registered `T45` top-3/top-4 runtime graph profile or a frozen
+non-PPA projection. That follow-up should keep the T44 direct PPA and
+Phase 03.1 viewer gates unchanged.
