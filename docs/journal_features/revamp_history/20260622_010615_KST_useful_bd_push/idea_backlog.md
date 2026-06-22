@@ -481,6 +481,23 @@ a numbered `techniques/T##_slug/` package before running it.
 - Required visual gates remain unchanged: full Phase 03.1 `qd_ppa_viewer/`,
   direct raw PPA supplement, strict validation, and inspected screenshots.
 
+## From `T45_t11_runtime_top4_graph`
+
+- T45 tested the compact top-4 follow-up. It preserves all three
+  classic-covered designs and avoids a 50 percent yield warning, but classic
+  wins mean HV, HV wins, mean Pareto points, reference-beating count,
+  valid-PPA samples, and every best-score comparison.
+- Retire direct ranked-axis escalation for this lane. Do not run top-16 or
+  top-64 graph axes as the next method just because top-4 avoided the yield
+  warning.
+- Candidate follow-up: use T11/T45 graph features as a secondary archive lane
+  or frozen non-PPA projection. The primary archive geometry should remain a
+  proven quality/yield-safe descriptor, while graph features influence a
+  bounded side lane or parent tie-breaker.
+- A stronger graph follow-up must pre-register the projection source and prove
+  it excludes final PPA, score, reference PPA, Pareto rank, pass/fail labels,
+  and problem identity.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

@@ -83,8 +83,16 @@ runtime descriptor registry as `t11_runtime_top8_graph`. The full
 three-problem live screen preserves all classic-covered designs and produces
 real traffic-light/multi-pipe HV and pooled-front signal, but it is `T0
 mixed_diagnostic` because ALU and traffic-light valid-PPA yield drop by more
-than 50% with classic denominators above 10. The next method should compress
-or select fewer T11 runtime axes before trying top-16/top-64 fitted projection.
+than 50% with classic denominators above 10.
+
+T45 is the completed compact follow-up. It reduces the graph profile to the
+first four T44 axes as `t11_runtime_top4_graph`. It preserves all
+classic-covered designs and avoids the 50% yield-warning threshold, but it is
+still `T0 mixed_diagnostic`: classic wins mean HV, HV wins, mean Pareto
+points, reference-beating count, valid-PPA samples, and every best-score
+comparison. The next graph method should not be direct top-16/top-64 ranked
+axis escalation; use a frozen non-PPA projection or a secondary graph archive
+lane.
 
 T35 remains important negative/upper-bound evidence. Full cell-local Pareto
 retention improves direct front hits but loses too much HV, while the

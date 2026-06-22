@@ -209,7 +209,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T45_t11_runtime_top4_graph` is pre-registered with a compact
       `t11_runtime_top4_graph` descriptor profile and the same T44 live
       settings, direct-PPA supplement, and full Phase 03.1 viewer gate.
-- [ ] `T45_t11_runtime_top4_graph` full three-problem live screen is
+- [x] `T45_t11_runtime_top4_graph` full three-problem live screen is
       executed, validated, packaged with Phase 03.1 `qd_ppa_viewer/` and
       `direct_ppa_pareto/`, visually inspected, and assigned a tier decision.
 
@@ -252,7 +252,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       direct raw-PPA supplement.
 - [x] Fix Phase 03.1 archive hover/rendering for high-dimensional occupied
       archive cells before accepting T44's full viewer.
-- [ ] T45 has a full Phase 03.1 `qd_ppa_viewer/` bundle with strict
+- [x] T45 has a full Phase 03.1 `qd_ppa_viewer/` bundle with strict
       validation, Playwright screenshot, honest classic projection, and a
       direct raw-PPA supplement.
 - [ ] Conclusions distinguish `T0`, `T1`, `T2`, and `T3`.

@@ -53,7 +53,7 @@ Real result packages:
   follow-up
 - `T44_t11_runtime_graph_bridge` live-safe T11 runtime graph descriptor bridge
 - `T45_t11_runtime_top4_graph` compact top-4 T11 runtime graph bridge
-  pre-registration
+  live ablation
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -136,12 +136,17 @@ full Phase 03.1 viewer is packaged at
 the direct raw-PPA supplement is packaged at
 `techniques/T44_t11_runtime_graph_bridge/visualizations/direct_ppa_pareto/index.html`.
 
-T45 is pre-registered as the immediate T44 ablation. It keeps T44's archive
+T45 is complete and remains `T0 mixed_diagnostic`. It keeps T44's archive
 substrate, model, subset, seed, budget, operator, and Phase 03.1/direct-PPA
 visualization gates, but reduces `t11_runtime_top8_graph` to
-`t11_runtime_top4_graph`. The purpose is to test whether T44's
-traffic-light/multi-pipe HV and front signal survives with less sparse archive
-geometry and better valid-PPA yield.
+`t11_runtime_top4_graph`. The compact profile preserves all three
+classic-covered designs and avoids a 50 percent valid-PPA yield warning, but
+the primary result is negative: classic wins mean HV (`0.2043` versus
+`0.1775`), value-level HV outcomes (`2` wins plus one zero-HV tie versus no
+wins), mean Pareto points (`3.67` versus `3.33`), reference-beating count
+(`10.00` versus `8.67`), valid-PPA samples (`61` versus `41`), and every
+best-score comparison. T45 contributes one traffic-light pooled raw-front
+point, not enough to justify promotion.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -508,3 +513,7 @@ the best ALU and traffic-light scores.
   champion-pressure tuning. Next either force a real sparse-trigger condition
   with a bounded warmup buffer/patience rule, or branch exact T11 runtime
   projection so the descriptor changes.
+- For the T44/T45 graph-runtime lineage, do not escalate the ranked-axis bridge
+  directly to top-16/top-64. The next graph follow-up needs a frozen non-PPA
+  projection or secondary-lane archive use rather than making graph axes the
+  primary archive geometry.

@@ -2428,3 +2428,45 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   retrospective review passes under
   `presentations/20260623_report/reviews/`. The final verdicts were `PASS`
   with no blockers after resolving readability and terminology notes.
+
+## T45 Compact T11 Runtime Graph Live Result - 2026-06-22 UTC
+
+- Ran the fresh T45 live root under
+  `exp/useful_bd_push/t45_t11_runtime_top4_graph_20260622_172949_UTC/`.
+  The earlier
+  `exp/useful_bd_push/t45_t11_runtime_top4_graph_20260622_124816_UTC/`
+  root remains an interrupted non-result.
+- The `/v1/models` preflight reported `openai/gpt-oss-120b` with
+  `max_model_len=131072`, satisfying the 128k token-budget requirement.
+- Completed matched arms with the frozen three-problem screen, seed `1001`,
+  population `12`, generations `3`, strict-ablation evaluation, and
+  `96` LLM calls per design:
+  `classic_revolution` completed in `595.26` seconds, and
+  `t11_runtime_top4_graph_qd` completed in `718.21` seconds.
+- Pareto archive validation passed with `valid=True`, `failure_count=0`,
+  `problem_invalid_count=0`, `acceptance_error_count=0`, and
+  `max_front_size_seen=2`.
+- Packaged direct raw-PPA artifacts under
+  `techniques/T45_t11_runtime_top4_graph/`, including candidate rows, method
+  summaries, raw area-power front PNG, count summary PNG, direct HTML
+  supplement, and Playwright screenshot.
+- Built the full Phase 03.1 viewer at
+  `techniques/T45_t11_runtime_top4_graph/visualizations/qd_ppa_viewer/`.
+  Strict validation with Playwright passed, and the package includes
+  `validation.{json,md}`, `screenshot.png`, and the optional screenshot matrix.
+- Main result: T45 preserves all three classic-covered designs and avoids the
+  50 percent yield-warning threshold, but classic wins the primary metrics:
+  mean HV `0.2043` versus `0.1775`, value-level HV outcomes are two classic
+  wins plus one zero-HV tie, mean Pareto points `3.67` versus `3.33`, mean
+  reference-beating count `10.00` versus `8.67`, valid-PPA samples `61` versus
+  `41`, and every best-score comparison.
+- Direct raw-PPA figures show T45 contributes only one pooled raw-front point,
+  on traffic-light. The correct tier is `T0 mixed_diagnostic`, not a
+  promotion.
+- Lane decision: retire direct ranked graph-axis escalation as the next graph
+  move. Do not run top-16/top-64 ranked axes next; use a frozen non-PPA graph
+  projection or make graph descriptors a secondary archive lane.
+- Sub-agent adversarial review passed with no blockers. Follow-up edits
+  clarified that final-analysis `HV Wins` assigns the zero-HV multi-pipe tie to
+  classic by deterministic winner count, while the report's value-level read
+  treats it as a tie. The manifest validation note was made self-contained.
