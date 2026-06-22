@@ -1,6 +1,10 @@
 # T39 Figures
 
-Status: pending live run.
+Status: bounded live arm packaged.
 
-The first accepted figure must be a direct raw area-power PPA Pareto-front PNG.
-Normalized improvement and archive-count figures are supporting views.
+Figures:
+
+- `t39_live_raw_area_power_fronts.png`: primary direct raw area-power PPA
+  front figure.
+- `t39_live_improvement_fronts.png`: normalized improvement companion.
+- `t39_live_archive_counts.png`: valid-PPA, front, and archive count summary.

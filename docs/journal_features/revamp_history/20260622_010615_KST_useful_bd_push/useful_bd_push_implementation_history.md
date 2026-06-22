@@ -1855,3 +1855,32 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - The method card records the leakage guard: PPA/front/HV/test labels are not
   descriptor inputs, and the lower warmup threshold alone cannot justify
   promotion without direct PPA/front and classic-covered-design evidence.
+
+## T39 Sparse-Yield Warmup Live Arm - 2026-06-22 UTC
+
+- Ran the pre-registered T39 bounded live arm under
+  `exp/useful_bd_push/t39_sparse_yield_warmup_qd_20260622_062937_UTC/`.
+  The vLLM preflight reported `openai/gpt-oss-120b` with `max_model_len`
+  131072. Runtime completed in 750 seconds.
+- The arm used `RTLLM/Prob045_alu`, `RTLLM/Prob041_traffic_light`, and
+  `RTLLM/Prob015_multi_pipe_8bit`; population `12`, generations `3`, seed
+  `1001`, `journal_graph_testability_3d`, `elite_pareto_slot`,
+  `max_elites_per_cell=2`, and `qd_grid_quantile_warmup_successes=4`.
+- Pareto archive validation passed with `failure_count=0` and
+  `max_front_size_seen=2`.
+- T39 fixed the T38 multi-pipe archive gap: multi-pipe has 11 valid PPA,
+  8 local-front points, 6 global-front points, and 10 active archive members.
+  T38 had 7 valid PPA, 3 local/global front points, and zero active archive
+  members.
+- Traffic-light improved from T38's 8 valid PPA and best quality `0.399899`
+  to 15 valid PPA and best quality `0.403821`. ALU kept archive/front material
+  but best quality dropped from `0.416377` to `0.402072`.
+- Packaged direct raw PPA figures, improvement figures, count summary,
+  candidate/front tables, validator output, preflight metadata, and a
+  Playwright-rendered HTML viewer screenshot under
+  `techniques/T39_sparse_yield_warmup_qd/`.
+- Visual inspection passed for the raw area-power front, normalized
+  improvement front, archive-count figure, and HTML screenshot.
+- Tier decision: `T0 positive_ablation`. The warmup fix is real, but this
+  package lacks same-budget classic/manual/random/full-Pareto controls, so it
+  is not a `T1` or `T2` useful-QD claim.

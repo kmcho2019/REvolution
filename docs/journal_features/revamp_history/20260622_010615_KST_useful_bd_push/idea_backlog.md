@@ -113,6 +113,18 @@ a numbered `techniques/T##_slug/` package before running it.
   replay of already-valid global Pareto members into a reporting archive, kept
   separate from in-loop descriptor construction.
 
+## From `T39_sparse_yield_warmup_qd` Positive Ablation
+
+- T39 fixes the T38 multi-pipe active-archive gap without changing descriptor
+  inputs, but it is not a promoted useful-QD result because same-budget
+  classic/manual/random/full-Pareto controls are not in this package.
+- The next package should keep warmup `4` and run the controls needed to tell
+  whether the sparse-warmup one-slot rule is useful beyond the T38 ablation.
+- If controls show ALU quality loss is systematic, try an adaptive warmup rule
+  that initializes at four successes only for designs still archive-empty
+  after the first generation, or pair sparse warmup with a stronger champion
+  parent lane. Record either variant separately before running it.
+
 ## From `T19_sr_relu_pca_bd` T0
 
 - SR ReLU PCA is a high-priority HV lead, not a promoted method: final mean HV

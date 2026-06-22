@@ -65,6 +65,7 @@ Validate the T39 arm:
 uv run python scripts/validate_pareto_front_run.py \
   --run-root "${RUN_ROOT}" \
   --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T39_sparse_yield_warmup_qd/tables/live_screen_v0_subset.yaml \
+  --classic-mode "" \
   --pareto-qd-mode sparse_warmup_elite_slot_qd \
   --require-full-subset
 ```

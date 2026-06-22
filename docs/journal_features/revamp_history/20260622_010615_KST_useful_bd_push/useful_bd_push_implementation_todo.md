@@ -153,7 +153,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T39 sparse-yield warmup/fallback variant is specified before broad T38
       controls, because T38 multi-pipe has valid/front PPA but no active
       archive members.
-- [ ] `T39_sparse_yield_warmup_qd` bounded arm is executed, validated,
+- [x] `T39_sparse_yield_warmup_qd` bounded arm is executed, validated,
       packaged with direct raw PPA Pareto figures, and assigned a tier
       decision.
 
@@ -192,7 +192,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T36 bounded front lane gets a slot-count ablation before any final
       useful-BD claim.
 - [x] T37 one-slot bounded front lane gets T38 same-budget live validation.
-- [ ] T38 warmup/archive gap is ablated before any final useful-BD claim.
+- [x] T38 warmup/archive gap is ablated before any final useful-BD claim.
+- [ ] T39 sparse-warmup result gets same-budget classic/manual/random/full-
+      Pareto controls before any `T1` or `T2` useful-QD claim.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

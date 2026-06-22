@@ -44,6 +44,8 @@ Real result packages:
 - `T35_t11_pareto_coupling_bd` T11 archive-coupling replay diagnostic
 - `T36_t11_bounded_front_lane_bd` T11 bounded-front-lane replay diagnostic
 - `T37_t36_slot_count_ablation` T36 explicit slot-count replay ablation
+- `T38_elite_pareto_slot_live_qd` champion-plus-one-slot live diagnostic
+- `T39_sparse_yield_warmup_qd` sparse-yield warmup live ablation
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -69,8 +71,11 @@ the front-seeded arm is only an upper-bound diagnostic. T36 is the current
 best replay lead: one local-front slot improves HV and direct front hits over
 both lexical and T11. T37 confirms that the useful replay boundary is one
 local-front slot: two or more slots collapse toward the weaker T35
-cell-Pareto HV regime. The ten-package minimum is satisfied, but the goal
-remains active.
+cell-Pareto HV regime. T38 validates the live code path but exposes a
+multi-pipe warmup archive gap. T39 fixes that specific gap by lowering
+grid-quantile warmup from 8 to 4, but it remains a `T0 positive_ablation`
+until same-budget controls are run. The ten-package minimum is satisfied, but
+the goal remains active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -303,6 +308,18 @@ active archive members. Multi-pipe has 7 valid PPA points and 3 global/local
 front points, but zero active archive members because the grid-quantile
 warmup threshold is 8. T38 is therefore `T0 diagnostic`, not a useful-BD win.
 
+`T39_sparse_yield_warmup_qd` is the focused T38 warmup ablation. It keeps the
+same one-slot archive rule, descriptor, model, seed, subset, and budget, but
+lowers `--qd_grid_quantile_warmup_successes` from 8 to 4. The bounded arm
+completed in 750 seconds and passed Pareto validation with `failure_count=0`.
+Multi-pipe moved from T38's 7 valid PPA, 3 local/global front points, and 0
+archive members to 11 valid PPA, 8 local-front points, 6 global-front points,
+and 10 active archive members. Traffic-light also improved valid PPA from 8
+to 15 and best quality from 0.399899 to 0.403821. ALU kept archive/front
+material but best quality fell from 0.416377 to 0.402072. T39 is therefore a
+`T0 positive_ablation`: it fixes the T38 archive gap, but it is not promoted
+until same-budget classic/manual/random/full-Pareto controls are run.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -368,6 +385,9 @@ warmup threshold is 8. T38 is therefore `T0 diagnostic`, not a useful-BD win.
     front material on ALU/traffic-light, but it also exposes a sparse-yield
     warmup failure: multi-pipe has valid/global front candidates and no active
     archive members.
+24. T39 fixes the T38 sparse-yield archive gap and improves multi-pipe
+    front/archive material, but it must be compared against same-budget
+    controls before becoming a `T1` or `T2` claim.
 
 ## Next Decisions
 
@@ -397,7 +417,8 @@ warmup threshold is 8. T38 is therefore `T0 diagnostic`, not a useful-BD win.
 - For the T11 lineage, do not promote front-seeded evidence as a method. Use it
   only to justify a gentler replay or live variant that preserves T11's
   farthest/HV behavior while reserving a small front-recovery lane.
-- For T36/T37/T38, keep the one-slot rule but fix sparse-yield archive warmup
-  before running broad controls. A next variant should allow a small valid-PPA
-  count below 8 to initialize or should use global Pareto fallback evidence
-  without changing descriptor inputs.
+- For T39, run same-budget classic/manual/random/full-Pareto controls before
+  any useful-QD claim.
+- For the T36/T37/T38/T39 lineage, keep the one-slot rule fixed during the
+  next control matrix. If controls expose a new sparse-yield failure, test a
+  separate global-Pareto fallback without changing descriptor inputs.

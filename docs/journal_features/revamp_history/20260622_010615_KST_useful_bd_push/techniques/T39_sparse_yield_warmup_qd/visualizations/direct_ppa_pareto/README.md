@@ -1,6 +1,9 @@
 # T39 Direct PPA Pareto Viewer
 
-Status: pending live run.
+Status: bounded live arm packaged.
 
-This directory will hold the filesystem-openable direct PPA viewer and a
-Playwright screenshot after the live arm is packaged.
+Files:
+
+- `index.html`: filesystem-openable direct PPA viewer.
+- `metrics.json`: summary table data.
+- `screenshot.png`: Playwright-rendered screenshot used for visual inspection.
