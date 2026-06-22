@@ -168,7 +168,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       visually inspected, and assigned a tier decision.
 - [x] `T42_initial_sparse_yield_gate_qd` is pre-registered with a generation-0
       sparse-yield fallback and mandatory direct raw PPA-front packaging.
-- [ ] `T42_initial_sparse_yield_gate_qd` is executed, validated, packaged,
+- [x] `T42_initial_sparse_yield_gate_qd` is executed, validated, packaged,
       visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
@@ -209,6 +209,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T38 warmup/archive gap is ablated before any final useful-BD claim.
 - [x] T39 sparse-warmup result gets same-budget classic/manual/random/full-
       Pareto controls before any `T1` or `T2` useful-QD claim.
+- [x] T42 initial sparse-yield gate gets a follow-up direction: per-design or
+      staged sparse-yield activation instead of another global trigger shift.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

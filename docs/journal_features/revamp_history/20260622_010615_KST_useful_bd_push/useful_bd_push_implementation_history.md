@@ -2074,3 +2074,38 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated central indexes, current-results matrix, lane docs, lineage ledger,
   TODO, and idea backlog so T42 is discoverable as pre-registered and pending
   live execution.
+
+## T42 Live Result And Direct PPA Report - 2026-06-22 UTC
+
+- Ran T42 under
+  `exp/useful_bd_push/t42_initial_sparse_yield_gate_qd_20260622_093940_UTC/`.
+  The vLLM preflight reported `openai/gpt-oss-120b` with `max_model_len`
+  131072.
+- Completed matched arms: `classic_revolution` in 646 seconds and
+  `initial_sparse_yield_gate_qd` in 747 seconds.
+- Pareto archive validation passed with `valid=True`, `failure_count=0`,
+  `problem_invalid_count=0`, `acceptance_error_count=0`, and
+  `max_front_size_seen=2`.
+- Packaged the result under
+  `techniques/T42_initial_sparse_yield_gate_qd/`, including preflight JSON,
+  validation JSON/MD, candidate-level PPA rows, method summary rows, runtime
+  summary, direct raw PPA-front PNG, count summary PNG, and a
+  filesystem-openable direct-PPA HTML viewer with screenshot.
+- Visual inspection passed. `figures/t42_raw_area_power_fronts.png` and
+  `visualizations/direct_ppa_pareto/screenshot.png` use conventional
+  lower-left-better raw area-power axes, open circles for method fronts, and
+  black stars for pooled fronts.
+- Main result: T42 preserves all classic-covered designs and adds one ALU
+  pooled raw-front hit plus one multi-pipe pooled raw-front hit. Multi-pipe
+  best score improves over T41 (`0.116397` versus `-0.000378`).
+- Promotion blockers: T42 loses T41's traffic-light signal with zero
+  traffic-light pooled-front hits and best score `0.391093` versus T41's seven
+  pooled hits and `0.473631`; T42 also does not recover T39's multi-pipe best
+  score (`0.116397` versus `0.222285`).
+- Archive read: all three T42 archives initialized with `warmup_successes=8`,
+  so this screen does not clearly prove that generation-0 fallback fired in a
+  sparse-initialization regime. Treat it as a timing ablation, not as a
+  solved gating policy.
+- Tier decision: `T0 mixed_diagnostic`. The next iteration should
+  pre-register a staged or per-design sparse-yield gate instead of another
+  global trigger-only variant.

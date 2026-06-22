@@ -48,10 +48,10 @@ Real result packages:
 - `T39_sparse_yield_warmup_qd` sparse-yield warmup live ablation
 - `T40_sparse_warmup_control_matrix` completed T39 control matrix
 - `T41_adaptive_sparse_yield_gate_qd` adaptive sparse-yield warmup fallback
+- `T42_initial_sparse_yield_gate_qd` initial sparse-yield warmup fallback
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
-Pre-registered but not yet real-result package: `T42_initial_sparse_yield_gate_qd`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -88,15 +88,20 @@ grid-quantile warmup threshold of `8`, then permits a generation-1 fallback to
 geometry is ready. It preserves all classic-covered problems and wins
 traffic-light with seven pooled raw area-power front hits and best score
 `0.473631`, but it loses ALU to classic and loses the T39 multi-pipe signal
-(`-0.000378` versus T39 `0.222285`). The next ablation should trigger the
-sparse-yield fallback at generation `0`, immediately after the initial
-population, instead of waiting until generation `1`.
+(`-0.000378` versus T39 `0.222285`).
 
-T42 is now pre-registered for that exact timing ablation. It keeps T41's
-descriptor, archive, parent selection, operator, model, seed, subset, and
-budget, but changes `qd_grid_quantile_adaptive_warmup_generation` from `1` to
-`0`. No result is assigned until the matched classic, QD arm, validator,
-direct raw PPA-front package, and visual inspection are complete.
+T42 is complete and remains `T0 mixed_diagnostic`. It keeps T41's descriptor,
+archive, parent selection, operator, model, seed, subset, and budget, but
+changes `qd_grid_quantile_adaptive_warmup_generation` from `1` to `0`. The
+primary evidence is the straightforward raw area-power Pareto figure
+`techniques/T42_initial_sparse_yield_gate_qd/figures/t42_raw_area_power_fronts.png`,
+with regeneration data in `tables/t42_candidate_ppa_points.csv`. T42 preserves
+all classic-covered problems and adds one pooled raw-front hit on ALU plus one
+on multi-pipe, but it loses T41's traffic-light win: zero traffic-light pooled
+hits and best score `0.391093` versus T41's seven pooled hits and `0.473631`.
+It also does not recover T39's multi-pipe best score (`0.116397` versus
+T39's `0.222285`). The next ablation should stop shifting one global warmup
+trigger and instead pre-register a per-design or staged sparse-yield gate.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -459,6 +464,7 @@ the best ALU and traffic-light scores.
 - Do not promote T39 as a general useful-QD method after T40. It is a useful
   multi-pipe signal and sparse-yield ablation, not a same-budget win across
   the three-problem screen.
-- For the T36/T37/T38/T39/T40/T41/T42 lineage, execute T42 next: keep strict
-  warmup `8` for high-yield designs, but trigger sparse-yield fallback at
-  generation `0` when initial valid-PPA count is below `8` and at least `4`.
+- For the T36/T37/T38/T39/T40/T41/T42 lineage, pre-register a per-design or
+  staged sparse-yield gate next: keep strict T41/T42-style warmup for
+  high-yield designs, but activate the one-slot sparse lane only when initial
+  archive sparsity is measured.

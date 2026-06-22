@@ -428,6 +428,24 @@ a numbered `techniques/T##_slug/` package before running it.
   PPA candidates or replays global Pareto members into the active archive at
   run end for low-yield problems.
 
+## From `T42_initial_sparse_yield_gate_qd`
+
+- T42 shows that generation-0 sparse-yield fallback is not enough as a global
+  timing change. The direct raw PPA front adds one ALU pooled-front point and
+  one multi-pipe pooled-front point, but it loses T41's traffic-light front
+  win and still misses T39's multi-pipe best score.
+- Do not continue by moving the same warmup trigger earlier or later. The next
+  method should use staged or per-design activation: keep strict warmup and
+  champion pressure for healthy-yield problems, then activate sparse one-slot
+  fallback only when initial archive sparsity is measured.
+- Candidate follow-up: `T43_staged_sparse_yield_gate_qd`. Gate variables
+  should be pre-PPA-leakage runtime state only: initial valid-PPA count,
+  archive initialized/not initialized, descriptor spread, and warmup buffer
+  size. The method must not branch on final score, final Pareto rank,
+  reference PPA, or problem identity.
+- Required visual gate remains the direct raw area-power Pareto front. The
+  method cannot be interpreted from archive heatmaps or aggregate counts alone.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

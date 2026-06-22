@@ -14,18 +14,18 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T41_adaptive_sparse_yield_gate_qd/` (`T0 mixed_diagnostic`;
-  adaptive gating wins traffic-light, but loses ALU and the T39 multi-pipe
-  signal).
-- Most recent pre-registered package:
-  `techniques/T42_initial_sparse_yield_gate_qd/` (generation-0 sparse-yield
-  fallback; pending live run).
+  `techniques/T42_initial_sparse_yield_gate_qd/` (`T0 mixed_diagnostic`;
+  generation-0 gating adds ALU and multi-pipe pooled-front hits, but loses the
+  T41 traffic-light win and does not recover T39's multi-pipe best score).
+- Most recent pre-registered package: none; next method should be a per-design
+  or staged sparse-yield gate derived from T42.
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  execute T42 with trigger generation `0` so sparse-yield archives can
-  initialize immediately after the initial population.
+  specify a per-design or staged sparse-yield gate so healthy-yield designs
+  keep the strict T41/T42 path while sparse initial archives get an earlier
+  one-slot fallback.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -34,10 +34,11 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T41_adaptive_sparse_yield_gate_qd/figures/t41_raw_area_power_fronts.png`
-  (traffic-light pooled-front win, ALU and multi-pipe blockers).
+  `techniques/T42_initial_sparse_yield_gate_qd/figures/t42_raw_area_power_fronts.png`
+  (straightforward raw area-power fronts; T42 adds ALU and multi-pipe
+  pooled-front hits but loses traffic-light).
 - Most recent direct PPA HTML viewer:
-  `techniques/T41_adaptive_sparse_yield_gate_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T42_initial_sparse_yield_gate_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto viewer with summary table and
   Playwright screenshot).
 - Most recent interactive visualization refresh:
@@ -141,7 +142,7 @@ Start here when resuming the active goal.
 | `T39` | `T39_sparse_yield_warmup_qd` | Completed sparse-yield warmup live ablation, `T0 positive_ablation`; fixes the T38 multi-pipe archive gap. |
 | `T40` | `T40_sparse_warmup_control_matrix` | Completed control matrix, `T0 mixed_control`; classic wins ALU/traffic pooled fronts while T39 wins multi-pipe. |
 | `T41` | `T41_adaptive_sparse_yield_gate_qd` | Completed adaptive sparse-yield gate, `T0 mixed_diagnostic`; traffic-light win, but ALU and multi-pipe block promotion. |
-| `T42` | `T42_initial_sparse_yield_gate_qd` | Pre-registered initial sparse-yield gate; pending live run. |
+| `T42` | `T42_initial_sparse_yield_gate_qd` | Completed initial sparse-yield gate, `T0 mixed_diagnostic`; direct PPA front shows ALU/multi-pipe pooled hits but traffic-light regression. |
 
 ## Validity-Gate Note
 

@@ -1,6 +1,6 @@
 # T42 Initial Sparse-Yield Gate Methodology
 
-Status: pre-registered live method; not yet interpreted.
+Status: complete live method; interpreted as `T0 mixed_diagnostic`.
 
 ## Question
 
@@ -24,7 +24,9 @@ subset, and budget. It changes only the adaptive fallback trigger:
 
 This tests whether sparse-yield designs need archive pressure before generation
 1. High-yield designs still use the strict eight-success warmup when enough
-initial samples exist.
+initial samples exist. The measured screen initialized all three archives with
+`8` warmup successes, so the result should be read as a conservative timing
+ablation, not as proof that the fallback threshold fired on every problem.
 
 ## Fixed Settings
 
@@ -69,5 +71,7 @@ T42 can advance only if it:
 - leads with a direct raw area-power PPA Pareto figure using conventional
   lower-left-better axes.
 
-If T42 only shifts archive timing without improving either traffic-light or
-multi-pipe direct-PPA evidence, it remains `T0`.
+Measured outcome: T42 preserved all classic-covered problems and added one
+pooled raw area-power front hit on ALU and one on multi-pipe, but lost T41's
+traffic-light front advantage and did not recover T39's multi-pipe best score.
+It remains `T0 mixed_diagnostic`.

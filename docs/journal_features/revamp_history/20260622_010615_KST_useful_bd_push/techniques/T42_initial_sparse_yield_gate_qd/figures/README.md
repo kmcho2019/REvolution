@@ -1,15 +1,16 @@
 # T42 Figures
 
-Status: pending live screen.
+Status: complete and visually inspected.
 
-The first accepted figure must be a direct raw area-power PPA Pareto plot with
-area on x, power on y, no inverted axes, and lower-left marked as better.
-Supporting figures should show valid-PPA counts, pooled-front hits, archive
-activation mode, and any HV/HV-AUC comparison used in the tier decision.
+Primary figure:
 
-Expected generated files:
+- `t42_raw_area_power_fronts.png` shows the direct raw area-power Pareto fronts
+  for T42 Classic, T42 initial gate, T41 adaptive gate, T40 controls, and T39.
+  Area is on x, power is on y, axes are not inverted, and lower-left is better.
 
-- `t42_raw_area_power_fronts.png`
-- `t42_front_count_summary.png`
+Supporting figure:
+
+- `t42_front_count_summary.png` summarizes valid-PPA counts and pooled raw
+  area-power front hits by problem and method.
 
 Regenerate both with `scripts/package_t42_initial_sparse_yield_gate.py`.
