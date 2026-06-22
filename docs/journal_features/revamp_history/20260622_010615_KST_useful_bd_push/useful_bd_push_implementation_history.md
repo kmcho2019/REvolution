@@ -1884,3 +1884,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Tier decision: `T0 positive_ablation`. The warmup fix is real, but this
   package lacks same-budget classic/manual/random/full-Pareto controls, so it
   is not a `T1` or `T2` useful-QD claim.
+
+## T38/T39 Direct PPA Front Correction - 2026-06-22 UTC
+
+- The T38/T39 packages included raw area-power PPA plots, but the generator
+  inverted both raw axes. That made the plots less straightforward for the
+  intended reader-facing question: where is the actual area-power Pareto front?
+- Updated `scripts/package_t38_elite_pareto_slot_live.py` so raw PPA plots use
+  area on x, power on y, conventional non-inverted axes, and an explicit
+  lower-left-is-better annotation. The normalized improvement plot remains
+  higher-is-better.
+- Regenerated T38 and T39 package artifacts:
+  `figures/t38_live_raw_area_power_fronts.png`,
+  `figures/t39_live_raw_area_power_fronts.png`, and their
+  `visualizations/direct_ppa_pareto/screenshot.png` viewer screenshots.
+- Visually inspected the regenerated T38 and T39 raw-front figures with
+  `view_image`. The T39 viewer screenshot also renders the corrected plot and
+  summary table without overlap.
+- Updated T38/T39 figure notes and results reports to state that the primary
+  direct PPA figure uses conventional lower-left-better axes.

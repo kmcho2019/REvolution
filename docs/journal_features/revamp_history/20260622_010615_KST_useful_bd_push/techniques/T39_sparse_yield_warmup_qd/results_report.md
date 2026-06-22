@@ -20,6 +20,10 @@ validator passed with `failure_count=0` and `max_front_size_seen=2`.
 | `Prob041_traffic_light` | 15 | 3 | 3 | 10 | 0.403821 |
 | `Prob015_multi_pipe_8bit` | 11 | 8 | 6 | 10 | 0.222285 |
 
+The direct raw area-power plot is
+`figures/t39_live_raw_area_power_fronts.png`. It uses raw area on x, raw power
+on y, no inverted axes, and lower-left marked as better.
+
 ## T38 Comparison
 
 The specific T38 blocker is fixed. Multi-pipe moved from 7 valid PPA,

@@ -318,12 +318,12 @@ def plot_raw_fronts(
         subset = [candidate for candidate in candidates if candidate.problem == problem]
         draw_problem(axis, subset, raw=True)
         axis.set_title(problem.replace("Prob", "P"))
-    axes[0].set_ylabel("Power (lower is better; axis inverted)")
+    axes[0].set_ylabel("Power (lower is better)")
     fig.suptitle(f"{config.plot_title_prefix}: Direct Raw Area-Power Fronts", y=0.98)
     fig.text(
         0.5,
         0.02,
-        "Open circles mark local active-objective rank-1 points. "
+        "Lower-left is better. Open circles mark local active-objective rank-1 points. "
         "Orange crosses mark global Pareto archive members; "
         "green squares mark active archive members.",
         ha="center",
@@ -396,10 +396,7 @@ def draw_problem(axis: Any, candidates: list[Candidate], *, raw: bool) -> None:
         label="Archive",
     )
     axis.grid(color="#e5e7eb", linewidth=0.8)
-    axis.set_xlabel("Area (lower is better; axis inverted)" if raw else "Area improvement g_A")
-    if raw:
-        axis.invert_xaxis()
-        axis.invert_yaxis()
+    axis.set_xlabel("Area (lower is better)" if raw else "Area improvement g_A")
 
 
 def draw_subset(

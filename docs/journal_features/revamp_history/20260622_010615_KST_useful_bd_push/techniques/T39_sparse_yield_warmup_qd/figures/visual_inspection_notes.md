@@ -9,8 +9,8 @@ Inspected:
 
 The raw area-power figure is readable and directly shows the main T39 result:
 multi-pipe now has green active-archive squares instead of the empty active
-archive seen in T38. The inverted raw axes make lower area and lower power
-move visually toward the upper-right.
+archive seen in T38. It uses conventional non-inverted axes, so lower area and
+lower power move toward the lower-left.
 
 The normalized improvement figure is readable and shows the multi-pipe
 tradeoff shape, including positive area movement with mixed power/timing

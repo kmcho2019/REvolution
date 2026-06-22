@@ -34,11 +34,12 @@ The Pareto archive validator passed with `failure_count=0` and
 | `Prob015_multi_pipe_8bit` | 7 | 3 | 3 | 0 |  |
 
 The direct raw area-power plot is
-`figures/t38_live_raw_area_power_fronts.png`. It shows usable T38 PPA/front
-material for ALU and traffic-light, and it exposes the main failure mode for
-multi-pipe: valid/global Pareto candidates exist, but the active grid-quantile
-archive has zero members because the run produced only seven valid PPA points,
-below the configured warmup threshold of eight.
+`figures/t38_live_raw_area_power_fronts.png`. It uses raw area on x, raw power
+on y, no inverted axes, and lower-left marked as better. It shows usable T38
+PPA/front material for ALU and traffic-light, and it exposes the main failure
+mode for multi-pipe: valid/global Pareto candidates exist, but the active
+grid-quantile archive has zero members because the run produced only seven
+valid PPA points, below the configured warmup threshold of eight.
 
 ## Conclusion
 
