@@ -47,7 +47,8 @@ Reject, downgrade, or explicitly warn on a method when:
   PPA candidate under the same budget on the fixed compared subset;
 - functionality rate, synthesis-valid rate, or valid-PPA yield declines by 50
   percent or more relative to classic on a comparison unit where classic has
-  at least 10 passing samples for the corresponding stage;
+  at least 10 passing samples for the corresponding stage and the report hides
+  that warning or treats the PPA gain as free;
 - the result depends on changing token budgets, prompt style, or subset after
   seeing outcomes;
 - only average fitness improves while hypervolume, Pareto spread, and passive

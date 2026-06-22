@@ -42,16 +42,18 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       full RTLLM run.
 - [x] Run and record initial sub-agent adversarial review for the milestone
       plan.
-- [ ] Run screening ladder for exact T26 and low-fusion T26.1; add gated
+- [x] Run screening ladder for exact T26 and low-fusion T26.1; add gated
       T26.1 only after narrow implementation and focused tests.
-- [ ] Select the full RTLLM QD arm before seeing full RTLLM results.
-- [ ] Run full RTLLM classic versus selected QD arm with recorded vLLM
+- [x] Select the full RTLLM QD arm before seeing full RTLLM results.
+- [x] Run full RTLLM classic versus selected QD arm with recorded vLLM
       preflight and 128k token budgets.
-- [ ] Treat the one-seed RTLLM run as the deadline package input; do not block
+- [x] Treat the one-seed RTLLM run as the deadline package input; do not block
       plots, tables, report, or slides on multi-seed replication.
-- [ ] Package RTLLM-wide tables, figures, direct PPA plots, and Phase 03.1
-      viewer artifacts when archive data is available.
-- [ ] Complete `presentations/20260623_report/report.md` and `slides.md` with
+- [x] Package RTLLM-wide tables, figures, raw PPA data, and direct PPA plots
+      for the one-seed milestone.
+- [ ] Add Phase 03.1 viewer artifacts for the full RTLLM QD archive when the
+      archive projection/export contract is ready.
+- [x] Complete `presentations/20260623_report/report.md` and `slides.md` with
       precise answers to the two main questions.
 - [ ] Run sub-agent and `claude -p` adversarial reviews when available, and
       record outputs under `presentations/20260623_report/reviews/`.
