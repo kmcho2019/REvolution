@@ -25,9 +25,12 @@ Problems:
   area, power, and optional clock-period metrics recorded in the live run log.
 - **Active objectives**: area and power for combinational references; area,
   power, and `eff_clk_period` when the reference clock objective is nonzero.
-- **Rank-1 PPA front**: candidates not dominated by another candidate from the
-  same method and problem under the active objectives. Open circles in the
-  plots mark these candidates.
+- **Raw area-power front**: candidates not dominated by another candidate from
+  the same method and problem using raw area and raw power only. Open circles
+  in the raw area-power plots mark this front, and lower-left is better.
+- **Active-objective front**: candidates not dominated under the active
+  objectives. For `Prob015_multi_pipe_8bit`, this includes clock period.
+  Open circles in the improvement plots mark this front.
 - **Reference-beating candidate**: candidate with no active objective worse
   than the reference and at least one active objective better.
 - **Candidate zoom**: raw area-power view that omits the reference star from
@@ -43,7 +46,8 @@ accounting.
 The clearest figures are:
 
 - `figures/live_key_ppa_fronts_area_power_zoom.png`: direct raw area-power
-  front shape for Classic, Manual BD, Random, SR raw, and Conservative exploit.
+  front shape for Classic, Manual BD, Random, SR raw, and Conservative exploit
+  on conventional non-inverted axes.
 - `figures/live_key_ppa_fronts_improvement.png`: normalized improvement view
   where up/right is better and the reference is at `(0, 0)`.
 - `figures/live_front_count_summary.png`: candidate-level front-point and
@@ -51,11 +55,13 @@ The clearest figures are:
 
 The front-shape evidence reinforces the current blocker. Conservative exploit
 recovers strong best-PPA pressure, especially on `Prob045_alu` and
-`Prob015_multi_pipe_8bit`, but it does not illuminate as broad a PPA front as
-Classic or SR raw. On `Prob015_multi_pipe_8bit`, Conservative exploit has six
-candidate-level rank-1 front points, SR raw has ten, and Classic has fourteen.
-That is why the next live variant should be a front-recovery test rather than a
-promotion claim.
+`Prob015_multi_pipe_8bit`, but it does not illuminate as broad an
+active-objective PPA front as Classic. On `Prob015_multi_pipe_8bit`,
+Conservative exploit has 2 raw area-power front points and 6 active-objective
+front points, SR raw has 2 raw area-power front points and 10 active-objective
+front points, and Classic has 4 raw area-power front points and 14
+active-objective front points. That is why the next live variant should be a
+front-recovery test rather than a promotion claim.
 
 ## Regeneration
 

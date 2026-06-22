@@ -38,7 +38,8 @@ def test_package_useful_bd_direct_ppa_fronts(tmp_path: Path) -> None:
     front_rows = list(csv.DictReader((output_dir / "tables" / "problem_front_counts.csv").open()))
     assert len(candidate_rows) == len(METHODS) * len(PROBLEMS) * 2
     assert len(front_rows) == len(METHODS) * len(PROBLEMS)
-    assert all(int(row["ppa_front_count"]) >= 1 for row in front_rows)
+    assert all(int(row["area_power_front_count"]) >= 1 for row in front_rows)
+    assert all(int(row["active_objective_front_count"]) >= 1 for row in front_rows)
     assert (output_dir / "figures" / "live_key_ppa_fronts_area_power.png").read_bytes().startswith(
         b"\x89PNG"
     )

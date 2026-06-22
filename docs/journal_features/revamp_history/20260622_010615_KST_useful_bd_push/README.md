@@ -24,8 +24,9 @@ Start here when resuming the active goal.
   pre-register T42 with trigger generation `0` so sparse-yield archives can
   initialize immediately after the initial population.
 - Most recent cross-cutting visualization:
-  `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
-  normalized PPA-front scatter plots for T24/T25/T26 live methods).
+  `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
+  lower-left-better raw area-power Pareto fronts plus active-objective front
+  counts for T24/T25/T26 live methods).
 - Prior per-technique direct PPA visualization:
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).

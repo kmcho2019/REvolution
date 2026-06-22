@@ -130,7 +130,8 @@ class PpaCandidate:
     reference_metrics: dict[str, float]
     improvements: dict[str, float]
     objective_metrics: tuple[str, ...]
-    is_front: bool
+    is_area_power_front: bool
+    is_active_objective_front: bool
     beats_reference: bool
     code_file_path: str
 
@@ -225,13 +226,15 @@ def collect_problem_candidates(
                 reference_metrics=ref_metrics,
                 improvements=improvements,
                 objective_metrics=objective_metrics,
-                is_front=False,
+                is_area_power_front=False,
+                is_active_objective_front=False,
                 beats_reference=beats_reference(improvements, objective_metrics),
                 code_file_path=generated.code_file_path,
             )
         )
 
-    front_ids = pareto_candidate_ids(candidates, objective_metrics)
+    area_power_ids = area_power_front_ids(candidates)
+    active_ids = active_objective_front_ids(candidates, objective_metrics)
     return [
         PpaCandidate(
             method=candidate.method,
@@ -245,7 +248,8 @@ def collect_problem_candidates(
             reference_metrics=candidate.reference_metrics,
             improvements=candidate.improvements,
             objective_metrics=candidate.objective_metrics,
-            is_front=candidate.candidate_id in front_ids,
+            is_area_power_front=candidate.candidate_id in area_power_ids,
+            is_active_objective_front=candidate.candidate_id in active_ids,
             beats_reference=candidate.beats_reference,
             code_file_path=candidate.code_file_path,
         )
@@ -253,11 +257,19 @@ def collect_problem_candidates(
     ]
 
 
-def pareto_candidate_ids(
+def area_power_front_ids(candidates: list[PpaCandidate]) -> set[str]:
+    points: list[tuple[float, ...]] = [
+        (-candidate.ppa_metrics["area"], -candidate.ppa_metrics["power"])
+        for candidate in candidates
+    ]
+    return {candidates[index].candidate_id for index in pareto_front(points)}
+
+
+def active_objective_front_ids(
     candidates: list[PpaCandidate],
     objective_metrics: tuple[str, ...],
 ) -> set[str]:
-    points = [
+    points: list[tuple[float, ...]] = [
         tuple(candidate.improvements[metric] for metric in objective_metrics)
         for candidate in candidates
     ]
@@ -281,7 +293,8 @@ def candidate_rows(candidates: list[PpaCandidate]) -> list[dict[str, str]]:
             "g_P": fmt(candidate.improvements["power"]),
             "g_T": fmt(candidate.improvements.get("eff_clk_period", 0.0)),
             "active_objectives": ";".join(candidate.objective_metrics),
-            "is_pareto_front": str(candidate.is_front).lower(),
+            "is_area_power_front": str(candidate.is_area_power_front).lower(),
+            "is_active_objective_front": str(candidate.is_active_objective_front).lower(),
             "beats_reference": str(candidate.beats_reference).lower(),
             "code_file_path": candidate.code_file_path,
         }
@@ -298,7 +311,12 @@ def problem_summary_rows(candidates: list[PpaCandidate]) -> list[dict[str, str]]
                 for candidate in candidates
                 if candidate.method == method.method and candidate.problem == problem
             ]
-            front = [candidate for candidate in subset if candidate.is_front]
+            area_power_front = [
+                candidate for candidate in subset if candidate.is_area_power_front
+            ]
+            active_front = [
+                candidate for candidate in subset if candidate.is_active_objective_front
+            ]
             beating = [candidate for candidate in subset if candidate.beats_reference]
             rows.append(
                 {
@@ -306,7 +324,8 @@ def problem_summary_rows(candidates: list[PpaCandidate]) -> list[dict[str, str]]
                     "method_label": method.label,
                     "problem": problem,
                     "valid_ppa_count": str(len(subset)),
-                    "ppa_front_count": str(len(front)),
+                    "area_power_front_count": str(len(area_power_front)),
+                    "active_objective_front_count": str(len(active_front)),
                     "reference_beating_count": str(len(beating)),
                     "best_score": fmt(max(candidate.score for candidate in subset)),
                     "min_area": fmt(min(candidate.ppa_metrics["area"] for candidate in subset)),
@@ -428,7 +447,14 @@ def plot_fronts(
             method_points = [candidate for candidate in subset if candidate.method == method.method]
             xs = [plot_value(candidate, "area", use_improvements) for candidate in method_points]
             ys = [plot_value(candidate, "power", use_improvements) for candidate in method_points]
-            front_flags = [candidate.is_front for candidate in method_points]
+            if use_improvements:
+                front_flags = [
+                    candidate.is_active_objective_front for candidate in method_points
+                ]
+            else:
+                front_flags = [
+                    candidate.is_area_power_front for candidate in method_points
+                ]
             axis.scatter(
                 xs,
                 ys,
@@ -453,14 +479,12 @@ def plot_fronts(
         if use_improvements:
             axis.set_xlabel("Area improvement g_A (higher is better)")
         else:
-            axis.invert_xaxis()
-            axis.invert_yaxis()
-            axis.set_xlabel("Area (lower is better; axis inverted)")
+            axis.set_xlabel("Area (lower is better)")
         if problem == PROBLEMS[0]:
             if use_improvements:
                 axis.set_ylabel("Power improvement g_P (higher is better)")
             else:
-                axis.set_ylabel("Power (lower is better; axis inverted)")
+                axis.set_ylabel("Power (lower is better)")
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(
         handles,
@@ -471,7 +495,10 @@ def plot_fronts(
         frameon=False,
     )
     fig.suptitle(title, y=0.995)
-    note = "Open circles mark each method's active-objective rank-1 PPA front. "
+    if use_improvements:
+        note = "Open circles mark each method's active-objective rank-1 front. "
+    else:
+        note = "Lower-left is better. Open circles mark each method's raw area-power front. "
     if show_reference:
         note += "Reference star included; P015 also uses clock period as a third objective."
     else:
@@ -487,10 +514,11 @@ def plot_front_count_summary(rows: list[dict[str, str]], output_path: Path) -> N
     by_key = {(row["method"], row["problem"]): row for row in rows}
     x_positions = list(range(len(PROBLEMS)))
     width = 0.84 / len(methods)
-    fig, axes = plt.subplots(1, 2, figsize=(17.8, 5.2))
+    fig, axes = plt.subplots(1, 3, figsize=(18.6, 5.2))
     for axis, metric, title in (
-        (axes[0], "ppa_front_count", "Rank-1 PPA Front Points"),
-        (axes[1], "reference_beating_count", "Reference-Beating Candidates"),
+        (axes[0], "area_power_front_count", "Raw Area-Power Front Points"),
+        (axes[1], "active_objective_front_count", "Active-Objective Front Points"),
+        (axes[2], "reference_beating_count", "Reference-Beating Candidates"),
     ):
         for method_index, method in enumerate(methods):
             offset = (method_index - (len(methods) - 1) / 2) * width

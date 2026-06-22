@@ -2027,3 +2027,27 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Next iteration should pre-register T42: keep warmup `8`, fallback threshold
   `4`, but trigger fallback at generation `0` so sparse-yield designs can
   initialize immediately after the initial population.
+
+## Direct PPA Audit Semantics Refresh - 2026-06-22 UTC
+
+- Corrected `scripts/package_useful_bd_direct_ppa_fronts.py` so raw
+  area-power plots use conventional non-inverted axes and raw area-power
+  Pareto membership, rather than reusing the active-objective front flag.
+- Regenerated
+  `visualization_audits/20260621_direct_ppa_fronts/` from the original
+  T24/T25/T26 run roots. The candidate table now records
+  `is_area_power_front` and `is_active_objective_front`; the problem table now
+  reports `area_power_front_count` and `active_objective_front_count`.
+- Visual inspection accepted the regenerated
+  `live_key_ppa_fronts_area_power_zoom.png`,
+  `live_all_ppa_fronts_area_power_zoom.png`, and
+  `live_front_count_summary.png` figures. The raw panels now directly answer
+  the straightforward PPA Pareto-front concern: lower-left is better, open
+  circles are raw area-power nondominated points, and the timing-aware
+  active-objective counts are separate.
+- Updated the visualization audit README, figure README, table README,
+  visual-inspection notes, and current-results matrix to use the corrected
+  front definitions and counts.
+- Focused validation:
+  `uv run pytest tests/scripts/test_package_useful_bd_direct_ppa_fronts.py`
+  passed.

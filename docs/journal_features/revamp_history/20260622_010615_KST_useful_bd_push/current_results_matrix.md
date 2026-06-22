@@ -180,8 +180,10 @@ bundle over T24, T25, and T26 live methods. It adds the missing straightforward
 area-power Pareto/front scatter plots, including candidate-zoomed raw PPA views
 and normalized improvement-space views. The direct front plots make the current
 T26 blocker visually obvious: Conservative exploit has strong best-PPA points,
-but on `Prob015_multi_pipe_8bit` it has 6 candidate-level rank-1 front points
-while SR raw has 10 and Classic has 14.
+but on `Prob015_multi_pipe_8bit` it has 2 raw area-power front points and 6
+active-objective front points, while SR raw has 2 raw area-power front points
+and 10 active-objective front points, and Classic has 4 raw area-power front
+points and 14 active-objective front points.
 
 `T29_sr_raw_front_recovery_qd` is the completed front-recovery live variant. It
 keeps SR raw PCA, local Pareto cells, the T26 fill target, and NSGA-II parent
