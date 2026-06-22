@@ -37,15 +37,29 @@
 - Aggressive local Pareto archives can disrupt hill climbing.
 - Sparse graph axes can create archive sparsity and yield loss.
 
-## Slide 6 - What Worked Best
+## Slide 6 - Retrospective Scale
 
-- SR raw descriptors capture implementation response.
+- ASP-DAC release archive: 170057 candidates, 90058 valid PPA artifacts.
+- Auto-BD controls: 23400 candidates, 10343 valid PPA artifacts.
+- RTLLM gen-20 history: 10413 candidates, 2335 valid PPA artifacts.
+- Retrospective verdict: interpretable diversity, not active utility.
+
+## Slide 7 - Retrospective Takeaway
+
+- Early lexical diversity vs final HV: rho 0.300, uncontrolled.
+- Multi-cluster fronts: 48.8%, below shuffled labels at 56.0%.
+- Best diversity replay HV gain over best-fitness retention: 1.35%.
+- Qwen common-audit replay: +3.35% HV vs lexical, diagnostic only.
+
+## Slide 8 - What Worked Best
+
+- Synthesis-response raw descriptors capture implementation response.
 - Pareto-front archive cells preserve alternate PPA tradeoffs.
 - T26 keeps champion-style exploit pressure active.
 - This is QD plus quality pressure, not novelty alone.
 - This does not isolate descriptor-only causality.
 
-## Slide 7 - Full RTLLM Setup
+## Slide 9 - Full RTLLM Setup
 
 - Benchmark: all 50 RTLLM problems.
 - Seed and budget: seed 1001, population 12, generations 3.
@@ -53,14 +67,14 @@
 - Classic: `classic_revolution` with `eoh_strategies`.
 - QD: exact T26, `sr_raw_conservative_exploit_qd`.
 
-## Slide 8 - PPA-First Gate
+## Slide 10 - PPA-First Gate
 
 - Hard gate: no classic-covered design loss.
 - If classic has at least one valid PPA sample, QD must also have one.
 - Functionality and valid-PPA rate drops are visible warnings.
 - This fits the milestone goal: optimize PPA while preserving design coverage.
 
-## Slide 9 - Headline Result
+## Slide 11 - Headline Result
 
 | Metric | Classic | Exact T26 QD | Delta |
 | --- | ---: | ---: | ---: |
@@ -69,7 +83,7 @@
 | Valid PPA | 1056 | 879 | -177 |
 | PPA-front points | 61 | 69 | +8 |
 
-## Slide 10 - Budget Parity
+## Slide 12 - Budget Parity
 
 | Metric | Classic | Exact T26 QD |
 | --- | ---: | ---: |
@@ -78,14 +92,14 @@
 | Mean calls/problem | 96.02 | 96.00 |
 | Runtime seconds | 83328.15 | 84516.21 |
 
-## Slide 11 - Gate Result
+## Slide 13 - Gate Result
 
 - Hard retention failures: 0.
 - Yield warnings: 4.
 - Small-n labels: 6.
 - `Prob006_adder_pipe_64bit` has no valid PPA in either arm.
 
-## Slide 12 - Why This Is Not Overclaiming
+## Slide 14 - Why This Is Not Overclaiming
 
 - Per-problem HV: 4 QD wins, 15 losses, 31 ties.
 - Per-problem HV-AUC: 5 QD wins, 16 losses, 29 ties.
@@ -94,7 +108,7 @@
 - Prior T28 family audit favored classic on front-family breadth.
 - Full-suite front-family breadth is still a follow-up audit.
 
-## Slide 13 - Answer The Two Questions
+## Slide 15 - Answer The Two Questions
 
 - Does diversity matter?
 - Yes, enough to continue the QD/MAP-Elites line.
@@ -103,7 +117,7 @@
 - Which diversity does not suffice?
 - Lexical, random, sparse, or unguarded novelty.
 
-## Slide 14 - Decision
+## Slide 16 - Decision
 
 - Continue the QD/MAP-Elites research direction.
 - Present the result as reviewable one-seed engineering evidence.

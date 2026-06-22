@@ -23,6 +23,7 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
 | `data/` | Problem manifest and source inventory for regenerating tables and figures. |
 | `figures/` | Presentation-ready plots after packaging and visual inspection. |
 | `tables/` | Claim gates, planned metric schema, and generated result tables. |
+| `retrospective/` | Prior-branch diversity/PPA retrospective digest, tables, figures, and regeneration script. |
 | `reviews/` | Sub-agent, Claude, and manual adversarial review logs. |
 | `full_rtllm/` | Generated full RTLLM tables, figures, raw PPA data, and package summary. |
 

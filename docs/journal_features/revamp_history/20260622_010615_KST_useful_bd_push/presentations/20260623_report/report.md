@@ -32,11 +32,12 @@ Question 2: Which diversity matters?
 The current evidence supports the T26 implementation-response archive bundle,
 not a descriptor-only causal claim. The useful pattern appears to be
 implementation-response diversity coupled to quality-safe archive pressure. The
-best current pattern is not "more novelty" by itself. It is an SR raw
-descriptor/archive bundle that keeps champion-style hill climbing active while
-using QD/MAP-Elites to preserve alternative implementation responses. Lexical,
-identifier, random, overly sparse graph, and unguarded local-Pareto diversity
-have repeatedly failed or produced yield loss without enough PPA evidence.
+best current pattern is not "more novelty" by itself. It is a
+synthesis-response raw descriptor/archive bundle that keeps champion-style hill
+climbing active while using QD/MAP-Elites to preserve alternative
+implementation responses. Lexical, identifier, random, overly sparse graph, and
+unguarded local-Pareto diversity have repeatedly failed or produced yield loss
+without enough PPA evidence.
 
 ## Definitions
 
@@ -90,6 +91,126 @@ One-seed paired engineering evidence: a same-seed, same-budget comparison
 across many problems. It can justify continuing or tuning a method, but it does
 not prove seed-stable statistical significance.
 
+## Retrospective Diversity Analysis
+
+Before the full RTLLM T26 run, we ran a broad retrospective pass across prior
+branches and copied worktree artifacts to test whether PPA clusters or PPA
+distributions were already explained by simple diversity metrics. The largest
+source was the ASP-DAC 2026 release archive under
+`exp/diversity_check/aspdac2026_submission_source/`, especially the
+`deepseek_clean_results`, `gpt-4.1-mini_clean_results`,
+`llama3_clean_results`, and `llama3_baseline_clean_results` run roots. The
+self-contained retrospective bundle is:
+
+`docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/20260621_150407_UTC_compiled_results_bundle/`
+
+The presentation-local digest is in `retrospective/`. It includes source
+tables, regenerated summary figures, a regeneration script, and visual
+inspection notes.
+
+### Retrospective Scope
+
+| Source | Candidate rows | Valid PPA artifacts | Why it matters |
+| --- | ---: | ---: | --- |
+| ASP-DAC release | 170057 | 90058 | Largest retrospective source; includes RTLLM and VerilogEval-Spec-to-RTL runs from DeepSeek, GPT-4.1-mini, and Llama-family roots. |
+| Auto-BD controls | 23400 | 10343 | Prior paired QD/control evidence for random, Yosys-stat, ST-NOD, synthesis-response, and VQ descriptors. |
+| RTLLM gen-20 | 10413 | 2335 | Older broad RTLLM REvolution corpus with generation history and motif vectors. |
+
+The table uses the retrospective `candidate_count` convention from
+`corpus_coverage.csv`. The ASP-DAC source also records `170131` code
+artifacts; that is an artifact-count convention difference, not a different
+experiment.
+
+![Retrospective source coverage](retrospective/figures/retrospective_source_coverage.png)
+
+### What The Retrospective Asked
+
+The retrospective was not a live QD run. It asked whether existing RTL/netlist
+style regions, lexical distances, motif descriptors, Qwen embeddings,
+DeepGate-style graph embeddings, or AURORA-style learned bottlenecks could
+explain or reconstruct useful PPA-front structure after candidates had already
+been generated.
+
+Retrospective terms:
+
+| Term | Definition |
+| --- | --- |
+| Oracle replay | A post-hoc retention policy that chooses from an already generated candidate pool to test whether a diversity rule would have retained useful points. |
+| Common audit | A fixed post-hoc descriptor and metric surface used to compare candidates without changing the original generation process. |
+| Motif/style/lexical oracle | A replay policy that prioritizes structural motif spread, RTL style-cluster spread, or lexical distance after candidates already exist. |
+| DeepGate3/AIG | A graph-encoder path over And-Inverter Graph representations of synthesized logic. |
+| AURORA-style linear AE | An unsupervised bottleneck over implementation-side features with PPA fields excluded from the encoder inputs. |
+
+| Gate | Result | Main evidence | Interpretation |
+| --- | --- | --- | --- |
+| D1 early diversity predicts final PPA | FAIL | Early lexical distance vs final HV had `rho=0.300`, but only as uncontrolled single-run problem-level evidence. | Weak post-hoc signal, not a controlled predictor. |
+| D2 clusters explain PPA front | FAIL | `48.8%` of valid-PPA groups had multi-cluster fronts; shuffled labels reached `56.0%`. | Style clusters were not better than label randomization for front explanation. |
+| D3 diversity replay beats fitness | FAIL | Best diversity replay improved HV by `1.35%` over best-fitness retention. | Too small for the old strong utility threshold and not enough to promote a method. |
+| D4 live intervention | NOT RUN | No prospective intervention was launched in the retrospective goal. | Retrospective evidence alone could not justify an active claim. |
+| D5 descriptors beat controls | FAIL | 20260618 Auto-BD controls did not show robust PPA uplift over classic/manual baselines. | More descriptor capacity did not fix yield/PPA robustness. |
+| D6 interpretable regions | PASS | Style regions such as arithmetic, control, mux, wire, and sequential RTL were stable enough to describe. | Diversity is measurable and interpretable, but only as illumination. |
+
+![Retrospective utility gates](retrospective/figures/retrospective_gate_status.png)
+
+### PPA Cluster And Replay Findings
+
+The clearest failure mode is visible in the replay table: style diversity can
+retain more style regions, but the HV improvement over best-fitness retention
+is tiny.
+
+| Replay policy | Mean HV | Mean style clusters | Takeaway |
+| --- | ---: | ---: | --- |
+| Motif diversity oracle | 0.042866 | 1.472 | Best replay HV, but only `1.35%` over best-fitness oracle. |
+| Style diversity oracle | 0.042432 | 2.677 | Much broader style coverage without meaningful HV gain. |
+| Lexical diversity oracle | 0.042303 | 2.545 | Similar HV to best fitness despite more lexical spread. |
+| Best-fitness oracle | 0.042294 | 1.462 | Hard to beat retrospectively because fitness already preserves useful points. |
+| Random mean | 0.030529 | 1.717 | Random retention is clearly worse, so the replay is not vacuous. |
+
+![Replay HV and style clusters](retrospective/figures/retrospective_replay_tradeoff.png)
+
+The case-study plot below shows why the old cluster story was useful but
+insufficient. It is a two-dimensional area-power projection of a PPA front
+computed in the active PPA space, so timing can make some projected front
+points look dominated in 2D. The plot applies tiny deterministic marker
+offsets only to separate overlapping style markers. In an RTLLM example,
+multiple implementation styles appear on the projected front, but no single
+style cleanly explains the front. That supports an illumination claim, not a
+causal descriptor claim.
+
+![PPA front by implementation style](retrospective/figures/retrospective_cluster_case_study.png)
+
+The early-diversity scatter tells the same story at problem level: the
+association exists, but it is weak and noisy.
+
+![Early diversity versus final HV](retrospective/figures/retrospective_early_diversity_vs_final_hv.png)
+
+### Encoder And Learned-BD Retrospective
+
+The restart also escalated beyond simple lexical/style clusters.
+
+| Encoder family | Evidence | Retrospective decision |
+| --- | --- | --- |
+| Qwen3 embedding | Common-audit replay ranked `768` candidates, covering `682` valid-PPA rows across `114` valid-PPA replay groups. Identifier-normalized Qwen gained `3.35%` HV versus lexical farthest; raw Qwen lost `1.25%`. Fitness-top retention was similarly positive, so the result is not embedding-specific. | Diagnostic only; useful for later preprocessing studies, but not a promotion gate pass. |
+| DeepGate3/AIG | AIG export and tokenizer probes ran, but the bounded tokenizer path produced only `3` nontrivial embeddings with cosine mean near `0.999971`. | No-proceed in that form; sequential/latch handling and collapse remained blockers. |
+| AURORA-style linear AE | AE2/AE3 and richer AE8/AE16 bottlenecks excluded PPA fields and used problem splits, but held-out HV/Pareto gains were near-zero, mixed, or negative. | Diagnostic only; no finetuning or in-loop learned BD claim justified. |
+
+![Frozen Qwen replay delta](retrospective/figures/retrospective_qwen_replay_delta.png)
+
+### Retrospective Conclusion For The Current Claim
+
+The retrospective answer to Question 1 was negative: generic implementation
+diversity was measurable, but did not by itself explain or improve PPA quality
+under the old post-hoc gates. That is why the current presentation should not
+claim that arbitrary diversity matters.
+
+The retrospective answer to Question 2 was also restrictive: lexical/style
+clusters, raw random descriptors, generic learned bottlenecks, and collapsed
+graph embeddings were not enough. The current positive T26 result is therefore
+better framed as a prospective matched-budget test of a specific
+implementation-response archive bundle with quality pressure. The retrospective
+evidence is the reason this report avoids descriptor-only causality and
+family-breadth overclaims.
+
 ## Full RTLLM Protocol
 
 The comparison used all 50 RTLLM problems from
@@ -100,10 +221,11 @@ Classic arm:
 `classic_revolution` with `eoh_strategies`.
 
 QD arm:
-exact T26, `sr_raw_conservative_exploit_qd`, with grid-quantile SR raw
-descriptors, Pareto-front archive cells, `qd_fill_target_fraction=0.25`,
-`qd_improve_backfill_fraction=0.20`, `qd_champion_lane_fraction=0.80`,
-NSGA-II global-rank parent selection, and two-parent fusion disabled.
+exact T26, `sr_raw_conservative_exploit_qd`, with grid-quantile
+synthesis-response raw (SR raw) descriptors, Pareto-front archive cells,
+`qd_fill_target_fraction=0.25`, `qd_improve_backfill_fraction=0.20`,
+`qd_champion_lane_fraction=0.80`, NSGA-II global-rank parent selection, and
+two-parent fusion disabled.
 
 Exact T26 was selected before seeing full RTLLM results. The screen favored it
 because it was the only screened QD arm with positive mean HV and it improved

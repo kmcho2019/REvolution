@@ -33,9 +33,14 @@ the non-QD baseline. It uses the same benchmark, model, prompt flow, operators,
 seed, population size, and generation count, but it does not use a BD archive.
 
 Exact T26 QD:
-the selected QD arm for the milestone. It combines SR raw descriptors, a
-grid-quantile QD archive, Pareto-front cells, and conservative champion-style
-exploitation.
+the selected QD arm for the milestone. It combines synthesis-response raw
+descriptors, a grid-quantile QD archive, Pareto-front cells, and conservative
+champion-style exploitation.
+
+Synthesis-response raw descriptor, or SR raw descriptor:
+a BD built from direct synthesis-response signals instead of final PPA metrics.
+It is intended to describe how the implementation behaves under synthesis,
+while avoiding in-loop access to the final optimization target.
 
 ## RTL And PPA Terms
 

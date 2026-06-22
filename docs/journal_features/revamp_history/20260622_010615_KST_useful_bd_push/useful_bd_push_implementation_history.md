@@ -2412,3 +2412,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   generated.
 - Clarified that bootstrap intervals are deferred for the one-seed package
   because this milestone is not a seed-stability claim.
+
+## Retrospective Presentation Digest - 2026-06-22 UTC
+
+- Added `presentations/20260623_report/retrospective/` as the local digest for
+  the 20260618 Auto-BD controls and the 20260621 ASP-DAC-backed retrospective
+  diversity analysis.
+- Regenerated presentation-local tables and figures for source coverage,
+  utility gates, replay retention, Qwen replay deltas, early-diversity
+  correlation, and a PPA-front-by-style RTLLM case study.
+- Added a report subsection explaining that the retrospective evidence supports
+  interpretable/diagnostic diversity only, while the current positive claim
+  comes from the prospective matched-budget T26 full RTLLM comparison.
+- Recorded two sub-agent retrospective review passes and two `claude -p`
+  retrospective review passes under
+  `presentations/20260623_report/reviews/`. The final verdicts were `PASS`
+  with no blockers after resolving readability and terminology notes.
