@@ -17,15 +17,16 @@ Start here when resuming the active goal.
   `techniques/T42_initial_sparse_yield_gate_qd/` (`T0 mixed_diagnostic`;
   generation-0 gating adds ALU and multi-pipe pooled-front hits, but loses the
   T41 traffic-light win and does not recover T39's multi-pipe best score).
-- Most recent pre-registered package: none; next method should be a per-design
-  or staged sparse-yield gate derived from T42.
+- Most recent pre-registered package:
+  `techniques/T43_staged_sparse_yield_gate_qd/` (staged sparse-yield gate;
+  lowers champion-lane pressure only after adaptive sparse archive
+  initialization).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  specify a per-design or staged sparse-yield gate so healthy-yield designs
-  keep the strict T41/T42 path while sparse initial archives get an earlier
-  one-slot fallback.
+  execute T43 and judge the direct raw PPA-front geometry before archive-space
+  views or aggregate counts.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -143,6 +144,7 @@ Start here when resuming the active goal.
 | `T40` | `T40_sparse_warmup_control_matrix` | Completed control matrix, `T0 mixed_control`; classic wins ALU/traffic pooled fronts while T39 wins multi-pipe. |
 | `T41` | `T41_adaptive_sparse_yield_gate_qd` | Completed adaptive sparse-yield gate, `T0 mixed_diagnostic`; traffic-light win, but ALU and multi-pipe block promotion. |
 | `T42` | `T42_initial_sparse_yield_gate_qd` | Completed initial sparse-yield gate, `T0 mixed_diagnostic`; direct PPA front shows ALU/multi-pipe pooled hits but traffic-light regression. |
+| `T43` | `T43_staged_sparse_yield_gate_qd` | Pre-registered staged sparse-yield gate; pending live run. |
 
 ## Validity-Gate Note
 

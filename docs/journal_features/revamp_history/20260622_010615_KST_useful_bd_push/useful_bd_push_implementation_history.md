@@ -2109,3 +2109,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Tier decision: `T0 mixed_diagnostic`. The next iteration should
   pre-register a staged or per-design sparse-yield gate instead of another
   global trigger-only variant.
+
+## T43 Staged Sparse-Yield Gate Pre-Registration - 2026-06-22 UTC
+
+- Added staged sparse-yield parent-pressure support for T43. The new
+  `qd_adaptive_warmup_champion_lane_fraction` setting is off by default and
+  only changes parent sampling when a `GridQuantileArchive` reports
+  `initialization_mode=adaptive_sparse_yield_fallback`.
+- Pre-registered `techniques/T43_staged_sparse_yield_gate_qd/` as the next
+  same-surface live method after T42. T43 keeps T42's descriptor, archive,
+  operator, model, seed, subset, and budget.
+- T43 keeps the default champion lane at `0.80`, but changes it to `0.60` for
+  problems whose archive actually initialized through adaptive sparse-yield
+  fallback. Strict eight-success warmup archives keep `0.80`.
+- The trigger is per-problem runtime archive state, not problem identity,
+  final PPA, final Pareto rank, reference PPA, hypervolume, or best score.
+- Added `scripts/package_t43_staged_sparse_yield_gate.py` and a focused
+  package test. The planned package emits candidate-level PPA rows, per-method
+  summaries, direct raw area-power front PNGs, count summaries, and a local
+  direct-PPA HTML viewer.
+- Updated central indexes, current-results matrix, lane docs, lineage ledger,
+  TODO, and plan so T43 is discoverable as pre-registered and pending live
+  execution.

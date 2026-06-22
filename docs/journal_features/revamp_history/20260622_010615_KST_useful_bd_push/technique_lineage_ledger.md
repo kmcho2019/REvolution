@@ -22,8 +22,8 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L1` | Transparent CAD descriptors | Use reviewer-readable features such as Yosys stats, motifs, pathlets, and ST-NOD. | Reuse selected features in guarded hybrids; stop pure concatenation. |
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
-| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T37 confirms the T11-family replay lead is exactly one bounded local-front slot; T42 is mixed live evidence before exact T11 projection. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T42 blocks simple global trigger escalation; next is staged or per-design sparse-yield activation. |
+| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T37 confirms the T11-family replay lead is exactly one bounded local-front slot; T43 is the active staged live hook before exact T11 projection. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T43 is pre-registered to stage champion pressure after adaptive sparse archive initialization. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T31/T32 show repair/front tweaks need stronger role separation. |
 
 ## Lineage Graph
@@ -85,6 +85,7 @@ flowchart LR
     T40[T40 sparse-warmup controls]
     T41[T41 adaptive sparse-yield gate]
     T42[T42 initial sparse-yield gate]
+    T43[T43 staged sparse-yield gate]
   end
 
   subgraph emitters[L6 lineage/emitter]
@@ -132,6 +133,7 @@ flowchart LR
   T39 --> T40
   T40 --> T41
   T41 --> T42
+  T42 --> T43
   T39 --> enc
   T17 --> T12
   T17 --> T18
@@ -159,7 +161,8 @@ flowchart LR
 | T39 | `L5` | Sparse-yield warmup ablation of T38: keep the one-slot rule and lower grid-quantile warmup from 8 to 4. | `T0 positive_ablation`: fixes multi-pipe active archive coverage and improves front material, but T40 blocks broad promotion. | `ablate` controls | T40 completed the matched control matrix. |
 | T40 | `L0/L5` | Matched sparse-warmup controls for the frozen T39 candidate. | `T0 mixed_control`: T39 wins multi-pipe best score and two pooled raw-front hits, but classic owns ALU and traffic-light pooled fronts and best scores. | `ablate` adaptive gating | Test per-design sparse-yield activation instead of uniform one-slot pressure. |
 | T41 | `L5` | Adaptive sparse-yield gate: keep warmup 8 but allow generation-1 fallback to 4 valid PPA successes when the archive is still empty. | `T0 mixed_diagnostic`: traffic-light gets 7 pooled hits and best score `0.473631`, but ALU loses to classic and multi-pipe loses the T39 signal. | `ablate` earlier trigger | T42 completed the generation-0 trigger check. |
-| T42 | `L5` | Initial sparse-yield gate: keep T41 settings but trigger fallback at generation 0 after initial population. | `T0 mixed_diagnostic`: direct PPA front adds one ALU pooled hit and one multi-pipe pooled hit, but loses T41 traffic-light and misses T39 multi-pipe best score. | `ablate` staged gate | Pre-register per-design or staged sparse-yield activation before another live one-slot variant. |
+| T42 | `L5` | Initial sparse-yield gate: keep T41 settings but trigger fallback at generation 0 after initial population. | `T0 mixed_diagnostic`: direct PPA front adds one ALU pooled hit and one multi-pipe pooled hit, but loses T41 traffic-light and misses T39 multi-pipe best score. | `ablate` staged gate | T43 is pre-registered as the staged sparse-yield follow-up. |
+| T43 | `L5` | Staged sparse-yield gate: keep T42 settings but lower champion pressure only after adaptive sparse initialization. | Pre-registered; no live result yet. | `run_next` | Execute live screen and package direct raw PPA-front comparison. |
 | T08-T10/T12/T15-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, lineage repair, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |

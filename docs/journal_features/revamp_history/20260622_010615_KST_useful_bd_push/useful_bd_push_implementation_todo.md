@@ -170,6 +170,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       sparse-yield fallback and mandatory direct raw PPA-front packaging.
 - [x] `T42_initial_sparse_yield_gate_qd` is executed, validated, packaged,
       visually inspected, and assigned a tier decision.
+- [x] `T43_staged_sparse_yield_gate_qd` is pre-registered with staged champion
+      pressure after adaptive sparse archive initialization.
+- [ ] `T43_staged_sparse_yield_gate_qd` is executed, validated, packaged,
+      visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
 

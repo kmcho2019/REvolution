@@ -52,6 +52,8 @@ Real result packages:
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
+Pre-registered but not yet real-result package:
+`T43_staged_sparse_yield_gate_qd`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -100,8 +102,15 @@ all classic-covered problems and adds one pooled raw-front hit on ALU plus one
 on multi-pipe, but it loses T41's traffic-light win: zero traffic-light pooled
 hits and best score `0.391093` versus T41's seven pooled hits and `0.473631`.
 It also does not recover T39's multi-pipe best score (`0.116397` versus
-T39's `0.222285`). The next ablation should stop shifting one global warmup
-trigger and instead pre-register a per-design or staged sparse-yield gate.
+T39's `0.222285`).
+
+T43 is pre-registered as that staged sparse-yield follow-up. It keeps T42's
+archive, descriptor, subset, model, seed, and budget, but lowers champion-lane
+pressure from `0.80` to `0.60` only for a problem whose archive initializes
+through `adaptive_sparse_yield_fallback`. Strict eight-success archives keep
+the `0.80` champion lane. No result is assigned until the matched classic, QD
+arm, validator, direct raw PPA-front package, and visual inspection are
+complete.
 
 ## Comparable Seed-1001 Replay Metrics
 
