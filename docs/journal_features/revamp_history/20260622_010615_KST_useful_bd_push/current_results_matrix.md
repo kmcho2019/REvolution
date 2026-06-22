@@ -47,9 +47,6 @@ Real result packages:
 - `T38_elite_pareto_slot_live_qd` champion-plus-one-slot live diagnostic
 - `T39_sparse_yield_warmup_qd` sparse-yield warmup live ablation
 - `T40_sparse_warmup_control_matrix` completed T39 control matrix
-
-Pre-registered but not yet real-result packages:
-
 - `T41_adaptive_sparse_yield_gate_qd` adaptive sparse-yield warmup fallback
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
@@ -84,12 +81,15 @@ multi-pipe pooled-front points, but classic still owns ALU and traffic-light
 pooled raw area-power fronts. The ten-package minimum is satisfied, but the
 goal remains active.
 
-T41 is the pre-registered follow-up to T40, not a result yet. It keeps the
-strict primary grid-quantile warmup threshold of `8`, but permits a
-generation-1 fallback to `4` valid PPA successes only when the archive is still
-empty and descriptor geometry is ready. Its first required artifact is
-`techniques/T41_adaptive_sparse_yield_gate_qd/figures/t41_raw_area_power_fronts.png`,
-a conventional lower-left-better raw area-power PPA Pareto comparison.
+T41 is complete and remains `T0 mixed_diagnostic`. It keeps the strict primary
+grid-quantile warmup threshold of `8`, then permits a generation-1 fallback to
+`4` valid PPA successes only when the archive is still empty and descriptor
+geometry is ready. It preserves all classic-covered problems and wins
+traffic-light with seven pooled raw area-power front hits and best score
+`0.473631`, but it loses ALU to classic and loses the T39 multi-pipe signal
+(`-0.000378` versus T39 `0.222285`). The next ablation should trigger the
+sparse-yield fallback at generation `0`, immediately after the initial
+population, instead of waiting until generation `1`.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -450,7 +450,6 @@ the best ALU and traffic-light scores.
 - Do not promote T39 as a general useful-QD method after T40. It is a useful
   multi-pipe signal and sparse-yield ablation, not a same-budget win across
   the three-problem screen.
-- For the T36/T37/T38/T39/T40 lineage, execute T41 next: keep the one-slot
-  rule available, but gate it by per-design archive activation with strict
-  warmup `8`, fallback `4`, and direct raw PPA-front figures as the first
-  reporting artifact.
+- For the T36/T37/T38/T39/T40/T41 lineage, test T42 next: keep strict warmup
+  `8` for high-yield designs, but trigger sparse-yield fallback at generation
+  `0` when initial valid-PPA count is below `8` and at least `4`.

@@ -130,6 +130,18 @@ a numbered `techniques/T##_slug/` package before running it.
   fronts: area on x, power on y, no inverted axes, and lower-left marked as
   better.
 
+## From `T41_adaptive_sparse_yield_gate_qd` T0
+
+- T41 shows adaptive gating can find a real traffic-light win: 7 pooled raw
+  area-power front hits and best score `0.473631`.
+- T41 also shows generation-1 fallback is too late for the hard multi-pipe
+  slice. Multi-pipe initialized from 5 samples, but best quality collapsed to
+  `-0.000378` versus T39's `0.222285`.
+- Next candidate: T42 initial sparse-yield gate. Keep strict warmup `8`, but
+  allow fallback `4` at trigger generation `0` so sparse-yield designs can
+  initialize immediately after the initial population. Keep the same T41
+  subset/model/seed/budget and the same direct raw PPA-front figure gate.
+
 ## From `T19_sr_relu_pca_bd` T0
 
 - SR ReLU PCA is a high-priority HV lead, not a promoted method: final mean HV

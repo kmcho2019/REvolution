@@ -1,12 +1,23 @@
 # T41 Visual Inspection Notes
 
-Status: pending.
+Status: accepted for `T0 mixed_diagnostic`.
 
-Before assigning a tier decision, inspect:
+Inspected artifacts:
 
-- the direct raw area-power PPA front;
-- the count or activation summary figure;
-- the filesystem-openable HTML viewer screenshot.
+- `figures/t41_raw_area_power_fronts.png`
+- `figures/t41_front_count_summary.png`
+- `visualizations/direct_ppa_pareto/screenshot.png`
 
-Reject the package if the primary raw PPA figure uses inverted axes, hides the
-pooled front, or makes the lower-left-better direction ambiguous.
+The raw PPA figure uses area on x, power on y, no inverted axes, and an
+explicit lower-left-better caption. The pooled-front stars and method-front
+open circles are visible. The figure makes the result easy to read:
+
+- ALU: the only pooled point is T41 classic.
+- Traffic-light: T41 adaptive owns the pooled front.
+- Multi-pipe: T39 owns the strongest low-power/low-area front material.
+
+The count summary is readable and confirms the same result: T41 adaptive has
+seven traffic-light pooled-front hits, but zero ALU and multi-pipe pooled hits.
+
+The HTML screenshot opens from the filesystem, renders the primary figure, and
+shows the summary table without overlap or clipped text.

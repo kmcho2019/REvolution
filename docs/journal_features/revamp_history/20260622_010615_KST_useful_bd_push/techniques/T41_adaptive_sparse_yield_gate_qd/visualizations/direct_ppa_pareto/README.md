@@ -1,11 +1,13 @@
 # T41 Direct PPA Pareto Viewer
 
-Status: pending live run.
+Status: complete.
 
-This directory will hold the filesystem-openable direct raw PPA-front viewer,
-metrics JSON, and Playwright screenshot after packaging.
+Files:
 
-Expected generated files:
+- `index.html`: filesystem-openable direct raw PPA-front viewer.
+- `metrics.json`: summary rows used by the viewer.
+- `screenshot.png`: Playwright-rendered screenshot used for visual
+  inspection.
 
-- `index.html`
-- `metrics.json`
+The viewer renders `../../figures/t41_raw_area_power_fronts.png` and the
+per-problem summary table.

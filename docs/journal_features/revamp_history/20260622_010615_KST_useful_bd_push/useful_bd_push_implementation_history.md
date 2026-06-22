@@ -1989,3 +1989,41 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   passed for the changed QD/backend modules and T40/T41 packagers. Pyright and
   ty still report the pre-existing `scripts/run_backend.py` evaluator union
   mismatch at lines 305 and 339.
+
+## T41 Live Result And Direct PPA Report - 2026-06-22 UTC
+
+- Ran T41 under
+  `exp/useful_bd_push/t41_adaptive_sparse_yield_gate_qd_20260622_083629_UTC/`.
+  The vLLM preflight reported `openai/gpt-oss-120b` with `max_model_len`
+  131072.
+- Completed matched arms: `classic_revolution` in 716.66 seconds
+  (`classic_seconds=719`) and `adaptive_sparse_yield_gate_qd` in 1029.96
+  seconds (`adaptive_seconds=1033`).
+- Pareto archive validation passed with `valid=True`, `failure_count=0`,
+  `problem_invalid_count=0`, `acceptance_error_count=0`, and
+  `max_front_size_seen=2`.
+- Packaged the result under
+  `techniques/T41_adaptive_sparse_yield_gate_qd/`, including preflight JSON,
+  validation JSON/MD, candidate-level PPA rows, method summary rows, runtime
+  summary, direct raw PPA-front PNG, count summary PNG, and a
+  filesystem-openable HTML viewer with Playwright screenshot.
+- Visual inspection passed. `figures/t41_raw_area_power_fronts.png` and
+  `visualizations/direct_ppa_pareto/screenshot.png` use conventional
+  lower-left-better raw area-power axes and make the T41 traffic-light win and
+  multi-pipe loss visible.
+- Main result: T41 adaptive wins traffic-light with 20 valid PPA candidates,
+  7 pooled raw-front hits, min area `97`, min power `0.000255`, and best score
+  `0.473631`, beating T41 classic (`0.407742`) and all frozen controls on the
+  claimed traffic-light metric.
+- Promotion blockers: T41 adaptive has zero ALU pooled-front hits and best
+  score `0.400330` versus T41 classic `0.414603`; it also loses the T39
+  multi-pipe signal with best score `-0.000378` versus T39 `0.222285`.
+- Archive read: ALU and traffic-light initialized with 8 samples; multi-pipe
+  initialized with 5 samples, so the adaptive fallback did activate on the
+  sparse-yield design. The issue is not activation, but late/weak activation
+  that fails to preserve useful multi-pipe quality.
+- Tier decision: `T0 mixed_diagnostic`. T41 is useful evidence for adaptive
+  gating but not a screen-wide useful-QD method.
+- Next iteration should pre-register T42: keep warmup `8`, fallback threshold
+  `4`, but trigger fallback at generation `0` so sparse-yield designs can
+  initialize immediately after the initial population.

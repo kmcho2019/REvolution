@@ -1,6 +1,6 @@
 # T41 Adaptive Sparse-Yield Gate Methodology
 
-Status: pre-registered live method.
+Status: completed live method; result is `T0 mixed_diagnostic`.
 
 ## Question
 
