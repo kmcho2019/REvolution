@@ -53,12 +53,14 @@ Next diagnostic run:
 
 ```bash
 uv run python scripts/analyze_t33_qwen_embedding_diagnostics.py \
-  --embedding-root exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC/embeddings \
+  --embedding-manifest docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd/tables/t33_embedding_cache_manifest.csv \
+  --view-manifest docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd/tables/t33_preprocessing_view_manifest.csv \
+  --candidates-csv exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/qwen_common_audit_candidates.csv \
   --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd
 ```
 
-The next script should generate collapse diagnostics and replay tables. It must
-not read PPA fields until the replay evaluation stage.
+The next script generated collapse diagnostics. Replay scoring is still pending
+and must not use PPA fields until the evaluation stage.
 
 ## Required Post-Run Checks
 

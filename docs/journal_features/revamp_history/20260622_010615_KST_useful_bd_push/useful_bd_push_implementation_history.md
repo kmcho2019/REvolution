@@ -1347,3 +1347,30 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   and
   `uv tool run ty check scripts/embed_t33_qwen_preprocessing_views.py tests/scripts/test_embed_t33_qwen_preprocessing_views.py`
   all passed.
+
+## T33d Qwen Collapse Diagnostics - 2026-06-22 UTC
+
+- Added `scripts/analyze_t33_qwen_embedding_diagnostics.py` and a focused
+  test. The script computes nearest-neighbor cosine, same-problem/corpus/hash
+  fractions, and pairwise view-stability cosines over the six T33 embedding
+  matrices.
+- Ran diagnostics against the T33c embedding manifest, T33b view manifest, and
+  T06 candidate table. It wrote `tables/t33_collapse_diagnostics.csv`,
+  `tables/t33_nearest_neighbors.csv`, and `tables/t33_view_stability.csv`.
+- Main signal: preprocessing helped only for netlist-style views. T06
+  same-problem nearest fraction was `0.93359375`; T33 canonical Yosys netlist
+  drops it to `0.738281250`, summary-plus-netlist drops it to `0.816406250`,
+  canonical RTL drops it to `0.894531250`, and raw/commentless RTL do not
+  improve it.
+- Same-corpus fraction also improves most for canonical Yosys netlist:
+  `0.822916667` versus T06's `0.9479166666666666`.
+- Interpretation: this is a meaningful L4 preprocessing signal, not yet a
+  useful-BD claim. The next step must test replay/PPA-front metrics against
+  lexical and random controls, especially for `canonical_yosys_netlist`.
+- Validation run:
+  `uv run pytest tests/scripts/test_analyze_t33_qwen_embedding_diagnostics.py`,
+  `uv run ruff check scripts/analyze_t33_qwen_embedding_diagnostics.py tests/scripts/test_analyze_t33_qwen_embedding_diagnostics.py`,
+  `uv run python -m pyright scripts/analyze_t33_qwen_embedding_diagnostics.py tests/scripts/test_analyze_t33_qwen_embedding_diagnostics.py`,
+  and
+  `uv tool run ty check scripts/analyze_t33_qwen_embedding_diagnostics.py tests/scripts/test_analyze_t33_qwen_embedding_diagnostics.py`
+  all passed.

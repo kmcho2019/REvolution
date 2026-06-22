@@ -1,7 +1,8 @@
 # Qwen3 Preprocessing Ladder Artifacts Manifest
 
 Status: pre-registered with T33a source inventory, T33b preprocessing-view
-manifests, and T33c embedding manifests. Replay artifact hashes are pending.
+manifests, T33c embedding manifests, and T33d collapse diagnostics. Replay
+artifact hashes are pending.
 
 ## Source Evidence
 
@@ -50,6 +51,14 @@ The generated embedding matrices and chunk manifests are intentionally not
 committed. They live under:
 
 `exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC/embeddings/`
+
+## T33d Committed Tables
+
+| Artifact | Rows | SHA256 |
+| --- | ---: | --- |
+| `tables/t33_collapse_diagnostics.csv` | 6 | `e3d2afe026bdbcbbf8c0dec2e3cd08086c96aab5cdd196c05d0a93900d8e56cd` |
+| `tables/t33_nearest_neighbors.csv` | 4608 | `1fd13be2d9c10a8202eb105faaf50f2ce02ee64287deb0b069f0c8eda5bbff15` |
+| `tables/t33_view_stability.csv` | 15 | `5c8b5be47e276519aad8a9f56edebad476554e63dafdecb1f2d798a8135fda08` |
 
 ## Planned Subdirectories
 

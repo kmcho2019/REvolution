@@ -1,8 +1,7 @@
 # T33 Tables
 
-T33a source-inventory, T33b preprocessing-view, and T33c embedding-cache
-manifest tables are committed. They are setup evidence only, not replay or PPA
-results.
+T33a source-inventory, T33b preprocessing-view, T33c embedding-cache, and T33d
+collapse-diagnostic tables are committed. They are not replay or PPA results.
 
 Current tables:
 
@@ -21,10 +20,15 @@ Current tables:
   matrix shape, chunk count, output path, SHA256, and encode seconds.
 - `t33_embedding_chunk_summary.csv`: chunk counts and chunk-size summaries per
   view.
+- `t33_collapse_diagnostics.csv`: per-view nearest-neighbor collapse metrics
+  and deltas versus T06.
+- `t33_nearest_neighbors.csv`: one row per candidate/view nearest-neighbor
+  pair with same-problem/corpus/hash/style flags.
+- `t33_view_stability.csv`: pairwise cosine stability between preprocessing
+  views for the same candidate.
 
 Required tables after the first run:
 
-- `t33_collapse_diagnostics.csv`
 - `t33_nuisance_axis_diagnostics.csv`
 - `t33_replay_aggregate.csv`
 - `t33_qwen_ladder_vs_controls.csv`

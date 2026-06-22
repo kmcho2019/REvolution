@@ -1,7 +1,7 @@
 # Qwen3 Preprocessing Ladder BD Results Report
 
 Status: pre-registered method package with T33a source inventory, T33b
-preprocessing-view cache, and T33c embedding cache.
+preprocessing-view cache, T33c embedding cache, and T33d collapse diagnostics.
 
 Tier decision: pending. No result is claimed yet.
 
@@ -91,6 +91,31 @@ The `.npy` matrices are stored under:
 Each pooled row was inspected for shape and unit norm. This is still not a
 T33 success claim: the next step is collapse diagnostics, then replay/Pareto
 scoring against lexical and random controls.
+
+## T33d Collapse Diagnostics
+
+T33d computes nearest-neighbor collapse metrics over each six-view embedding
+matrix. It directly tests T06's main failure mode: same-problem nearest-neighbor
+fraction `0.93359375` and same-corpus fraction `0.9479166666666666`.
+
+| View | Same Problem | Delta vs T06 | Same Corpus | Delta vs T06 |
+| --- | ---: | ---: | ---: | ---: |
+| `canonical_yosys_netlist` | 0.738281250 | -0.195312500 | 0.822916667 | -0.125000000 |
+| `summary_plus_netlist` | 0.816406250 | -0.117187500 | 0.910156250 | -0.037760417 |
+| `canonical_rtl` | 0.894531250 | -0.039062500 | 0.923177083 | -0.024739583 |
+| `identifier_role_rtl` | 0.906250000 | -0.027343750 | 0.930989583 | -0.016927083 |
+| `commentless_rtl` | 0.937500000 | +0.003906250 | 0.944010417 | -0.003906250 |
+| `raw_rtl` | 0.942708333 | +0.009114583 | 0.949218750 | +0.001302083 |
+
+The result is a meaningful preprocessing signal. Whole-file raw and
+commentless RTL remain as bad as T06, but the netlist views reduce
+same-problem clustering substantially. `canonical_yosys_netlist` is the
+strongest collapse-diagnostic candidate.
+
+The blocker is that this is still only a neighborhood diagnostic. The next
+required step is replay/PPA-front scoring: if `canonical_yosys_netlist` reduces
+problem clustering but fails lexical/random controls on QD/Pareto metrics, it
+remains `T0 diagnostic`.
 
 ## Required Result Tables
 

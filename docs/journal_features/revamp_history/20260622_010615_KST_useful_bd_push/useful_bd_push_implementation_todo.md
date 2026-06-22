@@ -132,8 +132,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       direct raw PPA Pareto figures and regeneration tables, and assigned a
       tier decision.
 - [ ] `T33_qwen3_preprocessing_ladder_bd` has source inventory and
-      preprocessing/embedding caches; needs collapse, replay, and PPA-front
-      diagnostics.
+      preprocessing/embedding caches plus collapse diagnostics; needs replay
+      and PPA-front diagnostics.
 
 ## Minimum Goal Completion
 
