@@ -138,3 +138,51 @@ uv run python scripts/package_rtllm_milestone_full.py \
 
 The final package has `0` hard retention failures, `4` yield warnings, and
 claim status `reviewable`.
+
+## Completed Phase 03.1 Viewer Export
+
+The full RTLLM viewer source was generated under:
+
+```text
+exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/qd_ppa_viewer_source_full
+```
+
+The viewer subset includes the `37` RTLLM problems with at least one valid
+PPA candidate. The other `13` manifest problems remain in the aggregate
+package but have no candidate-level PPA point to render.
+
+Classic candidates were projected into the exact T26 SR-PCA archive with the
+frozen SR raw PCA artifact from the 20260618 Auto-BD run. Projection summary:
+
+```text
+classic rows: 352
+projected rows: 352
+failed rows: 0
+descriptor hash: 931edf18e9ec5e3a7b2b8d7996c603c64ec82619f6185ea44cf4803e6105ee1b
+```
+
+Export command:
+
+```bash
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/qd_ppa_viewer_source_full \
+  --backend_run classic=exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/classic_revolution/seed_1001 \
+  --backend_run sr_raw_conservative_exploit_qd=exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/qd_viewer_backend_physical \
+  --archive_source_backend sr_raw_conservative_exploit_qd \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/full_rtllm/visualizations/rtllm_valid_ppa_viewer_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/full_rtllm/visualizations/qd_ppa_viewer \
+  --strict \
+  --no-classic-descriptor-recovery
+```
+
+Validation command:
+
+```bash
+uv run python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/full_rtllm/visualizations/qd_ppa_viewer \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/full_rtllm/visualizations/rtllm_valid_ppa_viewer_subset.yaml \
+  --strict \
+  --playwright
+```
+
+Validation result: `QD/PPA viewer validation passed`.

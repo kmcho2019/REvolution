@@ -129,3 +129,5 @@
 - Full terminology reference: `glossary.md`.
 - Generated tables: `full_rtllm/tables/`.
 - Raw candidate PPA data: `full_rtllm/data/full_ppa_candidates.csv`.
+- Full Phase 03.1 viewer: `full_rtllm/visualizations/qd_ppa_viewer/`.
+- Direct raw PPA supplement: `full_rtllm/visualizations/direct_ppa_pareto/`.

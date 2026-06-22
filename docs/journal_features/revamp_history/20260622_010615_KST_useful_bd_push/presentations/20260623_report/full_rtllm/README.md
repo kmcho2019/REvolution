@@ -149,6 +149,24 @@ Full token accounting is in `tables/full_budget_parity.csv`.
 - `figures/full_validity_funnel.png`
 - `figures/full_front_counts.png`
 - `figures/full_representative_ppa_fronts.png`
+- `visualizations/qd_ppa_viewer/`: full Phase 03.1 linked archive/PPA
+  viewer with 37 valid-PPA RTLLM problem datasets, strict validation, and
+  Playwright screenshots.
+- `visualizations/direct_ppa_pareto/`: static reader-facing raw area-power
+  PPA-front supplement.
+
+## Viewer Scope
+
+The full RTLLM package covers all `50` manifest problems. The Phase 03.1
+viewer includes the `37` problems with at least one valid PPA candidate. The
+remaining `13` problems had zero valid PPA candidates in both arms, so they
+remain in the aggregate tables and validity gates but are omitted from the
+candidate-level PPA/Pareto viewer.
+
+Classic rows were projected into the exact T26 SR-PCA archive using the
+frozen SR raw PCA artifact from the 20260618 Auto-BD run. Projection coverage
+was `352/352` classic rows with `0` failures. Strict viewer validation with
+Playwright passed.
 
 ## Claim Discipline
 

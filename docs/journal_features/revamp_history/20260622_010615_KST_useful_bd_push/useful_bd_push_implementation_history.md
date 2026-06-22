@@ -2525,3 +2525,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   dimensionality variants as the next primary live path. Reuse graph features
   as secondary archive/reporting coordinates or trained-encoder inputs unless
   a new mechanism is specified.
+
+## Full RTLLM Phase 03.1 Viewer Package - 2026-06-22 UTC
+
+- Added the full Phase 03.1 archive/PPA viewer under
+  `presentations/20260623_report/full_rtllm/visualizations/qd_ppa_viewer/`.
+  The bundle includes `index.html`, `manifest.json`, 37 problem datasets,
+  `validation.{json,md}`, `visual_parity_report.md`, `screenshot.png`, and
+  the Playwright screenshot matrix.
+- Kept the scope explicit: the milestone covers all 50 RTLLM manifest
+  problems, while the viewer includes the 37 problems with at least one valid
+  PPA candidate. The 13 zero-valid-PPA problems remain in the aggregate
+  tables and validity gates.
+- Projected all classic samples into the exact T26 SR-PCA archive using the
+  frozen 20260618 SR raw PCA artifact. Projection coverage was `352/352`
+  classic rows with `0` failures and descriptor hash
+  `931edf18e9ec5e3a7b2b8d7996c603c64ec82619f6185ea44cf4803e6105ee1b`.
+- Added `visualizations/direct_ppa_pareto/` as the static reader-facing raw
+  area-power front supplement, reusing the visually inspected representative
+  PPA-front figure.
+- Strict validation passed with Playwright:
+  `uv run python scripts/validate_qd_ppa_visualization.py --viewer-root .../qd_ppa_viewer --subset-config .../rtllm_valid_ppa_viewer_subset.yaml --strict --playwright`.

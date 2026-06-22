@@ -326,6 +326,18 @@ full 50-problem package to be generated.
 - `full_rtllm/figures/`: generated PNG figures.
 - `full_rtllm/figures/visual_inspection_notes.md`: manual visual inspection
   notes for the generated figures.
+- `full_rtllm/visualizations/qd_ppa_viewer/`: full Phase 03.1 linked
+  archive/PPA viewer with `37` valid-PPA RTLLM datasets, `manifest.json`,
+  `validation.json`, Playwright screenshots, and `screenshot.png`.
+- `full_rtllm/visualizations/direct_ppa_pareto/`: static raw area-power
+  PPA-front supplement for reader-facing inspection.
+
+The Phase 03.1 viewer covers the `37` RTLLM problems with candidate-level
+valid PPA data. The other `13` RTLLM problems remain in the 50-problem
+aggregate tables but are omitted from the viewer because there is no PPA point
+to draw. Classic samples were projected into the T26 archive using the frozen
+SR raw PCA artifact from the 20260618 Auto-BD run, with `352/352` classic rows
+projected and `0` failures. Strict validator status: `passed`.
 
 ## Conclusion
 
