@@ -6,7 +6,7 @@ is useful for RTL PPA evolution.
 | Gate | Required Evidence | Failure Meaning |
 | --- | --- | --- |
 | Classic-covered retention | Every problem where classic has at least one valid functional PPA candidate must also have a valid QD candidate. | QD cannot be promoted on that comparison. |
-| Yield warning | Valid-PPA and synthesis-valid rates are reported per problem, with 50% or larger drops labeled when classic has at least 10 passing samples. | Not a launch blocker if classic-covered retention passes, but the report must show the tradeoff. |
+| Yield warning | Functionality, synthesis-valid, and valid-PPA rates are reported per problem, with 50% or larger drops labeled when classic has at least 10 passing samples. | Not a launch blocker if classic-covered retention passes, but the report must show the tradeoff. |
 | Paired HV | Per-problem and aggregate HV deltas versus classic. | Aggregate-only wins are insufficient. |
 | HV-AUC | AUC over generation history, not only final population. | Final-only gains may be unstable. |
 | Direct PPA fronts | Raw area-power front points and representative plots. | BD-space visuals cannot substitute for PPA evidence. |

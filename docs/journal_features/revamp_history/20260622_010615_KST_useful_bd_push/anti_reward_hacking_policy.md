@@ -36,7 +36,7 @@ ablation, dependency escalation, or subset diagnostic.
 
 ## Anti-Gaming Checks
 
-Reject or downgrade a method when:
+Reject, downgrade, or explicitly warn on a method when:
 
 - descriptor fitting uses PPA, fitness, hypervolume, Pareto rank, reference
   PPA, or test pass outcomes;
@@ -45,9 +45,9 @@ Reject or downgrade a method when:
 - the method improves one easy problem while losing classic-covered coverage;
 - the method loses any design where classic has at least one valid functional
   PPA candidate under the same budget on the fixed compared subset;
-- functionality rate or synthesis-valid rate declines by 50 percent or more
-  relative to classic on a comparison unit where classic has at least 10
-  passing samples for the corresponding stage;
+- functionality rate, synthesis-valid rate, or valid-PPA yield declines by 50
+  percent or more relative to classic on a comparison unit where classic has
+  at least 10 passing samples for the corresponding stage;
 - the result depends on changing token budgets, prompt style, or subset after
   seeing outcomes;
 - only average fitness improves while hypervolume, Pareto spread, and passive
@@ -112,12 +112,17 @@ Use the weakest claim supported by evidence:
 
 Never phrase diagnostic-only evidence as optimization improvement.
 
-## Small-N Validity Caveat
+## PPA-First Validity Caveat
 
-Do not let a tiny classic baseline denominator create a false regression. The
-50 percent relative functionality/synthesis-validity decline rule is a hard
-gate only when classic has at least 10 passing samples for the corresponding
-stage in the compared unit. If classic has fewer than 10 passing samples,
-report the raw generated/pass counts and tag the unit `small_n_validity`;
-continue judging the method with coverage retention, valid-PPA yield,
-hypervolume, archive metrics, and follow-up evidence.
+The hard gate is design-level coverage retention. If classic has at least one
+valid functional PPA candidate for a design under the same budget, a `T1+`
+method must also produce at least one valid functional PPA candidate for that
+design. After that gate passes, 50 percent or larger drops in functionality,
+synthesis-valid, or valid-PPA yield are warnings, not automatic rejection
+criteria. They must be shown in the report and weighed against PPA
+hypervolume, front quality, archive metrics, and follow-up evidence.
+
+Do not let a tiny classic baseline denominator create a false regression. If
+classic has fewer than 10 passing samples for the compared stage, report the
+raw generated/pass counts and tag the unit `small_n_validity`; do not promote
+or reject a method from that rate alone.

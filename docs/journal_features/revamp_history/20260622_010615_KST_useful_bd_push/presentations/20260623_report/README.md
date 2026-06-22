@@ -45,4 +45,5 @@ baseline on PPA-centered metrics.
 Do not claim QD usefulness from average fitness alone. The report must use
 paired HV, HV-AUC, valid-PPA yield, front/family breadth, archive coverage, and
 duplicate accounting. A result is useful only if it preserves classic-covered
-problems and does not hide yield loss, validity collapse, or invalid diversity.
+problems and reports yield loss, validity collapse, or invalid diversity
+instead of hiding it.

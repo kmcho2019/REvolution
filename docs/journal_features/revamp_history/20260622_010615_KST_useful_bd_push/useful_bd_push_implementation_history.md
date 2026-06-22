@@ -2343,3 +2343,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   RTLLM run because it is the only QD arm with positive final mean HV versus
   classic and it improves HV-AUC. Exact T26 yield drops on ALU and multi-pipe
   are retained as visible yield warnings.
+
+## 2026-06-22T14:34:27Z - Relax PPA-first validity policy
+
+- Updated the current source-of-truth gate language after user clarification:
+  PPA optimization is the primary milestone goal, so the hard gate is
+  design-level coverage retention, not matching classic's valid-yield rate.
+- A `T1+` or milestone-promoted method must still produce at least one valid
+  functional PPA candidate for every design where classic has at least one
+  under the same budget.
+- A 50 percent or larger functionality, synthesis-valid, or valid-PPA yield
+  drop is now a visible warning when the classic denominator is at least 10,
+  not automatic rejection. Below 10, the rate is labeled small-n/noisy.
+- The active full RTLLM experiment remains pre-registered; this change aligns
+  the broader policy docs with the already-packaged milestone gate.

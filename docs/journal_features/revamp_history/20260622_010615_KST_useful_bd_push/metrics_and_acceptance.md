@@ -60,9 +60,10 @@ Use these as the headline metrics:
 - `functionality_rate`: functional candidates divided by generated candidates.
 - `synthesis_valid_rate`: synthesis-valid candidates divided by generated
   candidates.
-- `validity_gate_min_baseline_passes`: minimum classic baseline passing
-  samples needed before relative functionality/synthesis-validity decline is
-  treated as a hard promotion gate. This push uses `10`.
+- `yield_warning_min_baseline_passes`: minimum classic baseline passing
+  samples needed before a relative functionality, synthesis-valid, or
+  valid-PPA decline is treated as a meaningful yield warning. This push uses
+  `10`.
 
 ## Secondary Metrics
 
@@ -115,10 +116,9 @@ that a method explores a broader Pareto region rather than a lucky grid.
 - preserves every classic-covered design in the fixed compared subset: if
   classic has at least one valid functional PPA candidate for that design under
   the same evolutionary budget, the method must also have at least one;
-- avoids catastrophic validity collapse: functionality rate and
-  synthesis-valid rate must not drop by 50 percent or more relative to
-  classic on comparison units where the classic baseline has at least 10
-  passing samples for the corresponding stage;
+- reports any 50 percent or larger functionality, synthesis-valid, or
+  valid-PPA yield drop as a visible warning when the classic baseline has at
+  least 10 passing samples for the corresponding stage;
 - improves or matches at least one diversity metric such as coverage,
   Pareto-cell count, or unique front families.
 
@@ -144,10 +144,10 @@ that a method explores a broader Pareto region rather than a lucky grid.
   netlists.
 - A method cannot be promoted if it loses any classic-covered design in the
   fixed compared subset.
-- A method cannot be promoted if its functionality rate or synthesis-valid
-  rate falls by 50 percent or more relative to classic under the same budget on
-  comparison units where classic has at least 10 passing samples for the
-  corresponding stage.
+- A method with a 50 percent or larger functionality, synthesis-valid, or
+  valid-PPA yield drop can be promoted only as a PPA-first tradeoff: the report
+  must label the warning, preserve every classic-covered design, and justify
+  the claim with PPA hypervolume, front, archive, or best-quality evidence.
 - If classic has fewer than 10 passing samples for that stage, the relative
   decline gate is too sensitive to noise. Report raw counts and mark the unit
   `small_n_validity`; do not promote or reject a method from that rate alone.
@@ -170,7 +170,7 @@ The central comparison report must include:
 
 ## What Counts As A Useful Gain
 
-After the strict functionality and catastrophic-validity guardrails are met, a
+After the classic-covered design gate is met and yield warnings are visible, a
 method may be useful even if average fitness does not improve. A `T2` claim may
 come from any clearly documented primary metric improvement:
 

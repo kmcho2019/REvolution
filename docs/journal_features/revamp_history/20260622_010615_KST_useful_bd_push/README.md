@@ -166,8 +166,10 @@ Start here when resuming the active goal.
 
 ## Validity-Gate Note
 
-The strict "no 50 percent relative functionality/synthesis-validity collapse"
-rule is a hard promotion gate only when the classic baseline has at least 10
-passing samples for the corresponding stage in the compared unit. When the
-classic passing count is below 10, report the raw counts and mark the rate as
-small-n/noisy; do not promote or reject a method from that rate alone.
+The hard validity gate is design-level coverage retention: if classic has at
+least one valid functional PPA result for a design, a promoted QD method must
+also have at least one valid functional PPA result for that design. A 50
+percent or larger functionality, synthesis-valid, or valid-PPA yield drop is a
+visible warning when classic has at least 10 passing samples, not automatic
+rejection. Below 10 classic passing samples, report raw counts and mark the
+rate as small-n/noisy; do not promote or reject a method from that rate alone.
