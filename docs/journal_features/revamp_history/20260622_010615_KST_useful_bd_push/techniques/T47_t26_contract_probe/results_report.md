@@ -1,10 +1,10 @@
 # T47 T26 Contract Probe Results
 
-Status: not run.
+Status: hard/tuning complete; analysis packaging pending.
 
 ## Current Decision
 
-`pending_pre_registered`.
+`pending_hard_tuning_analysis`.
 
 T47 is a guardrail package, not completed evidence. It exists to make the next
 T26-family experiment answer the strongest current objections:
@@ -38,8 +38,10 @@ headline-reference failure mode from the one-seed RTLLM package.
 `2026-06-22T21:52:23Z` and produced 13 of 13 expected problem summaries.
 `sr_raw_conservative_exploit_qd` seed `1001` completed with return code `0` at
 `2026-06-22T21:26:45Z` and produced 13 of 13 expected archive summaries.
+`sr_raw_conservative_exploit_qd` seed `1002` completed with return code `0` at
+`2026-06-22T22:20:55Z` and produced 13 of 13 expected archive summaries.
 
-The matched seed-1001 pair passed:
+The matched two-seed hard/tuning run passed:
 
 ```bash
 uv run python scripts/validate_pareto_front_run.py \
@@ -50,7 +52,8 @@ uv run python scripts/validate_pareto_front_run.py \
   --require-full-subset
 ```
 
-Exact T26 QD seed `1002` is still pending.
+The next step is to package paired HV, best-score, validity, front-count, and
+default-reference-quarantine metrics before any T1-or-higher decision.
 
 ## Completion Gate
 

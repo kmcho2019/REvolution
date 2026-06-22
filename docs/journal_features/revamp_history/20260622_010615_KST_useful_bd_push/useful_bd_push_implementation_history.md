@@ -2664,3 +2664,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   produced 13 of 13 expected problem summaries.
 - The remaining hard/tuning live spend is exact T26 QD seed `1002`, after
   which the two-seed T47 comparison can be validated and packaged.
+
+## T47 Exact T26 Seed 1002 Completion - 2026-06-22 UTC
+
+- Launched the hard/tuning sanity `sr_raw_conservative_exploit_qd` arm for
+  seed `1002` under the same T47 run root.
+- The run completed with return code `0` at `2026-06-22T22:20:55Z` and
+  produced 13 of 13 expected archive summaries.
+- Validated the full two-seed hard/tuning set with
+  `scripts/validate_pareto_front_run.py --require-full-subset`. The command
+  exited with code `0` and no validation errors.
+- The next T47 step is analysis packaging, not a held-out launch. Package
+  paired HV, best-score, validity, front-count, and default-reference
+  quarantine metrics before assigning any T1-or-higher decision.

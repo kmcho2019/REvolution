@@ -1,7 +1,7 @@
 # T47 Hard/Tuning Sanity Commands
 
-Status: preflight complete; both `classic_revolution` seeds and exact T26 QD
-seed `1001` are complete. Exact T26 QD seed `1002` is not launched yet.
+Status: preflight complete; both `classic_revolution` seeds and both exact
+T26 QD seeds are complete.
 
 Run timestamp: `20260622_203146_UTC`
 
@@ -109,4 +109,4 @@ uv run python scripts/validate_pareto_front_run.py \
   --require-full-subset
 ```
 
-Seed `1001` validation passed with this command on 2026-06-22 UTC.
+Two-seed hard/tuning validation passed with this command on 2026-06-22 UTC.

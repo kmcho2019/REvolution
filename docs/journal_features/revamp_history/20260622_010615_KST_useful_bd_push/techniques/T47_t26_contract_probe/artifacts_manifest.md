@@ -1,11 +1,11 @@
 # T47 Artifacts Manifest
 
-Status: pre-run manifest.
+Status: hard/tuning run artifacts present; analysis packaging pending.
 
 ## Current Files
 
 - `methodology.md`: pre-registered T47 method card.
-- `results_report.md`: pending result report and decision placeholder.
+- `results_report.md`: run-status report and decision placeholder.
 - `commands/probe_plan.md`: command plan and execution checklist.
 - `commands/hard_tuning_sanity_20260622_203146_UTC.md`: exact preflighted
   hard/tuning launch commands for the current run root.
