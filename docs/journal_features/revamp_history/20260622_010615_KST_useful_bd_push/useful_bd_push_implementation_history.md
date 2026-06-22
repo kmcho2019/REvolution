@@ -1066,3 +1066,43 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Lane decision: keep T26 as the champion exploitation comparator, but specify
   T31 as a repair/yield/front-preserving emitter. Do not keep blindly
   interpolating T24/T26 scheduler knobs.
+
+## T31 SR Raw Fail-Feedback Repair QD Pre-Registration - 2026-06-22 UTC
+
+- Created `techniques/T31_sr_raw_fail_feedback_repair_qd/` as the next
+  archive-coupling package after T30.
+- T31 targets the T30 P098 warning directly: exact T26 had 15 valid PPA
+  samples on P098 versus classic's 31, and T26 did not broaden front/netlist
+  evidence on the holdout.
+- T31 keeps the T26/T30 SR raw descriptor, `grid_quantile` archive,
+  `pareto_front` cells, `qd_max_elites_per_cell=5`, NSGA-II parent selection,
+  `qd_champion_lane_fraction=0.80`, `qd_two_parent_probability=0.00`,
+  `qd_fill_target_fraction=0.25`, and
+  `qd_improve_backfill_fraction=0.20`.
+- T31 changes the code-generation emitter to code-individual
+  `single_thought_operator` with one-parent success sampling and
+  `qd_operator_fail_feedback_chars=1200`, so fail-pool parents expose the
+  failed stage and evaluator feedback to the LLM.
+- T31 deliberately does not use `thought_only` or bounded local repair attempts
+  in the first run. Prior journal-revamp evidence says thought-only/k-code
+  variants can improve pass rate while losing PPA quality; T31 is therefore a
+  same-offspring-budget repair/yield probe before any expanded-budget repair
+  loop.
+- Reuses the frozen T30 VerilogEval holdout problems and T30 classic/T26 roots
+  as comparators. The only new planned run is the T31 arm under
+  `exp/useful_bd_push/t31_sr_raw_fail_feedback_repair_qd_<RUN_TS>/`.
+- Added methodology, command, holdout subset YAML, run matrix, pending
+  artifact manifest, pending result report, figure requirements, visualization
+  placeholder, and central lane/index updates before execution.
+
+## Direct Raw PPA Pareto Figure Gate Tightening - 2026-06-22 UTC
+
+- Clarified the visualization policy after reviewing the current figure set.
+  A completed technique package now explicitly requires a standalone raw
+  area-power PPA Pareto-front PNG with conventional non-inverted axes and
+  lower-left marked as better.
+- Normalized PPA plots, BD/archive heatmaps, and HTML viewers are supporting
+  views only; they do not satisfy the primary PPA-front visualization gate.
+- Updated T31's methodology, results placeholder, figure checklist, and
+  visualization notes so the next live package cannot be accepted without this
+  straightforward PPA Pareto view.

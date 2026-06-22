@@ -23,8 +23,8 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, and multimodal circuit embeddings. | Run preprocessing ladders before fine-tuning or heavier external envs. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T30 gives mixed holdout support: T26 is best-score/HV competitive but still lacks front breadth. |
-| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Use T26/T29/T30 evidence to design bounded repair/yield/front-preserving emitters. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T31 is pre-registered to test same-budget failure-feedback repair on the T30 holdout. |
+| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Use T31 to measure whether fail-pool feedback repairs P098 yield without losing T26 pressure. |
 
 ## Lineage Graph
 
@@ -128,6 +128,7 @@ flowchart LR
 | T28 | `L5/L6` | Canonical RTL/netlist/family audit plus direct PPA-front figures and scoped HTML viewer. | Valid candidates are not duplicate collapse, but front-family coverage is still weak: T26 has 9 front families versus classic's 19 and SR raw's 16. | `advance` | Run T26 holdout or an SR raw front-recovery variant before promotion. |
 | T29 | `L5/L6` | SR raw front-recovery parent-source variant. | Completed `T0 diagnostic`; mean HV, HV-AUC, valid PPA, front points, and multi-pipe final-PPA coverage regress versus T26. Direct PPA-front plots show only two multi-pipe front points. | `retire` direct variant | Do not continue blind schedule interpolation; run T26 holdout or specify T31 repair/yield/front-preserving emitter. |
 | T30 | `L5/L6` | Classic versus exact T26 conservative-exploit SR raw on the frozen VerilogEval holdout screen. | Completed `T1 near_classic` holdout support with warning: T26 preserves all three holdout designs and improves mean best score by 9.91%, but drops valid PPA samples from 103 to 68, has a P098 yield warning, and does not broaden front/netlist evidence. | `advance` | Specify T31 repair/yield/front-preserving emitter using T26/T29/T30 direct PPA-front figures as controls. |
+| T31 | `L5/L6` | Same-budget failure-feedback repair emitter over the T26 SR raw archive substrate. | Pre-registered; keeps code-individual representation, 0.80 champion lane, and NSGA-II parent selection, but uses `single_thought_operator` with 1200-character fail-pool feedback. | `advance` | Run the T31 holdout command, then package against T30 classic/T26 controls. |
 | T12/T18 | `L6` | Lineage repair and adaptive emitter scheduling. | Scaffolded follow-ups now informed by T26/T27/T28's positive parent-source signal, T29's negative front-recovery result, and T30's holdout yield/front warning. | `hybridize` | Convert T30's P098 yield warning and front-breadth gap into a bounded repair emitter; keep T26/T29/T30 as controls. |
 
 ## Branching Rule

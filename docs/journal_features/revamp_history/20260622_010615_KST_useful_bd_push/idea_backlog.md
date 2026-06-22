@@ -266,6 +266,12 @@ a numbered `techniques/T##_slug/` package before running it.
   control, and the T30 holdout direct raw PPA Pareto plots.
 - Required T31 visual: a straightforward raw area-power Pareto front with no
   inverted axes, plus normalized improvement front and valid-PPA/yield bars.
+- T31 selected: `sr_raw_fail_feedback_repair_qd` keeps code-individual SR raw
+  QD, NSGA-II parent selection, and the 0.80 champion lane, but routes
+  same-budget fail-pool requests through `single_thought_operator` with
+  1200-character failure feedback. It intentionally avoids `thought_only` and
+  extra local repair attempts in the first holdout run because prior journal
+  evidence showed those mechanisms can trade away PPA quality.
 
 ## Near-Term Hybrids
 

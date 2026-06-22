@@ -163,6 +163,15 @@ samples, candidate-level front points tie at 3, unique PPA points drop from
 straightforward raw area-power Pareto figure with no inverted axes:
 `figures/t30_holdout_ppa_pareto_area_power_candidate_zoom.png`.
 
+`T31_sr_raw_fail_feedback_repair_qd` is pre-registered as the next live
+holdout arm. It keeps T26's SR raw descriptor, local-Pareto grid-quantile
+archive, NSGA-II parent selection, and 0.80 champion lane, but switches the
+code-individual emitter to `single_thought_operator` with `1200` characters of
+failure feedback for fail-pool parents. It does not use `thought_only`
+representation and does not add extra repair attempts, so it is a same
+offspring-budget repair/yield probe rather than an expanded-budget repair
+loop. Its controls are the T30 classic and T26 roots.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -197,10 +206,10 @@ straightforward raw area-power Pareto figure with no inverted axes:
 
 ## Next Decisions
 
-- Specify T31 as a repair/yield/front-preserving emitter before any promotion
-  claim.
+- Execute and package the pre-registered T31 failure-feedback repair arm before
+  any promotion claim.
 - Use the T30 P098 yield warning and front-family deficit as explicit T31
-  design targets.
+  acceptance targets.
 - Do not continue blind interpolation between T24 SR raw and T26 scheduler
   settings; T29 is the measured negative result for that idea.
 - Use the direct PPA-front audit figures when deciding whether a candidate has

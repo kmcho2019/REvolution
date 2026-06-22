@@ -45,7 +45,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Add `technique_lineage_ledger.md` as a skim-first lane/category,
       lineage, result, and branch tracking guide.
 - [ ] Add readable figures for every completed result package and cross-method
-      audit.
+      audit, including a standalone raw area-power PPA Pareto-front PNG before
+      any BD-space, normalized, or HTML-only visualization is accepted.
 - [ ] Inspect generated figures with `view_image` or equivalent before marking
       any technique complete.
 - [ ] Add tests for any new report/packaging code.
@@ -123,6 +124,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       assigned a tier decision.
 - [x] `T30_t26_holdout_front_audit` is pre-registered, executed, packaged, and
       assigned a tier decision.
+- [ ] `T31_sr_raw_fail_feedback_repair_qd` is pre-registered, executed,
+      packaged, and assigned a tier decision.
 
 ## Minimum Goal Completion
 
@@ -141,12 +144,13 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       useful-QD claim.
 - [x] T26/T28 gets holdout or front-recovery validation before any `T2`
       useful-QD claim.
-- [ ] T31 repair/yield/front-preserving emitter is specified from T30's P098
+- [x] T31 repair/yield/front-preserving emitter is specified from T30's P098
       yield warning and front-breadth deficit before another live run.
 - [ ] Central comparison report states whether QD/MAP-Elites is useful,
       near-classic, or still negative.
 - [ ] Central and per-technique reports pass
-      `visualization_reporting_policy.md`.
+      `visualization_reporting_policy.md`, including the direct raw PPA-front
+      figure gate.
 - [ ] Conclusions distinguish `T0`, `T1`, `T2`, and `T3`.
 - [ ] Every `T0` result adds a follow-up idea, ablation, hybrid, or retirement
       rationale before the next method starts.

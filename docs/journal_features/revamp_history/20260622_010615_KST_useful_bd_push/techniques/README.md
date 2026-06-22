@@ -44,10 +44,14 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T28` | `T28_t26_family_audit` | Canonical/family audit | `T1 near_classic` support with front-family blocker |
 | `T29` | `T29_sr_raw_front_recovery_qd` | Archive-coupling front-recovery variant | `T0 diagnostic`; failed to recover multi-pipe front/final-PPA coverage |
 | `T30` | `T30_t26_holdout_front_audit` | Archive-coupling holdout audit | `T1 near_classic` holdout support with P098 yield warning |
+| `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Archive-coupling failure-feedback repair variant | Pre-registered holdout live arm |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
 former 10 percent threshold is only the `T3 strong_win` bar.
 
 Completed packages must also satisfy `../visualization_reporting_policy.md`.
-Figures should be manually inspected before a result is accepted.
+The first reader-facing plot should be a standalone raw area-power PPA Pareto
+front PNG when PPA data exists; BD-space, normalized, and HTML visualizations
+are supporting artifacts. Figures should be manually inspected before a result
+is accepted.

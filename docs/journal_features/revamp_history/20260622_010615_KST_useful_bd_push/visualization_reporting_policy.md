@@ -9,7 +9,9 @@ images and conclusion have been inspected for clarity.
 Each completed technique should include:
 
 - validity funnel plot;
-- direct PPA Pareto-front plots against classic and landing Smooth-QD;
+- direct raw PPA Pareto-front PNGs against classic and landing Smooth-QD,
+  with area on x, power on y, conventional non-inverted axes, and lower-left
+  marked as better;
 - PPA/front comparison tables against classic and landing Smooth-QD;
 - passive archive coverage or quality plot;
 - duplicate/canonical-netlist accounting plot;
@@ -25,14 +27,17 @@ When applicable, live runs should also include:
 - a local `visualizations/qd_ppa_viewer/index.html` bundle, generated with the
   Phase 03.1 viewer when the run artifacts can be adapted to that schema.
 
-The direct PPA-front plots are required because aggregate HV, mean best score,
-and family-count bars can hide the actual Pareto shape. At minimum, include a
-straightforward raw area-power projection with conventional axes, no inversion,
-and lower-left marked as better. If the reference design stretches the scale,
-also include a candidate-only zoom on the same conventional axes. A normalized
-improvement projection may be added where higher is better on both axes. For
-sequential designs, explicitly note when clock period is an active third
-objective and point readers to the HTML viewer for the 3D PPA view.
+The direct raw PPA Pareto-front PNG is a required primary figure, not an
+optional diagnostic. Aggregate HV, mean best score, family-count bars,
+BD/archive heatmaps, HTML viewers, and normalized improvement plots do not
+substitute for this figure because they can hide the actual Pareto shape. At
+minimum, include a straightforward raw area-power projection with conventional
+axes, no inversion, and lower-left marked as better. If the reference design
+stretches the scale, also include a candidate-only zoom on the same
+conventional axes. A normalized improvement projection may be added where
+higher is better on both axes. For sequential designs, explicitly note when
+clock period is an active third objective and point readers to the HTML viewer
+for the 3D PPA view.
 
 The HTML viewer should use the existing `scripts/export_qd_ppa_visualization.py`
 schema when possible. If a scoped live-run adapter is needed, keep the adapter

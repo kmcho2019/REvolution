@@ -52,10 +52,11 @@ improves mean final-best score by 9.91%. It is not a QD-front promotion:
 valid-PPA yield drops, P098 has a per-problem yield warning, and front/netlist
 breadth does not improve.
 
-The next method should be T31, a repair/yield/front-preserving emitter that
-keeps T26 champion refinement while addressing T30's P098 yield warning and
-front-breadth deficit. T31 must include straightforward raw PPA Pareto figures
-with conventional lower-left-better axes.
+T31 is now pre-registered as `T31_sr_raw_fail_feedback_repair_qd`, a
+same-budget failure-feedback repair emitter that keeps T26 champion refinement
+while addressing T30's P098 yield warning and front-breadth deficit. T31 must
+include straightforward raw PPA Pareto figures with conventional
+lower-left-better axes.
 
 ## Prior Evidence To Reuse
 
