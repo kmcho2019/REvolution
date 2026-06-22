@@ -59,6 +59,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       record outputs under `presentations/20260623_report/reviews/`.
 - [x] Pass final presentation/report adversarial validation for diagnostic
       package status; do not treat it as positive `useful_qd` sign-off.
+- [x] Map the one-seed RTLLM package to the accepted `journal_narrative.md`
+      contract and mark it not final-gate eligible.
 - [ ] Define shared classic/manual/random/simple-control baselines.
 - [ ] Define central method result schema.
 - [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime

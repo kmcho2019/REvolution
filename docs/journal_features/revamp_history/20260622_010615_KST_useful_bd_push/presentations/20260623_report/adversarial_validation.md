@@ -23,6 +23,9 @@ positive `useful_qd` claim.
    report was narrowed to `diagnostic`. See
    `reviews/claude_current_package_review.md` and
    `reviews/claude_current_package_resolution.md`.
+5. Journal contract alignment. The current package was mapped against the
+   accepted `journal_narrative.md` contract and labeled not final-gate
+   eligible. See `journal_contract_alignment.md`.
 
 ## Required Reviewer Questions
 
@@ -56,3 +59,5 @@ not be presented as a positive QD-effectiveness claim until paired PPA evidence,
 scalar-quality evidence, and non-defaulted-reference or multi-seed evidence are
 stronger. Archive-viewer or implementation-family breadth claims require the
 corresponding follow-up artifacts before being presented as complete.
+Any TCAD-style final claim must also pass the frozen `journal_narrative.md`
+contract, not only the local presentation gates.

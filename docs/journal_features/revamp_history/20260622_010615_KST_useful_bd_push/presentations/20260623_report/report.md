@@ -372,6 +372,19 @@ quality/yield caveat visible: exact T26 has fewer audited deduplicated
 PPA-point rows (`318` versus `352`) and fewer reference-beating family-proxy
 hits (`129` versus `179`).
 
+## Journal Contract Alignment
+
+The accepted `docs/journal_features/journal_narrative.md` contract controls
+final TCAD claims. This package does not satisfy that final contract: it is
+one seed, does not label the frozen 13-problem tuning plus 20-problem held-out
+RTLLM split, does not run the penalized cluster-bootstrap/sign-test gates, and
+includes repaired/default-reference problems that cannot carry a held-out
+reference-normalized headline.
+
+The detailed mapping is in `journal_contract_alignment.md`. The short rule is:
+use this package as diagnostic evidence for method triage and presentation
+discussion, not as Branch A/B/C final evidence.
+
 ## Conclusion
 
 The full one-seed RTLLM milestone answers the two core questions with bounded

@@ -16,6 +16,7 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
 | `report.md` | Detailed written answer to the two questions, with evidence map and open gaps. |
 | `slides.md` | Markdown slide deck outline for colleagues. |
 | `glossary.md` | Audience-facing definitions for QD, BD, PPA, Pareto, and gate terminology. |
+| `journal_contract_alignment.md` | Mapping from this diagnostic package to the accepted journal claims contract. |
 | `experiment_plan.md` | Pre-registered screening and full RTLLM protocol. |
 | `adversarial_validation.md` | Review gates, prompts, and recorded feedback plan. |
 | `archives/` | Raw original planning notes retained for traceability. |
@@ -48,6 +49,8 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
 - Replication policy: one seed is the deadline-driven first milestone. Package
   those results into plots, tables, and slides before starting costly
   multi-seed replication.
+- Contract status: not final-gate eligible under `journal_narrative.md`; see
+  `journal_contract_alignment.md`.
 
 ## Claim Discipline
 
@@ -57,3 +60,4 @@ Family-breadth or archive-viewer claims require their own follow-up artifacts.
 For this PPA-first milestone, the hard gate is classic-covered retention: if
 classic has at least one valid PPA sample for a problem, QD must also have one.
 Yield loss remains a visible warning, not an automatic blocker.
+The accepted `journal_narrative.md` contract controls any final TCAD claim.

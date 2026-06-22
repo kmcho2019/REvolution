@@ -2589,3 +2589,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   review-resolution notes, and the RTLLM package generator/test so future
   regenerated summaries remain diagnostic unless stronger paired PPA and
   scalar-quality evidence is added.
+
+## Journal Contract Alignment Note - 2026-06-22 UTC
+
+- Added `presentations/20260623_report/journal_contract_alignment.md` to map
+  the one-seed full RTLLM package against the accepted
+  `docs/journal_features/journal_narrative.md` contract.
+- Main decision: the package is not final-gate eligible. It lacks the 5-seed
+  final scale, frozen tuning/held-out split labels, `journal_stats`
+  penalized cluster-bootstrap/sign-test gates, and non-defaulted-reference
+  headline evidence.
+- The note keeps the diagnostic value: exact T26 preserves classic-covered
+  problems and adds front points, but it cannot support Branch A/B/C or a
+  positive useful-QD claim without the contract-aligned follow-up evidence.
