@@ -39,7 +39,7 @@ def test_problem_gate_row_keeps_classic_covered_loss() -> None:
         ("classic", "large"): {"valid_ppa_count": "12"},
         ("qd", "large"): {"valid_ppa_count": "0"},
         ("classic", "warning"): {"valid_ppa_count": "12"},
-        ("qd", "warning"): {"valid_ppa_count": "5"},
+        ("qd", "warning"): {"valid_ppa_count": "6"},
         ("classic", "small_n"): {"valid_ppa_count": "5"},
         ("qd", "small_n"): {"valid_ppa_count": "1"},
     }

@@ -347,7 +347,7 @@ def gate_row(
     status = "pass"
     if metric == "valid_ppa_count" and reference > 0 and value == 0:
         status = "classic_covered_loss"
-    elif reference >= 10 and value < math.ceil(reference * 0.5):
+    elif reference >= 10 and value * 2 <= reference:
         status = "yield_warning"
     elif 0 < reference < 10:
         status = "small_n"
@@ -574,7 +574,9 @@ def write_report(
     }
     all_delta = aggregate_delta(deltas, "all_rtllm", "mean_global_ppa_hypervolume")
     auc_delta = aggregate_delta(deltas, "all_rtllm", "mean_hv_auc")
-    warnings = [row for row in gates if row["gate_status"] != "pass"]
+    hard_failures = [row for row in gates if row["gate_status"] == "classic_covered_loss"]
+    yield_warnings = [row for row in gates if row["gate_status"] == "yield_warning"]
+    small_n = [row for row in gates if row["gate_status"] == "small_n"]
     lines = [
         "# Full RTLLM Milestone Package",
         "",
@@ -582,9 +584,12 @@ def write_report(
         "",
         "## Headline",
         "",
+        f"- Claim status: `{claim_status(gates)}`.",
         f"- Mean HV delta, all RTLLM: `{all_delta}`.",
         f"- Mean HV-AUC delta, all RTLLM: `{auc_delta}`.",
-        f"- Non-pass validity gate labels: `{len(warnings)}` rows.",
+        f"- Hard retention failures: `{len(hard_failures)}` rows.",
+        f"- Yield warnings: `{len(yield_warnings)}` rows.",
+        f"- Small-n validity labels: `{len(small_n)}` rows.",
         "",
         "## Aggregate Metrics",
         "",
@@ -597,6 +602,20 @@ def write_report(
             f"| {row['cohort']} | {row['method_label']} | {row['problem_count']} | "
             f"{row['mean_global_ppa_hypervolume']} | {row['mean_hv_auc']} | "
             f"{row['valid_ppa_count']} | {row['total_ppa_front_points']} |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Retention Gate",
+            "",
+            "| Problem | Metric | Classic | Exact T26 QD | Status |",
+            "| --- | --- | ---: | ---: | --- |",
+        ]
+    )
+    for row in gates:
+        lines.append(
+            f"| {row['problem']} | {row['metric']} | {row['reference_value']} | "
+            f"{row['value']} | {row['gate_status']} |"
         )
     lines.extend(
         [
@@ -624,6 +643,12 @@ def write_report(
         ]
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def claim_status(gates: list[dict[str, str]]) -> str:
+    if any(row["gate_status"] == "classic_covered_loss" for row in gates):
+        return "blocked"
+    return "reviewable"
 
 
 def paired_values(rows: list[dict[str, str]], metric: str) -> list[float]:

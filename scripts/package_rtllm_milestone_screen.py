@@ -240,7 +240,7 @@ def problem_gate_row(
     status = "pass"
     if ref_value > 0 and value == 0:
         status = "classic_covered_loss"
-    elif ref_value >= 10 and value < math.ceil(ref_value * 0.5):
+    elif ref_value >= 10 and value * 2 <= ref_value:
         status = "yield_warning"
     elif 0 < ref_value < 10:
         status = "small_n"

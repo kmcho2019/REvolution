@@ -4,7 +4,7 @@ import csv
 import json
 from pathlib import Path
 
-from scripts.package_rtllm_milestone_full import METHODS, gate_row, main
+from scripts.package_rtllm_milestone_full import METHODS, claim_status, gate_row, main
 
 
 def test_package_rtllm_milestone_full(tmp_path: Path) -> None:
@@ -49,6 +49,8 @@ def test_package_rtllm_milestone_full(tmp_path: Path) -> None:
     assert len(aggregates) == len(METHODS) * 3
     assert candidates
     assert "Mean HV delta, all RTLLM" in report
+    assert "Claim status: `reviewable`" in report
+    assert "## Retention Gate" in report
     for figure in (
         "full_hv_delta_distribution.png",
         "full_hv_auc_delta_distribution.png",
@@ -66,11 +68,12 @@ def test_gate_row_keeps_zero_valid_ppa_as_hard_loss() -> None:
     qd_zero = {"valid_ppa_count": "0", "functionality_count": "0"}
     qd_one = {"valid_ppa_count": "1", "functionality_count": "1"}
     classic_large = {"valid_ppa_count": "12", "functionality_count": "12"}
-    qd_warning = {"valid_ppa_count": "5", "functionality_count": "5"}
+    qd_warning = {"valid_ppa_count": "6", "functionality_count": "6"}
 
     assert gate_row("p", "valid_ppa_count", qd_zero, classic)["gate_status"] == "classic_covered_loss"
     assert gate_row("p", "valid_ppa_count", qd_one, classic)["gate_status"] == "small_n"
     assert gate_row("p", "valid_ppa_count", qd_warning, classic_large)["gate_status"] == "yield_warning"
+    assert claim_status([gate_row("p", "valid_ppa_count", qd_zero, classic)]) == "blocked"
 
 
 def _write_problem(root: Path, mode: str, problem: str, method_index: int) -> None:
