@@ -2375,3 +2375,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated `report.md`, `slides.md`, command provenance, and visual inspection
   notes so the milestone can be presented as reviewable one-seed engineering
   evidence rather than seed-stable proof.
+
+## Presentation Terminology Pass - 2026-06-22 UTC
+
+- Added `presentations/20260623_report/glossary.md` with audience-facing
+  definitions for BD, QD/MAP-Elites, archive/elites, PPA, valid PPA,
+  retention gates, yield warnings, Pareto fronts, HV, HV-AUC, archive
+  coverage, QD score, and one-seed paired engineering evidence.
+- Split the slide outline into separate terminology and metric/gate slides so
+  non-QD readers can follow the result before the method details.
+- Linked the glossary from the report and package README, and tightened metric
+  schema descriptions for HV, HV-AUC, front counts, archive coverage, and QD
+  score.

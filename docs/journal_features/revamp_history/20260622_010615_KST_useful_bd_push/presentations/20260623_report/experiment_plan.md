@@ -1,6 +1,7 @@
 # RTLLM QD Milestone Experiment Plan
 
-Status: pre-registered draft; full RTLLM launch pending screening and review.
+Status: pre-registered protocol; one-seed full RTLLM run completed and
+packaged under `full_rtllm/`.
 
 ## Objective
 

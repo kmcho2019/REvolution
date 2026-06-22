@@ -39,6 +39,21 @@ without enough PPA evidence.
 
 ## Definitions
 
+This section gives the short reading definitions. The fuller audience glossary
+is in `glossary.md`.
+
+Behavior descriptor, or BD: a numeric summary used to place an RTL candidate
+into a QD archive. A valid BD for this study cannot use final PPA, fitness,
+hypervolume, Pareto rank, reference PPA, or test pass rate as an in-loop input.
+
+QD/MAP-Elites: an optimization strategy that retains strong candidates across
+multiple behavior regions instead of keeping only one globally best candidate.
+Candidates are mapped into archive cells by their BD.
+
+PPA: power, performance, and area. Area and power are always active in this
+package. Effective clock period is active when the reference timing data is
+available.
+
 Valid functional PPA candidate: a generated candidate that reaches the
 synthesis/PPA stage and contributes PPA metrics used by the Pareto analysis.
 This is stricter than syntax pass and functionality pass alone.
@@ -69,6 +84,10 @@ improvement space for one problem and method.
 
 Unique PPA point: a deduplicated normalized PPA-improvement point. This catches
 duplicate collapse even when many candidates are valid.
+
+One-seed paired engineering evidence: a same-seed, same-budget comparison
+across many problems. It can justify continuing or tuning a method, but it does
+not prove seed-stable statistical significance.
 
 ## Full RTLLM Protocol
 

@@ -15,6 +15,7 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
 | --- | --- |
 | `report.md` | Detailed written answer to the two questions, with evidence map and open gaps. |
 | `slides.md` | Markdown slide deck outline for colleagues. |
+| `glossary.md` | Audience-facing definitions for QD, BD, PPA, Pareto, and gate terminology. |
 | `experiment_plan.md` | Pre-registered screening and full RTLLM protocol. |
 | `adversarial_validation.md` | Review gates, prompts, and recorded feedback plan. |
 | `archives/` | Raw original planning notes retained for traceability. |
