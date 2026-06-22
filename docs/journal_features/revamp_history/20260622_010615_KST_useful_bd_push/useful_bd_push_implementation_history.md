@@ -2131,3 +2131,32 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated central indexes, current-results matrix, lane docs, lineage ledger,
   TODO, and plan so T43 is discoverable as pre-registered and pending live
   execution.
+
+## T43 Live Result And Direct PPA Report - 2026-06-22 UTC
+
+- Ran T43 under
+  `exp/useful_bd_push/t43_staged_sparse_yield_gate_qd_20260622_102415_UTC/`.
+  The vLLM preflight reported `openai/gpt-oss-120b` with `max_model_len`
+  131072.
+- Completed matched arms: `classic_revolution` in 1025 seconds and
+  `staged_sparse_yield_gate_qd` in 721 seconds.
+- Pareto archive validation passed with `valid=True`, `failure_count=0`,
+  `problem_invalid_count=0`, `acceptance_error_count=0`, and
+  `max_front_size_seen=2`.
+- Packaged the result under
+  `techniques/T43_staged_sparse_yield_gate_qd/`, including preflight JSON,
+  validation JSON/MD, candidate-level PPA rows, method summary rows, runtime
+  summary, direct raw PPA-front PNG, count summary PNG, and a
+  filesystem-openable direct-PPA HTML viewer with screenshot.
+- Visual inspection passed. `figures/t43_raw_area_power_fronts.png` and
+  `visualizations/direct_ppa_pareto/screenshot.png` use conventional
+  lower-left-better raw area-power axes, open circles for method fronts, and
+  black stars for pooled fronts.
+- Main result: T43 preserves all classic-covered designs and improves
+  traffic-light valid-PPA count versus matched classic (`26` versus `12`), but
+  contributes zero pooled raw area-power front hits.
+- Archive read: all three T43 QD archives completed strict eight-success
+  warmup, so the staged `0.60` champion lane never activated.
+- Tier decision: `T0 mixed_diagnostic`. Do not continue blind
+  champion-lane-percentage tuning; next use a bounded sparse-trigger screen or
+  branch exact T11 runtime projection.

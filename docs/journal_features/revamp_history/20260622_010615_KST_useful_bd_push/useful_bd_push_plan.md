@@ -365,13 +365,14 @@ controls under the same subset, seed, model, budget, and warmup. The accepted
 primary figure is a direct raw area-power PPA Pareto front with conventional
 non-inverted axes and lower-left marked as better.
 
-Current next target: execute T43, the staged sparse-yield gate. T42 is
-complete as `T0 mixed_diagnostic`: generation-0 triggering adds one ALU
-pooled-front hit and one multi-pipe pooled-front hit, but loses T41's
-traffic-light win and does not recover T39's multi-pipe best score. T43 keeps
-strict T41/T42-style champion pressure for normal warmup archives and lowers
-champion pressure only for archives initialized through adaptive sparse-yield
-fallback.
+Current next target: move past T43. T43 is complete as
+`T0 mixed_diagnostic`: it preserved all classic-covered designs and passed
+validation, but all three QD archives completed strict eight-success warmup,
+so the staged `0.60` champion-lane branch never activated. Its direct raw
+PPA-front figure has zero pooled-front hits. The next method should either
+force a genuine sparse-trigger condition with a bounded warmup buffer/patience
+rule, or branch exact T11 runtime projection so the descriptor changes instead
+of only parent pressure.
 
 ## Completion Gates
 

@@ -172,7 +172,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       visually inspected, and assigned a tier decision.
 - [x] `T43_staged_sparse_yield_gate_qd` is pre-registered with staged champion
       pressure after adaptive sparse archive initialization.
-- [ ] `T43_staged_sparse_yield_gate_qd` is executed, validated, packaged,
+- [x] `T43_staged_sparse_yield_gate_qd` is executed, validated, packaged,
       visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
@@ -215,6 +215,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Pareto controls before any `T1` or `T2` useful-QD claim.
 - [x] T42 initial sparse-yield gate gets a follow-up direction: per-design or
       staged sparse-yield activation instead of another global trigger shift.
+- [x] T43 staged sparse-yield gate gets a follow-up direction: stop blind
+      champion-lane tuning unless a run actually enters sparse fallback; next
+      try a bounded sparse-trigger screen or exact T11 runtime projection.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

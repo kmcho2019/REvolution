@@ -446,6 +446,22 @@ a numbered `techniques/T##_slug/` package before running it.
 - Required visual gate remains the direct raw area-power Pareto front. The
   method cannot be interpreted from archive heatmaps or aggregate counts alone.
 
+## From `T43_staged_sparse_yield_gate_qd`
+
+- T43 answers the staged champion-lane idea negatively for this screen. The
+  method preserved all classic-covered designs and passed validation, but all
+  three QD archives completed strict eight-success warmup, so the staged
+  `0.60` lane never activated.
+- The direct raw area-power front is the decisive artifact: T43 has zero
+  pooled raw-front hits. It broadens the traffic-light method front, but T41
+  still owns the pooled traffic-light front and T39/T42 remain better
+  multi-pipe controls.
+- Do not continue with another global champion-lane percentage tweak unless
+  the screen actually enters sparse fallback. A valid follow-up must either
+  add a bounded warmup buffer/patience rule that creates pre-registered sparse
+  fallback evidence, or change the descriptor by implementing exact T11 runtime
+  projection.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

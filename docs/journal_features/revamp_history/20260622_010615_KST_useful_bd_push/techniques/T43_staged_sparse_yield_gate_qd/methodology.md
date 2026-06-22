@@ -1,6 +1,6 @@
 # T43 Staged Sparse-Yield Gate Methodology
 
-Status: pre-registered live method; not yet interpreted.
+Status: completed live method; interpreted as `T0 mixed_diagnostic`.
 
 ## Question
 
@@ -69,3 +69,10 @@ T43 can advance only if it:
 
 If T43 does not preserve T41 traffic-light while improving T42/T39 multi-pipe
 evidence, it remains `T0`.
+
+## Observed Activation
+
+The staged branch did not activate in the live screen. All three QD archives
+completed strict eight-success warmup, so the run used the default `0.80`
+champion lane throughout. This means T43 is valid as a staged-gate smoke test,
+but it is not evidence that `0.60` sparse-fallback champion pressure helps.

@@ -49,11 +49,11 @@ Real result packages:
 - `T40_sparse_warmup_control_matrix` completed T39 control matrix
 - `T41_adaptive_sparse_yield_gate_qd` adaptive sparse-yield warmup fallback
 - `T42_initial_sparse_yield_gate_qd` initial sparse-yield warmup fallback
+- `T43_staged_sparse_yield_gate_qd` staged sparse-yield champion-pressure
+  follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
-Pre-registered but not yet real-result package:
-`T43_staged_sparse_yield_gate_qd`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -104,13 +104,19 @@ hits and best score `0.391093` versus T41's seven pooled hits and `0.473631`.
 It also does not recover T39's multi-pipe best score (`0.116397` versus
 T39's `0.222285`).
 
-T43 is pre-registered as that staged sparse-yield follow-up. It keeps T42's
-archive, descriptor, subset, model, seed, and budget, but lowers champion-lane
-pressure from `0.80` to `0.60` only for a problem whose archive initializes
-through `adaptive_sparse_yield_fallback`. Strict eight-success archives keep
-the `0.80` champion lane. No result is assigned until the matched classic, QD
-arm, validator, direct raw PPA-front package, and visual inspection are
-complete.
+T43 is complete and remains `T0 mixed_diagnostic`. It keeps T42's archive,
+descriptor, subset, model, seed, and budget, but lowers champion-lane pressure
+from `0.80` to `0.60` only for a problem whose archive initializes through
+`adaptive_sparse_yield_fallback`. The live run preserved all classic-covered
+designs and passed validation, but all three archives completed strict
+eight-success warmup, so the staged branch never activated. The direct raw
+PPA-front figure
+`techniques/T43_staged_sparse_yield_gate_qd/figures/t43_raw_area_power_fronts.png`
+shows the blocker: T43 has zero pooled raw-front hits. It improves
+traffic-light valid-PPA count versus matched classic (`26` versus `12`) and
+has seven traffic-light method-front points, but those points are dominated in
+the pooled comparison. T41 still owns the traffic-light pooled front, and
+T39/T42 remain stronger multi-pipe controls.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -473,7 +479,7 @@ the best ALU and traffic-light scores.
 - Do not promote T39 as a general useful-QD method after T40. It is a useful
   multi-pipe signal and sparse-yield ablation, not a same-budget win across
   the three-problem screen.
-- For the T36/T37/T38/T39/T40/T41/T42 lineage, pre-register a per-design or
-  staged sparse-yield gate next: keep strict T41/T42-style warmup for
-  high-yield designs, but activate the one-slot sparse lane only when initial
-  archive sparsity is measured.
+- For the T36/T37/T38/T39/T40/T41/T42/T43 lineage, stop global trigger-only
+  champion-pressure tuning. Next either force a real sparse-trigger condition
+  with a bounded warmup buffer/patience rule, or branch exact T11 runtime
+  projection so the descriptor changes.

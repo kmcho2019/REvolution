@@ -56,7 +56,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T40` | `T40_sparse_warmup_control_matrix` | Archive-coupling control matrix | `T0 mixed_control`; classic wins ALU/traffic pooled fronts, T39 only wins multi-pipe |
 | `T41` | `T41_adaptive_sparse_yield_gate_qd` | Archive-coupling adaptive warmup variant | `T0 mixed_diagnostic`; traffic-light win, but ALU and multi-pipe block promotion |
 | `T42` | `T42_initial_sparse_yield_gate_qd` | Archive-coupling initial warmup variant | `T0 mixed_diagnostic`; generation-0 gate adds ALU/multi-pipe pooled hits but loses T41 traffic-light |
-| `T43` | `T43_staged_sparse_yield_gate_qd` | Archive-coupling staged warmup variant | Pre-registered; lower champion pressure only after adaptive sparse initialization |
+| `T43` | `T43_staged_sparse_yield_gate_qd` | Archive-coupling staged warmup variant | `T0 mixed_diagnostic`; staged branch did not activate and direct PPA front has zero pooled hits |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
