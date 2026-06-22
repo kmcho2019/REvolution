@@ -361,7 +361,10 @@ class QDEngine(EoHEngine):
 
     def _objective_names(self) -> tuple[str, ...]:
         if self.qd_objectives == "ppa":
-            return active_ppa_objectives(self._circuit_type())
+            objectives = active_ppa_objectives(self._circuit_type())
+            if "g_T" in objectives and not self.ref_ppa_metrics.get("eff_clk_period", 0.0):
+                return tuple(name for name in objectives if name != "g_T")
+            return objectives
         raise ValueError(f"Unsupported qd_objectives '{self.qd_objectives}'.")
 
     def _resolve_grid_axes(

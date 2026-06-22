@@ -270,6 +270,31 @@ def test_qd_engine_default_grid_axes_include_power_for_sequential_problem(tmp_pa
     assert engine.qd_grid_axes == ("g_A", "g_P", "g_T")
 
 
+def test_qd_engine_omits_timing_objective_when_reference_timing_zero(
+    tmp_path,
+    monkeypatch,
+):
+    problem_spec = ProblemSpec(
+        benchmark_name="RTLLM",
+        problem_name="Prob",
+        prompt_text="desc",
+        top_module="TopModule",
+        benchmark_root=tmp_path,
+        circuit_type="sequential",
+    )
+    engine = _engine(tmp_path, monkeypatch, problem_spec=problem_spec, qd_grid_axes=("g_A",))
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 0.0}
+    candidate = Heuristic("timing-zero", "module m; endmodule", "", status="success")
+    candidate.ppa_success = True
+    candidate.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.0}
+    candidate.archive_insertion_index = 1
+
+    member = engine._archive_member(candidate, (0.1,))
+
+    assert engine._objective_names() == ("g_P", "g_A")
+    assert member.objectives == {"g_P": pytest.approx(0.1), "g_A": pytest.approx(0.1)}
+
+
 def test_qd_engine_uses_problem_spec_prompt_text_for_non_file_backed_problem(tmp_path):
     problem_spec = ProblemSpec(
         benchmark_name="cvdp",
