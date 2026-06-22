@@ -43,6 +43,7 @@ Real result packages:
 - `T11_mgvga_contrastive_bd` structural-contrastive replay diagnostic
 - `T35_t11_pareto_coupling_bd` T11 archive-coupling replay diagnostic
 - `T36_t11_bounded_front_lane_bd` T11 bounded-front-lane replay diagnostic
+- `T37_t36_slot_count_ablation` T36 explicit slot-count replay ablation
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -66,7 +67,9 @@ has zero mean HV/HV-AUC. T35 shows that T11 cell-local Pareto retention can
 recover direct front hits, but the deployable cell-local arms lose too much HV;
 the front-seeded arm is only an upper-bound diagnostic. T36 is the current
 best replay lead: one local-front slot improves HV and direct front hits over
-both lexical and T11. The ten-package minimum is satisfied, but the goal
+both lexical and T11. T37 confirms that the useful replay boundary is one
+local-front slot: two or more slots collapse toward the weaker T35
+cell-Pareto HV regime. The ten-package minimum is satisfied, but the goal
 remains active.
 
 ## Comparable Seed-1001 Replay Metrics
@@ -277,6 +280,18 @@ The primary PNG is
 The filesystem-openable direct raw PPA viewer is
 `techniques/T36_t11_bounded_front_lane_bd/visualizations/direct_ppa_pareto/index.html`.
 
+`T37_t36_slot_count_ablation` is the completed explicit slot-count ablation
+for the T36 replay lead. Slot zero reproduces T11 (`3.769259` HV, `120` front
+hits). One slot reproduces the T36 win (`3.851344` HV, `+4.04%` versus lexical,
+`126` front hits). Two or more local-front slots lose too much HV
+(`3.369630`, `-8.97%` versus lexical) even when front hits improve. The result
+keeps T36/T37 at `T2 replay_candidate`: the next step is same-budget live
+validation of exactly one bounded local-front slot, not a wider front lane.
+The primary PNG is
+`techniques/T37_t36_slot_count_ablation/figures/t37_multi_problem_ppa_pareto_fronts.png`.
+The filesystem-openable direct raw PPA viewer is
+`techniques/T37_t36_slot_count_ablation/visualizations/direct_ppa_pareto/index.html`.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -332,9 +347,12 @@ The filesystem-openable direct raw PPA viewer is
     replacing descriptor novelty with cell-local Pareto retention loses too
     much HV. The next attempt should keep the T11 selector and add only a
     bounded front lane.
-21. T36 is the strongest current replay lead. A one-slot local-front lane
+21. The T36/T37 one-slot bounded lane is the strongest current replay lead. It
     improves HV by +4.04% over lexical and recovers direct front hits to 126,
     but it still needs live validation before any useful-BD claim.
+22. T37 confirms the T36 result is a one-slot boundary, not a broad quota
+    sweep. Adding a second or third local-front slot over-replaces the T11
+    selector and loses HV.
 
 ## Next Decisions
 
@@ -364,6 +382,6 @@ The filesystem-openable direct raw PPA viewer is
 - For the T11 lineage, do not promote front-seeded evidence as a method. Use it
   only to justify a gentler replay or live variant that preserves T11's
   farthest/HV behavior while reserving a small front-recovery lane.
-- For T36, run same-budget live validation or a slot-count ablation next. Do
-  not overstate the six quota labels as separate evidence because they all map
-  to one front-lane slot under the current replay group size.
+- For T36/T37, run same-budget live validation of the one-slot bounded front
+  lane next. Do not widen the local-front lane unless new evidence changes the
+  T37 slot-count conclusion.

@@ -50,6 +50,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T34` | `T34_qwen_pca_residual_bd` | Learned/projection descriptor | `T0 diagnostic`; PCA residuals preserve RTL HV but do not reduce collapse enough |
 | `T35` | `T35_t11_pareto_coupling_bd` | Archive-coupled contrastive descriptor | mixed `T0/T1 diagnostic`; cell-local Pareto improves front hits but loses HV, front-seeded is only an upper bound |
 | `T36` | `T36_t11_bounded_front_lane_bd` | Archive-coupled contrastive descriptor | `T2 replay_candidate`; one local-front slot gives +4.04% HV and +4 front hits vs lexical |
+| `T37` | `T37_t36_slot_count_ablation` | Archive-coupled contrastive descriptor | `T2 replay_candidate`; one-slot T37 matches T36, two-plus slots collapse HV |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

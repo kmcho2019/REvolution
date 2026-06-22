@@ -14,24 +14,23 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T36_t11_bounded_front_lane_bd/` (completed T11 bounded-front
-  replay; one local-front slot improves HV and direct front hits versus both
-  lexical and T11).
+  `techniques/T37_t36_slot_count_ablation/` (completed T36 slot-count
+  ablation; one local-front slot is the best deployable replay arm, while two
+  or more slots collapse toward weaker cell-Pareto HV).
 - Most recent pre-registered package: none beyond the remaining scaffolded
   T08-T10/T12/T15-T16/T18 encoder and emitter candidates.
 - Next direction:
-  live-validate the one-slot T36 bounded front lane or run a slot-count
-  ablation; do not describe the collapsed 5-20% quota arms as independent
-  wins on the current replay surface.
+  live-validate the one-slot T36/T37 bounded front lane; do not expand the
+  local-front lane beyond one slot without new evidence.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T36_t11_bounded_front_lane_bd/figures/t36_multi_problem_ppa_pareto_fronts.png`
+  `techniques/T37_t36_slot_count_ablation/figures/t37_multi_problem_ppa_pareto_fronts.png`
   (four representative raw area-power Pareto-front panels with all-valid,
-  lexical, T11, T35, and T36 overlays).
+  lexical, T11, T35, and T37 slot-count overlays).
 - Most recent direct PPA HTML viewer:
-  `techniques/T36_t11_bounded_front_lane_bd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T37_t36_slot_count_ablation/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto viewer with front-hit summary and
   Playwright screenshot).
 - Most recent interactive visualization refresh:
@@ -130,6 +129,7 @@ Start here when resuming the active goal.
 | `T34` | `T34_qwen_pca_residual_bd` | Completed replay diagnostic, `T0 diagnostic`; PCA residuals preserve T33 RTL HV signal but do not align HV, front hits, and collapse reduction. |
 | `T35` | `T35_t11_pareto_coupling_bd` | Completed replay diagnostic, mixed `T0/T1 diagnostic`; T11 cell-local Pareto retention improves direct front hits but loses HV, while front-seeded retention is only an upper-bound diagnostic. |
 | `T36` | `T36_t11_bounded_front_lane_bd` | Completed replay diagnostic, `T2 replay_candidate`; one local-front slot improves HV by +4.04% over lexical and recovers direct front hits to 126. |
+| `T37` | `T37_t36_slot_count_ablation` | Completed replay diagnostic, `T2 replay_candidate`; confirms one local-front slot is the useful boundary and rejects two-plus slots. |
 
 ## Validity-Gate Note
 

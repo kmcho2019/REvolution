@@ -1735,3 +1735,45 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `uv run python -m pyright scripts/analyze_t36_t11_bounded_front_lane.py tests/scripts/test_analyze_t36_t11_bounded_front_lane.py`,
   and
   `uv tool run ty check scripts/analyze_t36_t11_bounded_front_lane.py tests/scripts/test_analyze_t36_t11_bounded_front_lane.py`.
+
+## T37 T36 Slot-Count Ablation - 2026-06-22 UTC
+
+- Added `scripts/analyze_t37_t36_slot_count_ablation.py` and a focused test.
+  The replay turns the collapsed T36 quota question into explicit zero, one,
+  two, and three local-front slot arms.
+- Pre-registered the method in
+  `techniques/T37_t36_slot_count_ablation/methodology.md` before the real
+  replay. The descriptor remains the T11 structural contrastive descriptor; PPA
+  is excluded from descriptor fitting and used only after candidate evaluation
+  for archive-retention diagnostics.
+- Ran the replay command recorded in
+  `techniques/T37_t36_slot_count_ablation/commands/replay_v0.md` with the
+  common Qwen audit candidate CSV, T07 graph manifest, T14 hypergraph feature
+  table, `0.5` retention fraction, random seed `0`, and `2` bins per T11 PCA
+  axis.
+- Main result: slot zero reproduces T11 (`3.769259` HV, `120` front hits). One
+  slot reproduces the T36 win (`3.851344` HV, `+4.04%` versus lexical, `126`
+  front hits). Two or more slots lose too much HV (`3.369630`, `-8.97%` versus
+  lexical), so wider local-front lanes are rejected.
+- Tier decision: one-slot T37 remains `T2 replay_candidate`, not final
+  promotion. The slot-count ablation answers the replay ambiguity and makes the
+  next live target precise: exactly one bounded local-front slot.
+- Added primary raw PPA-front figures:
+  `techniques/T37_t36_slot_count_ablation/figures/t37_multi_problem_ppa_pareto_fronts.png`
+  and
+  `techniques/T37_t36_slot_count_ablation/figures/t37_raw_area_power_pareto_front.png`.
+  The plotted data are committed in `tables/ppa_front_plot_points.csv`.
+- Added the direct raw PPA HTML viewer:
+  `techniques/T37_t36_slot_count_ablation/visualizations/direct_ppa_pareto/index.html`.
+  Playwright rendered it and saved
+  `visualizations/direct_ppa_pareto/screenshot.png`.
+- Visual inspection passed for the multi-problem raw PPA front, raw
+  area-power zoom, hypervolume bars, front-hit bars, and HTML viewer. Notes are
+  in
+  `techniques/T37_t36_slot_count_ablation/figures/visual_inspection_notes.md`.
+- Focused validation passed:
+  `uv run pytest tests/scripts/test_analyze_t37_t36_slot_count_ablation.py`,
+  `uv run ruff check scripts/analyze_t37_t36_slot_count_ablation.py tests/scripts/test_analyze_t37_t36_slot_count_ablation.py`,
+  `uv run python -m pyright scripts/analyze_t37_t36_slot_count_ablation.py tests/scripts/test_analyze_t37_t36_slot_count_ablation.py`,
+  and
+  `uv tool run ty check scripts/analyze_t37_t36_slot_count_ablation.py tests/scripts/test_analyze_t37_t36_slot_count_ablation.py`.

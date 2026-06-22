@@ -45,11 +45,12 @@ The desired end state is one of:
 
 ## Current Research State
 
-T36 is the most recent completed package and the strongest current replay
-lead. It keeps the T11 structural-contrastive selector and adds one bounded
-descriptor-cell local-front slot. The bounded lane reaches HV `3.851344`,
-`+4.04%` versus lexical, and recovers direct front hits to `126`, above
-lexical's `122` and T11's `120`. It is a `T2 replay_candidate`, not a final
+T37 is the most recent completed package and confirms the T36 replay lead. It
+keeps the T11 structural-contrastive selector and tests zero, one, two, and
+three bounded descriptor-cell local-front slots. One slot reaches HV
+`3.851344`, `+4.04%` versus lexical, and recovers direct front hits to `126`,
+above lexical's `122` and T11's `120`. Two or more slots collapse toward the
+weaker T35 cell-Pareto HV regime. It is a `T2 replay_candidate`, not a final
 useful-BD promotion, because no same-budget live run has tested
 generation-time validity and coverage.
 
@@ -62,8 +63,9 @@ T11 remains the strongest pure descriptor-only L4 replay selector so far. Its
 top-64/weighted structural contrastive descriptors beat lexical HV by
 `+1.82%` and keep `186` unique PPA points, but direct front hits still miss
 lexical (`120` versus `122`). T36 is the measured bounded-front follow-up. The
-next T11-family step should live-validate T36 or run a slot-count ablation; do
-not replace descriptor novelty outright with local Pareto retention.
+T37 is the measured slot-count ablation. The next T11-family step should
+live-validate exactly one bounded local-front slot; do not replace descriptor
+novelty outright with local Pareto retention.
 
 T30 remains the most recent positive holdout support for exact T26
 conservative-exploit SR raw: it preserves all three classic-covered
@@ -266,6 +268,8 @@ Start with these packages and add more only with a method card:
   descriptor cells.
 - `T18_adaptive_emitter_cvt_bd`: CVT archive with fixed explore/exploit/repair
   emitter mixture.
+- `T37_t36_slot_count_ablation`: explicit bounded-front slot-count ablation
+  for the T36/T11 replay lead.
 
 At least 10 technique packages must be attempted with real results before the
 goal can claim a completed negative map. Prior failed methods can be reused as

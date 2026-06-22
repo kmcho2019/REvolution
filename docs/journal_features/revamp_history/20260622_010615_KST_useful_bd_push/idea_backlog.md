@@ -353,14 +353,26 @@ a numbered `techniques/T##_slug/` package before running it.
 - The `5%` to `20%` quota arms collapse to the same one-slot bounded lane
   because retained group sizes are small. Do not count those labels as
   independent evidence.
-- Potential T37: `t36_live_bounded_front_lane_qd`. Implement the same archive
+- Potential live follow-up: `t37_live_bounded_front_lane_qd`. Implement the same archive
   rule in a same-budget live screen, keeping the T11 descriptor and one local
   front-recovery slot per cell/group. Acceptance gates: preserve every
   classic-covered design, avoid catastrophic validity collapse, and show the
   direct raw PPA front before aggregate claims.
-- Alternative T37 if staying passive: `t36_slot_count_ablation`. Compare zero,
-  one, and two local-front slots under the same replay setup so the slot-count
-  effect is explicit rather than hidden behind percent quotas.
+- Completed passive follow-up: `T37_t36_slot_count_ablation` compares zero,
+  one, two, and three local-front slots under the same replay setup so the
+  slot-count effect is explicit rather than hidden behind percent quotas.
+
+## From `T37_t36_slot_count_ablation`
+
+- T37 confirms that one bounded local-front slot is the useful replay boundary:
+  it keeps the T36 HV/front-hit win, while two or more local-front slots fall
+  back to the weaker T35 cell-Pareto HV regime.
+- Do not spend live budget on two-slot or three-slot front lanes unless a new
+  mechanism changes the retained group size or archive pressure. Wider front
+  lanes are not automatically better.
+- Next live method should implement exactly one bounded local-front slot on
+  top of the T11 structural contrastive descriptor. The direct raw PPA Pareto
+  plot is the first acceptance figure; aggregate HV bars are secondary.
 
 ## Near-Term Hybrids
 
