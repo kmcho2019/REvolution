@@ -29,8 +29,16 @@ multi-pipe pooled-front recovery?
 - Pareto archive validation passed with `valid=True`, `failure_count=0`,
   `problem_invalid_count=0`, `acceptance_error_count=0`, and
   `max_front_size_seen=2`.
+- Full Phase 03.1 viewer:
+  `visualizations/qd_ppa_viewer/index.html`.
+- Full viewer validation:
+  `visualizations/qd_ppa_viewer/validation.json` reports `passed` with zero
+  errors after strict schema/control validation and Playwright smoke.
+- Classic archive projection is honest: the viewer aliases the baseline as
+  `classic` and projects 35/35 ALU, 12/12 traffic-light, and 14/14 multi-pipe
+  classic candidates into the T43 QD archive from recovered descriptor values.
 - Primary figure: `figures/t43_raw_area_power_fronts.png`.
-- HTML viewer:
+- Direct raw-PPA supplement:
   `visualizations/direct_ppa_pareto/index.html`.
 - Regeneration data:
   `tables/t43_candidate_ppa_points.csv` and

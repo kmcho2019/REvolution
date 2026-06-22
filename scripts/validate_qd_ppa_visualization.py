@@ -162,7 +162,13 @@ def validate_viewer(
         errors.extend(_validate_dataset(dataset, viewer_root=viewer_root, strict=strict))
 
     if run_playwright:
-        errors.extend(_playwright_smoke(viewer_root, strict=strict))
+        errors.extend(
+            _playwright_smoke(
+                viewer_root,
+                strict=strict,
+                require_reference_cases=subset_config is None,
+            )
+        )
 
     _write_validation(viewer_root, errors)
     return errors
@@ -528,7 +534,12 @@ def _check_rank_one(
     return errors
 
 
-def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
+def _playwright_smoke(
+    viewer_root: Path,
+    *,
+    strict: bool,
+    require_reference_cases: bool,
+) -> list[str]:
     try:
         from playwright.sync_api import sync_playwright  # type: ignore[reportMissingImports]
     except ImportError:
@@ -776,7 +787,7 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                 " window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('all');"
                 "}"
             )
-            if strict:
+            if strict and require_reference_cases:
                 _strict_visual_matrix(
                     page,
                     problem_keys,

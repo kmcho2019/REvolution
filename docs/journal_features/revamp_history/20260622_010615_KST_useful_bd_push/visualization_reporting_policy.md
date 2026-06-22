@@ -18,14 +18,27 @@ Each completed technique should include:
 - method-specific diagnostic plot;
 - one compact summary figure that supports the tier decision.
 
-When applicable, live runs should also include:
+Live QD runs with archive artifacts must also include:
 
 - hypervolume versus valid-PPA evaluations;
 - QD score versus valid-PPA evaluations;
 - coverage versus valid-PPA evaluations;
 - archive heatmap or CVT projection at the final budget.
-- a local `visualizations/qd_ppa_viewer/index.html` bundle, generated with the
-  Phase 03.1 viewer when the run artifacts can be adapted to that schema.
+- a full Phase 03.1-compatible
+  `visualizations/qd_ppa_viewer/` bundle:
+  `index.html`, `manifest.json`, `datasets/*.json`, `validation.json`,
+  `screenshot.png`, and `README.md`.
+- a reader-facing `visualizations/direct_ppa_pareto/` bundle:
+  `index.html`, `metrics.json`, `screenshot.png`, and `README.md`.
+
+`visualizations/qd_ppa_viewer/` is the linked archive/PPA viewer from
+`scripts/export_qd_ppa_visualization.py` and
+`src/revolution/qd/ppa_visualization_viewer.py`. It supports the timeline,
+compare mode, archive projection, raw/improvement/normalized coordinate modes,
+native and raw-area-power PPA panes, 2D/3D-style rendering, validation hooks,
+and schema files. The simpler `direct_ppa_pareto/index.html` wrapper is useful
+for paper-readable raw PPA-front inspection, but it is not the Phase 03.1
+viewer and must not be described as such.
 
 The direct raw PPA Pareto-front PNG is a required primary figure, not an
 optional diagnostic. Aggregate HV, mean best score, family-count bars,
@@ -51,15 +64,59 @@ technique `figures/README.md` and the first figure discussed in
 raw area, power, problem, method, and rank-1-front columns to regenerate the
 figure without rerunning the LLM.
 
-The HTML viewer should use the existing `scripts/export_qd_ppa_visualization.py`
-schema when possible. If a scoped live-run adapter is needed, keep the adapter
-data under the technique directory or `exp/`, never under `/aux`. Record
-whether Classic is honestly projectable into the selected archive coordinates;
-if it is not, keep Classic in the PPA/Pareto pane and document why the archive
-pane is empty. Every generated viewer must expose a raw area-power front mode
-with conventional axes, lower-left-better annotation, and per-technique
-nondominated front outlines. The native 3D PPA view remains necessary for
-sequential timing, but it does not replace the raw area-power projection.
+Export every full viewer with `scripts/export_qd_ppa_visualization.py` after
+generating the canonical source CSVs. Required inputs are:
+
+- `final_analysis/ppa_distribution/data/ppa_candidates.csv`;
+- `final_analysis/ppa_distribution/data/reference_ppa_metrics.csv`;
+- `final_analysis/design_space_analysis/successful_candidates.csv` when
+  classic candidates need descriptor recovery;
+- the classic backend run directory;
+- the QD backend run directory;
+- QD archive artifacts such as `archive_space.json`, `archive_cells.csv`, and
+  preferably `archive_history.jsonl`;
+- descriptor values, or code paths sufficient to recover descriptor values and
+  project classic candidates into the QD archive posthoc.
+
+Use `classic` as the viewer technique key for the baseline while documenting
+the source backend path, so the Phase 03.1 compare/validation conventions stay
+consistent. A standard export should look like:
+
+```bash
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root docs/.../techniques/T##_slug/visualizations/qd_ppa_viewer_source \
+  --backend_run classic=exp/.../classic_revolution/seed_1001 \
+  --backend_run METHOD=exp/.../METHOD/seed_1001 \
+  --archive_source_backend METHOD \
+  --subset-config docs/.../techniques/T##_slug/tables/live_screen_v0_subset.yaml \
+  --output-dir docs/.../techniques/T##_slug/visualizations/qd_ppa_viewer \
+  --strict
+```
+
+Then validate it:
+
+```bash
+uv run python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root docs/.../techniques/T##_slug/visualizations/qd_ppa_viewer \
+  --subset-config docs/.../techniques/T##_slug/tables/live_screen_v0_subset.yaml \
+  --strict
+```
+
+Run the same validator with `--playwright` before marking a live QD package
+complete when Playwright is available, then keep a compact
+`visualizations/qd_ppa_viewer/screenshot.png` in the package. The optional
+Playwright screenshot matrix can be regenerated locally and does not need to
+be committed for every technique.
+
+Record whether classic candidates are honestly projectable into the selected
+archive coordinates. If projection fails, keep classic in the PPA/Pareto pane
+and document why the archive pane is empty. Replay-only or archive-missing
+techniques may omit the full viewer only with a documented reason in
+`results_report.md` and `artifacts_manifest.md`. Every generated viewer must
+expose a raw area-power front mode with conventional axes, lower-left-better
+annotation, and per-technique nondominated front outlines. The native 3D PPA
+view remains necessary for sequential timing, but it does not replace the raw
+area-power projection.
 
 ## Visual Quality Checklist
 

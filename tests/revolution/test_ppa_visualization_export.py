@@ -3,11 +3,15 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 import csv
 import json
+import math
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from revolution.qd.ppa_visualization_export import (
     BackendRun,
+    _graph_metrics_for_code,
     _project_sample,
     export_qd_ppa_visualization,
 )
@@ -397,6 +401,65 @@ def test_projection_rules_cover_grid_quantile_grid_and_cvt() -> None:
     assert _project_sample(cvt, descriptors={"x": 1.8, "y": 1.9}, technique="classic")[
         "archive_cell_id"
     ] == "1"
+
+
+def test_graph_recovery_combines_rtl_and_graph_metrics(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    code_path = tmp_path / "code.sv"
+    code_path.write_text("module top; endmodule\n", encoding="utf-8")
+
+    class FakeRTLDescriptorEvaluator:
+        def extract_metrics(
+            self,
+            *,
+            code_text: str,
+            code_file_path: str | Path | None,
+            mapped_cell_count: float | int | None = None,
+        ) -> dict[str, float]:
+            return {"rtl_cyclomatic_total_log": 3.0}
+
+    class FakeGraphDescriptorEvaluator:
+        def __init__(self, *, yosys_timeout_seconds: int = 30) -> None:
+            assert yosys_timeout_seconds == 30
+
+        def extract_metrics(
+            self,
+            *,
+            code_file_path: str | Path | None,
+            top_module_name: str | None,
+        ) -> dict[str, float]:
+            return {
+                "reconv_sink_ratio": 0.25,
+                "scoap_signal_smoothness": 0.75,
+            }
+
+    monkeypatch.setattr(
+        "revolution.rtl_descriptor_evaluator.RTLDescriptorEvaluator",
+        FakeRTLDescriptorEvaluator,
+    )
+    monkeypatch.setattr(
+        "revolution.graph_descriptor_evaluator.GraphDescriptorEvaluator",
+        FakeGraphDescriptorEvaluator,
+    )
+
+    _, metrics = _graph_metrics_for_code(
+        (
+            str(code_path),
+            (
+                "rtl_cyclomatic_total_log",
+                "reconv_sink_ratio",
+                "scoap_signal_smoothness",
+            ),
+        )
+    )
+
+    assert metrics == {
+        "rtl_cyclomatic_total_log": pytest.approx(math.log1p(3.0)),
+        "reconv_sink_ratio": 0.25,
+        "scoap_signal_smoothness": 0.75,
+    }
 
 
 def test_export_supports_grid_and_cvt_archive_sources(tmp_path: Path) -> None:

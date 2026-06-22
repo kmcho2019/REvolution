@@ -2160,3 +2160,23 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Tier decision: `T0 mixed_diagnostic`. Do not continue blind
   champion-lane-percentage tuning; next use a bounded sparse-trigger screen or
   branch exact T11 runtime projection.
+
+## Phase 03.1 Viewer Contract And T43 Export - 2026-06-22 UTC
+
+- Tightened `visualization_reporting_policy.md`: live QD techniques with
+  archive artifacts now require both the full Phase 03.1
+  `visualizations/qd_ppa_viewer/` bundle and the simpler
+  `visualizations/direct_ppa_pareto/` supplement.
+- Fixed `scripts/validate_qd_ppa_visualization.py` so strict Playwright
+  validation can run on per-technique subsets without requiring unrelated
+  reference/demo problems.
+- Fixed classic descriptor recovery in
+  `src/revolution/qd/ppa_visualization_export.py` by combining RTL and graph
+  metrics and applying descriptor-axis transforms before posthoc projection.
+- Exported T43's full viewer at
+  `techniques/T43_staged_sparse_yield_gate_qd/visualizations/qd_ppa_viewer/`.
+  The baseline is aliased as `classic` for Phase 03.1 compatibility and maps
+  to the `classic_revolution` backend run.
+- Strict schema/control validation and strict Playwright smoke both passed.
+  Classic projection coverage is 35/35 for ALU, 12/12 for traffic-light, and
+  14/14 for multi-pipe.

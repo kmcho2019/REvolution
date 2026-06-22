@@ -607,18 +607,26 @@ def _recover_classic_descriptors_for_problem(
 
 def _graph_metrics_for_code(task: tuple[str, tuple[str, ...]]) -> tuple[str, dict[str, float]]:
     from revolution.graph_descriptor_evaluator import GraphDescriptorEvaluator
+    from revolution.qd.descriptors import extract_descriptor_values
+    from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
 
     code_file_path, axis_names = task
-    evaluator = GraphDescriptorEvaluator(yosys_timeout_seconds=30)
+    graph_evaluator = GraphDescriptorEvaluator(yosys_timeout_seconds=30)
     if set(axis_names).issubset({"logic_depth", "ff_depth", "comb_width_log"}):
-        payload = evaluator._load_yosys_json(Path(code_file_path), top_module_name=None)
+        payload = graph_evaluator._load_yosys_json(Path(code_file_path), top_module_name=None)
         if payload is None:
             return code_file_path, {}
-        graph = evaluator._build_graph_model(payload, top_module_name=None)
-        metrics = evaluator._extract_journal_bd_metrics(graph)
-        return code_file_path, metrics
-    metrics = evaluator.extract_metrics(code_file_path=code_file_path, top_module_name=None)
-    return code_file_path, metrics
+        graph = graph_evaluator._build_graph_model(payload, top_module_name=None)
+        metrics = graph_evaluator._extract_journal_bd_metrics(graph)
+        return code_file_path, extract_descriptor_values(metrics, axis_names)
+    code_path = Path(code_file_path)
+    code_text = code_path.read_text(encoding="utf-8", errors="ignore")
+    metrics = RTLDescriptorEvaluator().extract_metrics(
+        code_text=code_text,
+        code_file_path=code_path,
+    )
+    metrics.update(graph_evaluator.extract_metrics(code_file_path=code_path, top_module_name=None))
+    return code_file_path, extract_descriptor_values(metrics, axis_names)
 
 
 def _descriptor_values_from_row(axis_names: tuple[str, ...], row: dict[str, str]) -> dict[str, float]:
@@ -638,10 +646,12 @@ def _descriptor_values_from_archive_row(axis_names: tuple[str, ...], row: dict[s
     payload = json.loads(str(raw)) if isinstance(raw, str) else raw
     if not isinstance(payload, list) or len(payload) != len(axis_names):
         return {}
-    return {
-        axis: float(value)
-        for axis, value in zip(axis_names, payload, strict=True)
-    }
+    values: dict[str, float] = {}
+    for axis, raw_value in zip(axis_names, payload, strict=True):
+        value = finite_float(raw_value)
+        assert value is not None
+        values[axis] = value
+    return values
 
 
 def _descriptor_values_from_event(axis_names: tuple[str, ...], event: dict[str, Any]) -> dict[str, float]:

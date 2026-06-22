@@ -204,6 +204,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Central and per-technique reports pass
       `visualization_reporting_policy.md`, including the direct raw PPA-front
       figure gate.
+- [x] Visualization policy distinguishes the full Phase 03.1
+      `qd_ppa_viewer/` from the simpler `direct_ppa_pareto/` supplement and
+      makes both mandatory for live QD archive methods.
+- [x] T43 has a full Phase 03.1 `qd_ppa_viewer/` bundle with strict
+      validation, Playwright screenshot, and honest classic projection.
 - [ ] Conclusions distinguish `T0`, `T1`, `T2`, and `T3`.
 - [ ] Every `T0` result adds a follow-up idea, ablation, hybrid, or retirement
       rationale before the next method starts.

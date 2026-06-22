@@ -102,3 +102,35 @@ uv run python scripts/package_t43_staged_sparse_yield_gate.py \
 The primary generated figure is `figures/t43_raw_area_power_fronts.png`.
 Inspect it before interpreting the run. Use raw area on x, raw power on y, no
 inverted axes, and lower-left as better.
+
+Build the full Phase 03.1-compatible viewer source with the baseline aliased
+as `classic`:
+
+```bash
+uv run python scripts/report_final_analysis_bundle.py \
+  --backend_run classic="${RUN_ROOT}/classic_revolution/seed_1001" \
+  --backend_run staged_sparse_yield_gate_qd="${RUN_ROOT}/staged_sparse_yield_gate_qd/seed_1001" \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T43_staged_sparse_yield_gate_qd/tables/live_screen_v0_subset.yaml \
+  --output-dir "${RUN_ROOT}/qd_ppa_viewer_source/final_analysis"
+```
+
+Copy the three source CSVs into
+`visualizations/qd_ppa_viewer_source/final_analysis/`, then export and
+validate the full viewer:
+
+```bash
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T43_staged_sparse_yield_gate_qd/visualizations/qd_ppa_viewer_source \
+  --backend_run classic="${RUN_ROOT}/classic_revolution/seed_1001" \
+  --backend_run staged_sparse_yield_gate_qd="${RUN_ROOT}/staged_sparse_yield_gate_qd/seed_1001" \
+  --archive_source_backend staged_sparse_yield_gate_qd \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T43_staged_sparse_yield_gate_qd/tables/live_screen_v0_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T43_staged_sparse_yield_gate_qd/visualizations/qd_ppa_viewer \
+  --strict
+
+uv run python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T43_staged_sparse_yield_gate_qd/visualizations/qd_ppa_viewer \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T43_staged_sparse_yield_gate_qd/tables/live_screen_v0_subset.yaml \
+  --strict \
+  --playwright
+```

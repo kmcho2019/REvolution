@@ -39,12 +39,13 @@ Start here when resuming the active goal.
   method front but adds no pooled-front hits).
 - Most recent direct PPA HTML viewer:
   `techniques/T43_staged_sparse_yield_gate_qd/visualizations/direct_ppa_pareto/index.html`
-  (filesystem-openable raw area-power Pareto viewer with summary table and
-  Playwright screenshot).
-- Most recent interactive visualization refresh:
-  `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
-  now has a `raw A-P front` PPA mode, with screenshot
-  `screenshots/raw_area_power_front.png`.
+  (filesystem-openable raw area-power Pareto supplement with summary table and
+  Playwright screenshot; not the full Phase 03.1 viewer).
+- Most recent full Phase 03.1 viewer:
+  `techniques/T43_staged_sparse_yield_gate_qd/visualizations/qd_ppa_viewer/index.html`
+  (linked archive/PPA timeline viewer with compare mode, archive projection,
+  raw/improvement/normalized PPA modes, raw A-P front mode, strict validation,
+  and `screenshot.png`).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -82,6 +83,8 @@ Start here when resuming the active goal.
 | `techniques/T##_slug/figures/` | Generated or copied PNG figures plus visual inspection notes for that method. |
 | `techniques/T##_slug/tables/` | Raw or summarized CSV tables needed to regenerate method claims. |
 | `techniques/T##_slug/visualizations/` | HTML viewers, screenshots, and source CSVs when a method has interactive visualization artifacts. |
+| `techniques/T##_slug/visualizations/qd_ppa_viewer/` | Mandatory full Phase 03.1 viewer for live QD methods with archive artifacts. |
+| `techniques/T##_slug/visualizations/direct_ppa_pareto/` | Mandatory paper-readable raw PPA-front supplement for live PPA methods. |
 
 ## Process Tracking
 
