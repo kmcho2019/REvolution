@@ -2489,3 +2489,39 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Added `scripts/package_t46_t11_runtime_pca4_graph.py` and focused tests for
   the new descriptor profile plus package generation. T46 is now ready for
   pre-run validation and a matched live screen.
+
+## T46 Frozen T11 PCA Graph Live Result - 2026-06-22 UTC
+
+- Ran the matched T46 live screen under
+  `exp/useful_bd_push/t46_t11_runtime_pca4_graph_20260622_182358_UTC/`.
+  The `/v1/models` preflight reported `openai/gpt-oss-120b` with
+  `max_model_len=131072`, satisfying the 128k token-budget requirement.
+- Completed matched arms with the fixed three-problem RTLLM screen, seed
+  `1001`, population `12`, generations `3`, strict-ablation evaluation, and
+  `96` LLM calls per problem. `classic_revolution` completed in `664.23`
+  seconds, and `t11_runtime_pca4_graph_qd` completed in `744.18` seconds.
+- Pareto archive validation passed for all three problems with `valid=True`,
+  `failure_count=0`, `problem_invalid_count=0`, `acceptance_error_count=0`,
+  and `max_front_size_seen=2`.
+- Packaged direct raw-PPA artifacts under
+  `techniques/T46_t11_runtime_pca4_graph/`, including candidate rows, method
+  summaries, raw area-power front PNG, count summary PNG, direct HTML
+  supplement, and Playwright screenshot.
+- Built the full Phase 03.1 viewer at
+  `techniques/T46_t11_runtime_pca4_graph/visualizations/qd_ppa_viewer/`.
+  Strict validation with Playwright passed, and the package includes
+  `validation.{json,md}`, `screenshot.png`, and the screenshot matrix.
+- Main result: T46 preserves all three classic-covered designs and avoids the
+  50 percent valid-PPA yield warning, but classic wins the primary aggregate
+  metrics: mean HV `0.1588` versus `0.1155`, HV wins `2` versus `1`,
+  reference-beating count `11.00` versus `7.00`, and valid-PPA samples `54`
+  versus `37`.
+- The positive signal is narrow: T46 wins ALU HV (`0.2046` versus `0.1962`),
+  contributes one ALU pooled raw-front hit, and improves best score on ALU and
+  multi-pipe. Traffic-light blocks promotion: HV falls from `0.2801` to
+  `0.1419`, best score falls from `0.4248` to `0.3774`, and T46 contributes no
+  traffic-light pooled raw-front hit.
+- Lane decision: assign `T0 mixed_diagnostic` and retire direct graph-axis
+  dimensionality variants as the next primary live path. Reuse graph features
+  as secondary archive/reporting coordinates or trained-encoder inputs unless
+  a new mechanism is specified.

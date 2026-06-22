@@ -1,6 +1,6 @@
 # T46 Frozen T11 PCA Graph Methodology
 
-Status: pre-registered; live screen pending.
+Status: complete method card. Live result is in `results_report.md`.
 
 ## Question
 
@@ -99,3 +99,11 @@ T46 can advance only if it:
   families;
 - includes both `visualizations/direct_ppa_pareto/` and the full Phase 03.1
   `visualizations/qd_ppa_viewer/` bundle before any result is complete.
+
+## Outcome
+
+T46 met the coverage and visualization gates, but it did not promote. It wins
+ALU HV and contributes one ALU pooled raw-front hit, while classic wins mean
+HV, reference-beating count, valid-PPA samples, and traffic-light quality.
+The direct graph-axis projection lane is therefore retired as a primary live
+archive path for now.

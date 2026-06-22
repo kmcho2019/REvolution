@@ -17,18 +17,17 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T45_t11_runtime_top4_graph/` (`T0 mixed_diagnostic`; compact
-  top-4 T11 graph axes preserve design coverage but lose to classic on HV,
-  Pareto points, valid-PPA samples, and best score).
-- Active pre-registered package:
-  `techniques/T46_t11_runtime_pca4_graph/` (frozen non-PPA PCA projection over
-  T44's top-8 graph features; live screen pending).
+  `techniques/T46_t11_runtime_pca4_graph/` (`T0 mixed_diagnostic`; frozen
+  PCA4 graph projection preserves coverage and wins ALU HV, but loses to
+  classic on mean HV, reference-beating count, valid-PPA samples, and
+  traffic-light quality).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  run T46 before any richer graph branch; avoid direct top-16/top-64 ranked
-  axis escalation.
+  stop direct graph-axis dimensionality variants as the next primary live
+  path; reuse graph features only as secondary archive/reporting coordinates
+  or trained-encoder inputs unless a new mechanism is specified.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -37,15 +36,15 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T45_t11_runtime_top4_graph/figures/t45_raw_area_power_fronts.png`
-  (straightforward raw area-power fronts; T45 adds one traffic-light pooled hit
-  but loses aggregate HV and yield versus classic).
+  `techniques/T46_t11_runtime_pca4_graph/figures/t46_raw_area_power_fronts.png`
+  (straightforward raw area-power fronts; T46 adds one ALU pooled hit but loses
+  aggregate HV and traffic-light quality versus classic).
 - Most recent direct PPA HTML viewer:
-  `techniques/T45_t11_runtime_top4_graph/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T46_t11_runtime_pca4_graph/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary table and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T45_t11_runtime_top4_graph/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T46_t11_runtime_pca4_graph/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
   raw/improvement/normalized PPA modes, raw A-P front mode, strict validation,
   and `screenshot.png`).
@@ -54,7 +53,7 @@ Start here when resuming the active goal.
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T45_t11_runtime_top4_graph/` (compact T11 graph-axis ablation;
+  `techniques/T46_t11_runtime_pca4_graph/` (frozen PCA4 graph-axis ablation;
   full live screen, direct PPA supplement, and Phase 03.1 viewer are packaged).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
@@ -162,7 +161,7 @@ Start here when resuming the active goal.
 | `T43` | `T43_staged_sparse_yield_gate_qd` | Completed staged sparse-yield gate, `T0 mixed_diagnostic`; strict warmup path prevented staged activation and T43 contributes zero pooled raw-front hits. |
 | `T44` | `T44_t11_runtime_graph_bridge` | Completed live result, `T0 mixed_diagnostic`; T11 graph axes show HV/front signal but top-8 archive sparsity and yield loss block promotion. |
 | `T45` | `T45_t11_runtime_top4_graph` | Completed live result, `T0 mixed_diagnostic`; compact graph axes preserve coverage but lose classic on HV, Pareto points, valid-PPA count, and best score. |
-| `T46` | `T46_t11_runtime_pca4_graph` | Pre-registered live follow-up; frozen PCA projection over T44's top-8 graph features, with T45/T44/T39 as references. |
+| `T46` | `T46_t11_runtime_pca4_graph` | Completed live result, `T0 mixed_diagnostic`; frozen PCA4 graph projection preserves coverage and wins ALU HV but loses classic on mean HV, reference-beating count, valid-PPA samples, and traffic-light quality. |
 
 ## Validity-Gate Note
 

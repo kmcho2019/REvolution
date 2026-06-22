@@ -54,6 +54,8 @@ Real result packages:
 - `T44_t11_runtime_graph_bridge` live-safe T11 runtime graph descriptor bridge
 - `T45_t11_runtime_top4_graph` compact top-4 T11 runtime graph bridge
   live ablation
+- `T46_t11_runtime_pca4_graph` frozen PCA4 T11 runtime graph projection
+  live ablation
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -148,11 +150,19 @@ wins), mean Pareto points (`3.67` versus `3.33`), reference-beating count
 best-score comparison. T45 contributes one traffic-light pooled raw-front
 point, not enough to justify promotion.
 
-T46 is pre-registered as the next graph-lane follow-up. It avoids direct
+T46 is complete and remains `T0 mixed_diagnostic`. It avoids direct
 top-16/top-64 ranked-axis escalation by replacing raw top-k axes with a frozen
 non-PPA four-component PCA projection over T44's top-8 graph feature family.
-The live screen is pending and keeps T45's subset, model, seed, budget,
-operators, archive settings, direct-PPA supplement, and Phase 03.1 viewer gate.
+It preserves all three classic-covered designs and avoids the 50 percent
+valid-PPA yield warning. The positive signal is narrow: T46 wins ALU HV
+(`0.2046` versus classic `0.1962`), contributes one ALU pooled raw-front hit,
+and improves best score on ALU and multi-pipe. The primary result is still
+negative: classic wins mean HV (`0.1588` versus `0.1155`), HV wins (`2` versus
+`1`), reference-beating count (`11.00` versus `7.00`), valid-PPA samples
+(`54` versus `37`), and traffic-light quality. This retires direct graph-axis
+dimensionality variants as the next live path; graph features should move to a
+secondary archive/reporting role or a trained-encoder input unless a new
+mechanism is specified.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -519,7 +529,8 @@ the best ALU and traffic-light scores.
   champion-pressure tuning. Next either force a real sparse-trigger condition
   with a bounded warmup buffer/patience rule, or branch exact T11 runtime
   projection so the descriptor changes.
-- For the T44/T45 graph-runtime lineage, do not escalate the ranked-axis bridge
-  directly to top-16/top-64. The next graph follow-up needs a frozen non-PPA
-  projection or secondary-lane archive use rather than making graph axes the
-  primary archive geometry.
+- For the T44/T45/T46 graph-runtime lineage, direct graph-axis dimensionality
+  variants are now exhausted as the next primary live path. T46 tested the
+  frozen non-PPA projection and still lost the aggregate comparison, so graph
+  features should move to secondary archive/reporting coordinates or trained
+  encoder inputs unless a new mechanism is specified.

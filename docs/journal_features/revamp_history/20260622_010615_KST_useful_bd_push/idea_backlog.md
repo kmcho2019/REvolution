@@ -148,14 +148,27 @@ a numbered `techniques/T##_slug/` package before running it.
 - T45 fixes the T44 catastrophic valid-PPA yield warning but loses to classic
   on every primary aggregate metric. This means direct ranked top-k graph axes
   are not the right next escalation path.
-- The next method is T46: keep the T45 live settings fixed, but replace the
-  direct top-4 axes with a frozen non-PPA PCA4 projection over T44's top-8
-  graph feature family. The fit uses graph-only T14 rows and excludes PPA,
-  fitness, validity, pass-rate, problem, corpus, model, method, seed, and
-  candidate-id labels.
-- If T46 also loses, stop treating T11 runtime graph axes as a primary live
-  archive coordinate. Reuse them only as a secondary archive lane, a reporting
-  projection, or input to a genuinely trained encoder.
+- T46 tested the planned replacement: a frozen non-PPA PCA4 projection over
+  T44's top-8 graph feature family. The fit used graph-only T14 rows and
+  excluded PPA, fitness, validity, pass-rate, problem, corpus, model, method,
+  seed, and candidate-id labels.
+- T46 also loses on the primary aggregate metrics, so stop treating T11
+  runtime graph axes as a primary live archive coordinate. Reuse them only as a
+  secondary archive lane, a reporting projection, or input to a genuinely
+  trained encoder.
+
+## From `T46_t11_runtime_pca4_graph` T0
+
+- T46 preserves all classic-covered designs and avoids the 50 percent
+  valid-PPA yield warning, so the frozen projection is operationally usable.
+- It is not a promoted method: classic wins mean HV, HV wins, reference-beating
+  count, valid-PPA samples, and traffic-light quality. T46's useful signal is
+  restricted to ALU HV, one ALU pooled raw-front hit, and best-score wins on
+  ALU plus multi-pipe.
+- Do not spend the next live budget on another direct graph-axis dimensionality
+  tweak. Reuse graph features as a secondary archive/reporting projection or
+  as trained-encoder inputs, and return primary live budget to T26-family
+  SR/archive-coupling variants or role-separated emitters.
 
 ## From `T19_sr_relu_pca_bd` T0
 
