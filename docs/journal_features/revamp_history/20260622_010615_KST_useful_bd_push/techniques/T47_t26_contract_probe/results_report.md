@@ -1,10 +1,10 @@
 # T47 T26 Contract Probe Results
 
-Status: hard/tuning complete; analysis packaging pending.
+Status: hard/tuning packaged; diagnostic.
 
 ## Current Decision
 
-`pending_hard_tuning_analysis`.
+`diagnostic_t26_not_holdout_ready`.
 
 T47 is a guardrail package, not completed evidence. It exists to make the next
 T26-family experiment answer the strongest current objections:
@@ -52,16 +52,36 @@ uv run python scripts/validate_pareto_front_run.py \
   --require-full-subset
 ```
 
-The next step is to package paired HV, best-score, validity, front-count, and
-default-reference-quarantine metrics before any T1-or-higher decision.
+## Hard/Tuning Package Result
+
+The package lives in `hard_tuning_package/`. It compares two matched seeds
+across 13 hard/tuning problems and keeps RTLLM and VerilogEval rows visible.
+
+Headline deltas for exact T26 QD versus classic:
+
+- mean HV delta: `-0.015483`;
+- mean HV-AUC delta: `-0.018435`;
+- mean best-score delta: `+0.024728`;
+- valid-PPA candidates: `428` versus `538`;
+- total PPA-front points: `53` versus `61`;
+- classic-covered valid-PPA losses: `0`;
+- yield warnings: `4`;
+- small-n labels: `4`.
+
+This does not clear the T47 hard/tuning gate for a held-out exact-T26 launch.
+The positive best-score movement is useful, but it is not enough to override
+negative paired HV/HV-AUC and lower valid-PPA yield. The front-count evidence
+is mixed: mean relative per-problem front delta is positive, but aggregate
+front points are lower because losses concentrate on larger-front problems.
 
 ## Completion Gate
 
-Do not assign a T1 or higher tier until live artifacts prove the acceptance
-signals in `methodology.md`.
+Do not assign a T1 or higher tier. Exact T26 should not move directly to the
+held-out dry run from this package.
 
 ## Follow-Up If It Fails
 
-If exact T26 fails the hard/tuning sanity probe, do not launch a held-out run.
 Specify a narrower T26.1 variant or return to a different lane with a recorded
-reason in `technique_lanes.md`.
+reason in `technique_lanes.md`. The next variant should preserve the aggregate
+best-score gain while directly targeting valid-PPA yield and HV/HV-AUC
+retention.

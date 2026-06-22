@@ -1,6 +1,6 @@
 # T47 Tables
 
-Status: pre-run generated tables.
+Status: pre-run tables plus completed hard/tuning package tables.
 
 `probe_matrix.csv` is the human-readable ladder: hard/tuning sanity,
 held-out dry run, and final-style escalation.
@@ -20,6 +20,15 @@ preflight. It shows `openai/gpt-oss-120b` with `max_model_len=131072`.
 
 `hard_tuning_run_status.csv` records timestamped launch status for the
 hard/tuning sanity probe. It should be updated after each arm/seed completes.
+
+`../hard_tuning_package/tables/` records the completed two-seed hard/tuning
+analysis:
+
+- `t47_problem_seed_metrics.csv`: one row per seed, arm, benchmark, and
+  problem with HV, HV-AUC, best score, validity, and front metrics;
+- `t47_aggregate_metrics.csv`: all/benchmark cohort aggregates by seed group;
+- `t47_comparison_deltas.csv`: exact T26 QD minus classic deltas;
+- `t47_validity_gates.csv`: relaxed validity gate labels.
 
 Regenerate the tables with:
 

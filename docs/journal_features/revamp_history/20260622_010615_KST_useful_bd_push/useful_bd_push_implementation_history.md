@@ -2677,3 +2677,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - The next T47 step is analysis packaging, not a held-out launch. Package
   paired HV, best-score, validity, front-count, and default-reference
   quarantine metrics before assigning any T1-or-higher decision.
+
+## T47 Hard/Tuning Package - 2026-06-22 UTC
+
+- Added `scripts/package_t47_contract_probe.py` plus focused tests to package
+  the two-seed T47 hard/tuning run across RTLLM and VerilogEval problems.
+- Generated `techniques/T47_t26_contract_probe/hard_tuning_package/` with
+  per-seed problem metrics, aggregate metrics, comparison deltas, relaxed
+  validity gates, candidate-level PPA data, four figures, and visual
+  inspection notes.
+- Exact T26 QD is diagnostic but not held-out-ready: mean HV delta is
+  `-0.015483`, mean HV-AUC delta is `-0.018435`, mean best-score delta is
+  `+0.024728`, valid-PPA candidates are `428` versus `538`, and aggregate
+  PPA-front points are `53` versus `61`.
+- There are no classic-covered valid-PPA losses, but there are `4` yield
+  warnings and `4` small-n labels. The next step should be a narrow T26.1
+  variant or another lane, not exact T26 held-out escalation.

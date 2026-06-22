@@ -1,6 +1,6 @@
 # T47 Artifacts Manifest
 
-Status: hard/tuning run artifacts present; analysis packaging pending.
+Status: hard/tuning package generated; held-out launch blocked.
 
 ## Current Files
 
@@ -9,6 +9,8 @@ Status: hard/tuning run artifacts present; analysis packaging pending.
 - `commands/probe_plan.md`: command plan and execution checklist.
 - `commands/hard_tuning_sanity_20260622_203146_UTC.md`: exact preflighted
   hard/tuning launch commands for the current run root.
+- `commands/package_hard_tuning_20260622_UTC.md`: package regeneration
+  command for the completed hard/tuning run.
 - `tables/probe_matrix.csv`: frozen probe ladder matrix.
 - `tables/hard_tuning_run_status.csv`: launch/completion ledger for the
   timestamped hard/tuning sanity run.
@@ -20,6 +22,8 @@ Status: hard/tuning run artifacts present; analysis packaging pending.
   preflight showing `openai/gpt-oss-120b` with `max_model_len=131072`.
 - `tables/README.md`: table semantics and regeneration command.
 - `figures/README.md`: required visual outputs and inspection rule.
+- `hard_tuning_package/`: generated two-seed hard/tuning analysis package with
+  tables, raw PPA candidate data, inspected figures, and package README.
 
 ## Expected Run Artifacts
 
@@ -27,23 +31,19 @@ Run outputs should live under:
 
 `exp/useful_bd_push/t47_t26_contract_probe_<timestamp>/`
 
-Expected copied or generated package artifacts:
+Generated hard/tuning package artifacts:
 
-- `tables/preflight_models_<timestamp>.json`
-- `tables/run_matrix.csv`
-- `tables/problem_method_metrics.csv`
-- `tables/default_reference_quarantine.csv`
-- `tables/budget_parity.csv`
-- `tables/paired_metric_deltas.csv`
-- `figures/raw_area_power_fronts.png`
-- `figures/validity_funnel.png`
-- `figures/hv_without_default_reference.png`
-- `figures/visual_inspection_notes.md`
-- `visualizations/direct_ppa_pareto/`
-- `visualizations/qd_ppa_viewer/`
+- `hard_tuning_package/tables/t47_problem_seed_metrics.csv`
+- `hard_tuning_package/tables/t47_aggregate_metrics.csv`
+- `hard_tuning_package/tables/t47_comparison_deltas.csv`
+- `hard_tuning_package/tables/t47_validity_gates.csv`
+- `hard_tuning_package/data/t47_ppa_candidates.csv`
+- `hard_tuning_package/figures/t47_hv_delta_heatmap.png`
+- `hard_tuning_package/figures/t47_metric_delta_summary.png`
+- `hard_tuning_package/figures/t47_validity_funnel.png`
+- `hard_tuning_package/figures/t47_front_counts.png`
 
 ## Hashes
 
-Hashes are pending until run artifacts exist. Record SHA-256 hashes for the
-subset configs, preflight metadata, method manifest, and candidate-level PPA
-table before any result report claims are made.
+Hashes are pending until the next claim-candidate package. The current package
+is diagnostic and blocks held-out exact T26 escalation.
