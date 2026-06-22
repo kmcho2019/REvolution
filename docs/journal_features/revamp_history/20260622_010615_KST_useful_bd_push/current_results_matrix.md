@@ -39,9 +39,10 @@ Real result packages:
 - `T07_deepgate_family_bd` graph-surrogate encoder replay diagnostic
 - `T13_aurora_incremental_autoencoder_bd` implementation-feature/AURORA replay
   diagnostic
+- `T14_dehnn_hypergraph_bd` directed-hypergraph replay diagnostic
 
 Scaffolded but not yet real-result packages remain `T08` to `T12`,
-`T14` to `T16`, and `T18`.
+`T15`, `T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -221,6 +222,15 @@ features keep 120 all-valid front hits versus lexical's 122. The primary
 figure is
 `techniques/T13_aurora_incremental_autoencoder_bd/figures/aurora_multi_problem_ppa_pareto_fronts.png`.
 
+`T14_dehnn_hypergraph_bd` is the completed directed-hypergraph replay. The
+hypergraph-only descriptors improve selected PPA breadth but lose HV versus
+lexical. The hybrid that concatenates hypergraph incidence features with T13
+implementation features keeps a positive HV delta: `3.739236`, `+1.01%` over
+lexical, and improves unique PPA points to 187. It is still not promoted
+because direct front hits stay below lexical: 119 versus 122. The primary
+figure is
+`techniques/T14_dehnn_hypergraph_bd/figures/hypergraph_multi_problem_ppa_pareto_fronts.png`.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -266,6 +276,9 @@ figure is
 17. T13 shows raw implementation features are a better L4 signal than
     unsupervised AURORA-style compression. The next L4 step should preserve
     that signal and target front hits explicitly.
+18. T14 shows hypergraph structure can add unique PPA breadth when combined
+    with the T13 signal, but simple concatenation still does not recover direct
+    front hits.
 
 ## Next Decisions
 

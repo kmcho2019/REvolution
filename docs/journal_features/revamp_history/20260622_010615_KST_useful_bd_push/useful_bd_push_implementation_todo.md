@@ -91,7 +91,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       decision.
 - [x] `T13_aurora_incremental_autoencoder_bd` has methodology, results, figures,
       tables, and tier decision.
-- [ ] `T14_dehnn_hypergraph_bd` has methodology, results, figures, tables, and tier
+- [x] `T14_dehnn_hypergraph_bd` has methodology, results, figures, tables, and tier
       decision.
 - [ ] `T15_masterrtl_sog_bd` has methodology, results, figures, tables, and tier
       decision.

@@ -1557,3 +1557,47 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Re-ran the real replay with the final script after the focused checks. The
   table and figure hashes stayed stable; the final code hash is recorded in
   `techniques/T13_aurora_incremental_autoencoder_bd/artifacts_manifest.md`.
+
+## T14 DE-HNN-Style Hypergraph Replay - 2026-06-22 UTC
+
+- Added `scripts/analyze_t14_dehnn_hypergraph.py` and a focused test. The
+  script parses mapped netlists into directed hyperedges from driver cells or
+  primary inputs to sink cells or primary outputs, then replays hypergraph
+  farthest-first descriptors on the same 768-candidate common surface.
+- Descriptor construction excludes final PPA, reference PPA, fitness,
+  hypervolume, Pareto labels, validity labels, problem id, corpus, model,
+  method, seed, and candidate id. The T14 hybrid uses the same T13
+  implementation-feature schema plus hypergraph incidence features.
+- Ran the replay command:
+  `uv run python scripts/analyze_t14_dehnn_hypergraph.py --candidates-csv exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/qwen_common_audit_candidates.csv --graph-manifest-csv docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T07_deepgate_family_bd/tables/netlist_graph_manifest.csv --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T14_dehnn_hypergraph_bd --retention-fraction 0.5 --random-seed 0`.
+- Extraction result: all `768` candidates parsed, all had cells and
+  hyperedges, and `647` had directed source-to-sink cell edges.
+- Main result: `t14_hyper_impl_combo_farthest` selects HV `3.739236`, a
+  `+1.01%` gain over lexical (`3.701827`). Unique PPA points improve to `187`,
+  compared with lexical's `183` and T13's `186`.
+- Hypergraph-only descriptors are not enough. `t14_hyper_hash_farthest` and
+  `t14_hyper_combo_farthest` select HV `3.624054`, about `-2.10%` versus
+  lexical, despite improving selected Pareto size and unique PPA counts.
+- Promotion blocker: direct front hits remain below lexical. Lexical has
+  `122` selected all-valid front hits; the T14 hybrid has `119`.
+- Collapse diagnostics explain the hybrid tradeoff. Hypergraph hash reduces
+  same-problem nearest-neighbor collapse to `0.690104`, but the high-HV hybrid
+  restores T13-like same-problem collapse at `0.867188`.
+- Added the primary raw PPA-front figure:
+  `techniques/T14_dehnn_hypergraph_bd/figures/hypergraph_multi_problem_ppa_pareto_fronts.png`.
+  The source points are in `tables/ppa_front_plot_points.csv`.
+- Tier decision: mixed. The package is `T1 near_classic_replay_lead` for the
+  hypergraph plus implementation-feature hybrid and `T0 diagnostic` for
+  hypergraph-only descriptors. The next L4 method should target front-hit
+  retention with feature selection or contrastive training, not more blind
+  concatenation.
+- Final validation run:
+  `uv run pytest tests/scripts/test_analyze_t14_dehnn_hypergraph.py`,
+  `uv run ruff check scripts/analyze_t14_dehnn_hypergraph.py tests/scripts/test_analyze_t14_dehnn_hypergraph.py`,
+  `uv run python -m pyright scripts/analyze_t14_dehnn_hypergraph.py tests/scripts/test_analyze_t14_dehnn_hypergraph.py`,
+  and
+  `uv tool run ty check scripts/analyze_t14_dehnn_hypergraph.py tests/scripts/test_analyze_t14_dehnn_hypergraph.py`
+  all passed. `git diff --check` passed.
+- Re-ran the real replay with the final script after the focused checks. The
+  table and figure hashes stayed stable; the final code hash is recorded in
+  `techniques/T14_dehnn_hypergraph_bd/artifacts_manifest.md`.

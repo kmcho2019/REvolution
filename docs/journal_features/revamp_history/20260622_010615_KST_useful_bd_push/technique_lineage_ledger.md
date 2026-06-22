@@ -22,7 +22,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L1` | Transparent CAD descriptors | Use reviewer-readable features such as Yosys stats, motifs, pathlets, and ST-NOD. | Reuse selected features in guarded hybrids; stop pure concatenation. |
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
-| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T13 makes raw implementation features the strongest L4 replay lead; compression alone is not the answer. |
+| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T14 confirms implementation-feature hybrids are the strongest L4 replay lead; front-hit retention is still missing. |
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T32 is negative; stop simple schedule tuning and use it as a P098-yield control. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T31/T32 show repair/front tweaks need stronger role separation. |
 
@@ -60,6 +60,7 @@ flowchart LR
     T33[T33 Qwen3 preprocessing ladder]
     T07[T07 graph surrogate]
     T13[T13 AURORA feature replay]
+    T14[T14 DE-HNN hypergraph replay]
     enc[T08-T16 encoder scaffolds]
   end
 
@@ -112,7 +113,8 @@ flowchart LR
   T33 --> T34
   T34 --> T07
   T07 --> T13
-  T13 --> enc
+  T13 --> T14
+  T14 --> enc
   T17 --> T12
   T17 --> T18
   T24 --> T18
@@ -130,7 +132,8 @@ flowchart LR
 | T34 | `L4` | Label-free PCA residuals over T33 Qwen views. | `T0 diagnostic`: preserves RTL HV signal but does not align collapse reduction with PPA-front/HV utility. | `retire` | Move to graph encoders or a genuinely different Qwen training objective. |
 | T07 | `L4` | DeepGate-family route with a standard-cell graph WL/stat surrogate after full checkpoint blockers. | `T1 near_classic_replay_lead`: graph WL/combo barely beats lexical HV and improves unique PPA points, but front hits remain below lexical. | `advance` stronger graph encoder | Use the direct raw PPA-front figure as the gate before any live budget. |
 | T13 | `L4` | AURORA-style implementation feature replay with PCA, RFF-PCA, and incremental PCA bottlenecks. | Mixed: raw implementation features beat lexical HV by +1.06%, while compressed bottlenecks lose HV and front hits remain below lexical. | `hybridize` | Reuse raw features in feature selection, local-Pareto coupling, or contrastive graph training. |
-| T08-T12/T14-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
+| T14 | `L4` | DE-HNN-style directed hypergraph replay, plus a T13 implementation-feature hybrid. | Mixed: hypergraph-only descriptors lose HV; the hybrid beats lexical HV by +1.01% and raises unique PPA to 187, but front hits remain below lexical. | `hybridize` | Keep the hybrid signal, but use feature selection or contrastive training to target front-hit retention. |
+| T08-T12/T15-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, MGVGA, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
 | T25 | `L2/L5` | Guarded SR raw: lower fill target, lower improve backfill, lower two-parent fusion. | Completed `T0 diagnostic`; preserves covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. | `ablate` | Use as negative evidence for T26 emitter/parent-source design. |

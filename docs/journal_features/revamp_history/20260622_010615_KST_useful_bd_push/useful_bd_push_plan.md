@@ -45,11 +45,12 @@ The desired end state is one of:
 
 ## Current Research State
 
-T13 is the most recent completed package. It is an implementation-feature and
-AURORA-style learned-BD replay: raw implementation features beat lexical HV
-by `+1.06%` and improve unique PPA points, but compressed PCA/RFF/incremental
-bottlenecks lose HV and raw features still miss lexical direct front hits. It
-is a feature-input lead, not a promoted useful-BD claim.
+T14 is the most recent completed package. It is a directed-hypergraph replay:
+hypergraph-only descriptors broaden selected PPA counts but lose HV, while
+the hypergraph plus T13 implementation-feature hybrid beats lexical HV by
+`+1.01%` and improves unique PPA points to `187`. It is a hybrid feature-input
+lead, not a promoted useful-BD claim, because direct front hits still miss
+lexical (`119` versus `122`).
 
 T30 remains the most recent positive holdout support for exact T26
 conservative-exploit SR raw: it preserves all three classic-covered
@@ -73,10 +74,11 @@ same-family method should not keep nudging champion fraction or two-parent
 probability alone; it needs a stronger role-separated emitter or a branch to a
 different descriptor family.
 
-The learned-encoder lane should preserve the T13 raw implementation-feature
-signal while adding feature selection, local-Pareto coupling, a contrastive
-graph objective, or a true graph/AIG encoder. Do not spend the next attempt on
-plain unsupervised PCA/RFF compression. Any follow-up must include
+The learned-encoder lane should preserve the T13/T14 implementation-feature
+signal while adding feature selection, local-Pareto coupling, or a contrastive
+graph objective that targets front-hit retention. Do not spend the next attempt
+on plain unsupervised compression or more blind feature concatenation. Any
+follow-up must include
 straightforward raw PPA Pareto figures before BD-space projections are used.
 
 ## Prior Evidence To Reuse
