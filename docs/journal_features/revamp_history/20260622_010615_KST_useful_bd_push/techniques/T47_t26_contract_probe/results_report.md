@@ -29,6 +29,13 @@ headline-reference failure mode from the one-seed RTLLM package.
 `20.0.0.103:8000`. The endpoint reports `openai/gpt-oss-120b` with
 `max_model_len=131072`, so the planned 128k token budgets are valid.
 
+## Hard/Tuning Run Status
+
+`classic_revolution` seed `1001` completed with return code `0` at
+`2026-06-22T20:57:52Z`. It produced 13 of 13 expected problem summaries under
+`exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/`.
+The remaining hard/tuning arms are still pending.
+
 ## Completion Gate
 
 Do not assign a T1 or higher tier until live artifacts prove the acceptance

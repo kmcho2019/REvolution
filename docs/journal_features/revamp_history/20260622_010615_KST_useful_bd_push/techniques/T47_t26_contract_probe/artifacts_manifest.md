@@ -10,6 +10,8 @@ Status: pre-run manifest.
 - `commands/hard_tuning_sanity_20260622_203146_UTC.md`: exact preflighted
   hard/tuning launch commands for the current run root.
 - `tables/probe_matrix.csv`: frozen probe ladder matrix.
+- `tables/hard_tuning_run_status.csv`: launch/completion ledger for the
+  timestamped hard/tuning sanity run.
 - `tables/probe_problem_matrix.csv`: expanded pre-run matrix by phase, seed,
   arm, benchmark, and problem.
 - `tables/default_reference_quarantine.csv`: known repaired/default-reference

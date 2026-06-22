@@ -2635,3 +2635,13 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Added exact hard/tuning sanity commands under
   `techniques/T47_t26_contract_probe/commands/hard_tuning_sanity_20260622_203146_UTC.md`
   before launching any live T47 spend.
+
+## T47 Classic Seed 1001 Completion - 2026-06-22 UTC
+
+- Launched the hard/tuning sanity `classic_revolution` arm for seed `1001`
+  under
+  `exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/`.
+- The run completed with return code `0` at `2026-06-22T20:57:52Z` and
+  produced 13 of 13 expected problem summaries.
+- Added `tables/hard_tuning_run_status.csv` so subsequent T47 arm/seed
+  launches can be tracked without relying on untracked `exp/` state alone.

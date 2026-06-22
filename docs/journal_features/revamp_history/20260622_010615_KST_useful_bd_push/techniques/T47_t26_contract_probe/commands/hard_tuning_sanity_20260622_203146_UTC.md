@@ -1,6 +1,7 @@
 # T47 Hard/Tuning Sanity Commands
 
-Status: preflight complete; live runs not launched from this file yet.
+Status: preflight complete; `classic_revolution` seed `1001` complete.
+Remaining arms/seeds are not launched yet.
 
 Run timestamp: `20260622_203146_UTC`
 

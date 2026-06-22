@@ -18,6 +18,9 @@ current table lists `Prob013_multi_booth_8bit`, `Prob018_float_multi`, and
 `preflight_models_20260622_203146_UTC.json` records the current local vLLM
 preflight. It shows `openai/gpt-oss-120b` with `max_model_len=131072`.
 
+`hard_tuning_run_status.csv` records timestamped launch status for the
+hard/tuning sanity probe. It should be updated after each arm/seed completes.
+
 Regenerate the tables with:
 
 ```bash
