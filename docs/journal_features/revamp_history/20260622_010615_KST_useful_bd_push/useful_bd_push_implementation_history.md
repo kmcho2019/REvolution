@@ -2645,3 +2645,13 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   produced 13 of 13 expected problem summaries.
 - Added `tables/hard_tuning_run_status.csv` so subsequent T47 arm/seed
   launches can be tracked without relying on untracked `exp/` state alone.
+
+## T47 Exact T26 Seed 1001 Completion - 2026-06-22 UTC
+
+- Launched the hard/tuning sanity `sr_raw_conservative_exploit_qd` arm for
+  seed `1001` under the same T47 run root.
+- The run completed with return code `0` at `2026-06-22T21:26:45Z` and
+  produced 13 of 13 expected archive summaries.
+- Validated the matched seed-1001 pair with
+  `scripts/validate_pareto_front_run.py --require-full-subset` before
+  launching any seed-1002 spend.

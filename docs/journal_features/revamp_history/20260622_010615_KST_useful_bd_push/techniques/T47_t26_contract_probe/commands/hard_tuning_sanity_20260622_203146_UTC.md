@@ -1,7 +1,7 @@
 # T47 Hard/Tuning Sanity Commands
 
-Status: preflight complete; `classic_revolution` seed `1001` complete.
-Remaining arms/seeds are not launched yet.
+Status: preflight complete; seed `1001` classic and exact T26 QD arms are
+complete. Seed `1002` arms are not launched yet.
 
 Run timestamp: `20260622_203146_UTC`
 
@@ -108,3 +108,5 @@ uv run python scripts/validate_pareto_front_run.py \
   --pareto-qd-mode sr_raw_conservative_exploit_qd \
   --require-full-subset
 ```
+
+Seed `1001` validation passed with this command on 2026-06-22 UTC.
