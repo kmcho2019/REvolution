@@ -5,7 +5,10 @@ Status: draft rubric.
 ## Review Gates
 
 1. Pre-registration review before screening.
-2. Screening review before full RTLLM launch.
+2. Screening review before full RTLLM launch. Complete:
+   `reviews/subagent_screen_prelaunch_review.md` and
+   `reviews/claude_screen_prelaunch_review.md` gave conditional go after
+   fixing the gate-order bug and freezing the exact T26 selection.
 3. Packaging review before presentation sign-off.
 
 ## Required Reviewer Questions

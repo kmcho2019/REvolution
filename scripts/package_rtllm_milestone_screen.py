@@ -233,14 +233,16 @@ def problem_gate_row(
     reference: str,
     problem: str,
 ) -> dict[str, str]:
+    """Return the highest-severity valid-PPA launch gate for one problem."""
+
     value = int(by_key[(method, problem)]["valid_ppa_count"])
     ref_value = int(by_key[(reference, problem)]["valid_ppa_count"])
     status = "pass"
     if ref_value > 0 and value == 0:
         status = "classic_covered_loss"
-    if ref_value >= 10 and value < math.ceil(ref_value * 0.5):
+    elif ref_value >= 10 and value < math.ceil(ref_value * 0.5):
         status = "yield_warning"
-    if 0 < ref_value < 10:
+    elif 0 < ref_value < 10:
         status = "small_n"
     return {
         "scope": "problem",
@@ -386,9 +388,11 @@ def write_selection_report(
     lines.extend(
         [
             "",
-            "## Gate Notes",
-            "",
-            "- Full-run selection must still be reviewed adversarially before launch.",
+        "## Gate Notes",
+        "",
+        "- Exact T26's screen edge is narrow and must be presented with its",
+        "  yield and breadth warnings.",
+        "- Full-run selection must still be reviewed adversarially before launch.",
             "- Any one-seed win is paired engineering evidence, not seed-stable",
             "  significance.",
             "- The hard launch gate is classic-covered retention: if classic has",

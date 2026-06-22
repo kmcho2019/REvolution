@@ -2331,3 +2331,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - A 50 percent or larger valid-PPA or synthesis-valid drop is now a reported
   yield warning for this deadline milestone, not an automatic full-run blocker.
   Reports must still show the yield tradeoff clearly.
+
+## RTLLM Screen Selection - 2026-06-22 UTC
+
+- Completed the matched three-problem RTLLM screen under
+  `exp/useful_bd_push/rtllm_milestone_screen_20260622_130747_UTC/` for classic,
+  exact T26, T26.1 low-fusion, and T26.1 mid-fusion.
+- Packaged results under `presentations/20260623_report/screening/` with CSV
+  tables and inspected PNG summaries.
+- Selected exact T26, `sr_raw_conservative_exploit_qd`, for the full one-seed
+  RTLLM run because it is the only QD arm with positive final mean HV versus
+  classic and it improves HV-AUC. Exact T26 yield drops on ALU and multi-pipe
+  are retained as visible yield warnings.

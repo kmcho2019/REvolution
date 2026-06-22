@@ -21,6 +21,8 @@ replication deferred until after the presentation package.
 
 ## Gate Notes
 
+- Exact T26's screen edge is narrow and must be presented with its
+  yield and breadth warnings.
 - Full-run selection must still be reviewed adversarially before launch.
 - Any one-seed win is paired engineering evidence, not seed-stable
   significance.

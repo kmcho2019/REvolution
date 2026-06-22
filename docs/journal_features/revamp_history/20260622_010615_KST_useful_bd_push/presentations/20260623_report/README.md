@@ -29,11 +29,13 @@ baseline on PPA-centered metrics.
 
 - Milestone package: scaffolded.
 - RTLLM 50-problem manifest: frozen from `bench/RTLLM/*_prompt.txt`.
-- Full-run method: not selected yet. Exact T26 is the fallback candidate.
-- Screening ladder: exact T26, simple T26.1 low-fusion, and gated T26.1 only
-  if the narrow gate is implemented and passes focused tests.
-- Full RTLLM launch: blocked until screening and adversarial pre-launch review
-  are complete.
+- Full-run method: exact T26, `sr_raw_conservative_exploit_qd`, selected by
+  the screening package.
+- Screening ladder: classic, exact T26, T26.1 low-fusion, and T26.1
+  mid-fusion completed. Gated T26.1 stayed omitted because it was not
+  implemented for the deadline screen.
+- Full RTLLM launch: blocked only until pre-launch adversarial review artifacts
+  are recorded.
 - Replication policy: one seed is the deadline-driven first milestone. Package
   those results into plots, tables, and slides before starting costly
   multi-seed replication.

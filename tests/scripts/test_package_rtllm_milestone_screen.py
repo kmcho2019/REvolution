@@ -4,7 +4,7 @@ import csv
 import json
 from pathlib import Path
 
-from scripts.package_rtllm_milestone_screen import METHODS, PROBLEMS, main
+from scripts.package_rtllm_milestone_screen import METHODS, PROBLEMS, main, problem_gate_row
 
 
 def test_package_rtllm_milestone_screen(tmp_path: Path) -> None:
@@ -29,6 +29,36 @@ def test_package_rtllm_milestone_screen(tmp_path: Path) -> None:
     )
     assert (output_dir / "figures" / "screen_aggregate_metrics.png").read_bytes().startswith(
         b"\x89PNG"
+    )
+
+
+def test_problem_gate_row_keeps_classic_covered_loss() -> None:
+    rows = {
+        ("classic", "tiny"): {"valid_ppa_count": "5"},
+        ("qd", "tiny"): {"valid_ppa_count": "0"},
+        ("classic", "large"): {"valid_ppa_count": "12"},
+        ("qd", "large"): {"valid_ppa_count": "0"},
+        ("classic", "warning"): {"valid_ppa_count": "12"},
+        ("qd", "warning"): {"valid_ppa_count": "5"},
+        ("classic", "small_n"): {"valid_ppa_count": "5"},
+        ("qd", "small_n"): {"valid_ppa_count": "1"},
+    }
+
+    assert (
+        problem_gate_row(rows, "qd", "classic", "tiny")["gate_status"]
+        == "classic_covered_loss"
+    )
+    assert (
+        problem_gate_row(rows, "qd", "classic", "large")["gate_status"]
+        == "classic_covered_loss"
+    )
+    assert (
+        problem_gate_row(rows, "qd", "classic", "warning")["gate_status"]
+        == "yield_warning"
+    )
+    assert (
+        problem_gate_row(rows, "qd", "classic", "small_n")["gate_status"]
+        == "small_n"
     )
 
 

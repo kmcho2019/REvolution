@@ -21,9 +21,18 @@ Selection rule:
 Screen decision:
 
 - Selected full-run arm: `sr_raw_conservative_exploit_qd` exact T26.
-- Rationale: exact T26 is the only QD arm with positive final mean HV versus
-  classic on this screen, and it also improves HV-AUC. Its ALU and multi-pipe
-  valid-PPA drops are yield warnings that must stay visible in the report.
+- Rationale: exact T26 has a narrow final mean HV edge versus classic on this
+  screen and also improves HV-AUC. This is a confirmatory PPA/HV choice, not a
+  front-breadth or yield win. Its ALU and multi-pipe valid-PPA drops are yield
+  warnings that must stay visible in the report.
+
+Regeneration:
+
+```bash
+uv run python scripts/package_rtllm_milestone_screen.py \
+  --run-root exp/useful_bd_push/rtllm_milestone_screen_20260622_130747_UTC \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/screening
+```
 
 Visual inspection:
 
@@ -31,5 +40,5 @@ Visual inspection:
   T26's traffic-light HV win, low-fusion's HV-AUC strength, and mid-fusion's
   front-point breadth.
 - `figures/screen_aggregate_metrics.png`: readable aggregate view. It makes
-  the deadline tradeoff clear: exact T26 is the final-HV choice, while
+  the deadline tradeoff clear: exact T26 is the narrow final-HV choice, while
   mid-fusion is the broader-front diagnostic.

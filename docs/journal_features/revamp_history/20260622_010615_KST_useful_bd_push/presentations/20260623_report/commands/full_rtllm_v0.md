@@ -70,7 +70,7 @@ uv run python scripts/run_backend.py \
   --save_path "${RUN_ROOT}/classic_revolution/seed_1001"
 ```
 
-Selected QD arm, exact T26 shown as fallback:
+Selected QD arm, exact T26:
 
 ```bash
 uv run python scripts/run_backend.py \
