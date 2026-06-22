@@ -166,6 +166,11 @@ Start here when resuming the active goal.
 
 ## Validity-Gate Note
 
+This push uses a PPA-first acceptance policy. Functionality and synthesis yield
+still matter for interpretation, but they are not the primary optimization
+target once both methods can produce at least one valid PPA point for the same
+design.
+
 The hard validity gate is design-level coverage retention: if classic has at
 least one valid functional PPA result for a design, a promoted QD method must
 also have at least one valid functional PPA result for that design. A 50

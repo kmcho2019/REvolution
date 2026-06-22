@@ -3,6 +3,10 @@
 These gates must be evaluated before any presentation claim that QD/MAP-Elites
 is useful for RTL PPA evolution.
 
+Policy: this milestone is PPA-first. A QD arm can remain acceptable with a lower
+functionality or synthesis rate if it keeps at least one valid functional PPA
+candidate on every classic-covered design and improves the paired PPA evidence.
+
 | Gate | Required Evidence | Failure Meaning |
 | --- | --- | --- |
 | Classic-covered retention | Every problem where classic has at least one valid functional PPA candidate must also have a valid QD candidate. | QD cannot be promoted on that comparison. |
