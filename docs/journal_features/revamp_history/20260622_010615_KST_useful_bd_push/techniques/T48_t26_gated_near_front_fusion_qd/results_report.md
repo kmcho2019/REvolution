@@ -1,9 +1,17 @@
 # T48 Gated Near-Front Fusion Results
 
-Status: live result pending.
+Status: seed `1001` live run in progress.
 
-No live run has been launched. T48 was implemented because T47 exact T26 was
-diagnostic but not held-out-ready:
+T48 seed `1001` was launched at run root:
+
+`exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning`
+
+The run passed the in-command vLLM preflight for `openai/gpt-oss-120b` with
+`max_model_len=131072`. Do not claim a result until the run exits cleanly and
+the package is built.
+
+T48 was implemented because T47 exact T26 was diagnostic but not
+held-out-ready:
 
 - mean HV delta: `-0.015483`;
 - mean HV-AUC delta: `-0.018435`;

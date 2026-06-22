@@ -2732,3 +2732,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   type-check cleanly in isolation.
 - No live T48 sampling has been launched yet. The next step is the two-seed
   hard/tuning QD arm in `commands/hard_tuning_sanity.md`.
+
+## T48 Gated Near-Front Fusion Seed 1001 Launch - 2026-06-22 UTC
+
+- Launched seed `1001` for the T48 QD arm at:
+  `exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning`.
+- The run passed the local vLLM preflight against
+  `http://20.0.0.103:8000/v1/models`; the endpoint reported
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Runtime arguments match `commands/hard_tuning_sanity.md`: hard/tuning
+  subset, `population_size=12`, `num_generations=3`,
+  `qd_two_parent_probability=0.10`, and
+  `qd_two_parent_gate=near_front_descriptor`.
+- The run is still in progress. Do not package or tier T48 until the process
+  exits cleanly and the archive summaries are validated.

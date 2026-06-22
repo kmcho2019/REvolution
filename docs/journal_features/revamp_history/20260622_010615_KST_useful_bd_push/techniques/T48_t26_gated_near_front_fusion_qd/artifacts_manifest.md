@@ -1,6 +1,6 @@
 # T48 Artifacts Manifest
 
-Status: implementation ready. Live result is pending.
+Status: seed `1001` live run in progress.
 
 ## Method Sources
 
@@ -22,10 +22,12 @@ Focused validation:
 - `uv tool run ty check src/revolution/qd/engine.py src/revolution/backends/revolution_backend.py`
 - `uv run python -m pyright src/revolution/qd/engine.py src/revolution/backends/revolution_backend.py`
 
-## Planned Live Run
+## Live Run
 
+- launched seed:
+  `1001`
 - run root:
-  `exp/useful_bd_push/t48_t26_gated_near_front_fusion_<timestamp>/hard_tuning`
+  `exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning`
 - candidate backend:
   `t26_gated_near_front_fusion_qd`
 - comparator backend:
@@ -34,6 +36,8 @@ Focused validation:
   `data/configs/hard_iteration_subset.yaml`
 - command card:
   `commands/hard_tuning_sanity.md`
+- preflight:
+  `preflight/models_20260622_225714_UTC.json`
 
 ## Required Result Artifacts
 
