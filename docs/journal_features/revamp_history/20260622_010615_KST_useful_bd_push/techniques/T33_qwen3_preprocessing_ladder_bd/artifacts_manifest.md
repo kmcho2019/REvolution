@@ -1,6 +1,7 @@
 # Qwen3 Preprocessing Ladder Artifacts Manifest
 
-Status: pre-registered. Artifact hashes are pending.
+Status: pre-registered with T33a source-inventory tables. Embedding and replay
+artifact hashes are pending.
 
 ## Source Evidence
 
@@ -17,6 +18,14 @@ Status: pre-registered. Artifact hashes are pending.
 
 New run files must stay in `exp/useful_bd_push/`. Do not place T33 run outputs
 under `/aux`.
+
+## T33a Committed Tables
+
+| Artifact | Rows | SHA256 |
+| --- | ---: | --- |
+| `tables/t33_source_inventory.csv` | 15 | `38270088aefc4bc2f5807e842597e9a867e09832cf708a4f208509d73b275677` |
+| `tables/t33_prior_qwen_summary.csv` | 22 | `8c95680dc1e4a75b557f031e6bbe53786d15c69fd6721917ed3df06717338a6e` |
+| `tables/t33_preprocessing_ladder_plan.csv` | 6 | `f950c5b50c593f700b7354229e3e5e786b6cf77219b61bc71488268bf7440b00` |
 
 ## Planned Subdirectories
 

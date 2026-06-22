@@ -1264,3 +1264,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   read-only retrospective evidence. If dependencies block the repo uv
   environment, the method must try an isolated uv environment under
   `exp/useful_bd_push/envs/` before stopping.
+
+## T33a Source Inventory - 2026-06-22 UTC
+
+- Added `scripts/package_t33_qwen_ladder_inventory.py` and a focused test to
+  package T33 source inputs before new embeddings are generated.
+- Ran the packager against
+  `exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC` and the
+  committed 20260621 Qwen bundle. It wrote:
+  `tables/t33_source_inventory.csv`,
+  `tables/t33_prior_qwen_summary.csv`, and
+  `tables/t33_preprocessing_ladder_plan.csv`.
+- The source inventory records 15 artifacts with bytes and SHA256 hashes. The
+  summary table fixes the T06 facts T33 must beat or explain: 768 candidates,
+  127 problems, `768x1024` prior Qwen embeddings, same-problem nearest-neighbor
+  fraction `0.93359375`, and identifier-Qwen HV gain `0.033499553667026144`
+  versus lexical.
+- Validation run:
+  `uv run pytest tests/scripts/test_package_t33_qwen_ladder_inventory.py`,
+  `uv run ruff check scripts/package_t33_qwen_ladder_inventory.py tests/scripts/test_package_t33_qwen_ladder_inventory.py`,
+  `uv run python -m pyright scripts/package_t33_qwen_ladder_inventory.py tests/scripts/test_package_t33_qwen_ladder_inventory.py`,
+  and
+  `uv tool run ty check scripts/package_t33_qwen_ladder_inventory.py tests/scripts/test_package_t33_qwen_ladder_inventory.py`
+  all passed.

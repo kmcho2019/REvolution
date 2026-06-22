@@ -1,6 +1,6 @@
 # Qwen3 Preprocessing Ladder BD Results Report
 
-Status: pre-registered method package.
+Status: pre-registered method package with T33a source inventory.
 
 Tier decision: pending. No result is claimed yet.
 
@@ -14,6 +14,25 @@ same-problem and same-corpus clustering.
 T33 is the planned escalation: normalize the RTL/netlist views, pool stable
 chunks into whole-design embeddings, and score whether any view reduces the
 T06 nuisance axes while preserving QD/Pareto signal.
+
+## T33a Source Inventory
+
+The T33a inventory records the exact prior Qwen sources before new
+preprocessing starts:
+
+- `tables/t33_source_inventory.csv`: 15 source artifacts from the live prior
+  Qwen directory and the committed 20260621 Qwen bundle, with bytes and SHA256.
+- `tables/t33_prior_qwen_summary.csv`: key T06 baseline facts copied from the
+  source summary.
+- `tables/t33_preprocessing_ladder_plan.csv`: the six planned preprocessing
+  views and leakage exclusions.
+
+Key source facts: model `Qwen/Qwen3-Embedding-0.6B`, `768` candidates,
+`127` problems, `768x1024` embeddings for the prior raw/commentless/identifier
+views, same-problem nearest-neighbor fraction `0.93359375`, and
+identifier-Qwen selected-HV gain `0.033499553667026144` versus lexical.
+
+These are source facts from T06, not new T33 performance evidence.
 
 ## Required Result Tables
 

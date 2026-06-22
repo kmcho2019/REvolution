@@ -18,6 +18,17 @@ uv venv exp/useful_bd_push/envs/t33_qwen3_preprocessing_ladder_bd_YYYYMMDD_HHMMS
 
 ## Planned Run Shape
 
+T33a source inventory:
+
+```bash
+uv run python scripts/package_t33_qwen_ladder_inventory.py \
+  --qwen-dir exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC \
+  --compiled-bundle-dir docs/journal_features/revamp_history/20260621_000217_KST_rtl_diversity_check/20260621_150407_UTC_compiled_results_bundle \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd
+```
+
+Future embedding run:
+
 ```bash
 uv run python scripts/run_qwen3_preprocessing_ladder.py \
   --source exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC \
