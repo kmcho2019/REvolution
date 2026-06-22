@@ -42,6 +42,7 @@ Real result packages:
 - `T14_dehnn_hypergraph_bd` directed-hypergraph replay diagnostic
 - `T11_mgvga_contrastive_bd` structural-contrastive replay diagnostic
 - `T35_t11_pareto_coupling_bd` T11 archive-coupling replay diagnostic
+- `T36_t11_bounded_front_lane_bd` T11 bounded-front-lane replay diagnostic
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -63,8 +64,10 @@ negative: it improves P098 valid PPA versus T26/T31 and recovers some unique
 PPA/front-netlist breadth, but it still loses T26's P135 HV/quality signal and
 has zero mean HV/HV-AUC. T35 shows that T11 cell-local Pareto retention can
 recover direct front hits, but the deployable cell-local arms lose too much HV;
-the front-seeded arm is only an upper-bound diagnostic. The ten-package minimum
-is satisfied, but the goal remains active.
+the front-seeded arm is only an upper-bound diagnostic. T36 is the current
+best replay lead: one local-front slot improves HV and direct front hits over
+both lexical and T11. The ten-package minimum is satisfied, but the goal
+remains active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -260,6 +263,20 @@ claimed as a useful BD. The primary PNG is
 The filesystem-openable direct raw PPA viewer is
 `techniques/T35_t11_pareto_coupling_bd/visualizations/direct_ppa_pareto/index.html`.
 
+`T36_t11_bounded_front_lane_bd` is the completed T11 bounded-front-lane replay.
+It keeps the T11 farthest-first selector for most of each replay group and
+fills one local-front slot from descriptor-cell area-power Pareto order. The
+bounded lane reaches HV `3.851344`, `+4.04%` versus lexical and above T11's
+`3.769259`. It also recovers direct front hits to `126`, above lexical's
+`122` and T11's `120`. It is a `T2 replay_candidate`, not a final useful-BD
+promotion, because no same-budget live run has tested generation-time
+validity/coverage. The tested `5%` to `20%` quota labels collapse to one
+front-lane slot on this replay surface, so they are not independent variants.
+The primary PNG is
+`techniques/T36_t11_bounded_front_lane_bd/figures/t36_multi_problem_ppa_pareto_fronts.png`.
+The filesystem-openable direct raw PPA viewer is
+`techniques/T36_t11_bounded_front_lane_bd/visualizations/direct_ppa_pareto/index.html`.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -315,6 +332,9 @@ The filesystem-openable direct raw PPA viewer is
     replacing descriptor novelty with cell-local Pareto retention loses too
     much HV. The next attempt should keep the T11 selector and add only a
     bounded front lane.
+21. T36 is the strongest current replay lead. A one-slot local-front lane
+    improves HV by +4.04% over lexical and recovers direct front hits to 126,
+    but it still needs live validation before any useful-BD claim.
 
 ## Next Decisions
 
@@ -344,3 +364,6 @@ The filesystem-openable direct raw PPA viewer is
 - For the T11 lineage, do not promote front-seeded evidence as a method. Use it
   only to justify a gentler replay or live variant that preserves T11's
   farthest/HV behavior while reserving a small front-recovery lane.
+- For T36, run same-budget live validation or a slot-count ablation next. Do
+  not overstate the six quota labels as separate evidence because they all map
+  to one front-lane slot under the current replay group size.

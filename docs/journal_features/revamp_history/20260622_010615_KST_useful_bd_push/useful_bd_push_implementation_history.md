@@ -1692,3 +1692,46 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `uv run python -m pyright scripts/analyze_t35_t11_pareto_coupling.py tests/scripts/test_analyze_t35_t11_pareto_coupling.py`,
   and
   `uv tool run ty check scripts/analyze_t35_t11_pareto_coupling.py tests/scripts/test_analyze_t35_t11_pareto_coupling.py`.
+
+## T36 T11 Bounded Front-Lane Replay - 2026-06-22 UTC
+
+- Added `scripts/analyze_t36_t11_bounded_front_lane.py` and a focused test.
+  The replay keeps T11 structural contrastive farthest-first retention for
+  most slots and reserves a bounded descriptor-cell local-front lane.
+- Pre-registered the method in
+  `techniques/T36_t11_bounded_front_lane_bd/methodology.md` before the real
+  replay. PPA is excluded from descriptor fitting and used only after
+  candidate evaluation for the bounded archive-retention lane.
+- Ran the replay command recorded in
+  `techniques/T36_t11_bounded_front_lane_bd/commands/replay_v0.md` with the
+  common Qwen audit candidate CSV, T07 graph manifest, T14 hypergraph feature
+  table, `0.5` retention fraction, random seed `0`, and `2` bins per T11 PCA
+  axis.
+- Main result: every T36 quota arm maps to one front-lane slot under the
+  current group sizes. That one-slot bounded lane selects HV `3.851344`,
+  `+4.04%` versus lexical (`3.701827`) and above T11 (`3.769259`). Direct
+  front hits improve to `126`, compared with lexical's `122` and T11's `120`.
+- The result also beats `fitness_top` on HV (`3.851344` versus `3.823248`) and
+  unique PPA (`180` versus `159`). It does not beat lexical/T11 on unique PPA:
+  lexical has `183` and T11 has `186`.
+- Tier decision: `T2 replay_candidate`, not final promotion. This is the
+  strongest replay lead so far, but it still needs same-budget live validation
+  or a slot-count ablation before a useful-BD claim.
+- Added primary raw PPA-front figures:
+  `techniques/T36_t11_bounded_front_lane_bd/figures/t36_multi_problem_ppa_pareto_fronts.png`
+  and
+  `techniques/T36_t11_bounded_front_lane_bd/figures/t36_raw_area_power_pareto_front.png`.
+  The plotted data are committed in `tables/ppa_front_plot_points.csv`.
+- Added the direct raw PPA HTML viewer:
+  `techniques/T36_t11_bounded_front_lane_bd/visualizations/direct_ppa_pareto/index.html`.
+  Playwright rendered it and saved
+  `visualizations/direct_ppa_pareto/screenshot.png`.
+- Visual inspection passed for the multi-problem raw PPA front, raw
+  area-power zoom, hypervolume bars, front-hit bars, and HTML viewer. Notes are
+  in `techniques/T36_t11_bounded_front_lane_bd/figures/visual_inspection_notes.md`.
+- Focused validation passed:
+  `uv run pytest tests/scripts/test_analyze_t36_t11_bounded_front_lane.py`,
+  `uv run ruff check scripts/analyze_t36_t11_bounded_front_lane.py tests/scripts/test_analyze_t36_t11_bounded_front_lane.py`,
+  `uv run python -m pyright scripts/analyze_t36_t11_bounded_front_lane.py tests/scripts/test_analyze_t36_t11_bounded_front_lane.py`,
+  and
+  `uv tool run ty check scripts/analyze_t36_t11_bounded_front_lane.py tests/scripts/test_analyze_t36_t11_bounded_front_lane.py`.

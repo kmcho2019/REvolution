@@ -139,6 +139,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T35_t11_pareto_coupling_bd` has replay, direct PPA-front figures,
       HTML viewer, visual inspection notes, and a mixed diagnostic tier
       decision.
+- [x] `T36_t11_bounded_front_lane_bd` has replay, direct PPA-front figures,
+      HTML viewer, visual inspection notes, and a `T2 replay_candidate` tier
+      decision.
 
 ## Minimum Goal Completion
 
@@ -172,6 +175,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Conclusions distinguish `T0`, `T1`, `T2`, and `T3`.
 - [ ] Every `T0` result adds a follow-up idea, ablation, hybrid, or retirement
       rationale before the next method starts.
+- [ ] T36 bounded front lane gets same-budget live validation or a slot-count
+      ablation before any final useful-BD claim.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

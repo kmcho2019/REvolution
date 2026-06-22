@@ -45,22 +45,25 @@ The desired end state is one of:
 
 ## Current Research State
 
-T35 is the most recent completed package. It keeps the T11
-structural-contrastive descriptor and tests archive coupling over the same
-common replay surface. Cell-local Pareto retention improves direct front hits
-to `126`, versus lexical's `122` and T11's `120`, but loses too much selected
-HV (`-8.97%` versus lexical). The front-seeded upper-bound arm reaches
-`+4.39%` HV and `132` front hits, proving the fixed candidate pool contains
-recoverable front material, but it uses global raw PPA-front membership and is
-not a deployable BD claim.
+T36 is the most recent completed package and the strongest current replay
+lead. It keeps the T11 structural-contrastive selector and adds one bounded
+descriptor-cell local-front slot. The bounded lane reaches HV `3.851344`,
+`+4.04%` versus lexical, and recovers direct front hits to `126`, above
+lexical's `122` and T11's `120`. It is a `T2 replay_candidate`, not a final
+useful-BD promotion, because no same-budget live run has tested
+generation-time validity and coverage.
 
-T11 remains the strongest deployable L4 replay selector so far. Its
+T35 remains important negative/upper-bound evidence. Full cell-local Pareto
+retention improves direct front hits but loses too much HV, while the
+front-seeded arm proves the fixed candidate pool contains recoverable front
+material but uses global raw PPA-front membership and is not deployable.
+
+T11 remains the strongest pure descriptor-only L4 replay selector so far. Its
 top-64/weighted structural contrastive descriptors beat lexical HV by
 `+1.82%` and keep `186` unique PPA points, but direct front hits still miss
-lexical (`120` versus `122`). The next T11-family method should preserve this
-farthest/HV selector and add only a small bounded front lane, or change the
-encoder objective with collapse-penalized contrastive training. Do not replace
-descriptor novelty outright with local Pareto retention.
+lexical (`120` versus `122`). T36 is the measured bounded-front follow-up. The
+next T11-family step should live-validate T36 or run a slot-count ablation; do
+not replace descriptor novelty outright with local Pareto retention.
 
 T30 remains the most recent positive holdout support for exact T26
 conservative-exploit SR raw: it preserves all three classic-covered

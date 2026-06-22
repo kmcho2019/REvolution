@@ -345,6 +345,23 @@ a numbered `techniques/T##_slug/` package before running it.
   PPA Pareto front, with the HTML viewer regenerated from committed point
   tables and inspected before any aggregate conclusion is accepted.
 
+## From `T36_t11_bounded_front_lane_bd`
+
+- T36 is the strongest replay lead so far: one local-front slot reaches
+  `3.851344` HV (`+4.04%` versus lexical) and `126` direct front hits (`+4`
+  versus lexical), beating T11 and fitness-top on the claimed replay metrics.
+- The `5%` to `20%` quota arms collapse to the same one-slot bounded lane
+  because retained group sizes are small. Do not count those labels as
+  independent evidence.
+- Potential T37: `t36_live_bounded_front_lane_qd`. Implement the same archive
+  rule in a same-budget live screen, keeping the T11 descriptor and one local
+  front-recovery slot per cell/group. Acceptance gates: preserve every
+  classic-covered design, avoid catastrophic validity collapse, and show the
+  direct raw PPA front before aggregate claims.
+- Alternative T37 if staying passive: `t36_slot_count_ablation`. Compare zero,
+  one, and two local-front slots under the same replay setup so the slot-count
+  effect is explicit rather than hidden behind percent quotas.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live
