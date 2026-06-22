@@ -41,6 +41,7 @@ Real result packages:
   diagnostic
 - `T14_dehnn_hypergraph_bd` directed-hypergraph replay diagnostic
 - `T11_mgvga_contrastive_bd` structural-contrastive replay diagnostic
+- `T35_t11_pareto_coupling_bd` T11 archive-coupling replay diagnostic
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -60,8 +61,10 @@ PPA/front-family evidence. T31 is a negative same-budget repair result: it
 does not repair P098 yield and loses T26's P135 HV/quality signal. T32 is also
 negative: it improves P098 valid PPA versus T26/T31 and recovers some unique
 PPA/front-netlist breadth, but it still loses T26's P135 HV/quality signal and
-has zero mean HV/HV-AUC. The
-ten-package minimum is satisfied, but the goal remains active.
+has zero mean HV/HV-AUC. T35 shows that T11 cell-local Pareto retention can
+recover direct front hits, but the deployable cell-local arms lose too much HV;
+the front-seeded arm is only an upper-bound diagnostic. The ten-package minimum
+is satisfied, but the goal remains active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -244,6 +247,19 @@ direct front hits remain below lexical: 120 versus 122. The primary PNG is
 The filesystem-openable direct raw PPA viewer is
 `techniques/T11_mgvga_contrastive_bd/visualizations/direct_ppa_pareto/index.html`.
 
+`T35_t11_pareto_coupling_bd` is the completed T11 archive-coupling replay. It
+keeps T11's structural contrastive descriptors and tests local area-power
+Pareto retention inside descriptor cells. The deployable cell-Pareto arms
+improve direct front hits to `126`, versus lexical's `122` and T11's `120`,
+but they lose too much selected HV: `3.369630`, or `-8.97%` versus lexical.
+The passive front-seeded upper-bound arm reaches `3.864198` HV and `132`
+front hits, proving the candidate pool contains recoverable front material,
+but it uses global raw area-power front membership directly and must not be
+claimed as a useful BD. The primary PNG is
+`techniques/T35_t11_pareto_coupling_bd/figures/t35_multi_problem_ppa_pareto_fronts.png`.
+The filesystem-openable direct raw PPA viewer is
+`techniques/T35_t11_pareto_coupling_bd/visualizations/direct_ppa_pareto/index.html`.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -295,6 +311,10 @@ The filesystem-openable direct raw PPA viewer is
 19. T11 shows structural contrastive feature selection is the strongest L4
     replay direction so far, but the direct raw PPA front still blocks
     promotion: it improves HV without beating lexical front-hit retention.
+20. T35 shows local Pareto coupling can recover T11's missing front hits, but
+    replacing descriptor novelty with cell-local Pareto retention loses too
+    much HV. The next attempt should keep the T11 selector and add only a
+    bounded front lane.
 
 ## Next Decisions
 
@@ -321,3 +341,6 @@ The filesystem-openable direct raw PPA viewer is
 - Keep Qwen3 preprocessing and encoder methods in the queue, but do not let
   learned encoders distract from validating the current synthesis-response
   leads.
+- For the T11 lineage, do not promote front-seeded evidence as a method. Use it
+  only to justify a gentler replay or live variant that preserves T11's
+  farthest/HV behavior while reserving a small front-recovery lane.

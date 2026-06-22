@@ -136,6 +136,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       direct PPA-front figures, visual inspection notes, and a tier decision.
 - [x] `T34_qwen_pca_residual_bd` has replay, direct PPA-front figures,
       collapse diagnostics, visual inspection notes, and tier decision.
+- [x] `T35_t11_pareto_coupling_bd` has replay, direct PPA-front figures,
+      HTML viewer, visual inspection notes, and a mixed diagnostic tier
+      decision.
 
 ## Minimum Goal Completion
 

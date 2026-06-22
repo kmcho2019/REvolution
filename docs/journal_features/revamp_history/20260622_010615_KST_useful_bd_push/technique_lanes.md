@@ -54,8 +54,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`; T21 expands coverage but loses quality. | Stop pure concatenation; use feature selection, CVT, or local-Pareto retention. |
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
-| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T11 structural-contrastive top-64/weighted descriptors keep the strongest L4 HV lead so far (+1.82%), but direct front hits remain below lexical. | Keep the T11/T13/T14 structural signal, but target front-hit retention with local-Pareto coupling or collapse-penalized contrastive training. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T27 shows T26 beats classic on live HV/HV-AUC; T28/direct-front audit show weak front coverage; T29/T31/T32 are negative follow-ups; T30 gives holdout support but no front-breadth win. | Stop simple schedule tuning; use a separated repair/local-rank-1 emitter or switch lane. |
+| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T11 structural-contrastive descriptors keep the strongest L4 HV lead so far (+1.82%); T35 cell-local Pareto recovers front hits but loses HV. | Keep the T11 selector and add only a bounded front lane, or try collapse-penalized contrastive training. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T27 shows T26 beats classic on live HV/HV-AUC; T28/direct-front audit show weak front coverage; T29/T31/T32 are negative follow-ups; T30 gives holdout support but no front-breadth win; T35 shows full local-Pareto replacement is too costly in replay. | Stop simple schedule tuning; use a separated repair/local-rank-1 emitter or a gentle T11 front lane. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T26/T27/T30 show champion-biased parent-source policy restores quality and holdout pressure; T31 direct repair and T32 small near-front sampling are insufficient. | Split champion, near-front, and bounded-repair roles more sharply. |
 
 ## Lane Scorecard
@@ -66,8 +66,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L1` | T03 ST-NOD near-miss | Hybrid source. | Direct transparent descriptors lose audit-QD or best quality. | Continue only as selected features inside T17/T24-style archives. |
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
-| `L4` | T11 contrastive feature selection after T13/T14 structural features | Mixed: top-64/weighted descriptors are `T1 near_classic_replay_lead`; direct front hits remain below lexical. | HV improves more than T13/T14, but front-hit retention is still not solved. | Add local-Pareto coupling or a collapse penalty; do not continue blind concatenation. |
-| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32 local-Pareto lineage | T32 improves P098 yield and unique PPA breadth versus T31, but loses T26's P135 HV/quality signal. | Simple schedule tuning is exhausted for now. | Use T30/T31/T32 direct-front metrics as controls for a more separated emitter or branch away. |
+| `L4` | T11 contrastive feature selection after T13/T14 structural features, plus T35 replay coupling | Mixed: T11 top-64/weighted descriptors are `T1 near_classic_replay_lead`; T35 front-seeded is upper-bound evidence only and cell-local Pareto is `T0`. | HV and front-hit signals can be separated, but simple local Pareto retention trades away too much HV. | Preserve T11's farthest/HV selector and add a small front lane; do not replace novelty selection outright. |
+| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35 local-Pareto lineage | T32 improves P098 yield and unique PPA breadth versus T31, but loses T26's P135 HV/quality signal; T35 recovers replay front hits but loses HV. | Simple schedule tuning and full local-Pareto replacement are exhausted for now. | Use T30/T31/T32/T35 direct-front metrics as controls for a more separated emitter or gentle front lane. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter | T32 shows a small near-front success-parent lane is not enough. | Need a bounded repair/local-rank-1 lane that cannot replace T26 champion quality pressure. | Specify a true role-separated emitter before another holdout run. |
 
 ## Current Lineage
@@ -106,6 +106,7 @@ flowchart LR
     AE[T13 AURORA feature replay]
     AF[T14 hypergraph hybrid replay]
     AG[T11 contrastive replay]
+    AH[T35 T11 Pareto coupling]
     L[T08-T12 and T15-T16 graph and multimodal scaffolds]
   end
 
@@ -162,7 +163,8 @@ flowchart LR
   AD --> AE
   AE --> AF
   AF --> AG
-  AG --> L
+  AG --> AH
+  AH --> L
   G --> M
   G --> W
 ```
@@ -205,6 +207,7 @@ flowchart TD
 | 2026-06-22 | `L4` learned encoders | T13 AURORA-style implementation replay | `hybridize` | Raw implementation features improve HV by +1.06% versus lexical and improve unique PPA points, but PCA/RFF/incremental bottlenecks lose HV and raw features still miss lexical front hits. | Reuse the raw feature vector in feature selection or local-Pareto coupling; do not continue plain unsupervised compression. |
 | 2026-06-22 | `L4` learned encoders | T14 DE-HNN-style hypergraph replay | `hybridize` | Hypergraph-only descriptors lose HV, but the hypergraph+implementation hybrid keeps a +1.01% HV lead and improves unique PPA to 187; front hits remain below lexical. | Use feature selection or contrastive training to keep the HV/unique-PPA signal while explicitly retaining front hits. |
 | 2026-06-22 | `L4` learned encoders | T11 MGVGA-style structural contrastive replay | `hybridize` | Top-64/weighted contrastive descriptors improve HV by +1.82% over lexical and recover one front hit versus T14, but still trail lexical front hits 120 versus 122. | Use T11 as the feature-selection baseline; add local-Pareto coupling or collapse-penalized contrastive training before live budget. |
+| 2026-06-22 | `L4/L5` learned encoders and archive coupling | T35 T11 Pareto-coupling replay | `ablate` | Cell-local Pareto retention improves direct front hits to 126 versus lexical's 122 but loses 8.97% HV; front-seeded retention reaches 132 front hits and +4.39% HV but is only an upper-bound diagnostic because it uses global PPA-front membership. | Preserve T11's farthest/HV selector and add only a small bounded front lane before any live budget. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |

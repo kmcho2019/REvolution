@@ -22,8 +22,8 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L1` | Transparent CAD descriptors | Use reviewer-readable features such as Yosys stats, motifs, pathlets, and ST-NOD. | Reuse selected features in guarded hybrids; stop pure concatenation. |
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
-| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T11 is the strongest L4 replay HV lead so far; front-hit retention is still missing. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T32 is negative; stop simple schedule tuning and use it as a P098-yield control. |
+| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T11 is the strongest L4 replay HV lead; T35 shows front-hit recovery needs gentler coupling. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T32 and T35 are negative for simple tuning or full local-Pareto replacement. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T31/T32 show repair/front tweaks need stronger role separation. |
 
 ## Lineage Graph
@@ -62,6 +62,7 @@ flowchart LR
     T13[T13 AURORA feature replay]
     T14[T14 DE-HNN hypergraph replay]
     T11[T11 contrastive replay]
+    T35[T35 T11 Pareto coupling]
     enc[T08-T16 encoder scaffolds]
   end
 
@@ -116,7 +117,8 @@ flowchart LR
   T07 --> T13
   T13 --> T14
   T14 --> T11
-  T11 --> enc
+  T11 --> T35
+  T35 --> enc
   T17 --> T12
   T17 --> T18
   T24 --> T18
@@ -136,6 +138,7 @@ flowchart LR
 | T13 | `L4` | AURORA-style implementation feature replay with PCA, RFF-PCA, and incremental PCA bottlenecks. | Mixed: raw implementation features beat lexical HV by +1.06%, while compressed bottlenecks lose HV and front hits remain below lexical. | `hybridize` | Reuse raw features in feature selection, local-Pareto coupling, or contrastive graph training. |
 | T14 | `L4` | DE-HNN-style directed hypergraph replay, plus a T13 implementation-feature hybrid. | Mixed: hypergraph-only descriptors lose HV; the hybrid beats lexical HV by +1.01% and raises unique PPA to 187, but front hits remain below lexical. | `hybridize` | Keep the hybrid signal, but use feature selection or contrastive training to target front-hit retention. |
 | T11 | `L4` | MGVGA-style structural contrastive feature selection over T13/T07/T14 views. | `T1 near_classic_replay_lead`: top-64/weighted descriptors beat lexical HV by +1.82%, but direct front hits remain below lexical. | `hybridize` | Use T11 as the feature-selection baseline for local-Pareto coupling or collapse-penalized contrastive training. |
+| T35 | `L4/L5` | T11 structural contrastive descriptor with descriptor-cell local Pareto retention and a front-seeded upper bound. | Mixed diagnostic: cell-local Pareto retention improves direct front hits from lexical's 122 to 126 but loses 8.97% HV; front-seeded reaches +4.39% HV and 132 front hits but uses global PPA-front membership. | `ablate` | Keep T11's farthest/HV selector and add only a small bounded front lane before any live budget. |
 | T08-T10/T12/T15-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, lineage repair, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |

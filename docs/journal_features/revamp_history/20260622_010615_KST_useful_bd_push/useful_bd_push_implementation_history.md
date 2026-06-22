@@ -1645,3 +1645,50 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   and
   `uv tool run ty check scripts/analyze_t11_mgvga_contrastive.py tests/scripts/test_analyze_t11_mgvga_contrastive.py`
   passed before the final real replay was regenerated.
+
+## T35 T11 Pareto-Coupled Replay - 2026-06-22 UTC
+
+- Added `scripts/analyze_t35_t11_pareto_coupling.py` and a focused test. The
+  replay keeps T11 structural contrastive features from RTL counts, T07 graph
+  features, and T14 hypergraph features, then tests descriptor-cell local
+  area-power Pareto retention.
+- Descriptor fitting excludes final PPA, reference PPA, fitness,
+  hypervolume, Pareto labels, validity labels, problem id, corpus, model,
+  method, seed, and candidate id. PPA is used only after candidate evaluation
+  for archive-retention diagnostics.
+- Ran the replay command recorded in
+  `techniques/T35_t11_pareto_coupling_bd/commands/replay_v0.md` with the
+  common Qwen audit candidate CSV, T07 graph manifest, T14 hypergraph feature
+  table, `0.5` retention fraction, random seed `0`, and `2` bins per T11 PCA
+  axis.
+- Main deployable result: T35 cell-local Pareto retention improves direct
+  front hits to `126`, compared with lexical's `122` and T11's `120`, but it
+  loses too much selected HV: `3.369630`, or `-8.97%` versus lexical. Unique
+  PPA also falls to `162`, below lexical's `183`.
+- Upper-bound result: `t35_top64_front_seeded` reaches HV `3.864198`
+  (`+4.39%` versus lexical) and `132` front hits. This is not deployable
+  because it uses global raw area-power front membership directly; it only
+  proves that the fixed candidate pool contains recoverable front material.
+- Added primary raw PPA-front figures:
+  `techniques/T35_t11_pareto_coupling_bd/figures/t35_multi_problem_ppa_pareto_fronts.png`
+  and
+  `techniques/T35_t11_pareto_coupling_bd/figures/t35_raw_area_power_pareto_front.png`.
+  The plotted data are committed in `tables/ppa_front_plot_points.csv`.
+- Added the direct raw PPA HTML viewer:
+  `techniques/T35_t11_pareto_coupling_bd/visualizations/direct_ppa_pareto/index.html`.
+  Playwright rendered it and saved
+  `visualizations/direct_ppa_pareto/screenshot.png`.
+- Visual inspection passed for the multi-problem raw PPA front, raw
+  area-power zoom, hypervolume bars, front-hit bars, and HTML viewer. Notes are
+  in `techniques/T35_t11_pareto_coupling_bd/figures/visual_inspection_notes.md`.
+- Tier decision: mixed `T0/T1 diagnostic`, not promoted. The cell-local
+  Pareto arms are `T0` because the HV loss is too large. The front-seeded arm
+  is useful upper-bound evidence only. The next T11-family attempt should keep
+  the T11 farthest/HV selector and add a small bounded front lane rather than
+  replacing descriptor novelty with local Pareto retention.
+- Focused validation passed:
+  `uv run pytest tests/scripts/test_analyze_t35_t11_pareto_coupling.py`,
+  `uv run ruff check scripts/analyze_t35_t11_pareto_coupling.py tests/scripts/test_analyze_t35_t11_pareto_coupling.py`,
+  `uv run python -m pyright scripts/analyze_t35_t11_pareto_coupling.py tests/scripts/test_analyze_t35_t11_pareto_coupling.py`,
+  and
+  `uv tool run ty check scripts/analyze_t35_t11_pareto_coupling.py tests/scripts/test_analyze_t35_t11_pareto_coupling.py`.

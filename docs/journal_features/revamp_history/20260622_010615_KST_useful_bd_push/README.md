@@ -14,25 +14,26 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T11_mgvga_contrastive_bd/` (completed structural-contrastive
-  replay; top-64/weighted descriptors are `T1 near_classic_replay_lead`, but
-  direct front hits remain below lexical).
+  `techniques/T35_t11_pareto_coupling_bd/` (completed T11 archive-coupling
+  replay; cell-local Pareto retention improves direct front hits but loses too
+  much HV, while front-seeded retention is only an upper-bound diagnostic).
 - Most recent pre-registered package: none beyond the remaining scaffolded
   T08-T10/T12/T15-T16/T18 encoder and emitter candidates.
 - Next direction:
-  preserve the T11/T13/T14 structural implementation signal, but target
-  front-hit retention with local-Pareto coupling or collapse-penalized
-  contrastive training instead of more feature concatenation.
+  preserve the T11 farthest/HV selector and add only a small bounded front
+  lane, or try collapse-penalized contrastive training, instead of replacing
+  descriptor novelty with local Pareto retention.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T11_mgvga_contrastive_bd/figures/mgvga_multi_problem_ppa_pareto_fronts.png`
+  `techniques/T35_t11_pareto_coupling_bd/figures/t35_multi_problem_ppa_pareto_fronts.png`
   (four representative raw area-power Pareto-front panels with all-valid,
-  lexical, random, and T11 overlays).
+  lexical, T11, and T35 overlays).
 - Most recent direct PPA HTML viewer:
-  `techniques/T11_mgvga_contrastive_bd/visualizations/direct_ppa_pareto/index.html`
-  (filesystem-openable raw area-power Pareto viewer with front-hit summary).
+  `techniques/T35_t11_pareto_coupling_bd/visualizations/direct_ppa_pareto/index.html`
+  (filesystem-openable raw area-power Pareto viewer with front-hit summary and
+  Playwright screenshot).
 - Most recent interactive visualization refresh:
   `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
   now has a `raw A-P front` PPA mode, with screenshot
@@ -127,6 +128,7 @@ Start here when resuming the active goal.
 | `T32` | `T32_sr_raw_front_preserving_emitter_qd` | Completed holdout live arm, `T0 diagnostic`; repairs some P098 yield and unique PPA breadth versus T31 but loses T26's P135 HV/quality signal. |
 | `T33` | `T33_qwen3_preprocessing_ladder_bd` | Completed replay diagnostic, `T0 diagnostic`; canonical RTL/identifier-role RTL modestly beat lexical HV, but canonical Yosys netlist's collapse improvement does not transfer to HV/PPA-front metrics. |
 | `T34` | `T34_qwen_pca_residual_bd` | Completed replay diagnostic, `T0 diagnostic`; PCA residuals preserve T33 RTL HV signal but do not align HV, front hits, and collapse reduction. |
+| `T35` | `T35_t11_pareto_coupling_bd` | Completed replay diagnostic, mixed `T0/T1 diagnostic`; T11 cell-local Pareto retention improves direct front hits but loses HV, while front-seeded retention is only an upper-bound diagnostic. |
 
 ## Validity-Gate Note
 

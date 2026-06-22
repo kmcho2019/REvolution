@@ -328,6 +328,23 @@ a numbered `techniques/T##_slug/` package before running it.
   Pareto plot is mandatory evidence for any follow-up because aggregate valid
   counts alone would overstate the result.
 
+## From `T35_t11_pareto_coupling_bd`
+
+- T35 shows that the T11 candidate pool contains recoverable front material:
+  the front-seeded upper bound reaches `+4.39%` HV and `132` direct front
+  hits. This is evidence about the pool, not a method claim, because it uses
+  global raw PPA-front membership directly.
+- The deployable cell-local Pareto arms are negative as standalone replacements
+  for T11 farthest-first retention. They improve front hits to `126`, but lose
+  `8.97%` HV and reduce unique PPA to `162`.
+- Potential T36: `t11_bounded_front_lane_bd`. Keep the T11 contrastive
+  farthest/HV selector as the main lane, reserve a small fixed quota for
+  descriptor-cell or near-front recovery, and compare against lexical, T11,
+  T35 cell-local Pareto, and the T35 front-seeded upper bound.
+- Required T36 visual: the first figure must again be a direct raw area-power
+  PPA Pareto front, with the HTML viewer regenerated from committed point
+  tables and inspected before any aggregate conclusion is accepted.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live
