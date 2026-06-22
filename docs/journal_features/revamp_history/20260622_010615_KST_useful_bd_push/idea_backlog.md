@@ -249,6 +249,24 @@ a numbered `techniques/T##_slug/` package before running it.
   conservative-exploit SR raw on the frozen VerilogEval holdout screen. A new
   repair/yield emitter should wait for this holdout evidence.
 
+## From `T30_t26_holdout_front_audit`
+
+- T26 earns holdout support but not promotion. It preserves all three
+  classic-covered holdout designs, improves mean final-best score by 9.91%,
+  and produces the only positive normalized HV through P135.
+- The blocker is now sharper: P098 valid PPA samples fall from 31 to 15,
+  candidate-level front points only tie classic, unique PPA points fall from
+  11 to 8, and front netlists fall from 9 to 6.
+- T31 should be a repair/yield/front-preserving emitter, not another blind
+  champion-lane interpolation. Keep T26's champion refinement lane, add a
+  bounded repair lane for invalid or weak-yield descendants, and add a local
+  front-preservation lane that samples rank-1 or near-rank-1 candidates even
+  when they are not the scalar champion.
+- Required T31 controls: classic, exact T26, T29 as the failed front-recovery
+  control, and the T30 holdout direct raw PPA Pareto plots.
+- Required T31 visual: a straightforward raw area-power Pareto front with no
+  inverted axes, plus normalized improvement front and valid-PPA/yield bars.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

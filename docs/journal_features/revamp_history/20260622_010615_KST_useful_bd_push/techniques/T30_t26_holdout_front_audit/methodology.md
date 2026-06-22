@@ -89,14 +89,15 @@ T30 can support T26 as `T1` or higher only if:
 - per-problem summaries, generation logs, archive cells, archive summaries,
   and global Pareto summaries;
 - Pareto archive validation for the T26 arm;
-- direct raw and normalized PPA-front figures;
+- direct raw PPA-front figures with conventional lower-left-better axes,
+  candidate zoom, and normalized PPA-front figures;
 - canonical RTL/netlist/family duplicate audit tables;
 - `results_report.md` with a T0/T1/T2/T3 tier decision;
 - visual inspection notes.
 
 ## Current Status
 
-Current tier: pending live execution.
+Current tier: `T1 near-classic` holdout support with a P098 yield warning.
 
 Do not change the compared arms or holdout problem list after seeing live
 results. Any repair/yield emitter must become a separate T31 package.

@@ -121,7 +121,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       inspection, and lane-decision documentation.
 - [x] `T29_sr_raw_front_recovery_qd` is pre-registered, executed, packaged, and
       assigned a tier decision.
-- [ ] `T30_t26_holdout_front_audit` is pre-registered, executed, packaged, and
+- [x] `T30_t26_holdout_front_audit` is pre-registered, executed, packaged, and
       assigned a tier decision.
 
 ## Minimum Goal Completion
@@ -141,6 +141,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       useful-QD claim.
 - [x] T26/T28 gets holdout or front-recovery validation before any `T2`
       useful-QD claim.
+- [ ] T31 repair/yield/front-preserving emitter is specified from T30's P098
+      yield warning and front-breadth deficit before another live run.
 - [ ] Central comparison report states whether QD/MAP-Elites is useful,
       near-classic, or still negative.
 - [ ] Central and per-technique reports pass

@@ -1017,3 +1017,52 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Rationale: T29 shows simple front-recovery interpolation fails. T30 checks
   whether T26's current HV/HV-AUC/best-quality signal generalizes before
   spending effort on a repair/yield/front-preserving emitter.
+
+## T30 T26 Holdout Front Audit Live Result - 2026-06-21 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models`; the endpoint returned
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Completed the two-arm holdout run under
+  `exp/useful_bd_push/t30_t26_holdout_front_audit_20260621_233506_UTC/`.
+- Classic runtime was 580.04 seconds. T26 conservative-exploit runtime was
+  646.44 seconds.
+- Classic final-best scores:
+  `Prob150_review2015_fsmonehot` 0.329686,
+  `Prob098_circuit7` 0.012006, and
+  `Prob135_m2014_q6b` 0.331046.
+- T26 final-best scores:
+  `Prob150_review2015_fsmonehot` 0.329686,
+  `Prob098_circuit7` 0.012006, and
+  `Prob135_m2014_q6b` 0.397698.
+- Pareto archive validation passed structurally for the T26 holdout arm:
+  valid `True`, failure count `0`, and max front size seen `3`.
+- Added `scripts/package_t30_holdout_front_audit.py` and
+  `tests/scripts/test_package_t30_holdout_front_audit.py`.
+- Packaged T30 tables for live metrics, T26-vs-classic deltas, canonical
+  RTL/netlist/family accounting, method manifest, vLLM preflight metadata, and
+  T26 Pareto validation.
+- Added direct raw PPA Pareto figures after review feedback that the current
+  visualizations were not straightforward enough:
+  `figures/t30_holdout_ppa_pareto_area_power_candidate_zoom.png` uses raw area
+  and power with no inverted axes, and
+  `figures/t30_holdout_ppa_pareto_area_power.png` adds the reference star for
+  context.
+- Visual inspection accepted the new candidate-zoom raw PPA Pareto plot as the
+  primary front figure. The reference-star plot is useful context, but it
+  stretches the y-axis on P150 and P135.
+- Aggregate read: T26 valid PPA samples drop from 103 to 68, final-best
+  covered problems tie at 3, mean final-best score improves by 9.91%, mean
+  normalized HV rises from 0 to 0.066206, candidate-level front points tie at
+  3, unique PPA points drop from 11 to 8, and front netlists drop from 9 to 6.
+- Per-problem warning: P098 valid PPA samples drop from 31 to 15, which is
+  just below the 50% per-design validity threshold if interpreted per problem.
+- Tier read: `T1 near-classic` holdout support with a yield warning, not a
+  T2/T3 QD-front win.
+- Validation: `/workspace/.venv/bin/pytest` passed for
+  `tests/scripts/test_package_t30_holdout_front_audit.py`; `/workspace/.venv/bin/ruff`
+  passed for the packager and test; `git diff --check` passed; pyright
+  reported only unresolved `matplotlib` imports, matching the existing
+  plotting-script environment noise.
+- Lane decision: keep T26 as the champion exploitation comparator, but specify
+  T31 as a repair/yield/front-preserving emitter. Do not keep blindly
+  interpolating T24/T26 scheduler knobs.

@@ -31,6 +31,7 @@ Real result packages:
 - `T28_t26_family_audit` canonical/family duplicate audit over T24, T25, and
   T26 runs
 - `T29_sr_raw_front_recovery_qd` front-recovery live follow-up result
+- `T30_t26_holdout_front_audit` classic-versus-T26 VerilogEval holdout audit
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
@@ -42,8 +43,11 @@ blocks final promotion until family-front and holdout behavior improve. T28
 adds canonical/family duplicate accounting: T26 valid candidates are mostly
 distinct, but the front-family deficit versus classic and SR raw is real. The
 T29 front-recovery variant is also negative: it does not recover the front
-deficit and loses multi-pipe final-PPA coverage. The ten-package minimum is
-satisfied, but the goal remains active.
+deficit and loses multi-pipe final-PPA coverage. T30 gives T26 holdout support:
+it preserves all three classic-covered VerilogEval holdout designs and improves
+mean best score, but it has a P098 yield warning and does not broaden the raw
+PPA/front-family evidence. The ten-package minimum is satisfied, but the goal
+remains active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -147,11 +151,17 @@ versus 9. The direct PPA-front plots show the core failure: on
 `Prob015_multi_pipe_8bit`, T29 has only two candidate-level front points and
 no final-population best PPA.
 
-`T30_t26_holdout_front_audit` is the pre-registered holdout audit for the
-current T26 lead. It will compare classic REvolution and exact T26
-conservative-exploit SR raw on the frozen VerilogEval holdout screen:
-`Prob150_review2015_fsmonehot`, `Prob098_circuit7`, and
-`Prob135_m2014_q6b`.
+`T30_t26_holdout_front_audit` is the completed holdout audit for the current
+T26 lead. It compares classic REvolution and exact T26 conservative-exploit SR
+raw on the frozen VerilogEval holdout screen: `Prob150_review2015_fsmonehot`,
+`Prob098_circuit7`, and `Prob135_m2014_q6b`. T26 preserves final-best coverage
+on all three problems, improves mean final-best score by 9.91%, and produces
+positive normalized PPA HV from P135. The result is not a clean promotion:
+valid PPA samples drop from 103 to 68, P098 drops from 31 to 15 valid PPA
+samples, candidate-level front points tie at 3, unique PPA points drop from
+11 to 8, and front netlists drop from 9 to 6. The package includes a
+straightforward raw area-power Pareto figure with no inverted axes:
+`figures/t30_holdout_ppa_pareto_area_power_candidate_zoom.png`.
 
 ## Current Conclusions
 
@@ -182,13 +192,15 @@ conservative-exploit SR raw on the frozen VerilogEval holdout screen:
     confirms the front-family deficit is real.
 11. T29 shows that simply backing off T26's champion lane and restoring limited
     two-parent fusion is not the right front-recovery path.
+12. T30 shows T26 can survive a small frozen VerilogEval holdout and improve
+    mean best score, but it does not yet establish a broader QD front claim.
 
 ## Next Decisions
 
-- Complete the T30 T26 holdout audit or specify a T31
-  repair/yield/front-preserving emitter before any promotion claim.
-- Execute the pre-registered T30 holdout package before designing a new
-  repair/yield emitter.
+- Specify T31 as a repair/yield/front-preserving emitter before any promotion
+  claim.
+- Use the T30 P098 yield warning and front-family deficit as explicit T31
+  design targets.
 - Do not continue blind interpolation between T24 SR raw and T26 scheduler
   settings; T29 is the measured negative result for that idea.
 - Use the direct PPA-front audit figures when deciding whether a candidate has

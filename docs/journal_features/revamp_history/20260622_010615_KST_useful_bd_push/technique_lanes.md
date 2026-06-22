@@ -55,8 +55,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T06 Qwen is `T0`; identifier-normalized Qwen has HV signal but nuisance clustering. | Run Qwen3 preprocessing ladder before heavier fine-tuning or external graph-encoder branches. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T27 shows T26 beats classic on live HV/HV-AUC; T28/direct-front audit show weak front coverage; T29 shows simple front-recovery interpolation fails. | Execute T30 holdout before any repair/yield emitter. |
-| `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T26/T27 show champion-biased parent-source policy restores quality and HV pressure; T29 shows reducing that pressure can lose multi-pipe survival. | Escalate to explicit repair/yield emitters instead of another blind scheduler nudge. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T27 shows T26 beats classic on live HV/HV-AUC; T28/direct-front audit show weak front coverage; T29 shows simple front-recovery interpolation fails; T30 gives holdout support but no front-breadth win. | Specify T31 as a repair/yield/front-preserving emitter. |
+| `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T26/T27/T30 show champion-biased parent-source policy restores quality and holdout pressure; T29 shows reducing that pressure can lose survival; T30 flags P098 yield. | Add a bounded repair/yield lane without dropping T26 champion refinement. |
 
 ## Lane Scorecard
 
@@ -67,8 +67,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
 | `L4` | T06 Qwen normalized-view diagnostic | Needs preprocessing ladder. | Whole-file embeddings carry nuisance axes. | Split to a Qwen/encoder branch if dependencies or model runtime expand. |
-| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30 local-Pareto lineage | T29 is measured negative; T26 remains the active lead for HV/HV-AUC and best-quality pressure. | Holdout evidence and explicit front/yield preservation are still missing. | T30 holdout stays on current branch unless the live run exposes a runtime blocker. |
-| `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy | T26/T27/T28 give a positive schedule signal; T29 shows naive exploration recovery loses multi-pipe coverage. | Need to test whether repair-specific emitters add value beyond champion-biased SR raw. | Specify repair/yield emitter only with T26/T29 direct-front metrics as controls. |
+| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30 local-Pareto lineage | T30 confirms T26 is holdout-competitive on best score/HV but still sparse on raw front breadth. | Explicit front/yield preservation is still missing. | Keep T30 on the current branch and use it to define T31. |
+| `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy | T26/T27/T30 give a positive schedule signal; T29 shows naive exploration recovery loses multi-pipe coverage. | Need to test whether repair-specific emitters recover P098 yield and front breadth beyond champion-biased SR raw. | Specify T31 with T26/T29/T30 direct-front metrics as controls. |
 
 ## Current Lineage
 
@@ -116,6 +116,7 @@ flowchart LR
     Y[T28 canonical family audit]
     Z[T29 front recovery diagnostic]
     AA[T30 T26 holdout audit]
+    AB[T31 repair yield front emitter]
   end
 
   subgraph L6[L6 lineage and emitters]
@@ -148,6 +149,7 @@ flowchart LR
   X --> Y
   Y --> Z
   Z --> AA
+  AA --> AB
   I --> J
   J --> K
   K --> L
@@ -203,6 +205,7 @@ flowchart TD
 | 2026-06-21 | `L5/L6` archive coupling and emitters | T29 front-recovery method card | `advance` | T29 keeps SR raw PCA and T26's archive substrate, but lowers champion pressure to 0.60 and restores limited 0.20 two-parent fusion to test front recovery before any promotion claim. | Run `T29_sr_raw_front_recovery_qd/commands/live_screen_v0.md`. |
 | 2026-06-21 | `L5/L6` archive coupling and emitters | T29 live front-recovery result | `retire` | T29 does not recover front material: mean HV, HV-AUC, valid PPA, total front points, and multi-pipe final-PPA coverage all regress versus T26. Direct PPA-front plots show only two multi-pipe front points. | Do not continue blind T24/T26 schedule interpolation; run T26 holdout or specify a T31 repair/yield/front-preserving emitter. |
 | 2026-06-21 | `L5/L6` archive coupling and emitters | T30 holdout method card | `advance` | T30 tests whether exact T26 conservative-exploit SR raw generalizes to the frozen VerilogEval holdout screen before adding a new emitter. | Run `T30_t26_holdout_front_audit/commands/live_holdout_v0.md`. |
+| 2026-06-21 | `L5/L6` archive coupling and emitters | T30 live holdout result | `advance` | T26 preserves all three classic-covered holdout designs, improves mean final-best score by 9.91%, and produces positive normalized HV from P135. It also drops valid PPA samples from 103 to 68, has a P098 yield warning at 15 versus 31 valid PPA samples, ties candidate-level front points at 3, and has fewer front netlists than classic. | Specify T31 repair/yield/front-preserving emitter with `T30_t26_holdout_front_audit/figures/t30_holdout_ppa_pareto_area_power_candidate_zoom.png` as a primary control figure. |
 | 2026-06-21 | `L6` lineage and emitters | T12/T18 scaffolds plus T17/T24/T25 evidence | `hybridize` | Lineage/emitter methods should improve search dynamics around SR-family descriptors, not become generic descriptor resets. | Specify exploit/explore/repair scheduling from the observed T24/T25 failures. |
 
 ## Lane Notes
@@ -318,10 +321,17 @@ and restore limited two-parent archive fusion. It fails. Mean HV falls by
 multi-pipe loses final-PPA coverage. Direct PPA-front plots show only two
 multi-pipe rank-1 front points.
 
-Current follow-up: T30 runs T26 holdout validation before any new emitter. Use
-classic as the holdout comparator, T26 as the quality-pressure method under
-test, T29 as the failed front-recovery control, and random/manual/SR raw as
-development-screen context rather than holdout arms in this first bounded run.
+T30 runs T26 holdout validation before any new emitter. It supports T26 as a
+holdout-competitive quality-pressure method: final-best coverage is preserved
+on all three VerilogEval holdout problems, mean best score improves by 9.91%,
+and P135 supplies positive normalized HV. It also keeps the central blocker
+alive: P098 valid PPA samples fall from 31 to 15, candidate-level front points
+tie classic at 3, and front netlists fall from 9 to 6.
+
+Current follow-up: specify T31 as a repair/yield/front-preserving emitter. Use
+classic as the holdout comparator, T26 as the quality-pressure control, T29 as
+the failed front-recovery control, and T30's direct raw PPA Pareto figure as
+the required visual comparison.
 
 ### `L6` Lineage And Emitters
 
@@ -331,9 +341,10 @@ and local Pareto fronts. This lane is for improving search dynamics while
 leaving descriptor construction PPA-free.
 
 Current follow-up: T29 shows champion-pressure reduction alone can break
-multi-pipe survival. A repair/yield emitter should therefore keep T26-style
-champion refinement and add a bounded repair/front-preservation lane rather
-than replacing champion pressure with generic two-parent exploration.
+multi-pipe survival, while T30 shows T26 still needs P098 yield and front
+breadth repair. A repair/yield emitter should therefore keep T26-style champion
+refinement and add a bounded repair/front-preservation lane rather than
+replacing champion pressure with generic two-parent exploration.
 
 ## Branching Guidance
 
@@ -359,11 +370,11 @@ unblocks it.
 | --- | --- | --- | --- | --- |
 | `L0` common evaluation | T22, T24 random | Stays on current branch as a comparator. | Keep random/manual controls in every claim table. | Comparator rows are present for any method marked `advance` or better. |
 | `L1` transparent CAD descriptors | T03, T21 | Stays on current branch for hybrids. | Select a small ST-NOD/motif subset for a guarded archive variant. | Hybrid beats direct T21 on best quality without losing archive coverage. |
-| `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27, T28, T29, T30 | Stays on current branch; T29 is measured negative and T30 is pre-registered. | Execute T30 holdout. | Holdout preserves T26 signal, or emitter improves front/yield without losing T26 quality pressure. |
+| `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27, T28, T29, T30 | Stays on current branch; T29 is measured negative and T30 is completed mixed support. | Specify T31 repair/yield/front-preserving emitter. | Emitter improves front/yield without losing T26 quality pressure. |
 | `L3` codebook/discrete archives | T05 | Parked. | Reopen only as side archive or local-Pareto cell partition. | A non-codebook lane shows local front material worth discretizing. |
 | `L4` learned encoders | T06-T16 | Candidate split branch. | Run Qwen3 preprocessing ladder before fine-tuning or external graph encoders. | Normalized embedding diagnostics separate useful structure without problem-ID clustering. |
-| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30 | Active on current branch; T29 retired as direct variant and T30 holdout is pre-registered. | Execute and package T30. | A candidate beats controls on documented direct-front/HV metrics without hidden duplicate loss. |
-| `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30 | Candidate follow-up after T30. | Convert remaining T26/T29/T30 failures into explicit repair/yield emitter only if needed. | Better valid-yield recovery or front material than T26/T29/T30 without losing T26 best-quality recovery. |
+| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30 | Active on current branch; T29 retired as direct variant and T30 holdout is completed mixed support. | Define T31 direct-front and HV acceptance controls before running it. | A candidate beats controls on documented direct-front/HV metrics without hidden duplicate loss. |
+| `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30 | Candidate follow-up after T30. | Convert the T30 P098 yield warning and front-breadth gap into an explicit repair/yield emitter. | Better valid-yield recovery or front material than T26/T29/T30 without losing T26 best-quality recovery. |
 
 ## Branch Split Checklist
 

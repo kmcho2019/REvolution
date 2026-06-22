@@ -2,8 +2,7 @@
 
 Feature slug: `useful_bd_push`
 
-Status: scaffold draft for a future `/goal`; do not treat this as an
-activated goal. This directory defines the next research push on branch
+Status: active research plan on branch
 `feat/journal-useful-bd-exp-20260622`.
 
 ## Outcome
@@ -43,6 +42,20 @@ The desired end state is one of:
 - Local vLLM runtime guide: `vllm_runtime_guide.md`
 - Continuing idea backlog: `idea_backlog.md`
 - Technique packages: `techniques/<technique_slug>/`
+
+## Current Research State
+
+T30 is the most recent completed package. It supports exact T26
+conservative-exploit SR raw as a `T1 near_classic` holdout candidate because
+it preserves all three classic-covered VerilogEval holdout designs and
+improves mean final-best score by 9.91%. It is not a QD-front promotion:
+valid-PPA yield drops, P098 has a per-problem yield warning, and front/netlist
+breadth does not improve.
+
+The next method should be T31, a repair/yield/front-preserving emitter that
+keeps T26 champion refinement while addressing T30's P098 yield warning and
+front-breadth deficit. T31 must include straightforward raw PPA Pareto figures
+with conventional lower-left-better axes.
 
 ## Prior Evidence To Reuse
 

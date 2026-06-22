@@ -27,7 +27,10 @@ When applicable, live runs should also include:
 
 The direct PPA-front plots are required because aggregate HV, mean best score,
 and family-count bars can hide the actual Pareto shape. At minimum, include a
-raw area-power projection and a normalized improvement projection. For
+straightforward raw area-power projection with conventional axes, no inversion,
+and lower-left marked as better. If the reference design stretches the scale,
+also include a candidate-only zoom on the same conventional axes. A normalized
+improvement projection may be added where higher is better on both axes. For
 sequential designs, explicitly note when clock period is an active third
 objective and point readers to the HTML viewer for the 3D PPA view.
 

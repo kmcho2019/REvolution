@@ -1,5 +1,10 @@
 # T30 Live Holdout V0 Commands
 
+Status: executed.
+
+Resolved run root:
+`exp/useful_bd_push/t30_t26_holdout_front_audit_20260621_233506_UTC/`
+
 Run preflight first:
 
 ```bash
@@ -93,3 +98,32 @@ export PYTHONPATH=src
 
 Record the resolved `RUN_ROOT` in `tables/run_matrix.csv`,
 `artifacts_manifest.md`, and `results_report.md` after execution.
+
+## Executed Outcomes
+
+| Arm | Runtime | Summary |
+| --- | ---: | --- |
+| `classic_revolution` | `580.04` seconds | `classic_revolution/seed_1001/openai_gpt-oss-120b/20260621_233528_revolution_summary_results.txt` |
+| `sr_raw_conservative_exploit_qd` | `646.44` seconds | `sr_raw_conservative_exploit_qd/seed_1001/openai_gpt-oss-120b/20260621_234528_revolution_summary_results.txt` |
+
+The local vLLM preflight returned `openai/gpt-oss-120b` with
+`max_model_len=131072`.
+
+## Pareto Archive Validation
+
+```bash
+/workspace/.venv/bin/python scripts/validate_pareto_front_run.py \
+  --run-root exp/useful_bd_push/t30_t26_holdout_front_audit_20260621_233506_UTC \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T30_t26_holdout_front_audit/tables/holdout_screen_v0_subset.yaml \
+  --pareto-qd-mode sr_raw_conservative_exploit_qd/seed_1001/openai_gpt-oss-120b
+```
+
+Validation result: valid `True`, failure count `0`, max front size seen `3`.
+
+## Packaging
+
+```bash
+/workspace/.venv/bin/python -m scripts.package_t30_holdout_front_audit \
+  --run-root exp/useful_bd_push/t30_t26_holdout_front_audit_20260621_233506_UTC \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T30_t26_holdout_front_audit
+```
