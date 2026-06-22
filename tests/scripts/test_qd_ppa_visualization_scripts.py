@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
-import os
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -68,7 +68,7 @@ def test_export_and_validate_qd_ppa_visualization_cli(tmp_path: Path) -> None:
 
     export_result = subprocess.run(
         [
-            str(Path(os.sys.executable)),
+            str(Path(sys.executable)),
             str(repo_root / "scripts" / "export_qd_ppa_visualization.py"),
             "--run-root",
             str(run_root),
@@ -97,7 +97,7 @@ def test_export_and_validate_qd_ppa_visualization_cli(tmp_path: Path) -> None:
 
     validate_result = subprocess.run(
         [
-            str(Path(os.sys.executable)),
+            str(Path(sys.executable)),
             str(repo_root / "scripts" / "validate_qd_ppa_visualization.py"),
             "--viewer-root",
             str(output_dir),
@@ -122,7 +122,7 @@ def test_strict_validation_rejects_flat_2d_index_html(tmp_path: Path) -> None:
 
     export_result = subprocess.run(
         [
-            str(Path(os.sys.executable)),
+            str(Path(sys.executable)),
             str(repo_root / "scripts" / "export_qd_ppa_visualization.py"),
             "--run-root",
             str(run_root),
@@ -164,7 +164,7 @@ drawPpa();
 
     validate_result = subprocess.run(
         [
-            str(Path(os.sys.executable)),
+            str(Path(sys.executable)),
             str(repo_root / "scripts" / "validate_qd_ppa_visualization.py"),
             "--viewer-root",
             str(output_dir),
@@ -190,7 +190,7 @@ def test_strict_validation_rejects_network_assets(tmp_path: Path) -> None:
 
     export_result = subprocess.run(
         [
-            str(Path(os.sys.executable)),
+            str(Path(sys.executable)),
             str(repo_root / "scripts" / "export_qd_ppa_visualization.py"),
             "--run-root",
             str(run_root),
@@ -225,7 +225,7 @@ def test_strict_validation_rejects_network_assets(tmp_path: Path) -> None:
 
     validate_result = subprocess.run(
         [
-            str(Path(os.sys.executable)),
+            str(Path(sys.executable)),
             str(repo_root / "scripts" / "validate_qd_ppa_visualization.py"),
             "--viewer-root",
             str(output_dir),
