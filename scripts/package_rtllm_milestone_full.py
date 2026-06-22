@@ -112,6 +112,7 @@ def read_manifest(path: Path) -> list[str]:
 def problem_row(run_root: Path, method: dict[str, str], problem: str) -> dict[str, str]:
     problem_root = run_root / method["mode"] / "RTLLM" / problem
     summary = load_json(problem_root / f"{problem}_summary.json")
+    best_score = summary["final_population_ppa"].get("best_score")
     pareto = analyze_problem_pareto(problem_root, benchmark="RTLLM", problem=problem)
     archive = load_optional_json(problem_root / "archive_summary.json")
     global_pareto = load_optional_json(problem_root / "global_pareto_summary.json")
@@ -133,7 +134,7 @@ def problem_row(run_root: Path, method: dict[str, str], problem: str) -> dict[st
         "syntax_rate": fmt(success_rate(summary, "syntax")),
         "functionality_rate": fmt(success_rate(summary, "functionality")),
         "valid_ppa_rate": fmt(success_rate(summary, "synthesis_ppa")),
-        "best_score": fmt(float(summary["final_population_ppa"]["best_score"])),
+        "best_score": fmt_optional(None if best_score is None else float(best_score)),
         "global_ppa_hypervolume": fmt(pareto.hypervolume),
         "hv_auc": fmt(required_auc(hv_curve)),
         "ppa_front_points": str(pareto.pareto_point_count),
@@ -664,8 +665,8 @@ def paired_values(rows: list[dict[str, str]], metric: str) -> list[float]:
 
 def relative_paired_delta(rows: list[dict[str, str]], problem: str, metric: str) -> float:
     by_key = {(row["method"], row["problem"]): row for row in rows}
-    qd = float(by_key[("sr_raw_conservative_exploit_qd", problem)][metric])
-    classic = float(by_key[("classic_revolution", problem)][metric])
+    qd = parse_optional(by_key[("sr_raw_conservative_exploit_qd", problem)][metric])
+    classic = parse_optional(by_key[("classic_revolution", problem)][metric])
     delta = relative_delta(qd, classic)
     if delta is None:
         return 0.0

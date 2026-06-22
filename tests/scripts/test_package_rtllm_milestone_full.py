@@ -110,10 +110,16 @@ def _write_problem(root: Path, mode: str, problem: str, method_index: int) -> No
                     "functionality": 0.5,
                     "synthesis_ppa": 0.5,
                 },
-                "final_population_ppa": {"best_score": method_index / 10.0},
+                "final_population_ppa": {"best_score": _best_score(problem, method_index)},
                 "final_population_ppa_details": details,
                 "ref_ppa_metric": {"area": 100.0, "power": 10.0},
             }
         ),
         encoding="utf-8",
     )
+
+
+def _best_score(problem: str, method_index: int) -> float | None:
+    if problem == "Prob043_RAM" and method_index == 1:
+        return None
+    return method_index / 10.0
