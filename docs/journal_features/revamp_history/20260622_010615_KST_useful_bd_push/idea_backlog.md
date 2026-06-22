@@ -137,8 +137,9 @@ a numbered `techniques/T##_slug/` package before running it.
 - T41 also shows generation-1 fallback is too late for the hard multi-pipe
   slice. Multi-pipe initialized from 5 samples, but best quality collapsed to
   `-0.000378` versus T39's `0.222285`.
-- Next candidate: T42 initial sparse-yield gate. Keep strict warmup `8`, but
-  allow fallback `4` at trigger generation `0` so sparse-yield designs can
+- Next candidate is now pre-registered as
+  `T42_initial_sparse_yield_gate_qd`. Keep strict warmup `8`, but allow
+  fallback `4` at trigger generation `0` so sparse-yield designs can
   initialize immediately after the initial population. Keep the same T41
   subset/model/seed/budget and the same direct raw PPA-front figure gate.
 

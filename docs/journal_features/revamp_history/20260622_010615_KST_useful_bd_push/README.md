@@ -17,11 +17,14 @@ Start here when resuming the active goal.
   `techniques/T41_adaptive_sparse_yield_gate_qd/` (`T0 mixed_diagnostic`;
   adaptive gating wins traffic-light, but loses ALU and the T39 multi-pipe
   signal).
+- Most recent pre-registered package:
+  `techniques/T42_initial_sparse_yield_gate_qd/` (generation-0 sparse-yield
+  fallback; pending live run).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  pre-register T42 with trigger generation `0` so sparse-yield archives can
+  execute T42 with trigger generation `0` so sparse-yield archives can
   initialize immediately after the initial population.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
@@ -138,6 +141,7 @@ Start here when resuming the active goal.
 | `T39` | `T39_sparse_yield_warmup_qd` | Completed sparse-yield warmup live ablation, `T0 positive_ablation`; fixes the T38 multi-pipe archive gap. |
 | `T40` | `T40_sparse_warmup_control_matrix` | Completed control matrix, `T0 mixed_control`; classic wins ALU/traffic pooled fronts while T39 wins multi-pipe. |
 | `T41` | `T41_adaptive_sparse_yield_gate_qd` | Completed adaptive sparse-yield gate, `T0 mixed_diagnostic`; traffic-light win, but ALU and multi-pipe block promotion. |
+| `T42` | `T42_initial_sparse_yield_gate_qd` | Pre-registered initial sparse-yield gate; pending live run. |
 
 ## Validity-Gate Note
 

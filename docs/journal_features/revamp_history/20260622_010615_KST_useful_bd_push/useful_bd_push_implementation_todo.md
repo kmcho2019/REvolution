@@ -166,6 +166,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       packaging.
 - [x] `T41_adaptive_sparse_yield_gate_qd` is executed, validated, packaged,
       visually inspected, and assigned a tier decision.
+- [x] `T42_initial_sparse_yield_gate_qd` is pre-registered with a generation-0
+      sparse-yield fallback and mandatory direct raw PPA-front packaging.
+- [ ] `T42_initial_sparse_yield_gate_qd` is executed, validated, packaged,
+      visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
 

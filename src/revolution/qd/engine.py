@@ -1454,9 +1454,11 @@ class QDEngine(EoHEngine):
         if self.representation_kind == "thought_only":
             self._initialize_thought_population()
             self._rebuild_archive_from_success_pool()
+            self._maybe_adaptive_warmup_fallback()
             return
         super().initialize_population()
         self._rebuild_archive_from_success_pool()
+        self._maybe_adaptive_warmup_fallback()
 
     def _fail_pool_archive_member_ratio(self) -> float:
         """Return the initialized scheduler's fail-side parent-share cap."""

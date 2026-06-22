@@ -365,12 +365,12 @@ controls under the same subset, seed, model, budget, and warmup. The accepted
 primary figure is a direct raw area-power PPA Pareto front with conventional
 non-inverted axes and lower-left marked as better.
 
-Current next target: pre-register T42, the initial sparse-yield gate. T41
-completed as `T0 mixed_diagnostic`: it won traffic-light front material but
-lost ALU and the T39 multi-pipe signal. T42 should keep the primary
-grid-quantile warmup at `8`, but trigger fallback at generation `0` when the
-initial valid-PPA count is below `8` and at least `4`, so sparse-yield designs
-activate before the first evolutionary generation.
+Current next target: execute T42, the initial sparse-yield gate. T41 completed
+as `T0 mixed_diagnostic`: it won traffic-light front material but lost ALU and
+the T39 multi-pipe signal. T42 keeps the primary grid-quantile warmup at `8`,
+but triggers fallback at generation `0` when the initial valid-PPA count is
+below `8` and at least `4`, so sparse-yield designs activate before the first
+evolutionary generation.
 
 ## Completion Gates
 

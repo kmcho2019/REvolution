@@ -2051,3 +2051,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Focused validation:
   `uv run pytest tests/scripts/test_package_useful_bd_direct_ppa_fronts.py`
   passed.
+
+## T42 Initial Sparse-Yield Gate Pre-Registration - 2026-06-22 UTC
+
+- Added generation-0 adaptive warmup support to `QDEngine.initialize_population`.
+  After the initial success pool is rebuilt into a grid-quantile archive, the
+  existing adaptive fallback hook now runs once. It remains a no-op unless
+  `qd_grid_quantile_adaptive_warmup_generation=0` and the configured valid-PPA
+  fallback threshold is met.
+- Added a focused engine test for the public initialization path:
+  four valid initial PPA samples with primary warmup `8`, fallback `4`, and
+  trigger generation `0` initialize the grid-quantile archive with
+  `adaptive_sparse_yield_fallback`.
+- Pre-registered `techniques/T42_initial_sparse_yield_gate_qd/` as the next
+  live same-surface test after T41. T42 keeps T41's descriptor, archive,
+  parent selection, operator, model, seed, subset, and budget, but changes
+  `qd_grid_quantile_adaptive_warmup_generation` from `1` to `0`.
+- Added `scripts/package_t42_initial_sparse_yield_gate.py` and a focused
+  package test. The planned package emits candidate-level PPA rows, per-method
+  summaries, direct raw area-power front PNGs, count summaries, and a local
+  direct-PPA HTML viewer.
+- Updated central indexes, current-results matrix, lane docs, lineage ledger,
+  TODO, and idea backlog so T42 is discoverable as pre-registered and pending
+  live execution.
