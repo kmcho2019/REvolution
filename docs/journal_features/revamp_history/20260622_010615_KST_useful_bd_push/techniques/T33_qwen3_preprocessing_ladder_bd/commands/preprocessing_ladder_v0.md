@@ -1,6 +1,6 @@
 # T33 Preprocessing Ladder Commands
 
-Status: planned command contract. Fill exact script paths after implementation.
+Status: T33a, T33b, and T33c commands are implemented and run.
 
 ## Preflight
 
@@ -36,17 +36,29 @@ uv run python scripts/generate_t33_qwen_preprocessing_views.py \
   --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd
 ```
 
-Future embedding run:
+T33c embedding cache, using the existing isolated Qwen env:
 
 ```bash
-uv run python scripts/run_qwen3_preprocessing_ladder.py \
-  --source exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC \
-  --output exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_YYYYMMDD_HHMMSS_UTC
+exp/diversity_check/encoder_envs/qwen3_probe/bin/python \
+  scripts/embed_t33_qwen_preprocessing_views.py \
+  --view-manifest docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd/tables/t33_preprocessing_view_manifest.csv \
+  --output-root exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC \
+  --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd \
+  --model-id Qwen/Qwen3-Embedding-0.6B \
+  --batch-size 32 \
+  --chunk-max-chars 4096
 ```
 
-The eventual script should generate all six preprocessing views, embedding
-manifests, collapse diagnostics, replay tables, and raw PPA-front figures. It
-must not read PPA fields until the evaluation stage.
+Next diagnostic run:
+
+```bash
+uv run python scripts/analyze_t33_qwen_embedding_diagnostics.py \
+  --embedding-root exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC/embeddings \
+  --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd
+```
+
+The next script should generate collapse diagnostics and replay tables. It must
+not read PPA fields until the replay evaluation stage.
 
 ## Required Post-Run Checks
 

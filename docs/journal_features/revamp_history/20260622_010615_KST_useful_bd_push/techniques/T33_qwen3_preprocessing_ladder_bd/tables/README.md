@@ -1,7 +1,8 @@
 # T33 Tables
 
-T33a source-inventory and T33b preprocessing-view manifest tables are
-committed. They are setup evidence only, not embedding, replay, or PPA results.
+T33a source-inventory, T33b preprocessing-view, and T33c embedding-cache
+manifest tables are committed. They are setup evidence only, not replay or PPA
+results.
 
 Current tables:
 
@@ -16,11 +17,13 @@ Current tables:
 - `t33_preprocessing_view_manifest.csv`: one row per generated candidate/view
   file with source path, output path, byte-scale counts, and SHA256.
 - `t33_preprocessing_view_summary.csv`: compact size summary per view.
+- `t33_embedding_cache_manifest.csv`: one row per view with Qwen model id,
+  matrix shape, chunk count, output path, SHA256, and encode seconds.
+- `t33_embedding_chunk_summary.csv`: chunk counts and chunk-size summaries per
+  view.
 
 Required tables after the first run:
 
-- `t33_embedding_cache_manifest.csv`
-- `t33_pooling_ablation.csv`
 - `t33_collapse_diagnostics.csv`
 - `t33_nuisance_axis_diagnostics.csv`
 - `t33_replay_aggregate.csv`

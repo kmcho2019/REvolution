@@ -1,7 +1,7 @@
 # Qwen3 Preprocessing Ladder BD Results Report
 
-Status: pre-registered method package with T33a source inventory and T33b
-preprocessing-view cache.
+Status: pre-registered method package with T33a source inventory, T33b
+preprocessing-view cache, and T33c embedding cache.
 
 Tier decision: pending. No result is claimed yet.
 
@@ -66,10 +66,35 @@ identifier-normalized. The committed manifest points at the corrected cache.
 These are preprocessing artifacts only. They do not answer whether Qwen3 BDs
 work until embeddings, collapse diagnostics, and replay/PPA-front scoring run.
 
+## T33c Embedding Cache
+
+The existing isolated Qwen env at `exp/diversity_check/encoder_envs/qwen3_probe`
+was reused because the repo uv environment lacks `sentence_transformers`,
+`torch`, and `sklearn`. The env reports `sentence_transformers 5.6.0`,
+`torch 2.6.0+cu124`, and CUDA on an NVIDIA RTX A6000.
+
+All six views now have chunk-pooled Qwen embeddings:
+
+| View | Shape | Chunks | Encode Seconds |
+| --- | ---: | ---: | ---: |
+| `canonical_rtl` | `768x1024` | 768 | 26.606 |
+| `canonical_yosys_netlist` | `768x1024` | 4738 | 426.972 |
+| `commentless_rtl` | `768x1024` | 773 | 12.376 |
+| `identifier_role_rtl` | `768x1024` | 777 | 16.123 |
+| `raw_rtl` | `768x1024` | 773 | 13.869 |
+| `summary_plus_netlist` | `768x1024` | 4765 | 430.032 |
+
+The `.npy` matrices are stored under:
+
+`exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC/embeddings/`
+
+Each pooled row was inspected for shape and unit norm. This is still not a
+T33 success claim: the next step is collapse diagnostics, then replay/Pareto
+scoring against lexical and random controls.
+
 ## Required Result Tables
 
 - `tables/t33_embedding_cache_manifest.csv`
-- `tables/t33_pooling_ablation.csv`
 - `tables/t33_collapse_diagnostics.csv`
 - `tables/t33_nuisance_axis_diagnostics.csv`
 - `tables/t33_replay_aggregate.csv`

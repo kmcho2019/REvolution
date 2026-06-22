@@ -1,7 +1,7 @@
 # Qwen3 Preprocessing Ladder Artifacts Manifest
 
-Status: pre-registered with T33a source-inventory tables and T33b
-preprocessing-view manifests. Embedding and replay artifact hashes are pending.
+Status: pre-registered with T33a source inventory, T33b preprocessing-view
+manifests, and T33c embedding manifests. Replay artifact hashes are pending.
 
 ## Source Evidence
 
@@ -39,6 +39,18 @@ The generated text cache is intentionally not committed. It lives at:
 
 `exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC`
 
+## T33c Committed Tables
+
+| Artifact | Rows | SHA256 |
+| --- | ---: | --- |
+| `tables/t33_embedding_cache_manifest.csv` | 6 | `aed377f3f81e09656c37a8c3f01d3ad42b0baeccb815562e58ef42e43700d5be` |
+| `tables/t33_embedding_chunk_summary.csv` | 6 | `37b550765ce91dad95694c2cce755157b59248172afdce917f136b97c1dd90a3` |
+
+The generated embedding matrices and chunk manifests are intentionally not
+committed. They live under:
+
+`exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC/embeddings/`
+
 ## Planned Subdirectories
 
 | Path | Contents |
@@ -66,7 +78,7 @@ The generated text cache is intentionally not committed. It lives at:
 | Yosys normalization script | pending |
 | model revision | pending |
 | tokenizer revision | pending |
-| embedding cache | pending |
+| embedding cache | `tables/t33_embedding_cache_manifest.csv` |
 | replay aggregate table | pending |
 | primary raw PPA-front figure | pending |
 | optional HTML viewer | pending |

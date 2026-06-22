@@ -1316,3 +1316,34 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   and
   `uv tool run ty check scripts/generate_t33_qwen_preprocessing_views.py tests/scripts/test_generate_t33_qwen_preprocessing_views.py`
   all passed.
+
+## T33c Qwen Embedding Cache - 2026-06-22 UTC
+
+- Checked the repo uv environment first. It lacked `sentence_transformers`,
+  `torch`, and `sklearn`, so T33c reused the existing isolated Qwen env at
+  `exp/diversity_check/encoder_envs/qwen3_probe` rather than modifying the
+  repo dependency stack.
+- The isolated env reported `sentence_transformers 5.6.0`,
+  `torch 2.6.0+cu124`, `sklearn 1.9.0`, CUDA available, and an NVIDIA RTX
+  A6000 device. The Qwen model cache already contained
+  `Qwen/Qwen3-Embedding-0.6B`.
+- Added `scripts/embed_t33_qwen_preprocessing_views.py` and a focused fake
+  embedder test. The script chunks long view text at 4096 characters,
+  embeds chunks, L2-normalizes through the model, and pools by square-root word
+  count before writing one `768x1024` matrix per view.
+- Ran the real embedding command with batch size 32. All six views completed:
+  canonical RTL 768 chunks, raw/commentless/identifier RTL 773 to 777 chunks,
+  canonical Yosys netlist 4738 chunks, and summary-plus-netlist 4765 chunks.
+- Embedding matrices are stored under
+  `exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC/embeddings/`.
+  The committed manifest records each `.npy` SHA256 and encode time.
+- Verified all six `.npy` files have shape `(768, 1024)`, dtype `float32`, and
+  unit-norm first rows. This validates cache generation only; collapse and
+  replay diagnostics still decide whether T33 has useful BD signal.
+- Validation run:
+  `uv run pytest tests/scripts/test_embed_t33_qwen_preprocessing_views.py`,
+  `uv run ruff check scripts/embed_t33_qwen_preprocessing_views.py tests/scripts/test_embed_t33_qwen_preprocessing_views.py`,
+  `uv run python -m pyright scripts/embed_t33_qwen_preprocessing_views.py tests/scripts/test_embed_t33_qwen_preprocessing_views.py`,
+  and
+  `uv tool run ty check scripts/embed_t33_qwen_preprocessing_views.py tests/scripts/test_embed_t33_qwen_preprocessing_views.py`
+  all passed.
