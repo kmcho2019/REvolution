@@ -1,6 +1,6 @@
 # Full RTLLM Family Audit
 
-Status: completed post-hoc canonical RTL/netlist/family audit.
+Status: completed post-hoc canonical RTL/netlist/family-proxy audit.
 
 This package checks whether the one-seed full RTLLM T26 result
 is explained by duplicate implementations or by broader
@@ -14,7 +14,8 @@ front-family proxy material.
 - Classic audited PPA-point problems: `31`.
 - Exact T26 QD audited PPA-point problems: `37`.
 - Family proxy: SHA-256 of the synthesized standard-cell count
-  signature, summed per problem. It is a duplicate/front-material
+  signature, summed per problem. The signature grammar is sorted
+  `CELL_TYPE:COUNT` terms joined with `|`. It is a duplicate/front-material
   proxy, not a proof of semantic RTL implementation families.
 
 ## Headline Metrics
@@ -39,15 +40,17 @@ The audit strengthens the full-suite front-material claim: exact T26 QD
 has `69` front family-proxy hits and
 `69` front netlists versus classic's
 `61` and `61`.
-That is positive post-hoc front-material evidence for the active PPA front.
+That is positive post-hoc front-material evidence for the active PPA front. It
+is not independent of the front-point count because both arms have
+`front_family_ratio=1.0`.
 
 The caveat is total audited breadth and quality: exact T26 QD still has
 fewer summed family proxies (`311` versus
 `341`) and fewer reference-beating
 family proxies (`129` versus
 `179`). The presentation
-should claim better front-family proxy material, not broad implementation-family
-dominance.
+should describe better front-family proxy material only as a front observation,
+not broad implementation-family dominance.
 
 ## Files
 

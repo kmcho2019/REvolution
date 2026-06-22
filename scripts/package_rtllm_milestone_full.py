@@ -640,7 +640,9 @@ def write_report(
             "",
             "This is one-seed paired engineering evidence. A QD claim must preserve",
             "classic-covered designs and report yield warnings instead of hiding",
-            "them. Multi-seed replication remains a follow-on milestone.",
+            "them. The generated package status is diagnostic by default; promote",
+            "only after the report-level paired PPA and scalar-quality review",
+            "passes. Multi-seed replication remains a follow-on milestone.",
         ]
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -649,7 +651,7 @@ def write_report(
 def claim_status(gates: list[dict[str, str]]) -> str:
     if any(row["gate_status"] == "classic_covered_loss" for row in gates):
         return "blocked"
-    return "reviewable"
+    return "diagnostic"
 
 
 def paired_values(rows: list[dict[str, str]], metric: str) -> list[float]:

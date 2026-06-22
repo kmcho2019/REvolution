@@ -37,13 +37,14 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
   mid-fusion completed. Gated T26.1 stayed omitted because it was not
   implemented for the deadline screen.
 - Full RTLLM launch: completed and packaged under `full_rtllm/`.
-- Claim status: `reviewable`.
+- Claim status: `diagnostic`.
 - Aggregate all-RTLLM result: exact T26 improves mean HV by `0.010562` and
   mean HV-AUC by `0.012397`, with `0` hard retention failures.
-- Main caveat: exact T26 has lower valid-PPA yield (`879` versus `1056`) and
-  the aggregate HV gain is outlier-sensitive. The package supports a
-  PPA-centered T26-bundle claim, not a descriptor-only or full-family-breadth
-  claim.
+- Main caveat: exact T26 has lower valid-PPA yield (`879` versus `1056`), worse
+  all-RTLLM mean `best_score` (`-0.798824` versus `0.260455`), and the
+  aggregate HV gain flips negative without defaulted-reference
+  `Prob040_synchronizer`. The package supports a front-signal follow-up claim,
+  not a positive QD-effectiveness claim.
 - Replication policy: one seed is the deadline-driven first milestone. Package
   those results into plots, tables, and slides before starting costly
   multi-seed replication.

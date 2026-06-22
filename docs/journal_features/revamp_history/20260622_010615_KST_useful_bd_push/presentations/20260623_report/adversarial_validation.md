@@ -1,6 +1,8 @@
 # Milestone Adversarial Validation
 
-Status: packaging review passed for the scoped PPA-first T26-bundle claim.
+Status: current package is approved only as a `diagnostic` front-signal
+milestone after the stricter current-package review. It is not approved as a
+positive `useful_qd` claim.
 
 ## Review Gates
 
@@ -14,6 +16,13 @@ Status: packaging review passed for the scoped PPA-first T26-bundle claim.
    after Q2 scope, budget parity, and family-breadth caveats were fixed.
    See `reviews/subagent_packaging_review.md` and
    `reviews/claude_packaging_review.md`.
+4. Current package review after the full family-proxy audit. Sub-agent review
+   passed with limitations, but `claude -p` found presentation-integrity
+   blockers around Prob040/defaulted-reference dominance, omitted `best_score`,
+   aggregate-only HV evidence, and non-independent family-front counts. The
+   report was narrowed to `diagnostic`. See
+   `reviews/claude_current_package_review.md` and
+   `reviews/claude_current_package_resolution.md`.
 
 ## Required Reviewer Questions
 
@@ -41,8 +50,9 @@ the exact prompt and output. If it is unavailable, record the command failure.
 
 ## Pass Condition
 
-The milestone can be presented as scoped PPA-first evidence that QD/MAP-Elites
-should continue only if the final report has current artifacts for required
-PPA figures/tables, clear limitations, and no overclaim relative to the paired
-RTLLM evidence. Archive-viewer or implementation-family breadth claims require
-the corresponding follow-up artifacts before being presented as complete.
+The milestone can be presented as diagnostic evidence that exact T26 preserves
+classic-covered problems and adds front points under matched budget. It must
+not be presented as a positive QD-effectiveness claim until paired PPA evidence,
+scalar-quality evidence, and non-defaulted-reference or multi-seed evidence are
+stronger. Archive-viewer or implementation-family breadth claims require the
+corresponding follow-up artifacts before being presented as complete.

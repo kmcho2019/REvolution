@@ -12,20 +12,21 @@ Merged run root:
 
 Question 1: Does diversity matter?
 
-Yes, but only in a scoped and PPA-first sense. The full RTLLM milestone gives
-reviewable evidence that the T26-family QD/MAP-Elites line should not be
-dropped: exact T26 preserves every classic-covered design, improves aggregate
-mean PPA hypervolume by `0.010562` (+11.18%), improves aggregate mean HV-AUC by
-`0.012397` (+15.31%), and produces more total PPA-front points (`69` versus
-`61`) at the same one-seed, 12x3 budget.
+Not proven yet by this milestone. The full RTLLM run gives a useful diagnostic
+front-count signal, not a clean `useful_qd` proof: exact T26 preserves every
+classic-covered design and produces more total PPA-front points (`69` versus
+`61`) at the same one-seed, 12x3 budget. It also improves aggregate mean PPA
+hypervolume by `0.010562` (+11.18%) and aggregate mean HV-AUC by `0.012397`
+(+15.31%), but those aggregate wins depend on `Prob040_synchronizer`.
 
-This is not yet a broad decisive win. Per-problem HV has `4` QD wins, `15`
-QD losses, and `31` ties. The aggregate HV result is strongly affected by
-`Prob040_synchronizer`; without that problem, mean HV delta is `-0.009465` and
-mean HV-AUC delta is `-0.007588`. QD also has lower valid-PPA yield (`879`
-versus `1056`) and fewer unique PPA points (`318` versus `352`). The correct
-claim level is therefore `reviewable useful-QD evidence`, not seed-stable proof
-or `strong_win`.
+The current claim status is therefore `diagnostic`. Per-problem HV has `4` QD
+wins, `15` QD losses, and `31` ties, so paired HV evidence is net-negative.
+`Prob040_synchronizer` is also one of the repaired missing-reference problems;
+without it, mean HV delta is `-0.009465` and mean HV-AUC delta is `-0.007588`.
+QD also has lower valid-PPA yield (`879` versus `1056`), fewer unique PPA
+points (`318` versus `352`), and a worse all-RTLLM mean `best_score`
+(`-0.798824` versus `0.260455`). The defensible conclusion is that the T26
+line deserves a controlled follow-up, not that QD has already beaten classic.
 
 Question 2: Which diversity matters?
 
@@ -80,6 +81,10 @@ computed.
 
 HV-AUC: the area under the PPA-HV-over-generations curve. It rewards earlier
 discovery of useful front points, not only final population quality.
+
+Best score: the run's scalar quality score for the best candidate. It is not
+the primary QD metric, but it is a required sanity metric because a method can
+show front-count or HV movement while still losing scalar PPA quality.
 
 PPA-front point: a nondominated valid PPA candidate in the normalized
 improvement space for one problem and method.
@@ -240,9 +245,13 @@ cause of the gain.
 | --- | ---: | ---: | ---: | ---: |
 | All RTLLM | Mean HV | 0.094435 | 0.104997 | +0.010562 |
 | All RTLLM | Mean HV-AUC | 0.080956 | 0.093353 | +0.012397 |
+| All RTLLM | Mean best score | 0.260455 | -0.798824 | -1.059279 |
 | All RTLLM | Valid PPA | 1056 | 879 | -177 |
 | All RTLLM | PPA-front points | 61 | 69 | +8 |
 | All RTLLM | Unique PPA points | 352 | 318 | -34 |
+| Prob040-excluded | Mean HV | 0.096362 | 0.086897 | -0.009465 |
+| Prob040-excluded | Mean HV-AUC | 0.082608 | 0.075020 | -0.007588 |
+| Prob040-excluded | Mean best score | 0.268348 | 0.252416 | -0.015932 |
 | Screen-excluded | Mean HV | 0.088690 | 0.103015 | +0.014325 |
 | Screen-excluded | Mean HV-AUC | 0.075581 | 0.093051 | +0.017470 |
 | Screen-excluded | Valid PPA | 989 | 845 | -144 |
@@ -273,21 +282,30 @@ at least one valid PPA sample on every classic-covered problem.
 
 ## Evidence Interpretation
 
-The result argues that QD/MAP-Elites is still worth pursuing for RTL PPA
-evolution. Exact T26 can find PPA-front structure that classic misses, and it
-does so without losing design-level coverage. That is enough to justify the
-research direction and a stronger follow-up run.
+The result argues for a narrower position: T26-style QD is still worth a
+controlled follow-up, but this package is not a clean positive QD proof. Exact
+T26 can add PPA-front points without losing design-level coverage, yet it loses
+paired HV on more problems than it wins and it loses the scalar best-score
+metric.
 
-The result does not prove that exact T26 is already the final algorithm. The
-negative screen subset, lower raw valid-PPA yield, fewer audited PPA-point
-rows, and outlier-sensitive HV mean show that the method still needs tuning.
+The aggregate HV/HV-AUC win is outlier-sensitive. `Prob040_synchronizer`
+contributes the largest positive HV delta, is one of the repaired
+missing-reference problems, and uses a defaulted reference rather than a
+benchmark-provided PPA reference. That makes it unsuitable as the sole carrier
+of an affirmative QD claim. The negative screen subset, lower raw valid-PPA
+yield, fewer audited PPA-point rows, worse all-RTLLM best score, and
+outlier-sensitive HV mean show that the method still needs tuning.
 The full-suite family audit resolves part of the earlier T28-screen caveat:
 using a synthesized standard-cell count signature as a family proxy, exact T26
 has more active-front family-proxy hits and front netlists (`69` versus `61`),
 plus fewer family-proxy duplicates (`7` versus `11`). It still has fewer
 summed family proxies (`311` versus `341`) and fewer reference-beating family
 proxies (`129` versus `179`), so this package supports a front-material proxy
-claim, not broad implementation-family dominance.
+observation, not broad implementation-family dominance.
+Because the front family ratio is `1.0` in both arms, the `69` versus `61`
+front-family and front-netlist counts are not independent evidence beyond the
+front-point count. Their value is to reject a duplicate-collapse explanation,
+not to create a separate corroborating win.
 The most useful next variants should preserve the PPA-front gains while
 reducing yield loss and avoiding reliance on a single large-problem win.
 
@@ -332,7 +350,7 @@ full 50-problem package to be generated.
   `validation.json`, Playwright screenshots, and `screenshot.png`.
 - `full_rtllm/visualizations/direct_ppa_pareto/`: static raw area-power
   PPA-front supplement for reader-facing inspection.
-- `full_rtllm/family_audit/`: full-suite canonical RTL/netlist/family
+- `full_rtllm/family_audit/`: full-suite canonical RTL/netlist/family-proxy
   duplicate audit with candidate rows, per-problem metrics, aggregate deltas,
   and figures.
 
@@ -345,7 +363,9 @@ projected and `0` failures. Strict validator status: `passed`.
 
 The family audit uses the same canonical RTL/netlist/family-proxy definitions
 as the T28 audit: normalized RTL hash, normalized synthesized netlist hash,
-and a synthesized standard-cell count signature. It shows that exact T26 QD
+and a synthesized standard-cell count signature. The family signature is the
+`CELL_TYPE:COUNT` terms sorted by cell type and joined with `|`; the
+family-proxy hash is SHA-256 of that signature. It shows that exact T26 QD
 improves active-front proxy material: `69` front family-proxy hits and `69`
 front netlists versus classic's `61` and `61`. It also keeps the
 quality/yield caveat visible: exact T26 has fewer audited deduplicated
@@ -354,19 +374,19 @@ hits (`129` versus `179`).
 
 ## Conclusion
 
-The full one-seed RTLLM milestone answers the two core questions with useful
-but bounded evidence. Diversity matters enough to keep the QD/MAP-Elites line
-alive when it is implementation-aware and kept under quality pressure. The best
-current evidence supports the T26 implementation-response archive bundle, not
-generic embedding, lexical, random, or sparsity-seeking diversity.
+The full one-seed RTLLM milestone answers the two core questions with bounded
+diagnostic evidence. It does not prove that diversity already improves RTL PPA
+over classic REvolution. It does show that the best remaining diversity path is
+not generic novelty; it is the T26 implementation-response archive bundle with
+quality pressure.
 
 For the presentation, the defensible message is:
-QD/MAP-Elites should continue because exact T26 beats classic on aggregate
-PPA-HV, HV-AUC, PPA-front count, and active-front family-proxy/netlist count
-while preserving every classic-covered problem under matched
-generated-candidate and LLM-call budgets. The honest caveat is that the gain
-is uneven, one-seed, and outlier-sensitive, with visible raw-yield loss, fewer
-audited PPA-point rows, fewer total family-proxy hits, and fewer
-reference-beating family-proxy hits. The next milestone should be multi-seed
-replication plus T26.1-style variants that target yield recovery and less
-outlier-dependent front improvement.
+exact T26 preserves every classic-covered problem and adds front points under
+matched generated-candidate and LLM-call budgets, but it does not yet pass the
+paired-PPA or scalar-quality burden for a positive QD claim. The honest caveat
+is that the aggregate HV gain is one-seed, outlier-sensitive, and negative
+without `Prob040_synchronizer`, with visible raw-yield loss, fewer audited
+PPA-point rows, fewer total family-proxy hits, fewer reference-beating
+family-proxy hits, and worse all-RTLLM best score. The next milestone should be
+multi-seed replication plus T26.1-style variants that target yield recovery,
+non-defaulted-reference evidence, and less outlier-dependent front improvement.

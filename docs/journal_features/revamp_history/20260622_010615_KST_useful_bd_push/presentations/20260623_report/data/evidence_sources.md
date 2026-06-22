@@ -9,7 +9,7 @@ Use these sources to build `report.md`, `slides.md`, tables, and figures.
 - `technique_lanes.md`: lane taxonomy and decision ledger.
 - `techniques/T26_sr_raw_conservative_exploit_qd/`: current T26 method.
 - `techniques/T27_t26_live_qd_audit/`: live HV/HV-AUC audit for T26.
-- `techniques/T28_t26_family_audit/`: duplicate/family audit for T26.
+- `techniques/T28_t26_family_audit/`: duplicate/family-proxy audit for T26.
 - `techniques/T30_t26_holdout_front_audit/`: holdout support for exact T26.
 - `techniques/T31_sr_raw_fail_feedback_repair_qd/`: failed repair emitter.
 - `techniques/T32_sr_raw_front_preserving_emitter_qd/`: failed front emitter.

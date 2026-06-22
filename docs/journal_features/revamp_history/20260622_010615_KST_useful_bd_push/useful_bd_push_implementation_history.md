@@ -2422,8 +2422,9 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   utility gates, replay retention, Qwen replay deltas, early-diversity
   correlation, and a PPA-front-by-style RTLLM case study.
 - Added a report subsection explaining that the retrospective evidence supports
-  interpretable/diagnostic diversity only, while the current positive claim
-  comes from the prospective matched-budget T26 full RTLLM comparison.
+  interpretable/diagnostic diversity only, while the then-current T26 claim
+  came from the prospective matched-budget full RTLLM comparison. The later
+  current-package correction downgrades that claim to diagnostic.
 - Recorded two sub-agent retrospective review passes and two `claude -p`
   retrospective review passes under
   `presentations/20260623_report/reviews/`. The final verdicts were `PASS`
@@ -2565,5 +2566,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   noted in the presentation draft.
 - Remaining caveat: exact T26 QD has fewer summed family proxies (`311`
   versus `341`) and fewer reference-beating family-proxy hits (`129` versus
-  `179`), so the milestone supports a front-material proxy claim rather than
-  broad implementation-family dominance.
+  `179`), so the milestone supports a front-material proxy observation rather
+  than broad implementation-family dominance.
+
+## Current Package Adversarial Correction - 2026-06-22 UTC
+
+- Ran a new current-package sub-agent review and a long-timeout `claude -p`
+  review after the full family-proxy audit. The sub-agent passed with
+  limitations, but Claude found stronger presentation-integrity blockers.
+- Downgraded the milestone claim status from `useful_qd` to `diagnostic`.
+  Exact T26 preserves every classic-covered design and adds front points, but
+  paired HV is net-negative (`4` wins, `15` losses, `31` ties), all-RTLLM
+  `best_score` is worse (`-0.798824` versus `0.260455`), and the aggregate HV
+  win flips negative without `Prob040_synchronizer`.
+- Connected the aggregate HV caveat to the provenance note: `Prob040` is one
+  of the repaired missing-reference problems and uses a defaulted reference.
+  It cannot be the sole carrier for a positive QD-effectiveness claim.
+- Clarified that front-family and front-netlist counts are not independent
+  corroboration when `front_family_ratio=1.0`; the family-proxy audit rejects
+  duplicate collapse but does not create a separate front win.
+- Updated `report.md`, `slides.md`, package READMEs, claim-validation docs,
+  review-resolution notes, and the RTLLM package generator/test so future
+  regenerated summaries remain diagnostic unless stronger paired PPA and
+  scalar-quality evidence is added.

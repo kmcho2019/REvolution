@@ -49,7 +49,7 @@ def test_package_rtllm_milestone_full(tmp_path: Path) -> None:
     assert len(aggregates) == len(METHODS) * 3
     assert candidates
     assert "Mean HV delta, all RTLLM" in report
-    assert "Claim status: `reviewable`" in report
+    assert "Claim status: `diagnostic`" in report
     assert "## Retention Gate" in report
     for figure in (
         "full_hv_delta_distribution.png",

@@ -4,9 +4,11 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 
 ## Headline
 
-- Claim status: `reviewable`.
+- Claim status: `diagnostic`.
 - Mean HV delta, all RTLLM: `0.010562`.
 - Mean HV-AUC delta, all RTLLM: `0.012397`.
+- Mean best-score delta, all RTLLM: `-1.059279`.
+- Mean HV delta without Prob040: `-0.009465`.
 - Hard retention failures: `0` rows.
 - Yield warnings: `4` rows.
 - Small-n validity labels: `6` rows.
@@ -156,7 +158,7 @@ Full token accounting is in `tables/full_budget_parity.csv`.
   Playwright screenshots.
 - `visualizations/direct_ppa_pareto/`: static reader-facing raw area-power
   PPA-front supplement.
-- `family_audit/`: full-suite canonical RTL/netlist/family duplicate audit
+- `family_audit/`: full-suite canonical RTL/netlist/family-proxy duplicate audit
   with candidate rows, per-problem metrics, aggregate deltas, and figures.
 
 ## Viewer Scope
@@ -180,12 +182,16 @@ count family signature. Exact T26 QD has more active-front family-proxy hits
 and front netlists (`69` versus `61`) and fewer family-proxy duplicates (`7`
 versus `11`). It still has fewer summed family proxies (`311` versus `341`)
 and fewer reference-beating family-proxy hits (`129` versus `179`), so this
-supports a front-material proxy claim rather than broad family dominance.
+supports a front-material proxy observation rather than broad family dominance.
 
 ## Claim Discipline
 
 This is one-seed paired engineering evidence. A QD claim must preserve
-classic-covered designs and report yield warnings instead of hiding them.
-This package supports a PPA-front/HV/HV-AUC claim and a bounded front-family
-proxy claim, not a broad implementation-family dominance claim. Multi-seed
+classic-covered designs and report yield warnings instead of hiding them. The
+current package is diagnostic because the paired HV split is net-negative and
+the aggregate HV win depends on defaulted-reference `Prob040_synchronizer`.
+This package supports a bounded PPA-front observation, not a positive
+QD-effectiveness claim. The front-family and front-netlist counts match the
+front-point count because the front family ratio is `1.0`; they reject
+duplicate collapse but are not independent corroborating wins. Multi-seed
 replication and stronger semantic family audits remain follow-on milestones.

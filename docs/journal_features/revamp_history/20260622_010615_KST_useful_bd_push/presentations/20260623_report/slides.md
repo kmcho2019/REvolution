@@ -8,17 +8,16 @@
 
 ## Slide 2 - Short Answer
 
-- Yes, but only for a quality-safe implementation-response bundle.
+- Not proven yet; the current status is diagnostic.
 - Exact T26 QD passes the PPA-first retention gate on full RTLLM.
-- It improves aggregate HV, HV-AUC, and front count.
-- It is not yet a broad decisive win because yield drops and outlier
-  sensitivity remain.
+- It adds PPA-front points, but paired HV is net-negative.
+- The aggregate HV win depends on defaulted-reference `Prob040_synchronizer`.
 
 ## Slide 3 - Terms
 
 - BD: behavior descriptor used to place candidates in a QD archive.
 - QD/MAP-Elites: keep strong candidates across behavior regions.
-- PPA: power, performance, and area; lower raw values are better.
+- PPA: power, effective clock period, and area; lower raw values are better.
 - Valid PPA: candidate with usable synthesis/PPA metrics.
 - PPA-front point: nondominated valid PPA candidate.
 
@@ -80,6 +79,7 @@
 | --- | ---: | ---: | ---: |
 | Mean HV | 0.094435 | 0.104997 | +0.010562 |
 | Mean HV-AUC | 0.080956 | 0.093353 | +0.012397 |
+| Mean best score | 0.260455 | -0.798824 | -1.059279 |
 | Valid PPA | 1056 | 879 | -177 |
 | PPA-front points | 61 | 69 | +8 |
 
@@ -104,15 +104,16 @@
 - Per-problem HV: 4 QD wins, 15 losses, 31 ties.
 - Per-problem HV-AUC: 5 QD wins, 16 losses, 29 ties.
 - The aggregate HV win is strongly affected by `Prob040_synchronizer`.
+- Without `Prob040`, mean HV delta is -0.009465.
 - QD has fewer unique PPA points: 318 versus 352.
-- Family-proxy audit favors QD on front material: 69 versus 61.
+- Family-proxy front count matches front-point count: 69 versus 61.
 - But QD has fewer summed family proxies: 311 versus 341.
 - QD also has fewer reference-beating family proxies: 129 versus 179.
 
 ## Slide 15 - Answer The Two Questions
 
 - Does diversity matter?
-- Yes, enough to continue the QD/MAP-Elites line.
+- Not proven by this one-seed package.
 - Which diversity matters?
 - A T26-style implementation-response archive bundle with quality pressure.
 - Which diversity does not suffice?
@@ -120,16 +121,17 @@
 
 ## Slide 16 - Decision
 
-- Continue the QD/MAP-Elites research direction.
-- Present the result as reviewable one-seed engineering evidence.
-- Do not claim seed-stable significance yet.
+- Continue only as a controlled T26-family follow-up.
+- Present the result as diagnostic one-seed engineering evidence.
+- Do not claim useful-QD or seed-stable significance yet.
 - Next: multi-seed replication and T26.1 variants that reduce yield loss.
 
 ## Backup - Glossary Location
 
 - Full terminology reference: `glossary.md`.
+- Recommended figures: funnel, front counts, HV scatter, and PPA fronts.
 - Generated tables: `full_rtllm/tables/`.
 - Raw candidate PPA data: `full_rtllm/data/full_ppa_candidates.csv`.
 - Full Phase 03.1 viewer: `full_rtllm/visualizations/qd_ppa_viewer/`.
 - Direct raw PPA supplement: `full_rtllm/visualizations/direct_ppa_pareto/`.
-- Full family audit: `full_rtllm/family_audit/`.
+- Full family-proxy audit: `full_rtllm/family_audit/`.

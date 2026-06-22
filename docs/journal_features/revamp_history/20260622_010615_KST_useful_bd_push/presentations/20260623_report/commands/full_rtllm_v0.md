@@ -202,5 +202,5 @@ uv run python scripts/package_full_rtllm_family_audit.py \
 Headline result: exact T26 QD has `69` front family-proxy hits and `69` front
 netlists versus classic's `61` and `61`. Exact T26 QD has fewer summed family
 proxies (`311` versus `341`) and fewer reference-beating family-proxy hits
-(`129` versus `179`), so this supports a front-material proxy claim rather
-than broad family dominance.
+(`129` versus `179`), so this supports a front-material proxy observation
+rather than broad family dominance.

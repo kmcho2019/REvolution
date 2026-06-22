@@ -100,6 +100,11 @@ HV-AUC:
 area under the HV-over-generations curve. Larger HV-AUC means useful front
 points appeared earlier or persisted longer during the run.
 
+Best score:
+the scalar quality score for the best candidate in a run. It is not the
+primary QD metric, but it remains a sanity check because a method can add
+front points while losing scalar PPA quality.
+
 Unique PPA point:
 a deduplicated normalized PPA-improvement point. This prevents repeated copies
 of the same PPA outcome from being counted as diversity.

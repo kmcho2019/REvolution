@@ -57,7 +57,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       precise answers to the two main questions.
 - [x] Run sub-agent and `claude -p` adversarial reviews when available, and
       record outputs under `presentations/20260623_report/reviews/`.
-- [x] Pass final presentation/report adversarial validation before sign-off.
+- [x] Pass final presentation/report adversarial validation for diagnostic
+      package status; do not treat it as positive `useful_qd` sign-off.
 - [ ] Define shared classic/manual/random/simple-control baselines.
 - [ ] Define central method result schema.
 - [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime
