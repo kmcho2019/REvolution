@@ -780,6 +780,18 @@ class EoHEngine:
         # If the file does not exist, we will use default high PPA values.
 
         ref_ppa_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ppa.txt")
+        if not os.path.exists(ref_ppa_file):
+            print(
+                f"WARNING: Reference PPA file {ref_ppa_file} is missing. Using default high PPA values."
+            )
+            self.ref_ppa_metrics = {
+                "tns": 0.0,
+                "wns": 0.0,
+                "eff_clk_period": self.clk_period,
+                "area": 1e4,
+                "power": 1.0,
+            }
+            return
         if os.path.exists(ref_ppa_file):
             with open(ref_ppa_file, "r") as f:
                 lines = f.readlines()

@@ -466,18 +466,18 @@ def test_create_prompt_M_I_diff_recovers_relocated_parent_path(
 # ---------- Reference PPA ------------------------------------------------------------
 
 
-def test_calculate_reference_ppa_missing_file_leaves_empty(mocker, tmp_path):
+def test_calculate_reference_ppa_missing_file_uses_defaults(mocker, tmp_path):
     mocker.patch.object(EoHEngine, "load_problem_description", return_value="d")
     llm = MagicMock()
     llm.model_name = "m"
     synth = MagicMock()
     synth.clk_period = 0.01
     eng = EoHEngine("b", "p", llm, MagicMock(), synth, base_save_path=str(tmp_path))
-    # Point benchmark_path to empty dir; file does not exist
     eng.benchmark_path = str(tmp_path)
     eng._calculate_reference_ppa()
-    # Current implementation does nothing when file is missing (dict remains empty)
-    assert eng.ref_ppa_metrics == {}
+    assert eng.ref_ppa_metrics["area"] == 1e4
+    assert eng.ref_ppa_metrics["power"] == 1.0
+    assert eng.ref_ppa_metrics["eff_clk_period"] == synth.clk_period
 
 
 def test_calculate_reference_ppa_valid_file(mocker, tmp_path):
