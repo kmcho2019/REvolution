@@ -1,6 +1,6 @@
 # T40 Sparse-Warmup Control Matrix Methodology
 
-Status: pre-registered validation matrix.
+Status: completed validation matrix; pre-registered settings preserved.
 
 ## Question
 
@@ -65,7 +65,7 @@ T40 can promote T39 only if the candidate arm:
   These figures must use area on x, power on y, conventional non-inverted
   axes, and a visible lower-left-is-better cue.
 
-If T39 only beats T38 but not the controls, it remains `T0 positive_ablation`.
+If T39 only beats T38 but not the controls, it remains a `T0` ablation signal.
 
 ## Required Artifacts
 

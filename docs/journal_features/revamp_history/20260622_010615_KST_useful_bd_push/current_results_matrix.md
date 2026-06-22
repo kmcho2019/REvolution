@@ -46,7 +46,7 @@ Real result packages:
 - `T37_t36_slot_count_ablation` T36 explicit slot-count replay ablation
 - `T38_elite_pareto_slot_live_qd` champion-plus-one-slot live diagnostic
 - `T39_sparse_yield_warmup_qd` sparse-yield warmup live ablation
-- `T40_sparse_warmup_control_matrix` pre-registered T39 control matrix
+- `T40_sparse_warmup_control_matrix` completed T39 control matrix
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -74,10 +74,11 @@ both lexical and T11. T37 confirms that the useful replay boundary is one
 local-front slot: two or more slots collapse toward the weaker T35
 cell-Pareto HV regime. T38 validates the live code path but exposes a
 multi-pipe warmup archive gap. T39 fixes that specific gap by lowering
-grid-quantile warmup from 8 to 4, but it remains a `T0 positive_ablation`
-until same-budget controls are run. T40 is the pre-registered control matrix
-for that question. The ten-package minimum is satisfied, but the goal remains
-active.
+grid-quantile warmup from 8 to 4. T40 answers the same-budget control question
+and keeps T39/T40 at `T0`: T39 wins multi-pipe best score and contributes
+multi-pipe pooled-front points, but classic still owns ALU and traffic-light
+pooled raw area-power fronts. The ten-package minimum is satisfied, but the
+goal remains active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -318,16 +319,21 @@ Multi-pipe moved from T38's 7 valid PPA, 3 local/global front points, and 0
 archive members to 11 valid PPA, 8 local-front points, 6 global-front points,
 and 10 active archive members. Traffic-light also improved valid PPA from 8
 to 15 and best quality from 0.399899 to 0.403821. ALU kept archive/front
-material but best quality fell from 0.416377 to 0.402072. T39 is therefore a
-`T0 positive_ablation`: it fixes the T38 archive gap, but it is not promoted
-until same-budget classic/manual/random/full-Pareto controls are run.
+material but best quality fell from 0.416377 to 0.402072. T39 remains a `T0`
+positive ablation after T40: it fixes the T38 archive gap and wins the hard
+multi-pipe slice, but it is not a broad same-budget promotion.
 
-`T40_sparse_warmup_control_matrix` is the active next package. It freezes the
-completed T39 arm and runs matched classic, manual-BD, random-descriptor, and
-full local-Pareto controls under the same subset, seed, model, budget, warmup,
-and scheduler settings. Its first accepted figure must be a straightforward
-raw area-power PPA Pareto comparison with conventional non-inverted axes and
-lower-left marked as better.
+`T40_sparse_warmup_control_matrix` is the completed control package for T39.
+It freezes the completed T39 arm and compares matched classic, manual-BD,
+random-descriptor, and full local-Pareto controls under the same subset, seed,
+model, budget, warmup, and scheduler settings. Its first accepted figure is
+`techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`,
+a straightforward raw area-power PPA Pareto comparison with conventional
+non-inverted axes and lower-left marked as better. The result is `T0
+mixed_control_no_promotion`: T39's multi-pipe best score is +321.04% versus
+classic and it adds two multi-pipe pooled-front points, but classic keeps all
+three ALU pooled-front points, three traffic-light pooled-front points, and
+the best ALU and traffic-light scores.
 
 ## Current Conclusions
 
@@ -395,8 +401,12 @@ lower-left marked as better.
     warmup failure: multi-pipe has valid/global front candidates and no active
     archive members.
 24. T39 fixes the T38 sparse-yield archive gap and improves multi-pipe
-    front/archive material, but it must be compared against same-budget
-    controls before becoming a `T1` or `T2` claim.
+    front/archive material, but T40 blocks a broad useful-QD promotion because
+    classic still dominates ALU and traffic-light pooled raw PPA fronts.
+25. T40 shows the next archive-coupling step should be adaptive or per-design:
+    preserve classic/champion pressure on easier designs and reserve the
+    sparse-yield one-slot lane for designs where archive activation or hard
+    front recovery is the bottleneck.
 
 ## Next Decisions
 
@@ -426,8 +436,9 @@ lower-left marked as better.
 - For the T11 lineage, do not promote front-seeded evidence as a method. Use it
   only to justify a gentler replay or live variant that preserves T11's
   farthest/HV behavior while reserving a small front-recovery lane.
-- For T39, execute the T40 same-budget classic/manual/random/full-Pareto
-  controls before any useful-QD claim.
-- For the T36/T37/T38/T39/T40 lineage, keep the one-slot rule fixed during the
-  control matrix. If controls expose a new sparse-yield failure, test a
-  separate global-Pareto fallback without changing descriptor inputs.
+- Do not promote T39 as a general useful-QD method after T40. It is a useful
+  multi-pipe signal and sparse-yield ablation, not a same-budget win across
+  the three-problem screen.
+- For the T36/T37/T38/T39/T40 lineage, test an adaptive sparse-yield policy
+  next: keep the one-slot rule available, but gate it by per-design archive
+  activation/front-recovery evidence instead of applying it uniformly.

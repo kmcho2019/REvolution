@@ -116,17 +116,16 @@ a numbered `techniques/T##_slug/` package before running it.
 ## From `T39_sparse_yield_warmup_qd` Positive Ablation
 
 - T39 fixes the T38 multi-pipe active-archive gap without changing descriptor
-  inputs, but it is not a promoted useful-QD result because same-budget
-  classic/manual/random/full-Pareto controls are not in this package.
-- T40 is that next package: keep warmup `4` and run the controls needed to
-  tell whether the sparse-warmup one-slot rule is useful beyond the T38
-  ablation.
-- The T40 report must lead with straightforward raw area-power PPA fronts:
-  area on x, power on y, no inverted axes, and lower-left marked as better.
-- If controls show ALU quality loss is systematic, try an adaptive warmup rule
-  that initializes at four successes only for designs still archive-empty
-  after the first generation, or pair sparse warmup with a stronger champion
-  parent lane. Record either variant separately before running it.
+  inputs, but T40 shows it is not a promoted useful-QD result. The uniform
+  one-slot rule wins multi-pipe best score and pooled-front hits, while classic
+  still wins ALU and traffic-light raw area-power fronts.
+- Next candidate: adaptive sparse-yield gating. Initialize at four successes
+  only for designs still archive-empty after the first generation, or when
+  direct front recovery is explicitly weak. Keep the classic/champion lane
+  stronger on designs that already have healthy front and yield behavior.
+- Any adaptive follow-up must lead with straightforward raw area-power PPA
+  fronts: area on x, power on y, no inverted axes, and lower-left marked as
+  better.
 
 ## From `T19_sr_relu_pca_bd` T0
 

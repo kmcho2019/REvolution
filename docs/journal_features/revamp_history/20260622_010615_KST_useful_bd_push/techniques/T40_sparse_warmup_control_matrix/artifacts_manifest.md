@@ -1,6 +1,6 @@
 # T40 Artifacts Manifest
 
-Status: pre-registered; no runtime artifacts committed yet.
+Status: complete live control matrix.
 
 ## Committed Method Artifacts
 
@@ -8,14 +8,21 @@ Status: pre-registered; no runtime artifacts committed yet.
 - `commands/live_screen_v0.md`: exact preflight, control, and validation
   commands.
 - `tables/live_screen_v0_subset.yaml`: frozen three-problem live screen.
-- `tables/run_matrix.csv`: planned arms and fixed settings.
-- `figures/README.md`: required figure contract.
-- `figures/visual_inspection_notes.md`: pending visual inspection checklist.
-- `visualizations/direct_ppa_pareto/README.md`: pending direct PPA viewer
-  location.
-- `results_report.md`: pending-result report scaffold.
+- `tables/run_matrix.csv`: completed arms and fixed settings.
+- `tables/preflight_models_20260622_070540_UTC.json`: vLLM model preflight.
+- `tables/t40_method_manifest.csv`: source run roots and method paths.
+- `tables/t40_problem_method_summary.csv`: per-problem method metrics.
+- `tables/t40_candidate_ppa_points.csv`: candidate-level PPA/front rows.
+- `tables/*_validation.{json,md}`: QD archive validator outputs.
+- `figures/t40_raw_area_power_fronts.png`: primary direct PPA front.
+- `figures/t40_front_count_summary.png`: valid-PPA and pooled-front counts.
+- `figures/visual_inspection_notes.md`: accepted visual inspection notes.
+- `visualizations/direct_ppa_pareto/index.html`: direct PPA viewer.
+- `visualizations/direct_ppa_pareto/metrics.json`: viewer metrics.
+- `visualizations/direct_ppa_pareto/screenshot.png`: viewer screenshot.
+- `results_report.md`: measured result and tier decision.
 
-## Runtime Artifacts To Capture
+## Runtime Artifact Roots
 
 - `exp/useful_bd_push/t40_sparse_warmup_control_matrix_<timestamp>/preflight/`
 - `exp/useful_bd_push/t40_sparse_warmup_control_matrix_<timestamp>/classic_revolution/`

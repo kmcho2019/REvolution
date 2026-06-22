@@ -49,9 +49,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Add readable figures for every completed result package and cross-method
       audit, including a standalone raw area-power PPA Pareto-front PNG before
       any BD-space, normalized, or HTML-only visualization is accepted.
-- [ ] Inspect generated figures with `view_image` or equivalent before marking
+- [x] Inspect generated figures with `view_image` or equivalent before marking
       any technique complete.
-- [ ] Add tests for any new report/packaging code.
+- [x] Add tests for any new report/packaging code.
 - [ ] Keep new implementation code in shared descriptor/evaluator/reporting
       surfaces with method-specific extractors only.
 - [ ] Add or update docstrings, comments, and docs for new code paths.
@@ -159,7 +159,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T40_sparse_warmup_control_matrix` is pre-registered with matched
       classic/manual/random/full-Pareto controls and a mandatory conventional
       lower-left-better raw area-power PPA-front visual gate.
-- [ ] `T40_sparse_warmup_control_matrix` controls are executed, validated,
+- [x] `T40_sparse_warmup_control_matrix` controls are executed, validated,
       packaged, visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
@@ -198,7 +198,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       useful-BD claim.
 - [x] T37 one-slot bounded front lane gets T38 same-budget live validation.
 - [x] T38 warmup/archive gap is ablated before any final useful-BD claim.
-- [ ] T39 sparse-warmup result gets same-budget classic/manual/random/full-
+- [x] T39 sparse-warmup result gets same-budget classic/manual/random/full-
       Pareto controls before any `T1` or `T2` useful-QD claim.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 

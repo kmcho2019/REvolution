@@ -1922,3 +1922,43 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   axis inversion, and lower-left marked as better. Archive heatmaps,
   descriptor-space views, and normalized improvement plots are supporting
   artifacts, not substitutes.
+
+## T40 Live Controls And Direct PPA Report - 2026-06-22 UTC
+
+- Ran the four T40 live controls under
+  `exp/useful_bd_push/t40_sparse_warmup_control_matrix_20260622_070540_UTC/`.
+  The vLLM preflight reported `openai/gpt-oss-120b` with `max_model_len`
+  131072.
+- Completed arm runtimes:
+  `classic_revolution` 646.16 seconds, `manual_sparse_pareto_qd` 698.34
+  seconds, `random_sparse_elite_slot_qd` 743.50 seconds, and
+  `graph_full_pareto_sparse_qd` 1075.89 seconds.
+- Pareto archive validation passed for every QD control with `failure_count=0`.
+  Manual BD and graph full Pareto reached `max_front_size_seen=5`; random
+  one-slot reached `max_front_size_seen=2`.
+- Packaged the completed matrix under
+  `techniques/T40_sparse_warmup_control_matrix/`, including the preflight
+  capture, candidate-level PPA rows, method summary rows, validator outputs,
+  direct raw PPA-front PNG, count summary PNG, and filesystem-openable HTML
+  viewer with a Playwright screenshot.
+- The accepted primary figure is
+  `figures/t40_raw_area_power_fronts.png`. It uses raw area on x, raw power on
+  y, no axis inversion, and an explicit lower-left-is-better caption. The
+  first generated version had title/legend crowding; it was regenerated before
+  acceptance.
+- Main result: T39 one-slot has the strongest multi-pipe best score
+  (`0.222285`, +321.04% versus classic) and two multi-pipe pooled raw-front
+  hits. Manual BD also contributes one multi-pipe pooled-front hit and one
+  traffic-light pooled-front hit.
+- Promotion blocker: classic keeps all three ALU pooled raw-front hits, three
+  traffic-light pooled raw-front hits, and the best ALU and traffic-light
+  scores (`0.414136` and `0.420875`). Random one-slot and graph full Pareto do
+  not add pooled raw-front material.
+- Tier decision: `T0 mixed_control_no_promotion`. Sparse warmup fixed the T38
+  archive-activation failure and is useful for the hard multi-pipe slice, but
+  the uniform T39 one-slot policy is not a same-budget screen-wide useful-QD
+  win.
+- Next iteration should test adaptive or per-design sparse-yield gating:
+  preserve classic/champion pressure on designs with healthy yield/fronts, and
+  activate the one-slot sparse-yield lane only where archive activation or hard
+  front recovery is the bottleneck.

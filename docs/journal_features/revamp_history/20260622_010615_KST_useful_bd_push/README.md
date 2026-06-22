@@ -14,23 +14,23 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T39_sparse_yield_warmup_qd/` (completed bounded live arm;
-  `T0 positive_ablation` because sparse warmup fixes T38's multi-pipe archive
-  gap but same-budget controls are still missing).
-- Most recent pre-registered package:
-  `techniques/T40_sparse_warmup_control_matrix/` (classic, manual-BD, random,
-  and full local-Pareto controls for the frozen T39 arm).
+  `techniques/T40_sparse_warmup_control_matrix/` (`T0 mixed_control`; T39 wins
+  the hard multi-pipe slice, but classic still owns ALU and traffic-light raw
+  area-power fronts).
+- Most recent live ablation:
+  `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
+  warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  execute T40 and package conventional lower-left-better raw area-power PPA
-  fronts before assigning any promotion tier.
+  test adaptive or per-design sparse-yield gating rather than promoting the
+  uniform T39 one-slot rule.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T39_sparse_yield_warmup_qd/figures/t39_live_raw_area_power_fronts.png`
-  (raw area-power front panels for the T39 bounded live arm).
+  `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
+  (raw area-power front panels for the T40 control matrix).
 - Most recent direct PPA HTML viewer:
-  `techniques/T39_sparse_yield_warmup_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T40_sparse_warmup_control_matrix/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto viewer with summary table and
   Playwright screenshot).
 - Most recent interactive visualization refresh:

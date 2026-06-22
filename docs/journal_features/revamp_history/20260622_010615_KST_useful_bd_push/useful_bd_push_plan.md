@@ -359,11 +359,15 @@ After each `T0`, add at least one follow-up idea, ablation, or hybrid to
 
 ## Current Validation Target
 
-T40 is the active next package. It keeps the frozen T39 sparse-warmup one-slot
-candidate and runs matched classic, manual-BD, random-descriptor, and full
-local-Pareto controls under the same subset, seed, model, budget, and warmup.
-The first accepted figure must be a direct raw area-power PPA Pareto front with
-conventional non-inverted axes and lower-left marked as better.
+T40 is complete. It kept the frozen T39 sparse-warmup one-slot candidate and
+ran matched classic, manual-BD, random-descriptor, and full local-Pareto
+controls under the same subset, seed, model, budget, and warmup. The accepted
+primary figure is a direct raw area-power PPA Pareto front with conventional
+non-inverted axes and lower-left marked as better.
+
+Current next target: specify an adaptive or per-design sparse-yield gate. T40
+shows the uniform T39 one-slot rule helps the hard multi-pipe slice but does
+not beat classic on ALU or traffic-light raw PPA fronts.
 
 ## Completion Gates
 
