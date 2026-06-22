@@ -2625,3 +2625,13 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   (`Prob013_multi_booth_8bit`, `Prob018_float_multi`, and
   `Prob040_synchronizer`) are outside the T47 probe matrix and remain
   quarantined from headline reference-normalized claims.
+
+## T47 Endpoint Preflight - 2026-06-22 UTC
+
+- Recorded local vLLM preflight metadata in
+  `techniques/T47_t26_contract_probe/tables/preflight_models_20260622_203146_UTC.json`.
+- The endpoint at `20.0.0.103:8000` reports `openai/gpt-oss-120b` with
+  `max_model_len=131072`, satisfying the 128k-token budget requirement.
+- Added exact hard/tuning sanity commands under
+  `techniques/T47_t26_contract_probe/commands/hard_tuning_sanity_20260622_203146_UTC.md`
+  before launching any live T47 spend.

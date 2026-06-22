@@ -15,6 +15,9 @@ RTLLM problems that must not carry a headline reference-normalized claim. The
 current table lists `Prob013_multi_booth_8bit`, `Prob018_float_multi`, and
 `Prob040_synchronizer`; all three are outside the T47 probe matrix.
 
+`preflight_models_20260622_203146_UTC.json` records the current local vLLM
+preflight. It shows `openai/gpt-oss-120b` with `max_model_len=131072`.
+
 Regenerate the tables with:
 
 ```bash

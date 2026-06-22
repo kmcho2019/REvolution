@@ -23,6 +23,12 @@ default-reference problems in `default_reference_quarantine.csv` are not in
 the T47 probe, so the planned screen avoids the `Prob040_synchronizer`
 headline-reference failure mode from the one-seed RTLLM package.
 
+## Preflight Check
+
+`preflight_models_20260622_203146_UTC.json` records the local vLLM endpoint at
+`20.0.0.103:8000`. The endpoint reports `openai/gpt-oss-120b` with
+`max_model_len=131072`, so the planned 128k token budgets are valid.
+
 ## Completion Gate
 
 Do not assign a T1 or higher tier until live artifacts prove the acceptance
