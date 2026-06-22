@@ -212,6 +212,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T45_t11_runtime_top4_graph` full three-problem live screen is
       executed, validated, packaged with Phase 03.1 `qd_ppa_viewer/` and
       `direct_ppa_pareto/`, visually inspected, and assigned a tier decision.
+- [x] `T46_t11_runtime_pca4_graph` is pre-registered with frozen non-PPA PCA
+      axes over T44's top-8 graph features, the same T45 live settings, and
+      mandatory direct-PPA plus Phase 03.1 viewer gates.
+- [ ] `T46_t11_runtime_pca4_graph` full three-problem live screen is executed,
+      validated, packaged with Phase 03.1 `qd_ppa_viewer/` and
+      `direct_ppa_pareto/`, visually inspected, and assigned a tier decision.
 
 ## Minimum Goal Completion
 

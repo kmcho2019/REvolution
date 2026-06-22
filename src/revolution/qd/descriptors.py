@@ -34,6 +34,86 @@ class GridAxisDescriptorSpec:
     upper_bound: float
 
 
+_T11_RUNTIME_PCA_SOURCE_AXES = (
+    "hyper_mean_fanout",
+    "edge_per_node",
+    "log_edge_count",
+    "hyper_directed_edge_count",
+    "hyper_fanout_entropy",
+    "hyper_driven_net_count",
+    "hyper_sink_net_count",
+    "log_net_count",
+)
+_T11_RUNTIME_PCA_AXES = (
+    "t11_runtime_pca_0",
+    "t11_runtime_pca_1",
+    "t11_runtime_pca_2",
+    "t11_runtime_pca_3",
+)
+_T11_RUNTIME_PCA_MEANS = (
+    1.196406099612,
+    1.230324803388,
+    3.364217972698,
+    398.76953125,
+    1.411169238112,
+    227.411458333333,
+    233.540364583333,
+    3.859244883295,
+)
+_T11_RUNTIME_PCA_SCALES = (
+    0.462385346301,
+    0.821128505784,
+    2.447648954374,
+    1144.559855704543,
+    0.507450550491,
+    586.392702047477,
+    604.856920439895,
+    1.788825224165,
+)
+_T11_RUNTIME_PCA_COMPONENTS = (
+    (
+        0.356361378886,
+        0.367674080759,
+        0.410051887174,
+        0.353026367488,
+        0.214633794467,
+        0.352592678926,
+        0.350199941263,
+        0.389901153935,
+    ),
+    (
+        0.378695661276,
+        0.315727698356,
+        0.125065538101,
+        -0.368377851599,
+        0.528015043604,
+        -0.395550723286,
+        -0.412655291744,
+        -0.004163590238,
+    ),
+    (
+        0.090812610219,
+        -0.158520462863,
+        -0.365199439504,
+        0.340918210028,
+        0.619028903145,
+        0.218266395395,
+        0.135117075801,
+        -0.517624235982,
+    ),
+    (
+        -0.227176201264,
+        -0.601265011248,
+        0.014442195464,
+        -0.094373227797,
+        0.446487114326,
+        0.047954298731,
+        -0.060711106293,
+        0.610262468321,
+    ),
+)
+
+
 _REGISTRY: dict[str, DescriptorDefinition] = {
     "total_cells": DescriptorDefinition("total_cells", "yosys", requires_synthesis=True),
     "sequential_cells": DescriptorDefinition("sequential_cells", "yosys", requires_synthesis=True),
@@ -92,6 +172,10 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "log_max_level": DescriptorDefinition("log_max_level", "yosys_graph", transform="log1p"),
     "hyper_max_level_delta": DescriptorDefinition("hyper_max_level_delta", "yosys_graph"),
     "share_family_inv": DescriptorDefinition("share_family_inv", "yosys_graph"),
+    "t11_runtime_pca_0": DescriptorDefinition("t11_runtime_pca_0", "yosys_graph"),
+    "t11_runtime_pca_1": DescriptorDefinition("t11_runtime_pca_1", "yosys_graph"),
+    "t11_runtime_pca_2": DescriptorDefinition("t11_runtime_pca_2", "yosys_graph"),
+    "t11_runtime_pca_3": DescriptorDefinition("t11_runtime_pca_3", "yosys_graph"),
     "scoap_cc0_bin_0_pct": DescriptorDefinition("scoap_cc0_bin_0_pct", "yosys_graph"),
     "scoap_cc0_bin_1_pct": DescriptorDefinition("scoap_cc0_bin_1_pct", "yosys_graph"),
     "scoap_cc0_bin_2_pct": DescriptorDefinition("scoap_cc0_bin_2_pct", "yosys_graph"),
@@ -440,9 +524,13 @@ def extract_descriptor_values(
 
     registry = descriptor_registry()
     values: dict[str, float] = {}
+    if any(axis in _T11_RUNTIME_PCA_AXES for axis in axes):
+        values.update(_extract_t11_runtime_pca_values(metrics))
     for axis in axes:
         if axis not in registry:
             raise KeyError(f"Unknown descriptor axis '{axis}'.")
+        if axis in values:
+            continue
         if axis not in metrics:
             raise KeyError(f"Missing required descriptor metric '{axis}'.")
         raw_value = float(metrics[axis])
@@ -452,6 +540,35 @@ def extract_descriptor_values(
         else:
             values[axis] = raw_value
     return values
+
+
+def _extract_t11_runtime_pca_values(metrics: dict[str, float]) -> dict[str, float]:
+    source_values = tuple(
+        _axis_value(metrics, axis) for axis in _T11_RUNTIME_PCA_SOURCE_AXES
+    )
+    centered = tuple(
+        (value - mean) / scale
+        for value, mean, scale in zip(
+            source_values,
+            _T11_RUNTIME_PCA_MEANS,
+            _T11_RUNTIME_PCA_SCALES,
+            strict=True,
+        )
+    )
+    projected = tuple(
+        sum(value * weight for value, weight in zip(centered, component, strict=True))
+        for component in _T11_RUNTIME_PCA_COMPONENTS
+    )
+    return dict(zip(_T11_RUNTIME_PCA_AXES, projected, strict=True))
+
+
+def _axis_value(metrics: dict[str, float], axis: str) -> float:
+    if axis not in metrics:
+        raise KeyError(f"Missing required descriptor metric '{axis}'.")
+    raw_value = float(metrics[axis])
+    if _REGISTRY[axis].transform == "log1p":
+        return math.log1p(max(raw_value, 0.0))
+    return raw_value
 
 
 def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool]:

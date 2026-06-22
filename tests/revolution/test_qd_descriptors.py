@@ -169,6 +169,12 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
         "hyper_sink_net_count",
         "log_net_count",
     ]
+    assert profiles["t11_runtime_pca4_graph"] == [
+        "t11_runtime_pca_0",
+        "t11_runtime_pca_1",
+        "t11_runtime_pca_2",
+        "t11_runtime_pca_3",
+    ]
     assert profiles["t11_runtime_top16_graph"] == [
         *profiles["t11_runtime_top8_graph"],
         "hyper_net_count",
@@ -193,6 +199,48 @@ def test_t11_runtime_profile_requires_graph_metrics():
     )
     assert requirements["requires_graph_metrics"] is True
     assert requirements["requires_ppa"] is False
+
+
+def test_t11_runtime_pca_profile_requires_graph_metrics():
+    requirements = descriptor_requirements(
+        [
+            "t11_runtime_pca_0",
+            "t11_runtime_pca_1",
+            "t11_runtime_pca_2",
+            "t11_runtime_pca_3",
+        ]
+    )
+    assert requirements["requires_graph_metrics"] is True
+    assert requirements["requires_ppa"] is False
+
+
+def test_t11_runtime_pca_descriptor_values_are_frozen():
+    values = extract_descriptor_values(
+        {
+            "hyper_mean_fanout": 1.5,
+            "edge_per_node": 1.25,
+            "log_edge_count": 99.0,
+            "hyper_directed_edge_count": 99.0,
+            "hyper_fanout_entropy": 1.8,
+            "hyper_driven_net_count": 80.0,
+            "hyper_sink_net_count": 90.0,
+            "log_net_count": 120.0,
+        },
+        [
+            "t11_runtime_pca_0",
+            "t11_runtime_pca_1",
+            "t11_runtime_pca_2",
+            "t11_runtime_pca_3",
+        ],
+    )
+    assert values == pytest.approx(
+        {
+            "t11_runtime_pca_0": 0.555076953321,
+            "t11_runtime_pca_1": 1.015872073994,
+            "t11_runtime_pca_2": -0.102228257048,
+            "t11_runtime_pca_3": 0.532447855035,
+        }
+    )
 
 
 def test_load_descriptor_profiles_includes_hard_iteration_large_profile():

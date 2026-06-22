@@ -143,6 +143,20 @@ a numbered `techniques/T##_slug/` package before running it.
   initialize immediately after the initial population. Keep the same T41
   subset/model/seed/budget and the same direct raw PPA-front figure gate.
 
+## From `T45_t11_runtime_top4_graph` T0
+
+- T45 fixes the T44 catastrophic valid-PPA yield warning but loses to classic
+  on every primary aggregate metric. This means direct ranked top-k graph axes
+  are not the right next escalation path.
+- The next method is T46: keep the T45 live settings fixed, but replace the
+  direct top-4 axes with a frozen non-PPA PCA4 projection over T44's top-8
+  graph feature family. The fit uses graph-only T14 rows and excludes PPA,
+  fitness, validity, pass-rate, problem, corpus, model, method, seed, and
+  candidate-id labels.
+- If T46 also loses, stop treating T11 runtime graph axes as a primary live
+  archive coordinate. Reuse them only as a secondary archive lane, a reporting
+  projection, or input to a genuinely trained encoder.
+
 ## From `T19_sr_relu_pca_bd` T0
 
 - SR ReLU PCA is a high-priority HV lead, not a promoted method: final mean HV

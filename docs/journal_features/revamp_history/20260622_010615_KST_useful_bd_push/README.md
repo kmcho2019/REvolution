@@ -20,12 +20,15 @@ Start here when resuming the active goal.
   `techniques/T45_t11_runtime_top4_graph/` (`T0 mixed_diagnostic`; compact
   top-4 T11 graph axes preserve design coverage but lose to classic on HV,
   Pareto points, valid-PPA samples, and best score).
+- Active pre-registered package:
+  `techniques/T46_t11_runtime_pca4_graph/` (frozen non-PPA PCA projection over
+  T44's top-8 graph features; live screen pending).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  avoid direct top-16/top-64 ranked-axis escalation; use a frozen non-PPA graph
-  projection or make graph descriptors a secondary archive lane.
+  run T46 before any richer graph branch; avoid direct top-16/top-64 ranked
+  axis escalation.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -159,6 +162,7 @@ Start here when resuming the active goal.
 | `T43` | `T43_staged_sparse_yield_gate_qd` | Completed staged sparse-yield gate, `T0 mixed_diagnostic`; strict warmup path prevented staged activation and T43 contributes zero pooled raw-front hits. |
 | `T44` | `T44_t11_runtime_graph_bridge` | Completed live result, `T0 mixed_diagnostic`; T11 graph axes show HV/front signal but top-8 archive sparsity and yield loss block promotion. |
 | `T45` | `T45_t11_runtime_top4_graph` | Completed live result, `T0 mixed_diagnostic`; compact graph axes preserve coverage but lose classic on HV, Pareto points, valid-PPA count, and best score. |
+| `T46` | `T46_t11_runtime_pca4_graph` | Pre-registered live follow-up; frozen PCA projection over T44's top-8 graph features, with T45/T44/T39 as references. |
 
 ## Validity-Gate Note
 

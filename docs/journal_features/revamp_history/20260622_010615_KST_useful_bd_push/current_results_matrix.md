@@ -148,6 +148,12 @@ wins), mean Pareto points (`3.67` versus `3.33`), reference-beating count
 best-score comparison. T45 contributes one traffic-light pooled raw-front
 point, not enough to justify promotion.
 
+T46 is pre-registered as the next graph-lane follow-up. It avoids direct
+top-16/top-64 ranked-axis escalation by replacing raw top-k axes with a frozen
+non-PPA four-component PCA projection over T44's top-8 graph feature family.
+The live screen is pending and keeps T45's subset, model, seed, budget,
+operators, archive settings, direct-PPA supplement, and Phase 03.1 viewer gate.
+
 ## Comparable Seed-1001 Replay Metrics
 
 The table below uses the central replay source:

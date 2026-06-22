@@ -2470,3 +2470,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   clarified that final-analysis `HV Wins` assigns the zero-HV multi-pipe tie to
   classic by deterministic winner count, while the report's value-level read
   treats it as a tie. The manifest validation note was made self-contained.
+
+## T46 Frozen T11 PCA Graph Pre-Registration - 2026-06-22 UTC
+
+- Pre-registered `techniques/T46_t11_runtime_pca4_graph/` as the next graph
+  lane follow-up after T45 retired direct ranked-axis escalation.
+- Added descriptor profile `t11_runtime_pca4_graph` with four frozen
+  projection axes: `t11_runtime_pca_0` through `t11_runtime_pca_3`.
+- Fitted the projection from the 768 parsed non-PPA rows in
+  `techniques/T14_dehnn_hypergraph_bd/tables/hypergraph_features.csv`, using
+  T44's top-8 graph feature family and no PPA, fitness, hypervolume,
+  validity, pass-rate, problem, corpus, model, method, seed, or candidate-id
+  labels.
+- Kept the live-screen settings fixed to T45: same three RTLLM problems, model
+  endpoint, seed `1001`, population `12`, generations `3`, strict-ablation
+  evaluation, grid-quantile archive, one local Pareto slot, champion lane
+  `0.80`, no two-parent fusion, and Phase 03.1/direct-PPA visualization gates.
+- Added `scripts/package_t46_t11_runtime_pca4_graph.py` and focused tests for
+  the new descriptor profile plus package generation. T46 is now ready for
+  pre-run validation and a matched live screen.
