@@ -2546,3 +2546,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   PPA-front figure.
 - Strict validation passed with Playwright:
   `uv run python scripts/validate_qd_ppa_visualization.py --viewer-root .../qd_ppa_viewer --subset-config .../rtllm_valid_ppa_viewer_subset.yaml --strict --playwright`.
+
+## Full RTLLM Family Audit Package - 2026-06-22 UTC
+
+- Added `scripts/package_full_rtllm_family_audit.py` and a focused unit test
+  to package canonical RTL/netlist/family duplicate metrics for the one-seed
+  full RTLLM milestone.
+- Packaged `presentations/20260623_report/full_rtllm/family_audit/` with
+  candidate rows, per-problem family metrics, aggregate metrics, comparison
+  deltas, three figures, and visual inspection notes.
+- Main result: exact T26 QD is not a duplicate-collapse win under the T28
+  family proxy. It has fewer family-proxy duplicates (`7` versus `11`) and a
+  slightly higher audited family-proxy ratio (`0.977987` versus `0.968750`)
+  despite fewer audited deduplicated PPA-point rows.
+- Positive full-suite diversity result: exact T26 QD has more active-front
+  family-proxy hits and front netlists than classic (`69` versus `61` for both
+  metrics). This resolves the missing full-suite front-family proxy audit
+  noted in the presentation draft.
+- Remaining caveat: exact T26 QD has fewer summed family proxies (`311`
+  versus `341`) and fewer reference-beating family-proxy hits (`129` versus
+  `179`), so the milestone supports a front-material proxy claim rather than
+  broad implementation-family dominance.

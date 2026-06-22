@@ -16,8 +16,12 @@ Planned presentation figures:
   area-power Pareto panels;
 - `full_rtllm/figures/visual_inspection_notes.md`: manual inspection notes for
   the generated PNGs;
-- front-family delta distribution, because T26 currently loses this metric
-  versus classic in T28;
+- `full_rtllm/family_audit/figures/full_family_aggregate_counts.png`:
+  aggregate front-family proxy and duplicate-accounting summary;
+- `full_rtllm/family_audit/figures/full_front_family_delta_heatmap.png`:
+  per-problem family-proxy and netlist deltas;
+- `full_rtllm/family_audit/figures/full_family_ratio_distribution.png`:
+  audited/front family-proxy ratio distribution;
 - all-problem versus screen-excluded aggregate comparison;
 - evaluation-count and runtime parity chart;
 

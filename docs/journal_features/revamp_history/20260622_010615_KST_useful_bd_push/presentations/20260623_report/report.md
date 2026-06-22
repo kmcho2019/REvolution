@@ -279,14 +279,15 @@ does so without losing design-level coverage. That is enough to justify the
 research direction and a stronger follow-up run.
 
 The result does not prove that exact T26 is already the final algorithm. The
-negative screen subset, lower valid-PPA yield, fewer unique PPA points, and
-outlier-sensitive HV mean show that the method still needs tuning. The full
-RTLLM package also does not include unique front-family or canonical netlist
-family breadth. Those family metrics remain a follow-up audit before any claim
-that exact T26 expands implementation-family diversity across the full suite.
-Prior T28-family evidence already warned that exact T26 can trail classic on
-implementation-family breadth, so this package treats family breadth as an
-unresolved risk rather than an omitted win.
+negative screen subset, lower raw valid-PPA yield, fewer audited PPA-point
+rows, and outlier-sensitive HV mean show that the method still needs tuning.
+The full-suite family audit resolves part of the earlier T28-screen caveat:
+using a synthesized standard-cell count signature as a family proxy, exact T26
+has more active-front family-proxy hits and front netlists (`69` versus `61`),
+plus fewer family-proxy duplicates (`7` versus `11`). It still has fewer
+summed family proxies (`311` versus `341`) and fewer reference-beating family
+proxies (`129` versus `179`), so this package supports a front-material proxy
+claim, not broad implementation-family dominance.
 The most useful next variants should preserve the PPA-front gains while
 reducing yield loss and avoiding reliance on a single large-problem win.
 
@@ -331,6 +332,9 @@ full 50-problem package to be generated.
   `validation.json`, Playwright screenshots, and `screenshot.png`.
 - `full_rtllm/visualizations/direct_ppa_pareto/`: static raw area-power
   PPA-front supplement for reader-facing inspection.
+- `full_rtllm/family_audit/`: full-suite canonical RTL/netlist/family
+  duplicate audit with candidate rows, per-problem metrics, aggregate deltas,
+  and figures.
 
 The Phase 03.1 viewer covers the `37` RTLLM problems with candidate-level
 valid PPA data. The other `13` RTLLM problems remain in the 50-problem
@@ -338,6 +342,15 @@ aggregate tables but are omitted from the viewer because there is no PPA point
 to draw. Classic samples were projected into the T26 archive using the frozen
 SR raw PCA artifact from the 20260618 Auto-BD run, with `352/352` classic rows
 projected and `0` failures. Strict validator status: `passed`.
+
+The family audit uses the same canonical RTL/netlist/family-proxy definitions
+as the T28 audit: normalized RTL hash, normalized synthesized netlist hash,
+and a synthesized standard-cell count signature. It shows that exact T26 QD
+improves active-front proxy material: `69` front family-proxy hits and `69`
+front netlists versus classic's `61` and `61`. It also keeps the
+quality/yield caveat visible: exact T26 has fewer audited deduplicated
+PPA-point rows (`318` versus `352`) and fewer reference-beating family-proxy
+hits (`129` versus `179`).
 
 ## Conclusion
 
@@ -349,9 +362,11 @@ generic embedding, lexical, random, or sparsity-seeking diversity.
 
 For the presentation, the defensible message is:
 QD/MAP-Elites should continue because exact T26 beats classic on aggregate
-PPA-HV, HV-AUC, and PPA-front count while preserving every classic-covered
-problem under matched generated-candidate and LLM-call budgets. The honest
-caveat is that the gain is uneven, one-seed, and outlier-sensitive, with
-visible yield loss and no full-suite implementation-family audit yet. The next
-milestone should be multi-seed replication plus T26.1-style variants that
-target yield recovery and less outlier-dependent front improvement.
+PPA-HV, HV-AUC, PPA-front count, and active-front family-proxy/netlist count
+while preserving every classic-covered problem under matched
+generated-candidate and LLM-call budgets. The honest caveat is that the gain
+is uneven, one-seed, and outlier-sensitive, with visible raw-yield loss, fewer
+audited PPA-point rows, fewer total family-proxy hits, and fewer
+reference-beating family-proxy hits. The next milestone should be multi-seed
+replication plus T26.1-style variants that target yield recovery and less
+outlier-dependent front improvement.

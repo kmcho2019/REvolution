@@ -105,8 +105,9 @@
 - Per-problem HV-AUC: 5 QD wins, 16 losses, 29 ties.
 - The aggregate HV win is strongly affected by `Prob040_synchronizer`.
 - QD has fewer unique PPA points: 318 versus 352.
-- Prior T28 family audit favored classic on front-family breadth.
-- Full-suite front-family breadth is still a follow-up audit.
+- Family-proxy audit favors QD on front material: 69 versus 61.
+- But QD has fewer summed family proxies: 311 versus 341.
+- QD also has fewer reference-beating family proxies: 129 versus 179.
 
 ## Slide 15 - Answer The Two Questions
 
@@ -131,3 +132,4 @@
 - Raw candidate PPA data: `full_rtllm/data/full_ppa_candidates.csv`.
 - Full Phase 03.1 viewer: `full_rtllm/visualizations/qd_ppa_viewer/`.
 - Direct raw PPA supplement: `full_rtllm/visualizations/direct_ppa_pareto/`.
+- Full family audit: `full_rtllm/family_audit/`.

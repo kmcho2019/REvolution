@@ -16,7 +16,7 @@ topic, not a hidden rejection rule.
 | Paired HV | Per-problem and aggregate HV deltas versus classic. | Aggregate-only wins are insufficient. |
 | HV-AUC | AUC over generation history, not only final population. | Final-only gains may be unstable. |
 | Direct PPA fronts | Raw area-power front points and representative plots. | BD-space visuals cannot substitute for PPA evidence. |
-| Family breadth | Unique front netlists/families and duplicate accounting. | Do not claim implementation-family breadth until this exists for the compared suite. |
+| Family breadth | Unique front netlists, synthesized-cell-count family proxies, and duplicate accounting. | Do not claim broad semantic implementation-family dominance from proxy counts alone. |
 | Archive evidence | Coverage, QD score, and Phase 03.1 viewer for live QD archive arms. | Archive claims are unsupported. |
 | Selection timing | Full-run QD arm selected before full RTLLM outcomes. | Treat as exploratory/post-hoc. |
 | Screen exclusion | Aggregate metrics reported both with and without development-screen problems. | Selection bias is hidden. |

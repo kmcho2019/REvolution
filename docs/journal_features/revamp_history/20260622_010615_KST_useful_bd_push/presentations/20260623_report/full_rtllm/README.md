@@ -10,6 +10,8 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 - Hard retention failures: `0` rows.
 - Yield warnings: `4` rows.
 - Small-n validity labels: `6` rows.
+- Front-family delta: `+8` exact T26 QD versus classic.
+- Front-netlist delta: `+8` exact T26 QD versus classic.
 
 ## Aggregate Metrics
 
@@ -154,6 +156,8 @@ Full token accounting is in `tables/full_budget_parity.csv`.
   Playwright screenshots.
 - `visualizations/direct_ppa_pareto/`: static reader-facing raw area-power
   PPA-front supplement.
+- `family_audit/`: full-suite canonical RTL/netlist/family duplicate audit
+  with candidate rows, per-problem metrics, aggregate deltas, and figures.
 
 ## Viewer Scope
 
@@ -168,10 +172,20 @@ frozen SR raw PCA artifact from the 20260618 Auto-BD run. Projection coverage
 was `352/352` classic rows with `0` failures. Strict viewer validation with
 Playwright passed.
 
+## Family Audit
+
+The full-suite family audit uses the T28 proxy definition: normalized RTL
+hash, normalized synthesized netlist hash, and a synthesized standard-cell
+count family signature. Exact T26 QD has more active-front family-proxy hits
+and front netlists (`69` versus `61`) and fewer family-proxy duplicates (`7`
+versus `11`). It still has fewer summed family proxies (`311` versus `341`)
+and fewer reference-beating family-proxy hits (`129` versus `179`), so this
+supports a front-material proxy claim rather than broad family dominance.
+
 ## Claim Discipline
 
 This is one-seed paired engineering evidence. A QD claim must preserve
 classic-covered designs and report yield warnings instead of hiding them.
-This package supports a PPA-front/HV/HV-AUC claim, not a full-suite
-implementation-family breadth claim. Multi-seed replication and front-family
-auditing remain follow-on milestones.
+This package supports a PPA-front/HV/HV-AUC claim and a bounded front-family
+proxy claim, not a broad implementation-family dominance claim. Multi-seed
+replication and stronger semantic family audits remain follow-on milestones.
