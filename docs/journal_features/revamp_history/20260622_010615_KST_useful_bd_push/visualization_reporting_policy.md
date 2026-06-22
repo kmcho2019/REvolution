@@ -39,6 +39,12 @@ higher is better on both axes. For sequential designs, explicitly note when
 clock period is an active third objective and point readers to the HTML viewer
 for the 3D PPA view.
 
+The direct raw PPA figure should be the first PPA/front figure linked from the
+technique `figures/README.md` and the first figure discussed in
+`results_report.md`. The committed tables must include enough candidate-level
+raw area, power, problem, method, and rank-1-front columns to regenerate the
+figure without rerunning the LLM.
+
 The HTML viewer should use the existing `scripts/export_qd_ppa_visualization.py`
 schema when possible. If a scoped live-run adapter is needed, keep the adapter
 data under the technique directory or `exp/`, never under `/aux`. Record

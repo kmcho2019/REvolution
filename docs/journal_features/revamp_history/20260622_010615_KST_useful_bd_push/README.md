@@ -17,10 +17,14 @@ Start here when resuming the active goal.
   `techniques/T31_sr_raw_fail_feedback_repair_qd/` (completed same-budget
   failure-feedback repair arm; `T0 diagnostic` because it did not repair P098
   yield or preserve T26's P135 HV/quality signal).
+- Most recent pre-registered package:
+  `techniques/T32_sr_raw_front_preserving_emitter_qd/` (same-budget holdout
+  follow-up with `0.72` champion pressure, `0.08` two-parent success-parent
+  lane, and direct raw area-power Pareto plots as the primary figure gate).
 - Next direction:
-  stop direct fail-feedback repair as a T31 lane and specify a front-preserving
-  emitter/archive-ensemble follow-up that keeps T26 champion pressure while
-  sampling local rank-1 or near-front candidates.
+  execute T32 against T30 classic/T26 and T31 failed-repair controls, then
+  judge it first from raw PPA Pareto/front geometry, P098 yield, and P135
+  quality/HV retention.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
@@ -74,6 +78,10 @@ Start here when resuming the active goal.
 - `techniques/technique_registry.csv` is the chronological package index.
 - `visualization_audits/20260621_direct_ppa_fronts/` is the fast way to inspect
   direct PPA Pareto/front geometry across the completed live methods.
+- For the holdout lineage, open the per-technique primary figures first:
+  `T30_t26_holdout_front_audit/figures/t30_holdout_ppa_pareto_area_power_candidate_zoom.png`
+  and
+  `T31_sr_raw_fail_feedback_repair_qd/figures/t31_holdout_ppa_pareto_area_power_candidate_zoom.png`.
 
 ## Technique Package States
 
@@ -110,6 +118,7 @@ Start here when resuming the active goal.
 | `T29` | `T29_sr_raw_front_recovery_qd` | Completed front-recovery live variant, `T0 diagnostic`; direct PPA-front plots show only two multi-pipe front points and no final multi-pipe best PPA. |
 | `T30` | `T30_t26_holdout_front_audit` | Completed holdout audit; `T1 near-classic` support with a P098 yield warning, direct raw PPA Pareto figures, and no front-breadth win. |
 | `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Completed holdout live arm, `T0 diagnostic`; preserves final-best coverage but loses yield, P135 HV/quality, and unique PPA breadth. |
+| `T32` | `T32_sr_raw_front_preserving_emitter_qd` | Pre-registered holdout live arm; tests a small front-preserving success-parent lane and requires straightforward raw area-power Pareto figures before any tier decision. |
 
 ## Validity-Gate Note
 

@@ -126,6 +126,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       assigned a tier decision.
 - [x] `T31_sr_raw_fail_feedback_repair_qd` is pre-registered, executed,
       packaged, and assigned a tier decision.
+- [ ] `T32_sr_raw_front_preserving_emitter_qd` is executed, packaged with
+      direct raw PPA Pareto figures and regeneration tables, and assigned a
+      tier decision.
 
 ## Minimum Goal Completion
 
@@ -148,6 +151,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       yield warning and front-breadth deficit before another live run.
 - [x] T31 direct failure-feedback emitter is executed and retired as `T0`
       diagnostic before the next emitter/archive variant is specified.
+- [x] T32 front-preserving emitter is specified from T31's failed repair result
+      with `0.72` champion pressure, `0.08` two-parent success-parent sampling,
+      and a mandatory raw area-power PPA Pareto figure gate.
 - [ ] Central comparison report states whether QD/MAP-Elites is useful,
       near-classic, or still negative.
 - [ ] Central and per-technique reports pass

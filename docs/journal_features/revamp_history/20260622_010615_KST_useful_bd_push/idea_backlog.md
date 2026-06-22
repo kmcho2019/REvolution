@@ -293,6 +293,12 @@ a numbered `techniques/T##_slug/` package before running it.
 - Potential T32 acceptance controls: T26/T30 for quality pressure, T29 for
   failed generic exploration, T31 for failed direct repair, and the raw
   area-power PPA Pareto plots as mandatory primary figures.
+- T32 selected: `sr_raw_front_preserving_emitter_qd` keeps the T26/T30 SR raw
+  archive substrate, lowers champion pressure from `0.80` to `0.72`, adds a
+  small `0.08` two-parent success-parent lane, and removes T31's direct
+  fail-feedback text. The first acceptance view must be the straightforward
+  raw area-power PPA Pareto plot and candidate table, not aggregate bars or
+  BD/archive visualizations.
 
 ## Near-Term Hybrids
 

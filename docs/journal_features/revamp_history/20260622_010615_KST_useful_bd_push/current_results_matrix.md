@@ -35,6 +35,9 @@ Real result packages:
 - `T31_sr_raw_fail_feedback_repair_qd` failure-feedback repair holdout arm
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
+`T32_sr_raw_front_preserving_emitter_qd` is pre-registered but is not counted
+as a real-result package until the live run, direct raw PPA Pareto figures, and
+candidate/source tables are packaged.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -176,6 +179,14 @@ but valid PPA falls to 56 versus classic's 103 and T26's 68, P098 falls to
 and mean HV/HV-AUC return to zero. The direct raw PPA Pareto figure is
 `figures/t31_holdout_ppa_pareto_area_power_candidate_zoom.png`.
 
+`T32_sr_raw_front_preserving_emitter_qd` is pre-registered as the next holdout
+arm, not a result. It keeps the T26/T30 SR raw archive substrate, lowers
+champion pressure only to 0.72, adds a small 0.08 two-parent success-parent
+lane, and removes T31's direct fail-feedback text. Its package cannot be
+accepted without a straightforward raw area-power Pareto figure, candidate-only
+zoom, normalized improvement-front support plot, and the candidate-level table
+needed to regenerate those figures.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -210,12 +221,16 @@ and mean HV/HV-AUC return to zero. The direct raw PPA Pareto figure is
 13. T31 shows same-budget fail-pool feedback is not the missing repair
     mechanism: it preserves coverage but worsens yield, unique PPA breadth,
     P135 HV/quality, and reference-beating count.
+14. The next result must be read from direct raw PPA Pareto/front geometry
+    before aggregate bars or BD-space visualizations, because the T30/T31
+    holdout panels expose front collapse that summary metrics can obscure.
 
 ## Next Decisions
 
 - Do not continue direct fail-feedback repair as the next T26 follow-up.
-- Specify a front-preserving emitter/archive-ensemble variant that keeps T26
-  champion pressure while sampling local rank-1 or near-front candidates.
+- Execute the pre-registered T32 front-preserving emitter/archive variant that
+  keeps most T26 champion pressure while adding a small success-parent front
+  lane.
 - Use the T30 P098 yield warning, T30/T31 direct raw PPA-front plots, and T31
   failure modes as acceptance controls for the next emitter.
 - Do not continue blind interpolation between T24 SR raw and T26 scheduler

@@ -1148,3 +1148,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Lane decision: retire direct same-budget fail-feedback repair as the next
   T26 follow-up. The next method card should split champion exploitation,
   near-front sampling, and bounded repair into separate emitter roles.
+
+## T32 SR Raw Front-Preserving Emitter QD Pre-Registration - 2026-06-22 UTC
+
+- Created `techniques/T32_sr_raw_front_preserving_emitter_qd/` as the next
+  archive-coupling package after the negative T31 holdout result.
+- T32 keeps the T26/T30 SR raw descriptor, `grid_quantile` archive,
+  `pareto_front` cells, `qd_max_elites_per_cell=5`, NSGA-II parent selection,
+  `qd_fill_target_fraction=0.25`, `qd_improve_backfill_fraction=0.20`,
+  `representation_kind=code_individual`, `repair_kind=none`, and
+  `qd_operator_kind=eoh_strategies`.
+- T32 lowers `qd_champion_lane_fraction` from T26/T31's `0.80` to `0.72` and
+  adds `qd_two_parent_probability=0.08`. This is intentionally smaller than
+  failed T29's `0.20` two-parent lane and less disruptive than T29's `0.60`
+  champion setting.
+- T32 removes T31's direct fail-feedback text and does not add an expanded
+  repair loop. The test is whether a small success-parent near-front lane can
+  recover yield or front breadth while preserving T26's P135 quality/HV signal.
+- Registered T32 in the technique index, lane map, lineage ledger, current
+  results matrix, idea backlog, plan, and todo before execution.
+- Tightened the T32 artifact gate around straightforward raw area-power PPA
+  Pareto figures. The package must include the primary candidate-only raw
+  Pareto plot, reference-context raw plot if useful, visual inspection notes,
+  and a candidate-level raw PPA/front table that can regenerate the figures.
