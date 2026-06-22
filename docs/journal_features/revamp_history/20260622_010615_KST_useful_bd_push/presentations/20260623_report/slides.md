@@ -8,7 +8,7 @@
 
 ## Slide 2 - Short Answer
 
-- Yes, but only for implementation-aware diversity.
+- Yes, but only for a quality-safe implementation-response bundle.
 - Exact T26 QD passes the PPA-first retention gate on full RTLLM.
 - It improves aggregate HV, HV-AUC, and front count.
 - It is not yet a broad decisive win because yield drops and outlier
@@ -43,6 +43,7 @@
 - Pareto-front archive cells preserve alternate PPA tradeoffs.
 - T26 keeps champion-style exploit pressure active.
 - This is QD plus quality pressure, not novelty alone.
+- This does not isolate descriptor-only causality.
 
 ## Slide 7 - Full RTLLM Setup
 
@@ -68,30 +69,41 @@
 | Valid PPA | 1056 | 879 | -177 |
 | PPA-front points | 61 | 69 | +8 |
 
-## Slide 10 - Gate Result
+## Slide 10 - Budget Parity
+
+| Metric | Classic | Exact T26 QD |
+| --- | ---: | ---: |
+| Generated candidates | 2400 | 2400 |
+| LLM API calls | 4801 | 4800 |
+| Mean calls/problem | 96.02 | 96.00 |
+| Runtime seconds | 83328.15 | 84516.21 |
+
+## Slide 11 - Gate Result
 
 - Hard retention failures: 0.
 - Yield warnings: 4.
 - Small-n labels: 6.
 - `Prob006_adder_pipe_64bit` has no valid PPA in either arm.
 
-## Slide 11 - Why This Is Not Overclaiming
+## Slide 12 - Why This Is Not Overclaiming
 
 - Per-problem HV: 4 QD wins, 15 losses, 31 ties.
 - Per-problem HV-AUC: 5 QD wins, 16 losses, 29 ties.
 - The aggregate HV win is strongly affected by `Prob040_synchronizer`.
 - QD has fewer unique PPA points: 318 versus 352.
+- Prior T28 family audit favored classic on front-family breadth.
+- Full-suite front-family breadth is still a follow-up audit.
 
-## Slide 12 - Answer The Two Questions
+## Slide 13 - Answer The Two Questions
 
 - Does diversity matter?
 - Yes, enough to continue the QD/MAP-Elites line.
 - Which diversity matters?
-- Implementation-response diversity with quality-safe champion pressure.
+- A T26-style implementation-response archive bundle with quality pressure.
 - Which diversity does not suffice?
 - Lexical, random, sparse, or unguarded novelty.
 
-## Slide 13 - Decision
+## Slide 14 - Decision
 
 - Continue the QD/MAP-Elites research direction.
 - Present the result as reviewable one-seed engineering evidence.

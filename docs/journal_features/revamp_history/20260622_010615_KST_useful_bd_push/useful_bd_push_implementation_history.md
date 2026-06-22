@@ -2387,3 +2387,28 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Linked the glossary from the report and package README, and tightened metric
   schema descriptions for HV, HV-AUC, front counts, archive coverage, and QD
   score.
+
+## Packaging Review Resolution - 2026-06-22 UTC
+
+- Recorded the Lovelace sub-agent packaging review under
+  `presentations/20260623_report/reviews/subagent_packaging_review.md`.
+- Resolved the main presentation blockers by scoping the Q2 answer to the T26
+  implementation-response archive bundle instead of descriptor-only causality.
+- Added `full_rtllm/tables/full_budget_parity.csv` from existing per-problem
+  summaries. Both arms generated `2400` candidates; classic made `4801` LLM
+  API calls and exact T26 made `4800`.
+- Marked full-suite unique front-family breadth as a follow-up audit rather
+  than a current claim, while keeping the current claim on HV, HV-AUC,
+  classic-covered retention, PPA-front points, and unique PPA points.
+
+## Scoped Presentation Review Pass - 2026-06-22 UTC
+
+- Recorded the Volta follow-up sub-agent review as `PASS` for the scoped
+  PPA-first T26-bundle claim after the Q2 scope and budget-parity fixes.
+- Recorded the `claude -p` packaging review as `PASS` under
+  `presentations/20260623_report/reviews/claude_packaging_review.md`.
+- Added the explicit prior-family-audit caveat: exact T26 should not be
+  presented as a front-family-breadth win until the full RTLLM family audit is
+  generated.
+- Clarified that bootstrap intervals are deferred for the one-seed package
+  because this milestone is not a seed-stability claim.

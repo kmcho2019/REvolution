@@ -1,6 +1,6 @@
 # Milestone Adversarial Validation
 
-Status: draft rubric.
+Status: packaging review passed for the scoped PPA-first T26-bundle claim.
 
 ## Review Gates
 
@@ -9,7 +9,11 @@ Status: draft rubric.
    `reviews/subagent_screen_prelaunch_review.md` and
    `reviews/claude_screen_prelaunch_review.md` gave conditional go after
    fixing the gate-order bug and freezing the exact T26 selection.
-3. Packaging review before presentation sign-off.
+3. Packaging review before presentation sign-off. Initial sub-agent review
+   returned `FAIL`; the follow-up sub-agent and `claude -p` reviews passed
+   after Q2 scope, budget parity, and family-breadth caveats were fixed.
+   See `reviews/subagent_packaging_review.md` and
+   `reviews/claude_packaging_review.md`.
 
 ## Required Reviewer Questions
 
@@ -37,6 +41,8 @@ the exact prompt and output. If it is unavailable, record the command failure.
 
 ## Pass Condition
 
-The milestone can be presented as evidence that QD/MAP-Elites should continue
-only if the final report has current artifacts for all required figures/tables,
-clear limitations, and no overclaim relative to the paired RTLLM evidence.
+The milestone can be presented as scoped PPA-first evidence that QD/MAP-Elites
+should continue only if the final report has current artifacts for required
+PPA figures/tables, clear limitations, and no overclaim relative to the paired
+RTLLM evidence. Archive-viewer or implementation-family breadth claims require
+the corresponding follow-up artifacts before being presented as complete.

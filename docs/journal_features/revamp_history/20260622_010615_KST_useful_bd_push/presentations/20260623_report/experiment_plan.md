@@ -85,14 +85,20 @@ one-seed results are organized into the report, plots, tables, and slides.
 - raw run roots under `exp/useful_bd_push/`;
 - commands and model metadata under `commands/` and `data/`;
 - one row per method/problem with HV, HV-AUC, best score, valid-PPA count,
-  front points, unique families, and runtime;
-- paired aggregate tables with mean/median deltas and bootstrap intervals;
+  front points, and runtime;
+- paired aggregate tables with mean/median deltas; bootstrap intervals are
+  deferred because the one-seed package is not a seed-stability claim;
 - all-problem and screen-excluded aggregate tables;
 - per-arm evaluation-count and LLM-call parity tables;
 - direct static plots under `figures/`;
 - full Phase 03.1 `qd_ppa_viewer/` bundle for the selected QD arm if archive
   artifacts are available;
 - adversarial review logs under `reviews/`.
+
+Full-suite unique front-family breadth and the Phase 03.1 viewer remain
+follow-up artifacts for archive/family claims. The current presentation claim
+is deliberately scoped to matched-budget PPA evidence: HV, HV-AUC, valid-PPA
+retention, PPA-front points, and unique PPA points.
 
 ## Claim Scope
 

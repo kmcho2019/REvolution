@@ -20,6 +20,15 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 | screen_excluded | Classic | 47 | 0.088690 | 0.075581 | 989 | 52 |
 | screen_excluded | Exact T26 QD | 47 | 0.103015 | 0.093051 | 845 | 62 |
 
+## Budget Parity
+
+| Method | Problems | Generated | LLM Calls | Mean Calls/Problem | Runtime Seconds |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Classic | 50 | 2400 | 4801 | 96.02 | 83328.147096 |
+| Exact T26 QD | 50 | 2400 | 4800 | 96.00 | 84516.206077 |
+
+Full token accounting is in `tables/full_budget_parity.csv`.
+
 ## Retention Gate
 
 | Problem | Metric | Classic | Exact T26 QD | Status |
@@ -131,6 +140,7 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 - `tables/full_aggregate_metrics.csv`
 - `tables/full_comparison_deltas.csv`
 - `tables/full_validity_gates.csv`
+- `tables/full_budget_parity.csv`
 - `data/full_ppa_candidates.csv`
 - `figures/full_hv_delta_distribution.png`
 - `figures/full_hv_auc_delta_distribution.png`
@@ -143,5 +153,7 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 ## Claim Discipline
 
 This is one-seed paired engineering evidence. A QD claim must preserve
-classic-covered designs and report yield warnings instead of hiding
-them. Multi-seed replication remains a follow-on milestone.
+classic-covered designs and report yield warnings instead of hiding them.
+This package supports a PPA-front/HV/HV-AUC claim, not a full-suite
+implementation-family breadth claim. Multi-seed replication and front-family
+auditing remain follow-on milestones.

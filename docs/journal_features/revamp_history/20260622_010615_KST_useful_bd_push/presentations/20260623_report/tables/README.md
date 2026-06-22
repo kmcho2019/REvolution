@@ -12,6 +12,8 @@ Planned tables:
   deltas against classic.
 - `full_rtllm/tables/full_validity_gates.csv`: functionality and valid-PPA
   counts with `classic_covered_loss`, `yield_warning`, and `small_n` labels.
+- `full_rtllm/tables/full_budget_parity.csv`: runtime, LLM-call, token, and
+  generated-candidate parity from per-problem summary JSON files.
 - `full_rtllm/data/full_ppa_candidates.csv`: raw valid-PPA candidate points
   used to regenerate direct PPA-front figures.
 - `method_lineage_selection.md`: why exact T26 or a T26.1 variant was selected.

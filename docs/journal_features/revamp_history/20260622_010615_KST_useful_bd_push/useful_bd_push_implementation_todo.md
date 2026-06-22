@@ -55,9 +55,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       archive projection/export contract is ready.
 - [x] Complete `presentations/20260623_report/report.md` and `slides.md` with
       precise answers to the two main questions.
-- [ ] Run sub-agent and `claude -p` adversarial reviews when available, and
+- [x] Run sub-agent and `claude -p` adversarial reviews when available, and
       record outputs under `presentations/20260623_report/reviews/`.
-- [ ] Pass final presentation/report adversarial validation before sign-off.
+- [x] Pass final presentation/report adversarial validation before sign-off.
 - [ ] Define shared classic/manual/random/simple-control baselines.
 - [ ] Define central method result schema.
 - [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime

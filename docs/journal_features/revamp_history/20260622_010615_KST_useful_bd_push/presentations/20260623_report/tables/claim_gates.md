@@ -16,19 +16,20 @@ topic, not a hidden rejection rule.
 | Paired HV | Per-problem and aggregate HV deltas versus classic. | Aggregate-only wins are insufficient. |
 | HV-AUC | AUC over generation history, not only final population. | Final-only gains may be unstable. |
 | Direct PPA fronts | Raw area-power front points and representative plots. | BD-space visuals cannot substitute for PPA evidence. |
-| Family breadth | Unique front netlists/families and duplicate accounting. | Do not count duplicate or invalid candidates as useful diversity. |
+| Family breadth | Unique front netlists/families and duplicate accounting. | Do not claim implementation-family breadth until this exists for the compared suite. |
 | Archive evidence | Coverage, QD score, and Phase 03.1 viewer for live QD archive arms. | Archive claims are unsupported. |
 | Selection timing | Full-run QD arm selected before full RTLLM outcomes. | Treat as exploratory/post-hoc. |
 | Screen exclusion | Aggregate metrics reported both with and without development-screen problems. | Selection bias is hidden. |
-| Budget parity | LLM calls, evaluated candidates, and runtime reported for both arms. | Same pop/gen budget is not enough. |
+| Budget parity | LLM calls, evaluated candidates, tokens, and runtime reported for both arms. | Same pop/gen budget is not enough. |
 | Visual inspection | Notes for each figure and screenshot. | Figure is not presentation-ready. |
 
 ## Allowed Claim Levels
 
 - `diagnostic`: useful for method selection, but not a QD-effectiveness claim.
 - `near_classic`: close to classic and passes the retention gate.
-- `useful_qd`: positive paired evidence on HV/HV-AUC/front/family/archive
-  metrics while passing retention and reporting any yield warnings.
+- `useful_qd`: positive paired evidence on pre-declared PPA metrics while
+  passing retention and reporting any yield warnings. Family or archive claims
+  require the corresponding family or archive artifacts.
 - `strong_win`: at least 10% positive paired evidence plus independent
   stability evidence. The one-seed RTLLM milestone cannot claim this alone.
 

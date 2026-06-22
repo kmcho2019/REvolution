@@ -40,7 +40,9 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
 - Aggregate all-RTLLM result: exact T26 improves mean HV by `0.010562` and
   mean HV-AUC by `0.012397`, with `0` hard retention failures.
 - Main caveat: exact T26 has lower valid-PPA yield (`879` versus `1056`) and
-  the aggregate HV gain is outlier-sensitive.
+  the aggregate HV gain is outlier-sensitive. The package supports a
+  PPA-centered T26-bundle claim, not a descriptor-only or full-family-breadth
+  claim.
 - Replication policy: one seed is the deadline-driven first milestone. Package
   those results into plots, tables, and slides before starting costly
   multi-seed replication.
@@ -48,8 +50,8 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
 ## Claim Discipline
 
 Do not claim QD usefulness from average fitness alone. The report must use
-paired HV, HV-AUC, valid-PPA yield, front/family breadth, archive coverage, and
-duplicate accounting. For this PPA-first milestone, the hard gate is
-classic-covered retention: if classic has at least one valid PPA sample for a
-problem, QD must also have one. Yield loss remains a visible warning, not an
-automatic blocker.
+paired HV, HV-AUC, valid-PPA yield, PPA-front counts, and duplicate accounting.
+Family-breadth or archive-viewer claims require their own follow-up artifacts.
+For this PPA-first milestone, the hard gate is classic-covered retention: if
+classic has at least one valid PPA sample for a problem, QD must also have one.
+Yield loss remains a visible warning, not an automatic blocker.

@@ -29,13 +29,14 @@ or `strong_win`.
 
 Question 2: Which diversity matters?
 
-The useful diversity appears to be implementation-response diversity coupled
-to quality-safe archive pressure. The best current pattern is not "more novelty"
-by itself. It is an SR raw descriptor/archive bundle that keeps champion-style
-hill climbing active while using QD/MAP-Elites to preserve alternative
-implementation responses. Lexical, identifier, random, overly sparse graph, and
-unguarded local-Pareto diversity have repeatedly failed or produced yield loss
-without enough PPA evidence.
+The current evidence supports the T26 implementation-response archive bundle,
+not a descriptor-only causal claim. The useful pattern appears to be
+implementation-response diversity coupled to quality-safe archive pressure. The
+best current pattern is not "more novelty" by itself. It is an SR raw
+descriptor/archive bundle that keeps champion-style hill climbing active while
+using QD/MAP-Elites to preserve alternative implementation responses. Lexical,
+identifier, random, overly sparse graph, and unguarded local-Pareto diversity
+have repeatedly failed or produced yield loss without enough PPA evidence.
 
 ## Definitions
 
@@ -106,7 +107,10 @@ NSGA-II global-rank parent selection, and two-parent fusion disabled.
 
 Exact T26 was selected before seeing full RTLLM results. The screen favored it
 because it was the only screened QD arm with positive mean HV and it improved
-HV-AUC, despite visible yield warnings on the development screen.
+HV-AUC, despite visible yield warnings on the development screen. The full
+run therefore evaluates the selected T26 bundle; it does not isolate whether
+the descriptor, archive policy, or champion-biased exploitation is the sole
+cause of the gain.
 
 ## Result Summary
 
@@ -121,6 +125,16 @@ HV-AUC, despite visible yield warnings on the development screen.
 | Screen-excluded | Mean HV-AUC | 0.075581 | 0.093051 | +0.017470 |
 | Screen-excluded | Valid PPA | 989 | 845 | -144 |
 | Screen-excluded | PPA-front points | 52 | 62 | +10 |
+
+Budget parity:
+
+- generated candidates: classic `2400`, exact T26 QD `2400`;
+- LLM API calls: classic `4801`, exact T26 QD `4800`;
+- mean LLM API calls per problem: classic `96.02`, exact T26 QD `96.00`;
+- total runtime seconds from per-problem summaries: classic `83328.147096`,
+  exact T26 QD `84516.206077`.
+
+The exact table is in `full_rtllm/tables/full_budget_parity.csv`.
 
 Retention gate:
 
@@ -144,9 +158,15 @@ research direction and a stronger follow-up run.
 
 The result does not prove that exact T26 is already the final algorithm. The
 negative screen subset, lower valid-PPA yield, fewer unique PPA points, and
-outlier-sensitive HV mean show that the method still needs tuning. The most
-useful next variants should preserve the PPA-front gains while reducing yield
-loss and avoiding reliance on a single large-problem win.
+outlier-sensitive HV mean show that the method still needs tuning. The full
+RTLLM package also does not include unique front-family or canonical netlist
+family breadth. Those family metrics remain a follow-up audit before any claim
+that exact T26 expands implementation-family diversity across the full suite.
+Prior T28-family evidence already warned that exact T26 can trail classic on
+implementation-family breadth, so this package treats family breadth as an
+unresolved risk rather than an omitted win.
+The most useful next variants should preserve the PPA-front gains while
+reducing yield loss and avoiding reliance on a single large-problem win.
 
 The most promising technical direction remains T26/T26.1-style conservative
 exploit pressure: keep the QD archive, but bias sampling toward archive
@@ -177,6 +197,8 @@ full 50-problem package to be generated.
   deltas.
 - `full_rtllm/tables/full_validity_gates.csv`: retention, warning, and small-n
   labels.
+- `full_rtllm/tables/full_budget_parity.csv`: runtime, LLM-call, token, and
+  generated-candidate parity.
 - `full_rtllm/data/full_ppa_candidates.csv`: raw candidate-level PPA data for
   regenerating the direct PPA-front figures.
 - `full_rtllm/figures/`: generated PNG figures.
@@ -186,15 +208,16 @@ full 50-problem package to be generated.
 ## Conclusion
 
 The full one-seed RTLLM milestone answers the two core questions with useful
-but bounded evidence. Diversity matters when it is implementation-aware and
-kept under quality pressure. The best current diversity signal is the T26
-implementation-response archive family, not generic embedding, lexical,
-random, or sparsity-seeking diversity.
+but bounded evidence. Diversity matters enough to keep the QD/MAP-Elites line
+alive when it is implementation-aware and kept under quality pressure. The best
+current evidence supports the T26 implementation-response archive bundle, not
+generic embedding, lexical, random, or sparsity-seeking diversity.
 
 For the presentation, the defensible message is:
 QD/MAP-Elites should continue because exact T26 beats classic on aggregate
 PPA-HV, HV-AUC, and PPA-front count while preserving every classic-covered
-problem. The honest caveat is that the gain is uneven, one-seed, and
-outlier-sensitive, with visible yield loss. The next milestone should be
-multi-seed replication plus T26.1-style variants that target yield recovery and
-less outlier-dependent front improvement.
+problem under matched generated-candidate and LLM-call budgets. The honest
+caveat is that the gain is uneven, one-seed, and outlier-sensitive, with
+visible yield loss and no full-suite implementation-family audit yet. The next
+milestone should be multi-seed replication plus T26.1-style variants that
+target yield recovery and less outlier-dependent front improvement.
