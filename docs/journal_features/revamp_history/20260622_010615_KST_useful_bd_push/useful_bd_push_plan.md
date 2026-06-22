@@ -45,12 +45,13 @@ The desired end state is one of:
 
 ## Current Research State
 
-T14 is the most recent completed package. It is a directed-hypergraph replay:
-hypergraph-only descriptors broaden selected PPA counts but lose HV, while
-the hypergraph plus T13 implementation-feature hybrid beats lexical HV by
-`+1.01%` and improves unique PPA points to `187`. It is a hybrid feature-input
-lead, not a promoted useful-BD claim, because direct front hits still miss
-lexical (`119` versus `122`).
+T11 is the most recent completed package. It is a structural-contrastive
+replay over T13 implementation features, T07 graph features, and T14
+hypergraph features. The top-64/weighted contrastive descriptors beat lexical
+HV by `+1.82%` and keep `186` unique PPA points. It is an L4 replay lead, not
+a promoted useful-BD claim, because direct front hits still miss lexical
+(`120` versus `122`). The package includes both raw PPA Pareto PNGs and a
+filesystem-openable raw area-power Pareto viewer.
 
 T30 remains the most recent positive holdout support for exact T26
 conservative-exploit SR raw: it preserves all three classic-covered
@@ -74,12 +75,12 @@ same-family method should not keep nudging champion fraction or two-parent
 probability alone; it needs a stronger role-separated emitter or a branch to a
 different descriptor family.
 
-The learned-encoder lane should preserve the T13/T14 implementation-feature
-signal while adding feature selection, local-Pareto coupling, or a contrastive
-graph objective that targets front-hit retention. Do not spend the next attempt
-on plain unsupervised compression or more blind feature concatenation. Any
-follow-up must include
-straightforward raw PPA Pareto figures before BD-space projections are used.
+The learned-encoder lane should preserve the T11/T13/T14 structural
+implementation signal while adding local-Pareto coupling or a
+collapse-penalized contrastive graph objective that targets front-hit
+retention. Do not spend the next attempt on plain unsupervised compression or
+more blind feature concatenation. Any follow-up must include straightforward
+raw PPA Pareto figures before BD-space projections are used.
 
 ## Prior Evidence To Reuse
 

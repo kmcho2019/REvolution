@@ -14,23 +14,25 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T14_dehnn_hypergraph_bd/` (completed directed-hypergraph
-  replay; the hypergraph plus implementation hybrid is a
-  `T1 near_classic_replay_lead`, while hypergraph-only descriptors remain
-  `T0`).
+  `techniques/T11_mgvga_contrastive_bd/` (completed structural-contrastive
+  replay; top-64/weighted descriptors are `T1 near_classic_replay_lead`, but
+  direct front hits remain below lexical).
 - Most recent pre-registered package: none beyond the remaining scaffolded
-  T08-T12/T15-T16/T18 encoder and emitter candidates.
+  T08-T10/T12/T15-T16/T18 encoder and emitter candidates.
 - Next direction:
-  preserve the T13/T14 implementation-feature signal, but target front-hit
-  retention with feature selection, local-Pareto coupling, or contrastive graph
-  training instead of more feature concatenation.
+  preserve the T11/T13/T14 structural implementation signal, but target
+  front-hit retention with local-Pareto coupling or collapse-penalized
+  contrastive training instead of more feature concatenation.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T14_dehnn_hypergraph_bd/figures/hypergraph_multi_problem_ppa_pareto_fronts.png`
+  `techniques/T11_mgvga_contrastive_bd/figures/mgvga_multi_problem_ppa_pareto_fronts.png`
   (four representative raw area-power Pareto-front panels with all-valid,
-  lexical, random, and hypergraph-hybrid overlays).
+  lexical, random, and T11 overlays).
+- Most recent direct PPA HTML viewer:
+  `techniques/T11_mgvga_contrastive_bd/visualizations/direct_ppa_pareto/index.html`
+  (filesystem-openable raw area-power Pareto viewer with front-hit summary).
 - Most recent interactive visualization refresh:
   `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
   now has a `raw A-P front` PPA mode, with screenshot
@@ -101,7 +103,7 @@ Start here when resuming the active goal.
 | `T08` | `T08_sequential_deepseq_bd` | Scaffolded. |
 | `T09` | `T09_nettag_text_graph_bd` | Scaffolded. |
 | `T10` | `T10_circuitfusion_multimodal_bd` | Scaffolded. |
-| `T11` | `T11_mgvga_contrastive_bd` | Scaffolded. |
+| `T11` | `T11_mgvga_contrastive_bd` | Completed replay diagnostic, `T1 near_classic_replay_lead`; top-64/weighted structural contrastive descriptors improve HV by +1.82% but still trail lexical direct front hits. |
 | `T12` | `T12_lineage_repair_bd` | Scaffolded. |
 | `T13` | `T13_aurora_incremental_autoencoder_bd` | Completed replay diagnostic; raw implementation features are `T1 near_classic_replay_lead`, but PCA/RFF/incremental bottlenecks are `T0 diagnostic`. |
 | `T14` | `T14_dehnn_hypergraph_bd` | Completed replay diagnostic; hypergraph plus implementation features are `T1 near_classic_replay_lead`, but hypergraph-only descriptors are `T0 diagnostic`. |

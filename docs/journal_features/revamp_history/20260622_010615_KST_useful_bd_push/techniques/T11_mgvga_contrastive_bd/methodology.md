@@ -62,3 +62,40 @@ training and blocked attempts in the manifest.
 - `tables/collapse_diagnostics.csv`
 - `figures/aligned_embedding_projection.png`
 - `figures/source_graph_agreement.png`
+
+## Completed Replay Route
+
+The completed bounded replay approximates the MGVGA source-graph alignment
+idea without external model dependencies. It builds paired structural views
+from:
+
+- RTL count features;
+- T07 standard-cell graph features;
+- T14 directed-hypergraph features.
+
+Canonical-netlist and motif hashes provide self-supervised structural positive
+pairs. Rows without either structural key are treated as unique unlabeled
+examples, not as positives. No PPA, fitness, validity, problem id, corpus,
+model, method, seed, or candidate id field is used in descriptor fitting.
+
+T11 tests four descriptor arms:
+
+- `t11_contrast_top16_farthest`: top 16 structural-contrast features;
+- `t11_contrast_top32_farthest`: top 32 structural-contrast features;
+- `t11_contrast_top64_farthest`: top 64 structural-contrast features;
+- `t11_contrast_weighted_farthest`: all features weighted by contrastive score.
+
+Generated primary artifacts:
+
+- `tables/feature_manifest.csv`;
+- `tables/alignment_coverage.csv`;
+- `tables/contrastive_training.csv`;
+- `tables/ppa_comparison.csv`;
+- `tables/ppa_front_metrics.csv`;
+- `tables/ppa_front_plot_points.csv`;
+- `figures/mgvga_multi_problem_ppa_pareto_fronts.png`;
+- `figures/mgvga_raw_area_power_pareto_front.png`.
+- `visualizations/direct_ppa_pareto/index.html`.
+
+The completed result shows that structural contrastive selection improves the
+L4 replay HV lead, but it still does not recover lexical direct front hits.

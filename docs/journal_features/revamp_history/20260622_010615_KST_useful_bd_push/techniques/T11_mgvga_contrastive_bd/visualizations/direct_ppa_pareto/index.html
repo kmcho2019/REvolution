@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T11 Direct PPA Pareto Front</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172026;
+      --muted: #5b6770;
+      --line: #d5dce2;
+      --panel: #f7f9fb;
+      --lexical: #3b72b9;
+      --random: #8b8f96;
+      --t11: #3f8f4f;
+      --all: #b5bdc6;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #ffffff;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    header {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      max-width: 720px;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+    select {
+      min-width: 280px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--ink);
+      font: inherit;
+    }
+    .plot-shell {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+    svg {
+      display: block;
+      width: 100%;
+      height: min(68vh, 680px);
+      min-height: 460px;
+    }
+    .axis {
+      stroke: #7d8790;
+      stroke-width: 1;
+    }
+    .grid {
+      stroke: #e6eaee;
+      stroke-width: 1;
+    }
+    .tick {
+      fill: var(--muted);
+      font-size: 12px;
+    }
+    .axis-label {
+      fill: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .swatch {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0 16px;
+    }
+    .metric {
+      padding: 10px 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .metric b {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .front-line {
+      fill: none;
+      stroke-width: 2.3;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    @media (max-width: 760px) {
+      main {
+        padding: 14px;
+      }
+      header {
+        display: block;
+      }
+      .summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      svg {
+        min-height: 420px;
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>T11 Direct Raw PPA Pareto Front</h1>
+      <p class="subtitle">Raw area-power projection from committed replay points. Axes are conventional: lower area and lower power are better.</p>
+    </div>
+    <div class="controls">
+      <label for="problem">Problem</label>
+      <select id="problem"></select>
+    </div>
+  </header>
+  <section class="summary" id="summary"></section>
+  <section class="plot-shell">
+    <svg id="plot" viewBox="0 0 1100 660" role="img" aria-label="Raw area-power Pareto front"></svg>
+    <div class="legend">
+      <span><i class="swatch" style="background: var(--all)"></i>all valid</span>
+      <span><i class="swatch" style="background: var(--lexical)"></i>lexical</span>
+      <span><i class="swatch" style="background: var(--random)"></i>random</span>
+      <span><i class="swatch" style="background: var(--t11)"></i>T11 contrastive</span>
+      <span>hollow circles and lines mark area-power nondominated front points</span>
+    </div>
+  </section>
+</main>
+<script>
+const POINTS = [{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"e7a3bade-8672-4d2c-8455-eeb0c27a7c98","area":5463.0,"power":0.86,"eff_clk_period":1.56,"fitness":0.0,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"34f03c04-5a3e-4883-a96a-bb7847840ef3","area":5290.0,"power":0.119,"eff_clk_period":1.65,"fitness":0.0,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"4e910484-4b94-45a8-8777-fc11eecf4df1","area":5651.0,"power":0.161,"eff_clk_period":1.54,"fitness":0.0,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"d357a633-3365-4085-a4ed-7dfb1a4fffa6","area":5256.0,"power":0.12,"eff_clk_period":1.62,"fitness":0.0,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"d49ec588-e8dc-49f9-bf5d-013047f1c8ec","area":5230.0,"power":0.849,"eff_clk_period":1.55,"fitness":0.0,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"479a8286-e28a-4f67-be3c-b520a04242a7","area":5209.0,"power":0.407,"eff_clk_period":1.55,"fitness":0.0,"is_all_valid_area_power_front":true},{"representation":"lexical_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"e7a3bade-8672-4d2c-8455-eeb0c27a7c98","area":5463.0,"power":0.86,"eff_clk_period":1.56,"fitness":0.0,"is_all_valid_area_power_front":false},{"representation":"lexical_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"d357a633-3365-4085-a4ed-7dfb1a4fffa6","area":5256.0,"power":0.12,"eff_clk_period":1.62,"fitness":0.0,"is_all_valid_area_power_front":true},{"representation":"lexical_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"479a8286-e28a-4f67-be3c-b520a04242a7","area":5209.0,"power":0.407,"eff_clk_period":1.55,"fitness":0.0,"is_all_valid_area_power_front":true},{"representation":"random","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"d357a633-3365-4085-a4ed-7dfb1a4fffa6","area":5256.0,"power":0.12,"eff_clk_period":1.62,"fitness":0.0,"is_all_valid_area_power_front":true},{"representation":"random","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"d49ec588-e8dc-49f9-bf5d-013047f1c8ec","area":5230.0,"power":0.849,"eff_clk_period":1.55,"fitness":0.0,"is_all_valid_area_power_front":false},{"representation":"random","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"479a8286-e28a-4f67-be3c-b520a04242a7","area":5209.0,"power":0.407,"eff_clk_period":1.55,"fitness":0.0,"is_all_valid_area_power_front":true},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"e7a3bade-8672-4d2c-8455-eeb0c27a7c98","area":5463.0,"power":0.86,"eff_clk_period":1.56,"fitness":0.0,"is_all_valid_area_power_front":false},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"4e910484-4b94-45a8-8777-fc11eecf4df1","area":5651.0,"power":0.161,"eff_clk_period":1.54,"fitness":0.0,"is_all_valid_area_power_front":false},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob018_float_multi","candidate_id":"479a8286-e28a-4f67-be3c-b520a04242a7","area":5209.0,"power":0.407,"eff_clk_period":1.55,"fitness":0.0,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"76aab9cd-d774-47c8-8593-0b99d87be3f0","area":1123.0,"power":0.177,"eff_clk_period":1.13,"fitness":-0.0043074641,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"79097ff4-eab3-458a-b7c3-db6789f61b6d","area":1159.0,"power":0.129,"eff_clk_period":1.18,"fitness":0.0589354132,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"7b29c8af-1ad2-45e6-a02f-d7b6fd479b2f","area":1129.0,"power":0.185,"eff_clk_period":1.03,"fitness":0.0077336541,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"7e10376f-88cf-4f17-8931-2b0bce9b5073","area":1112.0,"power":0.167,"eff_clk_period":1.15,"fitness":0.0119100433,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"801fc0e4-e054-49bd-981a-7e01e0060756","area":1089.0,"power":0.171,"eff_clk_period":1.21,"fitness":-0.0055332296,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"bb12dc31-aef1-44aa-9568-0fb5721094c9","area":1288.0,"power":0.206,"eff_clk_period":1.15,"fitness":-0.1154500235,"is_all_valid_area_power_front":false},{"representation":"lexical_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"76aab9cd-d774-47c8-8593-0b99d87be3f0","area":1123.0,"power":0.177,"eff_clk_period":1.13,"fitness":-0.0043074641,"is_all_valid_area_power_front":false},{"representation":"lexical_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"801fc0e4-e054-49bd-981a-7e01e0060756","area":1089.0,"power":0.171,"eff_clk_period":1.21,"fitness":-0.0055332296,"is_all_valid_area_power_front":true},{"representation":"lexical_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"bb12dc31-aef1-44aa-9568-0fb5721094c9","area":1288.0,"power":0.206,"eff_clk_period":1.15,"fitness":-0.1154500235,"is_all_valid_area_power_front":false},{"representation":"random","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"76aab9cd-d774-47c8-8593-0b99d87be3f0","area":1123.0,"power":0.177,"eff_clk_period":1.13,"fitness":-0.0043074641,"is_all_valid_area_power_front":false},{"representation":"random","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"79097ff4-eab3-458a-b7c3-db6789f61b6d","area":1159.0,"power":0.129,"eff_clk_period":1.18,"fitness":0.0589354132,"is_all_valid_area_power_front":true},{"representation":"random","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"bb12dc31-aef1-44aa-9568-0fb5721094c9","area":1288.0,"power":0.206,"eff_clk_period":1.15,"fitness":-0.1154500235,"is_all_valid_area_power_front":false},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"76aab9cd-d774-47c8-8593-0b99d87be3f0","area":1123.0,"power":0.177,"eff_clk_period":1.13,"fitness":-0.0043074641,"is_all_valid_area_power_front":false},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"801fc0e4-e054-49bd-981a-7e01e0060756","area":1089.0,"power":0.171,"eff_clk_period":1.21,"fitness":-0.0055332296,"is_all_valid_area_power_front":true},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob011_multi_16bit","candidate_id":"bb12dc31-aef1-44aa-9568-0fb5721094c9","area":1288.0,"power":0.206,"eff_clk_period":1.15,"fitness":-0.1154500235,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"07c91f5d-f806-45c9-a040-53336bf69f91","area":245.0,"power":0.032,"eff_clk_period":0.41,"fitness":0.1218656017,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"bce41acf-3eb7-46b6-bf36-e50f0bde8089","area":238.0,"power":0.0303,"eff_clk_period":0.48,"fitness":0.0833645964,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"605885af-bde4-463a-a33a-6b0465d9db77","area":242.0,"power":0.0569,"eff_clk_period":0.44,"fitness":-0.0985216345,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"59c0f0fd-5c6a-4751-9ea0-24ba2e53b46c","area":245.0,"power":0.0335,"eff_clk_period":0.42,"fitness":0.1013854189,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"b34b28a5-af87-416b-bbb8-d93fcf74df74","area":222.0,"power":0.0443,"eff_clk_period":0.39,"fitness":0.0667486158,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"a55286d5-1f76-4f2c-9689-65cb14ca72ba","area":221.0,"power":0.0531,"eff_clk_period":0.43,"fitness":-0.0363325467,"is_all_valid_area_power_front":true},{"representation":"lexical_farthest","point_type":"selected","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"07c91f5d-f806-45c9-a040-53336bf69f91","area":245.0,"power":0.032,"eff_clk_period":0.41,"fitness":0.1218656017,"is_all_valid_area_power_front":false},{"representation":"lexical_farthest","point_type":"selected","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"605885af-bde4-463a-a33a-6b0465d9db77","area":242.0,"power":0.0569,"eff_clk_period":0.44,"fitness":-0.0985216345,"is_all_valid_area_power_front":false},{"representation":"lexical_farthest","point_type":"selected","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"b34b28a5-af87-416b-bbb8-d93fcf74df74","area":222.0,"power":0.0443,"eff_clk_period":0.39,"fitness":0.0667486158,"is_all_valid_area_power_front":true},{"representation":"random","point_type":"selected","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"07c91f5d-f806-45c9-a040-53336bf69f91","area":245.0,"power":0.032,"eff_clk_period":0.41,"fitness":0.1218656017,"is_all_valid_area_power_front":false},{"representation":"random","point_type":"selected","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"605885af-bde4-463a-a33a-6b0465d9db77","area":242.0,"power":0.0569,"eff_clk_period":0.44,"fitness":-0.0985216345,"is_all_valid_area_power_front":false},{"representation":"random","point_type":"selected","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"a55286d5-1f76-4f2c-9689-65cb14ca72ba","area":221.0,"power":0.0531,"eff_clk_period":0.43,"fitness":-0.0363325467,"is_all_valid_area_power_front":true},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"07c91f5d-f806-45c9-a040-53336bf69f91","area":245.0,"power":0.032,"eff_clk_period":0.41,"fitness":0.1218656017,"is_all_valid_area_power_front":false},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"bce41acf-3eb7-46b6-bf36-e50f0bde8089","area":238.0,"power":0.0303,"eff_clk_period":0.48,"fitness":0.0833645964,"is_all_valid_area_power_front":true},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"rtllm_gen20","method":"classic_revolution","seed":0,"problem_id":"RTLLM\/Prob027_LIFObuffer","candidate_id":"605885af-bde4-463a-a33a-6b0465d9db77","area":242.0,"power":0.0569,"eff_clk_period":0.44,"fitness":-0.0985216345,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"6c7ffc0d-b074-4c3b-a8d1-8b39def8d1f2","area":156.0,"power":0.0269,"eff_clk_period":0.0,"fitness":0.1260530138,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"6fa4b8d7-3863-46f9-b9b2-c45e1107e07c","area":145.0,"power":0.0206,"eff_clk_period":0.0,"fitness":0.2556281772,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"9ee76968-0760-4ec3-8bf5-82e9404dc697","area":151.0,"power":0.000458,"eff_clk_period":0.0,"fitness":0.5488144517,"is_all_valid_area_power_front":true},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"f516c962-72bf-4b1a-88d2-e0bf6bc18f6a","area":170.0,"power":0.0268,"eff_clk_period":0.0,"fitness":0.0864197531,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"68032f15-22ae-47e0-af25-c395913b9d83","area":149.0,"power":0.028,"eff_clk_period":0.0,"fitness":0.1296659405,"is_all_valid_area_power_front":false},{"representation":"all_valid","point_type":"all_valid","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"8353f206-59b9-41e8-a7ed-7af3a3bfbf39","area":192.0,"power":0.0286,"eff_clk_period":0.0,"fitness":-0.006063907,"is_all_valid_area_power_front":false},{"representation":"lexical_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"6c7ffc0d-b074-4c3b-a8d1-8b39def8d1f2","area":156.0,"power":0.0269,"eff_clk_period":0.0,"fitness":0.1260530138,"is_all_valid_area_power_front":false},{"representation":"lexical_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"6fa4b8d7-3863-46f9-b9b2-c45e1107e07c","area":145.0,"power":0.0206,"eff_clk_period":0.0,"fitness":0.2556281772,"is_all_valid_area_power_front":true},{"representation":"lexical_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"8353f206-59b9-41e8-a7ed-7af3a3bfbf39","area":192.0,"power":0.0286,"eff_clk_period":0.0,"fitness":-0.006063907,"is_all_valid_area_power_front":false},{"representation":"random","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"6c7ffc0d-b074-4c3b-a8d1-8b39def8d1f2","area":156.0,"power":0.0269,"eff_clk_period":0.0,"fitness":0.1260530138,"is_all_valid_area_power_front":false},{"representation":"random","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"9ee76968-0760-4ec3-8bf5-82e9404dc697","area":151.0,"power":0.000458,"eff_clk_period":0.0,"fitness":0.5488144517,"is_all_valid_area_power_front":true},{"representation":"random","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"f516c962-72bf-4b1a-88d2-e0bf6bc18f6a","area":170.0,"power":0.0268,"eff_clk_period":0.0,"fitness":0.0864197531,"is_all_valid_area_power_front":false},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"6c7ffc0d-b074-4c3b-a8d1-8b39def8d1f2","area":156.0,"power":0.0269,"eff_clk_period":0.0,"fitness":0.1260530138,"is_all_valid_area_power_front":false},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"6fa4b8d7-3863-46f9-b9b2-c45e1107e07c","area":145.0,"power":0.0206,"eff_clk_period":0.0,"fitness":0.2556281772,"is_all_valid_area_power_front":true},{"representation":"t11_contrast_weighted_farthest","point_type":"selected","corpus":"aspdac2026_release","method":"classic_revolution","seed":0,"problem_id":"aspdac2026\/deepseek_clean_results\/RTLLM\/Prob041_traffic_light","candidate_id":"8353f206-59b9-41e8-a7ed-7af3a3bfbf39","area":192.0,"power":0.0286,"eff_clk_period":0.0,"fitness":-0.006063907,"is_all_valid_area_power_front":false}];
+const METRICS = [{"representation":"fitness_top","problem_group_count":114,"valid_ppa_count":682,"selected_count":341,"baseline_hypervolume":3.864198083,"selected_hypervolume":3.823247628,"baseline_pareto_size":553,"selected_pareto_size":300,"baseline_best_fitness":0.7498077353,"selected_best_fitness":0.7498077353,"unique_canonical_netlists":52,"unique_motif_signatures":44,"vs_lexical_hv_gain_fraction":0.032800314,"vs_lexical_pareto_gain_fraction":0.0600706714,"selected_all_valid_front_hits":122,"unique_ppa_points":159},{"representation":"generation_prefix","problem_group_count":114,"valid_ppa_count":682,"selected_count":341,"baseline_hypervolume":3.864198083,"selected_hypervolume":3.155185681,"baseline_pareto_size":553,"selected_pareto_size":303,"baseline_best_fitness":0.7498077353,"selected_best_fitness":0.6950547731,"unique_canonical_netlists":50,"unique_motif_signatures":45,"vs_lexical_hv_gain_fraction":-0.1476678784,"vs_lexical_pareto_gain_fraction":0.0706713781,"selected_all_valid_front_hits":110,"unique_ppa_points":163},{"representation":"lexical_farthest","problem_group_count":114,"valid_ppa_count":682,"selected_count":341,"baseline_hypervolume":3.864198083,"selected_hypervolume":3.7018265547,"baseline_pareto_size":553,"selected_pareto_size":283,"baseline_best_fitness":0.7498077353,"selected_best_fitness":0.6881421865,"unique_canonical_netlists":60,"unique_motif_signatures":54,"vs_lexical_hv_gain_fraction":0.0,"vs_lexical_pareto_gain_fraction":0.0,"selected_all_valid_front_hits":122,"unique_ppa_points":183},{"representation":"random","problem_group_count":114,"valid_ppa_count":682,"selected_count":341,"baseline_hypervolume":3.864198083,"selected_hypervolume":3.0741669813,"baseline_pareto_size":553,"selected_pareto_size":303,"baseline_best_fitness":0.7498077353,"selected_best_fitness":0.6950547731,"unique_canonical_netlists":59,"unique_motif_signatures":50,"vs_lexical_hv_gain_fraction":-0.1695540199,"vs_lexical_pareto_gain_fraction":0.0706713781,"selected_all_valid_front_hits":107,"unique_ppa_points":166},{"representation":"t11_contrast_top16_farthest","problem_group_count":114,"valid_ppa_count":682,"selected_count":341,"baseline_hypervolume":3.864198083,"selected_hypervolume":3.5246823728,"baseline_pareto_size":553,"selected_pareto_size":288,"baseline_best_fitness":0.7498077353,"selected_best_fitness":0.7498077353,"unique_canonical_netlists":57,"unique_motif_signatures":55,"vs_lexical_hv_gain_fraction":-0.0478531826,"vs_lexical_pareto_gain_fraction":0.0176678445,"selected_all_valid_front_hits":119,"unique_ppa_points":185},{"representation":"t11_contrast_top32_farthest","problem_group_count":114,"valid_ppa_count":682,"selected_count":341,"baseline_hypervolume":3.864198083,"selected_hypervolume":3.7107031928,"baseline_pareto_size":553,"selected_pareto_size":289,"baseline_best_fitness":0.7498077353,"selected_best_fitness":0.7498077353,"unique_canonical_netlists":57,"unique_motif_signatures":55,"vs_lexical_hv_gain_fraction":0.0023979076,"vs_lexical_pareto_gain_fraction":0.0212014134,"selected_all_valid_front_hits":120,"unique_ppa_points":185},{"representation":"t11_contrast_top64_farthest","problem_group_count":114,"valid_ppa_count":682,"selected_count":341,"baseline_hypervolume":3.864198083,"selected_hypervolume":3.769258786,"baseline_pareto_size":553,"selected_pareto_size":286,"baseline_best_fitness":0.7498077353,"selected_best_fitness":0.7498077353,"unique_canonical_netlists":58,"unique_motif_signatures":54,"vs_lexical_hv_gain_fraction":0.0182159349,"vs_lexical_pareto_gain_fraction":0.0106007067,"selected_all_valid_front_hits":120,"unique_ppa_points":186},{"representation":"t11_contrast_weighted_farthest","problem_group_count":114,"valid_ppa_count":682,"selected_count":341,"baseline_hypervolume":3.864198083,"selected_hypervolume":3.769258786,"baseline_pareto_size":553,"selected_pareto_size":286,"baseline_best_fitness":0.7498077353,"selected_best_fitness":0.7498077353,"unique_canonical_netlists":58,"unique_motif_signatures":54,"vs_lexical_hv_gain_fraction":0.0182159349,"vs_lexical_pareto_gain_fraction":0.0106007067,"selected_all_valid_front_hits":120,"unique_ppa_points":186}];
+const COLORS = {
+  all_valid: '#b5bdc6',
+  lexical_farthest: '#3b72b9',
+  random: '#8b8f96',
+  t11_contrast_top64_farthest: '#3f8f4f',
+  t11_contrast_weighted_farthest: '#3f8f4f',
+};
+const LABELS = {
+  all_valid: 'all valid',
+  lexical_farthest: 'lexical',
+  random: 'random',
+  t11_contrast_top64_farthest: 'T11 contrastive top-64',
+  t11_contrast_weighted_farthest: 'T11 contrastive weighted',
+};
+const REPS = ['all_valid', 'lexical_farthest', 'random', bestT11()];
+const plot = document.getElementById('plot');
+const select = document.getElementById('problem');
+const summary = document.getElementById('summary');
+
+const problems = [...new Set(POINTS.map((row) => row.problem_id))];
+for (const problem of problems) {
+  const option = document.createElement('option');
+  option.value = problem;
+  option.textContent = shortProblem(problem);
+  select.appendChild(option);
+}
+select.addEventListener('change', draw);
+drawSummary();
+draw();
+
+function bestT11() {
+  const rows = METRICS.filter((row) => String(row.representation).startsWith('t11_'));
+  rows.sort((left, right) => right.selected_hypervolume - left.selected_hypervolume);
+  return rows[0].representation;
+}
+
+function shortProblem(problem) {
+  return String(problem).split('/').at(-1);
+}
+
+function drawSummary() {
+  const lexical = metric('lexical_farthest');
+  const t11 = metric(bestT11());
+  const delta = 100 * (t11.selected_hypervolume / lexical.selected_hypervolume - 1);
+  const cells = [
+    ['T11 HV', t11.selected_hypervolume.toFixed(6)],
+    ['HV gain vs lexical', `${delta >= 0 ? '+' : ''}${delta.toFixed(2)}%`],
+    ['T11 front hits', String(t11.selected_all_valid_front_hits)],
+    ['Lexical front hits', String(lexical.selected_all_valid_front_hits)],
+  ];
+  summary.innerHTML = cells.map(([name, value]) => `<div class="metric"><b>${value}</b><span>${name}</span></div>`).join('');
+}
+
+function metric(representation) {
+  const row = METRICS.find((entry) => entry.representation === representation);
+  console.assert(row, representation);
+  return row;
+}
+
+function draw() {
+  plot.replaceChildren();
+  const rows = POINTS.filter((row) => row.problem_id === select.value);
+  const bounds = paddedBounds(rows);
+  drawGrid(bounds);
+  for (const representation of REPS) {
+    drawRepresentation(rows, bounds, representation);
+  }
+  drawAxisLabels();
+}
+
+function paddedBounds(rows) {
+  const areas = rows.map((row) => Number(row.area));
+  const powers = rows.map((row) => Number(row.power));
+  const minArea = Math.min(...areas);
+  const maxArea = Math.max(...areas);
+  const minPower = Math.min(...powers);
+  const maxPower = Math.max(...powers);
+  const areaPad = Math.max((maxArea - minArea) * 0.08, 1);
+  const powerPad = Math.max((maxPower - minPower) * 0.08, 0.001);
+  return {
+    minArea: minArea - areaPad,
+    maxArea: maxArea + areaPad,
+    minPower: Math.max(0, minPower - powerPad),
+    maxPower: maxPower + powerPad,
+  };
+}
+
+function drawGrid(bounds) {
+  const ticks = 5;
+  for (let index = 0; index <= ticks; index += 1) {
+    const t = index / ticks;
+    const x = 82 + t * 950;
+    const y = 574 - t * 498;
+    line(x, 76, x, 574, 'grid');
+    line(82, y, 1032, y, 'grid');
+    text(x, 604, valueAt(bounds.minArea, bounds.maxArea, t), 'tick', 'middle');
+    text(60, y + 4, valueAt(bounds.minPower, bounds.maxPower, t), 'tick', 'end');
+  }
+  line(82, 574, 1032, 574, 'axis');
+  line(82, 76, 82, 574, 'axis');
+  text(130, 548, 'lower-left is better', 'tick', 'start');
+}
+
+function valueAt(minValue, maxValue, t) {
+  const value = minValue + (maxValue - minValue) * t;
+  return Math.abs(value) >= 100 ? value.toFixed(0) : value.toFixed(3);
+}
+
+function drawRepresentation(rows, bounds, representation) {
+  const repRows = rows.filter((row) => row.representation === representation);
+  if (repRows.length === 0) return;
+  const color = COLORS[representation];
+  for (const row of repRows) {
+    point(row, bounds, color, representation === 'all_valid' ? 4 : 7, 0.78);
+  }
+  const front = nondominated(repRows).sort((left, right) => left.area - right.area);
+  polyline(front, bounds, color);
+  for (const row of front) {
+    frontPoint(row, bounds, color);
+  }
+}
+
+function nondominated(rows) {
+  return rows.filter((row) => !rows.some((other) => {
+    const dominates = Number(other.area) <= Number(row.area) && Number(other.power) <= Number(row.power);
+    const strict = Number(other.area) < Number(row.area) || Number(other.power) < Number(row.power);
+    return dominates && strict;
+  }));
+}
+
+function project(row, bounds) {
+  const x = 82 + ((Number(row.area) - bounds.minArea) / (bounds.maxArea - bounds.minArea)) * 950;
+  const y = 574 - ((Number(row.power) - bounds.minPower) / (bounds.maxPower - bounds.minPower)) * 498;
+  return [x, y];
+}
+
+function point(row, bounds, color, radius, opacity) {
+  const [x, y] = project(row, bounds);
+  const node = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  node.setAttribute('cx', x);
+  node.setAttribute('cy', y);
+  node.setAttribute('r', radius);
+  node.setAttribute('fill', color);
+  node.setAttribute('opacity', opacity);
+  node.appendChild(title(row));
+  plot.appendChild(node);
+}
+
+function frontPoint(row, bounds, color) {
+  const [x, y] = project(row, bounds);
+  const node = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  node.setAttribute('cx', x);
+  node.setAttribute('cy', y);
+  node.setAttribute('r', 10);
+  node.setAttribute('fill', 'none');
+  node.setAttribute('stroke', color);
+  node.setAttribute('stroke-width', 2.4);
+  node.appendChild(title(row));
+  plot.appendChild(node);
+}
+
+function polyline(rows, bounds, color) {
+  if (rows.length < 2) return;
+  const node = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  node.setAttribute('points', rows.map((row) => project(row, bounds).join(',')).join(' '));
+  node.setAttribute('stroke', color);
+  node.setAttribute('class', 'front-line');
+  plot.appendChild(node);
+}
+
+function title(row) {
+  const node = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+  node.textContent = `${LABELS[row.representation]} area=${row.area} power=${row.power}`;
+  return node;
+}
+
+function line(x1, y1, x2, y2, cls) {
+  const node = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  node.setAttribute('x1', x1);
+  node.setAttribute('y1', y1);
+  node.setAttribute('x2', x2);
+  node.setAttribute('y2', y2);
+  node.setAttribute('class', cls);
+  plot.appendChild(node);
+}
+
+function text(x, y, value, cls, anchor) {
+  const node = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  node.setAttribute('x', x);
+  node.setAttribute('y', y);
+  node.setAttribute('class', cls);
+  node.setAttribute('text-anchor', anchor);
+  node.textContent = value;
+  plot.appendChild(node);
+}
+
+function drawAxisLabels() {
+  text(557, 640, 'Area', 'axis-label', 'middle');
+  const node = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  node.setAttribute('x', -325);
+  node.setAttribute('y', 20);
+  node.setAttribute('class', 'axis-label');
+  node.setAttribute('text-anchor', 'middle');
+  node.setAttribute('transform', 'rotate(-90)');
+  node.textContent = 'Power';
+  plot.appendChild(node);
+}
+</script>
+</body>
+</html>

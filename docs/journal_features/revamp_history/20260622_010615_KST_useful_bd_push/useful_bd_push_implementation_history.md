@@ -1601,3 +1601,47 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Re-ran the real replay with the final script after the focused checks. The
   table and figure hashes stayed stable; the final code hash is recorded in
   `techniques/T14_dehnn_hypergraph_bd/artifacts_manifest.md`.
+
+## T11 MGVGA-Style Contrastive Replay - 2026-06-22 UTC
+
+- Added `scripts/analyze_t11_mgvga_contrastive.py` and a focused test. The
+  bounded replay approximates MGVGA-style source/graph alignment by scoring
+  structural features from T13 implementation vectors, T07 graph features, and
+  T14 hypergraph features with self-supervised canonical-netlist/motif
+  duplicate keys.
+- Descriptor fitting excludes final PPA, reference PPA, fitness, hypervolume,
+  Pareto labels, validity labels, problem id, corpus, model, method, seed, and
+  candidate id. Rows without canonical-netlist or motif keys are treated as
+  unique unlabeled examples, not positive pairs.
+- Ran the replay command:
+  `uv run python scripts/analyze_t11_mgvga_contrastive.py --candidates-csv exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/qwen_common_audit_candidates.csv --graph-manifest-csv docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T07_deepgate_family_bd/tables/netlist_graph_manifest.csv --hypergraph-features-csv docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T14_dehnn_hypergraph_bd/tables/hypergraph_features.csv --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T11_mgvga_contrastive_bd --retention-fraction 0.5 --random-seed 0`.
+- Alignment coverage: `768` candidate rows, `658` unique structural keys,
+  `153` duplicate-key rows, `521` rows missing structural labels, `271`
+  positive pairs, and `294257` negative pairs.
+- Main result: `t11_contrast_top64_farthest` and
+  `t11_contrast_weighted_farthest` select HV `3.769259`, a `+1.82%` gain over
+  lexical (`3.701827`). Unique PPA improves to `186`, matching T13 and below
+  T14's `187`.
+- Promotion blocker: direct front hits remain below lexical. T11 keeps `120`
+  selected all-valid front hits versus lexical's `122`. This recovers one hit
+  versus the best T14 hybrid (`119`) but is not enough for promotion.
+- Added primary raw PPA-front figures:
+  `techniques/T11_mgvga_contrastive_bd/figures/mgvga_multi_problem_ppa_pareto_fronts.png`
+  and
+  `techniques/T11_mgvga_contrastive_bd/figures/mgvga_raw_area_power_pareto_front.png`.
+  The source table is `tables/ppa_front_plot_points.csv`.
+- Added the direct raw PPA HTML viewer:
+  `techniques/T11_mgvga_contrastive_bd/visualizations/direct_ppa_pareto/index.html`.
+  Playwright rendered it and saved
+  `visualizations/direct_ppa_pareto/screenshot.png`; the summary cards show
+  T11 front hits `120` versus lexical `122`.
+- Tier decision: `T1 near_classic_replay_lead`, not promoted. T11 is now the
+  best L4 HV replay lead, but it still needs local-Pareto coupling or a
+  collapse-penalized contrastive objective before live-budget use.
+- Final focused validation run:
+  `uv run pytest tests/scripts/test_analyze_t11_mgvga_contrastive.py` and
+  `uv run ruff check scripts/analyze_t11_mgvga_contrastive.py tests/scripts/test_analyze_t11_mgvga_contrastive.py`,
+  `uv run python -m pyright scripts/analyze_t11_mgvga_contrastive.py tests/scripts/test_analyze_t11_mgvga_contrastive.py`,
+  and
+  `uv tool run ty check scripts/analyze_t11_mgvga_contrastive.py tests/scripts/test_analyze_t11_mgvga_contrastive.py`
+  passed before the final real replay was regenerated.

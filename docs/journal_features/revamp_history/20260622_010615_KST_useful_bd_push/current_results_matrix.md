@@ -40,8 +40,9 @@ Real result packages:
 - `T13_aurora_incremental_autoencoder_bd` implementation-feature/AURORA replay
   diagnostic
 - `T14_dehnn_hypergraph_bd` directed-hypergraph replay diagnostic
+- `T11_mgvga_contrastive_bd` structural-contrastive replay diagnostic
 
-Scaffolded but not yet real-result packages remain `T08` to `T12`,
+Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
@@ -231,6 +232,18 @@ because direct front hits stay below lexical: 119 versus 122. The primary
 figure is
 `techniques/T14_dehnn_hypergraph_bd/figures/hypergraph_multi_problem_ppa_pareto_fronts.png`.
 
+`T11_mgvga_contrastive_bd` is the completed MGVGA-style structural
+contrastive replay. It uses T13/T07/T14 structural feature views and
+self-supervised canonical-netlist/motif duplicate keys, excluding PPA,
+fitness, validity, problem id, corpus, model, method, seed, and candidate id
+from descriptor fitting. The top-64 and weighted contrastive descriptors are
+the strongest L4 replay HV lead so far: selected HV is `3.769259`, `+1.82%`
+over lexical, with 186 unique PPA points. It is still not promoted because
+direct front hits remain below lexical: 120 versus 122. The primary PNG is
+`techniques/T11_mgvga_contrastive_bd/figures/mgvga_multi_problem_ppa_pareto_fronts.png`.
+The filesystem-openable direct raw PPA viewer is
+`techniques/T11_mgvga_contrastive_bd/visualizations/direct_ppa_pareto/index.html`.
+
 ## Current Conclusions
 
 1. `T04` is still the cleanest `T1 near_classic` validation candidate because
@@ -279,6 +292,9 @@ figure is
 18. T14 shows hypergraph structure can add unique PPA breadth when combined
     with the T13 signal, but simple concatenation still does not recover direct
     front hits.
+19. T11 shows structural contrastive feature selection is the strongest L4
+    replay direction so far, but the direct raw PPA front still blocks
+    promotion: it improves HV without beating lexical front-hit retention.
 
 ## Next Decisions
 

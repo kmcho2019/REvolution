@@ -85,7 +85,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       tier decision.
 - [ ] `T10_circuitfusion_multimodal_bd` has methodology, results, figures, tables,
       and tier decision.
-- [ ] `T11_mgvga_contrastive_bd` has methodology, results, figures, tables, and
+- [x] `T11_mgvga_contrastive_bd` has methodology, results, figures, tables, and
       tier decision.
 - [ ] `T12_lineage_repair_bd` has methodology, results, figures, tables, and tier
       decision.
