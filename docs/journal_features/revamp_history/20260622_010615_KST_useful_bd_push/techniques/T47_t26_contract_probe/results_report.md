@@ -15,6 +15,14 @@ T26-family experiment answer the strongest current objections:
 - family-proxy/front-netlist counts cannot be treated as independent wins when
   they equal the PPA-front count.
 
+## Pre-Run Table Check
+
+`probe_problem_matrix.csv` contains 92 planned rows for the hard/tuning and
+held-out phases. All 92 rows have `reference_available`. The known repaired
+default-reference problems in `default_reference_quarantine.csv` are not in
+the T47 probe, so the planned screen avoids the `Prob040_synchronizer`
+headline-reference failure mode from the one-seed RTLLM package.
+
 ## Completion Gate
 
 Do not assign a T1 or higher tier until live artifacts prove the acceptance

@@ -42,6 +42,12 @@ problem as a headline reference-normalized HV carrier. If a problem lacks a
 benchmark reference, it is quarantined for headline PPA gates until a real
 reference is added or the problem is excluded before the run is frozen.
 
+The pre-run matrix in `tables/probe_problem_matrix.csv` expands the planned
+hard/tuning and held-out phases to 92 phase/seed/arm/problem rows. All 92 rows
+currently have `reference_available`. The repaired/default-reference problems
+tracked in `tables/default_reference_quarantine.csv` are outside this T47
+probe, so they cannot carry the next headline reference-normalized signal.
+
 ## Probe Ladder
 
 1. Hard/tuning sanity probe:

@@ -8,6 +8,11 @@ Status: pre-run manifest.
 - `results_report.md`: pending result report and decision placeholder.
 - `commands/probe_plan.md`: command plan and execution checklist.
 - `tables/probe_matrix.csv`: frozen probe ladder matrix.
+- `tables/probe_problem_matrix.csv`: expanded pre-run matrix by phase, seed,
+  arm, benchmark, and problem.
+- `tables/default_reference_quarantine.csv`: known repaired/default-reference
+  problems excluded from headline reference-normalized claims.
+- `tables/README.md`: table semantics and regeneration command.
 - `figures/README.md`: required visual outputs and inspection rule.
 
 ## Expected Run Artifacts

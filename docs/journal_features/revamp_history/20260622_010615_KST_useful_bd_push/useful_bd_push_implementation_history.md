@@ -2613,3 +2613,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated the technique registry, TODO, lane ledger, and lineage ledger so the
   next live spend is tied to the frozen `journal_narrative.md` contract rather
   than the one-seed full-RTLLM diagnostic package.
+
+## T47 Probe Table Generation - 2026-06-22 UTC
+
+- Added `scripts/build_t47_contract_probe_tables.py` to regenerate the T47
+  probe ladder, expanded phase/seed/arm/problem matrix, and
+  default-reference quarantine table from the frozen configs.
+- Generated 92 planned T47 hard/tuning and held-out rows. All 92 have
+  benchmark reference PPA files available.
+- Confirmed the known repaired/default-reference RTLLM problems
+  (`Prob013_multi_booth_8bit`, `Prob018_float_multi`, and
+  `Prob040_synchronizer`) are outside the T47 probe matrix and remain
+  quarantined from headline reference-normalized claims.
