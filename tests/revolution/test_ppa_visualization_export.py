@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 import csv
 import json
 from pathlib import Path
+from typing import Any
 
 from revolution.qd.ppa_visualization_export import (
     BackendRun,
@@ -11,7 +13,7 @@ from revolution.qd.ppa_visualization_export import (
 )
 
 
-def _write_csv(path: Path, rows: list[dict[str, object]]) -> None:
+def _write_csv(path: Path, rows: Sequence[Mapping[str, object]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     assert rows
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -20,12 +22,12 @@ def _write_csv(path: Path, rows: list[dict[str, object]]) -> None:
         writer.writerows(rows)
 
 
-def _write_json(path: Path, payload: dict[str, object]) -> None:
+def _write_json(path: Path, payload: Mapping[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
-def _grid_quantile_space() -> dict[str, object]:
+def _grid_quantile_space() -> dict[str, Any]:
     return {
         "archive_type": "grid_quantile",
         "initialized": True,
@@ -211,7 +213,10 @@ def test_export_writes_projected_classic_dataset(tmp_path: Path) -> None:
     assert "advancedPanel" in html
     assert "archiveGeometryPerspectiveSelect" in html
     assert 'data-ppa-scale="final"' in html
+    assert 'data-ppa-view="area_power_front"' in html
     assert "setPpaScaleMode" in html
+    assert "setPpaViewMode" in html
+    assert "drawPpaAreaPowerFront(" in html
     dataset = json.loads(result.dataset_paths[0].read_text(encoding="utf-8"))
     classic = next(sample for sample in dataset["samples"] if sample["technique"] == "classic")
     qd = next(sample for sample in dataset["samples"] if sample["technique"] != "classic")

@@ -16,6 +16,12 @@ The viewer uses T26's native SR-PCA archive as the archive source. Classic is
 shown in the PPA/Pareto pane but is not projected into that SR-PCA archive,
 because that projection would imply descriptors Classic never used.
 
+Use the PPA pane's `raw A-P front` view for the straightforward raw area-power
+Pareto projection. It keeps conventional non-inverted axes, marks lower-left as
+better, and draws per-technique raw area-power nondominated front outlines.
+For sequential designs, this view intentionally omits clock period; switch back
+to `native` for the 3D area/period/power view.
+
 Static validation:
 
 ```bash

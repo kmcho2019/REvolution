@@ -28,6 +28,10 @@ Start here when resuming the active goal.
 - Most recent per-technique direct PPA visualization:
   `techniques/T32_sr_raw_front_preserving_emitter_qd/figures/t32_holdout_ppa_pareto_area_power_candidate_zoom.png`
   (straightforward raw area-power Pareto front, no inverted axes).
+- Most recent interactive visualization refresh:
+  `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
+  now has a `raw A-P front` PPA mode, with screenshot
+  `screenshots/raw_area_power_front.png`.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs

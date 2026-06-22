@@ -37,11 +37,12 @@ Status: completed canonical/family audit package.
 
 | Artifact | SHA-256 |
 | --- | --- |
-| `visualizations/qd_ppa_viewer/index.html` | `c3d835fad15c8df021e1f104e73ccafbc7be381e8ac30ce8edfa44685ba61fc1` |
-| `visualizations/qd_ppa_viewer/manifest.json` | `88e9b66b834e4ccdfa986f3ef12c2d7795415c84f1337e69c1372a195a9c58e6` |
-| `visualizations/qd_ppa_viewer/datasets/RTLLM__Prob015_multi_pipe_8bit.json` | `35bd26d815a86d8f17760b6e08a92721b886a692b1ffd833e09c22b1b56c302e` |
-| `visualizations/qd_ppa_viewer/datasets/RTLLM__Prob041_traffic_light.json` | `a8f5a9380254fc6d9aa3b1323a4380dd64a20b96b4b7a9c22707733f9fb17083` |
-| `visualizations/qd_ppa_viewer/datasets/RTLLM__Prob045_alu.json` | `fc0624ed25800ce3423827be2d15e01df31e48d2a0b111f9e997578e498e12ca` |
+| `visualizations/qd_ppa_viewer/index.html` | `e124359492e6196d17ae9bb1f8680450d5f557db5bae7021cca58fa19c3fb06c` |
+| `visualizations/qd_ppa_viewer/manifest.json` | `d5cb66bf763370e3ba41bb240fcade928b383e9ba601a08650ac32206652990e` |
+| `visualizations/qd_ppa_viewer/datasets/RTLLM__Prob015_multi_pipe_8bit.json` | `6648aa9384d4ab62fbbcc652319f745c6f8157ce8366c0029a9d926c9316b366` |
+| `visualizations/qd_ppa_viewer/datasets/RTLLM__Prob041_traffic_light.json` | `c705573dc6497ac0ef5f8c2bb086e82ce439d00530206d772616a8e7038d05a2` |
+| `visualizations/qd_ppa_viewer/datasets/RTLLM__Prob045_alu.json` | `484056fab10e2d6778deea4e7f99b04d9cafa7a3058906b9f0da9845d1be179e` |
+| `visualizations/qd_ppa_viewer/screenshots/raw_area_power_front.png` | `d12a76dc665eeaca13c8bea0693258b361ef5f4c59ba0f4200998eb3e8c37cac` |
 | `visualizations/qd_ppa_viewer_source/final_analysis/ppa_distribution/data/ppa_candidates.csv` | `267e0546a200a71367ebc26aa6ca31c0e961927fc8f410fe5b41938eb74b3125` |
 | `visualizations/qd_ppa_viewer_source/final_analysis/ppa_distribution/data/reference_ppa_metrics.csv` | `809cdd6f019666e0cf889466e94d468db9f066be090d4c4bca473f247ac28b33` |
 | `visualizations/qd_ppa_viewer_source/final_analysis/design_space_analysis/successful_candidates.csv` | `3f345395bf320206f2f05c5a3c1b80917c5e911163afb05c1a718ccbb78391d4` |
@@ -61,6 +62,9 @@ Status: completed canonical/family audit package.
 - Pyright: passed for the T28 script and test.
 - QD/PPA viewer static validation: passed for
   `visualizations/qd_ppa_viewer/`.
+- 2026-06-22 viewer refresh: static validation passed after adding the raw
+  area-power front mode; `screenshots/raw_area_power_front.png` was visually
+  inspected.
 - Playwright smoke: generated screenshots and visual parity report; one
   scoped archive-hover caveat is documented in
   `figures/visual_inspection_notes.md`.

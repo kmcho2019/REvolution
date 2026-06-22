@@ -18,6 +18,7 @@
 - `rank_guides_3d_projected_le2`: [screenshot](screenshots/rank_guides_3d_projected_le2.png)
 - `rank_guides_3d_mesh_projected_overlay`: [screenshot](screenshots/rank_guides_3d_mesh_projected_overlay.png)
 - `ppa_final_scale`: [screenshot](screenshots/ppa_final_scale.png)
+- `raw_area_power_front`: [screenshot](screenshots/raw_area_power_front.png)
 - `coordinate_raw`: [screenshot](screenshots/coordinate_raw.png)
 - `coordinate_improvement`: [screenshot](screenshots/coordinate_improvement.png)
 - `coordinate_normalized`: [screenshot](screenshots/coordinate_normalized.png)

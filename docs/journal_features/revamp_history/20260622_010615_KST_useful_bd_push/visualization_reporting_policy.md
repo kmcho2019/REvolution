@@ -50,7 +50,10 @@ schema when possible. If a scoped live-run adapter is needed, keep the adapter
 data under the technique directory or `exp/`, never under `/aux`. Record
 whether Classic is honestly projectable into the selected archive coordinates;
 if it is not, keep Classic in the PPA/Pareto pane and document why the archive
-pane is empty.
+pane is empty. Every generated viewer must expose a raw area-power front mode
+with conventional axes, lower-left-better annotation, and per-technique
+nondominated front outlines. The native 3D PPA view remains necessary for
+sequential timing, but it does not replace the raw area-power projection.
 
 ## Visual Quality Checklist
 

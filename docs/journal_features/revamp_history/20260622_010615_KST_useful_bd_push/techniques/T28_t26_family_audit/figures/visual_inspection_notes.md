@@ -44,6 +44,12 @@ Inspection date: 2026-06-21 UTC.
 
 - `visualizations/qd_ppa_viewer/index.html` opens and renders Classic versus
   T26 for all three audited problems.
+- 2026-06-22 update: the viewer now includes a `raw A-P front` PPA mode.
+  `visualizations/qd_ppa_viewer/screenshots/raw_area_power_front.png` was
+  inspected and is readable: raw area is on x, raw power is on y, lower-left is
+  marked as better, and hollow front outlines are visible by method. For P015,
+  the screenshot correctly states that timing is omitted from this 2D
+  projection.
 - Static validation passed with `scripts/validate_qd_ppa_visualization.py`.
 - Playwright generated screenshots under `visualizations/qd_ppa_viewer/screenshots/`.
   It reports one scoped-viewer caveat: Classic has no honest SR-PCA archive

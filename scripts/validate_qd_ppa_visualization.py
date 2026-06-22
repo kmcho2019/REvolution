@@ -127,7 +127,11 @@ def validate_viewer(
         "final_fixed",
         "data-ppa-scale=\"current\"",
         "data-ppa-scale=\"final\"",
+        "data-ppa-view=\"native\"",
+        "data-ppa-view=\"area_power_front\"",
+        "raw A-P front",
         "setPpaScaleMode",
+        "setPpaViewMode",
         "colorModeSelect",
         "color-quick",
         "rank-guide",
@@ -177,6 +181,10 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "drawArchive(",
         "drawPpa3d(",
         "drawPpa2d(",
+        "drawPpaAreaPowerFront(",
+        "drawAreaPowerFrontLines(",
+        "areaPowerFront(",
+        "areaPowerAxisSummary(",
         "drawPpaFrame3d(",
         "drawPpaShadedPoint(",
         "drawPpaSampleAxisTicks3d(",
@@ -215,12 +223,17 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "setRankGuideColorScheme",
         "setProjectedRankGuides",
         "setPpaScaleMode",
+        "setPpaViewMode",
         "ppaScaleLimits(",
         "ppaScaleSamples(",
+        "areaPowerScaleLimits(",
         "ppa_scale_mode:",
+        "ppa_view_mode:",
         "ppa_scale_step:",
         "ppa_scale_rank_filter:",
         "ppa_limits:",
+        "front_definition:",
+        "raw_area_power_minimized_per_technique",
         "rankColor(",
         "rankRadius(",
         "fitnessRange(",
@@ -638,6 +651,7 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
             _assert_archive_hover_clears(page, errors)
             _assert_reference_hover(page, errors)
             _assert_ppa_scale_modes(page, screenshot_dir, errors, report_lines)
+            _assert_area_power_front_mode(page, screenshot_dir, errors, report_lines)
             for coordinate_mode in ("raw", "improvement", "normalized"):
                 page.evaluate("mode => window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode(mode)", coordinate_mode)
                 _assert_coordinate_mode(page, errors, coordinate_mode)
@@ -655,6 +669,7 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     _viewer_screenshot(page, screenshot_dir, errors, f"coordinate_{coordinate_mode}"),
                 )
             page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode('raw')")
+            page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setPpaViewMode('native')")
             if _debug_state(page).get("auto_rotate"):
                 page.click("#autoRotateBtn")
             ppa_camera_before_lock = _debug_state(page).get("scenes", {}).get("ppa", {}).get("camera")
@@ -961,6 +976,39 @@ def _assert_ppa_scale_modes(
     _set_timeline_index(page, -1)
 
 
+def _assert_area_power_front_mode(
+    page: Any,
+    screenshot_dir: Path,
+    errors: list[str],
+    report_lines: list[str],
+) -> None:
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setPpaViewMode('area_power_front')")
+    state = _debug_state(page)
+    scene = state.get("scenes", {}).get("ppa", {})
+    if state.get("ppa_view_mode") != "area_power_front":
+        errors.append(f"Playwright PPA view mode mismatch: {state.get('ppa_view_mode')}")
+    active = page.locator(".ppa-view[data-ppa-view='area_power_front']").evaluate(
+        "node => node.classList.contains('active')"
+    )
+    if not active:
+        errors.append("Playwright raw area-power front control is not visibly active")
+    if scene.get("dimensionality") != "2d":
+        errors.append(f"Playwright raw area-power front is not 2D: {scene.get('dimensionality')}")
+    if scene.get("axes") != ["area", "power"]:
+        errors.append(f"Playwright raw area-power front axes changed: {scene.get('axes')}")
+    if scene.get("front_definition") != "raw_area_power_minimized_per_technique":
+        errors.append(f"Playwright raw area-power front definition missing: {scene.get('front_definition')}")
+    if int(scene.get("front_point_count", 0)) <= 0:
+        errors.append("Playwright raw area-power front has no front points")
+    if scene.get("point_glyph_mode") != "raw_area_power_front_points":
+        errors.append(f"Playwright raw area-power front glyph mode changed: {scene.get('point_glyph_mode')}")
+    legend = page.locator("#ppaLegend").inner_text().lower()
+    if "raw a-p front" not in legend or "area-power nondominated front" not in legend:
+        errors.append("Playwright raw area-power front legend is incomplete")
+    _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "raw_area_power_front"))
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setPpaViewMode('native')")
+
+
 def _set_timeline_index(page: Any, index: int) -> None:
     page.evaluate(
         "index => {"
@@ -1057,6 +1105,7 @@ def _assert_color_modes(
         non_classic = [scale for name, scale in technique_radii.items() if name != "classic"]
         if non_classic and max(float(scale) for scale in non_classic) <= float(technique_radii["classic"]):
             errors.append(f"Playwright non-classic technique markers are not larger: {technique_radii}")
+    state = _debug_state(page)
     reference_labels = state.get("reference_axis_labels")
     expected_label_count = 3 if state.get("circuit_type") == "sequential" else 2
     if not isinstance(reference_labels, list) or len(reference_labels) != expected_label_count:

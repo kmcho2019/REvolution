@@ -1216,3 +1216,30 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   as the next T26 follow-up. A same-family follow-up needs stronger
   role-separated champion, local-rank-1/front-preserving, and bounded-repair
   lanes, or the push should branch to another descriptor family.
+
+## PPA Viewer Raw Area-Power Front Refresh - 2026-06-22 UTC
+
+- User feedback identified a visualization gap: the Phase 03.1 HTML viewer
+  exposed archive/PPA distribution views, but did not make a straightforward
+  raw area-power Pareto-front projection obvious.
+- Added a `raw A-P front` PPA pane mode to
+  `src/revolution/qd/ppa_visualization_viewer.py`. The mode uses raw area on
+  x, raw power on y, conventional non-inverted axes, a lower-left-better
+  annotation, and per-technique raw area-power nondominated front outlines.
+- The native PPA mode remains available. For sequential problems, the raw
+  A-P mode explicitly states that clock period is omitted from the 2D
+  projection, while native mode keeps the 3D area/period/power view.
+- Tightened `scripts/validate_qd_ppa_visualization.py` so static validation
+  requires the raw A-P front controls, debug hook, and scene metadata. The
+  Playwright smoke also checks and screenshots the new mode when run.
+- Regenerated the T28 scoped viewer at
+  `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
+  and added
+  `screenshots/raw_area_power_front.png` as an inspected reader-facing
+  screenshot.
+- Validation run:
+  `uv run pytest tests/revolution/test_ppa_visualization_export.py tests/scripts/test_qd_ppa_visualization_scripts.py`,
+  `uv run ruff check ...`,
+  `uv run python -m pyright ...`,
+  `uv tool run ty check ...`, and static viewer validation for the T28
+  bundle all passed.

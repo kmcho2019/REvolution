@@ -556,6 +556,11 @@ details summary {
           <button class="rank-quick" data-rank-filter="2">&le;2</button>
           <button class="rank-quick" data-rank-filter="3">&le;3</button>
         </span>
+        <span class="control-label">View</span>
+        <span class="seg">
+          <button class="ppa-view active" data-ppa-view="native">native</button>
+          <button class="ppa-view" data-ppa-view="area_power_front">raw A-P front</button>
+        </span>
         <span class="control-label">Scale</span>
         <span class="seg">
           <button class="ppa-scale active" data-ppa-scale="current">current</button>
@@ -601,6 +606,7 @@ const state = {
   rankGuideMethod: 'auto',
   rankGuideColorScheme: 'auto',
   projectedRankGuides: 'off',
+  ppaViewMode: 'native',
   ppaScaleMode: 'current',
   archiveGeometryPerspective: 'native_timeline',
   stepIndex: 0,
@@ -710,6 +716,9 @@ function bindControls() {
   }));
   document.querySelectorAll('.ppa-scale').forEach((button) => button.addEventListener('click', () => {
     setPpaScaleMode(button.dataset.ppaScale);
+  }));
+  document.querySelectorAll('.ppa-view').forEach((button) => button.addEventListener('click', () => {
+    setPpaViewMode(button.dataset.ppaView);
   }));
   document.getElementById('colorModeSelect').addEventListener('change', () => {
     setColorMode(document.getElementById('colorModeSelect').value);
@@ -842,6 +851,7 @@ function resetViewer() {
   state.lockedPerspective = false;
   state.autoRotate = false;
   state.explodedLayers = false;
+  state.ppaViewMode = 'native';
   state.hoveredSampleIds.clear();
   state.highlightedCellId = null;
   state.highlightedScene = null;
@@ -851,6 +861,9 @@ function resetViewer() {
   document.getElementById('perspectiveLockBtn').classList.remove('active');
   document.getElementById('autoRotateBtn').classList.remove('active');
   document.getElementById('explodeLayersBtn').classList.remove('active');
+  document.querySelectorAll('.ppa-view').forEach((button) => {
+    button.classList.toggle('active', button.dataset.ppaView === state.ppaViewMode);
+  });
   render();
 }
 function tick(now) {
@@ -1039,11 +1052,18 @@ function drawPpa(selected) {
   const ctx = setupCanvas(canvas);
   clear(ctx, canvas);
   const samples = visibleSamples(ds, selected);
-  document.getElementById('ppaModeBadge').textContent = state.coordinateMode + ' · ' + state.ppaScaleMode + ' scale';
-  document.getElementById('ppaAxisSummary').textContent = ppaAxisSummary(ds);
+  const modeLabel = state.ppaViewMode === 'native' ? state.coordinateMode : 'raw area-power front';
+  document.getElementById('ppaModeBadge').textContent = modeLabel + ' · ' + state.ppaScaleMode + ' scale';
+  document.getElementById('ppaAxisSummary').textContent = (
+    state.ppaViewMode === 'native' ? ppaAxisSummary(ds) : areaPowerAxisSummary(ds)
+  );
   document.getElementById('ppaStats').innerHTML = compareStatsHtml(ds.technique_stats_by_step[stepName()] || {}, selected);
   drawPpaLegend(samples, selected);
   state.hitMaps.ppa = [];
+  if (state.ppaViewMode === 'area_power_front') {
+    drawPpaAreaPowerFront(ctx, canvas, ds, samples, selected);
+    return;
+  }
   if (ds.circuit_type === 'sequential') drawPpa3d(ctx, canvas, ds, samples, selected);
   else drawPpa2d(ctx, canvas, ds, samples, selected);
 }
@@ -1155,6 +1175,184 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
     rank_guide_projected_vertex_count: 0,
     rank_guide_projected_vertex_shapes: [],
   };
+}
+function drawPpaAreaPowerFront(ctx, canvas, ds, samples, selected) {
+  const rect = canvas.getBoundingClientRect();
+  const reference = areaPowerReferenceCoord(ds);
+  const limits = areaPowerScaleLimits(ds, selected);
+  const pad = {left: 58, right: 34, top: 54, bottom: 76};
+  const width = rect.width - pad.left - pad.right;
+  const height = rect.height - pad.top - pad.bottom;
+  const hoveredSample = visibleHoveredSample(samples);
+  ctx.strokeStyle = 'rgba(37,33,29,0.65)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, rect.height - pad.bottom);
+  ctx.lineTo(rect.width - pad.right, rect.height - pad.bottom);
+  ctx.stroke();
+  drawAreaPowerAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect, hoveredSample);
+  for (const sample of samples) {
+    drawPpaPoint(ctx, sample, areaPowerScreen2d(sample, limits, pad, width, height, rect), selected, false);
+  }
+  const frontSummary = drawAreaPowerFrontLines(ctx, samples, selected, limits, pad, width, height, rect);
+  if (reference) drawPpaReferencePoint(ctx, ppaScreen2d(reference, limits, pad, width, height, rect));
+  state.sceneInfo.ppa = {
+    scene_type: 'ppa',
+    renderer: 'custom_scene_canvas',
+    dimensionality: '2d',
+    ppa_view_mode: 'area_power_front',
+    camera: null,
+    visible_sample_count: samples.length,
+    reference_visible: Boolean(reference),
+    z_range: [0, 0],
+    axes: ['area', 'power'],
+    highlighted_sample_count: state.hoveredSampleIds.size,
+    point_glyph_mode: 'raw_area_power_front_points',
+    fitness_palette: 'viridis',
+    linked_fade_mode: state.hoveredSampleIds.size ? 'dim_unselected_samples' : 'none',
+    ppa_scale_mode: state.ppaScaleMode,
+    ppa_scale_step: ppaScaleStep(),
+    ppa_scale_rank_filter: ppaScaleRankFilter(),
+    ppa_limits: limits,
+    front_definition: 'raw_area_power_minimized_per_technique',
+    front_line_count: frontSummary.lineCount,
+    front_point_count: frontSummary.pointCount,
+    front_techniques: frontSummary.techniques,
+    omitted_objectives: ds.circuit_type === 'sequential' ? ['eff_clk_period'] : [],
+    rank_guide_mode: 'off',
+    rank_guide_count: 0,
+    rank_guide_techniques: [],
+    rank_guide_signature: [],
+    rank_guide_method: 'off',
+    rank_guide_color_scheme: 'off',
+    rank_guide_projection_mode: 'raw_area_power_front',
+    rank_guide_coordinate_mode: 'raw',
+    rank_guide_surface_mode: 'none',
+    rank_guide_triangle_count: 0,
+    rank_guide_projected_overlay: false,
+    rank_guide_projected_count: 0,
+    rank_guide_projected_vertex_count: 0,
+    rank_guide_projected_vertex_shapes: [],
+  };
+}
+function drawAreaPowerFrontLines(ctx, samples, selected, limits, pad, width, height, rect) {
+  const summary = {lineCount: 0, pointCount: 0, techniques: []};
+  for (const technique of selected) {
+    const front = areaPowerFront(samples.filter((sample) => sample.technique === technique));
+    if (!front.length) continue;
+    const screens = front.map((sample) => areaPowerScreen2d(sample, limits, pad, width, height, rect));
+    ctx.save();
+    ctx.strokeStyle = techniqueColor(technique, selected);
+    ctx.fillStyle = techniqueColor(technique, selected);
+    ctx.lineWidth = technique === 'classic' ? 2.0 : 2.8;
+    if (front.length > 1) {
+      ctx.beginPath();
+      ctx.moveTo(screens[0].x, screens[0].y);
+      for (const screen of screens.slice(1)) ctx.lineTo(screen.x, screen.y);
+      ctx.stroke();
+      summary.lineCount += 1;
+    }
+    for (const screen of screens) {
+      ctx.beginPath();
+      ctx.arc(screen.x, screen.y, 7, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.restore();
+    summary.pointCount += front.length;
+    summary.techniques.push(technique);
+  }
+  return summary;
+}
+function areaPowerFront(samples) {
+  const sorted = samples
+    .filter((sample) => Number.isFinite(Number(sample.area)) && Number.isFinite(Number(sample.power)))
+    .sort((left, right) => Number(left.area) - Number(right.area) || Number(left.power) - Number(right.power));
+  const unique = [];
+  for (const sample of sorted) {
+    const previous = unique[unique.length - 1];
+    if (previous && Math.abs(Number(previous.area) - Number(sample.area)) < 1e-9) continue;
+    unique.push(sample);
+  }
+  const front = [];
+  let bestPower = Infinity;
+  for (const sample of unique) {
+    const power = Number(sample.power);
+    if (power <= bestPower) {
+      front.push(sample);
+      bestPower = power;
+    }
+  }
+  return front;
+}
+function areaPowerScaleLimits(ds, selected) {
+  const samples = ppaScaleSamples(ds, selected);
+  const coords = samples.map((sample) => [Number(sample.area), Number(sample.power)]);
+  const reference = areaPowerReferenceCoord(ds);
+  return coordinateLimits(reference ? coords.concat([reference]) : coords, 2);
+}
+function areaPowerScreen2d(sample, limits, pad, width, height, rect) {
+  return ppaScreen2d([Number(sample.area), Number(sample.power)], limits, pad, width, height, rect);
+}
+function areaPowerReferenceCoord(ds) {
+  const ref = ds.reference_ppa || {};
+  const coord = [Number(ref.area), Number(ref.power)];
+  return coord.every(Number.isFinite) ? coord : null;
+}
+function drawAreaPowerAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect, hoveredSample) {
+  const x0 = pad.left, y0 = rect.height - pad.bottom;
+  const x1 = pad.left + width, y1 = pad.top;
+  ctx.save();
+  ctx.fillStyle = '#716b64';
+  ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+  ctx.fillText(areaPowerAxisSummary(ds), pad.left, 28);
+  drawAxisArrow(ctx, {x: x0, y: y0}, {x: x1, y: y0}, '#c2185b');
+  drawAxisArrow(ctx, {x: x0, y: y0}, {x: x0, y: y1}, '#237b35');
+  ctx.fillStyle = '#c2185b';
+  ctx.fillText('area · lower better', x1 - 148, y0 + 28);
+  ctx.fillStyle = '#237b35';
+  ctx.fillText('power · lower better', x0 + 8, y1 - 12);
+  ctx.fillStyle = '#25211d';
+  ctx.fillText('better', x0 + 8, y0 - 11);
+  ctx.strokeStyle = 'rgba(37,33,29,0.45)';
+  ctx.beginPath();
+  ctx.moveTo(x0 + 48, y0 - 10);
+  ctx.lineTo(x0 + 12, y0 - 10);
+  ctx.lineTo(x0 + 12, y0 - 46);
+  ctx.stroke();
+  if (reference) drawAreaPowerReferenceTicks2d(ctx, reference, limits, pad, width, height, rect);
+  if (hoveredSample) drawAreaPowerSampleTicks2d(ctx, hoveredSample, limits, pad, width, height, rect);
+  ctx.restore();
+}
+function drawAreaPowerReferenceTicks2d(ctx, reference, limits, pad, width, height, rect) {
+  const ref = ppaScreen2d(reference, limits, pad, width, height, rect);
+  const x0 = pad.left, y0 = rect.height - pad.bottom;
+  ctx.strokeStyle = 'rgba(37,33,29,0.55)';
+  ctx.fillStyle = '#25211d';
+  ctx.beginPath();
+  ctx.moveTo(ref.x, y0 - 5);
+  ctx.lineTo(ref.x, y0 + 5);
+  ctx.moveTo(x0 - 5, ref.y);
+  ctx.lineTo(x0 + 5, ref.y);
+  ctx.stroke();
+  ctx.fillText('ref area=' + fmt(reference[0]), ref.x + 6, y0 - 8);
+  ctx.fillText('ref power=' + fmt(reference[1]), x0 + 8, ref.y - 7);
+}
+function drawAreaPowerSampleTicks2d(ctx, sample, limits, pad, width, height, rect) {
+  const point = areaPowerScreen2d(sample, limits, pad, width, height, rect);
+  const x0 = pad.left, y0 = rect.height - pad.bottom;
+  ctx.strokeStyle = 'rgba(37,33,29,0.72)';
+  ctx.fillStyle = '#25211d';
+  ctx.beginPath();
+  ctx.arc(point.x, y0, 3, 0, Math.PI * 2);
+  ctx.moveTo(x0 + 3, point.y);
+  ctx.arc(x0, point.y, 3, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillText('sample area=' + fmt(sample.area), point.x + 6, y0 + 18);
+  ctx.fillText('sample power=' + fmt(sample.power), x0 + 8, point.y + 12);
+}
+function areaPowerAxisSummary(ds) {
+  return (ds.circuit_type === 'sequential' ? 'raw area-power projection; timing omitted' : 'raw area-power Pareto front') + ' · lower-left better';
 }
 function ppaScreen2d(coord, limits, pad, width, height, rect) {
   return {
@@ -1917,6 +2115,7 @@ function drawPpaLegend(samples, selected) {
       '<div class="legend-row">mean active PPA improvement</div>' +
       '<div class="legend-row">visible sample range ' + fmt(range[0]) + ' to ' + fmt(range[1]) + '</div>' +
       '<div class="legend-row">outliers clipped to [-1.0, 1.0]</div>' +
+      areaPowerViewLegend() +
       techniqueShapeLegend(selected);
     return;
   }
@@ -1927,6 +2126,7 @@ function drawPpaLegend(samples, selected) {
         '<div class="legend-row"><span class="legend-swatch" style="background:' +
         techniqueColor(technique, selected) + '"></span><span>' + technique + '</span></div>'
       ).join('') +
+      areaPowerViewLegend() +
       techniqueShapeLegend(selected);
     return;
   }
@@ -1940,10 +2140,20 @@ function drawPpaLegend(samples, selected) {
       ).join('') +
       '<div class="legend-row">larger = lower rank</div>' +
       rankGuideLegend() +
+      areaPowerViewLegend() +
       techniqueShapeLegend(selected);
     return;
   }
   throw new Error('unknown color mode: ' + state.colorMode);
+}
+function areaPowerViewLegend() {
+  if (state.ppaViewMode !== 'area_power_front') return '';
+  const note = dataset().circuit_type === 'sequential'
+    ? 'lower-left is better; timing omitted in this projection'
+    : 'lower-left is better on raw area and power';
+  return '<div class="legend-title legend-subtitle">Raw A-P front</div>' +
+    '<div class="legend-row">hollow circles and lines = area-power nondominated front</div>' +
+    '<div class="legend-row">' + note + '</div>';
 }
 function techniqueShapeLegend(selected) {
   if (state.mode !== 'compare' || selected.length < 2) return '';
@@ -2296,6 +2506,20 @@ function sampleAxisLabels(sample, ds) {
   const coord = ppaCoord(sample, ds);
   return labels.map((label, index) => 'sample ' + label + '=' + fmt(coord[index]));
 }
+function activeSampleAxisLabels(sample, ds) {
+  if (state.ppaViewMode === 'area_power_front') {
+    return ['sample area=' + fmt(sample.area), 'sample power=' + fmt(sample.power)];
+  }
+  return sampleAxisLabels(sample, ds);
+}
+function activeReferenceAxisLabels(ds) {
+  if (state.ppaViewMode === 'area_power_front') {
+    const coord = areaPowerReferenceCoord(ds);
+    if (!coord) return [];
+    return ['ref area=' + fmt(coord[0]), 'ref power=' + fmt(coord[1])];
+  }
+  return referenceAxisLabels(ds);
+}
 function axisSummary(ds) {
   const archive = arguments.length > 1 ? arguments[1] : ds.archive_definition;
   return 'X = ' + archive.axes[0].name + ' · Y = ' + archive.axes[2].name + ' · Z = ' + archive.axes[1].name +
@@ -2362,6 +2586,7 @@ function debugState() {
     highlighted_cell_id: state.highlightedCellId,
     highlighted_sample_ids: Array.from(state.hoveredSampleIds),
     color_mode: state.colorMode,
+    ppa_view_mode: state.ppaViewMode,
     ppa_scale_mode: state.ppaScaleMode,
     archive_geometry_perspective: state.archiveGeometryPerspective,
     rank_guide_mode: state.rankGuideMode,
@@ -2373,8 +2598,8 @@ function debugState() {
     effective_rank_guide_mode: effectiveRankGuideMode(),
     rank_radius_preview: [1, 2, 3, 4].map((rank) => rankRadius(rank, false)),
     technique_radius_preview: selectedTechniques().map((technique) => [technique, techniqueRadiusScale(technique)]),
-    reference_axis_labels: referenceAxisLabels(ds),
-    hovered_sample_axis_labels: hoveredSample ? sampleAxisLabels(hoveredSample, ds) : [],
+    reference_axis_labels: activeReferenceAxisLabels(ds),
+    hovered_sample_axis_labels: hoveredSample ? activeSampleAxisLabels(hoveredSample, ds) : [],
     reference_tooltip_preview: referenceTooltip(ds),
     scenes: state.sceneInfo,
     source_artifacts: ds.source_artifacts,
@@ -2476,6 +2701,14 @@ function setPpaScaleMode(value) {
   });
   render();
 }
+function setPpaViewMode(value) {
+  state.ppaViewMode = value;
+  assertKnown(state.ppaViewMode, ['native', 'area_power_front'], 'PPA view mode');
+  document.querySelectorAll('.ppa-view').forEach((button) => {
+    button.classList.toggle('active', button.dataset.ppaView === value);
+  });
+  render();
+}
 function setRankGuideMethod(value) {
   state.rankGuideMethod = value;
   assertKnownRankGuideMethod(state.rankGuideMethod);
@@ -2517,6 +2750,7 @@ window.__QD_PPA_VIEWER_DEBUG__ = {
   setRankFilter,
   setColorMode,
   setRankGuideMode,
+  setPpaViewMode,
   setPpaScaleMode,
   setRankGuideMethod,
   setRankGuideColorScheme,
