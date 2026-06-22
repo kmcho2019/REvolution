@@ -1287,3 +1287,32 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   and
   `uv tool run ty check scripts/package_t33_qwen_ladder_inventory.py tests/scripts/test_package_t33_qwen_ladder_inventory.py`
   all passed.
+
+## T33b Preprocessing View Cache - 2026-06-22 UTC
+
+- Added `scripts/generate_t33_qwen_preprocessing_views.py` and a focused test.
+  The script reads the T06 candidate table, asserts every RTL and netlist path
+  exists, writes generated view files under `exp/useful_bd_push/`, and commits
+  only compact manifests under the T33 package.
+- Fixed a preprocessing bug during sample inspection: tokens immediately after
+  a Verilog literal apostrophe must be preserved, so `2'b00` does not become
+  `2'tmp_...` during identifier normalization.
+- Generated `4608` view files for 768 candidates under
+  `exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC`.
+  The committed cache manifest records the source candidate-table SHA256
+  `f529204adff4a66aa2d9977f087eea41c5292397cac2815b78ef4723be850b0e`.
+- Committed setup tables:
+  `tables/t33_preprocessing_cache_manifest.csv`,
+  `tables/t33_preprocessing_view_manifest.csv`, and
+  `tables/t33_preprocessing_view_summary.csv`.
+- View-size summary: mean RTL views range from 561.63 to 783.17 characters,
+  while canonical netlist and summary-plus-netlist views average about
+  22.7k and 23.1k characters. The next embedding stage must therefore chunk
+  netlist views rather than treat them as single short strings.
+- Validation run:
+  `uv run pytest tests/scripts/test_generate_t33_qwen_preprocessing_views.py`,
+  `uv run ruff check scripts/generate_t33_qwen_preprocessing_views.py tests/scripts/test_generate_t33_qwen_preprocessing_views.py`,
+  `uv run python -m pyright scripts/generate_t33_qwen_preprocessing_views.py tests/scripts/test_generate_t33_qwen_preprocessing_views.py`,
+  and
+  `uv tool run ty check scripts/generate_t33_qwen_preprocessing_views.py tests/scripts/test_generate_t33_qwen_preprocessing_views.py`
+  all passed.

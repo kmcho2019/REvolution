@@ -1,6 +1,7 @@
 # Qwen3 Preprocessing Ladder BD Results Report
 
-Status: pre-registered method package with T33a source inventory.
+Status: pre-registered method package with T33a source inventory and T33b
+preprocessing-view cache.
 
 Tier decision: pending. No result is claimed yet.
 
@@ -34,16 +35,46 @@ identifier-Qwen selected-HV gain `0.033499553667026144` versus lexical.
 
 These are source facts from T06, not new T33 performance evidence.
 
+## T33b Preprocessing-View Cache
+
+The T33b cache generated all six planned text views for the 768 prior Qwen
+candidates:
+
+- output root:
+  `exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC`;
+- `4608` view files, covering 768 candidates times six views;
+- compact committed manifests:
+  `tables/t33_preprocessing_cache_manifest.csv`,
+  `tables/t33_preprocessing_view_manifest.csv`, and
+  `tables/t33_preprocessing_view_summary.csv`.
+
+Mean character counts by view are:
+
+| View | Mean Chars | Max Chars |
+| --- | ---: | ---: |
+| `canonical_rtl` | 561.63 | 3854 |
+| `commentless_rtl` | 627.82 | 4488 |
+| `identifier_role_rtl` | 763.30 | 4796 |
+| `raw_rtl` | 783.17 | 4904 |
+| `canonical_yosys_netlist` | 22742.37 | 711482 |
+| `summary_plus_netlist` | 23099.05 | 711847 |
+
+The cache inspection found and fixed one preprocessing bug before this manifest
+was accepted: Verilog base-literal payloads such as `2'b00` must not be
+identifier-normalized. The committed manifest points at the corrected cache.
+
+These are preprocessing artifacts only. They do not answer whether Qwen3 BDs
+work until embeddings, collapse diagnostics, and replay/PPA-front scoring run.
+
 ## Required Result Tables
 
-- `tables/preprocessing_view_manifest.csv`
-- `tables/embedding_cache_manifest.csv`
-- `tables/pooling_ablation.csv`
-- `tables/collapse_diagnostics.csv`
-- `tables/nuisance_axis_diagnostics.csv`
-- `tables/replay_aggregate.csv`
-- `tables/qwen_ladder_vs_controls.csv`
-- `tables/ppa_front_metrics.csv`
+- `tables/t33_embedding_cache_manifest.csv`
+- `tables/t33_pooling_ablation.csv`
+- `tables/t33_collapse_diagnostics.csv`
+- `tables/t33_nuisance_axis_diagnostics.csv`
+- `tables/t33_replay_aggregate.csv`
+- `tables/t33_qwen_ladder_vs_controls.csv`
+- `tables/t33_ppa_front_metrics.csv`
 
 ## Required Figures
 

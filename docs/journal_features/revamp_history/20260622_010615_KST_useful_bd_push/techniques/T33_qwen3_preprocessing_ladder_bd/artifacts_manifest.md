@@ -1,7 +1,7 @@
 # Qwen3 Preprocessing Ladder Artifacts Manifest
 
-Status: pre-registered with T33a source-inventory tables. Embedding and replay
-artifact hashes are pending.
+Status: pre-registered with T33a source-inventory tables and T33b
+preprocessing-view manifests. Embedding and replay artifact hashes are pending.
 
 ## Source Evidence
 
@@ -26,6 +26,18 @@ under `/aux`.
 | `tables/t33_source_inventory.csv` | 15 | `38270088aefc4bc2f5807e842597e9a867e09832cf708a4f208509d73b275677` |
 | `tables/t33_prior_qwen_summary.csv` | 22 | `8c95680dc1e4a75b557f031e6bbe53786d15c69fd6721917ed3df06717338a6e` |
 | `tables/t33_preprocessing_ladder_plan.csv` | 6 | `f950c5b50c593f700b7354229e3e5e786b6cf77219b61bc71488268bf7440b00` |
+
+## T33b Committed Tables
+
+| Artifact | Rows | SHA256 |
+| --- | ---: | --- |
+| `tables/t33_preprocessing_cache_manifest.csv` | 1 | `ad95530dd915baa96d1cb2ee1020091c4122bb15359c25a184e8900481998269` |
+| `tables/t33_preprocessing_view_manifest.csv` | 4608 | `78e084cfe8c660a0d693cf6adaec13d5a4db83e82df7050d436055f235e9ddbc` |
+| `tables/t33_preprocessing_view_summary.csv` | 6 | `950cda3c47d454419630015bdccb3d63074bf69df5bbff6e10d990e84b185e31` |
+
+The generated text cache is intentionally not committed. It lives at:
+
+`exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_20260622_021639_UTC`
 
 ## Planned Subdirectories
 

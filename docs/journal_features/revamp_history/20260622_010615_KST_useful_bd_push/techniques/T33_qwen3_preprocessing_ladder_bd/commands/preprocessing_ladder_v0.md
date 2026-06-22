@@ -27,6 +27,15 @@ uv run python scripts/package_t33_qwen_ladder_inventory.py \
   --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd
 ```
 
+T33b preprocessing-view cache:
+
+```bash
+uv run python scripts/generate_t33_qwen_preprocessing_views.py \
+  --candidates-csv exp/diversity_check/wp1_qwen_common_audit_20260621_075031_UTC/qwen_common_audit_candidates.csv \
+  --output-root exp/useful_bd_push/t33_qwen3_preprocessing_ladder_bd_YYYYMMDD_HHMMSS_UTC \
+  --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T33_qwen3_preprocessing_ladder_bd
+```
+
 Future embedding run:
 
 ```bash
