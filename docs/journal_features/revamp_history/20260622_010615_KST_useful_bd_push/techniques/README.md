@@ -46,6 +46,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T30` | `T30_t26_holdout_front_audit` | Archive-coupling holdout audit | `T1 near_classic` holdout support with P098 yield warning |
 | `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Archive-coupling failure-feedback repair variant | `T0 diagnostic`; no P098 repair or P135 HV retention |
 | `T32` | `T32_sr_raw_front_preserving_emitter_qd` | Archive-coupling front-preserving emitter variant | `T0 diagnostic`; P098 yield hint but no P135 HV/quality retention |
+| `T33` | `T33_qwen3_preprocessing_ladder_bd` | Learned/projection descriptor | Pre-registered Qwen3 normalized RTL/netlist preprocessing ladder |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

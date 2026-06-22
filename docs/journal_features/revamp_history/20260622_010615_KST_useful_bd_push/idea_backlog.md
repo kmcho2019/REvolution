@@ -75,6 +75,18 @@ a numbered `techniques/T##_slug/` package before running it.
   decision is which view and pooling rule produces a whole-design embedding that
   improves QD/Pareto replay metrics without increasing same-problem collapse.
 
+## From `T33_qwen3_preprocessing_ladder_bd` Pre-Registration
+
+- Run the ladder before claiming learned-encoder failure. The first useful
+  signal is lower same-problem nearest-neighbor fraction than T06's `0.9336`
+  while matching or beating lexical/random controls on at least one QD/Pareto
+  metric.
+- If only one normalized view improves nuisance diagnostics, try a small
+  projection-head or SR-raw hybrid before escalating to DeepGate/AURORA-style
+  external encoders.
+- If every view still clusters by problem or identifier churn, retire whole-text
+  Qwen as a direct BD and use it only as an auxiliary report feature.
+
 ## From `T17_mome_pareto_archive_bd` T0
 
 - Passive local-Pareto retention is promising as an archive-coupling direction:

@@ -18,10 +18,12 @@ Start here when resuming the active goal.
   front-preserving emitter arm; `T0 diagnostic` because it improves P098 valid
   PPA and unique PPA breadth versus T31, but loses T26's P135 HV/quality
   signal).
+- Most recent pre-registered package:
+  `techniques/T33_qwen3_preprocessing_ladder_bd/` (Qwen3 normalized RTL/netlist
+  preprocessing ladder that follows T06's nuisance-axis failure mode).
 - Next direction:
-  stop simple champion-fraction/two-parent-probability tuning and either add a
-  separate bounded repair/local-rank-1 emitter or branch to a different
-  descriptor family.
+  run T33 before heavier learned-encoder fine-tuning, or specify a separate
+  bounded repair/local-rank-1 emitter if returning to the SR raw family.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
@@ -120,6 +122,7 @@ Start here when resuming the active goal.
 | `T30` | `T30_t26_holdout_front_audit` | Completed holdout audit; `T1 near-classic` support with a P098 yield warning, direct raw PPA Pareto figures, and no front-breadth win. |
 | `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Completed holdout live arm, `T0 diagnostic`; preserves final-best coverage but loses yield, P135 HV/quality, and unique PPA breadth. |
 | `T32` | `T32_sr_raw_front_preserving_emitter_qd` | Completed holdout live arm, `T0 diagnostic`; repairs some P098 yield and unique PPA breadth versus T31 but loses T26's P135 HV/quality signal. |
+| `T33` | `T33_qwen3_preprocessing_ladder_bd` | Pre-registered learned-descriptor follow-up; tests Qwen3 canonical RTL, Yosys netlist, and structural-summary views before projection-head training. |
 
 ## Validity-Gate Note
 

@@ -1243,3 +1243,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `uv run python -m pyright ...`,
   `uv tool run ty check ...`, and static viewer validation for the T28
   bundle all passed.
+
+## T33 Qwen3 Preprocessing Ladder Registration - 2026-06-22 UTC
+
+- Registered `T33_qwen3_preprocessing_ladder_bd` as the next L4 learned-encoder
+  method after T06. The method directly targets T06's failure mode: Qwen
+  embeddings carried HV signal, but nearest neighbors were dominated by
+  same-problem and same-corpus clustering.
+- The package fixes six PPA-free views before running: raw RTL, commentless RTL,
+  identifier-role RTL, canonical RTL, canonical Yosys netlist, and
+  summary-plus-netlist.
+- The default embedding policy chunks at stable RTL/netlist boundaries,
+  L2-normalizes chunk embeddings, and pools by square-root token weighted mean,
+  with plain mean and cell-count pooling as ablations.
+- Promotion gates require beating lexical or random controls on a claimed
+  QD/Pareto metric, lowering T06's `0.9336` same-problem nearest-neighbor
+  fraction, avoiding worse duplicate collapse, and preserving classic-covered
+  designs in any live run.
+- T33 output is explicitly routed to `exp/useful_bd_push/`; `/aux` remains
+  read-only retrospective evidence. If dependencies block the repo uv
+  environment, the method must try an isolated uv environment under
+  `exp/useful_bd_push/envs/` before stopping.

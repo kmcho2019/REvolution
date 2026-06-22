@@ -22,7 +22,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L1` | Transparent CAD descriptors | Use reviewer-readable features such as Yosys stats, motifs, pathlets, and ST-NOD. | Reuse selected features in guarded hybrids; stop pure concatenation. |
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
-| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, and multimodal circuit embeddings. | Run preprocessing ladders before fine-tuning or heavier external envs. |
+| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, and multimodal circuit embeddings. | Run T33 preprocessing ladders before fine-tuning or heavier external envs. |
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T32 is negative; stop simple schedule tuning and use it as a P098-yield control. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T31/T32 show repair/front tweaks need stronger role separation. |
 
@@ -57,7 +57,7 @@ flowchart LR
 
   subgraph learned[L4 learned encoders]
     T06[T06 Qwen diagnostic]
-    qwen[Qwen3 preprocessing ladder]
+    T33[T33 Qwen3 preprocessing ladder]
     enc[T07-T16 encoder scaffolds]
   end
 
@@ -106,8 +106,8 @@ flowchart LR
   T29 --> T30
   T30 --> T31
   T31 --> T32
-  T06 --> qwen
-  qwen --> enc
+  T06 --> T33
+  T33 --> enc
   T17 --> T12
   T17 --> T18
   T24 --> T18
@@ -120,7 +120,8 @@ flowchart LR
 | T01-T03 | `L1` | Simple structure, motif/pathlet occupancy, and ST-NOD synthesis trajectories. | Useful lower bounds; T03 is a near miss, but direct transparent descriptors are not enough. | `hybridize` | Reuse selected transparent features inside guarded archives. |
 | T04/T19/T20 | `L2` | SR-RFF, SR ReLU, and raw synthesis-response PCA descriptors. | Strongest automatic-BD evidence, but quality/yield regressions remain. | `ablate` then `advance` guarded variants | Use T26/T27 as the current SR-family live lead and audit before holdout. |
 | T05 | `L3` | Direct VQ/codebook archive pressure. | Too costly in best quality and valid-PPA yield. | `park` | Reopen only as side archive or local-Pareto partition. |
-| T06 | `L4` | Qwen-style whole-RTL projections. | Contains signal but clusters around nuisance axes. | `ablate` | Split to a Qwen ladder branch if preprocessing/env work grows. |
+| T06 | `L4` | Qwen-style whole-RTL projections. | Contains signal but clusters around nuisance axes. | `ablate` | T33 now pre-registers the Qwen ladder follow-up. |
+| T33 | `L4` | Qwen3 normalized RTL/netlist preprocessing ladder. | Pre-registered; no measured result yet. | `advance` | Run preprocessing, embedding, collapse, and replay diagnostics before projection-head training. |
 | T07-T16 | `L4` | DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, AURORA, DE-HNN, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Start with Qwen preprocessing; use isolated uv envs or source checkouts as needed. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
