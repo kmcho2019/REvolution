@@ -99,6 +99,7 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
             qd_cell_mode="pareto_front",
             qd_max_elites_per_cell=5,
             qd_objectives="ppa",
+            qd_two_parent_gate="near_front_descriptor",
             representation_kind="thought_only",
             code_samples_per_thought=4,
             repair_kind="bounded_local_repair",
@@ -121,6 +122,7 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     assert captured["kwargs"]["qd_cell_mode"] == "pareto_front"
     assert captured["kwargs"]["qd_max_elites_per_cell"] == 5
     assert captured["kwargs"]["qd_objectives"] == "ppa"
+    assert captured["kwargs"]["qd_two_parent_gate"] == "near_front_descriptor"
     assert captured["kwargs"]["qd_descriptor_file"] is None
     assert captured["kwargs"]["representation_kind"] == "thought_only"
     assert captured["kwargs"]["code_samples_per_thought"] == 4

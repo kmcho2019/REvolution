@@ -61,7 +61,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T45` | `T45_t11_runtime_top4_graph` | Learned graph descriptor runtime bridge | `T0 mixed_diagnostic`; compact graph axes preserve coverage but lose mean HV, valid-PPA, and best score |
 | `T46` | `T46_t11_runtime_pca4_graph` | Learned graph descriptor runtime projection | `T0 mixed_diagnostic`; ALU HV signal, but direct graph-axis primary lane retired |
 | `T47` | `T47_t26_contract_probe` | Archive-coupling contract probe | `T0 diagnostic`; exact T26 has positive best-score delta but is not held-out-ready |
-| `T48` | `T48_t26_gated_near_front_fusion_qd` | Archive-coupling parent gate | Pre-registered T26.1 low-fusion gate; implementation and live result pending |
+| `T48` | `T48_t26_gated_near_front_fusion_qd` | Archive-coupling parent gate | Implementation-ready T26.1 gated low-fusion variant; live result pending |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

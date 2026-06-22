@@ -2711,3 +2711,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   to the existing one-parent success path and records the fallback.
 - No live T48 result is claimed yet. The next step is a narrow implementation
   plus focused tests before launching the hard/tuning QD arm.
+
+## T48 Gated Near-Front Fusion Implementation - 2026-06-22 UTC
+
+- Added opt-in `qd_two_parent_gate=near_front_descriptor` support through
+  `scripts/run_backend.py`, `RevolutionBackendConfig`, and `QDEngine`.
+- The default remains `none`, preserving exact T26/T47 behavior unless the new
+  flag is passed.
+- The near-front gate accepts a two-parent request only when both archive
+  parents are valid, rank `1` or `2` under existing NSGA-II ranking, and within
+  squared descriptor distance `6.75`. It records gate attempts, accepts,
+  rejects, and one-parent fallbacks in QD summaries.
+- Focused validation passed:
+  `uv run pytest tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py -q`
+  with `58 passed`; `uv run ruff check` on touched files; `ty` and `pyright`
+  on touched source modules; and `git diff --check`.
+- Broader `ty` and `pyright` runs including `scripts/run_backend.py` and the
+  full modified tests still report older type debt around the run-backend
+  evaluator union and broad test `**kwargs` helpers. The T48 source modules
+  type-check cleanly in isolation.
+- No live T48 sampling has been launched yet. The next step is the two-seed
+  hard/tuning QD arm in `commands/hard_tuning_sanity.md`.

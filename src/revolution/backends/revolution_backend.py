@@ -49,6 +49,7 @@ class RevolutionBackendConfig:
     qd_max_elites_per_cell: int = 1
     qd_objectives: str = "ppa"
     qd_two_parent_probability: float = 0.5
+    qd_two_parent_gate: str = "none"
     qd_neighbor_k: int = 8
     qd_cvt_warmup_successes: int | None = None
     qd_grid_quantile_warmup_successes: int = 20
@@ -168,6 +169,7 @@ class RevolutionBackend(EvolutionBackend):
                 qd_max_elites_per_cell=self.config.qd_max_elites_per_cell,
                 qd_objectives=self.config.qd_objectives,
                 qd_two_parent_probability=self.config.qd_two_parent_probability,
+                qd_two_parent_gate=self.config.qd_two_parent_gate,
                 qd_cvt_warmup_successes=self.config.qd_cvt_warmup_successes,
                 qd_grid_quantile_warmup_successes=self.config.qd_grid_quantile_warmup_successes,
                 qd_grid_quantile_warmup_max_buffer=self.config.qd_grid_quantile_warmup_max_buffer,
@@ -251,6 +253,7 @@ class RevolutionBackend(EvolutionBackend):
                     "max_elites_per_cell": self.config.qd_max_elites_per_cell,
                     "objectives": self.config.qd_objectives,
                     "two_parent_probability": self.config.qd_two_parent_probability,
+                    "two_parent_gate": self.config.qd_two_parent_gate,
                     "num_cells": self.config.qd_num_cells,
                     "fill_target_fraction": self.config.qd_fill_target_fraction,
                     "improve_backfill_fraction": self.config.qd_improve_backfill_fraction,

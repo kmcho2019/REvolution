@@ -1,6 +1,6 @@
 # T48 Gated Near-Front Fusion Methodology
 
-Status: pre-registered method card. No live run has been launched.
+Status: implementation ready; no live run has been launched.
 
 ## Question
 
@@ -25,9 +25,9 @@ T48 keeps T47 fixed except for low-probability, gated two-parent fusion:
 - `qd_operator_kind=eoh_strategies`;
 - `representation_kind=code_individual`;
 - `qd_two_parent_probability=0.10`;
-- new parent gate: `qd_two_parent_gate=near_front_descriptor`.
+- parent gate: `qd_two_parent_gate=near_front_descriptor`.
 
-The new gate is intentionally narrow. When a two-parent request occurs, the
+The gate is intentionally narrow. When a two-parent request occurs, the
 candidate pair is accepted only if:
 
 1. both parents are valid archive members;

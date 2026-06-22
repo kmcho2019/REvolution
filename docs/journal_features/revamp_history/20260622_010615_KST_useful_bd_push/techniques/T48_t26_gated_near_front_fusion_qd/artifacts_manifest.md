@@ -1,18 +1,26 @@
 # T48 Artifacts Manifest
 
-Status: pre-registered. Implementation and live result are pending.
+Status: implementation ready. Live result is pending.
 
 ## Method Sources
 
-Expected source touch points:
+Implemented source touch points:
 
 - `src/revolution/qd/engine.py`
 - `src/revolution/backends/revolution_backend.py`
 - `scripts/run_backend.py`
-- focused QD parent-selection tests under `tests/revolution/`
+- `tests/revolution/test_qd_engine.py`
+- `tests/revolution/test_revolution_backend.py`
 
 The implementation must keep `qd_two_parent_gate=none` as the default so prior
 T26/T47 behavior is unchanged.
+
+Focused validation:
+
+- `uv run pytest tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py -q`
+- `uv run ruff check src/revolution/qd/engine.py src/revolution/backends/revolution_backend.py scripts/run_backend.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py`
+- `uv tool run ty check src/revolution/qd/engine.py src/revolution/backends/revolution_backend.py`
+- `uv run python -m pyright src/revolution/qd/engine.py src/revolution/backends/revolution_backend.py`
 
 ## Planned Live Run
 

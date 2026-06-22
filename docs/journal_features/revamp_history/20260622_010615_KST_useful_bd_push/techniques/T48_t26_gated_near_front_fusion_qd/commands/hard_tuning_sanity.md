@@ -1,7 +1,7 @@
 # T48 Hard/Tuning Sanity Commands
 
-Status: planned. Run only after the narrow `qd_two_parent_gate` implementation
-and focused tests land.
+Status: ready to run after vLLM preflight. The narrow `qd_two_parent_gate`
+implementation and focused tests have landed.
 
 ## Preflight
 

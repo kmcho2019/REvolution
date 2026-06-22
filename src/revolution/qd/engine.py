@@ -106,6 +106,8 @@ from scipy.stats import ks_2samp
 _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
 JournalParentSource = Literal["archive", "fail_pool", "seed"]
 QDOperatorKind = Literal["eoh_strategies", "single_thought_operator"]
+QDTwoParentGate = Literal["none", "near_front_descriptor"]
+NEAR_FRONT_DESCRIPTOR_DISTANCE_SQ = 6.75
 SINGLE_THOUGHT_OPERATOR_STRATEGY = "single_thought_operator"
 THOUGHT_ONLY_CODE_STRATEGY = "thought_only_code"
 
@@ -125,6 +127,7 @@ class QDEngine(EoHEngine):
         qd_max_elites_per_cell: int = 1,
         qd_objectives: str = "ppa",
         qd_two_parent_probability: float = 0.5,
+        qd_two_parent_gate: str = "none",
         qd_cvt_warmup_successes: int | None = None,
         qd_grid_quantile_warmup_successes: int = 20,
         qd_grid_quantile_warmup_max_buffer: int = 0,
@@ -182,6 +185,8 @@ class QDEngine(EoHEngine):
             raise ValueError("elite_pareto_slot requires qd_max_elites_per_cell >= 2.")
         if not 0.0 <= float(qd_two_parent_probability) <= 1.0:
             raise ValueError("qd_two_parent_probability must be between 0 and 1.")
+        if qd_two_parent_gate not in {"none", "near_front_descriptor"}:
+            raise ValueError(f"Unsupported qd_two_parent_gate '{qd_two_parent_gate}'.")
         if qd_operator_kind not in {"eoh_strategies", "single_thought_operator"}:
             raise ValueError(f"Unsupported qd_operator_kind '{qd_operator_kind}'.")
         if not 0.0 <= float(qd_operator_one_parent_fraction) <= 1.0:
@@ -244,6 +249,10 @@ class QDEngine(EoHEngine):
         self.qd_max_elites_per_cell = int(qd_max_elites_per_cell)
         self.qd_objectives: QDObjectiveMode = cast(QDObjectiveMode, qd_objectives)
         self.qd_two_parent_probability = float(qd_two_parent_probability)
+        self.qd_two_parent_gate: QDTwoParentGate = cast(
+            QDTwoParentGate,
+            qd_two_parent_gate,
+        )
         self.qd_cvt_warmup_successes = qd_cvt_warmup_successes
         self.qd_grid_quantile_warmup_successes = int(qd_grid_quantile_warmup_successes)
         self.qd_grid_quantile_warmup_max_buffer = int(qd_grid_quantile_warmup_max_buffer)
@@ -330,6 +339,10 @@ class QDEngine(EoHEngine):
         self.qd_success_parent_requests = 0
         self.qd_two_parent_attempts = 0
         self.qd_two_parent_fallbacks = 0
+        self.qd_two_parent_gate_attempts = 0
+        self.qd_two_parent_gate_accepts = 0
+        self.qd_two_parent_gate_rejects = 0
+        self._pending_two_parent_gate_pair: list[Heuristic] | None = None
         self._archive_insertion_index = 0
         self._qd_rebin_recent_members: list[ArchiveMember] = []
         self._qd_rebin_replay_pool: dict[str, ArchiveMember] = {}
@@ -1228,6 +1241,10 @@ class QDEngine(EoHEngine):
             "two_parent_attempts": self.qd_two_parent_attempts,
             "two_parent_fallbacks": self.qd_two_parent_fallbacks,
             "qd_two_parent_probability": self.qd_two_parent_probability,
+            "qd_two_parent_gate": self.qd_two_parent_gate,
+            "two_parent_gate_attempts": self.qd_two_parent_gate_attempts,
+            "two_parent_gate_accepts": self.qd_two_parent_gate_accepts,
+            "two_parent_gate_rejects": self.qd_two_parent_gate_rejects,
             "num_cells": self.success_archive.num_cells,
             "fill_target_cells": qd_target_cells(
                 self.success_archive.num_cells,
@@ -1692,11 +1709,46 @@ class QDEngine(EoHEngine):
         )
         return cast(Heuristic, winner.member.payload)
 
+    def _gated_near_front_descriptor_pair(self) -> list[Heuristic] | None:
+        members = [member for _, member in self.success_archive.members()]
+        ranked = ranked_front(members, self._objective_names())
+        candidates: list[tuple[Heuristic, tuple[float, ...]]] = []
+        for item in ranked:
+            payload = item.member.payload
+            if item.pareto_rank > 2 or not isinstance(payload, Heuristic):
+                continue
+            if not bool(payload.ppa_success):
+                continue
+            descriptors = self._descriptor_tuple(payload)
+            if descriptors is None:
+                continue
+            candidates.append((payload, descriptors))
+
+        pairs: list[list[Heuristic]] = []
+        for left_index, (left, left_desc) in enumerate(candidates):
+            for right, right_desc in candidates[left_index + 1 :]:
+                distance = sum(
+                    (left_value - right_value) ** 2
+                    for left_value, right_value in zip(left_desc, right_desc)
+                )
+                if distance <= NEAR_FRONT_DESCRIPTOR_DISTANCE_SQ:
+                    pairs.append([left, right])
+        if not pairs:
+            return None
+        return random.choice(pairs)
+
     def _sample_two_success_parents(
         self,
         *,
         allow_intra_bin: bool = False,
     ) -> list[Heuristic]:
+        if self.qd_two_parent_gate == "near_front_descriptor":
+            if self._pending_two_parent_gate_pair is not None:
+                parents = self._pending_two_parent_gate_pair
+                self._pending_two_parent_gate_pair = None
+                return parents
+            parents = self._gated_near_front_descriptor_pair()
+            return parents if parents is not None else self._sample_success_parents(1)
         if self.qd_parent_selection == "nsga2_global_rank":
             return self._sample_success_parents(2)
         if self.qd_cell_mode not in {"pareto_front", "elite_pareto_slot"}:
@@ -1730,16 +1782,27 @@ class QDEngine(EoHEngine):
         ]
 
     def _success_parent_arity(self) -> int | None:
+        self._pending_two_parent_gate_pair = None
         if self.qd_cell_mode not in {"pareto_front", "elite_pareto_slot"}:
             return None
         self.qd_success_parent_requests += 1
         if random.random() >= self.qd_two_parent_probability:
             return 1
         self.qd_two_parent_attempts += 1
-        if self.success_archive.occupied_count() >= 2:
+        if self.success_archive.occupied_count() < 2:
+            self.qd_two_parent_fallbacks += 1
+            return 1
+        if self.qd_two_parent_gate == "none":
             return 2
-        self.qd_two_parent_fallbacks += 1
-        return 1
+        self.qd_two_parent_gate_attempts += 1
+        parents = self._gated_near_front_descriptor_pair()
+        if parents is None:
+            self.qd_two_parent_gate_rejects += 1
+            self.qd_two_parent_fallbacks += 1
+            return 1
+        self.qd_two_parent_gate_accepts += 1
+        self._pending_two_parent_gate_pair = parents
+        return 2
 
     def _descriptor_distance(self, left: Heuristic, right: Heuristic) -> float:
         left_desc = self._descriptor_tuple(left)

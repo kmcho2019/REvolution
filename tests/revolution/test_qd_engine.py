@@ -704,9 +704,121 @@ def test_qd_engine_two_parent_sampling_uses_distinct_cells(tmp_path, monkeypatch
     } == {"0", "1"}
 
 
+def test_qd_engine_gated_two_parent_accepts_near_front_pair(tmp_path, monkeypatch):
+    cfg = tmp_path / "qd.yaml"
+    cfg.write_text(
+        "grid_axes:\n"
+        "  sr_pca_0:\n"
+        "    bins: 4\n"
+        "    lower_bound: -3.0\n"
+        "    upper_bound: 3.0\n"
+        "  sr_pca_1:\n"
+        "    bins: 4\n"
+        "    lower_bound: -3.0\n"
+        "    upper_bound: 3.0\n"
+        "  sr_pca_2:\n"
+        "    bins: 4\n"
+        "    lower_bound: -3.0\n"
+        "    upper_bound: 3.0\n",
+        encoding="utf-8",
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_cell_mode="pareto_front",
+        qd_two_parent_probability=1.0,
+        qd_two_parent_gate="near_front_descriptor",
+        qd_parent_selection="nsga2_global_rank",
+        qd_grid_axes=("sr_pca_0", "sr_pca_1", "sr_pca_2"),
+        qd_descriptor_file=str(cfg),
+    )
+    left = Heuristic("left", "module m; endmodule", "", status="success")
+    left.id = "left"
+    left.ppa_success = True
+    left.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9}
+    left.descriptor_values = {"sr_pca_0": -2.0, "sr_pca_1": -2.0, "sr_pca_2": -2.0}
+    right = Heuristic("right", "module m; endmodule", "", status="success")
+    right.id = "right"
+    right.ppa_success = True
+    right.ppa_metrics = {"power": 0.91, "area": 91.0, "eff_clk_period": 0.91}
+    right.descriptor_values = {"sr_pca_0": -0.6, "sr_pca_1": -2.0, "sr_pca_2": -2.0}
+    engine.success_pool = [left, right]
+    engine._rebuild_archive_from_success_pool()
+
+    assert engine._success_parent_arity() == 2
+    assert {parent.id for parent in engine._sample_two_success_parents()} == {
+        "left",
+        "right",
+    }
+    assert engine.qd_two_parent_gate_attempts == 1
+    assert engine.qd_two_parent_gate_accepts == 1
+    assert engine.qd_two_parent_gate_rejects == 0
+
+
+def test_qd_engine_gated_two_parent_rejects_far_pair(tmp_path, monkeypatch):
+    cfg = tmp_path / "qd.yaml"
+    cfg.write_text(
+        "grid_axes:\n"
+        "  sr_pca_0:\n"
+        "    bins: 4\n"
+        "    lower_bound: -3.0\n"
+        "    upper_bound: 3.0\n"
+        "  sr_pca_1:\n"
+        "    bins: 4\n"
+        "    lower_bound: -3.0\n"
+        "    upper_bound: 3.0\n"
+        "  sr_pca_2:\n"
+        "    bins: 4\n"
+        "    lower_bound: -3.0\n"
+        "    upper_bound: 3.0\n",
+        encoding="utf-8",
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_cell_mode="pareto_front",
+        qd_two_parent_probability=1.0,
+        qd_two_parent_gate="near_front_descriptor",
+        qd_parent_selection="nsga2_global_rank",
+        qd_grid_axes=("sr_pca_0", "sr_pca_1", "sr_pca_2"),
+        qd_descriptor_file=str(cfg),
+    )
+    left = Heuristic("left", "module m; endmodule", "", status="success")
+    left.id = "left"
+    left.ppa_success = True
+    left.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9}
+    left.descriptor_values = {
+        "sr_pca_0": -2.5,
+        "sr_pca_1": -2.5,
+        "sr_pca_2": -2.5,
+    }
+    right = Heuristic("right", "module m; endmodule", "", status="success")
+    right.id = "right"
+    right.ppa_success = True
+    right.ppa_metrics = {"power": 0.91, "area": 91.0, "eff_clk_period": 0.91}
+    right.descriptor_values = {
+        "sr_pca_0": 2.5,
+        "sr_pca_1": 2.5,
+        "sr_pca_2": 2.5,
+    }
+    engine.success_pool = [left, right]
+    engine._rebuild_archive_from_success_pool()
+
+    assert engine._success_parent_arity() == 1
+    assert engine.qd_two_parent_gate_attempts == 1
+    assert engine.qd_two_parent_gate_accepts == 0
+    assert engine.qd_two_parent_gate_rejects == 1
+    assert engine.qd_two_parent_fallbacks == 1
+
+
 def test_qd_engine_rejects_unknown_cell_mode(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match="qd_cell_mode"):
         _engine(tmp_path, monkeypatch, qd_cell_mode="mystery")
+
+
+def test_qd_engine_rejects_unknown_two_parent_gate(tmp_path, monkeypatch):
+    with pytest.raises(ValueError, match="qd_two_parent_gate"):
+        _engine(tmp_path, monkeypatch, qd_two_parent_gate="wide_open")
 
 
 def test_qd_engine_builds_cvt_archive_runtime(monkeypatch, tmp_path):

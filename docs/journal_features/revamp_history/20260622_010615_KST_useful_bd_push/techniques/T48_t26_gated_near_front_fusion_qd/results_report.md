@@ -1,9 +1,9 @@
 # T48 Gated Near-Front Fusion Results
 
-Status: pending.
+Status: live result pending.
 
-No implementation or live run has been launched. T48 is pre-registered because
-T47 exact T26 was diagnostic but not held-out-ready:
+No live run has been launched. T48 was implemented because T47 exact T26 was
+diagnostic but not held-out-ready:
 
 - mean HV delta: `-0.015483`;
 - mean HV-AUC delta: `-0.018435`;

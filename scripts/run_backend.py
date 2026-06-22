@@ -430,6 +430,7 @@ def _build_backend(
             qd_max_elites_per_cell=args.qd_max_elites_per_cell,
             qd_objectives=args.qd_objectives,
             qd_two_parent_probability=args.qd_two_parent_probability,
+            qd_two_parent_gate=args.qd_two_parent_gate,
             qd_neighbor_k=args.qd_neighbor_k,
             qd_cvt_warmup_successes=args.qd_cvt_warmup_successes,
             qd_grid_quantile_warmup_successes=args.qd_grid_quantile_warmup_successes,
@@ -953,6 +954,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         choices=["ppa"],
     )
     parser.add_argument("--qd_two_parent_probability", type=float, default=0.5)
+    parser.add_argument(
+        "--qd_two_parent_gate",
+        type=str,
+        default="none",
+        choices=["none", "near_front_descriptor"],
+    )
     parser.add_argument("--qd_neighbor_k", type=int, default=8)
     parser.add_argument("--qd_cvt_warmup_successes", type=int, default=None)
     parser.add_argument("--qd_grid_quantile_warmup_successes", type=int, default=20)
