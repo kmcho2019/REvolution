@@ -1106,3 +1106,45 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated T31's methodology, results placeholder, figure checklist, and
   visualization notes so the next live package cannot be accepted without this
   straightforward PPA Pareto view.
+
+## T31 SR Raw Fail-Feedback Repair QD Live Result - 2026-06-22 UTC
+
+- Re-preflighted `http://20.0.0.103:8000/v1/models`; the endpoint returned
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Completed the T31 holdout run under
+  `exp/useful_bd_push/t31_sr_raw_fail_feedback_repair_qd_20260622_002953_UTC/`.
+  Runtime was 681.97 seconds.
+- T31 final-best scores:
+  `Prob150_review2015_fsmonehot` 0.329686,
+  `Prob098_circuit7` 0.012006, and
+  `Prob135_m2014_q6b` 0.263617.
+- Pareto archive validation passed structurally for the T31 holdout arm:
+  valid `True`, failure count `0`, problem-invalid count `0`, and max front
+  size seen `2`.
+- Added `scripts/package_t31_holdout_repair_audit.py` and
+  `tests/scripts/test_package_t31_holdout_repair_audit.py`; refactored the T30
+  packager to allow a reusable output prefix and figure title.
+- Packaged T31 tables for live metrics, T31/T26-vs-classic deltas, canonical
+  RTL/netlist/family accounting, method manifest, vLLM preflight metadata, and
+  T31 Pareto validation.
+- Added direct raw PPA Pareto figures:
+  `figures/t31_holdout_ppa_pareto_area_power_candidate_zoom.png` uses raw area
+  and power with no inverted axes, and
+  `figures/t31_holdout_ppa_pareto_area_power.png` adds reference stars.
+- Visual inspection accepted the candidate-zoom raw PPA Pareto plot as the
+  primary front figure. It shows no meaningful front widening and makes the
+  P135 quality/HV loss visible.
+- Aggregate read: T31 valid PPA samples drop to 56 versus classic's 103 and
+  T26's 68, final-best covered problems remain 3, mean final-best score drops
+  to 0.201770, mean normalized HV and HV-AUC are both 0, candidate-level front
+  points tie at 3, unique PPA points drop to 6, and front netlists tie T26 at
+  6 while remaining below classic's 9.
+- Per-problem warning: P098 valid PPA is 14, worse than T26's already weak 15
+  and far below classic's 31. P150 valid PPA is 13 versus classic's 32, which
+  triggers the per-problem 50% drop warning. P135 valid PPA improves slightly
+  versus T26, but the final-best score and HV signal regress.
+- Tier read: `T0 diagnostic`. T31 preserves final-best coverage, but it fails
+  the intended P098 repair target and loses T26's P135 quality/HV signal.
+- Lane decision: retire direct same-budget fail-feedback repair as the next
+  T26 follow-up. The next method card should split champion exploitation,
+  near-front sampling, and bounded repair into separate emitter roles.

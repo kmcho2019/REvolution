@@ -32,6 +32,7 @@ Real result packages:
   T26 runs
 - `T29_sr_raw_front_recovery_qd` front-recovery live follow-up result
 - `T30_t26_holdout_front_audit` classic-versus-T26 VerilogEval holdout audit
+- `T31_sr_raw_fail_feedback_repair_qd` failure-feedback repair holdout arm
 
 Scaffolded but not yet real-result packages remain `T07` to `T16` and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
@@ -46,8 +47,9 @@ T29 front-recovery variant is also negative: it does not recover the front
 deficit and loses multi-pipe final-PPA coverage. T30 gives T26 holdout support:
 it preserves all three classic-covered VerilogEval holdout designs and improves
 mean best score, but it has a P098 yield warning and does not broaden the raw
-PPA/front-family evidence. The ten-package minimum is satisfied, but the goal
-remains active.
+PPA/front-family evidence. T31 is a negative same-budget repair result: it
+does not repair P098 yield and loses T26's P135 HV/quality signal. The
+ten-package minimum is satisfied, but the goal remains active.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -163,14 +165,16 @@ samples, candidate-level front points tie at 3, unique PPA points drop from
 straightforward raw area-power Pareto figure with no inverted axes:
 `figures/t30_holdout_ppa_pareto_area_power_candidate_zoom.png`.
 
-`T31_sr_raw_fail_feedback_repair_qd` is pre-registered as the next live
-holdout arm. It keeps T26's SR raw descriptor, local-Pareto grid-quantile
-archive, NSGA-II parent selection, and 0.80 champion lane, but switches the
-code-individual emitter to `single_thought_operator` with `1200` characters of
-failure feedback for fail-pool parents. It does not use `thought_only`
-representation and does not add extra repair attempts, so it is a same
-offspring-budget repair/yield probe rather than an expanded-budget repair
-loop. Its controls are the T30 classic and T26 roots.
+`T31_sr_raw_fail_feedback_repair_qd` is the completed same-budget
+failure-feedback repair holdout arm. It keeps T26's SR raw descriptor,
+local-Pareto grid-quantile archive, NSGA-II parent selection, and 0.80
+champion lane, but switches the code-individual emitter to
+`single_thought_operator` with `1200` characters of failure feedback for
+fail-pool parents. It is `T0 diagnostic`: final-best coverage stays at 3/3,
+but valid PPA falls to 56 versus classic's 103 and T26's 68, P098 falls to
+14 valid PPA samples versus T26's 15, mean final-best score falls to 0.201770,
+and mean HV/HV-AUC return to zero. The direct raw PPA Pareto figure is
+`figures/t31_holdout_ppa_pareto_area_power_candidate_zoom.png`.
 
 ## Current Conclusions
 
@@ -203,13 +207,17 @@ loop. Its controls are the T30 classic and T26 roots.
     two-parent fusion is not the right front-recovery path.
 12. T30 shows T26 can survive a small frozen VerilogEval holdout and improve
     mean best score, but it does not yet establish a broader QD front claim.
+13. T31 shows same-budget fail-pool feedback is not the missing repair
+    mechanism: it preserves coverage but worsens yield, unique PPA breadth,
+    P135 HV/quality, and reference-beating count.
 
 ## Next Decisions
 
-- Execute and package the pre-registered T31 failure-feedback repair arm before
-  any promotion claim.
-- Use the T30 P098 yield warning and front-family deficit as explicit T31
-  acceptance targets.
+- Do not continue direct fail-feedback repair as the next T26 follow-up.
+- Specify a front-preserving emitter/archive-ensemble variant that keeps T26
+  champion pressure while sampling local rank-1 or near-front candidates.
+- Use the T30 P098 yield warning, T30/T31 direct raw PPA-front plots, and T31
+  failure modes as acceptance controls for the next emitter.
 - Do not continue blind interpolation between T24 SR raw and T26 scheduler
   settings; T29 is the measured negative result for that idea.
 - Use the direct PPA-front audit figures when deciding whether a candidate has

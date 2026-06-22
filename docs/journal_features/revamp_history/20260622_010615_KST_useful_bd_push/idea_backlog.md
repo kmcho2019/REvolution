@@ -273,6 +273,27 @@ a numbered `techniques/T##_slug/` package before running it.
   extra local repair attempts in the first holdout run because prior journal
   evidence showed those mechanisms can trade away PPA quality.
 
+## From `T31_sr_raw_fail_feedback_repair_qd`
+
+- Direct same-budget fail-pool feedback is retired as a standalone follow-up.
+  It preserves final-best coverage on all three holdout designs, but valid PPA
+  falls to 56 versus T26's 68 and classic's 103.
+- T31 does not repair the target P098 issue: P098 valid PPA is 14, slightly
+  worse than T26's already weak 15 and far below classic's 31.
+- T31 loses the T30/T26 P135 signal: final-best score falls to 0.263617, and
+  mean normalized HV/HV-AUC return to zero.
+- Candidate-level front points still tie at 3, but unique PPA points fall to
+  6 and reference-beating points fall to 2. The direct raw PPA Pareto figure
+  shows no visible front widening.
+- Potential T32: `sr_raw_front_preserving_emitter_qd`, an explicit emitter
+  ensemble with separate lanes for champion exploitation, near-front parent
+  sampling, and bounded repair attempts. The key difference from T31 is that
+  repair is isolated to a bounded lane and cannot replace all archive-parent
+  requests.
+- Potential T32 acceptance controls: T26/T30 for quality pressure, T29 for
+  failed generic exploration, T31 for failed direct repair, and the raw
+  area-power PPA Pareto plots as mandatory primary figures.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

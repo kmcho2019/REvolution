@@ -45,16 +45,19 @@ The desired end state is one of:
 
 ## Current Research State
 
-T30 is the most recent completed package. It supports exact T26
-conservative-exploit SR raw as a `T1 near_classic` holdout candidate because
-it preserves all three classic-covered VerilogEval holdout designs and
-improves mean final-best score by 9.91%. It is not a QD-front promotion:
-valid-PPA yield drops, P098 has a per-problem yield warning, and front/netlist
-breadth does not improve.
+T31 is the most recent completed package. T30 remains the most recent positive
+holdout support for exact T26 conservative-exploit SR raw: it preserves all
+three classic-covered VerilogEval holdout designs and improves mean final-best
+score by 9.91%. It is not a QD-front promotion because valid-PPA yield drops,
+P098 has a per-problem yield warning, and front/netlist breadth does not
+improve.
 
-T31 is now pre-registered as `T31_sr_raw_fail_feedback_repair_qd`, a
-same-budget failure-feedback repair emitter that keeps T26 champion refinement
-while addressing T30's P098 yield warning and front-breadth deficit. T31 must
+T31 is completed and retired as `T0 diagnostic`. Same-budget failure feedback
+kept final-best coverage alive, but it did not repair P098 yield, did not
+preserve T26's P135 HV/quality signal, and did not widen the raw PPA Pareto
+front. The next method should split champion, near-front, and bounded-repair
+emitter roles instead of replacing archive-parent requests with direct
+fail-feedback repair. Any T32-style follow-up must
 include straightforward raw PPA Pareto figures with conventional
 lower-left-better axes.
 

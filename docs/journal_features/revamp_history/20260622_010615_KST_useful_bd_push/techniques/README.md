@@ -44,7 +44,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T28` | `T28_t26_family_audit` | Canonical/family audit | `T1 near_classic` support with front-family blocker |
 | `T29` | `T29_sr_raw_front_recovery_qd` | Archive-coupling front-recovery variant | `T0 diagnostic`; failed to recover multi-pipe front/final-PPA coverage |
 | `T30` | `T30_t26_holdout_front_audit` | Archive-coupling holdout audit | `T1 near_classic` holdout support with P098 yield warning |
-| `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Archive-coupling failure-feedback repair variant | Pre-registered holdout live arm |
+| `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Archive-coupling failure-feedback repair variant | `T0 diagnostic`; no P098 repair or P135 HV retention |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

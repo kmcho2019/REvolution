@@ -13,21 +13,19 @@ Start here when resuming the active goal.
 - Holdout subset: `tables/holdout_screening_subset.csv`.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
-- Most recent package:
-  `techniques/T31_sr_raw_fail_feedback_repair_qd/` (pre-registered T31
-  same-budget failure-feedback repair arm for the frozen VerilogEval holdout).
 - Most recent completed package:
-  `techniques/T30_t26_holdout_front_audit/` (completed classic-versus-T26
-  holdout audit; `T1 near-classic` support with a P098 yield warning and no
-  front-breadth win).
+  `techniques/T31_sr_raw_fail_feedback_repair_qd/` (completed same-budget
+  failure-feedback repair arm; `T0 diagnostic` because it did not repair P098
+  yield or preserve T26's P135 HV/quality signal).
 - Next direction:
-  execute T31, then package direct raw PPA-front, yield, HV/HV-AUC, and
-  family/netlist evidence against T30 classic and T26 comparators.
+  stop direct fail-feedback repair as a T31 lane and specify a front-preserving
+  emitter/archive-ensemble follow-up that keeps T26 champion pressure while
+  sampling local rank-1 or near-front candidates.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T30_t26_holdout_front_audit/figures/t30_holdout_ppa_pareto_area_power_candidate_zoom.png`
+  `techniques/T31_sr_raw_fail_feedback_repair_qd/figures/t31_holdout_ppa_pareto_area_power_candidate_zoom.png`
   (straightforward raw area-power Pareto front, no inverted axes).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
@@ -111,7 +109,7 @@ Start here when resuming the active goal.
 | `T28` | `T28_t26_family_audit` | Canonical/family audit package with direct PPA-front figures and scoped HTML viewer; T26 valid candidates are mostly distinct, but front-family count remains below classic and SR raw. |
 | `T29` | `T29_sr_raw_front_recovery_qd` | Completed front-recovery live variant, `T0 diagnostic`; direct PPA-front plots show only two multi-pipe front points and no final multi-pipe best PPA. |
 | `T30` | `T30_t26_holdout_front_audit` | Completed holdout audit; `T1 near-classic` support with a P098 yield warning, direct raw PPA Pareto figures, and no front-breadth win. |
-| `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Pre-registered same-budget failure-feedback repair arm on the frozen VerilogEval holdout. |
+| `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Completed holdout live arm, `T0 diagnostic`; preserves final-best coverage but loses yield, P135 HV/quality, and unique PPA breadth. |
 
 ## Validity-Gate Note
 

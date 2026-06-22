@@ -52,7 +52,7 @@ PROBLEMS = (
     "Prob098_circuit7",
     "Prob135_m2014_q6b",
 )
-METHODS = (
+METHODS: tuple[dict[str, str], ...] = (
     {
         "method": "classic_revolution",
         "label": "Classic",
@@ -66,6 +66,8 @@ METHODS = (
         "color": "#e15759",
     },
 )
+OUTPUT_PREFIX: str = "t30_holdout"
+FIGURE_TITLE_PREFIX: str = "T30 Holdout"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -96,14 +98,14 @@ def main(argv: list[str] | None = None) -> int:
     family_aggregate_rows = aggregate_family_rows(family_rows)
     family_delta_rows = family_comparison_rows(family_aggregate_rows)
 
-    write_csv(table_dir / "t30_holdout_live_problem_metrics.csv", live_rows)
-    write_csv(table_dir / "t30_holdout_live_aggregate_metrics.csv", live_aggregate_rows)
-    write_csv(table_dir / "t30_holdout_live_comparison_deltas.csv", live_delta_rows)
-    write_csv(table_dir / "t30_holdout_family_candidate_rows.csv", candidate_rows(candidates))
-    write_csv(table_dir / "t30_holdout_family_problem_metrics.csv", family_rows)
-    write_csv(table_dir / "t30_holdout_family_aggregate_metrics.csv", family_aggregate_rows)
-    write_csv(table_dir / "t30_holdout_family_comparison_deltas.csv", family_delta_rows)
-    write_csv(table_dir / "t30_holdout_method_manifest.csv", manifest_rows(args.run_root))
+    write_csv(table_dir / f"{OUTPUT_PREFIX}_live_problem_metrics.csv", live_rows)
+    write_csv(table_dir / f"{OUTPUT_PREFIX}_live_aggregate_metrics.csv", live_aggregate_rows)
+    write_csv(table_dir / f"{OUTPUT_PREFIX}_live_comparison_deltas.csv", live_delta_rows)
+    write_csv(table_dir / f"{OUTPUT_PREFIX}_family_candidate_rows.csv", candidate_rows(candidates))
+    write_csv(table_dir / f"{OUTPUT_PREFIX}_family_problem_metrics.csv", family_rows)
+    write_csv(table_dir / f"{OUTPUT_PREFIX}_family_aggregate_metrics.csv", family_aggregate_rows)
+    write_csv(table_dir / f"{OUTPUT_PREFIX}_family_comparison_deltas.csv", family_delta_rows)
+    write_csv(table_dir / f"{OUTPUT_PREFIX}_method_manifest.csv", manifest_rows(args.run_root))
     write_figures(live_rows, live_aggregate_rows, candidates, family_aggregate_rows, figure_dir)
     return 0
 
@@ -456,31 +458,31 @@ def write_figures(
     family_aggregate: list[dict[str, str]],
     figure_dir: Path,
 ) -> None:
-    plot_live_aggregate(live_aggregate, figure_dir / "t30_holdout_live_aggregate.png")
-    plot_problem_counts(live_rows, figure_dir / "t30_holdout_problem_counts.png")
-    plot_family_aggregate(family_aggregate, figure_dir / "t30_holdout_family_counts.png")
+    plot_live_aggregate(live_aggregate, figure_dir / f"{OUTPUT_PREFIX}_live_aggregate.png")
+    plot_problem_counts(live_rows, figure_dir / f"{OUTPUT_PREFIX}_problem_counts.png")
+    plot_family_aggregate(family_aggregate, figure_dir / f"{OUTPUT_PREFIX}_family_counts.png")
     plot_raw_ppa_pareto_fronts(
         candidates,
         live_rows,
-        figure_dir / "t30_holdout_ppa_pareto_area_power.png",
-        title="T30 Holdout Raw PPA Pareto Fronts With Reference",
+        figure_dir / f"{OUTPUT_PREFIX}_ppa_pareto_area_power.png",
+        title=f"{FIGURE_TITLE_PREFIX} Raw PPA Pareto Fronts With Reference",
         show_reference=True,
     )
     plot_raw_ppa_pareto_fronts(
         candidates,
         live_rows,
-        figure_dir / "t30_holdout_ppa_pareto_area_power_candidate_zoom.png",
-        title="T30 Holdout Raw PPA Pareto Fronts",
+        figure_dir / f"{OUTPUT_PREFIX}_ppa_pareto_area_power_candidate_zoom.png",
+        title=f"{FIGURE_TITLE_PREFIX} Raw PPA Pareto Fronts",
         show_reference=False,
     )
     plot_ppa_fronts(
         candidates,
-        figure_dir / "t30_holdout_ppa_fronts_area_power_zoom.png",
+        figure_dir / f"{OUTPUT_PREFIX}_ppa_fronts_area_power_zoom.png",
         use_improvements=False,
     )
     plot_ppa_fronts(
         candidates,
-        figure_dir / "t30_holdout_ppa_fronts_improvement.png",
+        figure_dir / f"{OUTPUT_PREFIX}_ppa_fronts_improvement.png",
         use_improvements=True,
     )
 
@@ -496,7 +498,7 @@ def plot_live_aggregate(rows: list[dict[str, str]], output_path: Path) -> None:
         axis.set_xticks(x)
         axis.set_xticklabels(labels, rotation=18, ha="right")
         axis.grid(axis="y", color="#e5e5e5", linewidth=0.8)
-    fig.suptitle("T30 Holdout Live Metrics", y=1.02)
+    fig.suptitle(f"{FIGURE_TITLE_PREFIX} Live Metrics", y=1.02)
     fig.tight_layout()
     fig.savefig(output_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -528,7 +530,7 @@ def plot_problem_counts(rows: list[dict[str, str]], output_path: Path) -> None:
         axis.grid(axis="y", color="#e5e5e5", linewidth=0.8)
     handles, legend_labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, legend_labels, loc="lower center", ncol=2, frameon=False)
-    fig.suptitle("T30 Holdout Counts By Problem", y=1.02)
+    fig.suptitle(f"{FIGURE_TITLE_PREFIX} Counts By Problem", y=1.02)
     fig.tight_layout(rect=(0, 0.12, 1, 0.94))
     fig.savefig(output_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -545,7 +547,7 @@ def plot_family_aggregate(rows: list[dict[str, str]], output_path: Path) -> None
         axis.set_xticks(x)
         axis.set_xticklabels(labels, rotation=18, ha="right")
         axis.grid(axis="y", color="#e5e5e5", linewidth=0.8)
-    fig.suptitle("T30 Holdout Family Metrics", y=1.02)
+    fig.suptitle(f"{FIGURE_TITLE_PREFIX} Family Metrics", y=1.02)
     fig.tight_layout()
     fig.savefig(output_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -707,7 +709,11 @@ def plot_ppa_fronts(
             )
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 0.93), ncol=2, frameon=False)
-    title = "T30 Holdout PPA Fronts: Improvement Space" if use_improvements else "T30 Holdout PPA Fronts: Area-Power"
+    title = (
+        f"{FIGURE_TITLE_PREFIX} PPA Fronts: Improvement Space"
+        if use_improvements
+        else f"{FIGURE_TITLE_PREFIX} PPA Fronts: Area-Power"
+    )
     fig.suptitle(title, y=0.995)
     fig.text(
         0.5,

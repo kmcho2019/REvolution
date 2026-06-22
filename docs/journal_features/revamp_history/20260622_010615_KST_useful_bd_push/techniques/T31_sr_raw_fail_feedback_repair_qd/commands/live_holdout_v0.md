@@ -73,5 +73,15 @@ After execution, validate the T31 Pareto archive:
   --pareto-qd-mode sr_raw_fail_feedback_repair_qd/seed_1001/openai_gpt-oss-120b
 ```
 
-Package with a T31-specific packager or an extension of the T30 packager that
-compares T30 classic, T30 T26, and the resolved T31 run root.
+Package the completed run:
+
+```bash
+/workspace/.venv/bin/python -m scripts.package_t31_holdout_repair_audit \
+  --t30-run-root exp/useful_bd_push/t30_t26_holdout_front_audit_20260621_233506_UTC \
+  --t31-run-root exp/useful_bd_push/t31_sr_raw_fail_feedback_repair_qd_20260622_002953_UTC \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T31_sr_raw_fail_feedback_repair_qd
+```
+
+The resolved run completed at:
+
+`exp/useful_bd_push/t31_sr_raw_fail_feedback_repair_qd_20260622_002953_UTC/`
