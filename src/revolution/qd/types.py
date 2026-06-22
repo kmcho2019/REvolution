@@ -5,7 +5,7 @@ from typing import Any, Literal, Protocol
 
 QDSearchMode = Literal["revolution", "revolution_qd"]
 QDArchiveType = Literal["grid", "cvt", "grid_quantile"]
-QDCellMode = Literal["scalar_elite", "pareto_front"]
+QDCellMode = Literal["scalar_elite", "pareto_front", "elite_pareto_slot"]
 QDObjectiveMode = Literal["ppa"]
 QDRebinningKind = Literal["disabled", "ks_triggered"]
 QDPhaseName = Literal["fail", "seed", "backfill", "refine", "crossover"]

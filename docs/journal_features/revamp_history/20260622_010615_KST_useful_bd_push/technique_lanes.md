@@ -54,8 +54,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`; T21 expands coverage but loses quality. | Stop pure concatenation; use feature selection, CVT, or local-Pareto retention. |
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
-| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T37 confirms the T36/T11 structural signal is strongest with exactly one bounded local-front slot. | Live-validate the one-slot T37 setting before claiming useful BD. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T27 shows T26 beats classic on live HV/HV-AUC; T30 gives holdout support; T35 shows full local-Pareto replacement is too costly; T37 rejects two-plus front slots. | Advance one-slot T37 to same-budget live validation. |
+| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T37 confirms the T36/T11 structural signal is strongest with exactly one bounded local-front slot. | Use T38 to live-validate the one-slot archive rule before claiming useful BD. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T27 shows T26 beats classic on live HV/HV-AUC; T30 gives holdout support; T35 shows full local-Pareto replacement is too costly; T37 rejects two-plus front slots. | Run T38 as the same-budget champion-plus-one-slot archive validation. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T26/T27/T30 show champion-biased parent-source policy restores quality and holdout pressure; T31 direct repair and T32 small near-front sampling are insufficient. | Split champion, near-front, and bounded-repair roles more sharply. |
 
 ## Lane Scorecard
@@ -66,8 +66,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L1` | T03 ST-NOD near-miss | Hybrid source. | Direct transparent descriptors lose audit-QD or best quality. | Continue only as selected features inside T17/T24-style archives. |
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
-| `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, and T37 slot ablation | T37 is `T2 replay_candidate`; one local-front slot improves HV and front hits over lexical and T11, while two-plus slots lose HV. | Replay signal is strong, but live validity and coverage are untested. | Run same-budget live validation of the one-slot rule; keep T35 front-seeded only as an upper bound. |
-| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37 local-Pareto lineage | T37 shows bounded one-slot local-front coupling is better than full cell-local Pareto replacement or larger local-front lanes. | Need to prove the archive rule works during generation, not only passive replay. | Advance one-slot T37 before more passive descriptor work. |
+| `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, and T38 live hook | T37 is `T2 replay_candidate`; one local-front slot improves HV and front hits over lexical and T11, while two-plus slots lose HV. | Replay signal is strong, but live validity and coverage are untested. | Run T38; keep T35 front-seeded only as an upper bound. |
+| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38 local-Pareto lineage | T38 implements the bounded champion-plus-one-slot rule as a live archive mode. | Need to prove the archive rule works during generation, not only passive replay. | Execute T38 before more passive descriptor work. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter | T32 shows a small near-front success-parent lane is not enough. | Need a bounded repair/local-rank-1 lane that cannot replace T26 champion quality pressure. | Specify a true role-separated emitter before another holdout run. |
 
 ## Current Lineage
@@ -109,6 +109,7 @@ flowchart LR
     AH[T35 T11 Pareto coupling]
     AI[T36 bounded front lane]
     AJ[T37 slot count ablation]
+    AK[T38 elite Pareto slot live]
     L[T08-T12 and T15-T16 graph and multimodal scaffolds]
   end
 
@@ -168,7 +169,8 @@ flowchart LR
   AG --> AH
   AH --> AI
   AI --> AJ
-  AJ --> L
+  AJ --> AK
+  AK --> L
   G --> M
   G --> W
 ```
@@ -214,6 +216,7 @@ flowchart TD
 | 2026-06-22 | `L4/L5` learned encoders and archive coupling | T35 T11 Pareto-coupling replay | `ablate` | Cell-local Pareto retention improves direct front hits to 126 versus lexical's 122 but loses 8.97% HV; front-seeded retention reaches 132 front hits and +4.39% HV but is only an upper-bound diagnostic because it uses global PPA-front membership. | Preserve T11's farthest/HV selector and add only a small bounded front lane before any live budget. |
 | 2026-06-22 | `L4/L5` learned encoders and archive coupling | T36 T11 bounded-front replay | `advance` | One bounded local-front slot improves HV to 3.851344 (+4.04% versus lexical) and direct front hits to 126, beating lexical, T11, and fitness-top on the claimed replay metrics. The quota arms collapse to the same one-slot lane. | T37 completed the slot-count ablation; next is one-slot live validation before any final useful-BD claim. |
 | 2026-06-22 | `L4/L5` learned encoders and archive coupling | T37 explicit slot-count replay | `advance` | Slot zero reproduces T11, one slot reproduces the T36 win, and two or more local-front slots lose too much HV. The one-slot setting is the useful replay boundary. | Run same-budget live validation of exactly one bounded local-front slot with direct raw PPA-front figures as the first visual gate. |
+| 2026-06-22 | `L5` archive coupling | T38 elite Pareto slot live hook | `run` | The runtime now has `elite_pareto_slot`, preserving the scalar quality champion plus one local Pareto slot when `max_elites_per_cell=2`. | Execute the T38 live screen and package direct raw PPA Pareto figures before assigning a tier. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
@@ -410,8 +413,8 @@ unblocks it.
 | `L1` transparent CAD descriptors | T03, T21 | Stays on current branch for hybrids. | Select a small ST-NOD/motif subset for a guarded archive variant. | Hybrid beats direct T21 on best quality without losing archive coverage. |
 | `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27, T28, T29, T30, T31, T32 | Stays on current branch; T29/T31/T32 are measured negative, while T30 is mixed holdout support for T26. | Pause simple SR raw schedule tuning. | New method improves front/yield without losing T26 quality pressure. |
 | `L3` codebook/discrete archives | T05 | Parked. | Reopen only as side archive or local-Pareto cell partition. | A non-codebook lane shows local front material worth discretizing. |
-| `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14 | Candidate split branch; T11 is the best L4 HV lead, while front hits remain negative. | Try local-Pareto coupling or collapse-penalized contrastive training. | Learned features improve PPA-front/HV metrics without problem-ID collapse. |
-| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32 | Active on current branch; T32 is negative but supplies P098-yield/direct-front controls. | Specify a stronger role-separated emitter or branch away. | A candidate beats controls on documented direct-front/HV metrics without hidden duplicate loss. |
+| `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T37 | Candidate split branch; T37 proves the T11-family replay lead is one bounded local-front slot. | Run T38 live archive validation, then revisit exact T11 runtime projection if the archive rule helps. | Learned features improve PPA-front/HV metrics without problem-ID collapse. |
+| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T38 | Active on current branch; T38 is pre-registered for champion-plus-one-slot retention. | Execute T38 and package direct PPA-front evidence. | A candidate beats controls on documented direct-front/HV metrics without hidden duplicate loss. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32 | T31 and T32 show single repair/front-preserving tweaks are insufficient. | Restore T26 champion pressure and isolate bounded repair/local-rank-1 roles. | Better valid-yield recovery or front material than T26/T29/T30 without losing T26 best-quality recovery. |
 
 ## Branch Split Checklist

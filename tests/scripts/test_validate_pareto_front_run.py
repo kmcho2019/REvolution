@@ -16,12 +16,16 @@ def _subset_config(path: Path) -> Path:
     return config_path
 
 
-def _write_problem(path: Path, rows: list[dict[str, float]]) -> None:
+def _write_problem(
+    path: Path,
+    rows: list[dict[str, float]],
+    cell_mode: str = "pareto_front",
+) -> None:
     problem_root = path / "grid_quantile_pareto_journal_bd" / "RTLLM" / "Prob004_adder_8bit"
     problem_root.mkdir(parents=True)
     summary = {
         "archive_type": "grid_quantile",
-        "cell_mode": "pareto_front",
+        "cell_mode": cell_mode,
         "descriptor_profile": "journal_logic_ff_width_3d",
         "objective_names": ["g_P", "g_A"],
         "occupied_cells": 1,
@@ -156,6 +160,33 @@ def test_validate_pareto_front_run_accepts_multi_member_front(tmp_path):
     assert payload["failure_count"] == 0
     assert payload["max_front_size_seen"] == 2
     assert (tmp_path / "pareto_front_validation.md").is_file()
+
+
+def test_validate_pareto_front_run_accepts_elite_pareto_slot(tmp_path):
+    subset_config = _subset_config(tmp_path)
+    _write_problem(
+        tmp_path,
+        [
+            {"quality_score": 10.0, "g_P": 0.1, "g_A": 0.1, "pareto_rank": 2},
+            {"quality_score": 0.9, "g_P": 0.9, "g_A": 0.1, "pareto_rank": 1},
+        ],
+        cell_mode="elite_pareto_slot",
+    )
+
+    exit_code = validate_pareto_main(
+        [
+            "--run-root",
+            str(tmp_path),
+            "--subset-config",
+            str(subset_config),
+            "--pareto-qd-mode",
+            "grid_quantile_pareto_journal_bd",
+        ]
+    )
+
+    payload = json.loads((tmp_path / "pareto_front_validation.json").read_text(encoding="utf-8"))
+    assert exit_code == 0
+    assert payload["failure_count"] == 0
 
 
 def test_validate_pareto_front_run_accepts_classic_problem_summary(tmp_path):

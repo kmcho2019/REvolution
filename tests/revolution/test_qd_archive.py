@@ -55,6 +55,12 @@ def _insert(
     )
 
 
+def _elite_candidate_id(archive, cell_id):
+    elite = archive.elite_for_cell(cell_id)
+    assert elite is not None
+    return elite.candidate_id
+
+
 def test_grid_archive_inserts_into_empty_cell():
     archive = GridArchive(
         [
@@ -69,7 +75,7 @@ def test_grid_archive_inserts_into_empty_cell():
     assert result.replaced is False
     assert result.decision == "filled_empty"
     assert archive.occupied_count() == 1
-    assert archive.elite_for_cell(result.cell_id).candidate_id == "cand-a"
+    assert _elite_candidate_id(archive, result.cell_id) == "cand-a"
 
 
 def test_grid_archive_replaces_only_on_higher_quality():
@@ -86,7 +92,7 @@ def test_grid_archive_replaces_only_on_higher_quality():
     assert second.decision == "not_inserted"
     assert third.replaced is True
     assert third.decision == "replaced_elite"
-    assert archive.elite_for_cell(third.cell_id).candidate_id == "cand-c"
+    assert _elite_candidate_id(archive, third.cell_id) == "cand-c"
 
 
 def test_grid_archive_clamps_extreme_values_to_edge_bins():
@@ -342,6 +348,98 @@ def test_pareto_archive_overflow_culls_worst_rank():
     }
 
 
+def test_elite_pareto_slot_keeps_quality_elite_and_front_slot():
+    archive = GridArchive(
+        [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
+        cell_mode="elite_pareto_slot",
+        max_elites_per_cell=2,
+        objective_names=("g_P", "g_A"),
+    )
+
+    _insert(archive, "champion", (0.5,), 10.0, objectives={"g_P": 0.2, "g_A": 0.2})
+    _insert(archive, "front", (0.5,), 1.0, objectives={"g_P": 0.9, "g_A": 0.1})
+    rejected = _insert(
+        archive,
+        "dominated",
+        (0.5,),
+        0.5,
+        objectives={"g_P": 0.1, "g_A": 0.1},
+    )
+
+    assert rejected.inserted is False
+    assert rejected.decision == "crowding_evicted"
+    assert rejected.evicted_candidate_id == "dominated"
+    assert _elite_candidate_id(archive, "0") == "champion"
+    assert {member.candidate_id for _, member in archive.members()} == {
+        "champion",
+        "front",
+    }
+
+
+def test_elite_pareto_slot_replaces_quality_elite_without_losing_front_slot():
+    archive = GridArchive(
+        [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
+        cell_mode="elite_pareto_slot",
+        max_elites_per_cell=2,
+        objective_names=("g_P", "g_A"),
+    )
+
+    _insert(archive, "old-elite", (0.5,), 10.0, objectives={"g_P": 0.1, "g_A": 0.1})
+    _insert(archive, "front", (0.5,), 1.0, objectives={"g_P": 0.9, "g_A": 0.1})
+    result = _insert(
+        archive,
+        "new-elite",
+        (0.5,),
+        11.0,
+        objectives={"g_P": 0.0, "g_A": 0.0},
+    )
+
+    assert result.inserted is True
+    assert result.replaced is True
+    assert result.decision == "replaced_elite"
+    assert _elite_candidate_id(archive, "0") == "new-elite"
+    assert {member.candidate_id for _, member in archive.members()} == {
+        "new-elite",
+        "front",
+    }
+
+
+def test_elite_pareto_slot_reports_champion_swap_when_old_elite_stays():
+    archive = GridArchive(
+        [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
+        cell_mode="elite_pareto_slot",
+        max_elites_per_cell=2,
+        objective_names=("g_P", "g_A"),
+    )
+
+    _insert(archive, "old-elite", (0.5,), 10.0, objectives={"g_P": 0.9, "g_A": 0.1})
+    result = _insert(
+        archive,
+        "new-elite",
+        (0.5,),
+        11.0,
+        objectives={"g_P": 0.1, "g_A": 0.9},
+    )
+
+    assert result.decision == "replaced_elite"
+    assert result.replaced is True
+    assert _elite_candidate_id(archive, "0") == "new-elite"
+    assert {member.candidate_id for _, member in archive.members()} == {
+        "old-elite",
+        "new-elite",
+    }
+
+
+def test_elite_pareto_slot_rejects_single_slot_configuration():
+    with pytest.raises(ValueError, match="elite_pareto_slot"):
+        GridArchive(
+            [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
+            cell_mode="elite_pareto_slot",
+            max_elites_per_cell=1,
+            objective_names=("g_P", "g_A"),
+        )
+
+
 def test_global_pareto_archive_tracks_distinct_non_dominated_members():
     archive = GlobalParetoArchive(("g_P", "g_A"))
     weak = _member("weak", (0.5,), 0.1, objectives={"g_P": 0.1, "g_A": 0.1})
@@ -429,6 +527,39 @@ def test_pareto_cell_mode_is_supported_by_all_geometries():
     assert quantile.members()
 
 
+def test_elite_pareto_slot_is_supported_by_all_geometries():
+    grid = GridArchive(
+        [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
+        cell_mode="elite_pareto_slot",
+        max_elites_per_cell=2,
+        objective_names=("g_P", "g_A"),
+    )
+    cvt = CVTArchive(
+        ("g_A",),
+        num_cells=1,
+        warmup_successes=1,
+        cell_mode="elite_pareto_slot",
+        max_elites_per_cell=2,
+        objective_names=("g_P", "g_A"),
+    )
+    quantile = GridQuantileArchive(
+        ("g_A",),
+        warmup_successes=2,
+        cell_mode="elite_pareto_slot",
+        max_elites_per_cell=2,
+        objective_names=("g_P", "g_A"),
+    )
+
+    _insert(grid, "grid-a", (0.5,), 0.1, objectives={"g_P": 0.9, "g_A": 0.1})
+    _insert(cvt, "cvt-a", (0.5,), 0.1, objectives={"g_P": 0.9, "g_A": 0.1})
+    _insert(quantile, "q-a", (0.0,), 0.1, objectives={"g_P": 0.9, "g_A": 0.1})
+    _insert(quantile, "q-b", (10.0,), 0.2, objectives={"g_P": 0.1, "g_A": 0.9})
+
+    assert grid.members()
+    assert cvt.members()
+    assert quantile.members()
+
+
 def test_cvt_archive_buffers_until_warmup_threshold_then_initializes():
     archive = CVTArchive(("g_A", "g_T"), num_cells=4, warmup_successes=2)
 
@@ -456,7 +587,7 @@ def test_cvt_archive_replaces_only_on_higher_quality():
     assert second.decision == "not_inserted"
     assert third.replaced is True
     assert third.decision == "replaced_elite"
-    assert archive.elite_for_cell("0").candidate_id == "cand-c"
+    assert _elite_candidate_id(archive, "0") == "cand-c"
 
 
 def test_cvt_archive_freezes_scaler_and_centroids_after_warmup():
@@ -465,14 +596,18 @@ def test_cvt_archive_freezes_scaler_and_centroids_after_warmup():
     _insert(archive, "cand-b", (0.2, 0.4), 0.5, {"id": "cand-b"})
 
     assert archive.is_initialized is True
-    means_before = archive.scaler.means
-    stds_before = archive.scaler.stds
+    scaler = archive.scaler
+    assert scaler is not None
+    means_before = scaler.means
+    stds_before = scaler.stds
     centroids_before = archive.centroids
 
     _insert(archive, "cand-c", (100.0, -100.0), 0.6, {"id": "cand-c"})
 
-    assert archive.scaler.means == means_before
-    assert archive.scaler.stds == stds_before
+    scaler_after = archive.scaler
+    assert scaler_after is not None
+    assert scaler_after.means == means_before
+    assert scaler_after.stds == stds_before
     assert archive.centroids == centroids_before
 
 
@@ -854,7 +989,7 @@ def test_grid_quantile_archive_replaces_after_initialization():
     assert lower_quality.decision == "not_inserted"
     assert better.decision == "replaced_elite"
     assert better.inserted is True
-    assert archive.elite_for_cell(better.cell_id).candidate_id == "cand-d"
+    assert _elite_candidate_id(archive, better.cell_id) == "cand-d"
 
 
 def test_grid_quantile_archive_describes_pending_assignment():

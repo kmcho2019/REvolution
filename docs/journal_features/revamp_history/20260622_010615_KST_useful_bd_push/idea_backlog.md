@@ -373,6 +373,10 @@ a numbered `techniques/T##_slug/` package before running it.
 - Next live method should implement exactly one bounded local-front slot on
   top of the T11 structural contrastive descriptor. The direct raw PPA Pareto
   plot is the first acceptance figure; aggregate HV bars are secondary.
+- T38 implements the live archive-rule portion as `elite_pareto_slot`, using a
+  runtime graph/testability descriptor because exact T11 projection is not yet
+  available online. If T38 helps, implement the exact T11 runtime projection
+  next; if it fails, do not blame the T11 descriptor without that follow-up.
 
 ## Near-Term Hybrids
 

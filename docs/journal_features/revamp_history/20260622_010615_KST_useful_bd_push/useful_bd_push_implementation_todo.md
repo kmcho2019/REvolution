@@ -145,6 +145,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T37_t36_slot_count_ablation` has replay, direct PPA-front figures,
       HTML viewer, visual inspection notes, and a `T2 replay_candidate` tier
       decision for the one-slot arm.
+- [x] `T38_elite_pareto_slot_live_qd` is pre-registered with the live
+      champion-plus-one-local-Pareto-slot archive rule and exact command card.
+- [ ] `T38_elite_pareto_slot_live_qd` is executed, validated, packaged with
+      direct raw PPA Pareto figures, and assigned a tier decision.
 
 ## Minimum Goal Completion
 
@@ -180,8 +184,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       rationale before the next method starts.
 - [x] T36 bounded front lane gets a slot-count ablation before any final
       useful-BD claim.
-- [ ] T37 one-slot bounded front lane gets same-budget live validation before
-      any final useful-BD claim.
+- [ ] T37 one-slot bounded front lane gets T38 same-budget live validation
+      before any final useful-BD claim.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

@@ -22,8 +22,8 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L1` | Transparent CAD descriptors | Use reviewer-readable features such as Yosys stats, motifs, pathlets, and ST-NOD. | Reuse selected features in guarded hybrids; stop pure concatenation. |
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
-| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T37 confirms the T11-family replay lead is exactly one bounded local-front slot and needs live validation. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T37 one-slot bounded local-front coupling is the current archive-coupling replay lead. |
+| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T37 confirms the T11-family replay lead is exactly one bounded local-front slot; T38 now tests the live archive rule. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T38 is the current live archive-coupling follow-up for champion-plus-one-slot retention. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T31/T32 show repair/front tweaks need stronger role separation. |
 
 ## Lineage Graph
@@ -65,6 +65,7 @@ flowchart LR
     T35[T35 T11 Pareto coupling]
     T36[T36 bounded front lane]
     T37[T37 slot-count ablation]
+    T38[T38 elite Pareto slot live]
     enc[T08-T16 encoder scaffolds]
   end
 
@@ -122,7 +123,8 @@ flowchart LR
   T11 --> T35
   T35 --> T36
   T36 --> T37
-  T37 --> enc
+  T37 --> T38
+  T38 --> enc
   T17 --> T12
   T17 --> T18
   T24 --> T18
@@ -145,6 +147,7 @@ flowchart LR
 | T35 | `L4/L5` | T11 structural contrastive descriptor with descriptor-cell local Pareto retention and a front-seeded upper bound. | Mixed diagnostic: cell-local Pareto retention improves direct front hits from lexical's 122 to 126 but loses 8.97% HV; front-seeded reaches +4.39% HV and 132 front hits but uses global PPA-front membership. | `ablate` | Keep T11's farthest/HV selector and add only a small bounded front lane before any live budget. |
 | T36 | `L4/L5` | T11 structural contrastive descriptor with one bounded descriptor-cell local-front slot. | `T2 replay_candidate`: HV reaches 3.851344 (+4.04% versus lexical) and direct front hits reach 126, beating lexical, T11, and fitness-top on the claimed replay metrics. | `advance` | T37 completed the slot-count ablation; next is one-slot live validation before any final useful-BD claim. |
 | T37 | `L4/L5` | Explicit zero/one/two/three slot ablation for the T36 bounded local-front lane. | `T2 replay_candidate`: one slot keeps the T36 win; two or more slots lose HV and should not advance. | `advance` one-slot live validation | Run same-budget live validation of exactly one bounded local-front slot with direct raw PPA-front plots as the primary visual gate. |
+| T38 | `L5` | Live archive mode for the T37 one-slot boundary: scalar champion plus one local Pareto slot per cell. | Pre-registered; code path and command card exist, live results pending. | `run` | Execute the same-budget live screen and package direct raw PPA-front figures before assigning any tier. |
 | T08-T10/T12/T15-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, lineage repair, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |

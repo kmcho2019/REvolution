@@ -18,10 +18,11 @@ Start here when resuming the active goal.
   ablation; one local-front slot is the best deployable replay arm, while two
   or more slots collapse toward weaker cell-Pareto HV).
 - Most recent pre-registered package: none beyond the remaining scaffolded
-  T08-T10/T12/T15-T16/T18 encoder and emitter candidates.
+  `techniques/T38_elite_pareto_slot_live_qd/` now defines the live bounded
+  one-slot archive test for the T37 result.
 - Next direction:
-  live-validate the one-slot T36/T37 bounded front lane; do not expand the
-  local-front lane beyond one slot without new evidence.
+  run the T38 live screen and package direct raw PPA Pareto-front figures
+  before reading aggregate metrics.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
@@ -130,6 +131,7 @@ Start here when resuming the active goal.
 | `T35` | `T35_t11_pareto_coupling_bd` | Completed replay diagnostic, mixed `T0/T1 diagnostic`; T11 cell-local Pareto retention improves direct front hits but loses HV, while front-seeded retention is only an upper-bound diagnostic. |
 | `T36` | `T36_t11_bounded_front_lane_bd` | Completed replay diagnostic, `T2 replay_candidate`; one local-front slot improves HV by +4.04% over lexical and recovers direct front hits to 126. |
 | `T37` | `T37_t36_slot_count_ablation` | Completed replay diagnostic, `T2 replay_candidate`; confirms one local-front slot is the useful boundary and rejects two-plus slots. |
+| `T38` | `T38_elite_pareto_slot_live_qd` | Pre-registered live archive-coupling method; adds a bounded champion-plus-one-Pareto-slot cell mode for same-budget validation. |
 
 ## Validity-Gate Note
 

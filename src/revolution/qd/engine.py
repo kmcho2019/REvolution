@@ -169,12 +169,14 @@ class QDEngine(EoHEngine):
             raise ValueError("qd_improve_backfill_fraction must be in [0, 1].")
         self.qd_improve_backfill_fraction = float(qd_improve_backfill_fraction)
         self.qd_cell_reservoir = max(0, int(qd_cell_reservoir))
-        if qd_cell_mode not in {"scalar_elite", "pareto_front"}:
+        if qd_cell_mode not in {"scalar_elite", "pareto_front", "elite_pareto_slot"}:
             raise ValueError(f"Unsupported qd_cell_mode '{qd_cell_mode}'.")
         if qd_objectives != "ppa":
             raise ValueError(f"Unsupported qd_objectives '{qd_objectives}'.")
         if qd_max_elites_per_cell <= 0:
             raise ValueError("qd_max_elites_per_cell must be > 0.")
+        if qd_cell_mode == "elite_pareto_slot" and qd_max_elites_per_cell < 2:
+            raise ValueError("elite_pareto_slot requires qd_max_elites_per_cell >= 2.")
         if not 0.0 <= float(qd_two_parent_probability) <= 1.0:
             raise ValueError("qd_two_parent_probability must be between 0 and 1.")
         if qd_operator_kind not in {"eoh_strategies", "single_thought_operator"}:
@@ -417,7 +419,7 @@ class QDEngine(EoHEngine):
         raise ValueError(f"Unsupported qd_archive_type '{self.qd_archive_type}'.")
 
     def _build_global_archive(self) -> GlobalParetoArchive | None:
-        if self.qd_cell_mode == "pareto_front":
+        if self.qd_cell_mode in {"pareto_front", "elite_pareto_slot"}:
             return GlobalParetoArchive(self._objective_names())
         if self.qd_cell_mode == "scalar_elite":
             return None
@@ -1588,7 +1590,7 @@ class QDEngine(EoHEngine):
                     else:
                         parents.append(random.choice(pool))
                 return parents
-        if self.qd_cell_mode == "pareto_front":
+        if self.qd_cell_mode in {"pareto_front", "elite_pareto_slot"}:
             by_cell = self._ranked_success_members_by_cell()
             if by_cell:
                 cell_ids = sorted(by_cell)
@@ -1643,7 +1645,7 @@ class QDEngine(EoHEngine):
     ) -> list[Heuristic]:
         if self.qd_parent_selection == "nsga2_global_rank":
             return self._sample_success_parents(2)
-        if self.qd_cell_mode != "pareto_front":
+        if self.qd_cell_mode not in {"pareto_front", "elite_pareto_slot"}:
             return self._sample_success_parents(2)
         by_cell = self._ranked_success_members_by_cell()
         cell_ids = sorted(by_cell)
@@ -1674,7 +1676,7 @@ class QDEngine(EoHEngine):
         ]
 
     def _success_parent_arity(self) -> int | None:
-        if self.qd_cell_mode != "pareto_front":
+        if self.qd_cell_mode not in {"pareto_front", "elite_pareto_slot"}:
             return None
         self.qd_success_parent_requests += 1
         if random.random() >= self.qd_two_parent_probability:
@@ -1693,7 +1695,7 @@ class QDEngine(EoHEngine):
         return sum((lhs - rhs) ** 2 for lhs, rhs in zip(left_desc, right_desc))
 
     def _sample_diverse_success_parents(self) -> list[Heuristic]:
-        if self.qd_cell_mode == "pareto_front":
+        if self.qd_cell_mode in {"pareto_front", "elite_pareto_slot"}:
             return self._sample_two_success_parents()
         success_view = self._success_view()
         if len(success_view) < 2:

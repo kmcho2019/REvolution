@@ -378,7 +378,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--qd_cell_mode",
         type=str,
         default="scalar_elite",
-        choices=["scalar_elite", "pareto_front"],
+        choices=["scalar_elite", "pareto_front", "elite_pareto_slot"],
     )
     parser.add_argument("--qd_max_elites_per_cell", type=int, default=1)
     parser.add_argument("--qd_objectives", type=str, default="ppa", choices=["ppa"])

@@ -83,8 +83,22 @@ def _objective_key(
 
 
 def _validate_cell_mode(cell_mode: QDCellMode) -> None:
-    if cell_mode not in {"scalar_elite", "pareto_front"}:
+    if cell_mode not in {"scalar_elite", "pareto_front", "elite_pareto_slot"}:
         raise ValueError(f"Unsupported qd_cell_mode '{cell_mode}'.")
+
+
+def _validate_cell_config(
+    cell_mode: QDCellMode,
+    max_elites_per_cell: int,
+    objective_names: tuple[str, ...],
+) -> None:
+    _validate_cell_mode(cell_mode)
+    if max_elites_per_cell <= 0:
+        raise ValueError("max_elites_per_cell must be > 0.")
+    if cell_mode in {"pareto_front", "elite_pareto_slot"} and not objective_names:
+        raise ValueError(f"{cell_mode} mode requires objective_names.")
+    if cell_mode == "elite_pareto_slot" and max_elites_per_cell < 2:
+        raise ValueError("elite_pareto_slot mode requires max_elites_per_cell >= 2.")
 
 
 def _validate_objectives(
@@ -325,6 +339,99 @@ def _insert_pareto(
     )
 
 
+def _insert_elite_pareto_slot(
+    fronts: dict[str, list[ArchiveMember]],
+    *,
+    cell_id: str,
+    member: ArchiveMember,
+    max_elites_per_cell: int,
+    objective_names: tuple[str, ...],
+) -> QDArchiveInsertResult:
+    _validate_objectives(member, objective_names)
+    front = fronts.get(cell_id)
+    if front is None:
+        fronts[cell_id] = [member]
+        return _member_result(
+            cell_id=cell_id,
+            member=member,
+            inserted=True,
+            replaced=False,
+            decision="filled_empty",
+            previous=None,
+            current=member,
+            removed=None,
+            objective_names=objective_names,
+            front=fronts[cell_id],
+        )
+
+    member_key = _objective_key(member, objective_names)
+    for existing in front:
+        if _objective_key(existing, objective_names) == member_key:
+            return _member_result(
+                cell_id=cell_id,
+                member=member,
+                inserted=False,
+                replaced=False,
+                decision="duplicate_objectives",
+                previous=existing,
+                current=existing,
+                removed=None,
+                objective_names=objective_names,
+                front=front,
+            )
+
+    previous_elite = _representative(front)
+    candidates = [*front, member]
+    elite = _representative(candidates)
+    slots = sorted(
+        (item for item in ranked_front(candidates, objective_names) if item.member is not elite),
+        key=lambda item: (
+            item.pareto_rank,
+            -item.crowding_distance,
+            item.member.insertion_index,
+            item.member.candidate_id,
+        ),
+    )
+    kept = [elite, *(item.member for item in slots[: max_elites_per_cell - 1])]
+    removed = [existing for existing in front if not any(existing is item for item in kept)]
+    inserted = any(item is member for item in kept)
+    fronts[cell_id] = kept
+
+    if inserted:
+        elite_replaced = member is elite and previous_elite is not elite
+        decision: QDArchiveDecision = (
+            "replaced_elite" if elite_replaced else "pareto_inserted"
+        )
+        return _member_result(
+            cell_id=cell_id,
+            member=member,
+            inserted=True,
+            replaced=elite_replaced or bool(removed),
+            decision=decision,
+            previous=previous_elite if elite_replaced else (removed[0] if removed else None),
+            current=member,
+            removed=removed,
+            objective_names=objective_names,
+            front=kept,
+            evicted=removed[0] if removed else None,
+        )
+
+    current = _representative(kept)
+    return _member_result(
+        cell_id=cell_id,
+        member=member,
+        inserted=False,
+        replaced=False,
+        decision="crowding_evicted",
+        previous=current,
+        current=current,
+        removed=None,
+        objective_names=objective_names,
+        front=kept,
+        evicted=member,
+    )
+
+
 def _crowding_distances(
     members: list[ArchiveMember],
     objective_names: tuple[str, ...],
@@ -452,11 +559,7 @@ class GridArchive:
     ) -> None:
         if not axes:
             raise ValueError("GridArchive requires at least one axis.")
-        _validate_cell_mode(cell_mode)
-        if max_elites_per_cell <= 0:
-            raise ValueError("max_elites_per_cell must be > 0.")
-        if cell_mode == "pareto_front" and not objective_names:
-            raise ValueError("pareto_front mode requires objective_names.")
+        _validate_cell_config(cell_mode, max_elites_per_cell, tuple(objective_names))
         for axis in axes:
             if axis.bins <= 0:
                 raise ValueError("Grid axis bins must be > 0.")
@@ -635,6 +738,14 @@ class GridArchive:
                 max_elites_per_cell=self.max_elites_per_cell,
                 objective_names=self.objective_names,
             )
+        if self.cell_mode == "elite_pareto_slot":
+            return _insert_elite_pareto_slot(
+                self._fronts,
+                cell_id=cell_id,
+                member=member,
+                max_elites_per_cell=self.max_elites_per_cell,
+                objective_names=self.objective_names,
+            )
         raise ValueError(f"Unsupported qd_cell_mode '{self.cell_mode}'.")
 
     def _bin_index(self, axis: GridAxisSpec, value: float) -> int:
@@ -676,11 +787,7 @@ class GridQuantileArchive:
             raise ValueError("warmup_max_buffer must be >= 0.")
         if 0 < warmup_max_buffer < warmup_successes:
             raise ValueError("warmup_max_buffer must be >= warmup_successes when set.")
-        _validate_cell_mode(cell_mode)
-        if max_elites_per_cell <= 0:
-            raise ValueError("max_elites_per_cell must be > 0.")
-        if cell_mode == "pareto_front" and not objective_names:
-            raise ValueError("pareto_front mode requires objective_names.")
+        _validate_cell_config(cell_mode, max_elites_per_cell, tuple(objective_names))
         self.axes = tuple(axes)
         self.cell_mode = cell_mode
         self.max_elites_per_cell = int(max_elites_per_cell)
@@ -1045,6 +1152,14 @@ class GridQuantileArchive:
                 max_elites_per_cell=self.max_elites_per_cell,
                 objective_names=self.objective_names,
             )
+        if self.cell_mode == "elite_pareto_slot":
+            return _insert_elite_pareto_slot(
+                self._fronts,
+                cell_id=cell_id,
+                member=member,
+                max_elites_per_cell=self.max_elites_per_cell,
+                objective_names=self.objective_names,
+            )
         raise ValueError(f"Unsupported qd_cell_mode '{self.cell_mode}'.")
 
     def _axis_quantile_boundaries(self, values: list[float]) -> tuple[float, ...]:
@@ -1126,11 +1241,7 @@ class CVTArchive:
             raise ValueError("CVTArchive requires at least one axis.")
         if num_cells <= 0:
             raise ValueError("CVTArchive requires num_cells > 0.")
-        _validate_cell_mode(cell_mode)
-        if max_elites_per_cell <= 0:
-            raise ValueError("max_elites_per_cell must be > 0.")
-        if cell_mode == "pareto_front" and not objective_names:
-            raise ValueError("pareto_front mode requires objective_names.")
+        _validate_cell_config(cell_mode, max_elites_per_cell, tuple(objective_names))
         self.axes = tuple(axes)
         self.cell_mode = cell_mode
         self.max_elites_per_cell = int(max_elites_per_cell)
@@ -1380,6 +1491,14 @@ class CVTArchive:
             )
         if self.cell_mode == "pareto_front":
             return _insert_pareto(
+                self._fronts,
+                cell_id=cell_id,
+                member=member,
+                max_elites_per_cell=self.max_elites_per_cell,
+                objective_names=self.objective_names,
+            )
+        if self.cell_mode == "elite_pareto_slot":
+            return _insert_elite_pareto_slot(
                 self._fronts,
                 cell_id=cell_id,
                 member=member,

@@ -54,6 +54,13 @@ weaker T35 cell-Pareto HV regime. It is a `T2 replay_candidate`, not a final
 useful-BD promotion, because no same-budget live run has tested
 generation-time validity and coverage.
 
+T38 is the current pre-registered live follow-up. It adds `elite_pareto_slot`,
+which keeps the scalar quality champion and one local PPA Pareto slot per
+descriptor cell when `--qd_max_elites_per_cell 2` is used. T38 uses an existing
+runtime graph/testability descriptor as the first online test of the T37
+archive rule; exact T11 runtime projection remains a follow-up if the archive
+rule helps.
+
 T35 remains important negative/upper-bound evidence. Full cell-local Pareto
 retention improves direct front hits but loses too much HV, while the
 front-seeded arm proves the fixed candidate pool contains recoverable front
@@ -63,9 +70,9 @@ T11 remains the strongest pure descriptor-only L4 replay selector so far. Its
 top-64/weighted structural contrastive descriptors beat lexical HV by
 `+1.82%` and keep `186` unique PPA points, but direct front hits still miss
 lexical (`120` versus `122`). T36 is the measured bounded-front follow-up. The
-T37 is the measured slot-count ablation. The next T11-family step should
-live-validate exactly one bounded local-front slot; do not replace descriptor
-novelty outright with local Pareto retention.
+T37 is the measured slot-count ablation. T38 is the live validation package for
+exactly one bounded local-front slot; do not replace descriptor novelty
+outright with local Pareto retention.
 
 T30 remains the most recent positive holdout support for exact T26
 conservative-exploit SR raw: it preserves all three classic-covered
@@ -270,6 +277,8 @@ Start with these packages and add more only with a method card:
   emitter mixture.
 - `T37_t36_slot_count_ablation`: explicit bounded-front slot-count ablation
   for the T36/T11 replay lead.
+- `T38_elite_pareto_slot_live_qd`: live champion-plus-one-Pareto-slot archive
+  mode for the T37 one-slot boundary.
 
 At least 10 technique packages must be attempted with real results before the
 goal can claim a completed negative map. Prior failed methods can be reused as

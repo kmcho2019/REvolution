@@ -1777,3 +1777,35 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `uv run python -m pyright scripts/analyze_t37_t36_slot_count_ablation.py tests/scripts/test_analyze_t37_t36_slot_count_ablation.py`,
   and
   `uv tool run ty check scripts/analyze_t37_t36_slot_count_ablation.py tests/scripts/test_analyze_t37_t36_slot_count_ablation.py`.
+
+## T38 Elite Pareto Slot Live Hook - 2026-06-22 UTC
+
+- Pre-registered `techniques/T38_elite_pareto_slot_live_qd/` as the live
+  archive-coupling follow-up to the T37 one-slot boundary.
+- Added the `elite_pareto_slot` QD cell mode. Each occupied cell preserves the
+  scalar quality champion and fills the remaining slots by local PPA Pareto
+  rank and crowding distance. The planned T38 arm sets
+  `--qd_max_elites_per_cell 2`, so the rule is champion plus one local Pareto
+  slot.
+- Wired the mode through the grid, grid-quantile, and CVT archives, engine
+  parent sampling, `scripts/run_backend.py`, `scripts/run_backend_ablation.py`,
+  and `scripts/validate_pareto_front_run.py`.
+- Added focused archive and validator tests for the new mode.
+- The T38 command card uses the existing live `journal_graph_testability_3d`
+  runtime descriptor because exact T11/T37 structural-contrastive projection is
+  still retrospective-only. If T38 is promising, the next follow-up is to add
+  exact T11 runtime projection rather than overclaiming the descriptor result.
+- No live result or tier is assigned yet. The next required artifact is the T38
+  same-budget live screen with direct raw area-power PPA Pareto figures as the
+  first visual gate.
+- Focused validation passed:
+  `uv run pytest tests/revolution/test_qd_archive.py tests/scripts/test_validate_pareto_front_run.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py`,
+  `uv run ruff check src/revolution/qd/archive.py src/revolution/qd/engine.py src/revolution/qd/types.py scripts/run_backend.py scripts/run_backend_ablation.py scripts/validate_pareto_front_run.py tests/revolution/test_qd_archive.py tests/scripts/test_validate_pareto_front_run.py`,
+  narrowed
+  `uv run python -m pyright src/revolution/qd/archive.py src/revolution/qd/engine.py src/revolution/qd/types.py scripts/run_backend_ablation.py scripts/validate_pareto_front_run.py tests/revolution/test_qd_archive.py tests/scripts/test_validate_pareto_front_run.py`,
+  narrowed
+  `uv tool run ty check src/revolution/qd/archive.py src/revolution/qd/engine.py src/revolution/qd/types.py scripts/run_backend_ablation.py scripts/validate_pareto_front_run.py tests/revolution/test_qd_archive.py tests/scripts/test_validate_pareto_front_run.py`,
+  and `git diff --check`.
+- Full touched-file `pyright`/`ty` still report the pre-existing
+  `scripts/run_backend.py` evaluator union mismatch at lines 305 and 339.
+  This commit only changes the CLI `--qd_cell_mode` choices in that file.

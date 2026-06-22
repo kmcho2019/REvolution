@@ -183,8 +183,9 @@ def _validate_problem(
     if not objective_names:
         errors.append("archive_summary.json missing objective_names")
 
-    if summary.get("cell_mode") != "pareto_front":
-        errors.append("archive_summary.json cell_mode is not pareto_front")
+    pareto_cell_modes = {"pareto_front", "elite_pareto_slot"}
+    if summary.get("cell_mode") not in pareto_cell_modes:
+        errors.append("archive_summary.json cell_mode is not Pareto-capable")
     if acceptance_hard_subset:
         if summary.get("archive_type") != "grid_quantile":
             errors.append("archive_type is not grid_quantile")
@@ -371,7 +372,7 @@ def main(argv: list[str] | None = None) -> int:
                     f"{mode} missing problems: {', '.join(missing)}"
                 )
 
-    problems = []
+    problems: list[dict[str, Any]] = []
     for item in expected:
         root = _problem_root(
             args.run_root,
