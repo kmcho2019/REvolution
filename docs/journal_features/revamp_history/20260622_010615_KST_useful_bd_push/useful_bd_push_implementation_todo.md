@@ -134,9 +134,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T33_qwen3_preprocessing_ladder_bd` has source inventory,
       preprocessing/embedding caches, collapse diagnostics, replay scoring,
       direct PPA-front figures, visual inspection notes, and a tier decision.
-- [ ] `T34_qwen_pca_residual_bd` has a registered method card; replay,
-      direct PPA-front figures, collapse diagnostics, and tier decision are
-      pending.
+- [x] `T34_qwen_pca_residual_bd` has replay, direct PPA-front figures,
+      collapse diagnostics, visual inspection notes, and tier decision.
 
 ## Minimum Goal Completion
 

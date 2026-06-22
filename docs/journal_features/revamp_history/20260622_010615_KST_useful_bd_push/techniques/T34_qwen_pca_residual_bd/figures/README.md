@@ -1,6 +1,10 @@
 # T34 Figures
 
-Measured figures are pending.
+Measured figures are committed:
 
-The primary figure must be a direct raw area-power PPA Pareto-front PNG before
-any embedding-space figure is accepted.
+- `t34_raw_area_power_pareto_front.png`
+- `t34_hypervolume_by_projection.png`
+- `t34_collapse_vs_hypervolume.png`
+
+`t34_raw_area_power_pareto_front.png` is the primary reader-facing figure. The
+other two figures support the `T0 diagnostic` decision.

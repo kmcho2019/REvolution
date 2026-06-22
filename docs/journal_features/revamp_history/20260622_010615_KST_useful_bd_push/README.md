@@ -14,21 +14,19 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T33_qwen3_preprocessing_ladder_bd/` (completed Qwen3
-  preprocessing-ladder replay; `T0 diagnostic` because RTL views modestly beat
-  lexical on selected HV, while the netlist views that reduce nuisance
-  clustering do not improve PPA-front/HV metrics).
-- Most recent pre-registered package:
-  `techniques/T34_qwen_pca_residual_bd/` (label-free PCA-residual projection
-  follow-up to T33; replay pending).
+  `techniques/T34_qwen_pca_residual_bd/` (completed label-free Qwen
+  PCA-residual replay; `T0 diagnostic` because it preserves T33's RTL HV signal
+  but does not reduce nuisance collapse for those high-HV views).
+- Most recent pre-registered package: none beyond the scaffolded T07-T16/T18
+  encoder and emitter candidates.
 - Next direction:
-  run T34, move to graph encoders if it fails, or define a separate bounded
-  repair/local-rank-1 emitter if returning to the SR raw family.
+  move L4 to graph encoders or define a separate bounded repair/local-rank-1
+  emitter if returning to the SR raw family.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T33_qwen3_preprocessing_ladder_bd/figures/t33_raw_area_power_pareto_front.png`
+  `techniques/T34_qwen_pca_residual_bd/figures/t34_raw_area_power_pareto_front.png`
   (raw area-power Pareto front with full-range and lower-left zoom panels).
 - Most recent interactive visualization refresh:
   `techniques/T28_t26_family_audit/visualizations/qd_ppa_viewer/index.html`
@@ -123,7 +121,7 @@ Start here when resuming the active goal.
 | `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Completed holdout live arm, `T0 diagnostic`; preserves final-best coverage but loses yield, P135 HV/quality, and unique PPA breadth. |
 | `T32` | `T32_sr_raw_front_preserving_emitter_qd` | Completed holdout live arm, `T0 diagnostic`; repairs some P098 yield and unique PPA breadth versus T31 but loses T26's P135 HV/quality signal. |
 | `T33` | `T33_qwen3_preprocessing_ladder_bd` | Completed replay diagnostic, `T0 diagnostic`; canonical RTL/identifier-role RTL modestly beat lexical HV, but canonical Yosys netlist's collapse improvement does not transfer to HV/PPA-front metrics. |
-| `T34` | `T34_qwen_pca_residual_bd` | Registered Qwen PCA-residual follow-up; replay pending. |
+| `T34` | `T34_qwen_pca_residual_bd` | Completed replay diagnostic, `T0 diagnostic`; PCA residuals preserve T33 RTL HV signal but do not align HV, front hits, and collapse reduction. |
 
 ## Validity-Gate Note
 

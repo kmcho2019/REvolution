@@ -1,6 +1,6 @@
 # T34 Replay Commands
 
-Status: planned.
+Status: executed.
 
 ```bash
 uv run python scripts/analyze_t34_qwen_pca_residual.py \

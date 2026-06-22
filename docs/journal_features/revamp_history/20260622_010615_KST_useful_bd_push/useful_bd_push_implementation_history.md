@@ -1428,3 +1428,37 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   projection can keep the RTL signal while suppressing dominant nuisance axes.
 - Next command is documented in
   `techniques/T34_qwen_pca_residual_bd/commands/replay_v0.md`.
+
+## T34 Qwen PCA-Residual Replay - 2026-06-22 UTC
+
+- Added `scripts/analyze_t34_qwen_pca_residual.py` and a focused unit test.
+  The script builds label-free PCA residual descriptors from T33 Qwen views,
+  replays farthest-first selection, computes collapse diagnostics, and writes
+  direct raw PPA-front figures.
+- Ran the documented replay command against the T33 embedding manifest and the
+  T06/T33 common 768-candidate replay surface.
+- Main result: T34 does not produce a promoted descriptor. The best residuals
+  tie T33 canonical RTL HV at `3.799167` (`+2.63%` versus lexical), but their
+  same-problem nearest-neighbor fractions remain high: `0.895833` to
+  `0.911458` for the best canonical/identifier RTL residuals.
+- Lower-collapse residuals are netlist-derived and do not solve utility:
+  `t34_summary_plus_netlist_pc4_residual` reaches same-problem fraction
+  `0.805990` but drops selected HV to `3.570861`, below lexical.
+- Direct PPA-front accounting is also not decisive. The best residual front
+  hit count is `123`, matching T33 commentless RTL and only one unique front
+  hit above lexical's `122`.
+- Tier decision: `T0 diagnostic`. Stop label-free whole-design Qwen projection
+  variants unless the training objective changes. The L4 lane should move to
+  graph encoders or a genuine contrastive/fine-tuning objective.
+- Visual inspection passed for `t34_raw_area_power_pareto_front.png`,
+  `t34_hypervolume_by_projection.png`, and
+  `t34_collapse_vs_hypervolume.png`; notes are in
+  `techniques/T34_qwen_pca_residual_bd/figures/visual_inspection_notes.md`.
+- Validation run:
+  `uv run pytest tests/scripts/test_analyze_t34_qwen_pca_residual.py`,
+  `uv run ruff check scripts/analyze_t34_qwen_pca_residual.py tests/scripts/test_analyze_t34_qwen_pca_residual.py`,
+  `uv run python -m pyright scripts/analyze_t34_qwen_pca_residual.py tests/scripts/test_analyze_t34_qwen_pca_residual.py`,
+  and
+  `uv tool run ty check scripts/analyze_t34_qwen_pca_residual.py tests/scripts/test_analyze_t34_qwen_pca_residual.py`
+  all passed before the real replay and again after the report artifacts were
+  generated. `git diff --check` also passed.
