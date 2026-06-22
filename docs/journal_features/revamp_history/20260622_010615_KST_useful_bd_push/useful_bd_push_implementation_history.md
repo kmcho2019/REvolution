@@ -1411,3 +1411,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `uv run python -m pyright` over the T33 scripts/tests,
   `uv tool run ty check` over the T33 scripts/tests, and `git diff --check`
   all passed.
+
+## T34 Qwen PCA-Residual Registration - 2026-06-22 UTC
+
+- Registered `T34_qwen_pca_residual_bd` as the bounded L4 follow-up to T33.
+- Method: remove the first `k` principal components from selected T33 Qwen
+  embedding views, L2-normalize the residuals, and replay farthest-first
+  selection against lexical, random, generation-prefix, fitness-top, and T33
+  base-view controls.
+- Leakage rule: PCA fitting uses embedding coordinates only. It does not use
+  final PPA, reference PPA, fitness, hypervolume, Pareto rank, validity labels,
+  problem id, or corpus id. Problem/corpus labels are reserved for post-replay
+  collapse diagnostics.
+- Motivation: T33 found that RTL views carry modest HV signal while netlist
+  views reduce nuisance clustering. T34 tests whether a label-free residual
+  projection can keep the RTL signal while suppressing dominant nuisance axes.
+- Next command is documented in
+  `techniques/T34_qwen_pca_residual_bd/commands/replay_v0.md`.

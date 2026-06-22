@@ -22,7 +22,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L1` | Transparent CAD descriptors | Use reviewer-readable features such as Yosys stats, motifs, pathlets, and ST-NOD. | Reuse selected features in guarded hybrids; stop pure concatenation. |
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
-| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, and multimodal circuit embeddings. | Continue Qwen only with anti-collapse projection; otherwise move to graph encoders. |
+| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, and multimodal circuit embeddings. | Run T34 anti-collapse projection; otherwise move to graph encoders. |
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T32 is negative; stop simple schedule tuning and use it as a P098-yield control. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T31/T32 show repair/front tweaks need stronger role separation. |
 
@@ -107,7 +107,8 @@ flowchart LR
   T30 --> T31
   T31 --> T32
   T06 --> T33
-  T33 --> enc
+  T33 --> T34
+  T34 --> enc
   T17 --> T12
   T17 --> T18
   T24 --> T18
@@ -122,6 +123,7 @@ flowchart LR
 | T05 | `L3` | Direct VQ/codebook archive pressure. | Too costly in best quality and valid-PPA yield. | `park` | Reopen only as side archive or local-Pareto partition. |
 | T06 | `L4` | Qwen-style whole-RTL projections. | Contains signal but clusters around nuisance axes. | `ablate` | T33 completed the preprocessing-ladder follow-up. |
 | T33 | `L4` | Qwen3 normalized RTL/netlist preprocessing ladder. | `T0 diagnostic`: RTL views modestly beat lexical HV, but netlist collapse fixes do not improve HV or direct PPA-front hits. | `ablate` | Only continue with a projection/head hybrid that penalizes problem/corpus collapse. |
+| T34 | `L4` | Label-free PCA residuals over T33 Qwen views. | Registered; replay pending. | `advance` | Test whether removing dominant embedding PCs keeps RTL HV signal while reducing collapse. |
 | T07-T16 | `L4` | DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, AURORA, DE-HNN, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |

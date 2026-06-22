@@ -18,12 +18,12 @@ Start here when resuming the active goal.
   preprocessing-ladder replay; `T0 diagnostic` because RTL views modestly beat
   lexical on selected HV, while the netlist views that reduce nuisance
   clustering do not improve PPA-front/HV metrics).
-- Most recent pre-registered package: none beyond the scaffolded T07-T16/T18
-  encoder and emitter candidates.
+- Most recent pre-registered package:
+  `techniques/T34_qwen_pca_residual_bd/` (label-free PCA-residual projection
+  follow-up to T33; replay pending).
 - Next direction:
-  either specify a bounded Qwen projection/head ablation that penalizes
-  problem/corpus collapse, move to graph encoders, or define a separate
-  bounded repair/local-rank-1 emitter if returning to the SR raw family.
+  run T34, move to graph encoders if it fails, or define a separate bounded
+  repair/local-rank-1 emitter if returning to the SR raw family.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (direct area-power and
   normalized PPA-front scatter plots for T24/T25/T26 live methods).
@@ -123,6 +123,7 @@ Start here when resuming the active goal.
 | `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Completed holdout live arm, `T0 diagnostic`; preserves final-best coverage but loses yield, P135 HV/quality, and unique PPA breadth. |
 | `T32` | `T32_sr_raw_front_preserving_emitter_qd` | Completed holdout live arm, `T0 diagnostic`; repairs some P098 yield and unique PPA breadth versus T31 but loses T26's P135 HV/quality signal. |
 | `T33` | `T33_qwen3_preprocessing_ladder_bd` | Completed replay diagnostic, `T0 diagnostic`; canonical RTL/identifier-role RTL modestly beat lexical HV, but canonical Yosys netlist's collapse improvement does not transfer to HV/PPA-front metrics. |
+| `T34` | `T34_qwen_pca_residual_bd` | Registered Qwen PCA-residual follow-up; replay pending. |
 
 ## Validity-Gate Note
 

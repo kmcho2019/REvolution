@@ -47,6 +47,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Archive-coupling failure-feedback repair variant | `T0 diagnostic`; no P098 repair or P135 HV retention |
 | `T32` | `T32_sr_raw_front_preserving_emitter_qd` | Archive-coupling front-preserving emitter variant | `T0 diagnostic`; P098 yield hint but no P135 HV/quality retention |
 | `T33` | `T33_qwen3_preprocessing_ladder_bd` | Learned/projection descriptor | `T0 diagnostic`; RTL views modestly beat lexical HV, netlist collapse fix does not transfer |
+| `T34` | `T34_qwen_pca_residual_bd` | Learned/projection descriptor | Registered; PCA-residual anti-collapse replay pending |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
