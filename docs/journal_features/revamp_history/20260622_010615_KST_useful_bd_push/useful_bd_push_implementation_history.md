@@ -2279,3 +2279,45 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - T45 remains pending until the full three-problem live screen, Pareto
   validation, direct-PPA package, Phase 03.1 viewer export, strict Playwright
   validation, visual inspection, and tier decision are complete.
+
+## Presentation And RTLLM Milestone Start - 2026-06-22 UTC
+
+- User redirected the active priority to a presentation/report milestone that
+  answers the two main questions: whether diversity matters for RTL/Verilog
+  PPA evolution, and which diversity matters.
+- Stopped the just-started T45 classic arm after about 10 seconds to avoid
+  consuming the vLLM endpoint while switching priorities. It wrote an
+  interrupted run root at
+  `exp/useful_bd_push/t45_t11_runtime_top4_graph_20260622_124816_UTC/`; this
+  is not a T45 result and must not be interpreted.
+- Created `presentations/20260623_report/` with report and slide scaffolds,
+  pre-registered RTLLM experiment protocol, command templates, adversarial
+  review rubric, planned figure/table directories, and a 50-problem RTLLM
+  manifest frozen from `bench/RTLLM/*_prompt.txt`.
+- Recorded an initial adversarial sub-agent review at
+  `presentations/20260623_report/reviews/subagent_prelaunch_review.md`.
+- Attempted `claude -p` prelaunch review and recorded the non-usable
+  `Execution error`, then reran with a longer wait and recorded the completed
+  review at `presentations/20260623_report/reviews/claude_prelaunch_review.md`.
+- Incorporated immediate Claude review gates: exact T26 is the confirmatory
+  fallback, one-seed RTLLM cannot claim seed-stable significance, full-run
+  aggregates must include a screen-excluded view, budget parity must report
+  evaluation/LLM-call counts, and front-family breadth must be a first-class
+  figure because T28 shows exact T26 loses that diversity metric versus
+  classic.
+- Added the milestone to `goal_template.md`,
+  `useful_bd_push_implementation_todo.md`, and
+  `useful_bd_push_adversarial_prompt.md` so presentation plus RTLLM comparison
+  is treated as a major goal gate before resuming lower-priority technique
+  exploration.
+
+## One-Seed RTLLM Milestone Clarification - 2026-06-22 13:05 UTC
+
+- User clarified that the one-seed limitation is acceptable for the deadline
+  as the first broad RTLLM pass. The priority is to run the matched
+  classic-vs-T26-family comparison, organize the plots/tables, and build the
+  presentation/report materials before paying the cost of multi-seed
+  replication.
+- Updated the milestone docs to keep the statistical caveat: one seed can
+  support paired engineering evidence across problems, but not seed-stable or
+  statistical-significance claims.

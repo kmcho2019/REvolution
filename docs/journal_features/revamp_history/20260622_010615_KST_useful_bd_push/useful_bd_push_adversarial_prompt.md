@@ -9,6 +9,11 @@ Read:
 - `useful_bd_push_plan.md`
 - `useful_bd_push_implementation_todo.md`
 - `useful_bd_push_implementation_history.md`
+- `presentations/20260623_report/README.md`
+- `presentations/20260623_report/report.md`
+- `presentations/20260623_report/slides.md`
+- `presentations/20260623_report/experiment_plan.md`
+- `presentations/20260623_report/adversarial_validation.md`
 - every attempted `techniques/<technique_slug>/methodology.md`
 - every attempted `techniques/<technique_slug>/results_report.md`
 - relevant scripts, tests, reports, figures, tables, run roots, and commits
@@ -58,6 +63,19 @@ Check:
 - Are tests, ruff, pyright, and `git diff --check` recorded, or are blocked
   results explicitly justified?
 - Are commits atomic, signed, and message-verified?
+- Does `presentations/20260623_report/` answer whether diversity matters for
+  RTL/Verilog PPA evolution and which diversity matters?
+- Was the RTLLM 50-problem manifest frozen from `bench/RTLLM/*_prompt.txt`
+  before full-run interpretation?
+- Was the full RTLLM QD arm selected from screening before seeing full RTLLM
+  results?
+- Does the RTLLM comparison use the same model, seed, prompts, operators,
+  budget, token limits, and evaluation flow for classic and QD?
+- Are RTLLM figures visually inspected, intuitive, and sufficient to explain
+  paired HV/HV-AUC, valid-PPA yield, front-family breadth, and representative
+  PPA fronts?
+- If T26.1 or gated T26.1 is used, is the implementation narrow, tested, and
+  compliant with GUIDELINES.md simplicity rules?
 
 PASS requires evidence, not implementer summary. If the final result is
 negative, PASS only if the negative map is complete enough to be useful for

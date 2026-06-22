@@ -33,6 +33,29 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 
 ## Common Evaluation Surface
 
+- [x] Create `presentations/20260623_report/` as the current priority
+      milestone package for the two diversity questions and broad RTLLM
+      classic-vs-T26-family comparison.
+- [x] Freeze the RTLLM 50-problem manifest from `bench/RTLLM/*_prompt.txt`
+      inside the milestone package.
+- [x] Add pre-registered command templates for T26-family screening and the
+      full RTLLM run.
+- [x] Run and record initial sub-agent adversarial review for the milestone
+      plan.
+- [ ] Run screening ladder for exact T26 and low-fusion T26.1; add gated
+      T26.1 only after narrow implementation and focused tests.
+- [ ] Select the full RTLLM QD arm before seeing full RTLLM results.
+- [ ] Run full RTLLM classic versus selected QD arm with recorded vLLM
+      preflight and 128k token budgets.
+- [ ] Treat the one-seed RTLLM run as the deadline package input; do not block
+      plots, tables, report, or slides on multi-seed replication.
+- [ ] Package RTLLM-wide tables, figures, direct PPA plots, and Phase 03.1
+      viewer artifacts when archive data is available.
+- [ ] Complete `presentations/20260623_report/report.md` and `slides.md` with
+      precise answers to the two main questions.
+- [ ] Run sub-agent and `claude -p` adversarial reviews when available, and
+      record outputs under `presentations/20260623_report/reviews/`.
+- [ ] Pass final presentation/report adversarial validation before sign-off.
 - [ ] Define shared classic/manual/random/simple-control baselines.
 - [ ] Define central method result schema.
 - [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime

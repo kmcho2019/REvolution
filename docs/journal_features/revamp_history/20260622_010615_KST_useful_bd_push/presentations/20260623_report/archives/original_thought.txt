@@ -1,0 +1,194 @@
+› We have been asked to prepare a presentation + report answering our two main questions 1. Does diversity even matter for the evolution
+  of RTL/Verilog, 2. What type of 'diversity' actually matters for RTL? And then run a relatively large scale experiment comparing the
+  classic REvolution baseline against a QD/MAP-Elites variant to comapre the results in detail. I want to create a new presentation
+  related directory within /workspace/docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/
+  presentations/20260623_report/ where we gather previous run results and analysis into answering the two questions (I think a lot of
+  resources should be available via previous revamp_history runs and ./exp directory as well). Also we want to demonstrate that using
+  the best method we have found T26 or its variants that we are able to beat the classic REvolution conference baseline in terms of
+  improving PPA metrics. We want to demonstrate this result on a broad benchamrk dataset RTLLM. So we want to run this experiment
+  comparing classic REvolution and our best T26 variant to demosntrate that the PPA related metrics like HV etc. are better to
+  demonstrate the effectiveness of this line of research. We have gotten questions from people  question if QD/MAP-Elites line of
+  thought is even worth it and can even meaningfully improve performance or not. So with this experiment and compiling the analysis raw
+  data visualization and plots into the presentation directory we want to demosntrate to colleagues that our current research direction
+  we are purusing should not be dropped. We want to make this experiment + presentation material prepration as part of a major milestone
+  of our goal + plan  + todo and should be included in the plan and aversarial validation requirements. Our priority is to demosntrate
+  that algorithms that integrate some form of QD/MAP-Elites perform well so I think you should use either T26 or other variants like
+  T26.1   T26.1 / low-fusion conservative exploit
+
+    qd_fill_target_fraction = 0.25
+    qd_improve_backfill_fraction = 0.20
+    qd_champion_lane_fraction = 0.80
+    qd_two_parent_probability = 0.10 + gated two-parent fusion: only
+    fuse parents that are both valid, near-front, and descriptor-compatible, instead of globally mixing unrelated archived candidates.
+    Current two-parent fusion under NSGA-II global rank can pair candidates that are both good but structurally incompatible, which is
+    likely why it hurts RTL generation quality.
+
+  Before launching full RTLLM run via vllm instance which will be expensive I think we should run a series of small tests to ensure that
+  our new variant is actually compettive or tune some other parameters or adjust things or make tweaks to ensure that when we launch
+  full run we have good chance of actually beating classic REvolution baseline and demonstrating QD-worhtiness and effectivenss. also
+  when doing experiments make sure we take full advantage of multi-threading/workers to ensure that the evlatuioan and each run goes
+  quickly. I think we can aim to use soemthing like 50 threads/workers simultaneously to make it go fast without threshing cpu usage too
+  much. I think we can use 50 workers we dynamic scheduling os that we can run 50 of them simultaneously so that all 50 problems of RTLLM
+  could be evaluated simultaneously  and efficiently reallocate threads when problems finish to so that workers could be reallocated to
+  longer taking problems so that we can maximizie throughput. We want to make each evaluation go fast so that it does not becomes
+  bottleneck and we can meet deadline.
+
+  After launching experiment we should update the presentation to make it organized and easy to understand and result is intutive and
+  demonstrates our claims well. visualizations + table + data orgnaization is very important so we should devote a lot of attention to
+  this. RTLLM has 50 problems so we should develop effective data represetnation + visualization + plotting strategies to ensure that
+  the comparison between two methods can be well organized and well represented in an intuitve fashion. Deploy adversarial sub-agents
+  relatively frequently to ensure that the presentation organization + the experiment RTLLM that should be included as major part of
+  presetnation is being followed and being in the major milestones of our current on-going goals and not being sidetracked. If there are
+  other todos it should be witheld as the presetnation + RTLLM comparison experiemtn is the priority. Also the adversarial sub-agent
+  should be asked for things like if the recent progress and code changes are following coding guidance outlined in GUIDELINES.md such
+  as avoiding excessive defensive coding, excessive abstractions, excessive fall-backs, and excessive back-compat usage so that the code
+  base is easy to follow and clean. We could maybe include this into an organized note in the presentations/20260623 directory as well.
+  Along with your own sub-agents I think we can deploy third-party sub-agents and validation feedback via 'claude -p' as well to ensure
+  more unbiased third prity based feedback. Also the feedback and adversarial review should check if the presentation is easy to follow
+  if it answers the core questions and if it conveys the experiemtnalt data demosntrating QD effectiveness clearly and if the
+  visualizations and plots and tables make sense is cohererent and conveys the intent well.
+  Our goal is to find our new QD/MAP-Elites method is better at improving PPA compared to classic REvolution
+  conference version, only other requirement is if classic is able to generate at least one viable ppa
+  solution for a problem our algorithm should also have at least one viable functionally accurate
+  solution for that design as well.
+
+some preliminary plan:
+  # RTLLM QD Milestone Presentation And Run Plan
+
+  ## Summary
+
+  Create docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/ as the milestone
+  package that answers:
+
+  1. Does diversity matter for RTL/Verilog PPA evolution?
+  2. Which diversity actually matters?
+
+  The package will combine prior evidence with a new matched RTLLM experiment comparing classic REvolution against the best QD/MAP-
+  Elites method selected by a small pre-screen. Use the selected defaults: Markdown deck, matched 1-seed 12x3 budget, and “screen then
+  choose” before the full RTLLM launch.
+
+  ## Key Changes
+
+  - Add a presentation/report directory with:
+      - README.md: navigation and artifact index.
+      - report.md: detailed answer to the two main questions.
+      - slides.md: concise Markdown presentation deck.
+      - experiment_plan.md: pre-registered RTLLM protocol.
+      - adversarial_validation.md: review rubric and recorded feedback.
+      - tables/, figures/, data/, commands/, reviews/.
+
+  - Update the current useful-BD goal docs to make this a priority milestone:
+      - goal_template.md: add presentation + full RTLLM comparison as the current priority.
+      - useful_bd_push_implementation_todo.md: add checklist items for screening, full RTLLM run, visual inspection, report, deck, and
+        adversarial review.
+
+      - useful_bd_push_adversarial_prompt.md: require reviewers to check whether the presentation answers the two questions and whether
+        the RTLLM comparison supports the claim.
+
+      - useful_bd_push_implementation_history.md: append a timestamped milestone start entry.
+
+  ## Experiment Plan
+
+  - Freeze the RTLLM suite from benchmark files, not scripts/RTLLM.csv, because the CSV omits Prob006_adder_pipe_64bit and
+    Prob013_multi_booth_8bit; the run manifest must list all 50 problems explicitly.
+
+  - Preflight http://20.0.0.103:8000/v1/models and require openai/gpt-oss-120b with max_model_len >= 128000.
+  - Run a small screening ladder before the expensive full RTLLM run:
+      - baseline: exact T26 settings.
+      - T26.1: T26 with qd_two_parent_probability=0.10.
+      - T26.1-gated: T26 with low two-parent fusion gated by valid, near-front, descriptor-compatible parents.
+
+  - Keep screening matched to classic on the existing hard RTLLM screen plus a small stress slice:
+      - Prob045_alu, Prob041_traffic_light, Prob015_multi_pipe_8bit.
+      - Add Prob006_adder_pipe_64bit, Prob013_multi_booth_8bit, Prob043_RAM if smoke cost is acceptable.
+
+  - Choose the full-run QD arm before seeing full RTLLM results using:
+      - preserves every classic-covered design;
+      - no catastrophic validity drop where classic has at least 10 passing samples;
+      - best paired HV/HV-AUC and front-family evidence on the screen;
+      - no duplicate-collapse or invalid-diversity claim.
+
+  - Full run:
+      - classic arm: classic_revolution, eoh_strategies.
+      - QD arm: selected T26-family variant.
+      - benchmark: RTLLM 50-problem manifest.
+      - seed: 1001.
+      - budget: population_size=12, num_generations=3.
+      - tokens: max_tokens=128000, diff_max_tokens=128000.
+      - workers: start with total_worker_slots=48, max_active_problems=12, max_workers_per_problem=4.
+      - record all commands under presentations/20260623_report/commands/.
+
+  ## T26.1 Implementation
+
+  - Keep exact T26 behavior as the control.
+  - For simple T26.1, no code change is needed if only qd_two_parent_probability=0.10 changes.
+  - For gated T26.1, add one narrow QD parent-selection option:
+      - new CLI/config field: --qd_two_parent_gate.
+      - allowed values: none, near_front_descriptor.
+      - default: none.
+      - near_front_descriptor only permits two-parent fusion when both parents are valid archive members, both are rank-1 or near-front
+        under existing NSGA-II rank, and descriptor distance is below a fixed pre-registered threshold.
+
+  - Do not add broad fallbacks or optional loose behavior. If the gate cannot find a valid pair, use the existing one-parent fallback
+    and count it in the summary.
+
+  - Extend summaries to report:
+      - success-parent requests;
+      - two-parent attempts;
+      - gated accept count;
+      - gated reject count;
+      - fallback count;
+      - PPA/front contribution from two-parent descendants.
+
+  ## Reporting And Visuals
+
+  - Primary figures:
+      - RTLLM-wide paired HV delta distribution.
+      - HV-AUC delta distribution.
+      - per-problem win/loss heatmap.
+      - valid-PPA funnel by method.
+      - PPA-front count and unique-front-family count by problem.
+      - scatter of classic HV vs QD HV with diagonal reference line.
+      - raw area-power Pareto panels for representative problems.
+
+  - Tables:
+      - one row per method/problem with HV, HV-AUC, best score, valid-PPA, front points, unique families, runtime.
+      - aggregate paired mean/median deltas and bootstrap confidence intervals.
+      - validity gate table with small-n labels where classic denominator is below 10.
+      - method lineage table explaining why T26/T26.1 was selected.
+
+  - Include both:
+      - simple static direct PPA front plots for readers;
+      - Phase 03.1 qd_ppa_viewer/ bundle for the selected full-run QD archive if archive artifacts are available.
+
+  - Manually inspect generated plots and record visual notes before claiming they are presentation-ready.
+
+  ## Validation
+
+  - Run focused tests for any touched QD parent-selection code and packaging scripts.
+  - Run ruff check and python -m pyright on touched source/report scripts.
+  - Run git diff --check.
+  - Validate QD archives with scripts/validate_pareto_front_run.py.
+  - Use adversarial review at these gates:
+      - after pre-registration, before screening run;
+      - after screening, before full RTLLM launch;
+      - after full-run packaging, before presentation sign-off.
+
+  - Use sub-agents for:
+      - code simplicity and GUIDELINES compliance;
+      - experimental anti-gaming review;
+      - presentation clarity and claim-evidence alignment.
+
+  - Also run claude -p review if available, recording prompt and output under reviews/.
+  - The final report can claim QD usefulness only if it passes the existing guardrails: no missing classic-covered designs, no invalid/
+    duplicate diversity claim, no hidden validity collapse, and positive evidence on HV/HV-AUC/front-family/archive metrics rather than
+    average fitness alone.
+
+  ## Assumptions
+
+  - The full benchmark means the 50 RTLLM problems found from *_prompt.txt files under bench/RTLLM or data/bench/RTLLM.
+  - If T26.1-gated fails smoke tests or complicates code, exact T26 remains the full-run candidate.
+  - If full 50-problem RTLLM is blocked by endpoint/runtime failures, record partial artifacts and complete a pre-registered resumable
+    continuation rather than changing method settings.
+
+  - Presentation format is Markdown deck plus detailed Markdown report.

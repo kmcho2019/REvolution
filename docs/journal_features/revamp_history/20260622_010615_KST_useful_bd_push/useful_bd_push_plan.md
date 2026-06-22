@@ -45,6 +45,15 @@ The desired end state is one of:
 
 ## Current Research State
 
+The current priority milestone is `presentations/20260623_report/`. It must
+prepare a report and Markdown deck answering whether diversity matters for
+RTL/Verilog PPA evolution and which diversity matters. It must also
+pre-register and execute a broad RTLLM classic versus T26-family QD comparison
+after a small screening ladder. The full RTLLM launch is not allowed until the
+selected QD arm is chosen from screening evidence and passes adversarial
+pre-launch review. Exact T26 is the fallback; T26.1 low-fusion and gated T26.1
+are candidates only if they pass smoke/screening without adding messy code.
+
 T37 is the most recent completed package and confirms the T36 replay lead. It
 keeps the T11 structural-contrastive selector and tests zero, one, two, and
 three bounded descriptor-cell local-front slots. One slot reaches HV

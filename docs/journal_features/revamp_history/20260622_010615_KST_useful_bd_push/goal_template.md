@@ -20,6 +20,15 @@ small tolerance, preserves classic-covered valid-PPA problems, or shows a
 reproducible positive delta in HV, valid-PPA count, Pareto spread, archive
 coverage, or lineage yield.
 
+Current priority milestone: build presentations/20260623_report/ to answer
+whether diversity matters for RTL PPA evolution and which diversity matters.
+Use prior evidence plus a pre-registered RTLLM 50-problem classic-vs-T26-family
+comparison. Screen exact T26, low-fusion T26.1, and gated T26.1 before any
+full RTLLM launch; exact T26 remains fallback if new variants fail smoke,
+screening, or code-simplicity review. Because the deadline is tight, the
+one-seed full RTLLM run is the first milestone; organize its plots, tables, and
+presentation materials before starting costly multi-seed replication.
+
 Metrics: do not use average fitness or average best PPA as primary evidence.
 Compare classic, landing Smooth-QD/manual-BD, and every method with a common
 passive archive. Report global PPA hypervolume, passive archive QD
@@ -61,7 +70,8 @@ message.
 Blocked stop condition: stop only after three concrete attempts hit the same
 blocker, with commands, artifacts, missing input, and exact next decision
 needed. Do not end because one method is weak. Completion requires
-focused tests/checks, inspected intuitive figures, precise conclusions, no
-overclaimed tier, no anti-loophole violation, and PASS from the adversarial
-prompt written to the validation report.
+focused tests/checks, inspected intuitive figures, a clear presentation/report
+answer to the two main diversity questions, precise conclusions, no overclaimed
+tier, no anti-loophole violation, and PASS from the adversarial prompt written
+to the validation report.
 ```
