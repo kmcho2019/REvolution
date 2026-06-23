@@ -58,7 +58,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T58 preserves coverage and improves yield/best score with frozen T11 PCA4 under T51, but still loses HV, HV-AUC, and front breadth. | Stop primary graph-coordinate live archive tests unless the next method uses graph features as a secondary lane or trains a new encoder objective. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
-| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T63 gives live front-material signal versus T51, but classic still wins mean HV, HV-AUC, and front points. | Do not rerun exact T63; ablate `operator_timing` or keep RTL-native axes as secondary/reporting archive evidence. |
+| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T64 improves valid-PPA yield, but classic still wins HV, HV-AUC, front points, unique PPA, and reference-beating count. | Do not rerun exact T63/T64; redesign generator/archive coupling or keep RTL-native axes as secondary/reporting archive evidence. |
 
 ## Lane Scorecard
 
@@ -71,7 +71,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, T46 PCA4 projection, and T58 T51/T11-PCA4 cross-lane test | T58 is measured `T0 diagnostic_no_promotion`: it preserves coverage and improves yield/best score, but loses classic/T51 on HV, HV-AUC, and front breadth. | Retire frozen T11 PCA4 as a primary archive geometry. | Reopen only as a secondary/reporting lane or with a trained encoder objective that targets front creation without PPA leakage. |
 | `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
-| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, and T63 live screen | T63 is measured `T0 positive_mechanism_ablation_not_promoted`. | Classic still wins mean HV, HV-AUC, and front points; VerilogEval yield is weak. | Try `operator_timing` only as an ablation, or keep fused RTL-native descriptors as secondary/reporting archive evidence. |
+| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, and T64 operator/timing ablation | T64 is measured `T0 diagnostic_yield_archive_ablation_not_promoted`. | Valid-PPA yield improves, but classic still wins the PPA-front metrics needed for promotion. | Redesign archive/generator coupling before another live RTL-native spend, or keep fused RTL-native descriptors as secondary/reporting archive evidence. |
 
 ## Current Lineage
 
@@ -160,6 +160,7 @@ flowchart LR
     BF[T61 problem-local timing risk]
     BG[T62 fused RTL-native proxy]
     BH[T63 fused RTL-native live screen]
+    BI[T64 operator timing live screen]
   end
 
   A --> Q
@@ -227,6 +228,7 @@ flowchart LR
   BD --> BG
   BF --> BG
   BG --> BH
+  BH --> BI
   G --> M
   G --> W
 ```
@@ -308,6 +310,7 @@ flowchart TD
 | 2026-06-23 | `L7` RTL-native descriptors | T62 fused RTL-native proxy result | `advance` guarded live screen only | T62 improves mean front-cell delta to `+0.161290` for `operator_timing` and `state_pipeline`, but all fused profiles still lose occupied-cell breadth. The package includes reference-complete completeness data and does not use PPA as descriptor input. | Use T62 as live-screen motivation only; a live lane must be reference-complete, PPA-free, duplicate-aware, and include direct PPA-front figures. |
 | 2026-06-23 | `L7` RTL-native descriptors | T63 fused RTL-native live screen | `ablate` or `secondary_archive` | T63 completes seed `1001`, preserves classic valid-PPA coverage (`257` versus `257`), and improves T51 front-material signals, but classic wins mean HV (`0.092601` versus `0.089551`), HV-AUC (`0.082020` versus `0.074125`), and front points (`30` versus `25`). | Do not spend seed `1002` on exact `state_pipeline`; try `operator_timing` or use RTL-native axes as secondary/reporting archive evidence. |
 | 2026-06-23 | `L7` RTL-native descriptors | T64 fused operator/timing method card | `advance` narrow ablation | T64 keeps T63's generator, subset, seed, archive mechanics, token budgets, and validators fixed, changing only the descriptor profile to `fused_rtl_operator_timing_2d`. | Run seed `1001`; compare against classic, T51, and T63 before any seed `1002` or secondary-archive redesign. |
+| 2026-06-23 | `L7` RTL-native descriptors | T64 fused operator/timing result | `retire` exact primary geometry | T64 improves valid-PPA yield (`283` versus classic `257`) and active archive members (`88` versus T63 `69`), but loses classic on mean HV (`0.092601` versus `0.084572`), HV-AUC (`0.082020` versus `0.072750`), front points (`30` versus `23`), unique PPA (`87` versus `74`), and reference-beating candidates (`46` versus `38`). | Do not spend seed `1002` on exact T64. Reuse MasterRTL/RTLTimer-style descriptors as secondary/reporting cells or redesign the generator/archive coupling. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
@@ -493,10 +496,12 @@ raises the best mean front-cell proxy to `+0.161290`, but still loses occupied
 cell breadth, so the lane remains a proxy direction rather than a promoted
 result.
 
-T63 is the guarded live archive test for the `state_pipeline` profile. It
-must keep the fused descriptor PPA-free and report reference-complete PPA,
-direct raw PPA fronts, and duplicate/family checks. `operator_timing` remains
-the first ablation only if T63 preserves coverage but front evidence is weak.
+T63 is the guarded live archive test for the `state_pipeline` profile. T64 is
+the matched `operator_timing` ablation. Both keep the fused descriptor PPA-free
+and report reference-complete PPA, direct raw PPA fronts, and Phase 03.1
+viewer artifacts. T64 improves valid-PPA yield, but both live screens lose the
+classic headline front metrics. Exact fused RTL-native primary archive
+geometry should pause until the generator/archive coupling changes.
 
 ## Branching Guidance
 
@@ -528,7 +533,7 @@ unblocks it.
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43, T58 | T58 completed the bounded T51/T11-PCA4 cross-lane test and failed promotion on HV/front breadth. | Stop exact frozen graph-coordinate primary archive tests. | Reopen only with secondary/reporting graph lanes or a trained encoder objective that improves front creation without PPA leakage. |
 | `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
-| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64 | T64 is pre-registered as the direct `operator_timing` ablation after T63. | Run T64 seed `1001`, then either retire primary fused RTL-native archive axes or redesign them as secondary/reporting archive evidence. | Fused descriptors improve live front/archive evidence without default-reference or PPA-leakage claims. |
+| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64 | T64 completed as a diagnostic yield/archive ablation, not a classic win. | Pause exact primary fused RTL-native archive axes. Redesign generator/archive coupling or use RTL-native cells as secondary/reporting evidence. | A redesigned method improves live front metrics without default-reference or PPA-leakage claims. |
 
 ## Branch Split Checklist
 

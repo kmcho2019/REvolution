@@ -1,6 +1,6 @@
 # T64 Hard/Tuning Sanity Commands
 
-Status: pre-registered; seed `1001` pending.
+Status: seed `1001` completed and packaged.
 
 ## Descriptor Probe
 
@@ -138,3 +138,74 @@ uv run python scripts/validate_pareto_front_run.py \
 
 Viewer export must follow the Phase 03.1 contract after final analysis data
 exists.
+
+## Completed Run
+
+```text
+RUN_ROOT=exp/useful_bd_push/t64_fused_operator_timing_20260623_144117_UTC/hard_tuning
+QD_ROOT=${RUN_ROOT}/fused_rtl_operator_timing_qd/seed_1001
+MODEL_DIR=${QD_ROOT}/openai_gpt-oss-120b
+SUMMARY=${MODEL_DIR}/20260623_144120_revolution_summary_results.txt
+```
+
+The run completed all 13 hard/tuning problems.
+
+## Packaging
+
+```bash
+uv run python scripts/package_t48_gated_probe.py \
+  --classic-root exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution \
+  --qd-root exp/useful_bd_push/t64_fused_operator_timing_20260623_144117_UTC/hard_tuning/fused_rtl_operator_timing_qd \
+  --matrix docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T47_t26_contract_probe/tables/probe_problem_matrix.csv \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/hard_tuning_package \
+  --seed 1001 \
+  --package-tag t64 \
+  --package-title T64 \
+  --qd-method fused_rtl_operator_timing_qd \
+  --qd-label "T64 operator/timing QD" \
+  --counter-stem operator_counters \
+  --counter-title "Operator Counters" \
+  --counter-keys success_parent_requests,two_parent_attempts,two_parent_fallbacks
+```
+
+```bash
+uv run python scripts/report_final_analysis_bundle.py \
+  --backend_run classic=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
+  --backend_run fused_rtl_operator_timing_qd=exp/useful_bd_push/t64_fused_operator_timing_20260623_144117_UTC/hard_tuning/fused_rtl_operator_timing_qd/seed_1001 \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/tables/hard_tuning_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/visualizations/qd_ppa_viewer_source/final_analysis
+```
+
+```bash
+uv run python scripts/report_ppa_completeness.py \
+  --ppa-candidates docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/hard_tuning_package/data/t64_ppa_candidates.csv \
+  --reference-ppa-metrics docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/hard_tuning_package/tables/t64_reference_ppa_metrics.csv \
+  --problem-manifest docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/hard_tuning_package/tables/t64_problem_manifest.csv \
+  --classic-method classic_revolution \
+  --qd-method fused_rtl_operator_timing_qd \
+  --output docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/hard_tuning_package/tables/t64_ppa_completeness.csv
+```
+
+## Visualization Export
+
+```bash
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/visualizations/qd_ppa_viewer_source \
+  --backend_run classic=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
+  --backend_run fused_rtl_operator_timing_qd=exp/useful_bd_push/t64_fused_operator_timing_20260623_144117_UTC/hard_tuning/fused_rtl_operator_timing_qd/seed_1001 \
+  --archive_source_backend fused_rtl_operator_timing_qd \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/tables/hard_tuning_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/visualizations/qd_ppa_viewer \
+  --strict
+```
+
+```bash
+uv run python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/visualizations/qd_ppa_viewer \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T64_fused_operator_timing_live_screen/tables/hard_tuning_subset.yaml \
+  --strict
+```
+
+Static strict validation passed. The Playwright run generated screenshots but
+reported the known compare-guide caveat for rank-guide emission in compare
+mode.

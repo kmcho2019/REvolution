@@ -148,7 +148,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       packaged, visually inspected, and assigned a tier decision.
 - [x] `T64_fused_operator_timing_live_screen` is pre-registered as the narrow
       `fused_rtl_operator_timing_2d` ablation after T63.
-- [ ] `T64_fused_operator_timing_live_screen` seed-1001 run is executed,
+- [x] `T64_fused_operator_timing_live_screen` seed-1001 run is executed,
       validated, packaged, visually inspected, and assigned a tier decision.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.

@@ -80,6 +80,9 @@ Real result packages:
 - `T61_rtl_timer_problem_local_bd` problem-local timing-risk proxy diagnostic
 - `T62_fused_rtl_native_bd` fused structural/timing RTL-native proxy
   diagnostic
+- `T63_fused_rtl_native_live_screen` fused RTL-native live diagnostic
+- `T64_fused_operator_timing_live_screen` fused operator/timing live
+  diagnostic
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`.
@@ -724,3 +727,13 @@ the best ALU and traffic-light scores.
   active archive members, but loses T51 on HV-AUC, best score, and valid-PPA
   count. Do not run exact seed `1002`; ablate `operator_timing` or keep
   RTL-native axes as secondary archive/reporting evidence.
+- T64 completed the direct `operator_timing` ablation as
+  `T0 diagnostic_yield_archive_ablation_not_promoted`. It keeps the T63
+  generator and budget fixed, improves valid-PPA count versus classic (`283`
+  versus `257`), and increases active archive members versus T63 (`88` versus
+  `69`). It is still not a QD/front win: classic wins mean HV (`0.092601`
+  versus `0.084572`), HV-AUC (`0.082020` versus `0.072750`), front points
+  (`30` versus `23`), unique PPA points (`87` versus `74`), and
+  reference-beating candidates (`46` versus `38`). Do not run exact seed
+  `1002`; the RTL-native lane needs a redesigned generator/archive coupling or
+  secondary/reporting archive use.

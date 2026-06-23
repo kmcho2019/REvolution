@@ -1,8 +1,10 @@
 # T64 Figures
 
-Status: pending live result.
+Status: completed and visually inspected.
 
-The completed package must include a direct raw area-power PPA-front figure
-before any BD-space or normalized-only visualization is accepted. The direct
-front supplement and Phase 03.1 viewer screenshots must be visually inspected
-before assigning a tier.
+The package includes the direct raw area-power PPA-front supplement under
+`visualizations/direct_ppa_pareto/` and the full Phase 03.1 viewer under
+`visualizations/qd_ppa_viewer/`.
+
+The visual read matches the metric decision: T64 improves valid-PPA yield, but
+classic retains stronger HV, HV-AUC, and front material.

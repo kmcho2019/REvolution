@@ -1,6 +1,6 @@
 # T64 Fused Operator/Timing Live Screen Methodology
 
-Status: pre-registered; seed `1001` not yet completed.
+Status: completed seed `1001`; result is diagnostic, not promoted.
 
 ## Question
 
@@ -84,3 +84,11 @@ If T64 repeats the T63 pattern or worsens yield, retire exact fused
 operator/timing as a primary archive geometry and keep RTL-native descriptors
 only as secondary/reporting archive evidence unless a new generator coupling
 is specified first.
+
+## Outcome
+
+T64 improves valid-PPA yield (`283` versus classic `257`) and active archive
+members (`88`), but it loses classic on mean HV, HV-AUC, front points, unique
+PPA points, and reference-beating candidates. The live result therefore
+confirms `operator_timing` as a diagnostic RTL-native descriptor, not as a
+better primary archive geometry than T63's `state_pipeline` profile.

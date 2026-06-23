@@ -24,17 +24,18 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T63_fused_rtl_native_live_screen/`
-  (`T0 positive_mechanism_ablation_not_promoted`; fused RTL-native axes
-  preserve hard/tuning valid-PPA coverage and improve some T51 front-material
-  measures, but classic wins mean HV, HV-AUC, and front points).
+  `techniques/T64_fused_operator_timing_live_screen/`
+  (`T0 diagnostic_yield_archive_ablation_not_promoted`; operator/timing
+  RTL-native axes improve valid-PPA yield and archive occupancy, but classic
+  wins HV, HV-AUC, front points, unique PPA, and reference-beating count).
 - Most recent live ablation:
-  `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
-  warmup fixes T38's multi-pipe archive gap).
+  `techniques/T64_fused_operator_timing_live_screen/` (direct T63
+  `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  run `techniques/T64_fused_operator_timing_live_screen/`, the
-  `fused_rtl_operator_timing_2d` ablation of T63. Do not spend seed `1002` on
-  exact T63 unless T64 changes the RTL-native lane assessment.
+  do not spend seed `1002` on exact T63 or T64. Treat MasterRTL/RTLTimer-style
+  RTL-native descriptors as high-priority secondary/reporting archive
+  evidence, or redesign the generator/archive coupling before another live
+  RTL-native spend.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -43,15 +44,15 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T63_fused_rtl_native_live_screen/visualizations/direct_ppa_pareto/t63_raw_area_power_fronts_seed1001.png`
-  (13-problem seed-1001 raw area-power fronts for the T63 hard/tuning
+  `techniques/T64_fused_operator_timing_live_screen/visualizations/direct_ppa_pareto/t64_raw_area_power_fronts_seed1001.png`
+  (13-problem seed-1001 raw area-power fronts for the T64 hard/tuning
   package).
 - Most recent direct PPA HTML viewer:
-  `techniques/T63_fused_rtl_native_live_screen/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T64_fused_operator_timing_live_screen/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T63_fused_rtl_native_live_screen/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T64_fused_operator_timing_live_screen/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
   raw/improvement/normalized PPA modes, raw A-P front mode, screenshot, and a
   documented Playwright compare-guide caveat).
@@ -60,23 +61,18 @@ Start here when resuming the active goal.
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T63_fused_rtl_native_live_screen/` (seed-1001 hard/tuning fused
-  RTL-native descriptor diagnostic with direct PPA supplement and Phase 03.1
-  viewer).
-- Active pre-registered live ablation:
-  `techniques/T64_fused_operator_timing_live_screen/` (same T63 generator and
-  hard/tuning surface, but with `operator_mix_score` and `timing_risk_score`
-  archive axes).
+  `techniques/T64_fused_operator_timing_live_screen/` (seed-1001 hard/tuning
+  fused operator/timing descriptor diagnostic with direct PPA supplement and
+  Phase 03.1 viewer).
 - Active RTL-native descriptor packages:
   `techniques/T15_masterrtl_sog_bd/` (`T0 structural_proxy_not_promoted`
   Yosys-SOG proxy with zero lowering failures) and
   `techniques/T61_rtl_timer_problem_local_bd/` (`T0
   positive_proxy_not_promoted` problem-local timing-risk proxy) and
   `techniques/T62_fused_rtl_native_bd/` (`T0
-  positive_proxy_not_promoted` fused structural/timing proxy). T63 is the
-  first reference-complete live archive test; T64 is the pending
-  operator/timing ablation. Use both as mechanism evidence unless a completed
-  package beats the classic headline metrics without reference leakage.
+  positive_proxy_not_promoted` fused structural/timing proxy). T63 and T64 are
+  reference-complete live archive tests. Use them as mechanism evidence only:
+  neither beats classic headline PPA-front metrics.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -202,7 +198,7 @@ Start here when resuming the active goal.
 | `T61` | `T61_rtl_timer_problem_local_bd` | Completed `T0 positive_proxy_not_promoted` problem-local timing-risk audit; small front-cell signal, but no live QD claim. |
 | `T62` | `T62_fused_rtl_native_bd` | Completed `T0 positive_proxy_not_promoted` fused RTL-native audit; front-cell proxy improves, but occupied-cell breadth is still negative. |
 | `T63` | `T63_fused_rtl_native_live_screen` | Completed `T0 positive_mechanism_ablation_not_promoted` live screen; improves T51 front-material measures but loses classic on HV, HV-AUC, and front points. |
-| `T64` | `T64_fused_operator_timing_live_screen` | Pre-registered live ablation of T63 using `operator_mix_score` and `timing_risk_score`; seed `1001` pending. |
+| `T64` | `T64_fused_operator_timing_live_screen` | Completed `T0 diagnostic_yield_archive_ablation_not_promoted`; valid-PPA yield improves, but classic wins HV, HV-AUC, front, unique-PPA, and reference-beating metrics. |
 
 ## Validity-Gate Note
 

@@ -3639,3 +3639,34 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   valid-PPA design, avoid defaulted-reference headline claims, and compare
   against classic, T51, and T63 on HV, HV-AUC, front points, unique PPA,
   reference-beating candidates, active archive members, and yield.
+
+## T64 Fused Operator/Timing Live Screen Result - 2026-06-23T15:30:13Z
+
+- Completed the seed-1001 hard/tuning run under
+  `exp/useful_bd_push/t64_fused_operator_timing_20260623_144117_UTC/hard_tuning`.
+  The vLLM preflight confirmed `openai/gpt-oss-120b max_model_len=131072`.
+- The run completed all 13 problems and passed the single-thought and
+  Pareto/front validators.
+- Packaged `techniques/T64_fused_operator_timing_live_screen/` with the
+  `hard_tuning_package/`, `t64_ppa_completeness.csv`, direct raw PPA-front
+  supplement, full Phase 03.1 viewer, screenshots, and final-analysis source
+  bundle.
+- Completeness: all 13 rows are reference-valid `headline` rows. There are no
+  missing-reference diagnostic rows in this subset. `Prob151_review2015_fsm`
+  is still marked small-n for the yield-rate gate because classic has only two
+  valid-PPA samples.
+- Result versus classic: T64 improves valid-PPA count (`283` versus `257`) but
+  loses mean HV (`0.084572` versus `0.092601`), HV-AUC (`0.072750` versus
+  `0.082020`), front points (`23` versus `30`), unique PPA points (`74` versus
+  `87`), and reference-beating candidates (`38` versus `46`).
+- Result versus T63: T64 adds yield and active archive members (`88` versus
+  `69`), but loses T63's front-material clue on HV, HV-AUC, front points,
+  unique PPA points, and reference-beating candidates.
+- Visualization validation: strict static Phase 03.1 validation passed.
+  Playwright generated screenshots and repeated the known compare-guide
+  rank-guide caveat seen for T63.
+- Tier decision: `T0 diagnostic_yield_archive_ablation_not_promoted`. Do not
+  spend seed `1002` on exact T63 or T64. Keep MasterRTL/RTLTimer-style
+  RTL-native descriptors as high-priority methodology evidence, but redesign
+  generator/archive coupling or use them as secondary/reporting cells before
+  another live RTL-native run.
