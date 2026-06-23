@@ -55,8 +55,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T46 preserves coverage and finds a narrow ALU HV/front signal, but classic still wins mean HV, reference-beating count, valid-PPA samples, and traffic-light quality. | Move graph features out of the primary live archive role unless a trained encoder or secondary-lane mechanism is specified. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T50 improves best score but loses HV, HV-AUC, valid-PPA count, and front coverage on the completed 12-problem screen. | Specify a new front/yield-preserving emitter before held-out spend. |
-| `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T50 shows candidate-budget/front-retention widening does not rescue thought-only role separation. | Do not run T50 seed `1002`; design a new mechanism. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T50 improves best score but loses HV, HV-AUC, valid-PPA count, and front coverage on the completed 12-problem screen. | Run T51 as the next front/yield-preserving archive-emitter check. |
+| `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T50 shows candidate-budget/front-retention widening does not rescue thought-only role separation. | Test T51 before seed `1002`: direct code individuals plus the single-thought operator and one local front slot. |
 
 ## Lane Scorecard
 
@@ -67,8 +67,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, and T46 PCA4 projection | T46 is measured and `T0 mixed_diagnostic`: it preserves coverage and wins ALU HV, but loses aggregate HV and traffic-light quality. | Stop direct graph-axis dimensionality variants; use graph descriptors only as a secondary archive/reporting lane or trained-encoder input. | Keep T35 front-seeded only as an upper bound. |
-| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47/T48/T49/T50 local-Pareto lineage | T50 is measured `T0 diagnostic`: best-score signal only, with HV/front/yield blockers. | Specify a new front/yield-preserving emitter before seed `1002` or held-out spend. | A candidate must improve T48/T49 on documented direct-front/HV metrics without hidden duplicate loss, default-reference headline dependence, or classic-covered design loss. |
-| `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49 thought-k repair, T50 candidate/front control | T50 shows visible candidate-budget restoration and wider local Pareto retention are insufficient. | Design a new repair/emitter mechanism, not another T50 seed. | Better valid-yield recovery or front material than T26/T29/T30 without losing T26 best-quality recovery. |
+| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47/T48/T49/T50/T51 local-Pareto lineage | T51 is pre-registered after T50's best-score-only diagnostic. | Run T51 seed `1001` before seed `1002` or held-out spend. | A candidate must improve T48/T49/T50 on documented direct-front/HV metrics without hidden duplicate loss, default-reference headline dependence, or classic-covered design loss. |
+| `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49 thought-k repair, T50 candidate/front control, T51 code-thought front slot | T51 is the current bounded mechanism check. | Package T51 against T47-T50 and inspect direct PPA fronts before another mechanism change. | Better valid-yield recovery or front material than T50 without losing T49/T50 best-score pressure. |
 
 ## Current Lineage
 
@@ -137,6 +137,8 @@ flowchart LR
     AT[T47 T26 contract probe]
     AU[T48 gated near-front fusion]
     AV[T49 thought-k role-separated repair]
+    AW[T50 candidate/front control]
+    AX[T51 code-thought front slot]
   end
 
   subgraph L6[L6 lineage and emitters]
@@ -193,6 +195,9 @@ flowchart LR
   AA --> AT
   AT --> AU
   AU --> AV
+  AV --> AW
+  AW --> AX
+  AL --> AX
   AL --> L
   G --> M
   G --> W
@@ -258,6 +263,7 @@ flowchart TD
 | 2026-06-23 | `L5/L6` archive coupling and emitters | T49 thought-k role-separated repair hard/tuning result | `ablate` repair-only role separation | T49 preserves all classic-covered valid-PPA designs and improves mean best score by `+0.067203`, but loses mean HV, valid-PPA count, aggregate front points, unique PPA points, and reference-beating candidates. | Do not promote T49 or launch held-out spend from it; specify a front-preserving repair/emitter follow-up first. |
 | 2026-06-23 | `L5/L6` archive coupling and emitters | T50 candidate-matched thought front method card | `advance` candidate/front control | T50 keeps T49's thought-only role separation but restores `population_size=12`, disables repair, and widens the per-cell Pareto cap to `8` so front retention is tested under a visible matched evaluated-code budget. | Run seed `1001`, package against T47 classic roots, and compare directly to T47/T48/T49 before any seed `1002` or held-out spend. |
 | 2026-06-23 | `L5/L6` archive coupling and emitters | T50 candidate-matched thought front partial result | `retire` candidate/front control | T50 improves mean best score by `+0.063433` on the 12 completed problems, but loses mean HV, HV-AUC, valid-PPA count, front points, unique PPA points, and reference-beating candidates; `Prob153_gshare` did not finish. | Do not run T50 seed `1002`; specify a new front/yield-preserving emitter before held-out spend. |
+| 2026-06-23 | `L5/L6` archive coupling and emitters | T51 code-thought front-slot method card | `advance` bounded live screen | T51 changes the mechanism instead of rerunning T50: it restores direct code individuals, keeps the single-thought operator, uses one local front slot per cell, and lowers sparse-yield warmup to `4`. | Run seed `1001` on the T47 hard/tuning surface, then package against T47-T50 before seed `1002` or held-out spend. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |

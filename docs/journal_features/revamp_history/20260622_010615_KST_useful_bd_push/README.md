@@ -27,15 +27,14 @@ Start here when resuming the active goal.
   partial 12-problem screen; best-score improvement does not recover HV,
   HV-AUC, valid-PPA, or front coverage).
 - Most recent pre-registered package:
-  none after T50; the next step is a new front/yield-preserving emitter idea
-  before any seed `1002` or held-out spend.
+  `techniques/T51_code_thought_front_slot_qd/` (code-individual
+  single-thought operator plus one local front slot; no live result yet).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  do not launch T50 seed `1002` or held-out spend; design a new mechanism that
-  preserves T49/T50 best-score pressure while recovering valid-yield and
-  PPA-front material.
+  launch T51 seed `1001` on the hard/tuning surface before any seed `1002` or
+  held-out spend; require front/yield movement, not just best-score movement.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -63,6 +62,9 @@ Start here when resuming the active goal.
 - Most recent live technique:
   `techniques/T50_candidate_matched_thought_front_qd/` (partial seed-1001
   hard/tuning diagnostic with direct PPA supplement).
+- Most recent planned live technique:
+  `techniques/T51_code_thought_front_slot_qd/` (pre-registered
+  hard/tuning follow-up).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -174,6 +176,7 @@ Start here when resuming the active goal.
 | `T48` | `T48_t26_gated_near_front_fusion_qd` | Completed hard/tuning result, `T0 diagnostic after review`; gated near-front fusion reduces some T47 damage but still loses the primary QD metrics versus classic. |
 | `T49` | `T49_thought_k_role_separated_repair_qd` | Completed hard/tuning result, `T0 mixed_diagnostic`; preserves classic-covered valid-PPA coverage and improves best score, but loses mean HV, valid-PPA count, and front coverage. |
 | `T50` | `T50_candidate_matched_thought_front_qd` | Partial hard/tuning result, `T0 diagnostic`; best-score gain, but HV, HV-AUC, valid-PPA, unique PPA, and front coverage lose. |
+| `T51` | `T51_code_thought_front_slot_qd` | Pre-registered hard/tuning follow-up; direct code individuals plus single-thought operator and one local front slot. |
 
 ## Validity-Gate Note
 

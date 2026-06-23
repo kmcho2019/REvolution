@@ -2936,3 +2936,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Interpretation: this reinforces the diagnostic presentation stance. Exact
   T26 has archive/front signal, but the current one-seed RTLLM package does
   not prove a positive QD-effectiveness claim over classic.
+
+## T51 Code-Thought Front-Slot Method Card - 2026-06-23 UTC
+
+- Added `T51_code_thought_front_slot_qd` as the direct follow-up to T50.
+- The method keeps the T47-T50 hard/tuning surface, SR-PCA descriptor, seed
+  policy, local vLLM model, 128k token budgets, no two-parent fusion, and no
+  repair loop.
+- The method changes the mechanism instead of rerunning T50: it returns to
+  `code_individual` representation, keeps `single_thought_operator`, uses
+  `elite_pareto_slot` with one local front slot per cell, and lowers
+  grid-quantile warmup to `4` based on the T39 sparse-yield result.
+- The method is explicitly a composite rescue. A positive seed `1001` result
+  would justify an ablation matrix before seed `1002` or held-out spend.
+- Next step: preflight the vLLM endpoint, launch T51 seed `1001`, then package
+  against the T47 classic hard/tuning roots and T47-T50 QD packages.

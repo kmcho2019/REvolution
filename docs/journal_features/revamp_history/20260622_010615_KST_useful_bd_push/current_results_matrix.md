@@ -594,3 +594,7 @@ the best ALU and traffic-light scores.
   seed `1002` or held-out spend. It improves best score but loses HV, HV-AUC,
   valid-PPA count, and unique/front material against classic and against the
   T47/T48/T49 family on the same 12 completed problems.
+- T51 is pre-registered as the next bounded hard/tuning check. It should be
+  run before any seed `1002` or held-out spend because it changes the mechanism
+  back to code individuals while preserving the single-thought operator and
+  one local front slot.

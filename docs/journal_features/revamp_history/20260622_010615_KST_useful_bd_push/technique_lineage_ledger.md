@@ -23,8 +23,8 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T46 completed the frozen non-PPA projection follow-up; direct graph-axis live archives should now move to secondary/reporting use or trained encoders. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T50 is measured negative except for best-score pressure. |
-| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T50 retires simple candidate-budget/front widening for thought-only role separation. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T51 is pre-registered as the next front/yield-preserving archive-emitter check. |
+| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | T51 tests whether direct code individuals plus the single-thought operator recover T50's front/yield losses. |
 
 ## Lineage Graph
 
@@ -92,6 +92,8 @@ flowchart LR
     T47[T47 T26 contract probe]
     T48[T48 gated near-front fusion]
     T49[T49 thought-k role-separated repair]
+    T50[T50 candidate/front control]
+    T51[T51 code-thought front slot]
   end
 
   subgraph emitters[L6 lineage/emitter]
@@ -147,6 +149,9 @@ flowchart LR
   T30 --> T47
   T47 --> T48
   T48 --> T49
+  T49 --> T50
+  T50 --> T51
+  T39 --> T51
   T39 --> enc
   T17 --> T12
   T17 --> T18
@@ -183,6 +188,7 @@ flowchart LR
 | T48 | `L5/L6` | T26.1 low-probability two-parent fusion gated by near-front rank and descriptor compatibility. | Completed `T0 diagnostic after review`: no classic-covered valid-PPA losses and some improvement over exact T26, but classic still wins mean HV, HV-AUC, valid-PPA count, and aggregate front points. | `retire` direct T26.1 fusion escalation | Specify a role-separated champion, local-rank-1, and bounded-repair emitter before held-out spend. |
 | T49 | `L5/L6` | Thought-only role separation with champion archive pressure, non-champion NSGA-II near-front pressure, and bounded sample-local repair. | Completed `T0 mixed_diagnostic`: preserves covered valid-PPA coverage and improves best score, but loses mean HV, valid-PPA count, and front coverage. | `ablate` repair-only role separation | Specify a front-preserving follow-up before seed `1002` or held-out spend. |
 | T50 | `L5/L6` | Candidate-matched thought-only front retention: restore the 12-candidate evaluated-code budget, disable repair, and widen per-cell Pareto retention. | Partial `T0 diagnostic`: best-score gain, but HV, HV-AUC, valid-PPA, unique PPA, and front material lose. | `retire` candidate/front control | Do not run seed `1002`; specify a new front/yield-preserving emitter. |
+| T51 | `L5/L6` | Code-thought front-slot QD: restore code individuals, keep the single-thought operator, use one local front slot, and lower sparse-yield warmup to 4. | Pre-registered; no live result yet. | `advance` bounded live screen | Run seed `1001` on the T47 hard/tuning surface and package before seed `1002` or held-out spend. |
 | T08-T10/T12/T15-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, lineage repair, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |

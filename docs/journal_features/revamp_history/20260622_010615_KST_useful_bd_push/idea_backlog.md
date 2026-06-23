@@ -553,6 +553,9 @@ a numbered `techniques/T##_slug/` package before running it.
   completed 12-problem screen.
 - Do not run T50 seed `1002` or held-out spend. The next idea must change the
   mechanism, not just the same thought-only role-separation budget.
+- T51 is the first bounded version of that next idea. It restores direct code
+  individuals, keeps `single_thought_operator`, uses one local front slot, and
+  lowers sparse-yield warmup to `4`.
 - Candidate follow-up: a front/yield-preserving emitter with two explicit
   lanes. One lane samples archive champions for best-score pressure. The other
   lane samples underrepresented valid-PPA front families and near-front
