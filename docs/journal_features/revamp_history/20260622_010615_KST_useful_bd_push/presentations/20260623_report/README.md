@@ -25,6 +25,7 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
 | `figures/` | Presentation-ready plots after packaging and visual inspection. |
 | `tables/` | Claim gates, planned metric schema, and generated result tables. |
 | `retrospective/` | Prior-branch diversity/PPA retrospective digest, tables, figures, and regeneration script. |
+| `retrospective_deep_dive/` | Expanded explanation of PPA cluster/replay analysis, Qwen preprocessing, encoder probes, and retrospective scoring. |
 | `reviews/` | Sub-agent, Claude, and manual adversarial review logs. |
 | `full_rtllm/` | Generated full RTLLM tables, figures, raw PPA data, package summary, and supplemental formal final-analysis bundle. |
 
