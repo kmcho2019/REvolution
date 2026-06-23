@@ -354,6 +354,70 @@ def test_candidate_evaluator_extracts_graph_metrics_for_theory_profile(tmp_path,
     assert result.descriptor_values["laplacian_lambda2"] == pytest.approx(0.9)
 
 
+def test_candidate_evaluator_skips_yosys_descriptors_after_synth_fail(
+    tmp_path,
+    monkeypatch,
+):
+    context = _context(tmp_path)
+    code_path = tmp_path / "candidate.sv"
+    code_path.write_text("module TopA; endmodule\n", encoding="utf-8")
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=_FakeSynthesisEvaluator(
+            {
+                "synthesis_success": False,
+                "synthesis_functionality_success": False,
+                "ppa_success": False,
+                "synthesis_log": "bad rtl",
+                "structural_metrics": {},
+            }
+        ),
+        descriptor_axes=(
+            "rent_exponent",
+            "source_aligned_masterrtl_branching",
+        ),
+    )
+    monkeypatch.setattr(
+        evaluator.rtl_descriptor_evaluator,
+        "extract_metrics",
+        lambda **kwargs: {},
+    )
+
+    def fail_graph_extraction(code_file_path):
+        raise AssertionError("graph extraction should be skipped")
+
+    def fail_source_aligned_extraction(code_file_path):
+        raise AssertionError("source-aligned extraction should be skipped")
+
+    monkeypatch.setattr(
+        evaluator,
+        "_extract_graph_metrics",
+        fail_graph_extraction,
+    )
+    monkeypatch.setattr(
+        evaluator,
+        "_extract_source_aligned_metrics",
+        fail_source_aligned_extraction,
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module TopA; endmodule", code_file_path=str(code_path))
+    )
+
+    assert result.status == "failed_synthesis"
+    assert result.graph_metrics == {}
+    assert result.descriptor_values == {}
+
+
 def test_candidate_evaluator_extracts_journal_descriptor_profile(tmp_path, monkeypatch):
     context = _context(tmp_path)
     code_path = tmp_path / "candidate.sv"

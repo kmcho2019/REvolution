@@ -1228,30 +1228,32 @@ class EoHEngine:
             if callable(extract_rtl_metrics)
             else {}
         )
-        extract_graph_metrics = getattr(self, "_extract_candidate_graph_metrics", None)
-        cand.graph_metrics = _coerce_float_metric_dict(
-            extract_graph_metrics(
-                cand,
-                top_module_name=synthesis_top_module_name,
-            )
-            if callable(extract_graph_metrics)
-            else {}
-        )
-        extract_source_aligned_metrics = getattr(
-            self,
-            "_extract_candidate_source_aligned_metrics",
-            None,
-        )
-        cand.graph_metrics.update(
-            _coerce_float_metric_dict(
-                extract_source_aligned_metrics(
+        cand.graph_metrics = {}
+        if synth_results["synthesis_success"]:
+            extract_graph_metrics = getattr(self, "_extract_candidate_graph_metrics", None)
+            cand.graph_metrics = _coerce_float_metric_dict(
+                extract_graph_metrics(
                     cand,
                     top_module_name=synthesis_top_module_name,
                 )
-                if callable(extract_source_aligned_metrics)
+                if callable(extract_graph_metrics)
                 else {}
             )
-        )
+            extract_source_aligned_metrics = getattr(
+                self,
+                "_extract_candidate_source_aligned_metrics",
+                None,
+            )
+            cand.graph_metrics.update(
+                _coerce_float_metric_dict(
+                    extract_source_aligned_metrics(
+                        cand,
+                        top_module_name=synthesis_top_module_name,
+                    )
+                    if callable(extract_source_aligned_metrics)
+                    else {}
+                )
+            )
         cand.descriptor_values = _coerce_float_metric_dict(
             self._extract_candidate_descriptor_values(cand, synth_results)
         )

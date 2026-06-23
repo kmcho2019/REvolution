@@ -456,6 +456,7 @@ class CandidateEvaluator:
             result.dynamic_metrics = self._extract_dynamic_metrics(result.simulation_result)
         if (
             not result.graph_metrics
+            and result.status == CandidateStatus.SUCCESS.value
             and self.descriptor_requirements.get("requires_graph_metrics", False)
         ):
             result.graph_metrics = self._extract_graph_metrics(item.code_file_path)
@@ -711,13 +712,17 @@ class CandidateEvaluator:
             code_file_path=item.code_file_path,
             mapped_cell_count=structural_metrics.get("total_cells"),
         )
-        graph_metrics = (
-            self._extract_graph_metrics(item.code_file_path)
-            if self.descriptor_requirements.get("requires_graph_metrics", False)
-            else {}
-        )
-        if self.descriptor_requirements.get("requires_source_aligned_rtl", False):
-            graph_metrics.update(self._extract_source_aligned_metrics(item.code_file_path))
+        graph_metrics = {}
+        if synth_success:
+            graph_metrics = (
+                self._extract_graph_metrics(item.code_file_path)
+                if self.descriptor_requirements.get("requires_graph_metrics", False)
+                else {}
+            )
+            if self.descriptor_requirements.get("requires_source_aligned_rtl", False):
+                graph_metrics.update(
+                    self._extract_source_aligned_metrics(item.code_file_path)
+                )
         if synth_success and post_synth_success and ppa_success:
             stages["synthesis"] = True
             stages["synthesis_functionality"] = True

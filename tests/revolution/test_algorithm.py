@@ -900,6 +900,59 @@ def _mk_engine(mocker, tmp_path, pop_size=4, candidate_workers=0):
     return eng, llm
 
 
+def test_evaluate_candidate_skips_yosys_descriptors_after_synth_fail(
+    mocker,
+    tmp_path,
+):
+    eng, _ = _mk_engine(mocker, tmp_path, pop_size=1)
+    code_path = tmp_path / "bad.sv"
+    code_path.write_text("module prob; endmodule\n", encoding="utf-8")
+    candidate = Heuristic("thought", "module prob; endmodule\n", "")
+    candidate.code_file_path = str(code_path)
+    mocker.patch.object(
+        eng.evaluator,
+        "evaluate",
+        return_value={
+            "status": "success",
+            "simulation_stdout": "Mismatches: 0\n",
+            "simulation_stderr": "",
+            "compilation_stderr": "",
+        },
+    )
+    mocker.patch.object(
+        eng.synthesis_evaluator,
+        "evaluate",
+        return_value={
+            "synthesis_success": False,
+            "synthesis_functionality_success": False,
+            "ppa_success": False,
+            "synthesis_log": "bad rtl",
+            "structural_metrics": {},
+        },
+    )
+    mocker.patch.object(
+        eng,
+        "_extract_candidate_graph_metrics",
+        side_effect=AssertionError("graph extraction should be skipped"),
+    )
+    mocker.patch.object(
+        eng,
+        "_extract_candidate_source_aligned_metrics",
+        side_effect=AssertionError("source-aligned extraction should be skipped"),
+    )
+
+    evaluated, _ = eng._evaluate_candidate_pipeline(
+        candidate,
+        str(tmp_path / "prob_test.sv"),
+        str(tmp_path / "prob_ref.sv"),
+        "tb",
+        "prob",
+    )
+
+    assert evaluated.status == "failed_synthesis"
+    assert evaluated.graph_metrics == {}
+
+
 def test_gen0_latency_engine_uses_feedback_scores(mocker, tmp_path):
     mocker.patch.object(EoHEngine, "load_problem_description", return_value="desc")
     llm = mocker.MagicMock()
