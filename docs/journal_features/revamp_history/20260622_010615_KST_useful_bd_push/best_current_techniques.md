@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T63/T64/T65/T66 are diagnostic only; the descriptors must affect front creation or repair more directly, not just weak parent pressure or reporting cells. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T63/T64/T65/T66/T67 are diagnostic only; descriptors must affect front creation or repair more directly, not just weak parent pressure, seeded realization, or reporting cells. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -30,10 +30,13 @@ the strongest methodology story because it defines diversity in RTL terms
 rather than opaque embedding space, while the PPA claim remains gated by
 reference-complete paired comparisons.
 
-T67 is the next registered test of this direction: keep the RTL-native
-state/pipeline archive cells, but use seeded thought-code realization so the
-generator can refine successful parent RTL instead of regenerating every code
-sample from scratch.
+T67 tested the next version of this direction by keeping the RTL-native
+state/pipeline archive cells and using seeded thought-code realization so the
+generator could refine successful parent RTL. It improves aggregate valid-PPA
+count (`304` versus classic `257`), but loses front points (`18` versus
+`30`), unique PPA points (`67` versus `87`), reference-beating candidates
+(`41` versus `46`), and misses `Prob153_gshare`. Treat seeded realization as
+a yield clue, not a promoted QD method.
 
 ## Current Assessment After Reference Fix
 
@@ -59,7 +62,7 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65 | Accelerate with coupling | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T63/T64/T65 are useful diagnostics but do not beat classic headline front metrics. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67 | Accelerate with coupling | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T63-T67 are useful diagnostics but do not beat classic headline front metrics. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |

@@ -86,11 +86,11 @@ Real result packages:
 - `T65_rtl_native_secondary_cells` RTL-native secondary-cell audit
 - `T66_rtl_native_front_guarded_parent_qd` RTL-native guarded-parent live
   diagnostic
-- `T67_rtl_native_seeded_thought_qd` is pre-registered but not yet a real
-  result package.
+- `T67_rtl_native_seeded_thought_qd` RTL-native seeded thought-code live
+  diagnostic.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T16`, `T18`, and `T67`.
+`T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis
@@ -760,7 +760,15 @@ the best ALU and traffic-light scores.
   `0.081293`), HV-AUC (`0.082020` versus `0.071443`), and front points (`30`
   versus `20`). Two-parent fusion did not trigger, so T66 should not be cited
   as gated-recombination evidence. Do not run exact seed `1002`.
-- T67 is pre-registered as the next RTL-native coupling attempt. It keeps
+- T67 completed the RTL-native seeded thought-code attempt as
+  `T0 diagnostic_yield_positive_front_negative_blocked`. It keeps
   `fused_rtl_state_pipeline_2d`, removes T66's front-slot parent lane and
-  two-parent fusion, and instead tests `thought_only` with seeded parent-code
-  realization. It has no result or tier yet.
+  two-parent fusion, and tests `thought_only` with seeded parent-code
+  realization. T67 improves aggregate valid-PPA count (`304` versus classic
+  `257`) and barely improves mean HV-AUC (`+0.000070`), but loses mean HV
+  (`-0.000860`), mean best score (`-0.001362`), PPA-front points (`18`
+  versus `30`), unique PPA points (`67` versus `87`), and reference-beating
+  candidates (`41` versus `46`). It also loses `Prob153_gshare`, where classic
+  has 8 valid-PPA candidates and T67 has 0. Do not rerun exact T67; keep the
+  seeded realization yield clue only if the next RTL-native method adds
+  front-preserving repair or source selection.

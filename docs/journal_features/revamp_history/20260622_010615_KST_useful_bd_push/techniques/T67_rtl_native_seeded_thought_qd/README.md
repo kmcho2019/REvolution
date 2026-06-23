@@ -1,6 +1,6 @@
 # T67 RTL-Native Seeded Thought QD
 
-Status: pre-registered; seed `1001` hard/tuning run pending.
+Status: completed seed `1001`; `T0 diagnostic_yield_positive_front_negative_blocked`.
 
 T67 is the next RTL-native coupling attempt after T66. It keeps the
 reference-complete hard/tuning surface and the `fused_rtl_state_pipeline_2d`
@@ -22,6 +22,12 @@ Primary comparators:
 - T63 fused RTL-native state/pipeline live screen;
 - T66 RTL-native guarded-parent QD.
 
-Do not promote T67 without a completed package, reference-complete
-`ppa_completeness.csv`, direct raw PPA figures, and Phase 03.1 viewer artifacts
-if archive export succeeds.
+Seed `1001` improves aggregate valid-PPA count versus classic (`304` versus
+`257`) but loses PPA-front points (`18` versus `30`), unique PPA points (`67`
+versus `87`), and reference-beating candidates (`41` versus `46`). It also
+misses the classic-covered `Prob153_gshare` design, so it is blocked from
+promotion.
+
+The completed package is in `hard_tuning_package/`. The direct raw PPA
+supplement is in `visualizations/direct_ppa_pareto/`, and the full Phase 03.1
+viewer is in `visualizations/qd_ppa_viewer/`.

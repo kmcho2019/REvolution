@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T67 Direct PPA Pareto Supplement</title>
+  <style>
+    :root { color-scheme: light; --ink: #17202a; --muted: #5b6572; --line: #d7dde5; --paper: #f7f8fa; --panel: #ffffff; --good: #0f766e; --warn: #a34d12; --bad: #b42318; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 24px 42px; }
+    h1, h2 { margin: 0; line-height: 1.15; font-weight: 650; }
+    h1 { font-size: 26px; }
+    h2 { margin-top: 28px; font-size: 18px; }
+    p { margin: 8px 0 0; color: var(--muted); }
+    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 10px; margin: 18px 0 26px; }
+    .metric { border-left: 3px solid var(--warn); background: var(--panel); padding: 10px 12px; box-shadow: 0 1px 0 var(--line); }
+    .metric.good { border-left-color: var(--good); }
+    .metric.bad { border-left-color: var(--bad); }
+    .metric strong { display: block; font-size: 18px; }
+    .metric span { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    figure { margin: 18px 0 0; padding: 12px; background: var(--panel); border: 1px solid var(--line); }
+    img { display: block; width: 100%; height: auto; }
+    figcaption { margin-top: 8px; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>T67 Direct PPA Pareto Supplement</h1>
+    <p>
+      Static reader-facing figures for the 13-problem hard/tuning screen.
+      T67 keeps RTL-native state/pipeline archive cells and uses seeded
+      thought-code realization. The result is diagnostic: total valid-PPA
+      count improves, but the method loses front breadth and misses
+      `Prob153_gshare`.
+    </p>
+
+    <section class="summary" aria-label="Aggregate metrics">
+      <div class="metric bad"><strong>-0.000860</strong><span>Mean HV delta</span></div>
+      <div class="metric good"><strong>+0.000070</strong><span>Mean HV-AUC delta</span></div>
+      <div class="metric bad"><strong>-0.001362</strong><span>Best-score delta</span></div>
+      <div class="metric good"><strong>+47</strong><span>Valid PPA delta</span></div>
+      <div class="metric bad"><strong>-12</strong><span>Front points</span></div>
+      <div class="metric bad"><strong>-20</strong><span>Unique PPA</span></div>
+      <div class="metric bad"><strong>-5</strong><span>Reference beating</span></div>
+      <div class="metric bad"><strong>1</strong><span>Covered loss</span></div>
+    </section>
+
+    <h2>Raw Area-Power Fronts</h2>
+    <figure>
+      <img src="t67_raw_area_power_fronts_seed1001.png" alt="Seed 1001 raw area-power fronts">
+      <figcaption>
+        Lower-left is better. Large markers are nondominated within each
+        problem and method using raw area and power.
+      </figcaption>
+    </figure>
+
+    <h2>Improvement-Vs-Reference Fronts</h2>
+    <figure>
+      <img src="t67_direct_ppa_fronts_seed1001.png" alt="Seed 1001 improvement-coordinate PPA fronts">
+      <figcaption>
+        Improvement coordinates are useful across designs, but this screen
+        has a QD candidate-missing row and does not support promotion.
+      </figcaption>
+    </figure>
+
+    <h2>Aggregate Direction</h2>
+    <figure>
+      <img src="t67_metric_delta_summary.png" alt="Aggregate relative deltas for T67 against classic">
+      <figcaption>
+        T67 improves aggregate valid-PPA yield but loses or ties the main
+        PPA-front metrics.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="t67_hv_delta_heatmap.png" alt="Problem heatmap of T67 relative HV delta">
+      <figcaption>
+        Problem-level HV movement is mixed and not strong enough to offset
+        front-count collapse.
+      </figcaption>
+    </figure>
+
+    <h2>Validity And Front Coverage</h2>
+    <figure>
+      <img src="t67_validity_funnel.png" alt="Validity funnel comparing generated, syntax, functional, and valid PPA counts">
+      <figcaption>
+        Seeded thought-code realization improves aggregate valid-PPA count.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="t67_front_counts.png" alt="Front-point counts by problem">
+      <figcaption>
+        Classic retains more aggregate PPA-front points; gshare has no T67
+        valid-PPA candidates.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="t67_thought_seed_counters.png" alt="Thought and seeded code counters for T67">
+      <figcaption>
+        The run produced 40 thoughts and 120 code samples. Success-parent
+        counters stayed at zero in this screen.
+      </figcaption>
+    </figure>
+  </main>
+</body>
+</html>

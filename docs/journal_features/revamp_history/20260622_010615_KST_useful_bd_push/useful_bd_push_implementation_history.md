@@ -3802,3 +3802,37 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   all-50/defaulted-reference metrics. Missing candidate PPA remains a method
   invalid/non-PPA outcome; missing reference PPA makes the problem
   `diagnostic_only`.
+
+## 2026-06-23T18:32:00Z - T67 Seeded Thought Result Package
+
+- Completed T67 seed `1001` on the 13-problem hard/tuning screen:
+  `exp/useful_bd_push/t67_rtl_native_seeded_thought_20260623_170935_UTC/hard_tuning`.
+- The run uses `rtl_native_seeded_thought_qd`, `thought_only`,
+  `code_samples_per_thought=3`, `qd_thought_code_seeded=true`, and the
+  `fused_rtl_state_pipeline_2d` descriptor.
+- Validators passed: Pareto/front run validation, single-thought validation
+  after accepting `code_from_thought` prompt stages, and strict Phase 03.1
+  viewer validation with Playwright.
+- Packaged the result at
+  `techniques/T67_rtl_native_seeded_thought_qd/hard_tuning_package/` and
+  added `tables/t67_ppa_completeness.csv`.
+- Completeness result: all 13 rows have valid reference PPA, but
+  `Prob153_gshare` is `candidate_missing` for T67 (`8` classic valid-PPA
+  candidates, `0` T67 valid-PPA candidates). This is not a missing-reference
+  artifact.
+- Aggregate result versus classic: mean HV `-0.000860`, mean HV-AUC
+  `+0.000070`, mean best score `-0.001362`, valid-PPA count `+47`,
+  PPA-front points `-12`, unique PPA points `-20`, and reference-beating
+  candidates `-5`.
+- Added the direct PPA supplement at
+  `techniques/T67_rtl_native_seeded_thought_qd/visualizations/direct_ppa_pareto/`
+  with a regenerated lower-left-better raw area-power panel and Playwright
+  screenshot.
+- Added the full Phase 03.1 viewer at
+  `techniques/T67_rtl_native_seeded_thought_qd/visualizations/qd_ppa_viewer/`
+  with `validation.{json,md}`, a screenshot matrix, and root
+  `screenshot.png`.
+- Tier decision:
+  `T0 diagnostic_yield_positive_front_negative_blocked`. Do not rerun exact
+  T67. Reuse seeded realization only if the next RTL-native method adds
+  front-preserving repair or source-selection pressure.

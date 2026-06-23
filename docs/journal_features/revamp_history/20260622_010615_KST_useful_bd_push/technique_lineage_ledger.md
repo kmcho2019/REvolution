@@ -25,7 +25,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T58 completed the final bounded frozen T11 PCA4 primary-archive check and failed promotion on HV/front breadth. |
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T59 failed promotion; the next method must change front-slot creation or use a secondary archive lane. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Short fail-pool feedback was insufficient; escalate only with measured source-level repair or role-separated emitters. |
-| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T66 completed as a diagnostic coupled-parent screen; T67 is pre-registered to test source-preserving realization. |
+| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T67 completed as a diagnostic seeded-realization screen; park exact T67 and add front-preserving repair/source selection before more live spend. |
 
 ## Lineage Graph
 
