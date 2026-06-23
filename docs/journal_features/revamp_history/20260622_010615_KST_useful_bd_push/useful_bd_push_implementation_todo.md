@@ -244,9 +244,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T50_candidate_matched_thought_front_qd` is pre-registered as the
       candidate-matched front-retention follow-up after T49 preserved coverage
       but lost mean HV and PPA-front material.
-- [ ] `T50_candidate_matched_thought_front_qd` seed `1001` is run on the T47
+- [x] `T50_candidate_matched_thought_front_qd` seed `1001` is run on the T47
       hard/tuning comparator surface, packaged, visually inspected, and
-      assigned a tier decision before seed `1002` or held-out spend.
+      assigned a tier decision before seed `1002` or held-out spend. The
+      package is partial because `Prob153_gshare` did not finish.
 
 ## Minimum Goal Completion
 

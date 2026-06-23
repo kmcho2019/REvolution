@@ -1,6 +1,6 @@
 # T50 Artifacts Manifest
 
-Status: pre-registered; no live artifacts yet.
+Status: seed `1001` partial 12-problem screen packaged.
 
 ## Method Card
 
@@ -8,32 +8,37 @@ Status: pre-registered; no live artifacts yet.
 - `commands/hard_tuning_sanity.md`
 - `results_report.md`
 
-## Planned Run Root
+## Run Root
 
 ```text
-exp/useful_bd_push/t50_candidate_matched_thought_front_<timestamp>/hard_tuning/
+exp/useful_bd_push/t50_candidate_matched_thought_front_20260623_020738_UTC/hard_tuning/
 ```
 
-## Required Preflight Files
+## Preflight Files
 
-- `preflight/models_<timestamp>.json`
-- `preflight/models_summary_<timestamp>.txt`
+- `preflight/models_20260623_020738_UTC.json`
+- `preflight/models_summary_20260623_020738_UTC.txt`
 
-## Expected QD Output Root
+## QD Output Root
 
 ```text
-exp/useful_bd_push/t50_candidate_matched_thought_front_<timestamp>/hard_tuning/candidate_matched_thought_front_qd/seed_1001/openai_gpt-oss-120b/
+exp/useful_bd_push/t50_candidate_matched_thought_front_20260623_020738_UTC/hard_tuning/candidate_matched_thought_front_qd/seed_1001/openai_gpt-oss-120b/
 ```
 
-## Planned Package
+`Prob153_gshare` did not produce a problem directory, so the committed package
+uses the 12 completed problems and labels the result as partial.
 
-After seed `1001`, package under `hard_tuning_package/` with:
+## Package
+
+Packaged under `hard_tuning_package/` with:
 
 - `tables/t50_problem_seed_metrics.csv`
 - `tables/t50_aggregate_metrics.csv`
 - `tables/t50_comparison_deltas.csv`
 - `tables/t50_validity_gates.csv`
 - `tables/t50_operator_counters.csv`
+- `tables/t50_family_comparison_12_problem_subset.csv`
+- `tables/t50_family_deltas_12_problem_subset.csv`
 - `data/t50_ppa_candidates.csv`
 - `figures/t50_hv_delta_heatmap.png`
 - `figures/t50_metric_delta_summary.png`
@@ -43,19 +48,14 @@ After seed `1001`, package under `hard_tuning_package/` with:
 - `figures/t50_direct_ppa_fronts_seed1001.png`
 - `figures/visual_inspection_notes.md`
 
-Also add T50-versus-T47/T48/T49 comparison tables after the classic/T50 package
-is written. The current generalized packager compares one QD arm against
-classic; QD-family comparisons are required post-package tables, not implied
-third arms inside that command.
-
 `visualizations/direct_ppa_pareto/` must contain:
 
 - `index.html`
 - `metrics.json`
 - `screenshot.png`
 
-Export `visualizations/qd_ppa_viewer/` only if the archive artifacts support an
-honest Phase 03.1 export.
+`visualizations/qd_ppa_viewer/` is omitted because the run is incomplete and
+missed final summary artifacts.
 
 ## Comparator Roots
 

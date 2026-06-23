@@ -17,20 +17,19 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T49_thought_k_role_separated_repair_qd/` (`T0
-  mixed_diagnostic`; role-separated thought generation preserves
-  classic-covered valid-PPA coverage and improves best score, but loses mean
-  HV, valid-PPA count, and front coverage).
+  `techniques/T50_candidate_matched_thought_front_qd/` (`T0 diagnostic`;
+  partial 12-problem screen; best-score improvement does not recover HV,
+  HV-AUC, valid-PPA, or front coverage).
 - Most recent pre-registered package:
-  `techniques/T50_candidate_matched_thought_front_qd/` (candidate-matched
-  thought-only follow-up that restores the 12-candidate evaluated-code budget
-  and widens per-cell Pareto retention).
+  none after T50; the next step is a new front/yield-preserving emitter idea
+  before any seed `1002` or held-out spend.
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  run T50 seed `1001` before any held-out spend; do not treat T49 seed `1001`
-  as a promoted QD lead.
+  do not launch T50 seed `1002` or held-out spend; design a new mechanism that
+  preserves T49/T50 best-score pressure while recovering valid-yield and
+  PPA-front material.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -39,12 +38,12 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T49_thought_k_role_separated_repair_qd/hard_tuning_package/figures/t49_direct_ppa_fronts_seed1001.png`
-  (straightforward seed-1001 raw area-power fronts for the T49 hard/tuning
+  `techniques/T50_candidate_matched_thought_front_qd/hard_tuning_package/figures/t50_direct_ppa_fronts_seed1001.png`
+  (partial 12-problem seed-1001 raw area-power fronts for the T50 hard/tuning
   package).
 - Most recent direct PPA HTML viewer:
-  `techniques/T49_thought_k_role_separated_repair_qd/visualizations/direct_ppa_pareto/index.html`
-  (filesystem-openable raw area-power Pareto supplement with summary table and
+  `techniques/T50_candidate_matched_thought_front_qd/visualizations/direct_ppa_pareto/index.html`
+  (filesystem-openable raw area-power Pareto supplement with summary cards and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
   `techniques/T48_t26_gated_near_front_fusion_qd/visualizations/qd_ppa_viewer/index.html`
@@ -56,7 +55,7 @@ Start here when resuming the active goal.
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T49_thought_k_role_separated_repair_qd/` (seed-1001
+  `techniques/T50_candidate_matched_thought_front_qd/` (partial seed-1001
   hard/tuning diagnostic with direct PPA supplement).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
@@ -168,7 +167,7 @@ Start here when resuming the active goal.
 | `T47` | `T47_t26_contract_probe` | Completed hard/tuning result, `T0 diagnostic`; exact T26 keeps positive best-score movement but loses HV, HV-AUC, valid-PPA count, and aggregate front points versus classic. |
 | `T48` | `T48_t26_gated_near_front_fusion_qd` | Completed hard/tuning result, `T0 diagnostic after review`; gated near-front fusion reduces some T47 damage but still loses the primary QD metrics versus classic. |
 | `T49` | `T49_thought_k_role_separated_repair_qd` | Completed hard/tuning result, `T0 mixed_diagnostic`; preserves classic-covered valid-PPA coverage and improves best score, but loses mean HV, valid-PPA count, and front coverage. |
-| `T50` | `T50_candidate_matched_thought_front_qd` | Pre-registered T49 follow-up; candidate-matched thought-only front-retention screen, no live result yet. |
+| `T50` | `T50_candidate_matched_thought_front_qd` | Partial hard/tuning result, `T0 diagnostic`; best-score gain, but HV, HV-AUC, valid-PPA, unique PPA, and front coverage lose. |
 
 ## Validity-Gate Note
 

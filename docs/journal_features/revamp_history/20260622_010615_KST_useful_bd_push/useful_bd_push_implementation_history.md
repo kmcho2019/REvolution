@@ -2882,3 +2882,34 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   accounting proves parity.
 - Next step: run seed `1001`, package against the T47 classic roots and T49
   diagnostic package, then decide whether seed `1002` is justified.
+
+## T50 Candidate-Matched Thought Front Partial Result - 2026-06-23 UTC
+
+- Launched seed `1001` under:
+  `exp/useful_bd_push/t50_candidate_matched_thought_front_20260623_020738_UTC/hard_tuning`.
+- The preflight snapshot accepted `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+- The run produced `12/13` planned problem artifacts. `Prob153_gshare` did
+  not produce a problem directory, and most completed QD problem roots missed
+  final `*_summary.json` files.
+- Added partial-run packaging support in
+  `src/revolution/qd/pareto_analysis.py` and
+  `scripts/package_t48_gated_probe.py`, with focused tests, so the package can
+  derive the required summary subset from `generation_log.jsonl` without
+  editing raw experiment artifacts.
+- Packaged the partial 12-problem comparison under
+  `techniques/T50_candidate_matched_thought_front_qd/hard_tuning_package/`.
+- Added family comparison tables against T47/T48/T49 on the same completed
+  12-problem subset:
+  `tables/t50_family_comparison_12_problem_subset.csv` and
+  `tables/t50_family_deltas_12_problem_subset.csv`.
+- Added the direct PPA supplement under
+  `visualizations/direct_ppa_pareto/` with a Playwright screenshot.
+- Tier decision: `T0 diagnostic_rejected_for_promotion`. T50 improves mean
+  best score by `+0.063433`, but loses mean HV (`-0.026686`), mean HV-AUC
+  (`-0.029095`), valid-PPA candidates (`156` versus `244`), aggregate front
+  points (`18` versus `26`), unique PPA points (`47` versus `79`), and
+  reference-beating candidates (`26` versus `45`).
+- Next step: do not run T50 seed `1002` or held-out spend. Specify a new
+  front/yield-preserving emitter that keeps the best-score pressure without
+  collapsing valid-PPA and front material.

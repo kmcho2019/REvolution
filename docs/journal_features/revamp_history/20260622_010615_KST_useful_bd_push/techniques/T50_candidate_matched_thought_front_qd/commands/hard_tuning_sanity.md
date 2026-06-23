@@ -1,6 +1,15 @@
 # T50 Hard/Tuning Sanity Commands
 
-Status: pre-registered; seed `1001` not launched yet.
+Status: seed `1001` launched; 12 of 13 planned problems completed.
+
+Actual run root:
+
+```text
+exp/useful_bd_push/t50_candidate_matched_thought_front_20260623_020738_UTC/hard_tuning
+```
+
+`Prob153_gshare` did not produce a problem directory. The package therefore
+uses the 12 completed problems and explicitly labels the result as partial.
 
 ## Preflight
 
@@ -65,8 +74,9 @@ COMMON_ARGS=(
 
 ## T50 QD Arm
 
-Run seed `1001` first. Add seed `1002` only if seed `1001` improves T49 front
-or HV evidence without introducing a classic-covered design loss.
+Seed `1001` is complete as a partial diagnostic. Do not add seed `1002` from
+this result: T50 improves best score but loses HV, HV-AUC, valid-PPA count,
+and front material.
 
 ```bash
 SEED=1001
@@ -114,13 +124,15 @@ T49_PACKAGE="docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_
 
 ## Packaging Plan
 
-Use the generalized hard/tuning packager after seed `1001` exits:
+Use the generalized hard/tuning packager after seed `1001` exits. The actual
+T50 package used the same command shape with a matrix filter excluding
+`Prob153_gshare`:
 
 ```bash
 uv run python scripts/package_t48_gated_probe.py \
   --classic-root "${CLASSIC_ROOT}" \
   --qd-root "${RUN_ROOT}/candidate_matched_thought_front_qd" \
-  --matrix docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T47_t26_contract_probe/tables/probe_problem_matrix.csv \
+  --matrix <(awk -F, 'NR==1 || $6 != "Prob153_gshare" {print}' docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T47_t26_contract_probe/tables/probe_problem_matrix.csv) \
   --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T50_candidate_matched_thought_front_qd/hard_tuning_package \
   --seed 1001 \
   --package-tag t50 \
@@ -133,7 +145,9 @@ uv run python scripts/package_t48_gated_probe.py \
 ```
 
 The package must include matched classic/T50 tables, candidate-level PPA data,
-direct raw PPA-front figures, and visual inspection notes.
+direct raw PPA-front figures, and visual inspection notes. The package support
+derives the required summary subset from `generation_log.jsonl` when a partial
+QD run misses final summary files.
 
 After that package is written, add T50-versus-T47/T48/T49 comparison tables
 from:
@@ -143,5 +157,6 @@ from:
 - `${T49_PACKAGE}/tables/t49_aggregate_metrics.csv`
 - `hard_tuning_package/tables/t50_aggregate_metrics.csv`
 
-Report that T50 is evaluated-code-candidate matched. Do not call it LLM-call
-or token matched unless the run logs prove request/token parity.
+Report that T50 is not LLM-call or token matched. It is also not a successful
+evaluated-code-candidate match in practice: the partial screen generated `336`
+T50 candidates versus `576` classic candidates on the 12 completed problems.

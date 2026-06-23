@@ -544,6 +544,26 @@ a numbered `techniques/T##_slug/` package before running it.
   it excludes final PPA, score, reference PPA, Pareto rank, pass/fail labels,
   and problem identity.
 
+## From `T50_candidate_matched_thought_front_qd`
+
+- T50 rejects the simple candidate-budget/front-retention explanation for
+  T49's losses. Restoring `population_size=12`, disabling repair, and widening
+  per-cell Pareto retention improves mean best score, but loses HV, HV-AUC,
+  valid-PPA count, unique PPA points, and reference-beating candidates on the
+  completed 12-problem screen.
+- Do not run T50 seed `1002` or held-out spend. The next idea must change the
+  mechanism, not just the same thought-only role-separation budget.
+- Candidate follow-up: a front/yield-preserving emitter with two explicit
+  lanes. One lane samples archive champions for best-score pressure. The other
+  lane samples underrepresented valid-PPA front families and near-front
+  parents, but it must be gated by pre-PPA-safe runtime state such as archive
+  occupancy, valid-PPA count, descriptor spread, parent arity, and duplicate
+  family count from already evaluated candidates.
+- The follow-up must report both direct raw area-power fronts and unique
+  PPA-family counts. It must not use final PPA score, reference PPA, final
+  Pareto rank, problem identity, or held-out outcomes to choose the descriptor
+  or emitter schedule.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

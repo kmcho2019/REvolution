@@ -60,11 +60,11 @@ Real result packages:
 - `T48_t26_gated_near_front_fusion_qd` gated near-front T26.1 follow-up
 - `T49_thought_k_role_separated_repair_qd` thought-k role-separated repair
   follow-up
+- `T50_candidate_matched_thought_front_qd` partial candidate-matched thought
+  front follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T15`, `T16`, and `T18`. `T50_candidate_matched_thought_front_qd` is
-pre-registered as the next T49 follow-up, but it has no live result yet and is
-not counted as a real result package.
+`T15`, `T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -199,6 +199,18 @@ coverage and improves mean best score (`+0.067203`) with a slight HV-AUC gain
 points (`76` versus `87`), and reference-beating candidates (`40` versus
 `46`). T49 should inform the next front-preserving emitter design, not seed a
 held-out escalation.
+
+T50 is complete as a partial 12-problem screen and remains `T0 diagnostic`.
+It restored the visible thought/code-sample budget knobs and widened per-cell
+Pareto retention, but the practical run generated only `336` T50 candidates
+versus `576` classic candidates on the completed subset and did not finish
+`Prob153_gshare`. The result is negative for promotion: T50 improves mean best
+score by `+0.063433`, but loses mean HV (`-0.026686`), mean HV-AUC
+(`-0.029095`), valid-PPA candidates (`156` versus `244`), aggregate front
+points (`18` versus `26`), unique PPA points (`47` versus `79`), and
+reference-beating candidates (`26` versus `45`). Family comparison tables show
+T50 also loses HV, HV-AUC, valid-PPA, and unique PPA material to T47, T48, and
+T49 on the same 12 completed problems.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -578,7 +590,7 @@ the best ALU and traffic-light scores.
   gated T26.1, or T49 as a held-out claim. The next same-family method needs
   explicit front preservation rather than another direct fusion or repair-only
   role-separation tweak.
-- T50 is the pre-registered version of that follow-up. It restores the
-  12-candidate evaluated-code budget, disables repair so the candidate budget
-  is visible, widens the local Pareto cap, and must be compared to
-  T47/T48/T49 before any seed `1002` or held-out spend.
+- T50 completed that follow-up as a partial diagnostic and should not receive
+  seed `1002` or held-out spend. It improves best score but loses HV, HV-AUC,
+  valid-PPA count, and unique/front material against classic and against the
+  T47/T48/T49 family on the same 12 completed problems.
