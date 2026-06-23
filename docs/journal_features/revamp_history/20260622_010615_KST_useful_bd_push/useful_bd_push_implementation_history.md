@@ -3897,3 +3897,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: T69 makes a source-aligned TinyRocket preprocessing path plausible,
   but the next RTL-native step must measure extractor success/failure on
   generated REvolution candidate RTL before another live QD spend.
+
+## 2026-06-23T19:40:00Z - T70 Generated RTL Extractor Smoke
+
+- Added `techniques/T70_generated_rtl_extractor_smoke/` as a bounded
+  source-aligned extractor smoke, not as a live QD result.
+- Selected a deterministic sample from the T67 hard/tuning run: for each of
+  the seven RTLLM problems, use first raw `code.sv`, first `code.sv` with
+  `code.syn.v`, and last `code.sv` with `code.syn.v`, with duplicate paths
+  removed. This yields `19` candidates and includes five candidates without
+  prior `code.syn.v`.
+- Ran the T69 MasterRTL path on every sample: `read_verilog -sv`, hierarchy,
+  `proc`, `flatten`, `opt`, `fsm`, `memory`, `techmap`, generated-attribute
+  cleanup, and upstream `vlg2ir/analyze.py` in the isolated
+  `rtl_native_verify` environment.
+- Ran the T69 RTL-Timer path on every sample: `read_verilog -sv`, hierarchy,
+  `proc`, `opt`, `fsm`, `memory`, `techmap`, `rename -wire t:$*DFF*`,
+  `dfflibmap`/`abc` with `nangate45_sog.lib`, cleanup, and Yosys parse.
+- Result: `19/19` candidates pass MasterRTL SOG extraction, `19/19` pass
+  RTL-Timer SOG BOG extraction, and `19/19` pass both.
+- Output richness is nonempty and differentiated: MasterRTL graph edges range
+  from `75` to `4097`; RTL-Timer DFF references range from `0` to `51`.
+- Local generated artifacts are under
+  `exp/verification/t70_generated_rtl_extractor_smoke` and occupy about
+  `6.7M`, with `/workspace` still at about `3.5T` available.
+- Decision: source-aligned extraction is no longer the immediate RTL-native
+  blocker on this generated-candidate sample. The next RTL-native package must
+  define feature extraction and archive-cell mapping before any larger live
+  spend.

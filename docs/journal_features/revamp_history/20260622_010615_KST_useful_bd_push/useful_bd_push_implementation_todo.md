@@ -167,8 +167,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T69_open_yosys_rtl_native_preprocessing` is executed and packaged as
       the open-Yosys TinyRocket preprocessing unblocker for MasterRTL and
       RTL-Timer source alignment.
-- [ ] Run a generated-RTL candidate extractor smoke using the T69 preprocessing
+- [x] Run a generated-RTL candidate extractor smoke using the T69 preprocessing
       path before spending another live RTL-native QD budget.
+- [ ] Build a source-aligned RTL-native feature table and archive-cell map
+      from MasterRTL/RTL-Timer extractor outputs before the next live
+      RTL-native QD spend.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

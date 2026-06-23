@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T69 unblocks TinyRocket open-Yosys preprocessing, but no live candidate run has used the source-aligned extractor yet. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T70 passes on a small generated-candidate smoke, but no live QD run has used source-aligned descriptors yet. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -62,7 +62,7 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69 | Accelerate with source alignment | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T69 gives a narrow open-Yosys TinyRocket preprocessing path, but candidate-level extractor success is still unmeasured. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70 | Accelerate with source alignment | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T70 shows candidate-level extraction works on a small generated sample, but descriptor-to-archive utility is still unproven. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |
@@ -82,8 +82,8 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 T68 shows that T15/T60/T61 are proxy lanes, not source-equivalent upstream
 MasterRTL or RTL-Timer runs. T69 narrows the fresh-conversion blocker on
-TinyRocket examples: open-source Yosys can regenerate close MasterRTL and
-RTL-Timer SOG/BOG artifacts after removing `read -verific` and applying the
-upstream cleanup convention. Do not promote an RTL-native method as
-MasterRTL/RTL-Timer-based until this path is measured on our generated
-candidate RTL with extractor success rates and reference-complete PPA results.
+TinyRocket examples, and T70 shows the same open-Yosys path parses `19/19`
+sampled generated T67 candidates with both MasterRTL and RTL-Timer flows. Do
+not promote an RTL-native method as MasterRTL/RTL-Timer-based until this path
+defines source-aligned archive cells and is evaluated in a reference-complete
+PPA comparison.

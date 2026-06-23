@@ -92,6 +92,8 @@ Real result packages:
   source-verification gate.
 - `T69_open_yosys_rtl_native_preprocessing` open-Yosys RTL-native
   preprocessing unblocker.
+- `T70_generated_rtl_extractor_smoke` generated-candidate MasterRTL/RTL-Timer
+  extractor smoke.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`.
@@ -108,6 +110,11 @@ cleanup. The open-clean MasterRTL graph stays within `1.098%` on graph keys,
 example; the open-clean RTL-Timer SOG BOG preserves the shipped DFF-reference
 count exactly. The remaining blocker is running this source-aligned path on
 our generated RTL candidates and measuring extractor success/failure rate.
+T70 clears that immediate blocker on a bounded sample: `19/19` generated T67
+RTL candidates pass both MasterRTL SOG extraction and RTL-Timer SOG BOG
+extraction. This remains an extractor smoke, not a live QD result. The next
+RTL-native package must define descriptor features and archive cells from the
+source-aligned outputs before any larger live spend.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis
