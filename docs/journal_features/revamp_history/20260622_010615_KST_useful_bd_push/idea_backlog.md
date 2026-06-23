@@ -622,10 +622,13 @@ a numbered `techniques/T##_slug/` package before running it.
   should either create better local front slots, branch back to exact T11
   runtime projection, or use a learned/auxiliary archive lane. Do not spend
   another run on a scalar champion-lane or small fixed parent-lane tweak.
-- T55 is the selected bounded follow-up for the "create better local front
-  slots" branch. It keeps T54 fixed except for coarser SR-PCA archive axes
-  (`--qd_descriptor_axes sr_pca_0 sr_pca_1`) to test whether over-partitioned
-  descriptor geometry caused slot scarcity.
+- T55 completed the "create better local front slots through coarser geometry"
+  branch as a positive mechanism ablation, not a promotable method. Slot hits
+  improved from `4` to `9`, front points improved from `21` to `23`, and yield
+  warnings fell to `0`, but classic still won HV/HV-AUC/front breadth and T51
+  still won HV-AUC, valid-PPA count, and best score. Do not run exact T55 seed
+  `1002`; either isolate coarse geometry with a T51-control ablation or switch
+  to exact T11 runtime projection / learned auxiliary archive lanes.
 
 ## Near-Term Hybrids
 

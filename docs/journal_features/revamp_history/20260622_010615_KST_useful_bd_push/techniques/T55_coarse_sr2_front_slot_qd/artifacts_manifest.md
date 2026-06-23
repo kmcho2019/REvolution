@@ -1,17 +1,21 @@
 # T55 Artifacts Manifest
 
-Status: pre-registered; no live result yet.
+Status: completed and packaged as `T0 positive_mechanism_ablation_not_promoted`.
 
 ## Raw Run
 
-- Planned root:
-  `exp/useful_bd_push/t55_coarse_sr2_front_slot_<timestamp>/hard_tuning/code_thought_coarse_sr2_front_slot_qd/seed_1001`
-- Planned preflight:
-  `exp/useful_bd_push/t55_coarse_sr2_front_slot_<timestamp>/hard_tuning/preflight/`
+- QD root:
+  `exp/useful_bd_push/t55_coarse_sr2_front_slot_20260623_064153_UTC/hard_tuning/code_thought_coarse_sr2_front_slot_qd/seed_1001`
+- Classic comparator root:
+  `exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001`
+- Final-analysis source:
+  `exp/useful_bd_push/t55_coarse_sr2_front_slot_20260623_064153_UTC/qd_ppa_viewer_source/final_analysis/`
+- Preflight:
+  `exp/useful_bd_push/t55_coarse_sr2_front_slot_20260623_064153_UTC/hard_tuning/preflight/`
 
 ## Packaged Result
 
-These paths are required after the live arm exits:
+These paths are packaged:
 
 - `hard_tuning_package/README.md`
 - `hard_tuning_package/tables/t55_problem_seed_metrics.csv`
@@ -27,12 +31,16 @@ These paths are required after the live arm exits:
 
 ## Visualizations
 
-Required after packaging:
+Packaged after validation:
 
 - `visualizations/direct_ppa_pareto/` with `index.html`, `metrics.json`, and
   `screenshot.png`.
 - `visualizations/qd_ppa_viewer/` with full Phase 03.1 export, validation
   files, screenshot, and any honest projection caveat.
+
+Strict Phase 03.1 schema validation passed. The optional Playwright smoke
+generated screenshots but failed deeper compare/hover checks; see
+`visualizations/qd_ppa_viewer/playwright_caveat.md`.
 
 ## Regeneration Scripts
 

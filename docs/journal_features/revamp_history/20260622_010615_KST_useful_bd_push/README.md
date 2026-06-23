@@ -23,16 +23,17 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T54_front_slot_lane_qd/`
-  (`T0 diagnostic_not_promoted`; the fixed front-slot parent lane is active,
-  but classic still wins HV, HV-AUC, valid-PPA count, and front breadth).
+  `techniques/T55_coarse_sr2_front_slot_qd/`
+  (`T0 positive_mechanism_ablation_not_promoted`; coarser two-axis SR-PCA
+  archive geometry improves T54 slot hits and removes yield warnings, but
+  classic still wins HV, HV-AUC, valid-PPA count, and front breadth).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  run `techniques/T55_coarse_sr2_front_slot_qd/`, a coarse two-axis SR-PCA
-  archive geometry test that tries to create more local front slots before
-  sampling them.
+  stop small T51-family parent-pressure tweaks; either isolate coarse geometry
+  with a T51-control ablation or switch to exact T11 runtime projection /
+  learned auxiliary archive lanes with front-yield protection.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -41,15 +42,15 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T54_front_slot_lane_qd/hard_tuning_package/figures/t54_direct_ppa_fronts_seed1001.png`
-  (13-problem seed-1001 raw area-power fronts for the T54 hard/tuning
+  `techniques/T55_coarse_sr2_front_slot_qd/hard_tuning_package/figures/t55_direct_ppa_fronts_seed1001.png`
+  (13-problem seed-1001 raw area-power fronts for the T55 hard/tuning
   package).
 - Most recent direct PPA HTML viewer:
-  `techniques/T54_front_slot_lane_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T55_coarse_sr2_front_slot_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T54_front_slot_lane_qd/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T55_coarse_sr2_front_slot_qd/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
   raw/improvement/normalized PPA modes, raw A-P front mode, screenshot, and a
   documented Playwright caveat).
@@ -58,11 +59,9 @@ Start here when resuming the active goal.
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T54_front_slot_lane_qd/` (seed-1001 hard/tuning diagnostic
-  with direct PPA supplement and Phase 03.1 viewer).
-- Active planned live technique:
-  `techniques/T55_coarse_sr2_front_slot_qd/` (pre-registered coarse SR2
-  front-slot geometry check).
+  `techniques/T55_coarse_sr2_front_slot_qd/` (seed-1001 hard/tuning mechanism
+  ablation with direct PPA supplement and Phase 03.1 viewer).
+- Active planned live technique: none selected after T55 packaging.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -178,7 +177,7 @@ Start here when resuming the active goal.
 | `T52` | `T52_code_thought_full_pareto_qd` | Completed hard/tuning result, `T0 diagnostic_retired_full_pareto`; adds a few front points versus T51 but loses yield, HV-AUC, and best-score recovery. |
 | `T53` | `T53_sparse_front_trigger_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; trigger fires, but HV, HV-AUC, valid-PPA, and front breadth still lose to classic. |
 | `T54` | `T54_front_slot_lane_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; fixed front-slot lane is active but loses classic on HV, HV-AUC, valid-PPA count, unique PPA breadth, and front points. |
-| `T55` | `T55_coarse_sr2_front_slot_qd` | Pre-registered hard/tuning method; uses `--qd_descriptor_axes sr_pca_0 sr_pca_1` so grid-quantile cells are coarser and local front slots can form more often. |
+| `T55` | `T55_coarse_sr2_front_slot_qd` | Completed hard/tuning result, `T0 positive_mechanism_ablation_not_promoted`; improves T54 slot hits but still loses classic and T51 on primary promotion metrics. |
 
 ## Validity-Gate Note
 

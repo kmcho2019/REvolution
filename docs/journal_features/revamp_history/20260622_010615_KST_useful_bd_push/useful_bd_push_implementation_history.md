@@ -3167,3 +3167,43 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Next step: commit the pre-run package, preflight the vLLM endpoint, run T55
   seed `1001`, validate single-thought and Pareto artifacts, then package
   against T47 classic and T51 through T54.
+
+## T55 Coarse SR2 Front-Slot Result - 2026-06-23 UTC
+
+- Preflight passed against `http://20.0.0.103:8000/v1/models` with
+  `openai/gpt-oss-120b max_model_len=131072`.
+- Ran T55 seed `1001` on the 13-problem hard/tuning surface in `1593.98`
+  seconds:
+  `exp/useful_bd_push/t55_coarse_sr2_front_slot_20260623_064153_UTC/hard_tuning/code_thought_coarse_sr2_front_slot_qd/seed_1001`.
+- Validation passed for the single-thought operator and Pareto/front archive
+  checks with `--require-full-subset`.
+- Verified all 13 emitted archive spaces use exactly
+  `descriptor_axes == ["sr_pca_0", "sr_pca_1"]`.
+- Packaged results under
+  `techniques/T55_coarse_sr2_front_slot_qd/hard_tuning_package/`.
+- Added direct PPA supplement under
+  `techniques/T55_coarse_sr2_front_slot_qd/visualizations/direct_ppa_pareto/`
+  and a full Phase 03.1 viewer under
+  `techniques/T55_coarse_sr2_front_slot_qd/visualizations/qd_ppa_viewer/`.
+- Patched the canonical Phase 03.1 viewer template so two-axis archive
+  datasets render as a `4 x 4 x 1` slab instead of crashing when the third
+  descriptor axis is absent.
+- Phase 03.1 strict schema validation passed. The optional Playwright smoke
+  generated screenshots but failed deeper compare and hover checks; the exact
+  caveat is recorded in
+  `visualizations/qd_ppa_viewer/playwright_caveat.md`.
+- Visual inspection passed after regenerating
+  `hard_tuning_package/figures/t55_operator_counters.png` as a horizontal bar
+  chart and recapturing the direct-PPA browser screenshot.
+- Tier decision: `T0 positive_mechanism_ablation_not_promoted`. T55 improves
+  T54 slot activity (`9` hits versus `4`) and removes T54's yield warnings
+  (`0` versus `2`), but still loses classic on mean HV (`0.086189` versus
+  `0.092601`), HV-AUC (`0.072307` versus `0.082020`), valid PPA (`233`
+  versus `257`), front points (`23` versus `30`), unique PPA (`72` versus
+  `87`), and reference-beating candidates (`36` versus `46`).
+- Against T51, T55 loses HV (`-0.003063`), HV-AUC (`-0.013147`), best score
+  (`-0.029412`), and valid-PPA count (`-33`) while adding two front points.
+- Do not run seed `1002` for exact T55. The next live arm should either
+  isolate coarse geometry with a T51-control ablation or switch mechanisms to
+  exact T11 runtime projection / learned auxiliary archive lanes with
+  front-yield protection.

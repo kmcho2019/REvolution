@@ -151,3 +151,17 @@ uv run python scripts/package_t48_gated_probe.py \
 
 If `Prob153_gshare` or another problem is incomplete, filter the matrix only
 after writing the missing-problem rationale in `results_report.md`.
+
+## Completed Run
+
+- Timestamp: `20260623_064153_UTC`.
+- QD root:
+  `exp/useful_bd_push/t55_coarse_sr2_front_slot_20260623_064153_UTC/hard_tuning/code_thought_coarse_sr2_front_slot_qd/seed_1001`.
+- Runtime: `1593.98` seconds.
+- Completed subset: all 13 hard/tuning problems.
+- Axis proof: every `archive_space.json` reports
+  `descriptor_axes == ["sr_pca_0", "sr_pca_1"]`.
+- Single-thought and Pareto validators passed with `--require-full-subset`.
+- Strict Phase 03.1 viewer validation passed. Optional Playwright smoke
+  generated screenshots but failed deeper compare/hover checks, recorded in
+  `../visualizations/qd_ppa_viewer/playwright_caveat.md`.

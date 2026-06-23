@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T55 Direct PPA Pareto Supplement</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5b6572;
+      --line: #d7dde5;
+      --paper: #f7f8fa;
+      --panel: #ffffff;
+      --accent: #2563eb;
+      --good: #0f766e;
+      --warn: #a34d12;
+    }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 42px;
+    }
+    h1,
+    h2 {
+      margin: 0;
+      line-height: 1.15;
+      font-weight: 650;
+    }
+    h1 { font-size: 26px; }
+    h2 {
+      margin-top: 28px;
+      font-size: 18px;
+    }
+    p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+      gap: 10px;
+      margin: 18px 0 26px;
+    }
+    .metric {
+      border-left: 3px solid var(--accent);
+      background: var(--panel);
+      padding: 10px 12px;
+      box-shadow: 0 1px 0 var(--line);
+    }
+    .metric.good { border-left-color: var(--good); }
+    .metric.warning { border-left-color: var(--warn); }
+    .metric strong {
+      display: block;
+      font-size: 18px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    figure {
+      margin: 18px 0 0;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>T55 Direct PPA Pareto Supplement</h1>
+    <p>
+      Static reader-facing figures for the completed 13-problem hard/tuning
+      screen. T55 coarsens the SR-PCA archive to two axes and improves
+      front-slot lane hits over T54, but it remains below classic on mean HV,
+      HV-AUC, and raw PPA-front breadth.
+    </p>
+
+    <section class="summary" aria-label="Aggregate metrics">
+      <div class="metric warning"><strong>-6.9%</strong><span>Mean HV</span></div>
+      <div class="metric warning"><strong>-11.8%</strong><span>Mean HV-AUC</span></div>
+      <div class="metric good"><strong>+15.9%</strong><span>Mean best score</span></div>
+      <div class="metric warning"><strong>-24</strong><span>Valid PPA</span></div>
+      <div class="metric warning"><strong>-23.3%</strong><span>Front points</span></div>
+      <div class="metric good"><strong>0</strong><span>Classic-covered losses</span></div>
+      <div class="metric good"><strong>0</strong><span>Yield warnings</span></div>
+      <div class="metric good"><strong>9</strong><span>Front-slot hits</span></div>
+    </section>
+
+    <h2>Aggregate Direction</h2>
+    <figure>
+      <img src="t55_metric_delta_summary.png" alt="Aggregate relative deltas for T55 against classic">
+      <figcaption>T55 improves best-score pressure but does not recover the QD-facing HV, HV-AUC, or front breadth metrics.</figcaption>
+    </figure>
+
+    <h2>Paired HV Heatmap</h2>
+    <figure>
+      <img src="t55_hv_delta_heatmap.png" alt="Problem heatmap of T55 relative HV delta">
+      <figcaption>Blue favors T55 and red favors classic. The two-axis archive has isolated wins but the aggregate still favors classic.</figcaption>
+    </figure>
+
+    <h2>Direct Area-Power Fronts</h2>
+    <figure>
+      <img src="t55_direct_ppa_fronts_seed1001.png" alt="Seed 1001 direct area-power fronts">
+      <figcaption>The raw area-power panels show more useful slot activity than T54, but not a broad enough front to promote T55.</figcaption>
+    </figure>
+
+    <h2>Validity, Front Coverage, And Lane Use</h2>
+    <figure>
+      <img src="t55_validity_funnel.png" alt="Validity funnel comparing generated, syntax, functional, and valid PPA counts">
+      <figcaption>The funnel shows no classic-covered design loss and no yield warning, with lower aggregate valid-PPA volume than classic.</figcaption>
+    </figure>
+    <figure>
+      <img src="t55_front_counts.png" alt="Front-point counts by problem">
+      <figcaption>Front counts recover part of the T54 loss, but remain below classic and do not match T51 as a full candidate.</figcaption>
+    </figure>
+    <figure>
+      <img src="t55_operator_counters.png" alt="Front-slot lane counters by problem">
+      <figcaption>The front-slot lane records nine hits, a useful mechanism signal that is still too weak for promotion.</figcaption>
+    </figure>
+  </main>
+</body>
+</html>

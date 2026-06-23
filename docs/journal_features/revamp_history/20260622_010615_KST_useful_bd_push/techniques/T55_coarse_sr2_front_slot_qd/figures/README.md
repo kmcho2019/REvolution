@@ -1,15 +1,17 @@
 # T55 Figures
 
-Status: placeholder until the live run is packaged.
+Status: completed and visually inspected.
 
-Required figures after packaging:
+Packaged figures:
 
 - raw area-power Pareto panels for all 13 hard/tuning problems;
 - HV and HV-AUC deltas versus classic;
 - valid-PPA and functional-yield funnel;
 - operator counter plot with front-slot lane requests and hits;
-- archive occupancy plot comparing T55 slot formation against T54 when
-  available.
+- direct PPA supplement screenshot;
+- full Phase 03.1 viewer screenshot.
 
-Before any tier decision, open the generated figures and record visual
-inspection notes here or in `hard_tuning_package/figures/visual_inspection_notes.md`.
+The original operator-counter plot had overlapping x-axis labels, so it was
+regenerated as a horizontal bar chart before the direct PPA screenshot was
+accepted. Detailed inspection notes live in
+`hard_tuning_package/figures/visual_inspection_notes.md`.

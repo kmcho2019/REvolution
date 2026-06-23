@@ -1,6 +1,6 @@
 # T55 Coarse SR2 Front-Slot QD Methodology
 
-Status: pre-registered; not launched.
+Status: completed as `T0 positive_mechanism_ablation_not_promoted`.
 
 ## Question
 
@@ -87,7 +87,13 @@ T55 can advance only if it:
 - avoids a new 50 percent valid-PPA yield warning where classic has at least
   10 passing samples.
 
-If T55 increases slot hits but still loses front breadth, retire coarse SR2
-geometry as a slot-creation fix. If it improves front breadth while preserving
-T51-class yield, run seed `1002` or a held-out screen before any useful-QD
-claim.
+T55 satisfied the coverage/yield checks and improved the T54 slot mechanism:
+front-slot hits rose from `4` to `9`, front points rose from `21` to `23`,
+and yield warnings fell from `2` to `0`. It still lost classic on mean HV,
+HV-AUC, valid-PPA count, front breadth, unique PPA points, and
+reference-beating candidates. It also lost T51 on HV, HV-AUC, best score, and
+valid-PPA count.
+
+Decision: do not promote T55 or spend seed `1002` on this exact method. Treat
+it as evidence that coarser geometry can help slot formation, not as a broad
+QD/MAP-Elites win.

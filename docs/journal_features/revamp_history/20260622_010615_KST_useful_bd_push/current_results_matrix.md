@@ -66,6 +66,8 @@ Real result packages:
 - `T52_code_thought_full_pareto_qd` full local-Pareto retention follow-up
 - `T53_sparse_front_trigger_qd` bounded sparse-front trigger follow-up
 - `T54_front_slot_lane_qd` fixed front-slot parent lane follow-up
+- `T55_coarse_sr2_front_slot_qd` coarse two-axis SR-PCA front-slot geometry
+  follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -635,9 +637,15 @@ the best ALU and traffic-light scores.
   HV-AUC, best score, valid-PPA count, unique PPA count, and
   reference-beating count. Stop this immediate parent-lane lineage unless the
   next method changes how front slots are created.
-- T55 is pre-registered as that mechanism change. It keeps T54's operator,
+- T55 completed that mechanism change as
+  `T0 positive_mechanism_ablation_not_promoted`. It keeps T54's operator,
   one-slot archive, and front-slot parent lane fixed, but drops the third
-  SR-PCA descriptor axis through `--qd_descriptor_axes sr_pca_0 sr_pca_1` so
-  grid-quantile cells are coarser and local front slots can form more often.
-  It must not be read as a result until the seed-1001 hard/tuning arm is run,
-  validated, packaged, and compared against classic plus T51 through T54.
+  SR-PCA descriptor axis through `--qd_descriptor_axes sr_pca_0 sr_pca_1`.
+  The coarser archive helps the slot mechanism: hits rise from `4` to `9`,
+  front points rise from `21` to `23`, and yield warnings fall from `2` to
+  `0`. It still loses classic on mean HV (`0.086189` versus `0.092601`),
+  HV-AUC (`0.072307` versus `0.082020`), valid PPA (`233` versus `257`),
+  front points (`23` versus `30`), unique PPA (`72` versus `87`), and
+  reference-beating candidates (`36` versus `46`). It also loses T51 on HV,
+  HV-AUC, best score, and valid-PPA count. Do not promote T55 or spend seed
+  `1002` on the exact method.

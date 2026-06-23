@@ -356,11 +356,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       emitter/archive variant starts.
 - [x] T55 coarse SR2 front-slot geometry is pre-registered as a mechanism
       change after T54's sparse front-slot pool.
-- [ ] T55 coarse SR2 front-slot seed `1001` is run on the T47/T51/T52/T53/T54
+- [x] T55 coarse SR2 front-slot seed `1001` is run on the T47/T51/T52/T53/T54
       hard/tuning 13-problem surface after vLLM preflight.
-- [ ] T55 coarse SR2 front-slot is validated, packaged, visualized, and
+- [x] T55 coarse SR2 front-slot is validated, packaged, visualized, and
       compared against T47 classic and T51 through T54.
-- [ ] T55 gets a follow-up direction or retirement rationale before any next
+- [x] T55 gets a follow-up direction or retirement rationale before any next
       descriptor/archive geometry variant starts.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
