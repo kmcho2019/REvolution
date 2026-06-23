@@ -602,6 +602,12 @@ a numbered `techniques/T##_slug/` package before running it.
 - If this lane continues, the next step should be a role-separated emitter lane
   that spends a small explicit budget on front-family recovery while preserving
   T51's direct-code yield path.
+- T54 is the selected follow-up. It keeps T51's one-slot archive and champion
+  pressure, then adds a fixed 10 percent parent lane for non-elite local-front
+  slot members. If this loses T51 yield or still fails front breadth, retire
+  this immediate T51/T52/T53 parent-lane lineage and branch to either exact
+  T11 runtime projection or a learned/auxiliary archive lane rather than
+  another scalar parent-pressure tweak.
 
 ## Near-Term Hybrids
 

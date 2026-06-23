@@ -109,10 +109,12 @@ QDOperatorKind = Literal["eoh_strategies", "single_thought_operator"]
 QDTwoParentGate = Literal["none", "near_front_descriptor"]
 QDParentSelection = Literal[
     "cell_crowded_tournament",
+    "front_slot_lane_nsga2",
     "nsga2_global_rank",
     "sparse_front_triggered_nsga2",
 ]
 NEAR_FRONT_DESCRIPTOR_DISTANCE_SQ = 6.75
+FRONT_SLOT_LANE_FRACTION = 0.10
 SPARSE_FRONT_TRIGGER_CHAMPION_LANE_FRACTION = 0.65
 SPARSE_FRONT_TRIGGER_MIN_OCCUPIED_CELLS = 4
 SPARSE_FRONT_TRIGGER_MIN_EXTRA_FRONT_SLOTS = 2
@@ -319,6 +321,7 @@ class QDEngine(EoHEngine):
         self.qd_champion_lane_fraction = float(qd_champion_lane_fraction)
         if qd_parent_selection not in {
             "cell_crowded_tournament",
+            "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",
         }:
@@ -326,11 +329,14 @@ class QDEngine(EoHEngine):
                 f"Unsupported qd_parent_selection '{qd_parent_selection}'."
             )
         if (
-            qd_parent_selection == "sparse_front_triggered_nsga2"
+            qd_parent_selection in {
+                "front_slot_lane_nsga2",
+                "sparse_front_triggered_nsga2",
+            }
             and qd_cell_mode != "elite_pareto_slot"
         ):
             raise ValueError(
-                "sparse_front_triggered_nsga2 requires elite_pareto_slot."
+                f"{qd_parent_selection} requires elite_pareto_slot."
             )
         self.qd_parent_selection: QDParentSelection = cast(
             QDParentSelection,
@@ -359,6 +365,8 @@ class QDEngine(EoHEngine):
         self.qd_generation_history: list[dict[str, Any]] = []
         self.qd_descriptor_observations: list[dict[str, Any]] = []
         self.qd_success_parent_requests = 0
+        self.qd_front_slot_lane_parent_requests = 0
+        self.qd_front_slot_lane_parent_hits = 0
         self.qd_sparse_front_trigger_batches = 0
         self.qd_sparse_front_trigger_parent_requests = 0
         self.qd_two_parent_attempts = 0
@@ -1263,6 +1271,11 @@ class QDEngine(EoHEngine):
             "global_pareto_size": self._global_pareto_size(),
             "success_parent_requests": self.qd_success_parent_requests,
             "qd_parent_selection": self.qd_parent_selection,
+            "front_slot_lane_fraction": FRONT_SLOT_LANE_FRACTION,
+            "front_slot_lane_parent_requests": (
+                self.qd_front_slot_lane_parent_requests
+            ),
+            "front_slot_lane_parent_hits": self.qd_front_slot_lane_parent_hits,
             "sparse_front_trigger_batches": self.qd_sparse_front_trigger_batches,
             "sparse_front_trigger_parent_requests": (
                 self.qd_sparse_front_trigger_parent_requests
@@ -1661,16 +1674,54 @@ class QDEngine(EoHEngine):
             cast(Heuristic, r.member.payload) for r in ranked[: self.population_size]
         ]
 
+    def _front_slot_pool(self) -> list[Heuristic]:
+        if self.qd_cell_mode != "elite_pareto_slot":
+            return []
+        by_cell: dict[str, list[ArchiveMember]] = defaultdict(list)
+        for cell_id, member in self._archive_members():
+            by_cell[cell_id].append(member)
+
+        slots: list[Heuristic] = []
+        for members in by_cell.values():
+            if len(members) < 2:
+                continue
+            elite = max(
+                members,
+                key=lambda member: (member.quality_score, -member.insertion_index),
+            )
+            ranked_slots = sorted(
+                (
+                    item
+                    for item in ranked_front(members, self._objective_names())
+                    if item.member is not elite
+                ),
+                key=lambda item: (
+                    item.pareto_rank,
+                    -item.crowding_distance,
+                    item.member.insertion_index,
+                    item.member.candidate_id,
+                ),
+            )
+            for item in ranked_slots:
+                slots.append(cast(Heuristic, item.member.payload))
+        return slots
+
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
         sparse_front_triggered = self._sparse_front_triggered()
         champion_lane_fraction = self._active_champion_lane_fraction()
         if self.qd_parent_selection in {
+            "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",
         }:
             if sparse_front_triggered:
                 self.qd_sparse_front_trigger_batches += 1
                 self.qd_sparse_front_trigger_parent_requests += count
+            front_slots = (
+                self._front_slot_pool()
+                if self.qd_parent_selection == "front_slot_lane_nsga2"
+                else []
+            )
             pool = self._nsga2_global_pool()
             if pool:
                 champion = (
@@ -1680,6 +1731,15 @@ class QDEngine(EoHEngine):
                 )
                 parents: list[Heuristic] = []
                 for _ in range(count):
+                    if (
+                        self.qd_parent_selection == "front_slot_lane_nsga2"
+                        and random.random() < FRONT_SLOT_LANE_FRACTION
+                    ):
+                        self.qd_front_slot_lane_parent_requests += 1
+                        if front_slots:
+                            self.qd_front_slot_lane_parent_hits += 1
+                            parents.append(random.choice(front_slots))
+                            continue
                     if (
                         champion is not None
                         and random.random() < champion_lane_fraction
@@ -1808,6 +1868,7 @@ class QDEngine(EoHEngine):
             parents = self._gated_near_front_descriptor_pair()
             return parents if parents is not None else self._sample_success_parents(1)
         if self.qd_parent_selection in {
+            "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",
         }:

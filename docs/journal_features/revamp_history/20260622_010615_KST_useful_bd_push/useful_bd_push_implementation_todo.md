@@ -345,6 +345,15 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       compared against T47 classic, T51, and T52.
 - [x] T53 gets a follow-up direction: stop scalar champion-lane nudging and
       specify a role-separated front-family emitter if this lane continues.
+- [x] T54 front-slot lane is pre-registered as the role-separated follow-up
+      that keeps T51's one-slot archive and champion lane while sampling
+      non-elite local-front slot members with a fixed 10 percent parent lane.
+- [ ] T54 front-slot lane seed `1001` is run on the T47/T51/T52/T53
+      hard/tuning 13-problem surface after vLLM preflight.
+- [ ] T54 front-slot lane is validated, packaged, visualized, and compared
+      against T47 classic, T51, T52, and T53.
+- [ ] T54 gets a follow-up direction or retirement rationale before any next
+      emitter/archive variant starts.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

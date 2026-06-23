@@ -1079,12 +1079,15 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--qd_parent_selection", type=str, default="cell_crowded_tournament",
         choices=[
             "cell_crowded_tournament",
+            "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",
         ],
         help="QD parent selection: per-cell crowded tournament (default) or global "
-             "NSGA-II rank. sparse_front_triggered_nsga2 lowers the champion "
-             "lane to 0.65 only when elite_pareto_slot local fronts are thin.")
+             "NSGA-II rank. front_slot_lane_nsga2 reserves 10% of parent "
+             "requests for elite_pareto_slot local-front members. "
+             "sparse_front_triggered_nsga2 lowers the champion lane to 0.65 "
+             "only when elite_pareto_slot local fronts are thin.")
     parser.add_argument(
         "--representative_sample",
         type=str,

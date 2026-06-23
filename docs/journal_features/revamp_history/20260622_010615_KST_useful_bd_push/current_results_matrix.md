@@ -68,6 +68,8 @@ Real result packages:
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
+`T54_front_slot_lane_qd` is pre-registered as the next live hard/tuning
+follow-up, but it is not a result package yet.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -621,3 +623,8 @@ the best ALU and traffic-light scores.
   and reference-beating candidates (`38` versus `46`). Stop scalar
   champion-lane nudging; use a role-separated front-family emitter if this
   lane continues.
+- T54 is pre-registered as that role-separated emitter. It keeps T51's
+  one-slot archive and `0.80` champion lane, then reserves a fixed 10 percent
+  parent lane for non-elite local-front slot members. It must not be read as a
+  result until the seed-1001 hard/tuning arm is run, validated, packaged, and
+  compared against classic, T51, T52, and T53.

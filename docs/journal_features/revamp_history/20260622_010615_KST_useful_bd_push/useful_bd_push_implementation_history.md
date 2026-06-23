@@ -3079,3 +3079,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   reference-beating candidates (`38` versus `46`).
 - The sparse-front trigger fired 25 times, so this was not a no-op. The result
   argues against further scalar champion-lane tuning as the next escalation.
+
+## T54 Front-Slot Lane Method Card - 2026-06-23 UTC
+
+- Added `T54_front_slot_lane_qd` as the direct follow-up to T53.
+- The method keeps T51's hard/tuning surface, seed policy, local vLLM model,
+  128k token budgets, SR-PCA descriptor, direct code representation,
+  `single_thought_operator`, sparse warmup `4`, `elite_pareto_slot` capacity
+  `2`, champion lane `0.80`, no repair, and no two-parent fusion.
+- The only live-search change is parent selection:
+  `qd_parent_selection=front_slot_lane_nsga2`.
+- The new mode reserves a fixed 10 percent of archive parent requests for
+  non-elite members retained inside `elite_pareto_slot` cells. Those members
+  are local front slots, not the scalar quality elite for that cell.
+- If no local front slot exists, the request falls back to T51-style champion
+  and global NSGA-II parent sampling.
+- The lane cannot use classic results, held-out outcomes, problem identity,
+  final PPA-front labels, reference PPA, final hypervolume, or test pass rate
+  as descriptor or lane inputs.
+- Focused validation before launch passed:
+  `uv run pytest tests/revolution/test_qd_engine.py`, `uv run ruff check` on
+  touched files, and `uv run python -m pyright src/revolution/qd/engine.py`.
+- `uv run python -m pyright scripts/run_backend.py` still reports the
+  pre-existing evaluator union diagnostics at lines 305 and 339; the T54 CLI
+  choice does not touch that evaluator construction path.
+- `uv tool run ty check src/revolution/qd/engine.py` passed.
+- Next step: commit the code/docs checkpoint, preflight the vLLM endpoint, run
+  T54 seed `1001`, validate single-thought and Pareto artifacts, then package
+  against T47 classic, T51, T52, and T53.

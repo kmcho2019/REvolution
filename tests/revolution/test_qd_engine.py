@@ -833,6 +833,18 @@ def test_qd_engine_rejects_sparse_front_trigger_without_elite_slot(
         )
 
 
+def test_qd_engine_rejects_front_slot_lane_without_elite_slot(
+    tmp_path,
+    monkeypatch,
+):
+    with pytest.raises(ValueError, match="front_slot_lane_nsga2"):
+        _engine(
+            tmp_path,
+            monkeypatch,
+            qd_parent_selection="front_slot_lane_nsga2",
+        )
+
+
 def test_qd_engine_builds_cvt_archive_runtime(monkeypatch, tmp_path):
     monkeypatch.setattr(
         "revolution.algorithm.EoHEngine.load_problem_description",
@@ -1621,6 +1633,51 @@ def test_qd_engine_sparse_front_trigger_lowers_champion_lane(tmp_path, monkeypat
 
     assert engine.qd_sparse_front_trigger_batches == 1
     assert engine.qd_sparse_front_trigger_parent_requests == 3
+
+
+def test_qd_engine_front_slot_lane_samples_non_elite(tmp_path, monkeypatch):
+    cfg = tmp_path / "qd.yaml"
+    cfg.write_text(
+        "grid_axes:\n"
+        "  g_A:\n"
+        "    bins: 4\n"
+        "    lower_bound: 0.0\n"
+        "    upper_bound: 4.0\n",
+        encoding="utf-8",
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_cell_mode="elite_pareto_slot",
+        qd_max_elites_per_cell=2,
+        qd_parent_selection="front_slot_lane_nsga2",
+        qd_champion_lane_fraction=0.8,
+        qd_grid_axes=("g_A",),
+        qd_descriptor_file=str(cfg),
+    )
+    elite = _archive_member(
+        "elite",
+        generation=0,
+        descriptors=(0.5,),
+        insertion_index=1,
+        quality_score=10.0,
+    )
+    slot = _archive_member(
+        "slot",
+        generation=0,
+        descriptors=(0.5,),
+        insertion_index=2,
+        quality_score=1.0,
+    )
+    engine.success_archive.insert(elite)
+    engine.success_archive.insert(slot)
+    monkeypatch.setattr(random, "random", lambda: 0.0)
+
+    parents = engine._sample_success_parents(1)
+
+    assert [parent.id for parent in parents] == ["slot"]
+    assert engine.qd_front_slot_lane_parent_requests == 1
+    assert engine.qd_front_slot_lane_parent_hits == 1
 
 
 def test_qd_engine_writes_grid_quantile_artifacts(tmp_path, monkeypatch):
