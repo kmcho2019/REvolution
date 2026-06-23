@@ -42,9 +42,14 @@ from scripts.package_t47_contract_probe import LABEL_OVERRIDES, MODEL_DIR, PHASE
 
 CLASSIC_METHOD = "classic_revolution"
 QD_METHOD = "t26_gated_near_front_fusion_qd"
+PACKAGE_TAG = "t48"
+PACKAGE_TITLE = "T48"
+QD_LABEL = "T48 gated QD"
+COUNTER_STEM = "gate_counters"
+COUNTER_TITLE = "Gated Fusion Counters"
 METHODS = (
     {"method": CLASSIC_METHOD, "label": "Classic", "color": "#4e79a7"},
-    {"method": QD_METHOD, "label": "T48 gated QD", "color": "#f28e2b"},
+    {"method": QD_METHOD, "label": QD_LABEL, "color": "#f28e2b"},
 )
 COMPARISON_METRICS = (
     "global_ppa_hypervolume",
@@ -72,6 +77,14 @@ COUNTER_KEYS = (
     "two_parent_gate_accepts",
     "two_parent_gate_rejects",
 )
+COUNTER_LABELS = {
+    "success_parent_requests": "Success-parent requests",
+    "two_parent_attempts": "Two-parent attempts",
+    "two_parent_fallbacks": "Two-parent fallbacks",
+    "two_parent_gate_attempts": "Two-parent gate attempts",
+    "two_parent_gate_accepts": "Two-parent gate accepts",
+    "two_parent_gate_rejects": "Two-parent gate rejects",
+}
 
 Task = tuple[int, str, str]
 
@@ -82,7 +95,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--qd-root", required=True, type=Path)
     parser.add_argument("--matrix", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--seed", action="append", type=int)
+    parser.add_argument("--package-tag", default=PACKAGE_TAG)
+    parser.add_argument("--package-title", default=PACKAGE_TITLE)
+    parser.add_argument("--qd-method", default=QD_METHOD)
+    parser.add_argument("--qd-label", default=QD_LABEL)
+    parser.add_argument("--counter-stem", default=COUNTER_STEM)
+    parser.add_argument("--counter-title", default=COUNTER_TITLE)
+    parser.add_argument("--counter-keys", default=",".join(COUNTER_KEYS))
     args = parser.parse_args(argv)
+    configure_package(args)
 
     table_dir = args.output_dir / "tables"
     figure_dir = args.output_dir / "figures"
@@ -92,7 +114,7 @@ def main(argv: list[str] | None = None) -> int:
     data_dir.mkdir(parents=True, exist_ok=True)
 
     roots = {CLASSIC_METHOD: args.classic_root, QD_METHOD: args.qd_root}
-    tasks = read_tasks(args.matrix)
+    tasks = read_tasks(args.matrix, args.seed)
     problem_rows = [
         problem_seed_row(roots[method], method, task)
         for task in tasks
@@ -104,12 +126,12 @@ def main(argv: list[str] | None = None) -> int:
     counters = gate_counter_rows(problem_rows)
     candidates = ppa_candidate_rows(roots, tasks)
 
-    write_csv(table_dir / "t48_problem_seed_metrics.csv", problem_rows)
-    write_csv(table_dir / "t48_aggregate_metrics.csv", aggregate)
-    write_csv(table_dir / "t48_comparison_deltas.csv", deltas)
-    write_csv(table_dir / "t48_validity_gates.csv", gates)
-    write_csv(table_dir / "t48_gate_counters.csv", counters)
-    write_csv(data_dir / "t48_ppa_candidates.csv", candidates)
+    write_csv(table_dir / f"{PACKAGE_TAG}_problem_seed_metrics.csv", problem_rows)
+    write_csv(table_dir / f"{PACKAGE_TAG}_aggregate_metrics.csv", aggregate)
+    write_csv(table_dir / f"{PACKAGE_TAG}_comparison_deltas.csv", deltas)
+    write_csv(table_dir / f"{PACKAGE_TAG}_validity_gates.csv", gates)
+    write_csv(table_dir / f"{PACKAGE_TAG}_{COUNTER_STEM}.csv", counters)
+    write_csv(data_dir / f"{PACKAGE_TAG}_ppa_candidates.csv", candidates)
     write_figures(problem_rows, candidates, deltas, figure_dir)
     write_report(
         args.output_dir / "README.md",
@@ -124,13 +146,31 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def read_tasks(matrix_path: Path) -> list[Task]:
+def configure_package(args: argparse.Namespace) -> None:
+    global QD_METHOD, PACKAGE_TAG, PACKAGE_TITLE, QD_LABEL
+    global COUNTER_STEM, COUNTER_TITLE, COUNTER_KEYS, METHODS
+
+    QD_METHOD = args.qd_method
+    PACKAGE_TAG = args.package_tag
+    PACKAGE_TITLE = args.package_title
+    QD_LABEL = args.qd_label
+    COUNTER_STEM = args.counter_stem
+    COUNTER_TITLE = args.counter_title
+    COUNTER_KEYS = tuple(key for key in args.counter_keys.split(",") if key)
+    METHODS = (
+        {"method": CLASSIC_METHOD, "label": "Classic", "color": "#4e79a7"},
+        {"method": QD_METHOD, "label": QD_LABEL, "color": "#f28e2b"},
+    )
+
+
+def read_tasks(matrix_path: Path, seeds: list[int] | None) -> list[Task]:
     with matrix_path.open(encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle))
     tasks = {
         (int(row["seed"]), row["benchmark"], row["problem"])
         for row in rows
         if row["phase"] == PHASE and row["arm"] == CLASSIC_METHOD
+        and (seeds is None or int(row["seed"]) in seeds)
     }
     assert tasks
     for row in rows:
@@ -420,15 +460,15 @@ def write_figures(
     deltas: list[dict[str, str]],
     figure_dir: Path,
 ) -> None:
-    plot_hv_delta_heatmap(problem_rows, figure_dir / "t48_hv_delta_heatmap.png")
-    plot_metric_delta_summary(deltas, figure_dir / "t48_metric_delta_summary.png")
-    plot_validity_funnel(problem_rows, figure_dir / "t48_validity_funnel.png")
-    plot_front_counts(problem_rows, figure_dir / "t48_front_counts.png")
-    plot_gate_counters(problem_rows, figure_dir / "t48_gate_counters.png")
+    plot_hv_delta_heatmap(problem_rows, figure_dir / f"{PACKAGE_TAG}_hv_delta_heatmap.png")
+    plot_metric_delta_summary(deltas, figure_dir / f"{PACKAGE_TAG}_metric_delta_summary.png")
+    plot_validity_funnel(problem_rows, figure_dir / f"{PACKAGE_TAG}_validity_funnel.png")
+    plot_front_counts(problem_rows, figure_dir / f"{PACKAGE_TAG}_front_counts.png")
+    plot_gate_counters(problem_rows, figure_dir / f"{PACKAGE_TAG}_{COUNTER_STEM}.png")
     for seed in sorted({row["seed"] for row in candidates}):
         plot_direct_ppa_fronts(
             [row for row in candidates if row["seed"] == seed],
-            figure_dir / f"t48_direct_ppa_fronts_seed{seed}.png",
+            figure_dir / f"{PACKAGE_TAG}_direct_ppa_fronts_seed{seed}.png",
         )
 
 
@@ -436,7 +476,7 @@ def plot_hv_delta_heatmap(rows: list[dict[str, str]], output_path: Path) -> None
     values, labels, seeds = heatmap_values(rows, "global_ppa_hypervolume")
     fig, axis = plt.subplots(figsize=(max(10.0, len(labels) * 0.55), 3.4))
     image = axis.imshow(values, aspect="auto", cmap="RdBu", vmin=-1.0, vmax=1.0)
-    axis.set_title("T48 Relative HV Delta: Gated QD vs Classic")
+    axis.set_title(f"{PACKAGE_TITLE} Relative HV Delta: QD vs Classic")
     axis.set_yticks(range(len(seeds)))
     axis.set_yticklabels(seeds)
     axis.set_xticks(range(len(labels)))
@@ -469,8 +509,8 @@ def plot_metric_delta_summary(deltas: list[dict[str, str]], output_path: Path) -
         va = "bottom" if value >= 0.0 else "top"
         offset = y_span * 0.045 if value >= 0.0 else -y_span * 0.045
         axis.text(index, value + offset, f"{value:+.0%}", ha="center", va=va, fontsize=9)
-    axis.set_title("T48 Aggregate Relative Delta")
-    axis.set_ylabel("Gated QD vs Classic")
+    axis.set_title(f"{PACKAGE_TITLE} Aggregate Relative Delta")
+    axis.set_ylabel("QD vs Classic")
     axis.yaxis.set_major_formatter(PercentFormatter(1.0))
     axis.grid(axis="y", color="#e6e6e6", linewidth=0.8)
     fig.tight_layout()
@@ -497,7 +537,7 @@ def plot_validity_funnel(rows: list[dict[str, str]], output_path: Path) -> None:
         )
     axis.set_xticks(x)
     axis.set_xticklabels(labels)
-    axis.set_title("T48 Validity Funnel")
+    axis.set_title(f"{PACKAGE_TITLE} Validity Funnel")
     axis.set_ylabel("Candidates across available seeds")
     axis.legend(frameon=False)
     axis.grid(axis="y", color="#e6e6e6", linewidth=0.8)
@@ -526,7 +566,7 @@ def plot_front_counts(rows: list[dict[str, str]], output_path: Path) -> None:
         )
     axis.set_xticks(x)
     axis.set_xticklabels(labels, rotation=50, ha="right", fontsize=8)
-    axis.set_title("T48 Mean PPA-Front Points By Problem")
+    axis.set_title(f"{PACKAGE_TITLE} Mean PPA-Front Points By Problem")
     axis.set_ylabel("Mean front points across seeds")
     axis.legend(frameon=False)
     axis.grid(axis="y", color="#e6e6e6", linewidth=0.8)
@@ -536,21 +576,15 @@ def plot_front_counts(rows: list[dict[str, str]], output_path: Path) -> None:
 
 
 def plot_gate_counters(rows: list[dict[str, str]], output_path: Path) -> None:
-    labels = ("Requests", "Attempts", "Accepts", "Rejects", "Fallbacks")
-    keys = (
-        "success_parent_requests",
-        "two_parent_attempts",
-        "two_parent_gate_accepts",
-        "two_parent_gate_rejects",
-        "two_parent_fallbacks",
-    )
+    labels = [counter_label(key) for key in COUNTER_KEYS]
+    keys = COUNTER_KEYS
     qd_rows = method_rows(rows, QD_METHOD)
     values = [sum(int(parse_optional(row[key]) or 0) for row in qd_rows) for key in keys]
     fig, axis = plt.subplots(figsize=(7.6, 4.4))
     axis.bar(labels, values, color="#f28e2b", alpha=0.88)
     for index, value in enumerate(values):
         axis.text(index, value, str(value), ha="center", va="bottom", fontsize=9)
-    axis.set_title("T48 Gated Fusion Counters")
+    axis.set_title(f"{PACKAGE_TITLE} {COUNTER_TITLE}")
     axis.set_ylabel("Events across available seeds")
     axis.grid(axis="y", color="#e6e6e6", linewidth=0.8)
     fig.tight_layout()
@@ -601,7 +635,10 @@ def plot_direct_ppa_fronts(rows: list[dict[str, str]], output_path: Path) -> Non
     )
     fig.supxlabel("Area improvement vs reference", y=0.025)
     fig.supylabel("Power improvement vs reference", x=0.012)
-    fig.suptitle(f"T48 Direct Area-Power Fronts, Seed {rows[0]['seed']}", y=0.99)
+    fig.suptitle(
+        f"{PACKAGE_TITLE} Direct Area-Power Fronts, Seed {rows[0]['seed']}",
+        y=0.99,
+    )
     fig.tight_layout(rect=(0.0, 0.04, 1.0, 0.92))
     fig.savefig(output_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -652,10 +689,10 @@ def write_report(
     hard_losses = [row for row in gates if row["gate_status"] == "classic_covered_loss"]
     yield_warnings = [row for row in gates if row["gate_status"] == "yield_warning"]
     lines = [
-        "# T48 Gated-Fusion Probe Package",
+        f"# {PACKAGE_TITLE} Hard/Tuning Probe Package",
         "",
         f"Classic root: `{classic_root}`",
-        f"T48 root: `{qd_root}`",
+        f"{PACKAGE_TITLE} root: `{qd_root}`",
         "",
         "## Headline",
         "",
@@ -665,9 +702,7 @@ def write_report(
         f"- Mean best-score delta: `{aggregate_delta(deltas, 'all:all', 'mean_best_score')}`.",
         f"- Classic-covered valid-PPA losses: `{len(hard_losses)}`.",
         f"- Yield warnings: `{len(yield_warnings)}`.",
-        f"- Two-parent gate accepts: `{counter_total(counters, 'two_parent_gate_accepts')}`.",
-        f"- Two-parent gate rejects: `{counter_total(counters, 'two_parent_gate_rejects')}`.",
-        f"- Two-parent fallbacks: `{counter_total(counters, 'two_parent_fallbacks')}`.",
+        *counter_report_lines(counters),
         "",
         "## Aggregate Metrics",
         "",
@@ -678,26 +713,25 @@ def write_report(
         "",
         "## Files",
         "",
-        "- `tables/t48_problem_seed_metrics.csv`",
-        "- `tables/t48_aggregate_metrics.csv`",
-        "- `tables/t48_comparison_deltas.csv`",
-        "- `tables/t48_validity_gates.csv`",
-        "- `tables/t48_gate_counters.csv`",
-        "- `data/t48_ppa_candidates.csv`",
-        "- `figures/t48_hv_delta_heatmap.png`",
-        "- `figures/t48_metric_delta_summary.png`",
-        "- `figures/t48_validity_funnel.png`",
-        "- `figures/t48_front_counts.png`",
-        "- `figures/t48_gate_counters.png`",
-        "- `figures/t48_direct_ppa_fronts_seed1001.png`",
-        "- `figures/t48_direct_ppa_fronts_seed1002.png`",
+        f"- `tables/{PACKAGE_TAG}_problem_seed_metrics.csv`",
+        f"- `tables/{PACKAGE_TAG}_aggregate_metrics.csv`",
+        f"- `tables/{PACKAGE_TAG}_comparison_deltas.csv`",
+        f"- `tables/{PACKAGE_TAG}_validity_gates.csv`",
+        f"- `tables/{PACKAGE_TAG}_{COUNTER_STEM}.csv`",
+        f"- `data/{PACKAGE_TAG}_ppa_candidates.csv`",
+        f"- `figures/{PACKAGE_TAG}_hv_delta_heatmap.png`",
+        f"- `figures/{PACKAGE_TAG}_metric_delta_summary.png`",
+        f"- `figures/{PACKAGE_TAG}_validity_funnel.png`",
+        f"- `figures/{PACKAGE_TAG}_front_counts.png`",
+        f"- `figures/{PACKAGE_TAG}_{COUNTER_STEM}.png`",
+        f"- `figures/{PACKAGE_TAG}_direct_ppa_fronts_seed*.png`",
         "",
         "## Discipline",
         "",
         "This package compares a hard/tuning screen against the T47 classic",
         "roots. It is not a held-out RTLLM claim. The direct PPA-front plots are",
         "reader-facing supplements; they do not replace the Phase 03.1 viewer if",
-        "T48 advances to a larger archive-backed run.",
+        f"{PACKAGE_TITLE} advances to a larger archive-backed run.",
     ]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -706,18 +740,18 @@ def write_visual_notes(path: Path) -> None:
     path.write_text(
         "\n".join(
             [
-                "# T48 Visual Inspection Notes",
+                f"# {PACKAGE_TITLE} Visual Inspection Notes",
                 "",
                 "Status: generated; manual screenshot inspection pending.",
                 "",
-                "- `t48_hv_delta_heatmap.png` should expose seed/problem HV wins",
+                f"- `{PACKAGE_TAG}_hv_delta_heatmap.png` should expose seed/problem HV wins",
                 "  and losses without hiding paired failures.",
-                "- `t48_metric_delta_summary.png` should show whether the method",
+                f"- `{PACKAGE_TAG}_metric_delta_summary.png` should show whether the method",
                 "  wins through HV/front material or only through best score.",
-                "- `t48_validity_funnel.png` should make yield collapse visible.",
-                "- `t48_gate_counters.png` should show whether the gate is actually",
-                "  participating or mostly falling back.",
-                "- `t48_direct_ppa_fronts_seed*.png` should make raw area-power",
+                f"- `{PACKAGE_TAG}_validity_funnel.png` should make yield collapse visible.",
+                f"- `{PACKAGE_TAG}_{COUNTER_STEM}.png` should show whether the",
+                "  configured counters are active or degenerate.",
+                f"- `{PACKAGE_TAG}_direct_ppa_fronts_seed*.png` should make raw area-power",
                 "  distribution differences easy to inspect by problem.",
             ]
         )
@@ -757,6 +791,17 @@ def aggregate_relative_delta(deltas: list[dict[str, str]], metric: str) -> float
 
 def counter_total(rows: list[dict[str, str]], key: str) -> str:
     return str(sum(int(parse_optional(row[key]) or 0) for row in rows))
+
+
+def counter_report_lines(rows: list[dict[str, str]]) -> list[str]:
+    return [f"- {counter_label(key)}: `{counter_total(rows, key)}`." for key in COUNTER_KEYS]
+
+
+def counter_label(key: str) -> str:
+    label = COUNTER_LABELS.get(key)
+    if label is not None:
+        return label
+    return key.replace("_", " ")
 
 
 def heatmap_values(rows: list[dict[str, str]], metric: str) -> tuple[list[list[float]], list[str], list[str]]:

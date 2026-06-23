@@ -79,6 +79,50 @@ def test_package_t48_gated_probe(tmp_path: Path) -> None:
     ):
         assert (output_dir / "figures" / figure).read_bytes().startswith(b"\x89PNG")
 
+    t49_dir = tmp_path / "package_t49"
+    assert (
+        main(
+            [
+                "--classic-root",
+                str(classic_root),
+                "--qd-root",
+                str(qd_root),
+                "--matrix",
+                str(matrix),
+                "--output-dir",
+                str(t49_dir),
+                "--seed",
+                "1001",
+                "--package-tag",
+                "t49",
+                "--package-title",
+                "T49",
+                "--qd-method",
+                "thought_k_role_separated_repair_qd",
+                "--qd-label",
+                "T49",
+                "--counter-stem",
+                "operator_counters",
+                "--counter-title",
+                "Operator Counters",
+                "--counter-keys",
+                "generated_thought_count,two_parent_attempts",
+            ]
+        )
+        == 0
+    )
+    t49_rows = list(
+        csv.DictReader((t49_dir / "tables" / "t49_problem_seed_metrics.csv").open())
+    )
+    t49_counters = list(
+        csv.DictReader((t49_dir / "tables" / "t49_operator_counters.csv").open())
+    )
+    assert len(t49_rows) == 4
+    assert t49_counters[0]["generated_thought_count"] == "3"
+    assert (t49_dir / "figures" / "t49_operator_counters.png").read_bytes().startswith(
+        b"\x89PNG"
+    )
+
 
 def test_gate_row_marks_sparse_cases() -> None:
     classic = {"valid_ppa_count": "8", "functionality_count": "8"}
@@ -178,6 +222,7 @@ def _write_problem(
             "two_parent_gate_attempts": 2,
             "two_parent_gate_accepts": 1,
             "two_parent_gate_rejects": 1,
+            "generated_thought_count": 3,
         }
         (problem_root / "qd_metrics.json").write_text(
             json.dumps({"latest_snapshot": snapshot}),
