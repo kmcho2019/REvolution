@@ -107,7 +107,15 @@ _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
 JournalParentSource = Literal["archive", "fail_pool", "seed"]
 QDOperatorKind = Literal["eoh_strategies", "single_thought_operator"]
 QDTwoParentGate = Literal["none", "near_front_descriptor"]
+QDParentSelection = Literal[
+    "cell_crowded_tournament",
+    "nsga2_global_rank",
+    "sparse_front_triggered_nsga2",
+]
 NEAR_FRONT_DESCRIPTOR_DISTANCE_SQ = 6.75
+SPARSE_FRONT_TRIGGER_CHAMPION_LANE_FRACTION = 0.65
+SPARSE_FRONT_TRIGGER_MIN_OCCUPIED_CELLS = 4
+SPARSE_FRONT_TRIGGER_MIN_EXTRA_FRONT_SLOTS = 2
 SINGLE_THOUGHT_OPERATOR_STRATEGY = "single_thought_operator"
 THOUGHT_ONLY_CODE_STRATEGY = "thought_only_code"
 
@@ -309,11 +317,25 @@ class QDEngine(EoHEngine):
         if not 0.0 <= float(qd_champion_lane_fraction) <= 1.0:
             raise ValueError("qd_champion_lane_fraction must be in [0, 1].")
         self.qd_champion_lane_fraction = float(qd_champion_lane_fraction)
-        if qd_parent_selection not in {"cell_crowded_tournament", "nsga2_global_rank"}:
+        if qd_parent_selection not in {
+            "cell_crowded_tournament",
+            "nsga2_global_rank",
+            "sparse_front_triggered_nsga2",
+        }:
             raise ValueError(
                 f"Unsupported qd_parent_selection '{qd_parent_selection}'."
             )
-        self.qd_parent_selection = qd_parent_selection
+        if (
+            qd_parent_selection == "sparse_front_triggered_nsga2"
+            and qd_cell_mode != "elite_pareto_slot"
+        ):
+            raise ValueError(
+                "sparse_front_triggered_nsga2 requires elite_pareto_slot."
+            )
+        self.qd_parent_selection: QDParentSelection = cast(
+            QDParentSelection,
+            qd_parent_selection,
+        )
         self.representative_sample = representative_sample
         self.thought_population_size = (
             self.population_size // self.code_samples_per_thought
@@ -337,6 +359,8 @@ class QDEngine(EoHEngine):
         self.qd_generation_history: list[dict[str, Any]] = []
         self.qd_descriptor_observations: list[dict[str, Any]] = []
         self.qd_success_parent_requests = 0
+        self.qd_sparse_front_trigger_batches = 0
+        self.qd_sparse_front_trigger_parent_requests = 0
         self.qd_two_parent_attempts = 0
         self.qd_two_parent_fallbacks = 0
         self.qd_two_parent_gate_attempts = 0
@@ -1238,6 +1262,14 @@ class QDEngine(EoHEngine):
             "max_front_size": max(front_sizes.values()) if front_sizes else 0,
             "global_pareto_size": self._global_pareto_size(),
             "success_parent_requests": self.qd_success_parent_requests,
+            "qd_parent_selection": self.qd_parent_selection,
+            "sparse_front_trigger_batches": self.qd_sparse_front_trigger_batches,
+            "sparse_front_trigger_parent_requests": (
+                self.qd_sparse_front_trigger_parent_requests
+            ),
+            "sparse_front_trigger_champion_lane_fraction": (
+                SPARSE_FRONT_TRIGGER_CHAMPION_LANE_FRACTION
+            ),
             "two_parent_attempts": self.qd_two_parent_attempts,
             "two_parent_fallbacks": self.qd_two_parent_fallbacks,
             "qd_two_parent_probability": self.qd_two_parent_probability,
@@ -1630,8 +1662,15 @@ class QDEngine(EoHEngine):
         ]
 
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
-        champion_lane_fraction = self._champion_lane_fraction()
-        if self.qd_parent_selection == "nsga2_global_rank":
+        sparse_front_triggered = self._sparse_front_triggered()
+        champion_lane_fraction = self._active_champion_lane_fraction()
+        if self.qd_parent_selection in {
+            "nsga2_global_rank",
+            "sparse_front_triggered_nsga2",
+        }:
+            if sparse_front_triggered:
+                self.qd_sparse_front_trigger_batches += 1
+                self.qd_sparse_front_trigger_parent_requests += count
             pool = self._nsga2_global_pool()
             if pool:
                 champion = (
@@ -1676,6 +1715,12 @@ class QDEngine(EoHEngine):
         weights = [max(c.score - base + 0.1, 1e-6) for c in success_view]
         return random.choices(success_view, weights=weights, k=count)
 
+    def _active_champion_lane_fraction(self) -> float:
+        fraction = self._champion_lane_fraction()
+        if self._sparse_front_triggered():
+            return min(fraction, SPARSE_FRONT_TRIGGER_CHAMPION_LANE_FRACTION)
+        return fraction
+
     def _champion_lane_fraction(self) -> float:
         if (
             self.qd_adaptive_warmup_champion_lane_fraction is not None
@@ -1684,6 +1729,19 @@ class QDEngine(EoHEngine):
         ):
             return self.qd_adaptive_warmup_champion_lane_fraction
         return self.qd_champion_lane_fraction
+
+    def _sparse_front_triggered(self) -> bool:
+        if self.qd_parent_selection != "sparse_front_triggered_nsga2":
+            return False
+        if self.qd_cell_mode != "elite_pareto_slot":
+            return False
+        if not self._archive_initialized_for_rebinning():
+            return False
+        occupied = self.success_archive.occupied_count()
+        if occupied < SPARSE_FRONT_TRIGGER_MIN_OCCUPIED_CELLS:
+            return False
+        extra_front_slots = len(self._archive_members()) - occupied
+        return extra_front_slots < SPARSE_FRONT_TRIGGER_MIN_EXTRA_FRONT_SLOTS
 
     def _ranked_success_members_by_cell(self) -> dict[str, list[RankedArchiveMember]]:
         by_cell: dict[str, list[RankedArchiveMember]] = defaultdict(list)
@@ -1749,7 +1807,10 @@ class QDEngine(EoHEngine):
                 return parents
             parents = self._gated_near_front_descriptor_pair()
             return parents if parents is not None else self._sample_success_parents(1)
-        if self.qd_parent_selection == "nsga2_global_rank":
+        if self.qd_parent_selection in {
+            "nsga2_global_rank",
+            "sparse_front_triggered_nsga2",
+        }:
             return self._sample_success_parents(2)
         if self.qd_cell_mode not in {"pareto_front", "elite_pareto_slot"}:
             return self._sample_success_parents(2)

@@ -254,6 +254,8 @@ class RevolutionBackend(EvolutionBackend):
                     "objectives": self.config.qd_objectives,
                     "two_parent_probability": self.config.qd_two_parent_probability,
                     "two_parent_gate": self.config.qd_two_parent_gate,
+                    "champion_lane_fraction": self.config.qd_champion_lane_fraction,
+                    "parent_selection": self.config.qd_parent_selection,
                     "num_cells": self.config.qd_num_cells,
                     "fill_target_fraction": self.config.qd_fill_target_fraction,
                     "improve_backfill_fraction": self.config.qd_improve_backfill_fraction,
