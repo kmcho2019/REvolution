@@ -1,6 +1,6 @@
 # T48 Gated Near-Front Fusion Methodology
 
-Status: implementation ready; no live run has been launched.
+Status: two-seed hard/tuning screen complete; method marked `T0 diagnostic`.
 
 ## Question
 

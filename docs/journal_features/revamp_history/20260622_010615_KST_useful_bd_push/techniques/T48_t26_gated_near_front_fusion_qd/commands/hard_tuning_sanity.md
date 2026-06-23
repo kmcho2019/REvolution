@@ -1,7 +1,7 @@
 # T48 Hard/Tuning Sanity Commands
 
-Status: ready to run after vLLM preflight. The narrow `qd_two_parent_gate`
-implementation and focused tests have landed.
+Status: seeds `1001` and `1002` complete. The narrow
+`qd_two_parent_gate` implementation and focused tests have landed.
 
 ## Preflight
 
@@ -93,3 +93,33 @@ CLASSIC_ROOT="exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard
 The T48 package script must compare each T48 seed against the matching T47
 classic seed. Rerun classic only if those roots are unavailable or fail a
 pre-packaging integrity check.
+
+## Packaging
+
+```bash
+uv run python scripts/package_t48_gated_probe.py \
+  --classic-root exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution \
+  --qd-root exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning/t26_gated_near_front_fusion_qd \
+  --matrix docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T47_t26_contract_probe/tables/probe_problem_matrix.csv \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T48_t26_gated_near_front_fusion_qd/hard_tuning_package
+```
+
+## Phase 03.1 Viewer
+
+```bash
+uv run python scripts/report_final_analysis_bundle.py \
+  --backend_run classic=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1002 \
+  --backend_run t26_gated_near_front_fusion_qd=exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning/t26_gated_near_front_fusion_qd/seed_1002 \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --output-dir exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/qd_ppa_viewer_source/final_analysis
+
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/qd_ppa_viewer_source \
+  --backend_run classic=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1002 \
+  --backend_run t26_gated_near_front_fusion_qd=exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning/t26_gated_near_front_fusion_qd/seed_1002 \
+  --archive_source_backend t26_gated_near_front_fusion_qd \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T48_t26_gated_near_front_fusion_qd/visualizations/qd_ppa_viewer \
+  --strict \
+  --no-classic-descriptor-recovery
+```

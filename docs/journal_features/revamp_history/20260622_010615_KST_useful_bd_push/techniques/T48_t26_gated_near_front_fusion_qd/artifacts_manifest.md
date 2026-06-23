@@ -1,6 +1,6 @@
 # T48 Artifacts Manifest
 
-Status: seed `1001` complete. Seed `1002` is in progress.
+Status: seeds `1001` and `1002` complete; hard/tuning package generated.
 
 ## Method Sources
 
@@ -24,10 +24,8 @@ Focused validation:
 
 ## Live Run
 
-- completed seed:
-  `1001`
-- launched seed:
-  `1002`
+- completed seeds:
+  `1001`, `1002`
 - run root:
   `exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC/hard_tuning`
 - candidate backend:
@@ -46,18 +44,38 @@ Focused validation:
   `t26_gated_near_front_fusion_qd/seed_1001/openai_gpt-oss-120b/20260622_225715_revolution_summary_results.txt`
 - seed-1001 scheduler telemetry:
   `t26_gated_near_front_fusion_qd/seed_1001/openai_gpt-oss-120b/20260622_225715_revolution_scheduler_telemetry.json`
+- seed-1002 summary:
+  `t26_gated_near_front_fusion_qd/seed_1002/openai_gpt-oss-120b/20260622_232739_revolution_summary_results.txt`
+- seed-1002 scheduler telemetry:
+  `t26_gated_near_front_fusion_qd/seed_1002/openai_gpt-oss-120b/20260622_232739_revolution_scheduler_telemetry.json`
 
 ## Required Result Artifacts
 
 - vLLM `/v1/models` preflight metadata: present for seed `1001`;
 - T48 live command log: present for seed `1001`;
-- per-problem/seed metrics table: pending package script;
-- aggregate metrics table;
-- validity gate table;
-- candidate-level PPA data;
-- direct raw area-power PPA-front figures;
-- visual inspection notes;
-- results report with T0/T1/T2/T3 tier decision.
+- per-problem/seed metrics table:
+  `hard_tuning_package/tables/t48_problem_seed_metrics.csv`;
+- aggregate metrics table:
+  `hard_tuning_package/tables/t48_aggregate_metrics.csv`;
+- validity gate table:
+  `hard_tuning_package/tables/t48_validity_gates.csv`;
+- candidate-level PPA data:
+  `hard_tuning_package/data/t48_ppa_candidates.csv`;
+- direct raw area-power PPA-front figures:
+  `hard_tuning_package/figures/t48_direct_ppa_fronts_seed1001.png`,
+  `hard_tuning_package/figures/t48_direct_ppa_fronts_seed1002.png`;
+- direct PPA HTML supplement:
+  `visualizations/direct_ppa_pareto/index.html`;
+- full Phase 03.1 viewer:
+  `visualizations/qd_ppa_viewer/index.html`;
+- viewer screenshot:
+  `visualizations/qd_ppa_viewer/screenshot.png`;
+- visual inspection notes:
+  `hard_tuning_package/figures/visual_inspection_notes.md`;
+- results report with tier decision:
+  `results_report.md`.
 
-If archive artifacts are complete, add the full Phase 03.1
-`visualizations/qd_ppa_viewer/` bundle beside the direct PPA-front supplement.
+Validation caveat: the Phase 03.1 viewer passes non-strict validation, but
+strict validation fails because classic candidates cannot be honestly projected
+into the learned `sr_pca_3d` archive space. The export therefore used
+`--no-classic-descriptor-recovery`.

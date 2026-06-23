@@ -2780,3 +2780,27 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `--save_path .../seed_1002`.
 - The seed is in progress and has created the expected config, run-log, and
   Gen0 problem directories. Do not package T48 until it exits.
+
+## T48 Gated Near-Front Fusion Completion - 2026-06-22 UTC
+
+- Seed `1002` completed with exit code `0` after `1593.16` seconds.
+- The final T48 run has `13/13` archive summaries and `13/13` QD metrics for
+  both seeds.
+- Added `scripts/package_t48_gated_probe.py` and a focused test to package
+  the split-root T48 comparison against T47 classic roots.
+- The hard/tuning package is:
+  `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T48_t26_gated_near_front_fusion_qd/hard_tuning_package/`.
+- Aggregate result versus classic: mean HV `-9.5%`, HV-AUC `-17.9%`, mean
+  best score `+2.3%`, valid-PPA count `-16.0%`, and PPA-front points
+  `-16.4%`.
+- T48 has no classic-covered valid-PPA design loss, but has three valid-PPA
+  yield warnings where classic has enough samples for the warning to matter.
+- Tier decision: `T0 diagnostic`. Near-front gated fusion mitigates parts of
+  T47 exact T26, but does not clear the active goal's T1+ guardrail.
+- Generated the direct PPA supplement at
+  `visualizations/direct_ppa_pareto/index.html`.
+- Generated a Phase 03.1 viewer at `visualizations/qd_ppa_viewer/index.html`.
+  Non-strict validation passes. Strict validation fails because classic
+  candidates cannot be honestly projected into learned `sr_pca_3d` archive
+  cells from raw graph/RTL metrics, so the viewer was exported with
+  `--no-classic-descriptor-recovery`.
