@@ -1,6 +1,7 @@
 # T50 Candidate-Matched Thought Front Methodology
 
-Status: pre-registered; no live result yet.
+Status: partial seed `1001` result packaged;
+`T0 diagnostic_rejected_for_promotion`.
 
 ## Question
 
