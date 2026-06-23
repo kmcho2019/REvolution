@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51 code-thought front slot | Diagnostic lead | Restores much of the yield and best-score damage from thought-only front control while preserving the one-slot archive idea. | Classic still wins front breadth and HV on the hard/tuning surface. |
 | 2 | T26/T30 SR conservative QD | Mechanism clue | Shows champion-biased archive pressure can recover local quality and preserves covered designs in the VerilogEval holdout. | Reference-complete RTLLM comparison is negative; not a headline win. |
-| 3 | RTL-native BD lane | Proposed high priority | MasterRTL/RTLTimer-style descriptors give a more defensible definition of RTL behavior diversity. | Needs implementation and reference-complete validation. |
+| 3 | RTL-native BD lane | Diagnostic proxy started | MasterRTL/RTLTimer-style descriptors give a more defensible definition of RTL behavior diversity. | T60 proxy did not show a front-cell advantage; true RTLTimer/MasterRTL extraction still needed. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic. |
 
 ## Most Promising Direction
@@ -26,7 +26,7 @@ claims and avoids using final PPA as the descriptor.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | MasterRTL SOG, RTLTimer timing-risk vectors | Should accelerate | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA. |
+| RTL-native descriptors | MasterRTL SOG, RTLTimer timing-risk vectors, T60 timing-risk proxy | Active diagnostic | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; first proxy audit is interpretable but not positive. |
 | Archive machinery | T26, T30, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |

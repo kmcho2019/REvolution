@@ -192,7 +192,7 @@ Start here when resuming the active goal.
 | `T57` | `T57_t51_adaptive_rebin_qd` | Completed hard/tuning result, `T0 diagnostic_no_rebin_signal`; emits 26 rebin checks but 0 rebin events, loses classic/T51 on HV/HV-AUC, and has one classic-covered valid-PPA loss. |
 | `T58` | `T58_t51_t11_pca4_front_slot_qd` | Completed hard/tuning result, `T0 diagnostic_no_promotion`; preserves valid-PPA coverage and improves best score/yield, but loses classic and T51 on HV/HV-AUC/front evidence. |
 | `T59` | `T59_t51_feedback_front_slot_qd` | Completed hard/tuning result, `T0 diagnostic_no_promotion`; improves mean best score but loses HV, HV-AUC, valid PPA, front breadth, unique PPA, and reference-beating count versus classic. |
-| `T60` | `T60_rtl_timer_timing_risk_bd` | Scaffolded high-priority RTL-native timing-risk BD lane; must use reference-complete paired claims and a PPA completeness table. |
+| `T60` | `T60_rtl_timer_timing_risk_bd` | Completed first `T0 diagnostic_proxy` timing-risk audit; interpretable RTL-native geometry, but no front-cell advantage over classic. |
 
 ## Validity-Gate Note
 

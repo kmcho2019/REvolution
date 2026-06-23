@@ -134,8 +134,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       decision.
 - [ ] `T15_masterrtl_sog_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `T60_rtl_timer_timing_risk_bd` has methodology, results, figures, tables,
-      and tier decision.
+- [x] `T60_rtl_timer_timing_risk_bd` has methodology, results, figures, tables,
+      and tier decision for the first diagnostic proxy audit.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

@@ -70,6 +70,12 @@ Real result packages:
   follow-up
 - `T56_coarse_sr2_t51_control_qd` coarse two-axis SR-PCA T51-control geometry
   follow-up
+- `T57_t51_adaptive_rebin_qd` adaptive grid-quantile rebinning diagnostic
+- `T58_t51_t11_pca4_front_slot_qd` T51 plus frozen T11-PCA4 graph-coordinate
+  diagnostic
+- `T59_t51_feedback_front_slot_qd` short fail-pool feedback front-slot
+  diagnostic
+- `T60_rtl_timer_timing_risk_bd` RTL-native timing-risk proxy diagnostic
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -676,3 +682,11 @@ the best ALU and traffic-light scores.
   (`-16`), front points (`-10`), unique PPA (`-27`), and reference-beating
   candidates (`-13`). `Prob153_gshare` triggers a yield warning. Do not spend
   seed `1002` on exact T59.
+- T60 completed the first RTLTimer-style timing-risk proxy audit as
+  `T0 diagnostic_proxy`. It extracted RTL-native timing-risk features from
+  670 full-RTLLM valid-PPA candidates. Both methods occupy all 16 pooled
+  timing-risk cells and all 16 pooled front cells, but problem-balanced exact
+  T26 deltas are not favorable: occupied-cell delta mean `-0.612903` and
+  front-cell delta mean `-0.096774`. Keep the RTL-native lane active, but
+  replace this regex proxy with true RTLTimer or MasterRTL/SOG extraction
+  before any live promotion claim.

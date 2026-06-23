@@ -3512,3 +3512,23 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated the full RTLLM package README, the presentation report, the metric
   rule, and the command log so the corrected T26 conclusion is tied to an
   executable completeness table rather than an implicit exclusion note.
+
+## T60 RTL Timing-Risk Proxy Audit - 2026-06-23 UTC
+
+- Added `scripts/package_rtl_timer_timing_risk_audit.py` and focused tests to
+  create the first RTLTimer-style descriptor audit from existing full-RTLLM
+  candidate RTL.
+- Packaged T60 artifacts under
+  `techniques/T60_rtl_timer_timing_risk_bd/`: candidate-level
+  `rtl_timer_features.csv`, pooled and per-problem timing-risk archive
+  summaries, comparison deltas, PPA completeness, and an inspected projection
+  figure.
+- Source: 670 valid-PPA candidates from the full RTLLM family-audit table
+  (`352` classic, `318` exact T26 QD).
+- Result: both methods occupy all 16 coarse timing-risk cells and all 16
+  front cells in the pooled view, but problem-balanced exact T26 deltas are
+  not favorable (`occupied_cell_delta` mean `-0.612903`; front-cell delta mean
+  `-0.096774`).
+- Tier decision: `T0 diagnostic_proxy`. Keep the RTL-native lane active, but
+  escalate to true RTLTimer or MasterRTL/SOG extraction before any live
+  promotion claim.

@@ -1,6 +1,7 @@
 # T60 RTLTimer Timing-Risk BD Methodology
 
-Status: scaffolded high-priority RTL-native descriptor lane.
+Status: first diagnostic proxy audit packaged; live RTLTimer extraction still
+pending.
 
 ## Intent
 
@@ -32,6 +33,12 @@ Extract a timing-risk vector with:
 - timing-sensitive operator-chain patterns such as multiply-add, shift-add,
   compare-mux, and mux-arithmetic cascades;
 - unsupported-construct and preprocessing-failure funnel counts.
+
+The first T60 package uses a lightweight proxy extractor in
+`scripts/package_rtl_timer_timing_risk_audit.py`. It counts RTL text features
+that approximate the bullets above and is used only as a screening audit over
+existing candidates. A promoted T60/T61 method should replace this proxy with
+true RTLTimer or MasterRTL/SOG preprocessing before a live QD run.
 
 ## Archive Mapping
 
