@@ -35,6 +35,32 @@ def test_source_aligned_profile_resolves_without_ppa() -> None:
     ]
 
 
+def test_source_aligned_density_profile_resolves_without_ppa() -> None:
+    axes = resolve_descriptor_axes(
+        profile_name="source_aligned_shape_density_3d",
+        explicit_axes=None,
+        descriptor_file=None,
+        archive_type="grid",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+    specs = resolve_grid_axis_specs(axes, num_cells=64, descriptor_file=None)
+
+    assert axes == [
+        "source_aligned_masterrtl_branching",
+        "source_aligned_rtltimer_wire_density",
+        "source_aligned_rtltimer_dff_density",
+    ]
+    assert requirements["requires_source_aligned_rtl"] is True
+    assert requirements["requires_ppa"] is False
+    assert requirements["requires_synthesis"] is False
+    assert [(spec.bins, spec.lower_bound, spec.upper_bound) for spec in specs] == [
+        (4, 0.0, 8.0),
+        (4, 0.0, 1.0),
+        (4, 0.0, 1.0),
+    ]
+
+
 def test_source_aligned_evaluator_projects_t72_axes(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -77,6 +103,9 @@ def test_source_aligned_evaluator_projects_t72_axes(
     assert values["masterrtl_operator_log_edges"] == pytest.approx(math.log1p(128))
     assert values["rtltimer_state_timing_class"] == pytest.approx(0.0)
     assert metrics["source_aligned_rtltimer_dff_refs"] == pytest.approx(0.0)
+    assert metrics["source_aligned_masterrtl_branching"] == pytest.approx(128 / 58)
+    assert metrics["source_aligned_rtltimer_wire_density"] == pytest.approx(15 / 116)
+    assert metrics["source_aligned_rtltimer_dff_density"] == pytest.approx(0.0)
 
 
 def test_masterrtl_uses_candidate_local_parse_cwd(

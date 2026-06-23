@@ -38,7 +38,7 @@ class SourceAlignedRTLDescriptorEvaluator:
         code_file_path: str | Path,
         top_module_name: str | None,
     ) -> dict[str, float]:
-        """Run the verified T70 extractor flows and return T72 axis metrics."""
+        """Run the verified T70 extractor flows and return RTL-native metrics."""
 
         code_path = Path(code_file_path)
         assert code_path.is_file(), f"missing RTL file: {code_path}"
@@ -52,18 +52,26 @@ class SourceAlignedRTLDescriptorEvaluator:
             master = self._run_masterrtl(code_path, top, tmp_dir / "masterrtl")
             rtltimer = self._run_rtltimer(code_path, top, tmp_dir / "rtltimer")
 
+        graph_keys = int(master["masterrtl_graph_keys"])
         graph_edges = int(master["masterrtl_graph_edges"])
+        lines = int(rtltimer["rtltimer_lines"])
+        wires = int(rtltimer["rtltimer_wires"])
         dff_refs = int(rtltimer["rtltimer_dff_refs"])
+        assert graph_keys > 0
+        assert lines > 0
         return {
             "masterrtl_operator_log_edges": math.log1p(graph_edges),
             "rtltimer_state_timing_class": float(_state_timing_class(dff_refs)),
-            "source_aligned_masterrtl_graph_keys": float(master["masterrtl_graph_keys"]),
+            "source_aligned_masterrtl_graph_keys": float(graph_keys),
             "source_aligned_masterrtl_graph_edges": float(graph_edges),
             "source_aligned_masterrtl_node_dict": float(master["masterrtl_node_dict"]),
-            "source_aligned_rtltimer_lines": float(rtltimer["rtltimer_lines"]),
+            "source_aligned_masterrtl_branching": graph_edges / graph_keys,
+            "source_aligned_rtltimer_lines": float(lines),
             "source_aligned_rtltimer_assigns": float(rtltimer["rtltimer_assigns"]),
-            "source_aligned_rtltimer_wires": float(rtltimer["rtltimer_wires"]),
+            "source_aligned_rtltimer_wires": float(wires),
             "source_aligned_rtltimer_dff_refs": float(dff_refs),
+            "source_aligned_rtltimer_wire_density": wires / lines,
+            "source_aligned_rtltimer_dff_density": dff_refs / lines,
         }
 
     def _run_masterrtl(

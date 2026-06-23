@@ -196,6 +196,18 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
         "rtltimer_state_timing_class",
         "source_aligned_rtl",
     ),
+    "source_aligned_masterrtl_branching": DescriptorDefinition(
+        "source_aligned_masterrtl_branching",
+        "source_aligned_rtl",
+    ),
+    "source_aligned_rtltimer_wire_density": DescriptorDefinition(
+        "source_aligned_rtltimer_wire_density",
+        "source_aligned_rtl",
+    ),
+    "source_aligned_rtltimer_dff_density": DescriptorDefinition(
+        "source_aligned_rtltimer_dff_density",
+        "source_aligned_rtl",
+    ),
     "t11_runtime_pca_0": DescriptorDefinition("t11_runtime_pca_0", "yosys_graph"),
     "t11_runtime_pca_1": DescriptorDefinition("t11_runtime_pca_1", "yosys_graph"),
     "t11_runtime_pca_2": DescriptorDefinition("t11_runtime_pca_2", "yosys_graph"),
@@ -475,6 +487,13 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (4.0, 8.8)
     if axis == "rtltimer_state_timing_class":
         return (0.0, 4.0)
+    if axis == "source_aligned_masterrtl_branching":
+        return (0.0, 8.0)
+    if axis in {
+        "source_aligned_rtltimer_wire_density",
+        "source_aligned_rtltimer_dff_density",
+    }:
+        return (0.0, 1.0)
     if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count", "wire_count_log_est"}:
         return (0.0, 16.0)
     if axis in {"logic_depth", "ff_depth"}:
