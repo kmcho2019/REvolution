@@ -80,6 +80,12 @@ Required model line:
 openai/gpt-oss-120b max_model_len=131072
 ```
 
+Observed at `2026-06-23T20:17:37Z`:
+
+```text
+openai/gpt-oss-120b max_model_len=131072 owned_by=vllm
+```
+
 ## Shared Arguments
 
 ```bash

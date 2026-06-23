@@ -3988,3 +3988,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   result; the next step is vLLM preflight and a bounded hard/tuning live screen
   with PPA completeness, direct PPA-front, and Phase 03.1 visualization
   packaging.
+
+## 2026-06-23T20:20:00Z - T72 vLLM Preflight
+
+- Queried `http://20.0.0.103:8000/v1/models` at
+  `2026-06-23T20:17:37Z` before T72 live spend.
+- The endpoint returned `openai/gpt-oss-120b` with
+  `max_model_len=131072` and `owned_by=vllm`, satisfying the T72
+  `vllm_min_model_len >= 128000` guard.
+- Recorded raw and summarized preflight artifacts under
+  `techniques/T72_source_aligned_rtl_cell_qd/tables/`.
+- Command-surface check: `scripts/run_backend.py --help` currently fails on
+  an existing argparse help-string `%` formatting issue, but parser-source
+  inspection confirms the T72 live command flags exist, including
+  `--no-backend_subdir`, worker controls, descriptor profile, parent
+  selection, operator, repair, and vLLM length flags.
+- Decision: the next T72 blocker is not endpoint availability. The remaining
+  step is launching the bounded hard/tuning live screen and packaging the
+  resulting PPA/visualization evidence.

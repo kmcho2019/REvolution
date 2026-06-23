@@ -1,6 +1,6 @@
 # T72 Source-Aligned RTL Cell QD
 
-Status: runtime descriptor gate passed; live execution not launched.
+Status: descriptor and vLLM preflight gates passed; live execution not launched.
 
 T72 is the first proposed live method that uses the exact T71 source-aligned
 MasterRTL/RTL-Timer cell idea instead of the earlier proxy
@@ -39,6 +39,8 @@ Evidence:
 
 - `tables/descriptor_probe_source_aligned_masterrtl_rtltimer_cell_2d.json`
 - `tables/source_aligned_runtime_regression.csv`
+- `tables/vllm_preflight_20260623T201737Z.json`
+- `tables/vllm_preflight_20260623T201737Z.txt`
 
 ## Navigation
 
@@ -53,6 +55,5 @@ Evidence:
 
 ## Current Decision
 
-Advance to a bounded live T72 screen only after recording the model preflight
-and command under `commands/`. T72 has not produced PPA results, figures, or a
-tier decision yet.
+Advance to a bounded live T72 screen using the recorded preflight and command
+template. T72 has not produced PPA results, figures, or a tier decision yet.

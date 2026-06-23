@@ -12,6 +12,8 @@ Status: runtime descriptor gate passed. No live PPA results are claimed.
 | `tables/source_aligned_descriptor_contract.json` | Machine-readable descriptor and run contract. |
 | `tables/descriptor_probe_source_aligned_masterrtl_rtltimer_cell_2d.json` | Runtime profile probe showing no PPA, synthesis, simulation, or graph-proxy requirement. |
 | `tables/source_aligned_runtime_regression.csv` | Full 19-candidate regression showing exact T70 MasterRTL edge and RTL-Timer DFF-count reproduction. |
+| `tables/vllm_preflight_20260623T201737Z.json` | Raw local vLLM `/v1/models` response before live spend. |
+| `tables/vllm_preflight_20260623T201737Z.txt` | One-line model summary: `openai/gpt-oss-120b max_model_len=131072 owned_by=vllm`. |
 | `tables/hard_tuning_subset.yaml` | Frozen 13-problem comparator subset. |
 | `tables/t72_method_matrix.csv` | Compact comparison against T51/T66/T67. |
 | `tables/README.md` | Table inventory. |
@@ -20,7 +22,8 @@ Status: runtime descriptor gate passed. No live PPA results are claimed.
 
 ## Required Future Artifacts
 
-The descriptor gate is passed. The live result package is still missing:
+The descriptor and vLLM preflight gates are passed. The live result package is
+still missing:
 
 | Path | Requirement |
 | --- | --- |
