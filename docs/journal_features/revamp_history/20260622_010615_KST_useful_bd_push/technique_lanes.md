@@ -45,6 +45,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Can pretrained or trained circuit encoders reveal stronger BDs? | Qwen3, DeepGate, DeepSeq, NetTAG, CircuitFusion, AURORA. | Encoder separates behavioral/structural axes after normalization and beats non-learned controls. | Embeddings cluster by identifiers, problem identity, or corpus artifacts. T58 shows frozen T11 PCA4 can preserve yield under T51 but still fails as a primary front-broadening archive. |
 | `L5` archive coupling | Can archive mechanics preserve diversity while retaining hill-climbing pressure? | Local Pareto cells, NSGA-II parent selection, Smooth-QD-style champion lanes. | Same-budget live run improves front/hypervolume metrics while preserving classic-covered designs. | Archive keeps many candidates but does not improve live optimization. |
 | `L6` lineage and emitters | Can we bias search by repair dynamics and operator history? | Parent-child repair features, emitter mixtures, adaptive CVT. | Better valid-yield recovery or underexplored-cell improvement without reward leakage. | Lineage axes duplicate scalar fitness or become post-hoc reward proxies. |
+| `L7` RTL-native descriptors | Can RTL operator/timing structure define useful implementation families? | MasterRTL SOG, RTLTimer timing-risk/path morphology. | Archive cells preserve distinct RTL control/dataflow, pipeline, and timing-risk families while PPA improves. | Descriptor becomes a direct PPA predictor, leaks reference labels, or fails on common RTL constructs. |
 
 ## Lane Summary
 
@@ -57,6 +58,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T58 preserves coverage and improves yield/best score with frozen T11 PCA4 under T51, but still loses HV, HV-AUC, and front breadth. | Stop primary graph-coordinate live archive tests unless the next method uses graph features as a secondary lane or trains a new encoder objective. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
+| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T15 MasterRTL SOG is scaffolded; T60 RTLTimer timing-risk is now scaffolded as the high-priority next package. | Run replay/preprocessing first, then pair the descriptor with T51/T26-family archive machinery if the features survive collapse checks. |
 
 ## Lane Scorecard
 
@@ -69,6 +71,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, T46 PCA4 projection, and T58 T51/T11-PCA4 cross-lane test | T58 is measured `T0 diagnostic_no_promotion`: it preserves coverage and improves yield/best score, but loses classic/T51 on HV, HV-AUC, and front breadth. | Retire frozen T11 PCA4 as a primary archive geometry. | Reopen only as a secondary/reporting lane or with a trained encoder objective that targets front creation without PPA leakage. |
 | `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
+| `L7` | T15 MasterRTL SOG and T60 RTLTimer timing-risk descriptors | High-priority proposed lane after the T26/T59 corrections. | No live or replay result yet. | Build RTL-native feature extraction first; use reference-complete paired claims and avoid treating timing prediction as the BD objective. |
 
 ## Current Lineage
 
@@ -111,7 +114,7 @@ flowchart LR
     AJ[T37 slot count ablation]
     AK[T38 elite Pareto slot live]
     AL[T39 sparse-yield warmup]
-    L[T08-T12 and T15-T16 graph and multimodal scaffolds]
+    L[T08-T12 and T16 graph and multimodal scaffolds]
   end
 
   subgraph L5[L5 archive coupling]
@@ -149,6 +152,11 @@ flowchart LR
   subgraph L6[L6 lineage and emitters]
     M[T18 adaptive emitter CVT]
     W[T12 lineage repair descriptors]
+  end
+
+  subgraph L7[L7 RTL-native descriptors]
+    BD[T15 MasterRTL SOG]
+    BE[T60 RTLTimer timing risk]
   end
 
   A --> Q
@@ -209,6 +217,9 @@ flowchart LR
   BB --> BC
   AL --> AX
   AL --> L
+  L --> BD
+  BD --> BE
+  AX --> BE
   G --> M
   G --> W
 ```

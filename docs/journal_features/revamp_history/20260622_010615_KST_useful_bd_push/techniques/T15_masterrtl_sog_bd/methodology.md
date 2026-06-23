@@ -7,6 +7,11 @@ RTL representation before full synthesis. This tests whether pre-synthesis
 operator structure gives a cheaper and more stable signal than mapped netlist
 statistics alone.
 
+T15 is now paired with `T60_rtl_timer_timing_risk_bd` in the RTL-native lane.
+T15 focuses on structural/operator graph shape; T60 focuses on timing-risk and
+path morphology. Both should be used as behavior descriptors, not as direct PPA
+predictors.
+
 ## Inputs
 
 - Candidate RTL and fixed benchmark metadata.
@@ -38,7 +43,9 @@ Construct a SOG feature vector with:
   lineage data exists.
 
 Normalize per benchmark and compare SOG-only, Yosys-only, and fused
-SOG+Yosys descriptors.
+SOG+Yosys descriptors. A later fused variant may add T60 timing-risk features
+if both feature families pass collapse and reference-complete comparison
+checks.
 
 ## Archive Mapping
 

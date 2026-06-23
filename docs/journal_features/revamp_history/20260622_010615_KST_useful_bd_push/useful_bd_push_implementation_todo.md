@@ -17,6 +17,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Add local vLLM runtime guide for endpoint preflight and live commands.
 - [x] Add Phase 03.1 live-technique visualization contract requiring both the
       full `qd_ppa_viewer/` bundle and the `direct_ppa_pareto/` supplement.
+- [x] Add short `best_current_techniques.md` operational ranking and update
+      rules.
+- [x] Add reference-complete direct-comparison rule and per-run
+      `ppa_completeness.csv` schema.
+- [x] Elevate MasterRTL/RTLTimer-style RTL-native descriptors as the next
+      high-priority BD lane.
 - [x] Verify `http://20.0.0.103:8000/v1/models` returns live
       `openai/gpt-oss-120b` metadata.
 - [x] Confirm branch, HEAD, dirty state, data mounts, GPU visibility, and
@@ -128,6 +134,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       decision.
 - [ ] `T15_masterrtl_sog_bd` has methodology, results, figures, tables, and tier
       decision.
+- [ ] `T60_rtl_timer_timing_risk_bd` has methodology, results, figures, tables,
+      and tier decision.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

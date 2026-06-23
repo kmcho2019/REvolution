@@ -436,6 +436,10 @@ of only parent pressure.
   live experiment only for candidates that reach `T1` or `T2`.
 - A method can game diversity by producing invalid or duplicate designs.
   Validity funnels and duplicate accounting are mandatory.
+- Missing reference `ppa.txt` can make normalized improvement, HV, and HV-AUC
+  misleading. Direct classic-vs-QD headline claims must use the
+  reference-complete paired subset; missing-reference designs are
+  diagnostic-only unless a real reference PPA is added before analysis.
 - A method can look good from one easy problem. Require per-problem deltas and
   classic-covered problem retention before claiming usefulness.
 - A method can exploit a loosened threshold. Use the tier system to continue
@@ -461,6 +465,8 @@ of only parent pressure.
 - DE-HNN: https://arxiv.org/abs/2404.00477
 - DeepCell: https://arxiv.org/html/2502.06816v1
 - MasterRTL: https://github.com/hkust-zhiyao/MasterRTL
+- RTL-Timer: https://github.com/hkust-zhiyao/RTL-Timer
+- RTL-Timer paper: https://arxiv.org/abs/2403.18453
 - Multi-Objective QD: https://arxiv.org/pdf/2202.03057
 - Discretization-free QD metrics:
   https://www.research.autodesk.com/publications/a-discretization-free-metric-for-assessing-quality-diversity-algorithms/

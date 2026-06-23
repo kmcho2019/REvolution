@@ -35,6 +35,7 @@ or near-classic optimization quality.
 | DE-HNN, `https://arxiv.org/abs/2404.00477` | Directed hypergraph netlist representation for long-range netlist interactions. | Encode gates/nets as directed hyperedges and use hypergraph summary or a small HNN surrogate. |
 | DeepCell, `https://arxiv.org/html/2502.06816v1` | Multiview post-mapping netlist learning with masked circuit modeling. | Use standard-cell/post-mapping view plus AIG view; if full training is too costly, use multiview feature fusion. |
 | MasterRTL, `https://github.com/hkust-zhiyao/MasterRTL` | Simple operator graph (SOG) as bit-level RTL representation closer to gate netlists. | Build bit-level operator graph descriptors before full synthesis and compare to Yosys/motif descriptors. |
+| RTL-Timer, `https://github.com/hkust-zhiyao/RTL-Timer`, `https://arxiv.org/abs/2403.18453` | Fine-grained RTL timing-risk estimation using RTL representations and register-endpoint path information. | Use timing-risk/path morphology as archive descriptors, not as a direct PPA predictor. |
 
 ## Method Priority
 
@@ -45,7 +46,7 @@ the paper story.
 | --- | --- | --- |
 | P0 controls | `T01_simple_yosys_stat_bd`, `T02_motif_pathlet_bd`, `T03_synthesis_delta_stnod_bd` | Cheap, deterministic, interpretable, and needed to avoid over-crediting learned models. |
 | P1 practical QD | `T05_vq_elites_codebook_bd`, `T04_autoqd_mmd_synthesis_bd`, `T17_mome_pareto_archive_bd`, `T18_adaptive_emitter_cvt_bd` | Directly targets QD archive quality, Pareto-front spread, and broader illumination. |
-| P2 representation lift | `T15_masterrtl_sog_bd`, `T14_dehnn_hypergraph_bd`, `T16_deepcell_multiview_bd`, `T09_nettag_text_graph_bd`, `T10_circuitfusion_multimodal_bd` | More reviewer-interesting if they produce useful BDs or explain why structural controls are enough. |
+| P2 representation lift | `T15_masterrtl_sog_bd`, `T60_rtl_timer_timing_risk_bd`, `T14_dehnn_hypergraph_bd`, `T16_deepcell_multiview_bd`, `T09_nettag_text_graph_bd`, `T10_circuitfusion_multimodal_bd` | More reviewer-interesting if they produce useful BDs or explain why structural controls are enough. |
 | P3 expensive encoders | `T06_qwen_projection_bd`, `T07_deepgate_family_bd`, `T08_sequential_deepseq_bd`, `T11_mgvga_contrastive_bd`, `T13_aurora_incremental_autoencoder_bd` | Worth trying after cheap/replay diagnostics, but must pass collapse and leakage checks. |
 
 ## Hybrid Ideas To Generate During The Goal
@@ -61,6 +62,8 @@ the paper story.
 - DeepGate or DE-HNN cone embeddings fused with lineage repair features.
 - Text-attributed graph descriptors with Qwen summaries only at node or module
   level, not raw whole-file embeddings.
+- RTL-native timing-risk cells from RTL-Timer-style path morphology, combined
+  with T51/T26-family archive machinery.
 - Adaptive emitters: one exploit emitter reproduces classic search pressure,
   one explore emitter targets low-occupancy cells, and one repair emitter
   targets invalid-to-valid transitions.

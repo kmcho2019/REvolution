@@ -7,6 +7,7 @@ Start here when resuming the active goal.
 
 - Active branch: `feat/journal-useful-bd-exp-20260622`.
 - Goal contract: `useful_bd_push_plan.md`.
+- Short operational technique ranking: `best_current_techniques.md`.
 - Living checklist: `useful_bd_push_implementation_todo.md`.
 - Append-only evidence log: `useful_bd_push_implementation_history.md`.
 - Current priority milestone:
@@ -63,8 +64,13 @@ Start here when resuming the active goal.
   `techniques/T59_t51_feedback_front_slot_qd/` (seed-1001 hard/tuning
   direct-code feedback/front-slot diagnostic with direct PPA supplement and
   Phase 03.1 viewer).
-- Active planned live technique: none selected after T59; choose the next
-  method from the documented front-creation or source-level repair options.
+- Active planned live technique: none selected after T59. The next descriptor
+  push should prioritize the RTL-native MasterRTL/RTLTimer lane before another
+  primary archive tweak.
+- Active planned RTL-native descriptor package:
+  `techniques/T60_rtl_timer_timing_risk_bd/` (scaffolded high-priority
+  RTLTimer timing-risk lane). Pair it with T51/T26-family archive machinery
+  before spending live budget on another primary archive variant.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -72,6 +78,7 @@ Start here when resuming the active goal.
 | File | Purpose |
 | --- | --- |
 | `README.md` | This local navigation guide. |
+| `best_current_techniques.md` | Short current-best operational ranking and update rules. |
 | `goal_template.md` | Compact goal body that fits the goal-tool limit. |
 | `useful_bd_push_plan.md` | Main contract: outcome, constraints, method families, gates, and completion criteria. |
 | `technique_lineage_ledger.md` | Skim-first lane/category map with result lineage, branch policy, and Mermaid process graph. |
@@ -185,6 +192,7 @@ Start here when resuming the active goal.
 | `T57` | `T57_t51_adaptive_rebin_qd` | Completed hard/tuning result, `T0 diagnostic_no_rebin_signal`; emits 26 rebin checks but 0 rebin events, loses classic/T51 on HV/HV-AUC, and has one classic-covered valid-PPA loss. |
 | `T58` | `T58_t51_t11_pca4_front_slot_qd` | Completed hard/tuning result, `T0 diagnostic_no_promotion`; preserves valid-PPA coverage and improves best score/yield, but loses classic and T51 on HV/HV-AUC/front evidence. |
 | `T59` | `T59_t51_feedback_front_slot_qd` | Completed hard/tuning result, `T0 diagnostic_no_promotion`; improves mean best score but loses HV, HV-AUC, valid PPA, front breadth, unique PPA, and reference-beating count versus classic. |
+| `T60` | `T60_rtl_timer_timing_risk_bd` | Scaffolded high-priority RTL-native timing-risk BD lane; must use reference-complete paired claims and a PPA completeness table. |
 
 ## Validity-Gate Note
 
@@ -200,3 +208,8 @@ percent or larger functionality, synthesis-valid, or valid-PPA yield drop is a
 visible warning when classic has at least 10 passing samples, not automatic
 rejection. Below 10 classic passing samples, report raw counts and mark the
 rate as small-n/noisy; do not promote or reject a method from that rate alone.
+
+Headline direct classic-vs-QD claims also require a reference-complete paired
+subset. Missing candidate PPA is a method invalid/non-PPA count. Missing
+reference PPA makes the design `diagnostic_only` for normalized improvement,
+HV, and HV-AUC aggregates.

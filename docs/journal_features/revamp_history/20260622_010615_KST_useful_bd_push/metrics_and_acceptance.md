@@ -20,6 +20,13 @@ diagnostics only.
   methods, including classic REvolution, with identical cell definitions.
 - `PPA front`: nondominated set over normalized area, power, and timing
   objectives after functional and synthesis validity.
+- `candidate_ppa_missing`: a candidate did not produce usable area, power, and
+  timing metrics for the evaluated method.
+- `reference_ppa_missing`: the benchmark/reference `ppa.txt` is absent,
+  malformed, or intentionally defaulted.
+- `reference-complete paired subset`: problems where the benchmark reference
+  PPA is valid and both compared methods are evaluated under the same fixed
+  budget.
 
 ## Mandatory Funnels
 
@@ -35,6 +42,27 @@ Every result table must report counts for:
 
 No method may claim useful diversity from invalid candidates, duplicate
 netlists, or candidates without PPA.
+
+## PPA Completeness Rule
+
+Separate missing candidate PPA from missing reference PPA:
+
+- Missing candidate PPA is counted as an invalid/non-PPA candidate for that
+  method and remains visible in the funnel.
+- Missing reference PPA makes that design ineligible for headline normalized
+  improvement, HV, HV-AUC, and direct classic-vs-QD aggregate claims.
+- Designs with missing reference PPA may appear in inventory, raw diagnostic
+  plots, and appendix tables, but must be labeled `reference_missing` and
+  `diagnostic_only`.
+
+Direct classic-vs-QD claims must use the reference-complete paired subset. Do
+not use defaulted reference PPA in headline aggregates.
+
+Each new run package must include a completeness table:
+
+| problem | classic_valid_ppa | qd_valid_ppa | reference_ppa_valid | comparison_status |
+| --- | --- | --- | --- | --- |
+| `Prob040_synchronizer` | yes | yes | no | `diagnostic_only` |
 
 ## Primary QD Metrics
 
@@ -142,6 +170,8 @@ that a method explores a broader Pareto region rather than a lucky grid.
 - A method cannot be promoted by improving only average fitness.
 - A method cannot be promoted by filling cells with duplicate canonical
   netlists.
+- A method cannot be promoted from defaulted or missing-reference PPA headline
+  metrics.
 - A method cannot be promoted if it loses any classic-covered design in the
   fixed compared subset.
 - A method with a 50 percent or larger functionality, synthesis-valid, or
@@ -162,6 +192,8 @@ that a method explores a broader Pareto region rather than a lucky grid.
 The central comparison report must include:
 
 - one row per method/problem/seed with all primary metrics;
+- one row per problem in `ppa_completeness.csv` with `classic_valid_ppa`,
+  `qd_valid_ppa`, `reference_ppa_valid`, and `comparison_status`;
 - one row per method/problem/seed for the validity funnel;
 - passive archive metrics for classic, landing Smooth-QD, and each BD method;
 - per-problem deltas versus classic and landing Smooth-QD;

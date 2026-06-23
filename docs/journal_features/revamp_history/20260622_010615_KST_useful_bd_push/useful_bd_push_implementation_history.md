@@ -3462,3 +3462,23 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   champion-biased archive pressure and non-duplicate valid candidates, but any
   future T26-family promotion requires reference-complete proof on PPA/front
   metrics without missing/defaulted-reference support.
+
+## PPA Completeness And RTL-Native Lane Update - 2026-06-23 UTC
+
+- Added the run-package rule separating missing candidate PPA from missing
+  reference PPA. Missing candidate PPA is a method invalid/non-PPA count.
+  Missing reference `ppa.txt` makes a design diagnostic-only for normalized
+  improvement, HV, HV-AUC, and direct classic-vs-QD headline aggregates.
+- Required every new run package to include `ppa_completeness.csv` with
+  `problem`, `classic_valid_ppa`, `qd_valid_ppa`, `reference_ppa_valid`, and
+  `comparison_status`.
+- Added `best_current_techniques.md` as the short operational ranking. Current
+  direction: combine the useful T26/T51 archive mechanics with RTL-native
+  behavior descriptors, not opaque embedding-only archive cells.
+- Elevated MasterRTL/RTLTimer-style RTL-native descriptors into `L7`.
+  MasterRTL remains `T15`; new `T60_rtl_timer_timing_risk_bd` is scaffolded as
+  the high-priority RTL timing-risk/path-morphology descriptor package.
+- RTLTimer is positioned as descriptor geometry over timing-risk and path
+  morphology, not as a direct PPA predictor. Any live test should first pair
+  it with T51/T26-family archive machinery and use reference-complete paired
+  claims.
