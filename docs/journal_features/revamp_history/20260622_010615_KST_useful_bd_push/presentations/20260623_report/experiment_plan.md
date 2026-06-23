@@ -24,6 +24,11 @@ as `data/rtllm_50_problem_manifest.csv`.
 | `sr_raw_conservative_exploit_low_fusion_qd` | T26.1 with `qd_two_parent_probability=0.10`. | No source change if no gate. |
 | `sr_raw_conservative_exploit_gated_fusion_qd` | T26.1 with near-front descriptor-compatible two-parent gate. | Requires narrow implementation and tests. |
 
+Actual deadline screen note: the completed screen used exact T26, low-fusion,
+and mid-fusion. The gated-fusion arm was not launched before the deadline
+because the narrow gate was not available yet. Treat mid-fusion as a recorded
+deviation, not as pre-registered primary evidence.
+
 Do not launch the full RTLLM run with a new variant until the variant passes
 screening and adversarial pre-launch review. If the gated variant complicates
 the code or fails smoke/screening, exact T26 remains the full-run QD arm.

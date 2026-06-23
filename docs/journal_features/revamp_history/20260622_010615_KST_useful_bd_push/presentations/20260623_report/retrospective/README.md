@@ -19,6 +19,11 @@ generic descriptor causality.
 - `exp/diversity_check/aspdac2026_submission_source/REvolution-aspdac2026-submission/exp/`
 - `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/`
 
+The `restarted_report_20260621_075346_UTC` source is the second retrospective
+pass launched after the first cluster story failed the active-utility gates. It
+adds the Qwen, DeepGate/AIG, and AURORA-style probes summarized in the main
+report.
+
 ## Regeneration
 
 Run from `/workspace`:

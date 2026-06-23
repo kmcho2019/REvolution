@@ -108,6 +108,7 @@ Screen-excluded still includes `Prob040`; excluding both screen problems and
 - Per-problem HV-AUC: 5 QD wins, 16 losses, 29 ties.
 - The aggregate HV win is strongly affected by `Prob040_synchronizer`.
 - Without `Prob040`, mean HV delta is -0.009465.
+- Without `Prob040`, mean best score is near parity: -0.015932.
 - QD has fewer unique PPA points: 318 versus 352.
 - Family-proxy front count matches front-point count: 69 versus 61.
 - But QD has fewer summed family proxies: 311 versus 341.
@@ -125,7 +126,8 @@ Screen-excluded still includes `Prob040`; excluding both screen problems and
 - Does diversity matter?
 - Not proven by this one-seed package.
 - Which diversity matters?
-- A T26-style implementation-response archive bundle with quality pressure.
+- Most promising: T26-style implementation-response archives with quality
+  pressure.
 - Which diversity does not suffice?
 - Lexical, random, sparse, or unguarded novelty.
 

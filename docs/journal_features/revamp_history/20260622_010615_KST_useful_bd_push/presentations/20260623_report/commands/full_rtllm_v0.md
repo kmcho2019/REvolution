@@ -137,7 +137,7 @@ uv run python scripts/package_rtllm_milestone_full.py \
 ```
 
 The final package has `0` hard retention failures, `4` yield warnings, and
-claim status `reviewable`.
+claim status `diagnostic`.
 
 ## Completed Phase 03.1 Viewer Export
 
