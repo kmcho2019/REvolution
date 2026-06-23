@@ -108,6 +108,45 @@ def test_source_aligned_evaluator_projects_t72_axes(
     assert metrics["source_aligned_rtltimer_dff_density"] == pytest.approx(0.0)
 
 
+def test_source_aligned_evaluator_projects_empty_masterrtl_graph(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    code_path = tmp_path / "demo.sv"
+    code_path.write_text("module demo; endmodule\n", encoding="utf-8")
+    (tmp_path / "exp/external_repos/MasterRTL/vlg2ir").mkdir(parents=True)
+    (tmp_path / "exp/venvs/rtl_native_verify/bin").mkdir(parents=True)
+    (tmp_path / "exp/venvs/rtl_native_verify/bin/python").write_text("", encoding="utf-8")
+    rtltimer_lib = tmp_path / "exp/external_repos/RTL-Timer/vlg2bog/scr_ys/lib/nangate45_sog.lib"
+    rtltimer_lib.parent.mkdir(parents=True)
+    rtltimer_lib.write_text("", encoding="utf-8")
+    evaluator = SourceAlignedRTLDescriptorEvaluator(repo_root=tmp_path)
+    monkeypatch.setattr(
+        evaluator,
+        "_run_masterrtl",
+        lambda code, top, out: {
+            "masterrtl_graph_keys": 0,
+            "masterrtl_graph_edges": 0,
+            "masterrtl_node_dict": 0,
+        },
+    )
+    monkeypatch.setattr(
+        evaluator,
+        "_run_rtltimer",
+        lambda code, top, out: {
+            "rtltimer_lines": 8,
+            "rtltimer_assigns": 0,
+            "rtltimer_wires": 1,
+            "rtltimer_dff_refs": 0,
+        },
+    )
+
+    metrics = evaluator.extract_metrics(code_file_path=code_path, top_module_name="demo")
+
+    assert metrics["source_aligned_masterrtl_branching"] == pytest.approx(0.0)
+    assert metrics["source_aligned_rtltimer_wire_density"] == pytest.approx(1 / 8)
+
+
 def test_masterrtl_uses_candidate_local_parse_cwd(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

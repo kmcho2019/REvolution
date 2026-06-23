@@ -57,15 +57,19 @@ class SourceAlignedRTLDescriptorEvaluator:
         lines = int(rtltimer["rtltimer_lines"])
         wires = int(rtltimer["rtltimer_wires"])
         dff_refs = int(rtltimer["rtltimer_dff_refs"])
-        assert graph_keys > 0
         assert lines > 0
+        if graph_keys == 0:
+            assert graph_edges == 0
+            branching = 0.0
+        else:
+            branching = graph_edges / graph_keys
         return {
             "masterrtl_operator_log_edges": math.log1p(graph_edges),
             "rtltimer_state_timing_class": float(_state_timing_class(dff_refs)),
             "source_aligned_masterrtl_graph_keys": float(graph_keys),
             "source_aligned_masterrtl_graph_edges": float(graph_edges),
             "source_aligned_masterrtl_node_dict": float(master["masterrtl_node_dict"]),
-            "source_aligned_masterrtl_branching": graph_edges / graph_keys,
+            "source_aligned_masterrtl_branching": branching,
             "source_aligned_rtltimer_lines": float(lines),
             "source_aligned_rtltimer_assigns": float(rtltimer["rtltimer_assigns"]),
             "source_aligned_rtltimer_wires": float(wires),
