@@ -377,6 +377,16 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T57 T51 adaptive-rebin is validated, packaged, visualized, and compared
       against T47 classic, T51, and T56.
 - [x] T57 gets a retirement rationale before any exact seed `1002` spend.
+- [x] T58 T51 T11-PCA4 front-slot QD is pre-registered as the cross-lane
+      follow-up after T57 retired archive-boundary tweaks.
+- [x] T58 descriptor probe resolves `t11_runtime_pca_0..3` with
+      `requires_ppa=false` before live spend.
+- [ ] T58 seed `1001` is run on the T47/T51/T46/T57 hard/tuning surface after
+      vLLM preflight.
+- [ ] T58 is validated, packaged, visualized, and compared against T47
+      classic, T51, T46, and T57.
+- [ ] T58 gets a promotion, ablation, or retirement rationale before any exact
+      seed `1002` spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

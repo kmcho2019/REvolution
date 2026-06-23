@@ -3327,3 +3327,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: mark T57 `T0 diagnostic_no_rebin_signal`; do not spend seed
   `1002` on exact T57. Move to exact T11 runtime projection, learned auxiliary
   archive lanes, or a front-yield protected emitter.
+
+## T58 T51 T11-PCA4 Front-Slot Method Card - 2026-06-23 UTC
+
+- Created `techniques/T58_t51_t11_pca4_front_slot_qd/` as the next
+  pre-registered hard/tuning method after T57.
+- T58 keeps T51's code-individual representation, single-thought operator,
+  `elite_pareto_slot` archive, warmup `4`, champion lane `0.80`,
+  `nsga2_global_rank` parent selection, no repair, and no two-parent fusion.
+- T58 changes only the descriptor profile from T51's SR-PCA axes to the frozen
+  T46/T11 graph projection profile `t11_runtime_pca4_graph`.
+- The intended test is whether the stronger T51 emitter can make the T11 PCA4
+  graph projection useful after T44-T46 showed graph descriptors had local
+  signal but weak aggregate live results on the older substrate.
+- Descriptor probe passed: the profile resolves to
+  `t11_runtime_pca_0..3`, reports `requires_ppa=false`, and reports
+  `requires_graph_metrics=true`.
+- Next step: preflight the vLLM endpoint, then run seed `1001`.

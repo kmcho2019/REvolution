@@ -42,15 +42,15 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T56_coarse_sr2_t51_control_qd/hard_tuning_package/figures/t56_direct_ppa_fronts_seed1001.png`
-  (13-problem seed-1001 raw area-power fronts for the T56 hard/tuning
+  `techniques/T57_t51_adaptive_rebin_qd/hard_tuning_package/figures/t57_direct_ppa_fronts_seed1001.png`
+  (13-problem seed-1001 raw area-power fronts for the T57 hard/tuning
   package).
 - Most recent direct PPA HTML viewer:
-  `techniques/T56_coarse_sr2_t51_control_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T57_t51_adaptive_rebin_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T56_coarse_sr2_t51_control_qd/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T57_t51_adaptive_rebin_qd/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
   raw/improvement/normalized PPA modes, raw A-P front mode, screenshot, and a
   documented Playwright caveat).
@@ -59,11 +59,12 @@ Start here when resuming the active goal.
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T56_coarse_sr2_t51_control_qd/` (seed-1001 hard/tuning geometry
-  isolation ablation with direct PPA supplement and Phase 03.1 viewer).
+  `techniques/T57_t51_adaptive_rebin_qd/` (seed-1001 hard/tuning
+  adaptive-rebin diagnostic with direct PPA supplement and Phase 03.1 viewer).
 - Active planned live technique:
-  none; T57 completed as a no-promotion diagnostic, so the next method should
-  leave T51 archive-boundary tweaks.
+  `techniques/T58_t51_t11_pca4_front_slot_qd/` (pre-registered T51/T46
+  cross-lane test that uses frozen T11 PCA4 graph coordinates with the T51
+  code-thought front-slot emitter).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -182,6 +183,7 @@ Start here when resuming the active goal.
 | `T55` | `T55_coarse_sr2_front_slot_qd` | Completed hard/tuning result, `T0 positive_mechanism_ablation_not_promoted`; improves T54 slot hits but still loses classic and T51 on primary promotion metrics. |
 | `T56` | `T56_coarse_sr2_t51_control_qd` | Completed hard/tuning result, `T0 diagnostic_retire_coarse_sr2_geometry`; preserves coverage but loses classic/T51 on HV, HV-AUC, yield, and front evidence. |
 | `T57` | `T57_t51_adaptive_rebin_qd` | Completed hard/tuning result, `T0 diagnostic_no_rebin_signal`; emits 26 rebin checks but 0 rebin events, loses classic/T51 on HV/HV-AUC, and has one classic-covered valid-PPA loss. |
+| `T58` | `T58_t51_t11_pca4_front_slot_qd` | Pre-registered hard/tuning method; keeps T51's code-thought front-slot emitter and swaps in T46's frozen T11 PCA4 graph projection as archive coordinates. |
 
 ## Validity-Gate Note
 

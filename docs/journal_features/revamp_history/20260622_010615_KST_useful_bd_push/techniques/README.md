@@ -71,6 +71,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T55` | `T55_coarse_sr2_front_slot_qd` | Archive-coupling coarse descriptor geometry | `T0 positive_mechanism_ablation_not_promoted`; improves T54 slot hits but still loses classic/T51 on promotion metrics |
 | `T56` | `T56_coarse_sr2_t51_control_qd` | Archive-coupling coarse descriptor geometry | `T0 diagnostic_retire_coarse_sr2_geometry`; preserves coverage but loses classic/T51 on HV, HV-AUC, yield, and front evidence |
 | `T57` | `T57_t51_adaptive_rebin_qd` | Archive-coupling adaptive rebinning | `T0 diagnostic_no_rebin_signal`; 26 checks, 0 rebins, worse than classic/T51 on HV/HV-AUC, and one classic-covered valid-PPA loss |
+| `T58` | `T58_t51_t11_pca4_front_slot_qd` | Learned projection archive coupling | Pre-registered T51/T46 cross-lane test; keeps T51 emitter/yield settings but replaces SR-PCA archive axes with frozen T11 PCA4 graph coordinates |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

@@ -644,6 +644,10 @@ a numbered `techniques/T##_slug/` package before running it.
   classic/T51 on HV and HV-AUC with one classic-covered valid-PPA loss.
   Do not repeat exact T57. The next method should change candidate creation
   or add an auxiliary learned/runtime archive, not only archive cut points.
+- T58 next method: keep T51's code-thought front-slot emitter but swap in the
+  frozen T11 PCA4 graph projection from T46. This directly tests whether the
+  graph projection failed because of archive/emitter substrate, while avoiding
+  another graph-axis dimensionality tweak.
 
 ## Near-Term Hybrids
 

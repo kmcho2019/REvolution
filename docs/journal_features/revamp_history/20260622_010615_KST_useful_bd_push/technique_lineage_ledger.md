@@ -22,9 +22,9 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L1` | Transparent CAD descriptors | Use reviewer-readable features such as Yosys stats, motifs, pathlets, and ST-NOD. | Reuse selected features in guarded hybrids; stop pure concatenation. |
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
-| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T46 completed the frozen non-PPA projection follow-up; direct graph-axis live archives should now move to secondary/reporting use or trained encoders. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T52 adds front points versus T51 but loses HV-AUC/yield, so simple full-Pareto widening is retired. |
-| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Keep T51's code-individual recovery; next needs a bounded front-pressure trigger, not more global local-Pareto capacity. |
+| `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T58 is the final bounded primary-archive check for frozen T11 PCA4, now crossed with T51's stronger emitter. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T57 retired archive-boundary tweaks; T58 tests learned projection geometry before switching to front-yield protected emitters. |
+| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Keep T51's code-individual recovery; T58 checks whether a better learned projection can supply front pressure without changing the emitter. |
 
 ## Lineage Graph
 
@@ -94,6 +94,7 @@ flowchart LR
     T49[T49 thought-k role-separated repair]
     T50[T50 candidate/front control]
     T51[T51 code-thought front slot]
+    T58[T58 T51 + T11 PCA4]
   end
 
   subgraph emitters[L6 lineage/emitter]
@@ -153,6 +154,9 @@ flowchart LR
   T50 --> T51
   T39 --> T51
   T51 --> T52
+  T46 --> T58
+  T51 --> T58
+  T57 --> T58
   T39 --> enc
   T17 --> T12
   T17 --> T18
@@ -196,6 +200,7 @@ flowchart LR
 | T55 | `L5/L6` | Coarse SR2 front-slot QD: keep T54 fixed but use `--qd_descriptor_axes sr_pca_0 sr_pca_1` as grid-quantile archive axes. | Completed `T0 positive_mechanism_ablation_not_promoted`: slot hits improve over T54, but classic and T51 still block promotion on HV/HV-AUC/yield/front evidence. | `ablate` positive mechanism only | Do not spend seed `1002` on exact T55; change mechanism before the next live arm. |
 | T56 | `L5/L6` | Coarse SR2 T51-control QD: keep T51 parent selection and operator fixed but use T55's two-axis archive geometry. | Completed `T0 diagnostic_retire_coarse_sr2_geometry`: coverage is preserved, but classic and T51 win the primary HV/HV-AUC/yield/front evidence. | `retire` coarse SR2 primary path | Switch mechanism to exact T11 runtime projection, learned auxiliary archive lanes, or a front-yield protected emitter. |
 | T57 | `L5/L6` | T51 adaptive-rebin QD: keep T51 fixed and enable KS-triggered grid-quantile rebinning. | Completed `T0 diagnostic_no_rebin_signal`: 26 checks, 0 rebins, one classic-covered valid-PPA loss, and worse HV/HV-AUC than classic and T51. | `retire` exact adaptive-rebin path | Do not run seed `1002`; switch to exact T11 runtime projection, learned auxiliary archive lanes, or a front-yield protected emitter. |
+| T58 | `L4/L5/L6` | T51 T11-PCA4 front-slot QD: keep T51's code-thought emitter and use T46's frozen T11 PCA4 graph projection as the archive coordinates. | Pre-registered. | `advance` cross-lane live screen | Run descriptor probe, vLLM preflight, and seed `1001`; compare against classic, T51, T46, and T57 before any seed `1002`. |
 | T08-T10/T12/T15-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, lineage repair, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
