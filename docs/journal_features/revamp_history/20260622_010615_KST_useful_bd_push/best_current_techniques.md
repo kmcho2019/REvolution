@@ -30,6 +30,13 @@ the strongest methodology story because it defines diversity in RTL terms
 rather than opaque embedding space, while the PPA claim remains gated by
 reference-complete paired comparisons.
 
+## RTL-Native Descriptor Split
+
+| Lane | Descriptor Meaning | QD Use | Current Read |
+| --- | --- | --- | --- |
+| MasterRTL/Yosys-SOG | RTL operator graph, control/dataflow shape, arithmetic structure, muxing, pipeline/register topology, module interaction, and signal dependencies. | Define archive cells for distinct RTL implementation families before synthesis. | Strong methodology lane; needs tighter coupling to front creation or repair. |
+| RTLTimer | Timing-risk and path-structure morphology: likely critical-path depth, fanout, pipeline distance, control gating, and timing-sensitive operator chains. | Preserve timing-risk families while the optimizer still chases PPA. | Good reviewer-readable BD candidate; current runs are diagnostic, not promoted. |
+
 ## Technique Lanes
 
 | Lane | Examples | Status | Assessment |
@@ -42,7 +49,9 @@ reference-complete paired comparisons.
 ## Update Rules
 
 - Update after each meaningful run or claim correction.
-- Do not promote a technique using defaulted-reference metrics.
+- Separate missing candidate PPA from missing reference PPA in every new run
+  package.
+- Do not promote a technique using missing/defaulted-reference metrics.
 - Direct classic-vs-QD claims must use the reference-complete paired subset.
 - Mark each result as `headline`, `screening`, or `diagnostic`.
 - Keep only the current best few methods at the top.
