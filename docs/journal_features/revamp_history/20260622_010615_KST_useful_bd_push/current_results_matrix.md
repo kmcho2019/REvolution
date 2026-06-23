@@ -649,3 +649,9 @@ the best ALU and traffic-light scores.
   reference-beating candidates (`36` versus `46`). It also loses T51 on HV,
   HV-AUC, best score, and valid-PPA count. Do not promote T55 or spend seed
   `1002` on the exact method.
+- T56 is pre-registered as the geometry isolation control. It keeps T51's
+  `nsga2_global_rank` parent selection and removes T55's fixed front-slot
+  parent lane, while using the same two-axis SR-PCA archive geometry
+  (`--qd_descriptor_axes sr_pca_0 sr_pca_1`). Its role is to decide whether
+  coarse SR2 geometry itself helps T51 or whether the T55 mechanism signal is
+  too weak to continue.

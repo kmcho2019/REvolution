@@ -3207,3 +3207,30 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   isolate coarse geometry with a T51-control ablation or switch mechanisms to
   exact T11 runtime projection / learned auxiliary archive lanes with
   front-yield protection.
+
+## T56 Coarse SR2 T51-Control Method Card - 2026-06-23 UTC
+
+- Added `T56_coarse_sr2_t51_control_qd` as the geometry-isolation follow-up to
+  T55.
+- T56 keeps T51's hard/tuning surface, seed policy, local vLLM model, 128k
+  token budgets, direct code representation, `single_thought_operator`, sparse
+  warmup `4`, `elite_pareto_slot` capacity `2`, champion lane `0.80`,
+  `qd_parent_selection=nsga2_global_rank`, no repair, and no two-parent
+  fusion.
+- The only live-search change from T51 is archive geometry:
+  `--qd_descriptor_axes sr_pca_0 sr_pca_1`.
+- T56 intentionally removes T55's `front_slot_lane_nsga2` fixed parent lane.
+  This isolates whether two-axis SR-PCA grid-quantile cells help T51 directly
+  or whether T55's improved slot-hit counter was not enough to justify the
+  coarse-geometry branch.
+- Acceptance requires preserving every classic-covered valid-PPA design,
+  avoiding a new 50 percent valid-PPA yield warning where classic has at least
+  10 passing samples, improving T51 on at least two primary metrics, and not
+  losing T55's front-point recovery by more than one point.
+- Pre-run descriptor probe passed:
+  `uv run python scripts/qd_descriptor_probe.py --profile sr_pca_3d --axes sr_pca_0 sr_pca_1 --descriptor_file ... --archive_type grid_quantile --circuit_type sequential`
+  resolved exactly `["sr_pca_0", "sr_pca_1"]` and reported
+  `requires_ppa=false`.
+- Next step: commit the pre-run package, preflight the vLLM endpoint, run T56
+  seed `1001`, validate single-thought and Pareto artifacts, then package
+  against T47 classic, T51, and T55.

@@ -362,6 +362,14 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       compared against T47 classic and T51 through T54.
 - [x] T55 gets a follow-up direction or retirement rationale before any next
       descriptor/archive geometry variant starts.
+- [x] T56 coarse SR2 T51-control is pre-registered as the geometry isolation
+      ablation after T55.
+- [ ] T56 coarse SR2 T51-control seed `1001` is run on the T47/T51/T55
+      hard/tuning 13-problem surface after vLLM preflight.
+- [ ] T56 coarse SR2 T51-control is validated, packaged, visualized, and
+      compared against T47 classic, T51, and T55.
+- [ ] T56 gets a follow-up direction or retirement rationale before any next
+      descriptor/archive geometry variant starts.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

@@ -31,9 +31,9 @@ Start here when resuming the active goal.
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  stop small T51-family parent-pressure tweaks; either isolate coarse geometry
-  with a T51-control ablation or switch to exact T11 runtime projection /
-  learned auxiliary archive lanes with front-yield protection.
+  run `techniques/T56_coarse_sr2_t51_control_qd/`, a config-only T51-control
+  ablation that isolates T55's coarse SR2 archive geometry from the fixed
+  front-slot parent lane.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -61,7 +61,9 @@ Start here when resuming the active goal.
 - Most recent live technique:
   `techniques/T55_coarse_sr2_front_slot_qd/` (seed-1001 hard/tuning mechanism
   ablation with direct PPA supplement and Phase 03.1 viewer).
-- Active planned live technique: none selected after T55 packaging.
+- Active planned live technique:
+  `techniques/T56_coarse_sr2_t51_control_qd/` (pre-registered coarse SR2
+  T51-control geometry ablation).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -178,6 +180,7 @@ Start here when resuming the active goal.
 | `T53` | `T53_sparse_front_trigger_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; trigger fires, but HV, HV-AUC, valid-PPA, and front breadth still lose to classic. |
 | `T54` | `T54_front_slot_lane_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; fixed front-slot lane is active but loses classic on HV, HV-AUC, valid-PPA count, unique PPA breadth, and front points. |
 | `T55` | `T55_coarse_sr2_front_slot_qd` | Completed hard/tuning result, `T0 positive_mechanism_ablation_not_promoted`; improves T54 slot hits but still loses classic and T51 on primary promotion metrics. |
+| `T56` | `T56_coarse_sr2_t51_control_qd` | Pre-registered hard/tuning method; keeps T51 fixed except `--qd_descriptor_axes sr_pca_0 sr_pca_1` to isolate coarse SR2 archive geometry. |
 
 ## Validity-Gate Note
 
