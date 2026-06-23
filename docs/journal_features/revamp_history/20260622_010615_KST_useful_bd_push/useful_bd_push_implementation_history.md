@@ -3269,3 +3269,28 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Retire coarse SR2 archive geometry as a primary path. The next method should
   switch mechanisms to exact T11 runtime projection, learned auxiliary archive
   lanes, or a front-yield protected emitter before any seed `1002`.
+
+## T57 T51 Adaptive-Rebin Method Card - 2026-06-23 UTC
+
+- Added `T57_t51_adaptive_rebin_qd` as the first post-SR2 mechanism change.
+- T57 keeps T51's hard/tuning surface, seed policy, local vLLM model, 128k
+  token budgets, SR-PCA descriptor file, direct code representation,
+  `single_thought_operator`, sparse warmup `4`, `elite_pareto_slot` capacity
+  `2`, champion lane `0.80`, `nsga2_global_rank` parent selection, no repair,
+  and no two-parent fusion.
+- The only live-search change is archive adaptation:
+  `--qd_rebinning_kind ks_triggered`, `--qd_rebinning_recent_generations 1`,
+  `--qd_rebinning_min_archive_members 8`,
+  `--qd_rebinning_cooldown_generations 2`, and
+  `--qd_rebinning_base_p_threshold 0.05`.
+- The rebin trigger compares archive-member descriptor values against recent
+  archiveable samples by KS test and Bonferroni threshold. It does not use
+  final PPA, reference PPA, hypervolume, Pareto-front labels, classic results,
+  or test-pass outcomes as descriptor inputs or trigger labels.
+- Pre-run descriptor probe passed:
+  `uv run python scripts/qd_descriptor_probe.py --profile sr_pca_3d --descriptor_file ... --archive_type grid_quantile --circuit_type sequential`
+  resolved exactly `["sr_pca_0", "sr_pca_1", "sr_pca_2"]` and reported
+  `requires_ppa=false`.
+- Next step: commit the pre-run package, preflight the vLLM endpoint, run T57
+  seed `1001`, validate single-thought, Pareto/front, and adaptive-rebinning
+  artifacts, then package against T47 classic, T51 off-mode, and T56.

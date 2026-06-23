@@ -635,6 +635,11 @@ a numbered `techniques/T##_slug/` package before running it.
   method should switch to exact T11 runtime projection, learned auxiliary
   archive lanes, or a front-yield protected emitter instead of running another
   coarse-SR2 seed.
+- T57 is the first post-SR2 mechanism switch. It keeps T51's descriptor,
+  operator, parent policy, one-slot archive, and yield path fixed, then enables
+  KS-triggered grid-quantile rebinning. If rebinning does not trigger or does
+  not improve T51 front/HV evidence, switch away from T51-family archive
+  geometry and use exact T11 runtime projection or a learned auxiliary lane.
 
 ## Near-Term Hybrids
 

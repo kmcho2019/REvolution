@@ -370,6 +370,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       compared against T47 classic, T51, and T55.
 - [x] T56 gets a follow-up direction or retirement rationale before any next
       descriptor/archive geometry variant starts.
+- [x] T57 T51 adaptive-rebin QD is pre-registered as the next archive-
+      mechanics ablation after T56 retired coarse SR2 geometry.
+- [ ] T57 T51 adaptive-rebin seed `1001` is run on the T47/T51/T56
+      hard/tuning 13-problem surface after vLLM preflight.
+- [ ] T57 T51 adaptive-rebin is validated, packaged, visualized, and compared
+      against T47 classic, T51, and T56.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation
