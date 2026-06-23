@@ -1,4 +1,6 @@
 import math
+import pickle
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -75,3 +77,40 @@ def test_source_aligned_evaluator_projects_t72_axes(
     assert values["masterrtl_operator_log_edges"] == pytest.approx(math.log1p(128))
     assert values["rtltimer_state_timing_class"] == pytest.approx(0.0)
     assert metrics["source_aligned_rtltimer_dff_refs"] == pytest.approx(0.0)
+
+
+def test_masterrtl_uses_candidate_local_parse_cwd(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    code_path = tmp_path / "demo.sv"
+    code_path.write_text("module demo; endmodule\n", encoding="utf-8")
+    (tmp_path / "exp/external_repos/MasterRTL/vlg2ir").mkdir(parents=True)
+    (tmp_path / "exp/venvs/rtl_native_verify/bin").mkdir(parents=True)
+    (tmp_path / "exp/venvs/rtl_native_verify/bin/python").write_text("", encoding="utf-8")
+    rtltimer_lib = tmp_path / "exp/external_repos/RTL-Timer/vlg2bog/scr_ys/lib/nangate45_sog.lib"
+    rtltimer_lib.parent.mkdir(parents=True)
+    rtltimer_lib.write_text("", encoding="utf-8")
+    evaluator = SourceAlignedRTLDescriptorEvaluator(repo_root=tmp_path)
+    output_dir = tmp_path / "out"
+    calls = []
+
+    def fake_run(args: list[str], *, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
+        calls.append((args, cwd))
+        if args[0] == evaluator.yosys_path:
+            (output_dir / "sog.v").write_text("module demo; endmodule\n", encoding="utf-8")
+        else:
+            parse_dir = output_dir / "parse"
+            with (parse_dir / "demo_sog.pkl").open("wb") as handle:
+                pickle.dump({0: [1, 2]}, handle)
+            with (parse_dir / "demo_sog_node_dict.pkl").open("wb") as handle:
+                pickle.dump({0: "demo"}, handle)
+        return subprocess.CompletedProcess(args, 0, "", "")
+
+    monkeypatch.setattr(evaluator, "_run", fake_run)
+
+    metrics = evaluator._run_masterrtl(code_path, "demo", output_dir)
+
+    assert calls[1][0][1] == str(evaluator.master_vlg2ir / "analyze.py")
+    assert calls[1][1] == output_dir / "parse"
+    assert metrics["masterrtl_graph_edges"] == 2

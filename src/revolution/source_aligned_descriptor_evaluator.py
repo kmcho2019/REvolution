@@ -91,7 +91,7 @@ class SourceAlignedRTLDescriptorEvaluator:
         self._run(
             [
                 str(self.master_python),
-                "analyze.py",
+                str(self.master_vlg2ir / "analyze.py"),
                 str(clean_path),
                 "-N",
                 name,
@@ -100,7 +100,7 @@ class SourceAlignedRTLDescriptorEvaluator:
                 "-O",
                 f"{parse_dir}/",
             ],
-            cwd=self.master_vlg2ir,
+            cwd=parse_dir,
         )
         graph_path = parse_dir / f"{name}_sog.pkl"
         node_path = parse_dir / f"{name}_sog_node_dict.pkl"
