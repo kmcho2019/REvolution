@@ -3868,3 +3868,32 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   the package was corrected to use a committed verifier, state the
   constant-zero model caveat, and show Pearson plus Spearman in the timing
   alignment figure.
+
+## 2026-06-23T19:09:16Z - T69 Open-Yosys Preprocessing Unblocker
+
+- Checked storage before continuing: `/workspace` has `3.5T` available but is
+  `87%` used, so the generated artifacts were kept bounded under
+  `exp/verification/` and not placed under `/aux`.
+- Added
+  `techniques/T69_open_yosys_rtl_native_preprocessing/` as a preprocessing
+  unblocker, not a live QD result.
+- Re-ran TinyRocket MasterRTL preprocessing with open-source Yosys by removing
+  only `read -verific` from the invocation while preserving the upstream
+  `read_verilog`, hierarchy, lowering, optimization, and SOG write stages.
+- The raw MasterRTL generated Verilog failed `vlg2ir/analyze.py` because
+  Yosys emitted inline `(* ... *)` attributes inside expressions. Applying the
+  upstream-style generated-attribute cleanup allowed `analyze.py` to produce a
+  graph and node-dictionary pickle.
+- MasterRTL open-clean graph metrics are close to the shipped TinyRocket
+  example: `22061` graph keys versus `22306`, `65454` edges versus `65938`,
+  and `51128` node-dict entries versus `51337`.
+- Re-ran RTL-Timer TinyRocket SOG BOG preprocessing with `cmd=sog` semantics
+  and `nangate45_sog.lib` without `read -verific`, then applied the
+  cleaner-equivalent attribute/blank-line cleanup.
+- RTL-Timer open-clean SOG BOG preserves the shipped DFF-reference count
+  exactly (`2431` versus `2431`) with small assign and wire deltas.
+- Added `tools/write_t69_summary.py`, generated CSV/JSON tables, and visually
+  inspected `figures/t69_open_yosys_preprocessing_alignment.png`.
+- Decision: T69 makes a source-aligned TinyRocket preprocessing path plausible,
+  but the next RTL-native step must measure extractor success/failure on
+  generated REvolution candidate RTL before another live QD spend.

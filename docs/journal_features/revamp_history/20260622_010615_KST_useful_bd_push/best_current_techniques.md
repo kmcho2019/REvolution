@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T63/T64/T65/T66/T67 are diagnostic only; descriptors must affect front creation or repair more directly, not just weak parent pressure, seeded realization, or reporting cells. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T69 unblocks TinyRocket open-Yosys preprocessing, but no live candidate run has used the source-aligned extractor yet. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -62,7 +62,7 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68 | Accelerate with source alignment | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T68 shows source-equivalent MasterRTL/RTL-Timer extraction still needs a Verific-capable flow or a documented upstream-aligned preprocessing adaptation. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69 | Accelerate with source alignment | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T69 gives a narrow open-Yosys TinyRocket preprocessing path, but candidate-level extractor success is still unmeasured. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |
@@ -81,8 +81,9 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 ## Source-Verification Caveat
 
 T68 shows that T15/T60/T61 are proxy lanes, not source-equivalent upstream
-MasterRTL or RTL-Timer runs. Upstream example artifacts are partly usable, but
-fresh conversion currently fails on this open-source Yosys build because the
-original scripts require `read -verific`. Do not promote an RTL-native method
-as MasterRTL/RTL-Timer-based until the extractor path is source-aligned and
-measured on our candidate RTL.
+MasterRTL or RTL-Timer runs. T69 narrows the fresh-conversion blocker on
+TinyRocket examples: open-source Yosys can regenerate close MasterRTL and
+RTL-Timer SOG/BOG artifacts after removing `read -verific` and applying the
+upstream cleanup convention. Do not promote an RTL-native method as
+MasterRTL/RTL-Timer-based until this path is measured on our generated
+candidate RTL with extractor success rates and reference-complete PPA results.

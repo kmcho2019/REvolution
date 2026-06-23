@@ -24,10 +24,10 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T68_source_verified_rtl_native_extractors/`
-  (`T0 verification_gate`; upstream MasterRTL/RTL-Timer examples are partly
-  verified, but fresh source-equivalent conversion is blocked here by
-  Verific-dependent Yosys scripts).
+  `techniques/T69_open_yosys_rtl_native_preprocessing/`
+  (`T0 preprocessing_unblocker`; TinyRocket MasterRTL/RTL-Timer SOG/BOG
+  preprocessing works under open-source Yosys after removing `read -verific`
+  and applying upstream-style cleanup).
 - Most recent live QD package:
   `techniques/T67_rtl_native_seeded_thought_qd/`
   (`T0 diagnostic_yield_positive_front_negative_blocked`; improves aggregate
@@ -38,9 +38,8 @@ Start here when resuming the active goal.
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  do not spend seed `1002` on exact T67. Keep the seeded-realization yield clue
-  only if the next RTL-native method adds front-preserving repair or
-  source-selection pressure.
+  run a generated-RTL candidate extractor smoke with the T69 preprocessing
+  path before another live RTL-native QD spend.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -78,9 +77,10 @@ Start here when resuming the active goal.
   positive_proxy_not_promoted` fused structural/timing proxy). T63, T64, T66,
   and T67 are reference-complete live archive tests, and T65 is a
   secondary-cell audit over T51/T63/T64. Use them as mechanism evidence only:
-  none beats classic headline PPA-front metrics. T68 is the source-verification
-  caveat: do not claim true MasterRTL/RTL-Timer extraction until a
-  source-aligned preprocessing path runs on our candidates.
+  none beats classic headline PPA-front metrics. T68/T69 are the
+  source-verification caveat: do not claim true MasterRTL/RTL-Timer extraction
+  until the source-aligned preprocessing path runs on our generated
+  candidates.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -211,6 +211,7 @@ Start here when resuming the active goal.
 | `T66` | `T66_rtl_native_front_guarded_parent_qd` | Completed `T0 diagnostic_yield_positive_front_negative_not_promoted`; yield and best score improve, but classic wins HV, HV-AUC, and front points. |
 | `T67` | `T67_rtl_native_seeded_thought_qd` | Completed `T0 diagnostic_yield_positive_front_negative_blocked`; aggregate valid-PPA improves, but front breadth and `Prob153_gshare` coverage block promotion. |
 | `T68` | `T68_source_verified_rtl_native_extractors` | Completed `T0 verification_gate`; upstream MasterRTL/RTL-Timer examples are partly verified, but fresh conversion needs Verific or a source-aligned preprocessing adaptation. |
+| `T69` | `T69_open_yosys_rtl_native_preprocessing` | Completed `T0 preprocessing_unblocker`; TinyRocket open-Yosys SOG/BOG preprocessing is source-aligned enough for a generated-candidate extractor smoke, but not a live QD result. |
 
 ## Validity-Gate Note
 

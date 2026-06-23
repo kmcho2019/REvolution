@@ -164,6 +164,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       validated, packaged, visually inspected, and assigned a tier decision.
 - [x] `T68_source_verified_rtl_native_extractors` is executed and packaged as
       the upstream MasterRTL/RTL-Timer source-verification gate.
+- [x] `T69_open_yosys_rtl_native_preprocessing` is executed and packaged as
+      the open-Yosys TinyRocket preprocessing unblocker for MasterRTL and
+      RTL-Timer source alignment.
+- [ ] Run a generated-RTL candidate extractor smoke using the T69 preprocessing
+      path before spending another live RTL-native QD budget.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

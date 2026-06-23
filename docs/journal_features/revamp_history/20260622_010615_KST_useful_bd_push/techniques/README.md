@@ -82,6 +82,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T66` | `T66_rtl_native_front_guarded_parent_qd` | RTL-native archive coupling | Pre-registered; uses RTL state/pipeline cells for front-slot parent pressure and low-rate gated fusion |
 | `T67` | `T67_rtl_native_seeded_thought_qd` | RTL-native source-preserving coupling | `T0 diagnostic_yield_positive_front_negative_blocked`; valid-PPA yield improves but front breadth and `Prob153_gshare` coverage fail |
 | `T68` | `T68_source_verified_rtl_native_extractors` | RTL-native source verification | `T0 verification_gate`; upstream MasterRTL/RTL-Timer example artifacts are partly verified, but fresh conversion is blocked by Verific-dependent Yosys scripts |
+| `T69` | `T69_open_yosys_rtl_native_preprocessing` | RTL-native source alignment | `T0 preprocessing_unblocker`; TinyRocket open-Yosys SOG/BOG preprocessing works after removing `read -verific` and applying upstream-style cleanup |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

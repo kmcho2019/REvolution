@@ -58,7 +58,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T58 preserves coverage and improves yield/best score with frozen T11 PCA4 under T51, but still loses HV, HV-AUC, and front breadth. | Stop primary graph-coordinate live archive tests unless the next method uses graph features as a secondary lane or trains a new encoder objective. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
-| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T68 confirms the current T15/T60/T61 path is proxy-based: upstream examples are partly usable, but fresh MasterRTL/RTL-Timer conversion is blocked by Verific-dependent Yosys scripts. | Before another live RTL-native spend, either run a Verific-capable upstream flow or record a minimal source-aligned preprocessing adaptation. |
+| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T69 shows TinyRocket open-Yosys MasterRTL/RTL-Timer preprocessing works after removing `read -verific` and applying upstream-style cleanup. | Before another live RTL-native spend, run the source-aligned extractor on generated RTL candidates and measure success/failure. |
 
 ## Lane Scorecard
 
@@ -71,7 +71,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, T46 PCA4 projection, and T58 T51/T11-PCA4 cross-lane test | T58 is measured `T0 diagnostic_no_promotion`: it preserves coverage and improves yield/best score, but loses classic/T51 on HV, HV-AUC, and front breadth. | Retire frozen T11 PCA4 as a primary archive geometry. | Reopen only as a secondary/reporting lane or with a trained encoder objective that targets front creation without PPA leakage. |
 | `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
-| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, and T68 upstream verification | T68 is measured `T0 verification_gate`: MasterRTL SOG graph parsing works on shipped TinyRocket data with isolated dependencies, RTL-Timer SOG route-word slack alignment has Pearson `0.846441` but Spearman `0.385196`, and fresh upstream conversion needs Verific. | RTL-native cells are interpretable but the source-equivalent extractor path is not yet ready for live QD. | Source-align MasterRTL/RTL-Timer preprocessing before another RTL-native live spend. |
+| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, T68 upstream verification, and T69 open-Yosys preprocessing | T69 is measured `T0 preprocessing_unblocker`: open-clean MasterRTL graph counts stay within about 1.1% of shipped TinyRocket, and RTL-Timer SOG BOG preserves the shipped DFF-reference count. | RTL-native cells are interpretable, but candidate-level source-equivalent extraction is still unmeasured. | Run source-aligned extractor smokes on generated RTL before another RTL-native live spend. |
 
 ## Current Lineage
 
@@ -164,6 +164,8 @@ flowchart LR
     BJ[T65 secondary cells]
     BK[T66 RTL-native guarded parents]
     BL[T67 seeded thought RTL]
+    BM[T68 source verification]
+    BN[T69 open-Yosys preprocessing]
   end
 
   A --> Q
@@ -235,6 +237,8 @@ flowchart LR
   BI --> BJ
   BJ --> BK
   BK --> BL
+  BL --> BM
+  BM --> BN
   G --> M
   G --> W
 ```
@@ -322,6 +326,7 @@ flowchart TD
 | 2026-06-23 | `L7` RTL-native descriptors | T66 RTL-native front-guarded parent result | `retire` exact guarded-parent settings | T66 improves best score (`+0.050092`), valid PPA (`+3`), unique PPA (`+3`), and reference-beating candidates (`+2`) on a reference-complete screen, but loses mean HV (`-0.011308`), HV-AUC (`-0.010577`), and front points (`-10`). Two-parent fusion did not trigger. | Do not spend seed `1002` on exact T66. Redesign RTL-native coupling around stronger front creation, source-level repair/selection, or secondary archive evidence. |
 | 2026-06-23 | `L7/L6` RTL-native descriptors and emitters | T67 RTL-native seeded thought result | `park` exact method, `hybridize` yield clue | T67 improves valid-PPA yield but loses front points, unique PPA breadth, reference-beating count, and `Prob153_gshare` coverage. | Do not rerun exact T67. Reuse seeded realization only with front-preserving repair or source selection. |
 | 2026-06-23 | `L7` RTL-native descriptors | T68 source-verified RTL-native extractor check | `gate` upstream-equivalence claims | MasterRTL and RTL-Timer upstream examples can be inspected, but their fresh conversion scripts require Verific. MasterRTL graph parse on shipped SOG yields `51337` node-dict entries and `65938` graph edges; RTL-Timer route-word SOG slack has Pearson `0.846441` and Spearman `0.385196` against net slack. | Do not claim true MasterRTL/RTL-Timer descriptor use until a Verific-capable flow or source-aligned preprocessing adaptation runs on our candidates. |
+| 2026-06-23 | `L7` RTL-native descriptors | T69 open-Yosys RTL-native preprocessing | `advance` candidate extractor smoke | Open-clean TinyRocket preprocessing works without Verific for both MasterRTL and RTL-Timer. MasterRTL graph keys, edges, and node-dict entries stay within about 1.1% of shipped TinyRocket; RTL-Timer preserves the shipped SOG BOG DFF-reference count exactly. | Run the source-aligned extractor on generated RTL candidates before another RTL-native live QD spend. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
@@ -522,6 +527,15 @@ parent-pressure or fusion tweak. The run improved aggregate valid-PPA yield,
 but it did not fix the front-creation problem: classic still wins front
 points, unique PPA breadth, and gshare coverage.
 
+T68/T69 separate source-alignment from live QD behavior. T68 verifies that
+upstream MasterRTL/RTL-Timer examples are partly usable and that our earlier
+T15/T60/T61 features are proxy lanes. T69 then shows a narrow TinyRocket
+open-Yosys path: remove `read -verific`, keep the upstream SOG/BOG lowering
+intent, apply upstream-style generated-attribute cleanup, and confirm that the
+generated MasterRTL and RTL-Timer artifacts stay close to shipped examples.
+The next RTL-native step is candidate-level extractor success measurement, not
+another broad live run.
+
 ## Branching Guidance
 
 Continue on `feat/journal-useful-bd-exp-20260622` for lightweight replay
@@ -552,7 +566,7 @@ unblocks it.
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43, T58 | T58 completed the bounded T51/T11-PCA4 cross-lane test and failed promotion on HV/front breadth. | Stop exact frozen graph-coordinate primary archive tests. | Reopen only with secondary/reporting graph lanes or a trained encoder objective that improves front creation without PPA leakage. |
 | `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
-| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67 | T67 completed as a diagnostic seeded-realization screen: yield improves, but classic still wins front breadth and gshare coverage. | Add front-preserving repair/source selection, or keep RTL-native cells as secondary evidence. | A successor improves live front metrics without default-reference or PPA-leakage claims. |
+| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69 | T69 completed as a preprocessing unblocker: TinyRocket source-aligned open-Yosys extraction is plausible, but generated-candidate success is unmeasured. | Run a small generated-RTL extractor smoke before any live RTL-native spend. | A successor improves live front metrics without default-reference or PPA-leakage claims. |
 
 ## Branch Split Checklist
 

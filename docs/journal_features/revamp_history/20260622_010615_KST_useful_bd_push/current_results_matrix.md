@@ -90,6 +90,8 @@ Real result packages:
   diagnostic
 - `T68_source_verified_rtl_native_extractors` upstream MasterRTL/RTL-Timer
   source-verification gate.
+- `T69_open_yosys_rtl_native_preprocessing` open-Yosys RTL-native
+  preprocessing unblocker.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`.
@@ -98,6 +100,14 @@ features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but
 fresh conversion currently fails under this open-source Yosys build because
 their scripts require `read -verific`.
+T69 is also not a QD result. It shows that TinyRocket MasterRTL and RTL-Timer
+SOG/BOG preprocessing can run under open-source Yosys when the invocation
+removes only `read -verific` and applies upstream-style generated-attribute
+cleanup. The open-clean MasterRTL graph stays within `1.098%` on graph keys,
+`0.734%` on edges, and `0.407%` on node-dict entries versus the shipped
+example; the open-clean RTL-Timer SOG BOG preserves the shipped DFF-reference
+count exactly. The remaining blocker is running this source-aligned path on
+our generated RTL candidates and measuring extractor success/failure rate.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis

@@ -25,7 +25,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T58 completed the final bounded frozen T11 PCA4 primary-archive check and failed promotion on HV/front breadth. |
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T59 failed promotion; the next method must change front-slot creation or use a secondary archive lane. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Short fail-pool feedback was insufficient; escalate only with measured source-level repair or role-separated emitters. |
-| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T68 shows the upstream extractor path is not yet source-aligned; fix MasterRTL/RTL-Timer preprocessing before more live RTL-native spend. |
+| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T69 gives a narrow open-Yosys TinyRocket preprocessing unblocker; run candidate-level extraction before more live RTL-native spend. |
 
 ## Lineage Graph
 
@@ -116,6 +116,7 @@ flowchart LR
     T66[T66 guarded RTL parents]
     T67[T67 seeded thought RTL]
     T68[T68 source verification]
+    T69[T69 open-Yosys preprocessing]
   end
 
   prior --> T01
@@ -189,6 +190,7 @@ flowchart LR
   T65 --> T66
   T66 --> T67
   T67 --> T68
+  T68 --> T69
   T39 --> enc
   T17 --> T12
   T17 --> T18
@@ -240,6 +242,7 @@ flowchart LR
 | T66 | `L7` | T63 state/pipeline RTL-native cells used for front-slot parent pressure and low-rate near-front descriptor-compatible fusion. | Completed `T0 diagnostic_yield_positive_front_negative_not_promoted`: valid-PPA and best-score diagnostics improve, but classic wins HV, HV-AUC, and front points. Two-parent fusion did not trigger. | `retire` exact guarded-parent settings | Redesign RTL-native coupling before another live spend; do not run exact seed `1002`. |
 | T67 | `L7/L6` | RTL-native state/pipeline cells plus seeded thought-code realization that refines successful parent RTL for most samples. | Completed `T0 diagnostic_yield_positive_front_negative_blocked`: valid-PPA yield improves, but front breadth and `Prob153_gshare` coverage block promotion. | `park` exact method | Reuse seeded realization only with front-preserving repair or source selection. |
 | T68 | `L7` | Upstream MasterRTL/RTL-Timer source-verification gate. | Completed `T0 verification_gate`: shipped examples are partly verified, but fresh conversion needs Verific or a source-aligned preprocessing adaptation. | `gate` upstream-equivalence claims | Do not claim true MasterRTL/RTL-Timer descriptors until the extractor path runs on our candidate RTL. |
+| T69 | `L7` | Open-source Yosys adaptation for MasterRTL and RTL-Timer TinyRocket SOG/BOG preprocessing. | Completed `T0 preprocessing_unblocker`: open-clean MasterRTL graph counts stay within about 1.1% of shipped TinyRocket, and RTL-Timer SOG BOG preserves the shipped DFF-reference count. | `advance` candidate extractor smoke | Run this source-aligned path on a small generated-RTL sample and report extractor success/failure before any live QD spend. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
 | T25 | `L2/L5` | Guarded SR raw: lower fill target, lower improve backfill, lower two-parent fusion. | Completed `T0 diagnostic`; preserves covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. | `ablate` | Use as negative evidence for T26 emitter/parent-source design. |
