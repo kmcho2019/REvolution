@@ -1,6 +1,6 @@
 # T49 Hard/Tuning Sanity Commands
 
-Status: seed `1001` launched; completion packaging pending.
+Status: seed `1001` completed and packaged.
 
 ## Actual Seed 1001 Run
 
@@ -11,8 +11,11 @@ Status: seed `1001` launched; completion packaging pending.
 - Model: `openai/gpt-oss-120b`
 - Model context accepted by preflight: `max_model_len=131072`
 - Launch time: `2026-06-23 00:34 UTC`
-- Status at first audit checkpoint: in progress, with `11/13` problem-level
-  `qd_metrics.json` files written.
+- Runtime: `3270.46` seconds.
+- Summary:
+  `thought_k_role_separated_repair_qd/seed_1001/openai_gpt-oss-120b/20260623_003433_revolution_summary_results.txt`
+- Scheduler telemetry:
+  `thought_k_role_separated_repair_qd/seed_1001/openai_gpt-oss-120b/20260623_003433_revolution_scheduler_telemetry.json`
 
 ## Preflight
 
@@ -114,11 +117,30 @@ T48_ROOT="exp/useful_bd_push/t48_t26_gated_near_front_fusion_20260622_225714_UTC
 
 ## Packaging Plan
 
-Add or reuse a generalized hard/tuning probe packager after the seed `1001`
-run exits. The package must include:
+The completed package used the generalized hard/tuning probe packager:
 
-- matched classic/T48/T49 tables;
-- repair-attempt and repair-success counts;
+```bash
+uv run python scripts/package_t48_gated_probe.py \
+  --classic-root "${CLASSIC_ROOT}" \
+  --qd-root "${RUN_ROOT}/thought_k_role_separated_repair_qd" \
+  --matrix docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T47_t26_contract_probe/tables/probe_problem_matrix.csv \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T49_thought_k_role_separated_repair_qd/hard_tuning_package \
+  --seed 1001 \
+  --package-tag t49 \
+  --package-title "T49 Thought-K Repair" \
+  --qd-method thought_k_role_separated_repair_qd \
+  --qd-label "T49 thought repair QD" \
+  --counter-stem operator_counters \
+  --counter-title "Operator Counters" \
+  --counter-keys generated_thought_count,generated_code_sample_count,success_parent_requests,two_parent_attempts
+```
+
+The package includes:
+
+- matched classic/T49 tables;
+- observed thought/code sample and parent-selection counters;
 - direct raw PPA-front figures;
 - candidate-level PPA CSVs;
-- Phase 03.1 `qd_ppa_viewer/` if archive artifacts are present.
+- `visualizations/direct_ppa_pareto/` with screenshot.
+
+It does not include a Phase 03.1 `qd_ppa_viewer/` export.

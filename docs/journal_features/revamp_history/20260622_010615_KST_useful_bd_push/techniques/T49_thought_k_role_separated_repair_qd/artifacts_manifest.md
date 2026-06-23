@@ -1,6 +1,6 @@
 # T49 Artifacts Manifest
 
-Status: seed `1001` launched; completion artifacts are not packaged yet.
+Status: seed `1001` completed, packaged, and visually inspected.
 
 ## Method Card
 
@@ -8,13 +8,7 @@ Status: seed `1001` launched; completion artifacts are not packaged yet.
 - `commands/hard_tuning_sanity.md`
 - `results_report.md`
 
-## Planned Run Root
-
-```text
-exp/useful_bd_push/t49_thought_k_role_separated_repair_<timestamp>/hard_tuning/
-```
-
-## Active Seed 1001 Root
+## Seed 1001 Root
 
 ```text
 exp/useful_bd_push/t49_thought_k_role_separated_repair_20260623_003408_UTC/hard_tuning/
@@ -31,24 +25,40 @@ QD output root:
 exp/useful_bd_push/t49_thought_k_role_separated_repair_20260623_003408_UTC/hard_tuning/thought_k_role_separated_repair_qd/seed_1001/openai_gpt-oss-120b/
 ```
 
-## Planned Output Contract
+Completed run files:
 
-After the first live seed, this package must contain:
+- `20260623_003433_revolution_summary_results.txt`
+- `20260623_003433_revolution_scheduler_telemetry.json`
+- `20260623_003433_revolution_run_log.txt`
+
+## Packaged Output Contract
+
+`hard_tuning_package/` contains:
 
 - `tables/t49_problem_seed_metrics.csv`
+- `tables/t49_aggregate_metrics.csv`
 - `tables/t49_comparison_deltas.csv`
 - `tables/t49_validity_gates.csv`
-- `tables/t49_repair_counters.csv`
+- `tables/t49_operator_counters.csv`
 - `data/t49_ppa_candidates.csv`
+- `figures/t49_hv_delta_heatmap.png`
 - `figures/t49_metric_delta_summary.png`
 - `figures/t49_validity_funnel.png`
+- `figures/t49_front_counts.png`
+- `figures/t49_operator_counters.png`
 - `figures/t49_direct_ppa_fronts_seed1001.png`
 - `figures/visual_inspection_notes.md`
+
+`visualizations/direct_ppa_pareto/` contains:
+
 - `visualizations/direct_ppa_pareto/index.html`
 - `visualizations/direct_ppa_pareto/metrics.json`
 - `visualizations/direct_ppa_pareto/screenshot.png`
-- `visualizations/qd_ppa_viewer/index.html`, if archive artifacts are usable;
-- `visualizations/qd_ppa_viewer/validation.json`, if the viewer is exported.
+
+The Phase 03.1 viewer was not exported for this hard/tuning screen package.
+If T49 or a descendant advances to a larger archive-backed run, export
+`visualizations/qd_ppa_viewer/` from that run rather than treating this direct
+PPA supplement as a substitute.
 
 ## Comparator Roots
 
@@ -59,5 +69,5 @@ After the first live seed, this package must contain:
 
 ## Notes
 
-Do not claim a tier above `T0` until the package includes matched metrics,
-direct raw-PPA figures, repair accounting, and a visual inspection note.
+The package supports only a `T0 mixed_diagnostic` claim. It preserves
+classic-covered valid-PPA coverage but loses mean HV and front coverage.

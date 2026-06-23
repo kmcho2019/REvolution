@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T49 Direct PPA Pareto Supplement</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1f2429;
+      --muted: #5d6670;
+      --line: #d9dee5;
+      --paper: #fbfaf6;
+      --panel: #ffffff;
+      --accent: #1b7f8f;
+      --warn: #9a5a1f;
+    }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 40px;
+    }
+    h1, h2 {
+      margin: 0;
+      line-height: 1.15;
+      font-weight: 650;
+    }
+    h1 {
+      font-size: 26px;
+    }
+    h2 {
+      margin-top: 28px;
+      font-size: 18px;
+    }
+    p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+    code {
+      color: var(--ink);
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(154px, 1fr));
+      gap: 10px;
+      margin: 18px 0 26px;
+    }
+    .metric {
+      border-left: 3px solid var(--accent);
+      background: var(--panel);
+      padding: 10px 12px;
+      box-shadow: 0 1px 0 var(--line);
+    }
+    .metric.warning {
+      border-left-color: var(--warn);
+    }
+    .metric strong {
+      display: block;
+      font-size: 18px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    figure {
+      margin: 18px 0 0;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>T49 Direct PPA Pareto Supplement</h1>
+    <p>
+      Static reader-facing figures for the seed 1001 hard/tuning screen.
+      T49 is a mixed diagnostic result, not a promoted QD lead.
+    </p>
+
+    <section class="summary" aria-label="Aggregate metrics">
+      <div class="metric warning"><strong>-6.2%</strong><span>Mean HV</span></div>
+      <div class="metric"><strong>+1.4%</strong><span>Mean HV-AUC</span></div>
+      <div class="metric"><strong>+29.5%</strong><span>Mean best score</span></div>
+      <div class="metric warning"><strong>-10.1%</strong><span>Valid PPA</span></div>
+      <div class="metric warning"><strong>-33.3%</strong><span>Front points</span></div>
+      <div class="metric"><strong>0</strong><span>Classic-covered losses</span></div>
+      <div class="metric warning"><strong>6</strong><span>Yield warnings</span></div>
+    </section>
+
+    <h2>Aggregate Direction</h2>
+    <figure>
+      <img src="t49_metric_delta_summary.png" alt="Aggregate relative deltas for T49 against classic">
+      <figcaption>T49 improves best score and slightly improves HV-AUC, but loses mean HV, valid-PPA count, and front coverage.</figcaption>
+    </figure>
+
+    <h2>Paired HV Heatmap</h2>
+    <figure>
+      <img src="t49_hv_delta_heatmap.png" alt="Problem heatmap of T49 relative HV delta">
+      <figcaption>Blue favors T49 and red favors classic; zero-HV and tied cells are white.</figcaption>
+    </figure>
+
+    <h2>Direct Area-Power Fronts</h2>
+    <figure>
+      <img src="t49_direct_ppa_fronts_seed1001.png" alt="Seed 1001 direct area-power fronts">
+      <figcaption>Direct area-power panels show that several T49 fronts remain sparse despite preserving at least one valid-PPA candidate where classic had one.</figcaption>
+    </figure>
+
+    <h2>Validity And Front Coverage</h2>
+    <figure>
+      <img src="t49_validity_funnel.png" alt="Validity funnel comparing generated, syntax, functional, and valid PPA counts">
+      <figcaption>The funnel separates candidate yield from PPA-front quality; T49 produces fewer total generated samples than classic in this screen.</figcaption>
+    </figure>
+    <figure>
+      <img src="t49_front_counts.png" alt="Front-point counts by problem">
+      <figcaption>T49 front coverage is the main blocker for promotion beyond a diagnostic result.</figcaption>
+    </figure>
+  </main>
+</body>
+</html>
