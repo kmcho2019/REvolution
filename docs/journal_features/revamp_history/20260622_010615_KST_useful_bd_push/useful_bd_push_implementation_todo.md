@@ -341,8 +341,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       trigger is specified without in-loop classic or final-front labels.
 - [x] T53 bounded sparse-front trigger is specified as the next T51/T52
       follow-up before any new live run.
-- [ ] T53 bounded sparse-front trigger is executed, validated, packaged, and
+- [x] T53 bounded sparse-front trigger is executed, validated, packaged, and
       compared against T47 classic, T51, and T52.
+- [x] T53 gets a follow-up direction: stop scalar champion-lane nudging and
+      specify a role-separated front-family emitter if this lane continues.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

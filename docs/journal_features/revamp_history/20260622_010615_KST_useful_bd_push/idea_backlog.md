@@ -594,12 +594,14 @@ a numbered `techniques/T##_slug/` package before running it.
 
 ## From `T53_sparse_front_trigger_qd`
 
-- T53 is the registered follow-up to T52. It is intentionally only a
-  parent-pressure change, not a new descriptor or archive-retention rule.
-- If T53 triggers often but still loses front breadth, the next step should be
-  a role-separated emitter lane rather than another champion-lane scalar tweak.
-- If T53 never triggers, the local-front thinness threshold is too strict for
-  this budget and should be analyzed from archive histories before adjustment.
+- T53 is completed and retired as `T0 diagnostic_not_promoted`. It is
+  intentionally only a parent-pressure change, not a new descriptor or
+  archive-retention rule.
+- The trigger fired 25 times, so the negative result is meaningful: lower
+  champion pressure alone does not recover front breadth.
+- If this lane continues, the next step should be a role-separated emitter lane
+  that spends a small explicit budget on front-family recovery while preserving
+  T51's direct-code yield path.
 
 ## Near-Term Hybrids
 

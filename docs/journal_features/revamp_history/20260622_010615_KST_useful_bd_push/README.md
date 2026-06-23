@@ -173,7 +173,7 @@ Start here when resuming the active goal.
 | `T50` | `T50_candidate_matched_thought_front_qd` | Partial hard/tuning result, `T0 diagnostic`; best-score gain, but HV, HV-AUC, valid-PPA, unique PPA, and front coverage lose. |
 | `T51` | `T51_code_thought_front_slot_qd` | Completed hard/tuning result, `T0 positive_ablation_not_promoted`; restores T50 yield/HV-AUC but classic still wins front breadth. |
 | `T52` | `T52_code_thought_full_pareto_qd` | Completed hard/tuning result, `T0 diagnostic_retired_full_pareto`; adds a few front points versus T51 but loses yield, HV-AUC, and best-score recovery. |
-| `T53` | `T53_sparse_front_trigger_qd` | Pre-registered hard/tuning follow-up; keeps T51's one-slot archive and lowers champion pressure only when archive-local front material is thin. |
+| `T53` | `T53_sparse_front_trigger_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; trigger fires, but HV, HV-AUC, valid-PPA, and front breadth still lose to classic. |
 
 ## Validity-Gate Note
 

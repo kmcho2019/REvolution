@@ -62,6 +62,9 @@ Real result packages:
   follow-up
 - `T50_candidate_matched_thought_front_qd` partial candidate-matched thought
   front follow-up
+- `T51_code_thought_front_slot_qd` direct code-thought front-slot follow-up
+- `T52_code_thought_full_pareto_qd` full local-Pareto retention follow-up
+- `T53_sparse_front_trigger_qd` bounded sparse-front trigger follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -610,3 +613,11 @@ the best ALU and traffic-light scores.
   PPA (`254` versus `266`), and best score (`0.242261` versus `0.293480`), and
   returns a Prob098 yield warning. Do not continue simple local-Pareto
   widening as the next route.
+- T53 completed the bounded sparse-front trigger follow-up as
+  `T0 diagnostic_not_promoted`. The trigger fired 25 times, so the method is
+  not a no-op, but it still loses classic on valid PPA (`239` versus `257`),
+  mean HV (`0.085793` versus `0.092601`), HV-AUC (`0.071011` versus
+  `0.082020`), front points (`22` versus `30`), unique PPA (`71` versus `87`),
+  and reference-beating candidates (`38` versus `46`). Stop scalar
+  champion-lane nudging; use a role-separated front-family emitter if this
+  lane continues.
