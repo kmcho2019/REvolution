@@ -68,6 +68,8 @@ Real result packages:
 - `T54_front_slot_lane_qd` fixed front-slot parent lane follow-up
 - `T55_coarse_sr2_front_slot_qd` coarse two-axis SR-PCA front-slot geometry
   follow-up
+- `T56_coarse_sr2_t51_control_qd` coarse two-axis SR-PCA T51-control geometry
+  follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -649,9 +651,15 @@ the best ALU and traffic-light scores.
   reference-beating candidates (`36` versus `46`). It also loses T51 on HV,
   HV-AUC, best score, and valid-PPA count. Do not promote T55 or spend seed
   `1002` on the exact method.
-- T56 is pre-registered as the geometry isolation control. It keeps T51's
+- T56 completed the geometry isolation control as
+  `T0 diagnostic_retire_coarse_sr2_geometry`. It keeps T51's
   `nsga2_global_rank` parent selection and removes T55's fixed front-slot
   parent lane, while using the same two-axis SR-PCA archive geometry
-  (`--qd_descriptor_axes sr_pca_0 sr_pca_1`). Its role is to decide whether
-  coarse SR2 geometry itself helps T51 or whether the T55 mechanism signal is
-  too weak to continue.
+  (`--qd_descriptor_axes sr_pca_0 sr_pca_1`). It preserves every
+  classic-covered valid-PPA design, but loses classic on mean HV (`0.082056`
+  versus `0.092601`), HV-AUC (`0.069095` versus `0.082020`), valid PPA
+  (`231` versus `257`), front points (`22` versus `30`), unique PPA (`66`
+  versus `87`), and reference-beating candidates (`35` versus `46`). It also
+  loses T51 on HV, HV-AUC, best score, valid PPA, unique PPA, and
+  reference-beating candidates while adding only one front point. Retire
+  coarse SR2 archive geometry as a primary path.

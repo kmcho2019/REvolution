@@ -629,10 +629,12 @@ a numbered `techniques/T##_slug/` package before running it.
   still won HV-AUC, valid-PPA count, and best score. Do not run exact T55 seed
   `1002`; either isolate coarse geometry with a T51-control ablation or switch
   to exact T11 runtime projection / learned auxiliary archive lanes.
-- T56 is the T51-control ablation for that isolation step. It keeps T51's
-  normal `nsga2_global_rank` parent selection and removes T55's fixed
-  front-slot parent lane while using the same two-axis SR-PCA archive. If T56
-  loses T51, retire coarse SR2 geometry as a primary path.
+- T56 completed that T51-control ablation and loses T51 on HV, HV-AUC, best
+  score, valid PPA, unique PPA, and reference-beating candidates while adding
+  only one front point. Retire coarse SR2 geometry as a primary path. The next
+  method should switch to exact T11 runtime projection, learned auxiliary
+  archive lanes, or a front-yield protected emitter instead of running another
+  coarse-SR2 seed.
 
 ## Near-Term Hybrids
 

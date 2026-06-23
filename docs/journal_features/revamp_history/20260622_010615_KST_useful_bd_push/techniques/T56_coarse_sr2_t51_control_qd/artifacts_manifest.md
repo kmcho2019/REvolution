@@ -1,17 +1,16 @@
 # T56 Artifacts Manifest
 
-Status: pre-registered; no live result yet.
+Status: completed; `T0 diagnostic_retire_coarse_sr2_geometry`.
 
 ## Raw Run
 
-- Planned root:
-  `exp/useful_bd_push/t56_coarse_sr2_t51_control_<timestamp>/hard_tuning/code_thought_coarse_sr2_t51_control_qd/seed_1001`
-- Planned preflight:
-  `exp/useful_bd_push/t56_coarse_sr2_t51_control_<timestamp>/hard_tuning/preflight/`
+- Run root:
+  `exp/useful_bd_push/t56_coarse_sr2_t51_control_20260623_074326_UTC/hard_tuning/code_thought_coarse_sr2_t51_control_qd/seed_1001`
+- Preflight:
+  `exp/useful_bd_push/t56_coarse_sr2_t51_control_20260623_074326_UTC/hard_tuning/preflight/`
+- Runtime: `1598.41` seconds.
 
 ## Packaged Result
-
-Required after the live arm exits:
 
 - `hard_tuning_package/README.md`
 - `hard_tuning_package/tables/t56_problem_seed_metrics.csv`
@@ -27,12 +26,14 @@ Required after the live arm exits:
 
 ## Visualizations
 
-Required after packaging:
-
 - `visualizations/direct_ppa_pareto/` with `index.html`, `metrics.json`, and
   `screenshot.png`.
 - `visualizations/qd_ppa_viewer/` with full Phase 03.1 export, validation
   files, screenshot, and any honest projection caveat.
+
+Strict Phase 03.1 schema validation passes. The optional Playwright smoke
+generates screenshots but reports compare and hover warnings; the caveat is
+documented in `visualizations/qd_ppa_viewer/playwright_caveat.md`.
 
 ## Regeneration Scripts
 

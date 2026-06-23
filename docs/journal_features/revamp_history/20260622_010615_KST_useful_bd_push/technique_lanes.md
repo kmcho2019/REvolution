@@ -55,8 +55,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T46 preserves coverage and finds a narrow ALU HV/front signal, but classic still wins mean HV, reference-beating count, valid-PPA samples, and traffic-light quality. | Move graph features out of the primary live archive role unless a trained encoder or secondary-lane mechanism is specified. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T52 widens T51 to full local Pareto and gains front points, but loses HV-AUC/yield. | Retire simple full-Pareto widening; specify a bounded front-pressure trigger before any seed `1002`. |
-| `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fix T50's budget/yield issue, but wider local Pareto retention overcorrects. | Keep T51's one-slot/yield behavior and target front deficits with a narrower trigger. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T56 retires coarse SR2 geometry after T51/T55 isolation; classic and T51 still win the primary front/HV evidence. | Switch mechanisms to exact T11 runtime projection, learned auxiliary archive lanes, or a front-yield protected emitter. |
+| `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T51-T56 variants still miss classic front breadth. | Preserve T51-style yield while changing the front-recovery mechanism. |
 
 ## Lane Scorecard
 
@@ -67,8 +67,8 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, and T46 PCA4 projection | T46 is measured and `T0 mixed_diagnostic`: it preserves coverage and wins ALU HV, but loses aggregate HV and traffic-light quality. | Stop direct graph-axis dimensionality variants; use graph descriptors only as a secondary archive/reporting lane or trained-encoder input. | Keep T35 front-seeded only as an upper bound. |
-| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47/T48/T49/T50/T51/T52 local-Pareto lineage | T52 is measured `T0 diagnostic_retired_full_pareto`: more front points than T51, worse HV-AUC/yield. | Stop simple local-Pareto widening and define a bounded front-pressure trigger. | A candidate must improve T51 front material without losing its valid-PPA/HV-AUC recovery or classic-covered coverage. |
-| `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49 thought-k repair, T50 candidate/front control, T51 code-thought front slot, T52 full-Pareto retention | T51 shows direct code individuals are the right recovery from thought-only yield collapse. | T52 shows global local-Pareto widening is too costly. | Better front material than T51 without losing T51's yield and best-score recovery. |
+| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T56 local-Pareto lineage | T56 is measured `T0 diagnostic_retire_coarse_sr2_geometry`: coverage is preserved, but coarse SR2 loses classic/T51 on primary evidence. | Retire coarse SR2 geometry and change mechanism. | A candidate must improve T51 front material without losing its valid-PPA/HV-AUC recovery or classic-covered coverage. |
+| `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T56 hard/tuning emitters | T51 shows direct code individuals are useful; T56 shows geometry isolation is not enough. | Change the front-recovery mechanism before seed `1002`. | Better front material than T51 without losing T51's yield and best-score recovery. |
 
 ## Current Lineage
 
@@ -140,6 +140,10 @@ flowchart LR
     AW[T50 candidate/front control]
     AX[T51 code-thought front slot]
     AY[T52 code-thought full Pareto]
+    AZ[T53 sparse-front trigger]
+    BA[T54 front-slot lane]
+    BB[T55 coarse SR2 front-slot]
+    BC[T56 coarse SR2 T51-control]
   end
 
   subgraph L6[L6 lineage and emitters]
@@ -199,6 +203,10 @@ flowchart LR
   AV --> AW
   AW --> AX
   AX --> AY
+  AY --> AZ
+  AZ --> BA
+  BA --> BB
+  BB --> BC
   AL --> AX
   AL --> L
   G --> M
@@ -271,6 +279,7 @@ flowchart TD
 | 2026-06-23 | `L5/L6` archive coupling and emitters | T55 coarse SR2 front-slot method card | `advance` bounded live screen | T55 keeps T54 fixed except the archive axes: it uses `--qd_descriptor_axes sr_pca_0 sr_pca_1` so grid-quantile cells are coarser and local front slots can form more often. | Commit the pre-run package, prove emitted `descriptor_axes` is two-axis before live spend, run seed `1001`, and compare slot hits, front breadth, HV, HV-AUC, and validity against classic plus T51 through T54. |
 | 2026-06-23 | `L5/L6` archive coupling and emitters | T55 coarse SR2 front-slot result | `ablate` positive mechanism only | T55 improves T54 slot hits (`9` versus `4`), front points (`23` versus `21`), and yield warnings (`0` versus `2`), but still loses classic on HV, HV-AUC, valid PPA, front breadth, unique PPA, and reference-beating candidates. | Do not spend seed `1002` on exact T55. Either isolate coarse geometry with a T51-control ablation or switch mechanisms to exact T11 runtime projection / learned auxiliary archive lanes. |
 | 2026-06-23 | `L5/L6` archive coupling and emitters | T56 coarse SR2 T51-control method card | `advance` geometry isolation control | T56 keeps T51 fixed except the archive axes: it uses `--qd_descriptor_axes sr_pca_0 sr_pca_1` while retaining `nsga2_global_rank` parent selection and no fixed front-slot parent lane. | Run seed `1001` before any further coarse-geometry variants; compare directly against classic, T51, and T55. |
+| 2026-06-23 | `L5/L6` archive coupling and emitters | T56 coarse SR2 T51-control result | `retire` coarse SR2 primary path | T56 preserves classic-covered coverage but loses classic on HV, HV-AUC, valid PPA, front points, unique PPA, and reference-beating candidates; it also loses T51 on every primary metric except one extra front point. | Switch mechanism to exact T11 runtime projection, learned auxiliary archive lanes, or a front-yield protected emitter before any seed `1002`. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
@@ -468,8 +477,8 @@ unblocks it.
 | `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27, T28, T29, T30, T31, T32 | Stays on current branch; T29/T31/T32 are measured negative, while T30 is mixed holdout support for T26. | Pause simple SR raw schedule tuning. | New method improves front/yield without losing T26 quality pressure. |
 | `L3` codebook/discrete archives | T05 | Parked. | Reopen only as side archive or local-Pareto cell partition. | A non-codebook lane shows local front material worth discretizing. |
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43 | Candidate split branch; T37 proves the T11-family replay lead is one bounded local-front slot, and T43 does not close the runtime descriptor gap. | Split exact T11 runtime projection or another encoder branch. | Learned features improve PPA-front/HV metrics without problem-ID collapse. |
-| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T51 | Active on current branch; T51 recovers yield/HV-AUC but loses front breadth. | Specify a front-preserving follow-up before any held-out spend. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
-| `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49, T50, T51 | T51 shows code-individual single-thought recovery is useful but incomplete. | Design a stronger front-preserving mechanism, not another plain T51 seed. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
+| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T56 | Active on current branch; T56 retires coarse SR2 geometry after T51/T55 isolation. | Switch to exact T11 runtime projection, learned auxiliary archive lanes, or a front-yield protected emitter. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
+| `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T56 | T51 shows code-individual single-thought recovery is useful but incomplete; T56 shows archive geometry alone is not enough. | Design a stronger front-preserving mechanism, not another geometry/control seed. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
 
 ## Branch Split Checklist
 

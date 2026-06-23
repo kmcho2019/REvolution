@@ -164,3 +164,23 @@ uv run python scripts/package_t48_gated_probe.py \
 
 If `Prob153_gshare` or another problem is incomplete, filter the matrix only
 after writing the missing-problem rationale in `results_report.md`.
+
+## Completed Run
+
+- `RUN_TS=20260623_074326_UTC`.
+- `RUN_ROOT=exp/useful_bd_push/t56_coarse_sr2_t51_control_20260623_074326_UTC/hard_tuning`.
+- Preflight passed:
+  `openai/gpt-oss-120b max_model_len=131072`.
+- T56 completed all 13 hard/tuning problems in `1598.41` seconds.
+- Summary log:
+  `exp/useful_bd_push/t56_coarse_sr2_t51_control_20260623_074326_UTC/hard_tuning/code_thought_coarse_sr2_t51_control_qd/seed_1001/openai_gpt-oss-120b/20260623_074351_revolution_summary_results.txt`.
+- Single-thought validation passed with `--require-full-subset`.
+- Pareto/front validation passed with `--require-full-subset`.
+- All 13 archive spaces emitted exactly
+  `descriptor_axes == ["sr_pca_0", "sr_pca_1"]`.
+- Packaged result:
+  `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T56_coarse_sr2_t51_control_qd/hard_tuning_package/`.
+- Direct PPA supplement:
+  `visualizations/direct_ppa_pareto/index.html`.
+- Full Phase 03.1 viewer:
+  `visualizations/qd_ppa_viewer/index.html`.

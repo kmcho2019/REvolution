@@ -23,17 +23,17 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T55_coarse_sr2_front_slot_qd/`
-  (`T0 positive_mechanism_ablation_not_promoted`; coarser two-axis SR-PCA
-  archive geometry improves T54 slot hits and removes yield warnings, but
-  classic still wins HV, HV-AUC, valid-PPA count, and front breadth).
+  `techniques/T56_coarse_sr2_t51_control_qd/`
+  (`T0 diagnostic_retire_coarse_sr2_geometry`; the T51-control geometry
+  ablation preserves classic-covered designs but loses classic and T51 on
+  HV/HV-AUC/yield/front evidence).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  run `techniques/T56_coarse_sr2_t51_control_qd/`, a config-only T51-control
-  ablation that isolates T55's coarse SR2 archive geometry from the fixed
-  front-slot parent lane.
+  stop coarse SR2 geometry as a primary path; switch mechanisms to exact T11
+  runtime projection, learned auxiliary archive lanes, or a front-yield
+  protected emitter before any seed `1002`.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -42,15 +42,15 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T55_coarse_sr2_front_slot_qd/hard_tuning_package/figures/t55_direct_ppa_fronts_seed1001.png`
-  (13-problem seed-1001 raw area-power fronts for the T55 hard/tuning
+  `techniques/T56_coarse_sr2_t51_control_qd/hard_tuning_package/figures/t56_direct_ppa_fronts_seed1001.png`
+  (13-problem seed-1001 raw area-power fronts for the T56 hard/tuning
   package).
 - Most recent direct PPA HTML viewer:
-  `techniques/T55_coarse_sr2_front_slot_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T56_coarse_sr2_t51_control_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T55_coarse_sr2_front_slot_qd/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T56_coarse_sr2_t51_control_qd/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
   raw/improvement/normalized PPA modes, raw A-P front mode, screenshot, and a
   documented Playwright caveat).
@@ -59,11 +59,10 @@ Start here when resuming the active goal.
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T55_coarse_sr2_front_slot_qd/` (seed-1001 hard/tuning mechanism
-  ablation with direct PPA supplement and Phase 03.1 viewer).
+  `techniques/T56_coarse_sr2_t51_control_qd/` (seed-1001 hard/tuning geometry
+  isolation ablation with direct PPA supplement and Phase 03.1 viewer).
 - Active planned live technique:
-  `techniques/T56_coarse_sr2_t51_control_qd/` (pre-registered coarse SR2
-  T51-control geometry ablation).
+  none; the next technique should change mechanism before more live spend.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -180,7 +179,7 @@ Start here when resuming the active goal.
 | `T53` | `T53_sparse_front_trigger_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; trigger fires, but HV, HV-AUC, valid-PPA, and front breadth still lose to classic. |
 | `T54` | `T54_front_slot_lane_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; fixed front-slot lane is active but loses classic on HV, HV-AUC, valid-PPA count, unique PPA breadth, and front points. |
 | `T55` | `T55_coarse_sr2_front_slot_qd` | Completed hard/tuning result, `T0 positive_mechanism_ablation_not_promoted`; improves T54 slot hits but still loses classic and T51 on primary promotion metrics. |
-| `T56` | `T56_coarse_sr2_t51_control_qd` | Pre-registered hard/tuning method; keeps T51 fixed except `--qd_descriptor_axes sr_pca_0 sr_pca_1` to isolate coarse SR2 archive geometry. |
+| `T56` | `T56_coarse_sr2_t51_control_qd` | Completed hard/tuning result, `T0 diagnostic_retire_coarse_sr2_geometry`; preserves coverage but loses classic/T51 on HV, HV-AUC, yield, and front evidence. |
 
 ## Validity-Gate Note
 

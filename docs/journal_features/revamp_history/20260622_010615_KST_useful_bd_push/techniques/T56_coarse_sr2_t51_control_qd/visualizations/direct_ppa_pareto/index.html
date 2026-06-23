@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T56 Direct PPA Pareto Supplement</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5b6572;
+      --line: #d7dde5;
+      --paper: #f7f8fa;
+      --panel: #ffffff;
+      --accent: #2563eb;
+      --good: #0f766e;
+      --warn: #a34d12;
+    }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 42px;
+    }
+    h1,
+    h2 {
+      margin: 0;
+      line-height: 1.15;
+      font-weight: 650;
+    }
+    h1 { font-size: 26px; }
+    h2 {
+      margin-top: 28px;
+      font-size: 18px;
+    }
+    p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+      gap: 10px;
+      margin: 18px 0 26px;
+    }
+    .metric {
+      border-left: 3px solid var(--accent);
+      background: var(--panel);
+      padding: 10px 12px;
+      box-shadow: 0 1px 0 var(--line);
+    }
+    .metric.good { border-left-color: var(--good); }
+    .metric.warning { border-left-color: var(--warn); }
+    .metric strong {
+      display: block;
+      font-size: 18px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    figure {
+      margin: 18px 0 0;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>T56 Direct PPA Pareto Supplement</h1>
+    <p>
+      Static reader-facing figures for the completed 13-problem hard/tuning
+      screen. T56 keeps the T51 parent policy and isolates only the coarser
+      two-axis SR-PCA archive geometry. It preserves classic-covered design
+      coverage, but loses mean HV, HV-AUC, valid-PPA yield, and front breadth.
+    </p>
+
+    <section class="summary" aria-label="Aggregate metrics">
+      <div class="metric warning"><strong>-11.4%</strong><span>Mean HV</span></div>
+      <div class="metric warning"><strong>-15.8%</strong><span>Mean HV-AUC</span></div>
+      <div class="metric good"><strong>+17.9%</strong><span>Mean best score</span></div>
+      <div class="metric warning"><strong>-26</strong><span>Valid PPA</span></div>
+      <div class="metric warning"><strong>-26.7%</strong><span>Front points</span></div>
+      <div class="metric good"><strong>0</strong><span>Classic-covered losses</span></div>
+      <div class="metric warning"><strong>4</strong><span>Yield warnings</span></div>
+      <div class="metric warning"><strong>-8</strong><span>Reference beating</span></div>
+    </section>
+
+    <h2>Aggregate Direction</h2>
+    <figure>
+      <img src="t56_metric_delta_summary.png" alt="Aggregate relative deltas for T56 against classic">
+      <figcaption>T56 improves best-score pressure but loses the QD-facing HV, HV-AUC, front breadth, and valid-yield metrics.</figcaption>
+    </figure>
+
+    <h2>Paired HV Heatmap</h2>
+    <figure>
+      <img src="t56_hv_delta_heatmap.png" alt="Problem heatmap of T56 relative HV delta">
+      <figcaption>Blue favors T56 and red favors classic. The T51-control geometry ablation has isolated wins but a negative aggregate.</figcaption>
+    </figure>
+
+    <h2>Direct Area-Power Fronts</h2>
+    <figure>
+      <img src="t56_direct_ppa_fronts_seed1001.png" alt="Seed 1001 direct area-power fronts">
+      <figcaption>The raw area-power panels show that coarse SR2 does not recover enough broad-front behavior to promote the line.</figcaption>
+    </figure>
+
+    <h2>Validity, Front Coverage, And Operator Counters</h2>
+    <figure>
+      <img src="t56_validity_funnel.png" alt="Validity funnel comparing generated, syntax, functional, and valid PPA counts">
+      <figcaption>The funnel shows no classic-covered design loss, but lower aggregate valid-PPA volume and four denominator-gated yield warnings.</figcaption>
+    </figure>
+    <figure>
+      <img src="t56_front_counts.png" alt="Front-point counts by problem">
+      <figcaption>Front counts remain below classic and do not compensate for the HV/HV-AUC losses.</figcaption>
+    </figure>
+    <figure>
+      <img src="t56_operator_counters.png" alt="Operator counters by problem">
+      <figcaption>T56 uses no success-parent or two-parent lanes; it isolates archive geometry from parent-fusion effects.</figcaption>
+    </figure>
+  </main>
+</body>
+</html>

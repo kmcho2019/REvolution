@@ -3234,3 +3234,38 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Next step: commit the pre-run package, preflight the vLLM endpoint, run T56
   seed `1001`, validate single-thought and Pareto artifacts, then package
   against T47 classic, T51, and T55.
+
+## T56 Coarse SR2 T51-Control Result - 2026-06-23 UTC
+
+- Preflight passed against `http://20.0.0.103:8000/v1/models` with
+  `openai/gpt-oss-120b max_model_len=131072`.
+- Ran T56 seed `1001` on the 13-problem hard/tuning surface in `1598.41`
+  seconds:
+  `exp/useful_bd_push/t56_coarse_sr2_t51_control_20260623_074326_UTC/hard_tuning/code_thought_coarse_sr2_t51_control_qd/seed_1001`.
+- Validation passed for the single-thought operator and Pareto/front archive
+  checks with `--require-full-subset`.
+- Verified all 13 emitted archive spaces use exactly
+  `descriptor_axes == ["sr_pca_0", "sr_pca_1"]`.
+- Packaged results under
+  `techniques/T56_coarse_sr2_t51_control_qd/hard_tuning_package/`.
+- Added direct PPA supplement under
+  `techniques/T56_coarse_sr2_t51_control_qd/visualizations/direct_ppa_pareto/`
+  and a full Phase 03.1 viewer under
+  `techniques/T56_coarse_sr2_t51_control_qd/visualizations/qd_ppa_viewer/`.
+- Phase 03.1 strict schema validation passed. The optional Playwright smoke
+  generated screenshots but reported compare and hover warnings; the caveat is
+  recorded in `visualizations/qd_ppa_viewer/playwright_caveat.md`.
+- Visual inspection passed for the direct PPA HTML screenshot and the full
+  Phase 03.1 compare-mode screenshot. The operator-counter figure is
+  intentionally empty because T56 disables success-parent and two-parent lanes.
+- Tier decision: `T0 diagnostic_retire_coarse_sr2_geometry`. T56 preserves
+  every classic-covered valid-PPA design, but loses classic on mean HV
+  (`0.082056` versus `0.092601`), HV-AUC (`0.069095` versus `0.082020`),
+  valid PPA (`231` versus `257`), front points (`22` versus `30`), unique PPA
+  (`66` versus `87`), and reference-beating candidates (`35` versus `46`).
+- Against T51, T56 loses HV (`-0.007196`), HV-AUC (`-0.016359`), best score
+  (`-0.024855`), valid PPA (`-35`), unique PPA (`-9`), and reference-beating
+  candidates (`-8`) while adding only one front point.
+- Retire coarse SR2 archive geometry as a primary path. The next method should
+  switch mechanisms to exact T11 runtime projection, learned auxiliary archive
+  lanes, or a front-yield protected emitter before any seed `1002`.

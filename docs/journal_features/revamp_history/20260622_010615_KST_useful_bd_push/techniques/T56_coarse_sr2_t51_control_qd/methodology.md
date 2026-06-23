@@ -1,6 +1,6 @@
 # T56 Coarse SR2 T51-Control QD Methodology
 
-Status: pre-registered; not launched.
+Status: completed; `T0 diagnostic_retire_coarse_sr2_geometry`.
 
 ## Question
 
@@ -90,3 +90,24 @@ T56 can advance only if it:
 If T56 loses T51 on HV/HV-AUC/yield and does not improve front breadth, retire
 coarse SR2 geometry as a primary live path and move to exact T11 runtime
 projection or learned auxiliary archive lanes.
+
+## Measured Outcome
+
+T56 preserved every classic-covered valid-PPA design, but it failed the
+promotion signals:
+
+- Mean HV: `0.082056` versus classic `0.092601`.
+- Mean HV-AUC: `0.069095` versus classic `0.082020`.
+- Valid PPA: `231` versus classic `257`.
+- PPA front points: `22` versus classic `30`.
+- Unique PPA points: `66` versus classic `87`.
+- Reference-beating candidates: `35` versus classic `46`.
+- Yield warnings: `4`.
+
+Against T51, T56 loses HV (`-0.007196`), HV-AUC (`-0.016359`), best score
+(`-0.024855`), valid PPA (`-35`), unique PPA (`-9`), and reference-beating
+candidates (`-8`) while adding only one front point.
+
+This retires coarse SR2 archive geometry as a primary follow-up path. T55's
+slot-hit improvement was a mechanism signal, but T56 shows the geometry itself
+does not improve the stronger T51 baseline.
