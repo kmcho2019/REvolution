@@ -3294,3 +3294,36 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Next step: commit the pre-run package, preflight the vLLM endpoint, run T57
   seed `1001`, validate single-thought, Pareto/front, and adaptive-rebinning
   artifacts, then package against T47 classic, T51 off-mode, and T56.
+
+## T57 T51 Adaptive-Rebin Result - 2026-06-23 UTC
+
+- Preflight passed against the local vLLM endpoint:
+  `openai/gpt-oss-120b max_model_len=131072`.
+- T57 raw run:
+  `exp/useful_bd_push/t57_t51_adaptive_rebin_20260623_083945_UTC/hard_tuning/t51_adaptive_rebin_qd/seed_1001`.
+- The run completed all 13 hard/tuning problems in `1811.33` seconds.
+- Single-thought and Pareto/front validators passed with
+  `--require-full-subset`.
+- Adaptive-rebinning validation wrote diagnostics and returned invalid:
+  `26` rebin checks, `0` rebin events, and localized evidence was
+  inconclusive because the selected collapsed/localized case did not improve
+  healthy or occupied cells.
+- Aggregate T57 versus classic: HV `-0.016790`, HV-AUC `-0.011599`, best
+  score `+0.033800`, valid PPA `-12`, front points `-7`, unique PPA points
+  `-12`, reference-beating candidates `-7`.
+- T57 versus T51: HV `-0.013441`, HV-AUC `-0.015033`, best score
+  `-0.031752`, valid PPA `-21`, front points `+2`, unique PPA points `0`,
+  reference-beating candidates `-4`.
+- T57 has one classic-covered valid-PPA loss: `Prob151_review2015_fsm`.
+- Packaged result:
+  `techniques/T57_t51_adaptive_rebin_qd/hard_tuning_package/`.
+- Direct PPA supplement:
+  `techniques/T57_t51_adaptive_rebin_qd/visualizations/direct_ppa_pareto/index.html`.
+- Full Phase 03.1 viewer:
+  `techniques/T57_t51_adaptive_rebin_qd/visualizations/qd_ppa_viewer/index.html`.
+- Strict viewer validation passed. Playwright generated screenshots but
+  reported the caveat documented in
+  `visualizations/qd_ppa_viewer/playwright_caveat.md`.
+- Decision: mark T57 `T0 diagnostic_no_rebin_signal`; do not spend seed
+  `1002` on exact T57. Move to exact T11 runtime projection, learned auxiliary
+  archive lanes, or a front-yield protected emitter.

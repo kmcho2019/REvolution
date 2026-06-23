@@ -105,3 +105,27 @@ If T57 never reaches the minimum archive-member threshold, mark it `T0
 diagnostic_no_rebin_signal` and do not blame adaptive rebinning. If it
 triggers but loses T51 yield and front metrics, retire adaptive rebinning on
 this hard/tuning surface.
+
+## Result
+
+T57 completed the 13-problem hard/tuning run on
+`20260623_083945_UTC` in `1811.33` seconds and is marked
+`T0 diagnostic_no_rebin_signal`.
+
+The run emitted `26` rebin checks and `0` rebin events. It preserved most
+coverage but lost one classic-covered valid-PPA design
+(`Prob151_review2015_fsm`) and did not meet the acceptance signals:
+
+- T57 - classic: HV `-0.016790`, HV-AUC `-0.011599`, valid PPA `-12`,
+  front points `-7`, unique PPA points `-12`, reference-beating candidates
+  `-7`.
+- T57 - T51: HV `-0.013441`, HV-AUC `-0.015033`, best score `-0.031752`,
+  valid PPA `-21`, front points `+2`, unique PPA points `0`,
+  reference-beating candidates `-4`.
+- T57 - T56: HV `-0.006245`, HV-AUC `+0.001326`, valid PPA `+14`,
+  front points `+1`, unique PPA points `+9`, reference-beating candidates
+  `+4`.
+
+Do not run seed `1002` for exact T57. The next method should leave this
+archive-boundary tweak and test exact T11 runtime projection, a learned
+auxiliary archive lane, or a front-yield protected emitter.

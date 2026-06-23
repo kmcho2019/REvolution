@@ -640,6 +640,10 @@ a numbered `techniques/T##_slug/` package before running it.
   KS-triggered grid-quantile rebinning. If rebinning does not trigger or does
   not improve T51 front/HV evidence, switch away from T51-family archive
   geometry and use exact T11 runtime projection or a learned auxiliary lane.
+- T57 result: 26 rebin checks produced 0 rebin events, and the run lost
+  classic/T51 on HV and HV-AUC with one classic-covered valid-PPA loss.
+  Do not repeat exact T57. The next method should change candidate creation
+  or add an auxiliary learned/runtime archive, not only archive cut points.
 
 ## Near-Term Hybrids
 

@@ -173,5 +173,29 @@ uv run python scripts/package_t48_gated_probe.py \
   --qd-label "T57 T51 adaptive-rebin QD" \
   --counter-stem rebinning_counters \
   --counter-title "Rebinning Counters" \
-  --counter-keys success_parent_requests
+  --counter-keys total_rebin_count,rebin_recent_sample_count,rebin_replay_member_count
 ```
+
+## Completed Run
+
+- `RUN_TS=20260623_083945_UTC`.
+- `RUN_ROOT=exp/useful_bd_push/t57_t51_adaptive_rebin_20260623_083945_UTC/hard_tuning`.
+- Preflight passed:
+  `openai/gpt-oss-120b max_model_len=131072`.
+- T57 completed all 13 hard/tuning problems in `1811.33` seconds.
+- Summary log:
+  `exp/useful_bd_push/t57_t51_adaptive_rebin_20260623_083945_UTC/hard_tuning/t51_adaptive_rebin_qd/seed_1001/openai_gpt-oss-120b/20260623_083946_revolution_summary_results.txt`.
+- Single-thought validation passed with `--require-full-subset`.
+- Pareto/front validation passed with `--require-full-subset`.
+- Adaptive-rebinning validation wrote diagnostics and returned invalid because
+  localized trigger evidence was inconclusive: `26` checks, `0` rebin events,
+  and no selected localized healthy/occupied-cell improvement.
+- Packaged result:
+  `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T57_t51_adaptive_rebin_qd/hard_tuning_package/`.
+- Direct PPA supplement:
+  `visualizations/direct_ppa_pareto/index.html`.
+- Full Phase 03.1 viewer:
+  `visualizations/qd_ppa_viewer/index.html`.
+- Strict viewer validation passed. Playwright generated screenshots but
+  reported the caveats recorded in
+  `visualizations/qd_ppa_viewer/playwright_caveat.md`.

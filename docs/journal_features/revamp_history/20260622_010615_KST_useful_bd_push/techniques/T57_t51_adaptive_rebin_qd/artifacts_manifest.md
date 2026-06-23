@@ -1,17 +1,17 @@
 # T57 Artifacts Manifest
 
-Status: pre-registered; no live result yet.
+Status: completed hard/tuning result, `T0 diagnostic_no_rebin_signal`.
 
 ## Raw Run
 
-- Planned root:
-  `exp/useful_bd_push/t57_t51_adaptive_rebin_<timestamp>/hard_tuning/t51_adaptive_rebin_qd/seed_1001`
-- Planned preflight:
-  `exp/useful_bd_push/t57_t51_adaptive_rebin_<timestamp>/hard_tuning/preflight/`
+- Raw root:
+  `exp/useful_bd_push/t57_t51_adaptive_rebin_20260623_083945_UTC/hard_tuning/t51_adaptive_rebin_qd/seed_1001`
+- Preflight:
+  `exp/useful_bd_push/t57_t51_adaptive_rebin_20260623_083945_UTC/hard_tuning/preflight/`
+- Viewer source:
+  `exp/useful_bd_push/t57_t51_adaptive_rebin_20260623_083945_UTC/qd_ppa_viewer_source/final_analysis/`
 
 ## Packaged Result
-
-Required after the live arm exits:
 
 - `hard_tuning_package/README.md`
 - `hard_tuning_package/tables/t57_problem_seed_metrics.csv`
@@ -24,15 +24,15 @@ Required after the live arm exits:
 - `hard_tuning_package/data/t57_ppa_candidates.csv`
 - `hard_tuning_package/figures/`
 - `results_report.md`
+- Adaptive validation diagnostics:
+  `exp/useful_bd_push/t57_t51_adaptive_rebin_20260623_083945_UTC/hard_tuning/adaptive_rebin_validation_modes/adaptive_rebinning_validation.md`
 
 ## Visualizations
-
-Required after packaging:
 
 - `visualizations/direct_ppa_pareto/` with `index.html`, `metrics.json`, and
   `screenshot.png`.
 - `visualizations/qd_ppa_viewer/` with full Phase 03.1 export, validation
-  files, screenshot, and any honest projection caveat.
+  files, screenshot, and Playwright caveat.
 
 ## Regeneration Scripts
 

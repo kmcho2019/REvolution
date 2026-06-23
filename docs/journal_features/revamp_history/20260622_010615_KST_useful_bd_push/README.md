@@ -62,8 +62,8 @@ Start here when resuming the active goal.
   `techniques/T56_coarse_sr2_t51_control_qd/` (seed-1001 hard/tuning geometry
   isolation ablation with direct PPA supplement and Phase 03.1 viewer).
 - Active planned live technique:
-  `techniques/T57_t51_adaptive_rebin_qd/` (pre-registered T51-preserving
-  adaptive-rebin ablation; changes only KS-triggered grid-quantile rebinning).
+  none; T57 completed as a no-promotion diagnostic, so the next method should
+  leave T51 archive-boundary tweaks.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -181,7 +181,7 @@ Start here when resuming the active goal.
 | `T54` | `T54_front_slot_lane_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; fixed front-slot lane is active but loses classic on HV, HV-AUC, valid-PPA count, unique PPA breadth, and front points. |
 | `T55` | `T55_coarse_sr2_front_slot_qd` | Completed hard/tuning result, `T0 positive_mechanism_ablation_not_promoted`; improves T54 slot hits but still loses classic and T51 on primary promotion metrics. |
 | `T56` | `T56_coarse_sr2_t51_control_qd` | Completed hard/tuning result, `T0 diagnostic_retire_coarse_sr2_geometry`; preserves coverage but loses classic/T51 on HV, HV-AUC, yield, and front evidence. |
-| `T57` | `T57_t51_adaptive_rebin_qd` | Pre-registered hard/tuning method; keeps T51 fixed and enables KS-triggered grid-quantile archive rebinning. |
+| `T57` | `T57_t51_adaptive_rebin_qd` | Completed hard/tuning result, `T0 diagnostic_no_rebin_signal`; emits 26 rebin checks but 0 rebin events, loses classic/T51 on HV/HV-AUC, and has one classic-covered valid-PPA loss. |
 
 ## Validity-Gate Note
 
