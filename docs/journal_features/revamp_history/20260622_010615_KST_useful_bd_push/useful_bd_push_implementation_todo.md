@@ -447,6 +447,18 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       classic, T51, T54, and T58.
 - [x] T59 gets a promotion, ablation, or retirement rationale before any exact
       seed `1002` spend.
+- [x] T73 source-aligned shape-density QD is pre-registered as the
+      less-collapsed successor to T72.
+- [x] T73 descriptor probe resolves `source_aligned_shape_density_3d` with
+      `requires_ppa=false` and `requires_source_aligned_rtl=true`.
+- [x] T73 collapse audit replays T72 archive events and records why
+      `grid_quantile` is required instead of fixed density bounds.
+- [ ] T73 seed `1001` is run on the T72 hard/tuning surface after storage and
+      vLLM preflight.
+- [ ] T73 is validated, packaged, visualized, and compared against T47
+      classic, T51, T66, T67, and T72.
+- [ ] T73 gets a promotion, ablation, or retirement rationale before another
+      source-aligned live spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

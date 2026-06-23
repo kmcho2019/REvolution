@@ -86,6 +86,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T70` | `T70_generated_rtl_extractor_smoke` | RTL-native source alignment | `T0 extractor_smoke_unblocker`; source-aligned MasterRTL/RTL-Timer extraction passes on 19 generated T67 RTL candidates |
 | `T71` | `T71_source_aligned_rtl_native_feature_map` | RTL-native source alignment | `T0 descriptor_design_unblocker`; source-aligned extractor outputs cover 9/16 proposed RTL-native cells without PPA leakage |
 | `T72` | `T72_source_aligned_rtl_cell_qd` | RTL-native archive coupling | `T1 near_classic_not_promoted`; preserves `13/13` covered designs and trails classic mean HV by about `0.65%`, but loses HV wins and front breadth |
+| `T73` | `T73_source_aligned_shape_density_qd` | RTL-native archive coupling | Pre-registered; source-aligned shape-density quantile cells are a less-collapsed T72 successor |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

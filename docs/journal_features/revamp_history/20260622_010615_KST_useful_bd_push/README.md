@@ -27,6 +27,11 @@ Start here when resuming the active goal.
   `techniques/T72_source_aligned_rtl_cell_qd/`
   (`T1 near_classic_not_promoted`; fixed live screen passed, matched classic
   comparison is reference-complete, and classic still wins front breadth).
+- Most recent pre-registered package:
+  `techniques/T73_source_aligned_shape_density_qd/`
+  (source-aligned MasterRTL/RTL-Timer shape-density `grid_quantile` successor
+  to T72; pre-run audit shows less descriptor collapse, but no live result
+  yet).
 - Most recent live QD package:
   `techniques/T72_source_aligned_rtl_cell_qd/`
   (`T1 near_classic_not_promoted`; exact source-aligned RTL cells run end to
@@ -35,9 +40,9 @@ Start here when resuming the active goal.
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  do not promote exact T72; design a less-collapsed source-aligned RTL-native
-  cell map or secondary lane that can recover front breadth without losing
-  T72's coverage.
+  run the bounded T73 screen only after storage and vLLM preflight; compare
+  it against classic, T51, T66, T67, and T72 on reference-complete PPA/front
+  metrics before any promotion claim.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -76,7 +81,8 @@ Start here when resuming the active goal.
   secondary-cell audit over T51/T63/T64. Use them as mechanism evidence only:
   none beats classic headline PPA-front metrics. T68/T69/T70/T71 are the
   source-verification and descriptor-design bridge; T72 is the first live
-  source-aligned comparison, but exact T72 remains not promoted.
+  source-aligned comparison, but exact T72 remains not promoted. T73 is the
+  next pre-registered source-aligned quantile-cell successor.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -211,6 +217,7 @@ Start here when resuming the active goal.
 | `T70` | `T70_generated_rtl_extractor_smoke` | Completed `T0 extractor_smoke_unblocker`; 19 generated T67 RTL candidates pass both source-aligned extraction paths. |
 | `T71` | `T71_source_aligned_rtl_native_feature_map` | Completed `T0 descriptor_design_unblocker`; 19 candidates occupy 9/16 source-aligned RTL-native cells without PPA leakage. |
 | `T72` | `T72_source_aligned_rtl_cell_qd` | Completed `T1 near_classic_not_promoted`; fixed live run preserves coverage and trails classic mean HV by about `0.65%`, but classic wins HV wins, Pareto points, and reference-beating candidates. |
+| `T73` | `T73_source_aligned_shape_density_qd` | Pre-registered source-aligned shape-density `grid_quantile` successor to T72; collapse audit is positive, but no live PPA result exists yet. |
 
 ## Validity-Gate Note
 

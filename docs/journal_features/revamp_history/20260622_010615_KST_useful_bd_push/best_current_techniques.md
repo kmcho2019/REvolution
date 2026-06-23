@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T72 is executable and near-classic on mean HV, but classic still wins front breadth. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T73 is only pre-registered; T72 is executable and near-classic on mean HV, but classic still wins front breadth. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -30,6 +30,13 @@ preserves all `13/13` classic-covered designs. The reference-complete matched
 comparison is near-classic on mean HV (`0.0920` versus classic `0.0926`) but
 not promoted because classic wins HV wins, Pareto points, and
 reference-beating candidates.
+
+T73 is the immediate source-aligned follow-up. It replaces T72's collapsed
+`log_edges/state_class` grid with problem-local quantile cells over MasterRTL
+branching, RTL-Timer wire density, and RTL-Timer DFF density. The pre-run audit
+shows mean occupied cells rising from `1.0769` for T72's live fixed grid to
+`5.6923` for the T73 local-quantile projection on the same T72 candidates.
+This justifies a bounded live screen, not a promotion claim.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
@@ -63,7 +70,7 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72 | Continue after T72 near-classic screen | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is executable but too cell-collapsed to beat classic front breadth. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73 | Continue with T73 bounded screen | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is executable but too cell-collapsed to beat classic front breadth, and T73 is the registered quantile-cell fix. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |

@@ -4085,3 +4085,33 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: exact T72 is `T1 near_classic_not_promoted`. The source-aligned
   RTL-native lane is executable and reviewer-readable, but the current cell
   map is too collapsed to beat classic front breadth.
+
+## 2026-06-23T22:25:00Z - T73 Shape-Density Registration
+
+- Checked `/workspace` storage before the next package work: `27T` total,
+  `23T` used, `3.5T` free, `87%` used.
+- Added source-aligned descriptor axes:
+  `source_aligned_masterrtl_branching`,
+  `source_aligned_rtltimer_wire_density`, and
+  `source_aligned_rtltimer_dff_density`.
+- The extractor derives these axes from MasterRTL graph keys/edges and
+  RTL-Timer line/wire/DFF counts, with assertions for positive denominators.
+- Registered profile `source_aligned_shape_density_3d` and confirmed via
+  `scripts/qd_descriptor_probe.py` that it requires source-aligned RTL but
+  does not require PPA, synthesis, simulation, formal checks, or graph-proxy
+  metrics.
+- Created `techniques/T73_source_aligned_shape_density_qd/` as the next
+  source-aligned RTL-native package. It keeps T72's search surface fixed and
+  changes only the archive geometry to `grid_quantile` over the new axes.
+- Replayed all `233` T72 archive events with
+  `tools/audit_t73_axes_from_t72.py`. The audit shows T72 live fixed cells
+  average `1.0769` occupied cells per problem, while a T73 problem-local
+  quantile projection averages `5.6923` occupied cells and has minimum `2`.
+- Recorded the fixed-bound warning explicitly: fallback `0..1` density bounds
+  still collapse, so T73's live method must use `grid_quantile`.
+- Generated and inspected
+  `figures/t73_descriptor_occupancy_audit.png`; it clearly separates T72 live
+  fixed-grid occupancy from T73 observed-range and local-quantile projections.
+- Decision: T73 is pre-registered for one bounded live screen. It is not PPA
+  evidence and must not be promoted without a reference-complete matched
+  classic comparison.

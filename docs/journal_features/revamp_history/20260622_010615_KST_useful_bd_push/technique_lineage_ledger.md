@@ -25,7 +25,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T58 completed the final bounded frozen T11 PCA4 primary-archive check and failed promotion on HV/front breadth. |
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T59 failed promotion; the next method must change front-slot creation or use a secondary archive lane. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Short fail-pool feedback was insufficient; escalate only with measured source-level repair or role-separated emitters. |
-| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T72 source-aligned descriptor gate passes; run the bounded live screen before any PPA claim. |
+| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T73 is the pre-registered less-collapsed source-aligned quantile-cell successor to T72. |
 
 ## Lineage Graph
 
@@ -120,6 +120,7 @@ flowchart LR
     T70[T70 generated RTL smoke]
     T71[T71 feature map]
     T72[T72 source-aligned cell QD]
+    T73[T73 shape-density quantile QD]
   end
 
   prior --> T01
@@ -197,6 +198,7 @@ flowchart LR
   T69 --> T70
   T70 --> T71
   T71 --> T72
+  T72 --> T73
   T39 --> enc
   T17 --> T12
   T17 --> T18
@@ -251,7 +253,8 @@ flowchart LR
 | T69 | `L7` | Open-source Yosys adaptation for MasterRTL and RTL-Timer TinyRocket SOG/BOG preprocessing. | Completed `T0 preprocessing_unblocker`: open-clean MasterRTL graph counts stay within about 1.1% of shipped TinyRocket, and RTL-Timer SOG BOG preserves the shipped DFF-reference count. | `advance` candidate extractor smoke | Run this source-aligned path on a small generated-RTL sample and report extractor success/failure before any live QD spend. |
 | T70 | `L7` | Source-aligned MasterRTL and RTL-Timer extraction on generated T67 RTL candidates. | Completed `T0 extractor_smoke_unblocker`: `19/19` candidates pass both extractors, with nonempty MasterRTL graph edges and RTL-Timer DFF-reference outputs. | `advance` descriptor feature table | Define archive cells from source-aligned operator/control/timing-risk features before any larger live RTL-native spend. |
 | T71 | `L7` | Source-aligned RTL-native feature map over the T70 generated-candidate extractor outputs. | Completed `T0 descriptor_design_unblocker`: `19` candidates occupy `9/16` PPA-free cells using MasterRTL graph-edge operator scale and RTL-Timer DFF state/timing class. | `advance` live cell-coupled method | Pre-register a live method that uses T71 cells for parent selection, local-front retention, secondary archive pressure, or source-level repair. |
-| T72 | `L7` | Source-aligned RTL-cell QD method card using T71 cells inside T66-style front-slot parent pressure. | Pre-registered; no live result. The runtime descriptor gate passes the full 19-candidate T70 regression without PPA leakage. | `advance` live screen | Preflight vLLM and run the bounded hard/tuning screen before any PPA claim. |
+| T72 | `L7` | Source-aligned RTL-cell QD using T71 cells inside T66-style front-slot parent pressure. | Completed `T1 near_classic_not_promoted`: fixed live screen preserves `13/13` covered designs and trails classic mean HV by about `0.65%`, but classic wins front breadth. | `ablate` descriptor geometry | Do not promote exact T72; use it as source-aligned execution evidence and compare T73 against it. |
+| T73 | `L7` | Source-aligned shape-density `grid_quantile` cells using MasterRTL branching, RTL-Timer wire density, and RTL-Timer DFF density. | Pre-registered; descriptor probe is PPA-free and the T72 replay audit shows less collapse, but no live result exists. | `advance` bounded live screen | Run after storage/vLLM preflight, then package reference-complete classic/T51/T66/T67/T72 comparison. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
 | T25 | `L2/L5` | Guarded SR raw: lower fill target, lower improve backfill, lower two-parent fusion. | Completed `T0 diagnostic`; preserves covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. | `ablate` | Use as negative evidence for T26 emitter/parent-source design. |
