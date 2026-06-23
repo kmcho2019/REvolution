@@ -177,7 +177,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Implement and probe the exact
       `source_aligned_masterrtl_rtltimer_cell_2d` runtime descriptor hook
       before launching T72.
-- [ ] Launch the bounded T72 hard/tuning live screen only after vLLM preflight,
+- [x] Launch the bounded T72 hard/tuning live screen only after vLLM preflight,
       then package PPA completeness, direct PPA fronts, Phase 03.1 viewer, and
       tier decision.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and

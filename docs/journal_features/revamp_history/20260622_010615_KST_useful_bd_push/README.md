@@ -24,25 +24,20 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T71_source_aligned_rtl_native_feature_map/`
-  (`T0 descriptor_design_unblocker`; source-aligned extractor outputs occupy
-  9 of 16 proposed RTL-native archive cells without PPA leakage).
-- Most recent pre-registered package:
   `techniques/T72_source_aligned_rtl_cell_qd/`
-  (live source-aligned RTL-cell QD method; runtime descriptor gate passed, but
-  no live PPA result has been run).
+  (`T1 near_classic_not_promoted`; fixed live screen passed, matched classic
+  comparison is reference-complete, and classic still wins front breadth).
 - Most recent live QD package:
-  `techniques/T67_rtl_native_seeded_thought_qd/`
-  (`T0 diagnostic_yield_positive_front_negative_blocked`; improves aggregate
-  valid-PPA count, but loses PPA-front breadth, unique PPA points, and
-  `Prob153_gshare` coverage on the 13-problem reference-complete hard/tuning
-  screen).
+  `techniques/T72_source_aligned_rtl_cell_qd/`
+  (`T1 near_classic_not_promoted`; exact source-aligned RTL cells run end to
+  end and preserve coverage, but classic wins front breadth).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  preflight vLLM, launch a bounded T72 hard/tuning live screen, then package
-  PPA completeness, direct PPA-front plots, and the Phase 03.1 viewer.
+  do not promote exact T72; design a less-collapsed source-aligned RTL-native
+  cell map or secondary lane that can recover front breadth without losing
+  T72's coverage.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -51,26 +46,25 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T67_rtl_native_seeded_thought_qd/visualizations/direct_ppa_pareto/t67_raw_area_power_fronts_seed1001.png`
-  (13-problem seed-1001 raw area-power fronts for the T67 hard/tuning
-  package).
+  `techniques/T72_source_aligned_rtl_cell_qd/matched_classic_comparison/figures/t72_hv_delta_by_problem.png`
+  (13-problem matched classic-vs-T72 HV-delta summary).
 - Most recent direct PPA HTML viewer:
-  `techniques/T67_rtl_native_seeded_thought_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T72_source_aligned_rtl_cell_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
-  Playwright screenshot; not the full Phase 03.1 viewer).
+  screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T67_rtl_native_seeded_thought_qd/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T72_source_aligned_rtl_cell_qd/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
-  raw/improvement/normalized PPA modes, raw A-P front mode, screenshot, and
-  Playwright screenshot matrix).
+  raw/improvement/normalized PPA modes, raw A-P front mode, and screenshot;
+  single-method Playwright caveat is documented in that package).
 - Current Phase 03.1 visualization contract:
   `phase_03_1_visualization_contract.md` (every completed live QD technique
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T67_rtl_native_seeded_thought_qd/` (seed-1001 hard/tuning
-  RTL-native seeded thought-code diagnostic with direct PPA supplement and
-  Phase 03.1 viewer).
+  `techniques/T72_source_aligned_rtl_cell_qd/` (seed-1001 hard/tuning
+  source-aligned RTL-cell QD screen with direct PPA supplement, Phase 03.1
+  viewer, and matched classic comparison package).
 - Active RTL-native descriptor packages:
   `techniques/T15_masterrtl_sog_bd/` (`T0 structural_proxy_not_promoted`
   Yosys-SOG proxy with zero lowering failures) and
@@ -78,12 +72,11 @@ Start here when resuming the active goal.
   positive_proxy_not_promoted` problem-local timing-risk proxy) and
   `techniques/T62_fused_rtl_native_bd/` (`T0
   positive_proxy_not_promoted` fused structural/timing proxy). T63, T64, T66,
-  and T67 are reference-complete live archive tests, and T65 is a
+  T67, and T72 are reference-complete live archive tests, and T65 is a
   secondary-cell audit over T51/T63/T64. Use them as mechanism evidence only:
   none beats classic headline PPA-front metrics. T68/T69/T70/T71 are the
-  source-verification and descriptor-design caveat: do not claim true
-  MasterRTL/RTL-Timer extraction as a promoted QD method until source-aligned
-  descriptors are used in a live reference-complete comparison.
+  source-verification and descriptor-design bridge; T72 is the first live
+  source-aligned comparison, but exact T72 remains not promoted.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -217,7 +210,7 @@ Start here when resuming the active goal.
 | `T69` | `T69_open_yosys_rtl_native_preprocessing` | Completed `T0 preprocessing_unblocker`; TinyRocket open-Yosys SOG/BOG preprocessing is source-aligned enough for a generated-candidate extractor smoke, but not a live QD result. |
 | `T70` | `T70_generated_rtl_extractor_smoke` | Completed `T0 extractor_smoke_unblocker`; 19 generated T67 RTL candidates pass both source-aligned extraction paths. |
 | `T71` | `T71_source_aligned_rtl_native_feature_map` | Completed `T0 descriptor_design_unblocker`; 19 candidates occupy 9/16 source-aligned RTL-native cells without PPA leakage. |
-| `T72` | `T72_source_aligned_rtl_cell_qd` | Pre-registered source-aligned live QD method; descriptor gate passes, live PPA screen pending. |
+| `T72` | `T72_source_aligned_rtl_cell_qd` | Completed `T1 near_classic_not_promoted`; fixed live run preserves coverage and trails classic mean HV by about `0.65%`, but classic wins HV wins, Pareto points, and reference-beating candidates. |
 
 ## Validity-Gate Note
 

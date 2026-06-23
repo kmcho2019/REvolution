@@ -98,10 +98,10 @@ Real result packages:
   feature-map and archive-cell design package.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is pre-registered but not
-executed; its exact T71-compatible runtime descriptor hook now passes the
-profile probe and full 19-candidate T70 regression, but it still needs a live
-PPA screen before it can become a result package.
+`T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
+near-classic result package: it passes the source-aligned runtime descriptor
+gate, completes the bounded live screen, preserves all `13/13`
+classic-covered designs, and trails classic mean HV by about `0.65%`.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but
@@ -127,12 +127,12 @@ entropy `3.010571` bits. It remains a `T0` descriptor-design unblocker, not a
 PPA result: the next RTL-native live method still needs reference-complete
 classic-vs-QD comparison, direct PPA-front plots, and Phase 03.1 viewer
 artifacts when archive data exists.
-T72 is the pre-registered live follow-up. It keeps T66's hard/tuning
-front-slot parent-pressure surface, replaces the proxy RTL-native profile with
-the exact T71 source-aligned MasterRTL/RTL-Timer cell contract, and removes
-two-parent fusion to keep the variable count low. The runtime descriptor gate
-now passes without PPA leakage; the remaining work is vLLM preflight, bounded
-live execution, PPA completeness, and visualization packaging.
+T72 is the measured live follow-up. It keeps T66's hard/tuning front-slot
+parent-pressure surface, replaces the proxy RTL-native profile with the exact
+T71 source-aligned MasterRTL/RTL-Timer cell contract, and removes two-parent
+fusion to keep the variable count low. The runtime descriptor gate passes
+without PPA leakage, but exact T72 is not promoted because classic wins HV
+wins, Pareto points, and reference-beating candidates.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis

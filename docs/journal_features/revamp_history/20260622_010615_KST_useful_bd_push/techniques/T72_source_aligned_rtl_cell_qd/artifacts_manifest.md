@@ -1,7 +1,8 @@
 # T72 Artifacts Manifest
 
-Status: runtime descriptor gate, bounded live screen, and diagnostic
-visualization packaging passed. No classic-vs-QD headline result is claimed.
+Status: runtime descriptor gate, bounded live screen, diagnostic visualization
+packaging, and matched classic comparison packaging passed. Exact T72 is
+`T1 near_classic_not_promoted`.
 
 ## Committed Artifacts
 
@@ -23,6 +24,7 @@ visualization packaging passed. No classic-vs-QD headline result is claimed.
 | `visualizations/README.md` | Visualization package index and claim caveat. |
 | `visualizations/direct_ppa_pareto/` | Static PPA plots, raw CSVs, summary JSON, and compact HTML index. |
 | `visualizations/qd_ppa_viewer/` | Phase 03.1 viewer bundle for single-method T72 archive/PPA inspection. |
+| `matched_classic_comparison/` | Reference-complete matched classic-vs-T72 comparison package. |
 | `results_report.md` | Fixed live-screen result, validation status, and caveats. |
 | `tools/run_t72_runtime_regression.py` | Regenerates the full T70 source-aligned runtime regression CSV. |
 
@@ -39,15 +41,17 @@ problems, and passed both run validators. The first live attempt at
 `20260623_202136_UTC` is diagnostic only because it exposed the MasterRTL
 shared-scratch concurrency bug fixed before the successful rerun.
 
-## Remaining Required Artifacts
+## Matched Comparison
 
-The execution and diagnostic visualization gates are passed. The comparison
-package is still missing:
+The comparison package is compact and committed locally. The full generated
+final-analysis scratch output remains under:
 
-| Path | Requirement |
-| --- | --- |
-| `tables/t72_ppa_completeness.csv` | Reference-complete comparison eligibility table. |
-| matched classic/QD metrics | Needed before any headline comparison claim. |
+```text
+exp/useful_bd_push/t72_matched_classic_comparison_20260623_213900_UTC/final_analysis
+```
+
+Do not promote exact T72: the matched result preserves design coverage and is
+near-classic on mean HV, but classic wins the primary front-breadth metrics.
 
 ## Storage Policy
 

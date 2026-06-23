@@ -1,6 +1,7 @@
 # T72 Source-Aligned RTL Cell QD
 
-Status: bounded live screen passed and diagnostic visualizations packaged.
+Status: bounded live screen passed; matched classic comparison packaged as
+`T1 near_classic_not_promoted`.
 
 T72 is the first proposed live method that uses the exact T71 source-aligned
 MasterRTL/RTL-Timer cell idea instead of the earlier proxy
@@ -55,9 +56,29 @@ run produced 13 archive summaries, 13 global Pareto summaries, and 13
 descriptor-health files. It also passed the single-thought and Pareto-front
 run validators using the frozen T72 subset.
 
-This is not yet a headline classic-vs-QD comparison. It proves the
-source-aligned descriptor can run end to end under the bounded hard/tuning
-surface after the MasterRTL scratch-directory fix.
+This proves the source-aligned descriptor can run end to end under the bounded
+hard/tuning surface after the MasterRTL scratch-directory fix.
+
+## Matched Classic Comparison
+
+The matched comparison package lives at:
+
+```text
+matched_classic_comparison/
+```
+
+It compares the fixed T72 run against the existing matched classic hard/tuning
+run on the same `13` reference-complete problems. T72 preserves all
+classic-covered designs and has no catastrophic valid-PPA collapse, but classic
+remains the multi-objective winner:
+
+- mean HV: classic `0.0926007600`, T72 `0.0920035731`;
+- HV wins: classic `9`, T72 `4`;
+- mean Pareto points: classic `2.31`, T72 `1.31`;
+- valid PPA samples: classic `257`, T72 `233`.
+
+Decision: exact T72 is useful RTL-native execution evidence, but it is not a
+promoted QD result.
 
 ## Navigation
 
@@ -68,6 +89,8 @@ surface after the MasterRTL scratch-directory fix.
 - `results_report.md`: fixed live-screen result and caveats.
 - `visualizations/direct_ppa_pareto/`: static PPA plots and raw data.
 - `visualizations/qd_ppa_viewer/`: Phase 03.1 archive/PPA viewer bundle.
+- `matched_classic_comparison/`: reference-complete matched classic-vs-T72
+  comparison package.
 - `tables/source_aligned_descriptor_contract.json`: machine-readable method
   contract.
 - `tables/t72_live_screen_status.csv`: compact per-problem fixed-run status.
@@ -76,6 +99,6 @@ surface after the MasterRTL scratch-directory fix.
 
 ## Current Decision
 
-Use the packaged plots and viewer for diagnostic inspection only. The live
-screen is useful evidence that the RTL-native lane is executable; it is not a
-promotion result without matched classic/QD metrics.
+Use the single-method viewer for T72 archive inspection only. Use
+`matched_classic_comparison/` for the classic-vs-T72 result: near-classic on
+mean HV, negative on front breadth, not promoted.

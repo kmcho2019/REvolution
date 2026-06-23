@@ -3,7 +3,8 @@
 ## Status
 
 T72 passed a bounded hard/tuning live screen after fixing the MasterRTL
-runtime scratch-directory race.
+runtime scratch-directory race. The follow-on matched classic comparison is
+packaged and assigns exact T72 to `T1 near_classic_not_promoted`.
 
 ## Run
 
@@ -33,6 +34,31 @@ The compact per-problem table is:
 tables/t72_live_screen_status.csv
 ```
 
+## Matched Classic Comparison
+
+The comparison package is:
+
+```text
+matched_classic_comparison/
+```
+
+It compares T72 against the matched classic hard/tuning run on the same `13`
+reference-complete problems. All `13` problems are headline-eligible: both
+methods have valid PPA candidates and every problem has valid reference PPA.
+
+Classic remains the multi-objective winner:
+
+| Metric | Classic | T72 |
+| --- | ---: | ---: |
+| Mean HV | 0.0926007600 | 0.0920035731 |
+| HV wins | 9 | 4 |
+| Mean Pareto points | 2.31 | 1.31 |
+| Mean reference-beating candidates | 3.54 | 2.85 |
+| Valid PPA samples | 257 | 233 |
+
+T72 wins local HV on four problems and preserves design coverage, but it does
+not create enough front breadth to beat classic.
+
 ## Caveats
 
 The first live attempt at
@@ -45,9 +71,9 @@ The fixed run still had one recovered vLLM timeout during
 `Prob153_gshare`. The retry completed and the problem ended with `success`, so
 this is a runtime note rather than a failed problem.
 
-The result is not a classic-vs-QD headline comparison. It shows that the
-source-aligned RTL-native descriptor lane can run end to end on the bounded
-screen. A comparison claim still requires matched classic/QD metric packaging.
+The matched result is a fair comparison package, but it is still a one-seed
+screen. It supports a negative/near-classic method decision, not a broad final
+claim about all source-aligned RTL-native descriptors.
 
 ## Visualization Package
 
@@ -73,8 +99,6 @@ Validation status:
 
 The run supports continuing the MasterRTL/RTL-Timer lane because it removes
 the prior executability concern and gets valid PPA-producing candidates on all
-screen problems. The descriptor health files also show sparse archive
-coverage: most problems occupy one of sixteen cells, with one problem reaching
-two cells. That means T72 is an executable baseline for RTL-native descriptors,
-but the next variant should focus on improving cell spread or using a less
-collapsed second axis.
+screen problems. The matched comparison shows exact T72 is not enough:
+archive coverage is sparse, and front breadth trails classic. The next variant
+should focus on improving cell spread or using a less-collapsed second axis.

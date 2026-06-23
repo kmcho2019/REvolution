@@ -4057,3 +4057,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: T72 now has the required diagnostic visualization package, but it
   remains single-method evidence. Matched classic-vs-QD metrics are still
   required before any promotion or headline claim.
+
+## 2026-06-23T22:01:00Z - T72 Matched Classic Comparison
+
+- Checked `/workspace` storage before packaging: `27T` total, `23T` used,
+  `3.5T` free, `87%` used. The committed matched-comparison package is
+  compact (`768K`) and keeps the full generated final-analysis bundle under
+  `exp/`.
+- Reused the existing matched classic hard/tuning run from
+  `exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001`.
+- Compared it against the fixed T72 run at
+  `exp/useful_bd_push/t72_source_aligned_rtl_cell_20260623_204847_UTC/hard_tuning/source_aligned_rtl_cell_qd/seed_1001`.
+- Generated the matched final-analysis scratch bundle under
+  `exp/useful_bd_push/t72_matched_classic_comparison_20260623_213900_UTC/final_analysis`.
+- Built and committed a compact local package under
+  `techniques/T72_source_aligned_rtl_cell_qd/matched_classic_comparison/`
+  with aggregate tables, per-problem metrics, completeness data, raw
+  candidate/reference CSVs, inspected summary figures, visual notes, and a
+  regeneration script.
+- Completeness gate: all `13/13` problems have classic valid PPA, T72 valid
+  PPA, and valid reference PPA. No problem is diagnostic-only.
+- Result: classic remains the multi-objective winner. Mean HV is close
+  (`0.0926007600` classic versus `0.0920035731` T72), but classic wins HV
+  wins (`9` versus `4`), mean Pareto points (`2.31` versus `1.31`), mean
+  reference-beating candidates (`3.54` versus `2.85`), and valid-PPA samples
+  (`257` versus `233`).
+- Decision: exact T72 is `T1 near_classic_not_promoted`. The source-aligned
+  RTL-native lane is executable and reviewer-readable, but the current cell
+  map is too collapsed to beat classic front breadth.

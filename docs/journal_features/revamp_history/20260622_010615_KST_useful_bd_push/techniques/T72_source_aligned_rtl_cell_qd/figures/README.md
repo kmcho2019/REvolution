@@ -9,8 +9,14 @@ T72 diagnostic figures now live under `visualizations/`.
 - `visualizations/qd_ppa_viewer/screenshot.png`: representative Phase 03.1
   viewer screenshot.
 
-Still missing for a promotion claim:
+Matched classic comparison figures now live under
+`matched_classic_comparison/figures/`.
 
-- matched classic-vs-QD valid-PPA funnel;
-- paired front/HV/HV-AUC figures;
-- reference-complete comparison table.
+- `matched_classic_comparison/figures/t72_hv_delta_by_problem.png`: primary
+  HV-delta comparison.
+- `matched_classic_comparison/figures/t72_valid_ppa_counts.png`: valid-PPA
+  sample count comparison.
+- `matched_classic_comparison/figures/pareto_examples/`: supporting raw
+  PPA/Pareto examples.
+
+The matched figures support a near-classic but not-promoted decision.
