@@ -257,7 +257,7 @@ Candidate branch names:
 | `L4` Qwen ladder | `feat/journal-useful-bd-exp-20260622-qwen-ladder` | A projection/head hybrid improves PPA-front or HV metrics without restoring problem/corpus collapse. |
 | `L4` external encoders | `feat/journal-useful-bd-exp-20260622-encoder-env` | DeepGate/AURORA-style encoder produces reproducible features and passes the classic-covered-design gate. |
 | `L6` emitter schedule | `feat/journal-useful-bd-exp-20260622-emitter-guard` | Role-separated emitter schedule improves P098 yield or front material versus T30/T31/T32 without losing T26 best-quality recovery. |
-| `L7` RTL-native descriptors | `feat/journal-useful-bd-exp-20260622-rtl-native-bd` | Fused SOG/timing-risk features improve live front/archive evidence on a reference-complete paired subset. |
+| `L7` RTL-native descriptors | `feat/journal-useful-bd-exp-20260622-rtl-native-bd` | T64 `operator_timing` ablation improves live front/archive evidence on a reference-complete paired subset. |
 
 ## Update Rule
 

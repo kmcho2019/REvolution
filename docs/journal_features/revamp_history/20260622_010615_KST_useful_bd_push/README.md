@@ -32,10 +32,9 @@ Start here when resuming the active goal.
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  do not spend seed `1002` on exact T63. The next RTL-native step should
-  ablate `fused_rtl_operator_timing_2d` or keep RTL-native features as a
-  secondary/reporting archive while preserving T51/T26-family quality
-  pressure.
+  run `techniques/T64_fused_operator_timing_live_screen/`, the
+  `fused_rtl_operator_timing_2d` ablation of T63. Do not spend seed `1002` on
+  exact T63 unless T64 changes the RTL-native lane assessment.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -64,6 +63,10 @@ Start here when resuming the active goal.
   `techniques/T63_fused_rtl_native_live_screen/` (seed-1001 hard/tuning fused
   RTL-native descriptor diagnostic with direct PPA supplement and Phase 03.1
   viewer).
+- Active pre-registered live ablation:
+  `techniques/T64_fused_operator_timing_live_screen/` (same T63 generator and
+  hard/tuning surface, but with `operator_mix_score` and `timing_risk_score`
+  archive axes).
 - Active RTL-native descriptor packages:
   `techniques/T15_masterrtl_sog_bd/` (`T0 structural_proxy_not_promoted`
   Yosys-SOG proxy with zero lowering failures) and
@@ -71,8 +74,9 @@ Start here when resuming the active goal.
   positive_proxy_not_promoted` problem-local timing-risk proxy) and
   `techniques/T62_fused_rtl_native_bd/` (`T0
   positive_proxy_not_promoted` fused structural/timing proxy). T63 is the
-  reference-complete live archive test; use it as mechanism evidence only, not
-  a classic-beating headline claim.
+  first reference-complete live archive test; T64 is the pending
+  operator/timing ablation. Use both as mechanism evidence unless a completed
+  package beats the classic headline metrics without reference leakage.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -198,6 +202,7 @@ Start here when resuming the active goal.
 | `T61` | `T61_rtl_timer_problem_local_bd` | Completed `T0 positive_proxy_not_promoted` problem-local timing-risk audit; small front-cell signal, but no live QD claim. |
 | `T62` | `T62_fused_rtl_native_bd` | Completed `T0 positive_proxy_not_promoted` fused RTL-native audit; front-cell proxy improves, but occupied-cell breadth is still negative. |
 | `T63` | `T63_fused_rtl_native_live_screen` | Completed `T0 positive_mechanism_ablation_not_promoted` live screen; improves T51 front-material measures but loses classic on HV, HV-AUC, and front points. |
+| `T64` | `T64_fused_operator_timing_live_screen` | Pre-registered live ablation of T63 using `operator_mix_score` and `timing_risk_score`; seed `1001` pending. |
 
 ## Validity-Gate Note
 

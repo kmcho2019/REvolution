@@ -3624,3 +3624,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   If the RTL-native lane continues, ablate `fused_rtl_operator_timing_2d` or
   use RTL-native descriptors as a secondary/reporting archive while preserving
   T51/T26-family quality pressure.
+
+## T64 Fused Operator/Timing Live Screen Pre-Registration - 2026-06-23 UTC
+
+- Pre-registered `T64_fused_operator_timing_live_screen` as the narrow T63
+  ablation requested by the T62/T63 evidence.
+- Kept the T63 generator, hard/tuning subset, seed, archive mechanics, token
+  budget, no-repair setting, and validators fixed.
+- Changed only the QD descriptor profile from
+  `fused_rtl_state_pipeline_2d` to `fused_rtl_operator_timing_2d`.
+- Descriptor probe confirms axes `operator_mix_score` and `timing_risk_score`;
+  the profile requires graph and RTL metrics and does not require PPA.
+- Acceptance before any result interpretation: preserve every classic-covered
+  valid-PPA design, avoid defaulted-reference headline claims, and compare
+  against classic, T51, and T63 on HV, HV-AUC, front points, unique PPA,
+  reference-beating candidates, active archive members, and yield.
