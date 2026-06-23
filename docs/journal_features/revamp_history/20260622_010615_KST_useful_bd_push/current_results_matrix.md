@@ -604,3 +604,9 @@ the best ALU and traffic-light scores.
   (`0.293480` versus `0.227928`), but loses mean HV (`0.089252` versus
   `0.092601`) and front breadth (`21` versus `30` front points). Do not use it
   as the broad RTLLM headline method without a front-preserving follow-up.
+- T52 completed the direct full-Pareto retention follow-up as
+  `T0 diagnostic_retired_full_pareto`. It improves front points versus T51
+  (`24` versus `21`), but loses HV-AUC (`0.055792` versus `0.085454`), valid
+  PPA (`254` versus `266`), and best score (`0.242261` versus `0.293480`), and
+  returns a Prob098 yield warning. Do not continue simple local-Pareto
+  widening as the next route.

@@ -583,6 +583,15 @@ a numbered `techniques/T##_slug/` package before running it.
 - The follow-up should specifically address `Prob015_multi_pipe_8bit`, where
   T51's valid-PPA recovery does not translate to front breadth.
 
+## From `T52_code_thought_full_pareto_qd`
+
+- Retire simple full local-Pareto widening. T52 improves front points versus
+  T51, but costs too much HV-AUC, best score, and Prob098 yield.
+- A possible follow-up must keep T51's one-slot archive as the default and add
+  a bounded front-pressure trigger only when archive-local front material is
+  thin. The trigger cannot use classic results, final PPA-front labels, or
+  reference PPA as an in-loop BD input.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

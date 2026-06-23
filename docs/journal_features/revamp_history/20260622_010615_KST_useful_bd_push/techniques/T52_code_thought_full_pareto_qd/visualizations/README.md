@@ -1,6 +1,6 @@
 # T52 Visualizations
 
-Status: pending live run.
+Status: completed seed `1001`.
 
 Required bundles after packaging:
 
@@ -20,5 +20,5 @@ visualizations/qd_ppa_viewer/
 ```
 
 The direct PPA bundle is the reader-facing supplement. The Phase 03.1 viewer
-is mandatory when archive artifacts export cleanly; otherwise document the
-specific failure in this directory.
+is present and passes non-strict validation. Strict validation fails because
+classic candidates do not have honest SR-PCA archive coordinates.

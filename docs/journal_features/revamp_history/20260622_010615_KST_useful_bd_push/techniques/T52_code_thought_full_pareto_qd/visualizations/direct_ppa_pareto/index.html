@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T52 Direct PPA Pareto Supplement</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5b6572;
+      --line: #d7dde5;
+      --paper: #f7f8fa;
+      --panel: #ffffff;
+      --accent: #2563eb;
+      --good: #0f766e;
+      --warn: #a34d12;
+    }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 42px;
+    }
+    h1, h2 {
+      margin: 0;
+      line-height: 1.15;
+      font-weight: 650;
+    }
+    h1 { font-size: 26px; }
+    h2 {
+      margin-top: 28px;
+      font-size: 18px;
+    }
+    p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+      gap: 10px;
+      margin: 18px 0 26px;
+    }
+    .metric {
+      border-left: 3px solid var(--accent);
+      background: var(--panel);
+      padding: 10px 12px;
+      box-shadow: 0 1px 0 var(--line);
+    }
+    .metric.good { border-left-color: var(--good); }
+    .metric.warning { border-left-color: var(--warn); }
+    .metric strong {
+      display: block;
+      font-size: 18px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    figure {
+      margin: 18px 0 0;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>T52 Direct PPA Pareto Supplement</h1>
+    <p>
+      Static reader-facing figures for the completed 13-problem hard/tuning
+      screen. T52 widens T51's one local front slot to full per-cell Pareto
+      retention, but the wider archive loses HV-AUC, yield, and front breadth.
+    </p>
+
+    <section class="summary" aria-label="Aggregate metrics">
+      <div class="metric warning"><strong>-9.8%</strong><span>Mean HV</span></div>
+      <div class="metric warning"><strong>-32.0%</strong><span>Mean HV-AUC</span></div>
+      <div class="metric good"><strong>+6.3%</strong><span>Mean best score</span></div>
+      <div class="metric warning"><strong>-3</strong><span>Valid PPA</span></div>
+      <div class="metric warning"><strong>-20.0%</strong><span>Front points</span></div>
+      <div class="metric good"><strong>0</strong><span>Classic-covered losses</span></div>
+      <div class="metric warning"><strong>2</strong><span>Yield warnings</span></div>
+    </section>
+
+    <h2>Aggregate Direction</h2>
+    <figure>
+      <img src="t52_metric_delta_summary.png" alt="Aggregate relative deltas for T52 against classic">
+      <figcaption>T52 improves mean best score, but it loses the QD metrics needed for promotion: HV, HV-AUC, valid-PPA yield, and front breadth.</figcaption>
+    </figure>
+
+    <h2>Paired HV Heatmap</h2>
+    <figure>
+      <img src="t52_hv_delta_heatmap.png" alt="Problem heatmap of T52 relative HV delta">
+      <figcaption>Blue favors T52 and red favors classic. The aggregate HV loss is driven by broad paired losses, despite a few local signals.</figcaption>
+    </figure>
+
+    <h2>Direct Area-Power Fronts</h2>
+    <figure>
+      <img src="t52_direct_ppa_fronts_seed1001.png" alt="Seed 1001 direct area-power fronts">
+      <figcaption>The widened local Pareto archive does not recover classic front breadth and still loses the important multi-pipe front.</figcaption>
+    </figure>
+
+    <h2>Validity And Front Coverage</h2>
+    <figure>
+      <img src="t52_validity_funnel.png" alt="Validity funnel comparing generated, syntax, functional, and valid PPA counts">
+      <figcaption>The validity funnel shows T52 is close in total valid-PPA count but has a yield warning on Prob098.</figcaption>
+    </figure>
+    <figure>
+      <img src="t52_front_counts.png" alt="Front-point counts by problem">
+      <figcaption>Front counts confirm that full local Pareto retention is not enough to fix T51's front-breadth blocker.</figcaption>
+    </figure>
+  </main>
+</body>
+</html>

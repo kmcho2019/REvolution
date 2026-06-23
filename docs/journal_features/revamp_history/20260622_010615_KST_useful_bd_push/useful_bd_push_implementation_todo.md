@@ -259,7 +259,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       assigned a tier decision before seed `1002` or held-out spend.
 - [x] The next T51 follow-up is specified with an explicit front-preserving
       mechanism before any seed `1002` or held-out spend.
-- [ ] `T52_code_thought_full_pareto_qd` seed `1001` is run on the T47/T51
+- [x] `T52_code_thought_full_pareto_qd` seed `1001` is run on the T47/T51
       hard/tuning comparator surface, packaged, visually inspected, and
       assigned a tier decision before seed `1002` or held-out spend.
 
@@ -336,6 +336,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T51 gets a follow-up direction: keep direct code individuals and
       `single_thought_operator`, but widen the archive from one local front
       slot to full per-cell Pareto retention in T52.
+- [x] T52 gets a follow-up direction: retire simple full-Pareto widening and
+      keep T51's one-slot/yield behavior unless a bounded front-pressure
+      trigger is specified without in-loop classic or final-front labels.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

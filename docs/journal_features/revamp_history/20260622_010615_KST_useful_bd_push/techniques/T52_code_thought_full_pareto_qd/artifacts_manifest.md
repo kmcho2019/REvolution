@@ -1,6 +1,6 @@
 # T52 Artifacts Manifest
 
-Status: pre-registered; no live result yet.
+Status: seed `1001` hard/tuning package complete.
 
 ## Planned Inputs
 
@@ -14,18 +14,18 @@ Status: pre-registered; no live result yet.
 
 ## Planned Outputs
 
-Seed `1001` must add:
+Seed `1001` added:
 
 - `hard_tuning_package/` with matched classic/T52 tables and figures;
 - `visualizations/direct_ppa_pareto/` with `index.html`, `metrics.json`, and
   `screenshot.png`;
 - `visualizations/qd_ppa_viewer/` with Phase 03.1 export, validation files,
-  and `screenshot.png` when archive export is possible;
+  and `screenshot.png`;
 - `hard_tuning_package/validation/` with operator and Pareto validators.
 
 ## Raw Roots
 
-- T52 planned root:
-  `exp/useful_bd_push/t52_code_thought_full_pareto_<timestamp>/hard_tuning/code_thought_full_pareto_qd/seed_1001`.
+- T52:
+  `exp/useful_bd_push/t52_code_thought_full_pareto_20260623_035857_UTC/hard_tuning/code_thought_full_pareto_qd/seed_1001`.
 - Classic:
   `exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001`.

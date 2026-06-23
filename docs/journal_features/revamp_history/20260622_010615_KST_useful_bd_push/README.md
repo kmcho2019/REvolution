@@ -23,16 +23,16 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T51_code_thought_front_slot_qd/`
-  (`T0 positive_ablation_not_promoted`; restores T50 yield/HV-AUC and
-  preserves all classic-covered designs, but classic still wins front breadth).
+  `techniques/T52_code_thought_full_pareto_qd/`
+  (`T0 diagnostic_retired_full_pareto`; adds front points versus T51, but
+  loses HV-AUC/yield recovery and triggers a Prob098 yield warning).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  run `techniques/T52_code_thought_full_pareto_qd/`, which keeps T51's
-  code-individual yield recovery and widens the archive from one local
-  front slot to full per-cell Pareto retention.
+  keep T51's one-slot yield/HV-AUC recovery and avoid another simple local
+  Pareto widening; any follow-up needs a bounded front-pressure trigger that
+  does not use classic results or final front labels in-loop.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -41,15 +41,15 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T51_code_thought_front_slot_qd/hard_tuning_package/figures/t51_direct_ppa_fronts_seed1001.png`
-  (13-problem seed-1001 raw area-power fronts for the T51 hard/tuning
+  `techniques/T52_code_thought_full_pareto_qd/hard_tuning_package/figures/t52_direct_ppa_fronts_seed1001.png`
+  (13-problem seed-1001 raw area-power fronts for the T52 hard/tuning
   package).
 - Most recent direct PPA HTML viewer:
-  `techniques/T51_code_thought_front_slot_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T52_code_thought_full_pareto_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T51_code_thought_front_slot_qd/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T52_code_thought_full_pareto_qd/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
   raw/improvement/normalized PPA modes, raw A-P front mode, screenshot, and a
   documented non-strict classic-projection caveat).
@@ -58,11 +58,8 @@ Start here when resuming the active goal.
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T51_code_thought_front_slot_qd/` (seed-1001 hard/tuning
-  positive ablation with direct PPA supplement and Phase 03.1 viewer).
-- Most recent pre-registered technique:
-  `techniques/T52_code_thought_full_pareto_qd/` (T51 full-Pareto retention
-  ablation; no live result yet).
+  `techniques/T52_code_thought_full_pareto_qd/` (seed-1001 hard/tuning
+  diagnostic with direct PPA supplement and Phase 03.1 viewer).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs

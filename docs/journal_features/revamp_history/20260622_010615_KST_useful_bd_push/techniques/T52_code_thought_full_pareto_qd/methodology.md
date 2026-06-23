@@ -1,6 +1,6 @@
 # T52 Code-Thought Full-Pareto QD Methodology
 
-Status: pre-registered; no live result yet.
+Status: completed; `T0 diagnostic_retired_full_pareto`.
 
 ## Question
 

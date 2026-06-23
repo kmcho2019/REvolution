@@ -3000,3 +3000,35 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Next step: preflight the vLLM endpoint, run T52 seed `1001`, validate the
   single-thought and Pareto artifacts, then package against the T47 classic
   and T51 hard/tuning results.
+
+## T52 Code-Thought Full-Pareto Result - 2026-06-23 UTC
+
+- Preflight passed against `http://20.0.0.103:8000/v1/models` with
+  `openai/gpt-oss-120b max_model_len=131072`.
+- Ran T52 seed `1001` on the 13-problem hard/tuning surface in
+  `1666.96` seconds:
+  `exp/useful_bd_push/t52_code_thought_full_pareto_20260623_035857_UTC/hard_tuning/code_thought_full_pareto_qd/seed_1001`.
+- Validation passed:
+  `pareto_front_validation.md` reports `failure_count=0`, and
+  `single_thought_operator_validation.md` reports `failure_count=0`.
+- Packaged results under
+  `techniques/T52_code_thought_full_pareto_qd/hard_tuning_package/`.
+- Added direct PPA supplement under
+  `techniques/T52_code_thought_full_pareto_qd/visualizations/direct_ppa_pareto/`
+  and a full Phase 03.1 viewer under
+  `techniques/T52_code_thought_full_pareto_qd/visualizations/qd_ppa_viewer/`.
+- Non-strict Phase 03.1 validation passed. Strict validation failed because
+  classic candidates have no honest `sr_pca_0/1/2` archive projection.
+- Tier decision: `T0 diagnostic_retired_full_pareto`. T52 adds front points
+  versus T51 (`24` versus `21`) and unique PPA points (`76` versus `75`), but
+  loses T51's valid-PPA count (`254` versus `266`), mean HV (`0.083502`
+  versus `0.089252`), HV-AUC (`0.055792` versus `0.085454`), and best score
+  (`0.242261` versus `0.293480`).
+- Against classic, T52 loses mean HV by `-0.009099`, HV-AUC by `-0.026228`,
+  valid-PPA count by `-3`, front points by `-6`, unique PPA points by `-11`,
+  and reference-beating candidates by `-5`, while improving mean best score by
+  `+0.014333`.
+- Next step: do not spend seed `1002` on this exact full-Pareto widening.
+  Keep T51's one-slot/yield behavior and specify any follow-up as a bounded
+  front-pressure trigger that avoids in-loop classic results and final-front
+  labels.

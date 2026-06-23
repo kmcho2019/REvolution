@@ -65,7 +65,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T49` | `T49_thought_k_role_separated_repair_qd` | Archive-coupling role-separated emitter | `T0 mixed_diagnostic`; preserves covered valid-PPA designs and improves best score, but loses mean HV, valid-PPA count, and front coverage |
 | `T50` | `T50_candidate_matched_thought_front_qd` | Archive-coupling candidate/front control | `T0 diagnostic`; partial 12-problem screen improves best score but loses HV, HV-AUC, valid-PPA, and front material |
 | `T51` | `T51_code_thought_front_slot_qd` | Archive-coupling code-level front-slot emitter | `T0 positive_ablation_not_promoted`; restores T50 yield/HV-AUC but still loses classic front breadth |
-| `T52` | `T52_code_thought_full_pareto_qd` | Archive-coupling code-level full-Pareto emitter | Pre-registered T51 ablation; keeps code-thought recovery and widens per-cell retention from one front slot to full local Pareto |
+| `T52` | `T52_code_thought_full_pareto_qd` | Archive-coupling code-level full-Pareto emitter | `T0 diagnostic`; +3 front points versus T51, but loses HV-AUC/yield recovery and triggers Prob098 yield warning |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
