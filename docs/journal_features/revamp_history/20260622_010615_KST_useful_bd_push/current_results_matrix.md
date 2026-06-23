@@ -635,3 +635,9 @@ the best ALU and traffic-light scores.
   HV-AUC, best score, valid-PPA count, unique PPA count, and
   reference-beating count. Stop this immediate parent-lane lineage unless the
   next method changes how front slots are created.
+- T55 is pre-registered as that mechanism change. It keeps T54's operator,
+  one-slot archive, and front-slot parent lane fixed, but drops the third
+  SR-PCA descriptor axis through `--qd_descriptor_axes sr_pca_0 sr_pca_1` so
+  grid-quantile cells are coarser and local front slots can form more often.
+  It must not be read as a result until the seed-1001 hard/tuning arm is run,
+  validated, packaged, and compared against classic plus T51 through T54.

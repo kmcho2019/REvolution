@@ -3143,3 +3143,27 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - The front-slot lane was active but weak: `12` requests produced `4` hits.
   This retires the immediate T51/T52/T53/T54 parent-lane lineage unless the
   next method changes how front slots are created.
+
+## T55 Coarse SR2 Front-Slot Method Card - 2026-06-23 UTC
+
+- Added `T55_coarse_sr2_front_slot_qd` as the direct mechanism follow-up to
+  T54's sparse slot pool.
+- T55 keeps T54's hard/tuning surface, seed policy, local vLLM model, 128k
+  token budgets, SR-PCA descriptor file, direct code representation,
+  `single_thought_operator`, sparse warmup `4`, `elite_pareto_slot` capacity
+  `2`, champion lane `0.80`, fixed 10 percent front-slot parent lane, no
+  repair, and no two-parent fusion.
+- The only live-search change is archive geometry:
+  `--qd_descriptor_axes sr_pca_0 sr_pca_1`. T54 used the implicit three-axis
+  SR-PCA grid-quantile archive. T55 intentionally drops `sr_pca_2` so
+  descriptor cells are coarser and can form more local front slots.
+- This is not a new PPA-informed BD. The grid axes are descriptor coordinates
+  computed before PPA is known. Evaluated PPA is used only after evaluation
+  for archive retention and NSGA-II parent ranking, as in T47 through T54.
+- Adversarial review caught that `--qd_grid_axes` would not affect
+  `grid_quantile`; T55 must use `--qd_descriptor_axes` and must prove the
+  emitted `descriptor_axes` are exactly `sr_pca_0` and `sr_pca_1` before live
+  spend.
+- Next step: commit the pre-run package, preflight the vLLM endpoint, run T55
+  seed `1001`, validate single-thought and Pareto artifacts, then package
+  against T47 classic and T51 through T54.

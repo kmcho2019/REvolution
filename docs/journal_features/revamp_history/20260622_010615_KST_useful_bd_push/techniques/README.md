@@ -68,6 +68,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T52` | `T52_code_thought_full_pareto_qd` | Archive-coupling code-level full-Pareto emitter | `T0 diagnostic`; +3 front points versus T51, but loses HV-AUC/yield recovery and triggers Prob098 yield warning |
 | `T53` | `T53_sparse_front_trigger_qd` | Archive-coupling sparse-front trigger | `T0 diagnostic_not_promoted`; trigger fires but classic still wins HV, HV-AUC, valid-PPA, unique PPA, and front points |
 | `T54` | `T54_front_slot_lane_qd` | Archive-coupling front-slot parent lane | `T0 diagnostic_not_promoted`; lane has 12 requests and 4 hits but loses classic and T51 on primary front/HV evidence |
+| `T55` | `T55_coarse_sr2_front_slot_qd` | Archive-coupling coarse descriptor geometry | Pre-registered; keeps T54 fixed except `--qd_descriptor_axes sr_pca_0 sr_pca_1` to test whether coarser grid-quantile cells create more local front slots |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
