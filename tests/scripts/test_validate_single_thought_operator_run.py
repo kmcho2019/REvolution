@@ -314,6 +314,73 @@ def test_validate_single_thought_operator_run_accepts_clean_prompt(tmp_path):
     assert payload["operator_audit"]["prompt_snapshot_count"] == 1
 
 
+def test_validate_accepts_code_from_thought_prompt(tmp_path):
+    subset_config = _subset_config(tmp_path)
+    _write_classic(tmp_path)
+    _write_qd(tmp_path, "grid_quantile_pareto_journal_bd_eoh")
+    _write_qd(tmp_path, "grid_quantile_pareto_journal_bd_unified")
+    sample_dir = (
+        tmp_path
+        / "grid_quantile_pareto_journal_bd_unified"
+        / "RTLLM"
+        / "Prob004_adder_8bit"
+        / "Gen1"
+        / "child"
+        / "code_sample_0"
+    )
+    sample_dir.mkdir()
+    context = {
+        "task": "code_from_thought",
+        "problem_description": "build the circuit",
+        "thought_spec": {"summary": "use a small adder"},
+        "thought_id": "child",
+    }
+    (sample_dir / "prompt_snapshot.txt").write_text(
+        "CONTEXT_JSON:\n"
+        + json.dumps(context, indent=2)
+        + "\n\nReturn exactly ONE JSON object",
+        encoding="utf-8",
+    )
+    seeded_dir = sample_dir.parent / "code_sample_1"
+    seeded_dir.mkdir()
+    seeded_context = {
+        "task": "code_from_thought_seeded",
+        "problem_description": "build the circuit",
+        "thought_spec": {"summary": "use a small adder"},
+        "thought_id": "child",
+        "parent_code": "module parent_code_sentinel; endmodule",
+    }
+    (seeded_dir / "prompt_snapshot.txt").write_text(
+        "CONTEXT_JSON:\n"
+        + json.dumps(seeded_context, indent=2)
+        + "\n\nReturn exactly ONE JSON object",
+        encoding="utf-8",
+    )
+
+    exit_code = validate_main(
+        [
+            "--run-root",
+            str(tmp_path),
+            "--subset-config",
+            str(subset_config),
+            "--eoh-mode",
+            "grid_quantile_pareto_journal_bd_eoh",
+            "--unified-mode",
+            "grid_quantile_pareto_journal_bd_unified",
+            "--require-full-subset",
+        ]
+    )
+
+    payload = json.loads(
+        (tmp_path / "single_thought_operator_validation.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert exit_code == 0
+    assert payload["failure_count"] == 0
+    assert payload["operator_audit"]["prompt_snapshot_count"] == 3
+
+
 def test_validate_single_thought_operator_acceptance_allows_16_workers(tmp_path):
     subset_config = _subset_config(tmp_path)
     _write_manifest(

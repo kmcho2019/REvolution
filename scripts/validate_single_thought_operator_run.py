@@ -13,6 +13,13 @@ from typing import Any
 
 
 SINGLE_OPERATOR = "single_thought_operator"
+CODE_FROM_THOUGHT = "code_from_thought"
+CODE_FROM_THOUGHT_SEEDED = "code_from_thought_seeded"
+ALLOWED_CONTEXT_TASKS = {
+    SINGLE_OPERATOR,
+    CODE_FROM_THOUGHT,
+    CODE_FROM_THOUGHT_SEEDED,
+}
 MAX_ACCEPTANCE_WORKERS = 16
 FORBIDDEN_PROMPT_KEYS = {
     "code",
@@ -395,8 +402,12 @@ def _validate_prompt_snapshot(
     except ValueError as exc:
         return [f"{prompt_path}: {exc}"], False
 
-    if context.get("task") != SINGLE_OPERATOR:
-        errors.append(f"{prompt_path}: context task is not {SINGLE_OPERATOR}")
+    task = context.get("task")
+    if task not in ALLOWED_CONTEXT_TASKS:
+        errors.append(
+            f"{prompt_path}: context task is not one of "
+            f"{sorted(ALLOWED_CONTEXT_TASKS)}"
+        )
     forbidden = _forbidden_key_paths(context)
     if forbidden:
         errors.append(f"{prompt_path}: forbidden prompt keys {forbidden}")
