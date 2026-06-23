@@ -3566,3 +3566,28 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   viability and gives a reviewer-readable RTL-native structural descriptor,
   but it is not a live QD win. The next L7 step should fuse SOG structure with
   T61 timing-risk cells before any T51/T26-family live spend.
+
+## T62 Fused RTL-Native Proxy Audit - 2026-06-23 UTC
+
+- Added `scripts/package_fused_rtl_native_bd_audit.py` and focused tests to
+  join T15 Yosys-SOG structural features with T61 RTL timing-risk features.
+- Packaged `techniques/T62_fused_rtl_native_bd/` with fused candidate
+  features, profile archive metrics, per-problem deltas, copied PPA
+  completeness data, inspected figures, methodology, report, manifest, and
+  reproduction commands.
+- Evaluated three problem-local 4x4 descriptor profiles:
+  `operator_timing`, `state_pipeline`, and `complexity_entropy`. Descriptor
+  inputs exclude final PPA, reference PPA, fitness, hypervolume, Pareto rank,
+  and tests.
+- Result: `operator_timing` and `state_pipeline` both improve mean front-cell
+  delta to `+0.161290`; `complexity_entropy` reaches `+0.129032`. All profiles
+  still lose occupied-cell breadth, with the least bad occupied-cell delta at
+  `-0.612903` for `state_pipeline`.
+- Completeness: the copied RTLLM table has `31` headline rows, `15`
+  candidate-missing rows, and `4` diagnostic-only missing-reference rows:
+  `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+  `Prob018_float_multi`, and `Prob040_synchronizer`.
+- Tier decision: `T0 positive_proxy_not_promoted`. T62 is the strongest L7
+  proxy clue so far, but it is still retrospective and breadth-limited. Any
+  follow-up should be a guarded live fused RTL-native lane on T51/T26-family
+  archive machinery with reference-complete PPA claims.

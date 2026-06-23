@@ -33,7 +33,9 @@ Metrics: do not use average fitness or average best PPA as primary evidence.
 Compare classic, landing Smooth-QD/manual-BD, and every method with a common
 passive archive. Report global PPA hypervolume, passive archive QD
 score/coverage, Pareto-cell count, Pareto spread, unique front families,
-valid-PPA yield, duplicate accounting, and AUC metrics for live runs.
+valid-PPA yield, duplicate accounting, and AUC metrics for live runs. Headline
+classic-vs-QD claims must use the reference-complete paired subset; missing
+reference PPA is diagnostic-only, not defaulted headline evidence.
 
 Required scope: attempt at least 10 current technique packages from
 techniques/T##_slug/ before any broad negative sign-off, including one simple
@@ -62,12 +64,13 @@ Iteration policy: start from prior evidence, then cheap
 deterministic controls, synthesis/netlist descriptors, projection/codebook
 descriptors, MOME/adaptive CVT variants, and encoder adaptations such as Qwen,
 DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, MasterRTL
-SOG, or AURORA. Keep code modular and skimmable, update docs/docstrings, avoid
-broad fallback/back-compat clutter, and use isolated uv envs, source checkouts,
-or submodules when the main uv env blocks a method. After each method, update
-its package and central history. Every T0 needs a follow-up idea, ablation,
-hybrid, or retirement rationale. Commit regularly and inspect every commit
-message.
+SOG, RTLTimer, or AURORA. Prioritize RTL-native descriptor lanes when they can
+define implementation families without using final PPA. Keep code modular and
+skimmable, update docs/docstrings, avoid broad fallback/back-compat clutter,
+and use isolated uv envs, source checkouts, or submodules when the main uv env
+blocks a method. After each method, update its package and central history.
+Every T0 needs a follow-up idea, ablation, hybrid, or retirement rationale.
+Commit regularly and inspect every commit message.
 
 Blocked stop condition: stop only after three concrete attempts hit the same
 blocker, with commands, artifacts, missing input, and exact next decision

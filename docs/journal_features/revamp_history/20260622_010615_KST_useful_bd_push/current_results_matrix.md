@@ -78,6 +78,8 @@ Real result packages:
   diagnostic
 - `T60_rtl_timer_timing_risk_bd` RTL-native timing-risk proxy diagnostic
 - `T61_rtl_timer_problem_local_bd` problem-local timing-risk proxy diagnostic
+- `T62_fused_rtl_native_bd` fused structural/timing RTL-native proxy
+  diagnostic
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`.
@@ -704,3 +706,10 @@ the best ALU and traffic-light scores.
   timing-risk cell versus classic (`16` versus `15`), and the mean front-cell
   delta turns positive (`+0.129032`). The broader occupied-cell delta remains
   negative (`-0.774194`), so this is a live-screen clue, not a promotion.
+- T62 completed the fused RTL-native proxy audit as
+  `T0 positive_proxy_not_promoted`. It joins T15 Yosys-SOG features with T61
+  timing-risk features into three problem-local 4x4 profiles. `operator_timing`
+  and `state_pipeline` both improve mean front-cell delta to `+0.161290`, but
+  all profiles lose occupied-cell breadth; the least bad occupied-cell delta is
+  `state_pipeline` at `-0.612903`. Treat T62 as live-screen motivation for the
+  L7 lane, not as a promoted QD result.

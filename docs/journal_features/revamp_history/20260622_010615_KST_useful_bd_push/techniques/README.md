@@ -28,7 +28,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T12` | `T12_lineage_repair_bd` | Lineage/yield descriptor | Scaffolded |
 | `T13` | `T13_aurora_incremental_autoencoder_bd` | Learned AURORA descriptor | mixed: raw implementation features `T1 near_classic_replay_lead`, compressed bottlenecks `T0 diagnostic` |
 | `T14` | `T14_dehnn_hypergraph_bd` | Hypergraph descriptor | Completed replay diagnostic |
-| `T15` | `T15_masterrtl_sog_bd` | RTL operator-graph descriptor | Scaffolded |
+| `T15` | `T15_masterrtl_sog_bd` | RTL operator-graph descriptor | `T0 structural_proxy_not_promoted`; zero-failure Yosys-SOG lowering, but front-cell and occupied-cell evidence do not beat classic |
 | `T16` | `T16_deepcell_multiview_bd` | Multiview circuit descriptor | Scaffolded |
 | `T17` | `T17_mome_pareto_archive_bd` | Archive-coupling/Pareto variant | `T0 diagnostic`, passive live-candidate |
 | `T18` | `T18_adaptive_emitter_cvt_bd` | Archive-coupling/emitter variant | Scaffolded |
@@ -39,9 +39,9 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T23` | `T23_sr_pareto_validation_matrix` | Archive-coupling validation | `T0 diagnostic`, passive live-candidate matrix |
 | `T24` | `T24_sr_pareto_live_validation` | Archive-coupling live validation | `T0 diagnostic`, complete six-arm live matrix |
 | `T25` | `T25_guarded_sr_raw_pareto_qd` | Archive-coupling guarded live variant | `T0 diagnostic` |
-| `T26` | `T26_sr_raw_conservative_exploit_qd` | Archive-coupling parent-source variant | `T0 diagnostic`, active lead |
-| `T27` | `T27_t26_live_qd_audit` | Live QD audit | `T1 near_classic` audit support for T26 |
-| `T28` | `T28_t26_family_audit` | Canonical/family audit | `T1 near_classic` support with front-family blocker |
+| `T26` | `T26_sr_raw_conservative_exploit_qd` | Archive-coupling parent-source variant | `T0 diagnostic`; broad RTLLM claim is negative after reference-complete correction |
+| `T27` | `T27_t26_live_qd_audit` | Live QD audit | `T0 diagnostic`; early aggregate support is not claim-safe after missing-reference correction |
+| `T28` | `T28_t26_family_audit` | Canonical/family audit | `T0 diagnostic`; valid candidates are mostly distinct, but front-family breadth trails classic |
 | `T29` | `T29_sr_raw_front_recovery_qd` | Archive-coupling front-recovery variant | `T0 diagnostic`; failed to recover multi-pipe front/final-PPA coverage |
 | `T30` | `T30_t26_holdout_front_audit` | Archive-coupling holdout audit | `T1 near_classic` holdout support with P098 yield warning |
 | `T31` | `T31_sr_raw_fail_feedback_repair_qd` | Archive-coupling failure-feedback repair variant | `T0 diagnostic`; no P098 repair or P135 HV retention |
@@ -72,6 +72,10 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T56` | `T56_coarse_sr2_t51_control_qd` | Archive-coupling coarse descriptor geometry | `T0 diagnostic_retire_coarse_sr2_geometry`; preserves coverage but loses classic/T51 on HV, HV-AUC, yield, and front evidence |
 | `T57` | `T57_t51_adaptive_rebin_qd` | Archive-coupling adaptive rebinning | `T0 diagnostic_no_rebin_signal`; 26 checks, 0 rebins, worse than classic/T51 on HV/HV-AUC, and one classic-covered valid-PPA loss |
 | `T58` | `T58_t51_t11_pca4_front_slot_qd` | Learned projection archive coupling | `T0 diagnostic_no_promotion`; valid-PPA and best-score gains, but classic/T51 still win HV/HV-AUC/front breadth |
+| `T59` | `T59_t51_feedback_front_slot_qd` | Archive-coupling feedback front slot | `T0 diagnostic_no_promotion`; best score improves, but HV, HV-AUC, valid-PPA, and front breadth lose to classic |
+| `T60` | `T60_rtl_timer_timing_risk_bd` | RTL-native timing descriptor | `T0 diagnostic_proxy`; pooled timing-risk cells do not separate classic from exact T26 |
+| `T61` | `T61_rtl_timer_problem_local_bd` | RTL-native timing descriptor | `T0 positive_proxy_not_promoted`; problem-local timing-risk front-cell proxy improves, but occupied breadth loses |
+| `T62` | `T62_fused_rtl_native_bd` | RTL-native fused descriptor | `T0 positive_proxy_not_promoted`; fused structural/timing front-cell proxy improves, but occupied breadth still loses |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

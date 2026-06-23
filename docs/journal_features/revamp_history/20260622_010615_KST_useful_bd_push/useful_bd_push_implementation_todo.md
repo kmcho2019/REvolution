@@ -138,6 +138,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       and tier decision for the first diagnostic proxy audit.
 - [x] `T61_rtl_timer_problem_local_bd` has methodology, results, figures,
       tables, and tier decision for the problem-local timing-risk proxy audit.
+- [x] `T62_fused_rtl_native_bd` has methodology, results, figures, tables,
+      completeness data, and tier decision for the fused RTL-native proxy
+      audit.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

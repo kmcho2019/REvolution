@@ -24,10 +24,9 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T59_t51_feedback_front_slot_qd/`
-  (`T0 diagnostic_no_promotion`; short fail-pool feedback improves mean best
-  score but loses classic on HV/HV-AUC/front breadth and has a Prob153 yield
-  warning).
+  `techniques/T62_fused_rtl_native_bd/`
+  (`T0 positive_proxy_not_promoted`; fused Yosys-SOG and RTL timing-risk
+  descriptors improve a front-cell proxy but still lose occupied-cell breadth).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
@@ -71,8 +70,10 @@ Start here when resuming the active goal.
   `techniques/T15_masterrtl_sog_bd/` (`T0 structural_proxy_not_promoted`
   Yosys-SOG proxy with zero lowering failures) and
   `techniques/T61_rtl_timer_problem_local_bd/` (`T0
-  positive_proxy_not_promoted` problem-local timing-risk proxy). Use fused
-  structural/timing descriptors before spending live budget on this lane.
+  positive_proxy_not_promoted` problem-local timing-risk proxy) and
+  `techniques/T62_fused_rtl_native_bd/` (`T0
+  positive_proxy_not_promoted` fused structural/timing proxy). Use T62 only as
+  live-screen motivation until a reference-complete live archive test exists.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -196,6 +197,7 @@ Start here when resuming the active goal.
 | `T59` | `T59_t51_feedback_front_slot_qd` | Completed hard/tuning result, `T0 diagnostic_no_promotion`; improves mean best score but loses HV, HV-AUC, valid PPA, front breadth, unique PPA, and reference-beating count versus classic. |
 | `T60` | `T60_rtl_timer_timing_risk_bd` | Completed first `T0 diagnostic_proxy` timing-risk audit; interpretable RTL-native geometry, but no front-cell advantage over classic. |
 | `T61` | `T61_rtl_timer_problem_local_bd` | Completed `T0 positive_proxy_not_promoted` problem-local timing-risk audit; small front-cell signal, but no live QD claim. |
+| `T62` | `T62_fused_rtl_native_bd` | Completed `T0 positive_proxy_not_promoted` fused RTL-native audit; front-cell proxy improves, but occupied-cell breadth is still negative. |
 
 ## Validity-Gate Note
 

@@ -49,6 +49,11 @@ Check:
   from in-loop BD inputs?
 - Are duplicate netlists, missing classic-covered problems, and invalid
   candidates accounted for explicitly?
+- Does each new run package include `ppa_completeness.csv`, separating missing
+  candidate PPA from missing reference PPA?
+- Are missing-reference designs labeled `diagnostic_only` and excluded from
+  headline normalized improvement, HV, HV-AUC, and direct classic-vs-QD
+  aggregate claims?
 - Are generated figures and tables understandable, aesthetically clean,
   manually inspected, and tied to claims?
 - Do per-technique reports and the central report explain the method,
