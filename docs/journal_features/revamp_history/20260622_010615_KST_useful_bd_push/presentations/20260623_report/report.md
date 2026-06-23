@@ -256,6 +256,15 @@ cause of the gain.
 | Screen-excluded | Mean HV-AUC | 0.075581 | 0.093051 | +0.017470 |
 | Screen-excluded | Valid PPA | 989 | 845 | -144 |
 | Screen-excluded | PPA-front points | 52 | 62 | +10 |
+| Screen+Prob040-excluded | Mean HV | 0.090618 | 0.083691 | -0.006927 |
+| Screen+Prob040-excluded | Mean HV-AUC | 0.077224 | 0.073516 | -0.003708 |
+| Screen+Prob040-excluded | Valid PPA | 941 | 813 | -128 |
+| Screen+Prob040-excluded | PPA-front points | 52 | 61 | +9 |
+
+`Screen-excluded` removes the development screen, but it still includes
+defaulted-reference `Prob040_synchronizer`. The
+`Screen+Prob040-excluded` rows are the safer non-defaulted caveat view: QD
+keeps a front-point lead there, but the HV and HV-AUC deltas become negative.
 
 Budget parity:
 
@@ -279,6 +288,18 @@ Yield warnings are concentrated on `Prob041_traffic_light`, `Prob043_RAM`,
 `Prob044_ROM`, and `Prob045_alu`. These warnings matter, but they no longer
 invalidate the method under the relaxed PPA-first policy because exact T26 keeps
 at least one valid PPA sample on every classic-covered problem.
+
+Primary full-run figures:
+
+![Full RTLLM HV scatter](full_rtllm/figures/full_hv_scatter.png)
+
+![Full RTLLM win/loss heatmap](full_rtllm/figures/full_win_loss_heatmap.png)
+
+![Full RTLLM validity funnel](full_rtllm/figures/full_validity_funnel.png)
+
+![Full RTLLM front counts](full_rtllm/figures/full_front_counts.png)
+
+![Representative raw PPA fronts](full_rtllm/figures/full_representative_ppa_fronts.png)
 
 ## Evidence Interpretation
 

@@ -9,8 +9,8 @@ It is a presentation-local digest, not a replacement for the source bundles.
 The retrospective evidence says diversity is measurable and interpretable, but
 simple post-hoc diversity metrics did not explain or improve PPA fronts enough
 to justify a standalone active-QD claim. This is why the presentation frames the
-positive result around prospective exact T26 evidence, not around generic
-descriptor causality.
+diagnostic T26 front signal around prospective exact T26 evidence, not around
+generic descriptor causality.
 
 ## Source Roots
 

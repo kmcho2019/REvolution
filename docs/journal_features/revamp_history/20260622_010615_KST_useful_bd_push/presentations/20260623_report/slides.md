@@ -17,7 +17,7 @@
 
 - BD: behavior descriptor used to place candidates in a QD archive.
 - QD/MAP-Elites: keep strong candidates across behavior regions.
-- PPA: power, effective clock period, and area; lower raw values are better.
+- PPA: power, area, and timing when reference timing exists; lower is better.
 - Valid PPA: candidate with usable synthesis/PPA metrics.
 - PPA-front point: nondominated valid PPA candidate.
 
@@ -83,6 +83,9 @@
 | Valid PPA | 1056 | 879 | -177 |
 | PPA-front points | 61 | 69 | +8 |
 
+Screen-excluded still includes `Prob040`; excluding both screen problems and
+`Prob040` flips mean HV delta to `-0.006927`.
+
 ## Slide 12 - Budget Parity
 
 | Metric | Classic | Exact T26 QD |
@@ -110,7 +113,14 @@
 - But QD has fewer summed family proxies: 311 versus 341.
 - QD also has fewer reference-beating family proxies: 129 versus 179.
 
-## Slide 15 - Answer The Two Questions
+## Slide 15 - Visual Reading Path
+
+- HV scatter: paired per-problem direction and outlier dependence.
+- Win/loss heatmap: where QD wins, loses, or ties by problem.
+- Validity funnel: the yield cost behind the front-point signal.
+- Front counts and raw PPA fronts: whether extra front material is visible.
+
+## Slide 16 - Answer The Two Questions
 
 - Does diversity matter?
 - Not proven by this one-seed package.
@@ -119,7 +129,7 @@
 - Which diversity does not suffice?
 - Lexical, random, sparse, or unguarded novelty.
 
-## Slide 16 - Decision
+## Slide 17 - Decision
 
 - Continue only as a controlled T26-family follow-up.
 - Present the result as diagnostic one-seed engineering evidence.

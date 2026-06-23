@@ -9,6 +9,7 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 - Mean HV-AUC delta, all RTLLM: `0.012397`.
 - Mean best-score delta, all RTLLM: `-1.059279`.
 - Mean HV delta without Prob040: `-0.009465`.
+- Mean HV delta without the screen and Prob040: `-0.006927`.
 - Hard retention failures: `0` rows.
 - Yield warnings: `4` rows.
 - Small-n validity labels: `6` rows.
@@ -23,6 +24,12 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 | all_rtllm | Exact T26 QD | 50 | 0.104997 | 0.093353 | 879 | 69 |
 | screen_excluded | Classic | 47 | 0.088690 | 0.075581 | 989 | 52 |
 | screen_excluded | Exact T26 QD | 47 | 0.103015 | 0.093051 | 845 | 62 |
+| screen_and_prob040_excluded | Classic | 46 | 0.090618 | 0.077224 | 941 | 52 |
+| screen_and_prob040_excluded | Exact T26 QD | 46 | 0.083691 | 0.073516 | 813 | 61 |
+
+`screen_excluded` still includes defaulted-reference `Prob040_synchronizer`.
+The `screen_and_prob040_excluded` rows are the safer caveat view: the
+front-point lead remains, but mean HV and HV-AUC become negative.
 
 ## Budget Parity
 
