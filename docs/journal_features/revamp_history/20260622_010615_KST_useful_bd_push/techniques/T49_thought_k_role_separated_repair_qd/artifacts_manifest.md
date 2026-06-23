@@ -1,6 +1,6 @@
 # T49 Artifacts Manifest
 
-Status: pre-registered; no run artifacts yet.
+Status: seed `1001` launched; completion artifacts are not packaged yet.
 
 ## Method Card
 
@@ -12,6 +12,23 @@ Status: pre-registered; no run artifacts yet.
 
 ```text
 exp/useful_bd_push/t49_thought_k_role_separated_repair_<timestamp>/hard_tuning/
+```
+
+## Active Seed 1001 Root
+
+```text
+exp/useful_bd_push/t49_thought_k_role_separated_repair_20260623_003408_UTC/hard_tuning/
+```
+
+Preflight files:
+
+- `preflight/models_20260623_003408_UTC.json`
+- `preflight/models_summary_20260623_003408_UTC.txt`
+
+QD output root:
+
+```text
+exp/useful_bd_push/t49_thought_k_role_separated_repair_20260623_003408_UTC/hard_tuning/thought_k_role_separated_repair_qd/seed_1001/openai_gpt-oss-120b/
 ```
 
 ## Planned Output Contract

@@ -1,6 +1,18 @@
 # T49 Hard/Tuning Sanity Commands
 
-Status: pre-registered; do not run before committing the method card.
+Status: seed `1001` launched; completion packaging pending.
+
+## Actual Seed 1001 Run
+
+- Run root:
+  `exp/useful_bd_push/t49_thought_k_role_separated_repair_20260623_003408_UTC/hard_tuning`
+- Preflight:
+  `preflight/models_20260623_003408_UTC.json`
+- Model: `openai/gpt-oss-120b`
+- Model context accepted by preflight: `max_model_len=131072`
+- Launch time: `2026-06-23 00:34 UTC`
+- Status at first audit checkpoint: in progress, with `11/13` problem-level
+  `qd_metrics.json` files written.
 
 ## Preflight
 

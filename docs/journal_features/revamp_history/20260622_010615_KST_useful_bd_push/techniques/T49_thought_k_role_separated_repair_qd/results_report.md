@@ -1,8 +1,9 @@
 # T49 Results Report
 
-Status: no live result yet.
+Status: seed `1001` live run in progress; no tier assigned yet.
 
-T49 is pre-registered as a T48 follow-up. It has not been run, packaged, or
+T49 is pre-registered as a T48 follow-up. Seed `1001` has been launched on the
+hard/tuning comparator surface, but it has not been packaged, compared, or
 tiered.
 
 ## Pre-Registered Claim
@@ -13,7 +14,18 @@ PPA, pass rate, or front labels as behavior-descriptor inputs.
 
 ## Current Tier
 
-`pending_live_result`
+`running_seed_1001`
+
+## Live Run Audit
+
+- Run root:
+  `exp/useful_bd_push/t49_thought_k_role_separated_repair_20260623_003408_UTC/hard_tuning`
+- vLLM preflight accepted `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+- The launch uses the pre-registered T49 settings from
+  `commands/hard_tuning_sanity.md`.
+- First checkpoint: `11/13` problem-level `qd_metrics.json` files were present.
+  Do not infer quality from this partial state.
 
 ## Required Before Tiering
 

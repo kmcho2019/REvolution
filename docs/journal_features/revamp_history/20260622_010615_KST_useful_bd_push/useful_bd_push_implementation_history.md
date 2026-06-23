@@ -2833,3 +2833,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Next step: run seed `1001` on the T47/T48 hard/tuning comparator surface and
   package repair counters, validity gates, HV/HV-AUC, and direct raw-PPA
   figures before considering seed `1002`.
+
+## T49 Thought-K Role-Separated Repair Launch - 2026-06-23 UTC
+
+- Launched seed `1001` under:
+  `exp/useful_bd_push/t49_thought_k_role_separated_repair_20260623_003408_UTC/hard_tuning`.
+- The recorded preflight snapshot is
+  `preflight/models_20260623_003408_UTC.json`; the endpoint accepted
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Runtime arguments match the committed T49 method card: thought-only
+  representation, three code samples per thought, bounded one-attempt repair,
+  no two-parent fusion, no fail-feedback prompt injection, SR-PCA descriptors,
+  and the T47/T48 thirteen-problem hard/tuning surface.
+- First audit checkpoint found `11/13` problem-level `qd_metrics.json` files.
+  The run is still in progress, so no quality or tier conclusion is recorded
+  yet.
