@@ -3926,7 +3926,7 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   define feature extraction and archive-cell mapping before any larger live
   spend.
 
-## 2026-06-23T20:19:00Z - T71 Source-Aligned RTL-Native Feature Map
+## 2026-06-23T19:46:00Z - T71 Source-Aligned RTL-Native Feature Map
 
 - Checked storage before continuing: `/workspace` remains at about `3.5T`
   available and `87%` used, with inode usage around `3%`.
@@ -3948,3 +3948,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   RTL-native QD method, but it is not promotion evidence. The next method must
   test these cells under reference-complete PPA comparison and normal
   visualization gates.
+
+## 2026-06-23T19:52:00Z - T72 Source-Aligned RTL Cell QD Pre-Registration
+
+- Checked storage before continuing: `/workspace` still has about `3.5T`
+  available at `87%` used, with inode usage around `3%`.
+- Added `techniques/T72_source_aligned_rtl_cell_qd/` as the live
+  source-aligned RTL-cell QD method card following T71.
+- T72 keeps the T66 hard/tuning surface and front-slot parent-pressure
+  machinery, but replaces the proxy `fused_rtl_state_pipeline_2d` profile with
+  the exact T71 source-aligned MasterRTL/RTL-Timer cell contract.
+- T72 disables two-parent fusion (`0.0`) because T66's gated fusion did not
+  trigger and the next test should isolate the source-aligned cells before
+  adding another variable.
+- Added a machine-readable descriptor contract, hard/tuning subset, method
+  matrix, and live command template.
+- Decision: do not launch T72 until a narrow runtime descriptor hook proves
+  `source_aligned_masterrtl_rtltimer_cell_2d` resolves, requires no PPA, and
+  reproduces the T71 cell assignments on the T70 sample.

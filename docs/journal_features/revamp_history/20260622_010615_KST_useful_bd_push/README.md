@@ -27,6 +27,10 @@ Start here when resuming the active goal.
   `techniques/T71_source_aligned_rtl_native_feature_map/`
   (`T0 descriptor_design_unblocker`; source-aligned extractor outputs occupy
   9 of 16 proposed RTL-native archive cells without PPA leakage).
+- Most recent pre-registered package:
+  `techniques/T72_source_aligned_rtl_cell_qd/`
+  (live source-aligned RTL-cell QD method; runtime descriptor hook must prove
+  exact T71 axes before vLLM spend).
 - Most recent live QD package:
   `techniques/T67_rtl_native_seeded_thought_qd/`
   (`T0 diagnostic_yield_positive_front_negative_blocked`; improves aggregate
@@ -37,9 +41,8 @@ Start here when resuming the active goal.
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  pre-register a live source-aligned RTL-native QD method that uses T71 cells
-  for parent selection, local-front retention, secondary archive pressure, or
-  source-level repair.
+  implement the narrow `source_aligned_masterrtl_rtltimer_cell_2d` runtime
+  descriptor hook and regression probe against T71 before launching T72.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -214,6 +217,7 @@ Start here when resuming the active goal.
 | `T69` | `T69_open_yosys_rtl_native_preprocessing` | Completed `T0 preprocessing_unblocker`; TinyRocket open-Yosys SOG/BOG preprocessing is source-aligned enough for a generated-candidate extractor smoke, but not a live QD result. |
 | `T70` | `T70_generated_rtl_extractor_smoke` | Completed `T0 extractor_smoke_unblocker`; 19 generated T67 RTL candidates pass both source-aligned extraction paths. |
 | `T71` | `T71_source_aligned_rtl_native_feature_map` | Completed `T0 descriptor_design_unblocker`; 19 candidates occupy 9/16 source-aligned RTL-native cells without PPA leakage. |
+| `T72` | `T72_source_aligned_rtl_cell_qd` | Pre-registered source-aligned live QD method; blocked from execution until the exact T71-compatible runtime descriptor probe passes. |
 
 ## Validity-Gate Note
 

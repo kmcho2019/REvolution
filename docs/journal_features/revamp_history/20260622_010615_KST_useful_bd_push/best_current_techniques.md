@@ -10,25 +10,25 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T71 defines source-aligned cells, but no live QD run has used those cells yet. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T72 is pre-registered, but its exact source-aligned runtime hook is not implemented yet. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
 
-Combine the practical T51/T26-family archive machinery with RTL-native
-behavior descriptors. The archive mechanism should keep hill-climbing pressure
-and local front retention, while Yosys-SOG/MasterRTL and RTLTimer-style
-descriptors define archive cells from RTL operator structure, control/dataflow
-shape, pipeline/register topology, and timing-risk morphology.
+Combine the practical T51/T26-family archive machinery with source-aligned
+RTL-native behavior descriptors. The archive mechanism should keep
+hill-climbing pressure and local front retention, while Yosys-SOG/MasterRTL
+and RTLTimer-style descriptors define archive cells from RTL operator
+structure, control/dataflow shape, pipeline/register topology, and timing-risk
+morphology.
 
-T66 tested that idea with T63 state/pipeline RTL-native cells, front-slot
-parent pressure, and low-rate near-front descriptor-compatible fusion. It
-improves valid-PPA and best-score diagnostics, but loses classic on HV,
-HV-AUC, and front points. Do not use RTL-native descriptors only as direct PPA
-predictors, weak parent-pressure labels, or posthoc visual cells. This is still
-the strongest methodology story because it defines diversity in RTL terms
-rather than opaque embedding space, while the PPA claim remains gated by
-reference-complete paired comparisons.
+T72 is now the next registered test of that idea: use T71's source-aligned
+MasterRTL/RTL-Timer cells inside T66-style front-slot parent pressure, with
+two-parent fusion disabled to isolate the descriptor. Do not launch it until
+the exact runtime descriptor hook reproduces T71 cell assignments without PPA
+leakage. This is still the strongest methodology story because it defines
+diversity in RTL terms rather than opaque embedding space, while the PPA claim
+remains gated by reference-complete paired comparisons.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
@@ -62,7 +62,7 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71 | Accelerate with source alignment | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T71 defines a noncollapsed source-aligned cell map, but descriptor-to-archive utility is still unproven. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72 | Accelerate with source alignment | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T72 is the next registered live test once the exact runtime hook passes. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |

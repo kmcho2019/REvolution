@@ -172,8 +172,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Build a source-aligned RTL-native feature table and archive-cell map
       from MasterRTL/RTL-Timer extractor outputs before the next live
       RTL-native QD spend.
-- [ ] Pre-register the next live source-aligned RTL-native QD variant using
+- [x] Pre-register the next live source-aligned RTL-native QD variant using
       the T71 cells before spending live model budget.
+- [ ] Implement and probe the exact
+      `source_aligned_masterrtl_rtltimer_cell_2d` runtime descriptor hook
+      before launching T72.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

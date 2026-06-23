@@ -85,6 +85,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T69` | `T69_open_yosys_rtl_native_preprocessing` | RTL-native source alignment | `T0 preprocessing_unblocker`; TinyRocket open-Yosys SOG/BOG preprocessing works after removing `read -verific` and applying upstream-style cleanup |
 | `T70` | `T70_generated_rtl_extractor_smoke` | RTL-native source alignment | `T0 extractor_smoke_unblocker`; source-aligned MasterRTL/RTL-Timer extraction passes on 19 generated T67 RTL candidates |
 | `T71` | `T71_source_aligned_rtl_native_feature_map` | RTL-native source alignment | `T0 descriptor_design_unblocker`; source-aligned extractor outputs cover 9/16 proposed RTL-native cells without PPA leakage |
+| `T72` | `T72_source_aligned_rtl_cell_qd` | RTL-native archive coupling | Pre-registered; exact T71-compatible runtime descriptor hook required before live spend |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
