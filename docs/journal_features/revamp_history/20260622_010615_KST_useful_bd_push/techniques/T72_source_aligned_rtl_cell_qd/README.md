@@ -1,6 +1,6 @@
 # T72 Source-Aligned RTL Cell QD
 
-Status: descriptor and vLLM preflight gates passed; live execution not launched.
+Status: bounded live screen passed after a runtime concurrency fix.
 
 T72 is the first proposed live method that uses the exact T71 source-aligned
 MasterRTL/RTL-Timer cell idea instead of the earlier proxy
@@ -42,18 +42,39 @@ Evidence:
 - `tables/vllm_preflight_20260623T201737Z.json`
 - `tables/vllm_preflight_20260623T201737Z.txt`
 
+## Live Screen Result
+
+The fixed live screen ran at:
+
+```text
+exp/useful_bd_push/t72_source_aligned_rtl_cell_20260623_204847_UTC/hard_tuning/
+```
+
+It completed all 13 hard/tuning problems with `success` summary status. The
+run produced 13 archive summaries, 13 global Pareto summaries, and 13
+descriptor-health files. It also passed the single-thought and Pareto-front
+run validators using the frozen T72 subset.
+
+This is not yet a headline classic-vs-QD comparison. It proves the
+source-aligned descriptor can run end to end under the bounded hard/tuning
+surface after the MasterRTL scratch-directory fix.
+
 ## Navigation
 
 - `methodology.md`: full method card and acceptance criteria.
 - `commands/live_screen_v0.md`: preflight, descriptor-gate, live-run, and
   packaging command templates.
 - `artifacts_manifest.md`: expected artifacts and current runtime-gate status.
+- `results_report.md`: fixed live-screen result and caveats.
 - `tables/source_aligned_descriptor_contract.json`: machine-readable method
   contract.
+- `tables/t72_live_screen_status.csv`: compact per-problem fixed-run status.
 - `tables/hard_tuning_subset.yaml`: frozen comparator surface.
 - `tables/t72_method_matrix.csv`: compact delta from T51/T66/T67.
 
 ## Current Decision
 
-Advance to a bounded live T72 screen using the recorded preflight and command
-template. T72 has not produced PPA results, figures, or a tier decision yet.
+Package the fixed screen into direct PPA-front and Phase 03.1-compatible
+visualization artifacts before using T72 in any comparison claim. The live
+screen is useful evidence that the RTL-native lane is executable; it is not a
+promotion result without matched classic/QD metrics.

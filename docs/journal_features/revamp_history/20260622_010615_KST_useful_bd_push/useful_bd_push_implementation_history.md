@@ -4006,3 +4006,34 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: the next T72 blocker is not endpoint availability. The remaining
   step is launching the bounded hard/tuning live screen and packaging the
   resulting PPA/visualization evidence.
+
+## 2026-06-23T21:23:00Z - T72 Fixed Live Screen
+
+- Checked storage during and after the run. `/workspace` remained at about
+  `3.5T` free and `87%` used. The fixed run used `107M`; the earlier
+  diagnostic run that exposed the bug used `93M`.
+- The first T72 launch at `20260623_202136_UTC` exited `0` but was not a valid
+  method screen: only `4/13` problems had success summary rows because
+  parallel MasterRTL analyzer calls shared PyVerilog scratch files and failed
+  around `preprocess.output`.
+- Fixed the runtime issue in commit
+  `f2b15d59c9b536b5c883579138eac4b9405e0b68` by running upstream
+  `analyze.py` from each candidate-local parse directory.
+- Re-ran the same bounded screen at
+  `exp/useful_bd_push/t72_source_aligned_rtl_cell_20260623_204847_UTC/hard_tuning/`.
+  The run used `openai/gpt-oss-120b`, `max_tokens=128000`, seed `1001`,
+  `population_size=12`, `num_generations=3`, and the frozen 13-problem
+  hard/tuning subset.
+- Result: `13/13` problems ended with `success` summary status and produced
+  archive, global Pareto, and descriptor-health artifacts.
+- Validators passed:
+  `scripts/validate_single_thought_operator_run.py` and
+  `scripts/validate_pareto_front_run.py` with the frozen T72 subset.
+- Recorded compact status in
+  `techniques/T72_source_aligned_rtl_cell_qd/tables/t72_live_screen_status.csv`.
+- Caveat: `Prob153_gshare` had one recovered vLLM timeout retry. The problem
+  still completed successfully.
+- Decision: T72 is now executable live-screen evidence for the RTL-native
+  MasterRTL/RTL-Timer lane. It is not yet a headline QD-vs-classic result; the
+  next step is matched metric packaging, direct PPA-front figures, and the
+  Phase 03.1 viewer.
