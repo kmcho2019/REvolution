@@ -152,8 +152,8 @@ Start here when resuming the active goal.
 | `T23` | `T23_sr_pareto_validation_matrix` | Passive validation matrix, `T0 diagnostic`; compares T04/T19 against classic, manual BD, and T22. |
 | `T24` | `T24_sr_pareto_live_validation` | Complete six-arm live development-screen result, `T0 diagnostic`; all QD arms preserve covered designs but lose too much multi-pipe best quality. |
 | `T25` | `T25_guarded_sr_raw_pareto_qd` | Live result, `T0 diagnostic`; preserves all classic-covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. |
-| `T26` | `T26_sr_raw_conservative_exploit_qd` | Live result; beats classic on ALU and multi-pipe best score, preserves covered designs, and is supported by the T27 live audit. |
-| `T27` | `T27_t26_live_qd_audit` | Live audit package, supports T26 as `T1 near_classic` validation candidate on HV/HV-AUC but blocks final promotion until T28-style family and holdout/front-recovery evidence improve. |
+| `T26` | `T26_sr_raw_conservative_exploit_qd` | Live result; preserves covered designs and has local best-score signals, but the reference-complete RTLLM comparison downgrades it to mechanism context. |
+| `T27` | `T27_t26_live_qd_audit` | Live audit package; early HV/HV-AUC support is now treated as fragile after the missing-reference correction, not as `T1` proof. |
 | `T28` | `T28_t26_family_audit` | Canonical/family audit package with direct PPA-front figures and scoped HTML viewer; T26 valid candidates are mostly distinct, but front-family count remains below classic and SR raw. |
 | `T29` | `T29_sr_raw_front_recovery_qd` | Completed front-recovery live variant, `T0 diagnostic`; direct PPA-front plots show only two multi-pipe front points and no final multi-pipe best PPA. |
 | `T30` | `T30_t26_holdout_front_audit` | Completed holdout audit; `T1 near-classic` support with a P098 yield warning, direct raw PPA Pareto figures, and no front-breadth win. |

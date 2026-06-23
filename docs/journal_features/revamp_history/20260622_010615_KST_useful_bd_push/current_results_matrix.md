@@ -74,17 +74,18 @@ Real result packages:
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
-results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
-lead because it recovers ALU and multi-pipe best-score pressure while passing
-the covered-design and catastrophic-validity gates. T27 upgrades the evidence
-for T26 to `T1 near_classic` audit support on live HV and HV-AUC, but it still
-blocks final promotion until family-front and holdout behavior improve. T28
-adds canonical/family duplicate accounting: T26 valid candidates are mostly
-distinct, but the front-family deficit versus classic and SR raw is real. The
-T29 front-recovery variant is also negative: it does not recover the front
-deficit and loses multi-pipe final-PPA coverage. T30 gives T26 holdout support:
-it preserves all three classic-covered VerilogEval holdout designs and improves
-mean best score, but it has a P098 yield warning and does not broaden the raw
+results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
+clue, not a positive broad result: the reference-complete RTLLM analysis
+excludes four missing/defaulted-reference problems and recommends classic for
+overall, multi-objective, and Pareto comparisons. T27's earlier aggregate
+HV/HV-AUC support should therefore be read as a fragile defaulted-reference
+diagnostic, not as a clean T1 proof. T28 adds canonical/family duplicate
+accounting: T26 valid candidates are mostly distinct, but the front-family
+deficit versus classic and SR raw is real. The T29 front-recovery variant is
+also negative: it does not recover the front deficit and loses multi-pipe
+final-PPA coverage. T30 gives only local holdout support: it preserves all
+three classic-covered VerilogEval holdout designs and improves mean best
+score, but it has a P098 yield warning and does not broaden the raw
 PPA/front-family evidence. T31 is a negative same-budget repair result: it
 does not repair P098 yield and loses T26's P135 HV/quality signal. T32 is also
 negative: it improves P098 valid PPA versus T26/T31 and recovers some unique
@@ -283,18 +284,17 @@ quality-preserving parent source rather than more tuning of this guard alone.
 `T26_sr_raw_conservative_exploit_qd` is the completed conservative exploit
 parent-source test. It restores T24-style fill pressure, removes crossover, and
 biases archive parents toward the current champion. It preserves all three
-classic-covered designs, passes Pareto validation, improves ALU best score by
-3.73% versus classic, and improves multi-pipe best score by 14.34% versus
-classic. Traffic-light best score remains 3.48% below classic, and SR raw still
-retains more multi-pipe global Pareto members, so T26 is an active lead for
-passive audit rather than a promoted result.
+classic-covered development-screen designs and has local best-score signals,
+but the later reference-complete RTLLM analysis makes it mechanism context
+rather than a promoted result.
 
 `T27_t26_live_qd_audit` is the completed live audit over T24, T25, and T26.
-It shows that T26 beats classic on mean live PPA hypervolume (+11.62%),
-hypervolume AUC (+17.62%), and mean best score (+3.02%). T26 also beats random
-on every audited aggregate metric. The caveat is front material: T26 has 9
-PPA-front points versus classic's 18 and SR raw's 16, and the audit can only
-deduplicate unique PPA tuples, not canonical implementation families.
+Its early aggregate table reported T26 wins on mean live PPA hypervolume,
+hypervolume AUC, and mean best score. That read is now downgraded: the broad
+reference-complete RTLLM comparison is negative versus classic once the four
+missing/defaulted-reference problems are excluded. The remaining useful clue is
+that T26 can preserve covered designs and generate non-duplicate candidates,
+while still losing front-family breadth versus classic and SR raw.
 
 `T28_t26_family_audit` is the completed canonical/family duplicate audit. It
 hashes normalized RTL, normalized synthesized netlists, and synthesized

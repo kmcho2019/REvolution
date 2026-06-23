@@ -12,25 +12,24 @@ Merged run root:
 
 Question 1: Does diversity matter?
 
-Not proven yet by this milestone. The full RTLLM run gives a useful diagnostic
-front-count signal, not a clean `useful_qd` proof: exact T26 preserves every
-classic-covered design and produces more total PPA-front points (`69` versus
-`61`) at the same one-seed, population-12, three-generation budget. It also
-improves aggregate mean PPA hypervolume by `0.010562` (+11.18%) and aggregate
-mean HV-AUC by `0.012397` (+15.31%), but those aggregate wins depend on
-`Prob040_synchronizer`.
+Not proven yet by this milestone. The reference-complete RTLLM comparison is
+negative for exact T26 versus classic. The earlier all-50 aggregate suggested
+mean HV and HV-AUC gains, but that positive headline depended on RTLLM
+problems with missing/defaulted reference PPA and must not be used as evidence
+that QD beat classic.
 
 The current claim status is therefore `diagnostic`. Per-problem HV has `4` QD
 wins, `15` QD losses, and `31` ties, so paired HV evidence is net-negative.
 Per-problem HV-AUC is also net-negative, with `5` QD wins, `16` QD losses, and
 `29` ties.
-`Prob040_synchronizer` is also one of the repaired missing-reference problems;
-without it, mean HV delta is `-0.009465` and mean HV-AUC delta is `-0.007588`.
-The severe all-RTLLM best-score loss is the same `Prob040` artifact: without
-`Prob040`, mean `best_score` is near parity (`0.252416` versus `0.268348`).
-QD still has lower valid-PPA yield (`879` versus `1056`) and fewer unique PPA
-points (`318` versus `352`). The defensible conclusion is that the T26 line
-deserves a controlled follow-up, not that QD has already beaten classic.
+The missing/defaulted-reference cases are `Prob006_adder_pipe_64bit`,
+`Prob013_multi_booth_8bit`, `Prob018_float_multi`, and
+`Prob040_synchronizer`. The 46-problem reference-complete formal bundle
+recommends classic overall, classic for multi-objective/Pareto comparison, and
+T26 only for score/archive diagnostic views. QD still has lower valid-PPA yield
+(`879` versus `1056` in the all-50 inventory) and fewer unique PPA points
+(`318` versus `352`). The defensible conclusion is that the T26 line deserves
+a controlled follow-up, not that QD has already beaten classic.
 
 Question 2: Which diversity matters?
 

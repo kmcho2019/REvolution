@@ -1,16 +1,16 @@
 # T27 T26 Live QD Audit Results Report
 
-Status: completed live audit package.
+Status: completed live audit package; claim status downgraded after the
+reference-complete RTLLM correction.
 
 ## Summary
 
 T27 audits the completed T26 conservative-exploit SR raw run against the T24
-and T25 live controls. The audit supports keeping T26 as the current live lead:
-T26 beats classic on mean live PPA hypervolume, hypervolume AUC, and best
-score, and it strongly beats the random descriptor control. The result is still
-not a final useful-BD claim because T26 loses front-point count versus classic
-and SR raw, and the live logs do not prove canonical implementation-family
-novelty.
+and T25 live controls. The original audit table reported T26 wins on mean live
+PPA hypervolume, hypervolume AUC, and best score. That interpretation is now
+downgraded: the later RTLLM reference-complete comparison excludes four
+missing/defaulted-reference problems and is negative versus classic. Treat this
+package as mechanism context, not as evidence that T26 broadly beats classic.
 
 ## Compared Methods
 
@@ -47,10 +47,13 @@ Primary figures:
 
 ## Key Deltas
 
-Against classic, T26 improves mean live hypervolume by 11.62%, hypervolume AUC
-by 17.62%, and mean best score by 3.02%. It loses 9 valid-PPA samples
-(-13.64%), loses 9 PPA-front points (-50.00%), ties unique PPA points, and
-increases mean front nearest-neighbor spread by 29.23%.
+Against classic, this narrow development-screen audit reported mean live
+hypervolume +11.62%, hypervolume AUC +17.62%, and mean best score +3.02%. Do
+not cite those deltas as broad RTLLM evidence. The reference-complete full
+RTLLM correction supersedes that interpretation and is negative versus classic.
+The narrow audit still records useful mechanism details: T26 loses 9 valid-PPA
+samples (-13.64%), loses 9 PPA-front points (-50.00%), ties unique PPA points,
+and increases mean front nearest-neighbor spread by 29.23%.
 
 Against random descriptor QD, T26 improves mean hypervolume by 58.60%,
 hypervolume AUC by 87.55%, mean best score by 26.60%, valid-PPA count by
@@ -68,28 +71,23 @@ members and PPA-front points, and loses 3 unique PPA points.
 
 ## Interpretation
 
-T27 changes the T26 read from "best-score-only active lead" to a broader live
-audit lead. T26 no longer looks like a narrow scalar-quality recovery: it also
-beats classic on live HV and HV-AUC, and it beats random on every audited
-aggregate metric.
+T27 is now best read as a narrow mechanism audit. It showed that the
+conservative exploit policy can recover local quality pressure, but it did not
+establish a claim-safe broad RTLLM win.
 
-The audit also shows why a promotion claim would be premature. Classic and SR
-raw retain more PPA-front points, and SR raw retains more active global Pareto
-members. That means the conservative exploit policy recovers quality and
-hypervolume, but it may be collapsing some front material that the pure SR raw
-archive found.
+Classic and SR raw retain more PPA-front points, and SR raw retains more active
+global Pareto members. That means the conservative exploit policy may be
+collapsing front material even when narrow aggregate metrics look favorable.
 
 ## Tier Decision
 
-T27 supports T26 as a `T1 near_classic validation_candidate` for the next
-confirmation step, not as a final positive claim. The evidence is strong enough
-to continue the SR raw conservative-exploit lane because T26 beats classic on
-mean live HV, HV-AUC, and best score while preserving all classic-covered
-designs from the T26 live result.
+T27 no longer supports T26 as a `T1 near_classic validation_candidate`. It is a
+`T0 diagnostic` mechanism package because later reference-complete evidence
+does not support the broad positive claim.
 
-It is not `T2 useful_qd` yet because the audit does not provide canonical
-duplicate accounting, common passive archive scoring, holdout behavior, or
-multi-seed confidence.
+It is not `T2 useful_qd` because the audit does not provide a claim-safe
+reference-complete win, canonical duplicate accounting, common passive archive
+scoring, holdout behavior, or multi-seed confidence.
 
 ## Next Experiment
 

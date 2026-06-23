@@ -297,8 +297,8 @@ flowchart TD
 | 2026-06-21 | `L5` archive coupling | T25 guarded SR raw method card | `advance` | T25 keeps the SR raw descriptor and local Pareto archive but reduces improve-phase backfill and two-parent fusion to test quality/yield recovery without changing the BD. | Result captured in the T25 live-result row below. |
 | 2026-06-21 | `L5` archive coupling | T25 guarded SR raw live result | `ablate` | T25 preserves all classic-covered designs and validates the Pareto archive, but traffic-light valid-PPA count falls from 30 to 9 and multi-pipe best score drops 75.20% versus classic, worse than unguarded SR raw. | Specify T26 emitter/parent-source variant using SR raw as front-material control and manual BD as traffic-light quality control. |
 | 2026-06-21 | `L5/L6` archive coupling and emitters | T26 conservative exploit method card | `advance` | T26 keeps SR raw/local Pareto but restores T24's fill/repair/seed pressure, removes two-parent crossover, and makes archive-parent draws mostly champion-biased. | Run `T26_sr_raw_conservative_exploit_qd/commands/live_screen_v0.md`. |
-| 2026-06-21 | `L5/L6` archive coupling and emitters | T26 conservative exploit live result | `advance` | T26 preserves all classic-covered designs, passes Pareto validation, improves ALU and multi-pipe best score versus classic, and recovers traffic-light valid-PPA count versus T25. Traffic-light quality and SR raw front-material gaps still block promotion. | T27 and T28 completed the live-QD and family audits; next is holdout or front recovery. |
-| 2026-06-21 | `L5/L6` archive coupling and emitters | T27 live QD audit | `advance` | T26 beats classic on mean live HV (+11.62%), HV-AUC (+17.62%), and best score (+3.02%), and beats random on every audited aggregate metric. It still loses PPA-front points versus classic and SR raw, and lacks canonical family accounting. | T28 completed canonical duplicate/family audit; next is holdout or front recovery before any promotion claim. |
+| 2026-06-21 | `L5/L6` archive coupling and emitters | T26 conservative exploit live result | `diagnostic` | T26 preserves all classic-covered designs and has local best-score signals, but the later reference-complete RTLLM analysis shows the broad positive headline was fragile. | Treat T26 as mechanism context, not a positive QD proof. |
+| 2026-06-21 | `L5/L6` archive coupling and emitters | T27 live QD audit | `downgrade` reference-complete caveat | The early audit reported aggregate T26 HV/HV-AUC wins, but those wins are not claim-safe after the full RTLLM reference-complete correction. T26 remains useful as a mechanism clue, not as a broad positive result. | Use reference-complete comparisons for any future T26-family claim; do not cite the early aggregate win as proof. |
 | 2026-06-21 | `L5/L6` archive coupling and emitters | T28 canonical family audit | `advance` | T26's valid-PPA pool is not duplicate collapse: it has the highest valid-family ratio and one more reference-beating family than classic. The blocker is real front-family coverage: T26 has 9 front families versus classic's 19 and SR raw's 16. | Run T26 holdout or an SR raw front-recovery variant with direct PPA-front figures and the Phase 03.1 viewer. |
 | 2026-06-21 | `L5/L6` archive coupling and emitters | T29 front-recovery method card | `advance` | T29 keeps SR raw PCA and T26's archive substrate, but lowers champion pressure to 0.60 and restores limited 0.20 two-parent fusion to test front recovery before any promotion claim. | Run `T29_sr_raw_front_recovery_qd/commands/live_screen_v0.md`. |
 | 2026-06-21 | `L5/L6` archive coupling and emitters | T29 live front-recovery result | `retire` | T29 does not recover front material: mean HV, HV-AUC, valid PPA, total front points, and multi-pipe final-PPA coverage all regress versus T26. Direct PPA-front plots show only two multi-pipe front points. | Do not continue blind T24/T26 schedule interpolation; run T26 holdout or specify a T31 repair/yield/front-preserving emitter. |
@@ -411,17 +411,17 @@ traffic-light valid-PPA count falls from classic's 30 to 9.
 
 T26 keeps the same SR raw descriptor but restores T24-style fill pressure,
 removes two-parent crossover, and biases archive-parent draws toward the
-champion lane. This recovers best-quality pressure on the development screen:
-ALU improves by 3.73% versus classic and multi-pipe improves by 14.34% versus
-classic. Traffic-light still trails classic by 3.48%, and SR raw still has more
-multi-pipe global Pareto members.
+champion lane. This recovers best-quality pressure on the development screen,
+but the later reference-complete RTLLM analysis downgrades the broad T26
+headline to mechanism context rather than positive proof.
 
-T27 audits T26 against the live T24/T25 controls. T26 beats classic on mean
-live HV (+11.62%), HV-AUC (+17.62%), and best score (+3.02%), while beating
-random on every audited aggregate metric. The audit also exposes the blocker:
-T26 has 9 PPA-front points versus classic's 18 and SR raw's 16, and the live
-logs only support unique PPA-tuple accounting, not canonical implementation
-families.
+T27 audits T26 against the live T24/T25 controls. The early aggregate table
+reported mean live HV and HV-AUC wins, but the later full RTLLM
+reference-complete correction downgrades that result to a fragile diagnostic.
+The remaining useful clue is mechanism-level: T26 can preserve covered designs
+and generate distinct candidates, but it does not beat classic on the
+claim-safe broad comparison. The blocker is still front diversity: the live
+family audit shows 9 front families versus classic's 19 and SR raw's 16.
 
 T29 tests the simplest front-recovery hypothesis: lower T26 champion pressure
 and restore limited two-parent archive fusion. It fails. Mean HV falls by

@@ -5,8 +5,13 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 ## Headline
 
 - Claim status: `diagnostic`.
-- Mean HV delta, all RTLLM: `0.010562`.
-- Mean HV-AUC delta, all RTLLM: `0.012397`.
+- Corrected headline: exact T26 does not beat classic on the
+  reference-complete RTLLM comparison.
+- Missing/defaulted-reference exclusions:
+  `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+  `Prob018_float_multi`, and `Prob040_synchronizer`.
+- Mean HV delta, all RTLLM legacy/defaulted view: `0.010562`.
+- Mean HV-AUC delta, all RTLLM legacy/defaulted view: `0.012397`.
 - Mean best-score delta, all RTLLM: `-1.059279`.
 - Mean HV delta without Prob040: `-0.009465`.
 - Mean HV delta without the screen and Prob040: `-0.006927`.
@@ -28,8 +33,12 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 | screen_and_prob040_excluded | Exact T26 QD | 46 | 0.083691 | 0.073516 | 813 | 61 |
 
 `screen_excluded` still includes defaulted-reference `Prob040_synchronizer`.
-The `screen_and_prob040_excluded` rows are the safer caveat view: the
-front-point lead remains, but mean HV and HV-AUC become negative.
+The `screen_and_prob040_excluded` rows were an intermediate caveat view. The
+formal reference-complete bundle is stricter: it excludes all four
+missing/defaulted-reference problems listed above and recommends classic for
+overall, multi-objective, and Pareto comparisons. Use the reference-complete
+view for claims; use the all-50/defaulted view only to diagnose why the initial
+positive headline was fragile.
 
 ## Budget Parity
 

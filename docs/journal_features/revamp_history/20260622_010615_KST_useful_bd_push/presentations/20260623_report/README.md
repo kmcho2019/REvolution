@@ -40,13 +40,17 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
   implemented for the deadline screen.
 - Full RTLLM launch: completed and packaged under `full_rtllm/`.
 - Claim status: `diagnostic`.
-- Aggregate all-RTLLM result: exact T26 improves mean HV by `0.010562` and
-  mean HV-AUC by `0.012397`, with `0` hard retention failures.
-- Main caveat: exact T26 has lower valid-PPA yield (`879` versus `1056`), worse
-  all-RTLLM mean `best_score` (`-0.798824` versus `0.260455`), and the
-  aggregate HV gain flips negative without defaulted-reference
-  `Prob040_synchronizer`. The package supports a front-signal follow-up claim,
-  not a positive QD-effectiveness claim.
+- Corrected reference-complete result: exact T26 is negative versus classic on
+  the 46 RTLLM problems with real reference PPA in both arms. The all-50
+  aggregate HV/HV-AUC gain depends on missing/defaulted reference cases and
+  must not be used as a positive QD-effectiveness headline.
+- Excluded missing/defaulted-reference cases:
+  `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+  `Prob018_float_multi`, and `Prob040_synchronizer`.
+- Remaining useful signal: exact T26 has no hard retention failures and keeps
+  some archive/front diagnostic value, but it has lower valid-PPA yield and the
+  reference-complete formal analysis recommends classic for overall,
+  multi-objective, and Pareto comparisons.
 - Replication policy: one seed is the deadline-driven first milestone. Package
   those results into plots, tables, and slides before starting costly
   multi-seed replication.

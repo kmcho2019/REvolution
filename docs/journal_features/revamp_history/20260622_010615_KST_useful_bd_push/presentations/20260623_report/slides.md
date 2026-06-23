@@ -10,8 +10,8 @@
 
 - Not proven yet; the current status is diagnostic.
 - Exact T26 QD passes the PPA-first retention gate on full RTLLM.
-- It adds PPA-front points, but paired HV is net-negative.
-- The aggregate HV win depends on defaulted-reference `Prob040_synchronizer`.
+- It adds some front/archive signal, but paired HV is net-negative.
+- The reference-complete 46-problem comparison is negative versus classic.
 
 ## Slide 3 - Terms
 
@@ -73,7 +73,7 @@
 - Functionality and valid-PPA rate drops are visible warnings.
 - This fits the milestone goal: optimize PPA while preserving design coverage.
 
-## Slide 11 - Headline Result
+## Slide 11 - Legacy All-50 View
 
 | Metric | Classic | Exact T26 QD | Delta |
 | --- | ---: | ---: | ---: |
@@ -83,8 +83,9 @@
 | Valid PPA | 1056 | 879 | -177 |
 | PPA-front points | 61 | 69 | +8 |
 
-Screen-excluded still includes `Prob040`; excluding both screen problems and
-`Prob040` flips mean HV delta to `-0.006927`.
+This view includes missing/defaulted-reference cases and is not the claim-safe
+headline. Excluding the known fragile reference cases flips the broad
+comparison negative.
 
 ## Slide 12 - Budget Parity
 
@@ -106,9 +107,8 @@ Screen-excluded still includes `Prob040`; excluding both screen problems and
 
 - Per-problem HV: 4 QD wins, 15 losses, 31 ties.
 - Per-problem HV-AUC: 5 QD wins, 16 losses, 29 ties.
-- The aggregate HV win is strongly affected by `Prob040_synchronizer`.
-- Without `Prob040`, mean HV delta is -0.009465.
-- Without `Prob040`, mean best score is near parity: -0.015932.
+- Missing/defaulted references: `Prob006`, `Prob013`, `Prob018`, `Prob040`.
+- The 46-problem reference-complete bundle recommends classic overall.
 - QD has fewer unique PPA points: 318 versus 352.
 - Family-proxy front count matches front-point count: 69 versus 61.
 - But QD has fewer summed family proxies: 311 versus 341.

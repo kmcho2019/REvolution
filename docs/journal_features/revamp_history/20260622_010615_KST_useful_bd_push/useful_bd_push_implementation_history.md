@@ -2366,15 +2366,29 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Exact T26 QD passes the relaxed PPA-first hard gate with `0`
   classic-covered retention failures. It has `4` yield warnings and `6`
   small-n validity labels.
-- Aggregate all-RTLLM results are positive for PPA-centered QD evidence:
-  mean HV delta `+0.010562`, mean HV-AUC delta `+0.012397`, and PPA-front
-  points `69` versus `61`.
+- Legacy all-RTLLM/defaulted results looked positive for PPA-centered QD
+  evidence: mean HV delta `+0.010562`, mean HV-AUC delta `+0.012397`, and
+  PPA-front points `69` versus `61`.
 - The report records the main caveats: lower valid-PPA yield (`879` versus
   `1056`), fewer unique PPA points (`318` versus `352`), and outlier
   sensitivity around `Prob040_synchronizer`.
 - Updated `report.md`, `slides.md`, command provenance, and visual inspection
   notes so the milestone can be presented as reviewable one-seed engineering
   evidence rather than seed-stable proof.
+
+## T26 Reference-Complete Claim Correction - 2026-06-23 UTC
+
+- Updated the milestone interpretation after confirming that four RTLLM
+  problems have missing/defaulted reference PPA:
+  `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+  `Prob018_float_multi`, and `Prob040_synchronizer`.
+- The all-50/defaulted aggregate view explains why the first T26 headline
+  looked positive, but it is not claim-safe.
+- The 46-problem reference-complete formal bundle recommends classic overall,
+  classic for multi-objective/Pareto comparison, and T26 only for
+  score/archive diagnostic views.
+- T26/T27 are therefore mechanism clues and historical context, not proof that
+  QD beat classic on broad RTLLM.
 
 ## Presentation Terminology Pass - 2026-06-22 UTC
 

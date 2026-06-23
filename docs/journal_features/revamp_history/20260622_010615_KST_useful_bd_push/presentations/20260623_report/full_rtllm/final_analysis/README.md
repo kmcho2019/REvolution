@@ -1,9 +1,10 @@
 # Supplemental Formal Final Analysis
 
-This directory is a supplemental `report_final_analysis_bundle.py` output for
-the full RTLLM milestone. It is not the authoritative all-50 milestone package;
-that remains `../README.md` plus the generated tables, figures, direct PPA
-viewer, Phase 03.1 viewer, and family audit.
+This directory is the authoritative reference-complete interpretation for the
+full RTLLM milestone. The all-50 package remains useful for artifact inventory,
+figures, direct PPA viewer, Phase 03.1 viewer, and family audit, but not for a
+positive QD-effectiveness headline because four RTLLM problems have missing or
+defaulted reference PPA.
 
 ## Generation Command
 
@@ -39,9 +40,9 @@ reference `area` in the summary schema:
 - `Prob040_synchronizer`
 
 This restriction is needed because `report_ppa_distribution.py` requires
-`ref_ppa_metric["area"]`. The all-50 milestone packager handles the missing or
-defaulted-reference cases separately and remains the correct source for the
-presentation headline.
+`ref_ppa_metric["area"]`. It is also the claim-safe interpretation: excluding
+the missing/defaulted-reference cases removes the initial aggregate HV/HV-AUC
+positive headline for exact T26.
 
 `backend_comparison.md` scans all backend summaries and therefore still lists
 all 50 problems, using `N/A` where reference fields are missing. The
