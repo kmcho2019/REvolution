@@ -2816,3 +2816,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Recorded the next direction: do not spend held-out budget on exact T26 or
   gated T26.1. The next same-family method needs a role-separated champion,
   local-rank-1, and bounded-repair emitter/archive follow-up.
+
+## T49 Thought-K Role-Separated Repair Method Card - 2026-06-23 UTC
+
+- Added `T49_thought_k_role_separated_repair_qd` as the next T48 follow-up.
+- The method uses existing engine surfaces rather than adding another parent
+  knob: `thought_only`, `single_thought_operator`, `code_samples_per_thought=3`,
+  `population_size=9`, bounded sample-local repair, NSGA-II archive parent
+  selection, and `qd_champion_lane_fraction=0.80`.
+- The pre-registered budget caps each generation at nine base code samples
+  plus at most three repair attempts, matching the T47/T48 twelve-candidate
+  scale while making repair cost explicit.
+- The method intentionally disables two-parent fusion and broad fail-feedback
+  prompt injection. It tests role separation rather than another T26.1 fusion
+  probability or gate variant.
+- Next step: run seed `1001` on the T47/T48 hard/tuning comparator surface and
+  package repair counters, validity gates, HV/HV-AUC, and direct raw-PPA
+  figures before considering seed `1002`.

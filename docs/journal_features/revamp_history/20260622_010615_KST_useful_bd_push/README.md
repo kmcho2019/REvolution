@@ -21,13 +21,16 @@ Start here when resuming the active goal.
   review`; gated near-front fusion improves over exact T26 in some yield/gate
   behavior, but still loses to classic on HV, HV-AUC, valid-PPA count, and
   aggregate front points).
+- Most recent pre-registered package:
+  `techniques/T49_thought_k_role_separated_repair_qd/` (thought-k
+  role-separated archive emitter with bounded sample-local repair; no live
+  result yet).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  stop direct T26.1 two-parent fusion escalation and specify a role-separated
-  champion, local-rank-1, and bounded-repair emitter before spending held-out
-  budget.
+  run T49 seed `1001` on the T47/T48 hard/tuning comparator surface before
+  any held-out spend.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -164,6 +167,7 @@ Start here when resuming the active goal.
 | `T46` | `T46_t11_runtime_pca4_graph` | Completed live result, `T0 mixed_diagnostic`; frozen PCA4 graph projection preserves coverage and wins ALU HV but loses classic on mean HV, reference-beating count, valid-PPA samples, and traffic-light quality. |
 | `T47` | `T47_t26_contract_probe` | Completed hard/tuning result, `T0 diagnostic`; exact T26 keeps positive best-score movement but loses HV, HV-AUC, valid-PPA count, and aggregate front points versus classic. |
 | `T48` | `T48_t26_gated_near_front_fusion_qd` | Completed hard/tuning result, `T0 diagnostic after review`; gated near-front fusion reduces some T47 damage but still loses the primary QD metrics versus classic. |
+| `T49` | `T49_thought_k_role_separated_repair_qd` | Pre-registered T48 follow-up; thought-k role separation plus bounded sample-local repair, no live result yet. |
 
 ## Validity-Gate Note
 

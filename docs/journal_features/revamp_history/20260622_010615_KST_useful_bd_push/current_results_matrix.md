@@ -60,7 +60,9 @@ Real result packages:
 - `T48_t26_gated_near_front_fusion_qd` gated near-front T26.1 follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T15`, `T16`, and `T18`.
+`T15`, `T16`, and `T18`. `T49_thought_k_role_separated_repair_qd` is
+pre-registered as the next T48 follow-up, but it has no live result yet and is
+not counted as a real result package.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -564,3 +566,6 @@ the best ALU and traffic-light scores.
   gated T26.1 as a held-out claim. The next same-family method needs
   role-separated champion, local-rank-1, and bounded-repair lanes rather than
   another direct two-parent fusion tweak.
+- T49 is the pre-registered version of that follow-up. Run seed `1001` first
+  and do not add seed `1002` unless seed `1001` preserves classic-covered
+  designs and is not clearly dominated by T48.

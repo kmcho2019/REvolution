@@ -55,7 +55,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T46 preserves coverage and finds a narrow ALU HV/front signal, but classic still wins mean HV, reference-beating count, valid-PPA samples, and traffic-light quality. | Move graph features out of the primary live archive role unless a trained encoder or secondary-lane mechanism is specified. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T48 reduces some exact-T26 damage but still loses HV, HV-AUC, valid-PPA count, and aggregate front points versus classic. | Stop direct T26.1 fusion escalation; specify role-separated champion, local-rank-1, and bounded-repair lanes. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T48 reduces some exact-T26 damage but still loses HV, HV-AUC, valid-PPA count, and aggregate front points versus classic. | Run pre-registered T49 seed `1001` before any held-out spend. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | T26/T27/T30 show champion-biased parent-source policy restores quality and holdout pressure; T31 direct repair and T32 small near-front sampling are insufficient. | Split champion, near-front, and bounded-repair roles more sharply. |
 
 ## Lane Scorecard
@@ -67,7 +67,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, and T46 PCA4 projection | T46 is measured and `T0 mixed_diagnostic`: it preserves coverage and wins ALU HV, but loses aggregate HV and traffic-light quality. | Stop direct graph-axis dimensionality variants; use graph descriptors only as a secondary archive/reporting lane or trained-encoder input. | Keep T35 front-seeded only as an upper bound. |
-| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47/T48 local-Pareto lineage | T48 is measured `T0`: it improves over exact T26 only partially and remains below classic on primary hard/tuning metrics. | Do not spend held-out budget on exact T26 or gated T26.1; specify a role-separated emitter/archive follow-up. | A candidate must improve T48's HV/HV-AUC, valid yield, or front evidence without hidden duplicate loss, default-reference headline dependence, or classic-covered design loss. |
+| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47/T48/T49 local-Pareto lineage | T49 is pre-registered after T48's `T0` hard/tuning result. | Run T49 seed `1001`, then decide whether seed `1002` is warranted. | A candidate must improve T48's HV/HV-AUC, valid yield, or front evidence without hidden duplicate loss, default-reference headline dependence, or classic-covered design loss. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter | T32 shows a small near-front success-parent lane is not enough. | Need a bounded repair/local-rank-1 lane that cannot replace T26 champion quality pressure. | Specify a true role-separated emitter before another holdout run. |
 
 ## Current Lineage
@@ -136,6 +136,7 @@ flowchart LR
     AS[T46 T11 PCA4 graph projection]
     AT[T47 T26 contract probe]
     AU[T48 gated near-front fusion]
+    AV[T49 thought-k role-separated repair]
   end
 
   subgraph L6[L6 lineage and emitters]
@@ -191,6 +192,7 @@ flowchart LR
   U --> AT
   AA --> AT
   AT --> AU
+  AU --> AV
   AL --> L
   G --> M
   G --> W
@@ -252,6 +254,7 @@ flowchart TD
 | 2026-06-22 | `L5/L6` archive coupling and emitters | T47 T26 contract probe hard/tuning result | `retire` exact T26 held-out escalation | Exact T26 keeps positive mean best-score delta (`+0.024728`) and no classic-covered valid-PPA losses, but loses mean HV (`-0.015483`), mean HV-AUC (`-0.018435`), valid-PPA samples (`428` versus `538`), and aggregate PPA-front points (`53` versus `61`). | Do not launch exact T26 held-out from T47; implement the T48 near-front descriptor-compatible fusion gate first. |
 | 2026-06-22 | `L5/L6` archive coupling and emitters | T48 gated near-front fusion implementation | `advance` live run | T48 keeps T26's SR raw descriptor, local Pareto archive, champion lane, and hard/tuning surface, but reintroduces only low-probability two-parent fusion when both parents are near-front and descriptor-compatible. The opt-in gate, counters, fallback path, CLI plumbing, and focused tests are implemented. | Run the T48 QD arm on the T47 hard/tuning comparator surface and package HV/HV-AUC, validity, parent-gate counters, and direct PPA-front figures. |
 | 2026-06-23 | `L5/L6` archive coupling and emitters | T48 gated near-front fusion hard/tuning result | `retire` direct T26.1 fusion escalation | T48 has zero classic-covered valid-PPA losses and improves over T47 in some yield/gating behavior, but still loses mean HV (`-0.010183`), mean HV-AUC (`-0.015628`), valid PPA (`452` versus `538`), and aggregate front points (`51` versus `61`) versus classic, with three yield warnings. | Specify a role-separated champion, local-rank-1, and bounded-repair emitter before any held-out spend. |
+| 2026-06-23 | `L5/L6` archive coupling and emitters | T49 thought-k role-separated repair method card | `advance` bounded live screen | T49 moves the T48 follow-up from code-individual two-parent fusion to thought-only role separation: champion archive parents, non-champion NSGA-II near-front parents, and bounded sample-local repair with no broad fail-feedback prompt injection. | Run seed `1001` on the T47/T48 hard/tuning comparator surface; package repair counters and direct raw-PPA fronts before deciding on seed `1002`. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
@@ -449,7 +452,7 @@ unblocks it.
 | `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27, T28, T29, T30, T31, T32 | Stays on current branch; T29/T31/T32 are measured negative, while T30 is mixed holdout support for T26. | Pause simple SR raw schedule tuning. | New method improves front/yield without losing T26 quality pressure. |
 | `L3` codebook/discrete archives | T05 | Parked. | Reopen only as side archive or local-Pareto cell partition. | A non-codebook lane shows local front material worth discretizing. |
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43 | Candidate split branch; T37 proves the T11-family replay lead is one bounded local-front slot, and T43 does not close the runtime descriptor gap. | Split exact T11 runtime projection or another encoder branch. | Learned features improve PPA-front/HV metrics without problem-ID collapse. |
-| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47, T48 | Active on current branch; T48 is measured diagnostic after review. | Stop direct T26.1 fusion escalation; specify a role-separated emitter/archive follow-up. | A candidate improves T48 on documented direct-front/HV metrics without hidden duplicate loss or default-reference headline dependence. |
+| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T49 | Active on current branch; T49 is pre-registered after T48's diagnostic result. | Run T49 seed `1001` before any held-out spend. | A candidate improves T48 on documented direct-front/HV metrics without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32 | T31 and T32 show single repair/front-preserving tweaks are insufficient. | Restore T26 champion pressure and isolate bounded repair/local-rank-1 roles. | Better valid-yield recovery or front material than T26/T29/T30 without losing T26 best-quality recovery. |
 
 ## Branch Split Checklist
