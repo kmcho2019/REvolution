@@ -70,11 +70,18 @@ Use the committed helper to generate it:
 uv run python scripts/report_ppa_completeness.py \
   --ppa-candidates path/to/ppa_candidates.csv \
   --reference-ppa-metrics path/to/reference_ppa_metrics.csv \
+  --problem-manifest path/to/problem_manifest.csv \
+  --manifest-references-complete \
   --classic-method classic_or_classic_revolution \
   --qd-method qd_method_key \
   --reference-missing-problem RTLLM:Prob040_synchronizer \
   --output path/to/tables/ppa_completeness.csv
 ```
+
+Use `--problem-manifest` for suite-level packages so zero-PPA problems stay in
+the inventory. Use `--manifest-references-complete` only when the manifest is
+the authoritative benchmark inventory and every missing/defaulted reference PPA
+has been listed with `--reference-missing-problem`.
 
 ## Primary QD Metrics
 

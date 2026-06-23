@@ -3496,3 +3496,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `hard_tuning_package/tables/t59_ppa_completeness.csv`; all 13 hard/tuning
   rows are reference-complete headline rows, so the T59 negative decision is
   metric-driven rather than a missing-reference artifact.
+
+## Full RTLLM PPA Completeness Backfill - 2026-06-23 UTC
+
+- Extended `scripts/report_ppa_completeness.py` with an explicit
+  `--problem-manifest` mode so suite-level tables retain zero-PPA problems
+  instead of shrinking to the candidate-level PPA viewer subset.
+- Regenerated
+  `presentations/20260623_report/full_rtllm/tables/full_ppa_completeness.csv`
+  for all 50 RTLLM manifest problems.
+- Result: `31` headline paired-PPA rows, `15` candidate-missing rows, and `4`
+  diagnostic-only missing-reference rows:
+  `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+  `Prob018_float_multi`, and `Prob040_synchronizer`.
+- Updated the full RTLLM package README, the presentation report, the metric
+  rule, and the command log so the corrected T26 conclusion is tied to an
+  executable completeness table rather than an implicit exclusion note.

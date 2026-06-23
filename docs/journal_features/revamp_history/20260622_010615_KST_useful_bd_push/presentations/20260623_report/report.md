@@ -31,6 +31,11 @@ T26 only for score/archive diagnostic views. QD still has lower valid-PPA yield
 (`318` versus `352`). The defensible conclusion is that the T26 line deserves
 a controlled follow-up, not that QD has already beaten classic.
 
+The package-level completeness table is
+`full_rtllm/tables/full_ppa_completeness.csv`: `31` problems are
+headline-eligible paired PPA rows, `15` are candidate-missing rows, and `4`
+are diagnostic-only missing-reference rows.
+
 Question 2: Which diversity matters?
 
 The current evidence supports the T26 implementation-response archive bundle,

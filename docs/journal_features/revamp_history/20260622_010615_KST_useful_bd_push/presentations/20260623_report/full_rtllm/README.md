@@ -10,6 +10,9 @@ Run root: `exp/useful_bd_push/rtllm_milestone_full_20260622_142254_UTC/merged_re
 - Missing/defaulted-reference exclusions:
   `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
   `Prob018_float_multi`, and `Prob040_synchronizer`.
+- PPA completeness table: `31` headline paired-PPA problems, `15`
+  candidate-missing problems, and `4` diagnostic-only missing-reference
+  problems across the 50-problem manifest.
 - Mean HV delta, all RTLLM legacy/defaulted view: `0.010562`.
 - Mean HV-AUC delta, all RTLLM legacy/defaulted view: `0.012397`.
 - Mean best-score delta, all RTLLM: `-1.059279`.
@@ -39,6 +42,21 @@ missing/defaulted-reference problems listed above and recommends classic for
 overall, multi-objective, and Pareto comparisons. Use the reference-complete
 view for claims; use the all-50/defaulted view only to diagnose why the initial
 positive headline was fragile.
+
+## PPA Completeness
+
+`tables/full_ppa_completeness.csv` is the claim-gating table for this package.
+It keeps all 50 RTLLM manifest problems visible:
+
+| Status | Count | Meaning |
+| --- | ---: | --- |
+| `headline` | 31 | Both methods have valid PPA and reference PPA is valid. |
+| `candidate_missing` | 15 | Reference PPA is valid, but at least one method has no valid PPA candidate. |
+| `diagnostic_only` | 4 | Reference PPA is missing/defaulted and the design is excluded from headline normalized comparisons. |
+
+The four `diagnostic_only` rows are `Prob006_adder_pipe_64bit`,
+`Prob013_multi_booth_8bit`, `Prob018_float_multi`, and
+`Prob040_synchronizer`.
 
 ## Budget Parity
 
@@ -160,6 +178,7 @@ Full token accounting is in `tables/full_budget_parity.csv`.
 - `tables/full_aggregate_metrics.csv`
 - `tables/full_comparison_deltas.csv`
 - `tables/full_validity_gates.csv`
+- `tables/full_ppa_completeness.csv`
 - `tables/full_budget_parity.csv`
 - `data/full_ppa_candidates.csv`
 - `figures/full_hv_delta_distribution.png`

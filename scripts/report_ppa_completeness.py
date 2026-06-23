@@ -36,6 +36,12 @@ def read_csv(path: Path) -> list[dict[str, str]]:
     return rows
 
 
+def read_problem_manifest(path: Path | None) -> list[ProblemKey]:
+    if path is None:
+        return []
+    return [problem_key(row) for row in read_csv(path)]
+
+
 def method_key(row: dict[str, str]) -> str:
     if "method" in row:
         return row["method"]
@@ -80,12 +86,14 @@ def matches_missing_reference(key: ProblemKey, missing: set[ProblemKey]) -> bool
 def completeness_rows(
     candidate_rows: list[dict[str, str]],
     reference_rows: list[dict[str, str]],
+    problem_manifest: list[ProblemKey],
     classic_method: str,
     qd_method: str,
     missing_references: set[ProblemKey],
+    manifest_references_complete: bool,
 ) -> list[dict[str, str]]:
     counts: dict[tuple[str, ProblemKey], int] = {}
-    problems: set[ProblemKey] = set()
+    problems: set[ProblemKey] = set(problem_manifest)
     for row in candidate_rows:
         key = problem_key(row)
         problems.add(key)
@@ -103,15 +111,19 @@ def completeness_rows(
     for key in sorted(problems, key=lambda item: (item.benchmark, item.problem)):
         classic_count = counts.get((classic_method, key), 0)
         qd_count = counts.get((qd_method, key), 0)
-        reference_valid = references.get(key, "no")
         reason = ""
         if matches_missing_reference(key, missing_references):
             reference_valid = "no"
             reason = "marked_missing"
-        elif key not in references:
+        elif key in references:
+            reference_valid = references[key]
+            if reference_valid == "no":
+                reason = "invalid_metrics"
+        elif manifest_references_complete:
+            reference_valid = "yes"
+        else:
+            reference_valid = "no"
             reason = "missing_row"
-        elif reference_valid == "no":
-            reason = "invalid_metrics"
         output.append(
             {
                 "benchmark": key.benchmark,
@@ -152,9 +164,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ppa-candidates", type=Path, required=True)
     parser.add_argument("--reference-ppa-metrics", type=Path, required=True)
+    parser.add_argument("--problem-manifest", type=Path)
     parser.add_argument("--classic-method", required=True)
     parser.add_argument("--qd-method", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--manifest-references-complete",
+        action="store_true",
+        help="Treat manifest problems as reference-valid unless explicitly marked missing.",
+    )
     parser.add_argument(
         "--reference-missing-problem",
         action="append",
@@ -169,9 +187,11 @@ def main(argv: list[str] | None = None) -> int:
     rows = completeness_rows(
         read_csv(args.ppa_candidates),
         read_csv(args.reference_ppa_metrics),
+        read_problem_manifest(args.problem_manifest),
         args.classic_method,
         args.qd_method,
         {parse_missing_reference(item) for item in args.reference_missing_problem},
+        args.manifest_references_complete,
     )
     write_rows(args.output, rows)
     return 0

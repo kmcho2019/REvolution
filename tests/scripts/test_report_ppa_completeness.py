@@ -79,9 +79,11 @@ def test_completeness_rows_accept_backend_column() -> None:
             },
         ],
         [_reference("Prob001", "10", "1")],
+        [],
         "classic",
         "qd",
         set(),
+        False,
     )
 
     assert rows == [
@@ -97,6 +99,52 @@ def test_completeness_rows_accept_backend_column() -> None:
             "reference_missing_reason": "",
         }
     ]
+
+
+def test_problem_manifest_keeps_absent_problem_rows(tmp_path: Path) -> None:
+    candidates = tmp_path / "ppa_candidates.csv"
+    references = tmp_path / "reference_ppa_metrics.csv"
+    manifest = tmp_path / "manifest.csv"
+    output = tmp_path / "ppa_completeness.csv"
+    _write_csv(candidates, [_candidate("classic", "Prob001", "c1", "10", "1")])
+    _write_csv(references, [_reference("Prob001", "10", "1")])
+    _write_csv(
+        manifest,
+        [
+            _manifest("Prob001"),
+            _manifest("Prob006"),
+            _manifest("Prob022"),
+        ],
+    )
+
+    assert (
+        main(
+            [
+                "--ppa-candidates",
+                str(candidates),
+                "--reference-ppa-metrics",
+                str(references),
+                "--problem-manifest",
+                str(manifest),
+                "--classic-method",
+                "classic",
+                "--qd-method",
+                "qd",
+                "--manifest-references-complete",
+                "--reference-missing-problem",
+                "RTLLM:Prob006",
+                "--output",
+                str(output),
+            ]
+        )
+        == 0
+    )
+
+    rows = {row["problem"]: row for row in csv.DictReader(output.open())}
+    assert rows["Prob006"]["comparison_status"] == "diagnostic_only"
+    assert rows["Prob006"]["reference_missing_reason"] == "marked_missing"
+    assert rows["Prob022"]["reference_ppa_valid"] == "yes"
+    assert rows["Prob022"]["comparison_status"] == "candidate_missing"
 
 
 def _candidate(method: str, problem: str, candidate_id: str, area: str, power: str) -> dict[str, str]:
@@ -116,6 +164,13 @@ def _reference(problem: str, area: str, power: str) -> dict[str, str]:
         "problem": problem,
         "ref_area": area,
         "ref_power": power,
+    }
+
+
+def _manifest(problem: str) -> dict[str, str]:
+    return {
+        "benchmark": "RTLLM",
+        "problem": problem,
     }
 
 
