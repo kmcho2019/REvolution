@@ -78,6 +78,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T62` | `T62_fused_rtl_native_bd` | RTL-native fused descriptor | `T0 positive_proxy_not_promoted`; fused structural/timing front-cell proxy improves, but occupied breadth still loses |
 | `T63` | `T63_fused_rtl_native_live_screen` | RTL-native fused descriptor | `T0 positive_mechanism_ablation_not_promoted`; front-material signal versus T51, but classic wins HV/HV-AUC/front points |
 | `T64` | `T64_fused_operator_timing_live_screen` | RTL-native fused descriptor | `T0 diagnostic_yield_archive_ablation_not_promoted`; valid-PPA yield improves but classic wins the PPA-front metrics |
+| `T65` | `T65_rtl_native_secondary_cells` | RTL-native secondary-cell audit | `T0 diagnostic_secondary_cell_not_promoted`; source-level RTLTimer cells around T51/T63/T64 do not beat Classic front-cell coverage |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

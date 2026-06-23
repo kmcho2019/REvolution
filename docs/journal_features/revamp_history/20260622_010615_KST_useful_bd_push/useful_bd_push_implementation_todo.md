@@ -150,6 +150,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       `fused_rtl_operator_timing_2d` ablation after T63.
 - [x] `T64_fused_operator_timing_live_screen` seed-1001 run is executed,
       validated, packaged, visually inspected, and assigned a tier decision.
+- [x] `T65_rtl_native_secondary_cells` is executed and packaged as a posthoc
+      RTLTimer-style secondary-cell audit over T51/T63/T64.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

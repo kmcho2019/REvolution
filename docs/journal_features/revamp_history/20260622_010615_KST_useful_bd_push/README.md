@@ -24,18 +24,17 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T64_fused_operator_timing_live_screen/`
-  (`T0 diagnostic_yield_archive_ablation_not_promoted`; operator/timing
-  RTL-native axes improve valid-PPA yield and archive occupancy, but classic
-  wins HV, HV-AUC, front points, unique PPA, and reference-beating count).
+  `techniques/T65_rtl_native_secondary_cells/`
+  (`T0 diagnostic_secondary_cell_not_promoted`; RTLTimer-style secondary cells
+  around T51/T63/T64 do not beat Classic on problem-paired front-cell coverage).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  do not spend seed `1002` on exact T63 or T64. Treat MasterRTL/RTLTimer-style
-  RTL-native descriptors as high-priority secondary/reporting archive
-  evidence, or redesign the generator/archive coupling before another live
-  RTL-native spend.
+  do not spend seed `1002` on exact T63, T64, or a pure T65 reporting overlay.
+  The next RTL-native method must change generator/archive coupling, such as
+  near-front parent choice or measured repair selection, while keeping
+  descriptor inputs PPA-free.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -71,8 +70,9 @@ Start here when resuming the active goal.
   positive_proxy_not_promoted` problem-local timing-risk proxy) and
   `techniques/T62_fused_rtl_native_bd/` (`T0
   positive_proxy_not_promoted` fused structural/timing proxy). T63 and T64 are
-  reference-complete live archive tests. Use them as mechanism evidence only:
-  neither beats classic headline PPA-front metrics.
+  reference-complete live archive tests, and T65 is a secondary-cell audit over
+  T51/T63/T64. Use them as mechanism evidence only: none beats classic
+  headline PPA-front metrics.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -199,6 +199,7 @@ Start here when resuming the active goal.
 | `T62` | `T62_fused_rtl_native_bd` | Completed `T0 positive_proxy_not_promoted` fused RTL-native audit; front-cell proxy improves, but occupied-cell breadth is still negative. |
 | `T63` | `T63_fused_rtl_native_live_screen` | Completed `T0 positive_mechanism_ablation_not_promoted` live screen; improves T51 front-material measures but loses classic on HV, HV-AUC, and front points. |
 | `T64` | `T64_fused_operator_timing_live_screen` | Completed `T0 diagnostic_yield_archive_ablation_not_promoted`; valid-PPA yield improves, but classic wins HV, HV-AUC, front, unique-PPA, and reference-beating metrics. |
+| `T65` | `T65_rtl_native_secondary_cells` | Completed `T0 diagnostic_secondary_cell_not_promoted`; source-level RTLTimer secondary cells around T51/T63/T64 do not beat Classic on problem-paired front-cell coverage. |
 
 ## Validity-Gate Note
 

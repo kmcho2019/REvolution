@@ -737,3 +737,9 @@ the best ALU and traffic-light scores.
   reference-beating candidates (`46` versus `38`). Do not run exact seed
   `1002`; the RTL-native lane needs a redesigned generator/archive coupling or
   secondary/reporting archive use.
+- T65 completed the RTL-native secondary-cell audit as
+  `T0 diagnostic_secondary_cell_not_promoted`. It scores the T51/T63/T64
+  unique-PPA candidate surface with source-level RTLTimer-style cells. Every
+  method/profile loses Classic on problem-paired mean front-cell delta; the
+  closest result is T63 `control_pipeline` at `-0.076923`. This retires pure
+  secondary/reporting overlays as the next RTL-native step.

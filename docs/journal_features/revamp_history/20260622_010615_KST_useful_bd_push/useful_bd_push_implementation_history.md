@@ -3670,3 +3670,27 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   RTL-native descriptors as high-priority methodology evidence, but redesign
   generator/archive coupling or use them as secondary/reporting cells before
   another live RTL-native run.
+
+## 2026-06-23T15:48:20Z - T65 RTL-Native Secondary-Cell Audit
+
+- Added `scripts/package_t65_secondary_rtl_cells.py` and focused test coverage
+  in `tests/scripts/test_package_t65_secondary_rtl_cells.py`.
+- Packaged `techniques/T65_rtl_native_secondary_cells/` as a posthoc audit
+  over the T51, T63, and T64 hard/tuning unique-PPA candidate surfaces.
+- The audit joins Phase 03.1 viewer datasets for code paths with packaged
+  `*_ppa_candidates.csv` files for direct front labels, so Classic and QD use
+  the same direct unique-PPA comparison surface.
+- Extracted source-level RTLTimer-style descriptors only. Descriptor inputs do
+  not use final PPA, reference PPA, hypervolume, Pareto rank, fitness, or test
+  pass rate.
+- Candidate surface: `321` unique PPA candidates across Classic, T51, T63, and
+  T64. Profiles: `timing_risk`, `operator_timing`, and `control_pipeline`.
+- Result: every method/profile loses Classic on problem-paired mean front-cell
+  delta. The closest is T63 `control_pipeline` at `-0.076923`.
+- Visual inspection: `secondary_cell_delta_summary.png`,
+  `front_cell_heatmap.png`, and `timing_risk_projection.png` are readable and
+  included with notes.
+- Tier decision: `T0 diagnostic_secondary_cell_not_promoted`. Do not run a live
+  method that only adds RTL-native reporting cells. The next RTL-native method
+  must use descriptors to affect parent choice, repair selection, or another
+  measured coupling point without PPA leakage.
