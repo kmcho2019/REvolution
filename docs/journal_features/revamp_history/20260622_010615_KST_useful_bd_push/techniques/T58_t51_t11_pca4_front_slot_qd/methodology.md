@@ -1,6 +1,6 @@
 # T58 T51 T11-PCA4 Front-Slot QD Methodology
 
-Status: pre-registered; not launched.
+Status: completed; `T0 diagnostic_no_promotion`.
 
 ## Question
 
@@ -104,3 +104,28 @@ If T58 loses T51 on HV/HV-AUC and front/yield evidence, retire this exact
 learned-projection primary archive path. The follow-up should use graph
 features as a secondary reporting/archive lane or move to a front-yield
 protected emitter instead of another direct graph-coordinate variant.
+
+## Measured Outcome
+
+T58 completed seed `1001` on all 13 hard/tuning problems. It preserves every
+classic-covered valid-PPA design and increases aggregate valid-PPA samples
+from `257` to `266`, but it loses classic on mean HV (`0.076253` versus
+`0.092601`), mean HV-AUC (`0.066233` versus `0.082020`), front points (`22`
+versus `30`), unique PPA points (`71` versus `87`), and reference-beating
+candidates (`34` versus `46`).
+
+Against T51, T58 is also weaker on HV, HV-AUC, best score, unique PPA points,
+and reference-beating candidates; valid-PPA count ties and front points improve
+by only one. The T11 PCA4 archive geometry therefore does not rescue the T51
+front-breadth blocker.
+
+The pre-registered acceptance list included active archive members, but that
+metric is not comparable between T51's three-axis `sr_pca_3d` archive and
+T58's four-axis `t11_runtime_pca4_graph` archive. The one extra front point is
+also too small to override the geometry-independent losses on HV, HV-AUC,
+unique PPA points, and reference-beating candidates.
+
+The bounded T46 comparison is three-problem-only. On the shared RTLLM problems,
+T58 improves yield and mean best score versus T46 PCA4, but does not improve
+front breadth. Treat this as evidence that the T51 emitter helps graph-axis
+yield, not as evidence that graph PCA4 is a useful primary archive geometry.

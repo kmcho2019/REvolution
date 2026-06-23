@@ -1,14 +1,18 @@
 # T58 Figures
 
-Status: placeholder until the live run is packaged.
+Status: packaged and visually inspected.
 
-Required figures after packaging:
+Packaged figures:
 
-- raw area-power Pareto panels for all 13 hard/tuning problems;
-- HV and HV-AUC deltas versus classic;
-- valid-PPA and functional-yield funnel;
-- front count and unique-PPA summaries;
-- family comparison against T51, T46, and T57.
+- `hard_tuning_package/figures/t58_direct_ppa_fronts_seed1001.png`
+- `hard_tuning_package/figures/t58_raw_area_power_fronts_seed1001.png`
+- `hard_tuning_package/figures/t58_hv_delta_heatmap.png`
+- `hard_tuning_package/figures/t58_metric_delta_summary.png`
+- `hard_tuning_package/figures/t58_validity_funnel.png`
+- `hard_tuning_package/figures/t58_front_counts.png`
+- `hard_tuning_package/figures/t58_operator_counters.png`
 
-Before any tier decision, open generated figures and record visual inspection
-notes in `hard_tuning_package/figures/visual_inspection_notes.md`.
+Manual screenshot inspection was recorded in
+`hard_tuning_package/figures/visual_inspection_notes.md`. The figures are
+readable and presentation-safe, but the counter figure is intentionally sparse
+because both tracked counters are zero.

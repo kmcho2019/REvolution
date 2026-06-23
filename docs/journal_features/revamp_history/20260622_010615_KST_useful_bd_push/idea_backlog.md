@@ -648,6 +648,12 @@ a numbered `techniques/T##_slug/` package before running it.
   frozen T11 PCA4 graph projection from T46. This directly tests whether the
   graph projection failed because of archive/emitter substrate, while avoiding
   another graph-axis dimensionality tweak.
+- T58 result: exact T11-PCA4 graph coordinates preserve valid-PPA coverage and
+  improve aggregate best score/yield, but lose classic and T51 on HV,
+  HV-AUC, unique PPA points, reference-beating candidates, and front breadth.
+  Do not run exact T58 seed `1002`. Next ideas should either use graph features
+  as a secondary archive/reporting lane or design a front-yield protected
+  emitter that keeps T51's yield path while creating more front material.
 
 ## Near-Term Hybrids
 

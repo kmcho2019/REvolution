@@ -3344,3 +3344,37 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `t11_runtime_pca_0..3`, reports `requires_ppa=false`, and reports
   `requires_graph_metrics=true`.
 - Next step: preflight the vLLM endpoint, then run seed `1001`.
+
+## T58 T51 T11-PCA4 Front-Slot Result - 2026-06-23 UTC
+
+- Preflight passed against the local vLLM endpoint:
+  `openai/gpt-oss-120b max_model_len=131072`.
+- T58 raw run:
+  `exp/useful_bd_push/t58_t51_t11_pca4_front_slot_20260623_093653_UTC/hard_tuning/t51_t11_pca4_front_slot_qd/seed_1001`.
+- The run completed all 13 hard/tuning problems in `1808.04` seconds.
+- Single-thought and Pareto/front validators passed with
+  `--require-full-subset`.
+- Aggregate T58 versus classic: HV `-0.016348`, HV-AUC `-0.015787`, best
+  score `+0.021823`, valid PPA `+9`, front points `-8`, unique PPA points
+  `-16`, reference-beating candidates `-12`.
+- T58 versus T51: HV `-0.012999`, HV-AUC `-0.019221`, best score
+  `-0.043729`, valid PPA tie, front points `+1`, unique PPA points `-4`,
+  reference-beating candidates `-9`.
+- Bounded T46 overlap: T58 improves valid PPA (`44` versus `37`) and mean best
+  score (`0.297560` versus `0.276800`) on the three shared RTLLM problems, but
+  does not improve front breadth (`5` versus `6` area-power/front points).
+- Packaged result:
+  `techniques/T58_t51_t11_pca4_front_slot_qd/hard_tuning_package/`.
+- Direct PPA supplement:
+  `techniques/T58_t51_t11_pca4_front_slot_qd/visualizations/direct_ppa_pareto/index.html`.
+- Full Phase 03.1 viewer:
+  `techniques/T58_t51_t11_pca4_front_slot_qd/visualizations/qd_ppa_viewer/index.html`.
+- Strict viewer validation passed. Playwright generated screenshots but
+  reported the caveat documented in
+  `visualizations/qd_ppa_viewer/playwright_caveat.md`.
+- Manual screenshots were inspected for the direct PPA supplement and full
+  Phase 03.1 viewer; both render readable, nonblank figures without broken
+  assets.
+- Decision: mark T58 `T0 diagnostic_no_promotion`; do not spend seed `1002`
+  on exact T58. Move graph features to secondary/reporting lanes or a trained
+  encoder objective, and make the next live method front-yield protected.

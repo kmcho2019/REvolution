@@ -1,8 +1,8 @@
 # T58 Visualizations
 
-Status: placeholder until packaging.
+Status: generated, validated, and screenshot-inspected.
 
-T58 must include both visualization bundles after the live run:
+T58 includes both required visualization bundles:
 
 - `visualizations/direct_ppa_pareto/`: paper-readable raw area-power PPA-front
   supplement with browser screenshot.
@@ -10,5 +10,7 @@ T58 must include both visualization bundles after the live run:
   `index.html`, `manifest.json`, `datasets/*.json`, validation output,
   screenshot, and any honest projection caveat.
 
-The full viewer must use T58 as the archive source backend and project classic
-candidates into T58's T11-PCA4 graph archive space honestly.
+The full viewer uses T58 as the archive source backend and keeps classic
+projection enabled for the T11-PCA4 graph archive space. Strict validation
+passed. Playwright generated screenshots and reported the rank-guide caveat
+documented in `qd_ppa_viewer/playwright_caveat.md`.

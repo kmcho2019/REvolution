@@ -162,3 +162,26 @@ uv run python scripts/package_t48_gated_probe.py \
   --counter-title "Operator Counters" \
   --counter-keys success_parent_requests,two_parent_attempts
 ```
+
+## Completed Run
+
+- `RUN_TS=20260623_093653_UTC`.
+- `RUN_ROOT=exp/useful_bd_push/t58_t51_t11_pca4_front_slot_20260623_093653_UTC/hard_tuning`.
+- Preflight passed:
+  `openai/gpt-oss-120b max_model_len=131072`.
+- T58 completed all 13 hard/tuning problems in `1808.04` seconds.
+- Summary log:
+  `exp/useful_bd_push/t58_t51_t11_pca4_front_slot_20260623_093653_UTC/hard_tuning/t51_t11_pca4_front_slot_qd/seed_1001/openai_gpt-oss-120b/20260623_093714_revolution_summary_results.txt`.
+- Single-thought validation passed with `--require-full-subset`.
+- Pareto/front validation passed with `--require-full-subset`.
+- Packaged result:
+  `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T58_t51_t11_pca4_front_slot_qd/hard_tuning_package/`.
+- Direct PPA supplement:
+  `visualizations/direct_ppa_pareto/index.html`.
+- Full Phase 03.1 viewer:
+  `visualizations/qd_ppa_viewer/index.html`.
+- Strict viewer validation passed. Playwright generated screenshots but
+  reported the rank-guide caveat recorded in
+  `visualizations/qd_ppa_viewer/playwright_caveat.md`.
+- Decision: exact T58 is `T0 diagnostic_no_promotion`; do not spend seed
+  `1002` on this exact primary graph-projection archive path.
