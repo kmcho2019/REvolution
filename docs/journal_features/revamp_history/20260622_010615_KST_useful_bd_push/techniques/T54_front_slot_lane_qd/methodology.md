@@ -1,6 +1,6 @@
 # T54 Front-Slot Lane QD Methodology
 
-Status: pre-registered; not launched.
+Status: completed hard/tuning diagnostic; method remained as pre-registered.
 
 ## Question
 
@@ -99,3 +99,17 @@ If T54 improves front breadth but loses T51's yield/HV-AUC recovery, mark it
 `T0` and keep it as evidence that explicit front-slot parent pressure is still
 insufficient. If it preserves T51 yield while improving front material, run
 seed `1002` or a held-out screen before any useful-QD claim.
+
+## Result Decision
+
+T54 is `T0 diagnostic_not_promoted`. It preserved every classic-covered
+valid-PPA design and improved mean best score versus classic, but it lost the
+primary QD evidence: mean HV, mean HV-AUC, valid-PPA count, aggregate front
+points, unique PPA points, and reference-beating candidates. It also lost
+T51 on HV, HV-AUC, best score, valid-PPA count, unique PPA count, and
+reference-beating count.
+
+The front-slot lane was active but weak: `12` requests produced only `4` hits.
+That means the negative result is not a pure implementation no-op, but it does
+show that a small non-elite slot parent lane is not enough to repair the
+T51/T52/T53 front-breadth gap.

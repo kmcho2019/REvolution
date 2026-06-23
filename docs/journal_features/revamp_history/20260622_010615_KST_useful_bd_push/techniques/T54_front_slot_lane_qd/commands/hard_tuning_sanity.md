@@ -147,3 +147,21 @@ uv run python scripts/package_t48_gated_probe.py \
 
 If `Prob153_gshare` or another problem is incomplete, filter the matrix only
 after writing the missing-problem rationale in `results_report.md`.
+
+## Actual Run Paths
+
+- Timestamp root:
+  `exp/useful_bd_push/t54_front_slot_lane_20260623_054428_UTC/hard_tuning`.
+- QD root:
+  `exp/useful_bd_push/t54_front_slot_lane_20260623_054428_UTC/hard_tuning/code_thought_front_slot_lane_qd/seed_1001`.
+- Run log:
+  `openai_gpt-oss-120b/20260623_054452_revolution_run_log.txt`.
+- Summary:
+  `openai_gpt-oss-120b/20260623_054452_revolution_summary_results.txt`.
+- Scheduler telemetry:
+  `openai_gpt-oss-120b/20260623_054452_revolution_scheduler_telemetry.json`.
+- Validation:
+  `single_thought_operator_validation.md` and
+  `pareto_front_validation.md` both passed.
+- Packaged report:
+  `../results_report.md`.

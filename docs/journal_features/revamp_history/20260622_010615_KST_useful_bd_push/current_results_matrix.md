@@ -65,11 +65,10 @@ Real result packages:
 - `T51_code_thought_front_slot_qd` direct code-thought front-slot follow-up
 - `T52_code_thought_full_pareto_qd` full local-Pareto retention follow-up
 - `T53_sparse_front_trigger_qd` bounded sparse-front trigger follow-up
+- `T54_front_slot_lane_qd` fixed front-slot parent lane follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
-`T54_front_slot_lane_qd` is pre-registered as the next live hard/tuning
-follow-up, but it is not a result package yet.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -550,6 +549,9 @@ the best ALU and traffic-light scores.
     not enough to rescue the T26-family hard/tuning contract. It reduces some
     exact-T26 damage but still loses HV, HV-AUC, valid-PPA count, and aggregate
     front points versus classic.
+27. T54 shows that a fixed non-elite front-slot parent lane is also not enough
+    to rescue the T51 family. The lane records nonzero hits, but loses classic
+    and T51 on the primary HV/front-breadth evidence.
 
 ## Next Decisions
 
@@ -623,8 +625,13 @@ the best ALU and traffic-light scores.
   and reference-beating candidates (`38` versus `46`). Stop scalar
   champion-lane nudging; use a role-separated front-family emitter if this
   lane continues.
-- T54 is pre-registered as that role-separated emitter. It keeps T51's
-  one-slot archive and `0.80` champion lane, then reserves a fixed 10 percent
-  parent lane for non-elite local-front slot members. It must not be read as a
-  result until the seed-1001 hard/tuning arm is run, validated, packaged, and
-  compared against classic, T51, T52, and T53.
+- T54 completed that role-separated front-slot parent lane as
+  `T0 diagnostic_not_promoted`. It preserves every classic-covered valid-PPA
+  design and improves mean best score versus classic (`0.263027` versus
+  `0.227928`), but loses mean HV (`0.075892` versus `0.092601`), HV-AUC
+  (`0.062753` versus `0.082020`), valid PPA (`253` versus `257`), front
+  points (`21` versus `30`), unique PPA (`67` versus `87`), and
+  reference-beating candidates (`31` versus `46`). It also loses T51 on HV,
+  HV-AUC, best score, valid-PPA count, unique PPA count, and
+  reference-beating count. Stop this immediate parent-lane lineage unless the
+  next method changes how front slots are created.

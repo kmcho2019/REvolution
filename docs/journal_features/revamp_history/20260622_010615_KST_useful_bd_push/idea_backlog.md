@@ -609,6 +609,20 @@ a numbered `techniques/T##_slug/` package before running it.
   T11 runtime projection or a learned/auxiliary archive lane rather than
   another scalar parent-pressure tweak.
 
+## From `T54_front_slot_lane_qd`
+
+- T54 is completed and retired as `T0 diagnostic_not_promoted`. It preserves
+  classic-covered design coverage and improves mean best score versus classic,
+  but loses mean HV, HV-AUC, valid-PPA count, unique PPA breadth,
+  reference-beating candidates, and aggregate front points.
+- The front-slot lane was active but weak: `12` requests produced only `4`
+  hits. The failure is not just a no-op, but the local front-slot pool is too
+  sparse to rescue front breadth through parent sampling alone.
+- Stop the immediate T51/T52/T53/T54 parent-lane lineage. The next method
+  should either create better local front slots, branch back to exact T11
+  runtime projection, or use a learned/auxiliary archive lane. Do not spend
+  another run on a scalar champion-lane or small fixed parent-lane tweak.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

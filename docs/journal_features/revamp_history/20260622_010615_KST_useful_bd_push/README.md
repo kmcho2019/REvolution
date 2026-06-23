@@ -23,15 +23,16 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T53_sparse_front_trigger_qd/`
-  (`T0 diagnostic_not_promoted`; trigger fires, but classic still wins HV,
-  HV-AUC, valid-PPA count, and front breadth).
+  `techniques/T54_front_slot_lane_qd/`
+  (`T0 diagnostic_not_promoted`; the fixed front-slot parent lane is active,
+  but classic still wins HV, HV-AUC, valid-PPA count, and front breadth).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  run `techniques/T54_front_slot_lane_qd/`, a fixed 10 percent front-slot
-  parent lane that preserves T51's one-slot archive and champion pressure.
+  stop the immediate T51/T52/T53/T54 parent-lane lineage and branch to a
+  method that changes front-slot creation, exact T11 runtime projection, or a
+  learned/auxiliary archive lane.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -40,27 +41,27 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T53_sparse_front_trigger_qd/hard_tuning_package/figures/t53_direct_ppa_fronts_seed1001.png`
-  (13-problem seed-1001 raw area-power fronts for the T53 hard/tuning
+  `techniques/T54_front_slot_lane_qd/hard_tuning_package/figures/t54_direct_ppa_fronts_seed1001.png`
+  (13-problem seed-1001 raw area-power fronts for the T54 hard/tuning
   package).
 - Most recent direct PPA HTML viewer:
-  `techniques/T53_sparse_front_trigger_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T54_front_slot_lane_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T53_sparse_front_trigger_qd/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T54_front_slot_lane_qd/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
   raw/improvement/normalized PPA modes, raw A-P front mode, screenshot, and a
-  documented non-strict classic-projection caveat).
+  documented Playwright caveat).
 - Current Phase 03.1 visualization contract:
   `phase_03_1_visualization_contract.md` (every completed live QD technique
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T53_sparse_front_trigger_qd/` (seed-1001 hard/tuning diagnostic
+  `techniques/T54_front_slot_lane_qd/` (seed-1001 hard/tuning diagnostic
   with direct PPA supplement and Phase 03.1 viewer).
-- Active planned live technique:
-  `techniques/T54_front_slot_lane_qd/` (pre-registered fixed front-slot lane).
+- Active planned live technique: none selected after T54. The next method
+  should change mechanism rather than tune the same parent lane.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -175,7 +176,7 @@ Start here when resuming the active goal.
 | `T51` | `T51_code_thought_front_slot_qd` | Completed hard/tuning result, `T0 positive_ablation_not_promoted`; restores T50 yield/HV-AUC but classic still wins front breadth. |
 | `T52` | `T52_code_thought_full_pareto_qd` | Completed hard/tuning result, `T0 diagnostic_retired_full_pareto`; adds a few front points versus T51 but loses yield, HV-AUC, and best-score recovery. |
 | `T53` | `T53_sparse_front_trigger_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; trigger fires, but HV, HV-AUC, valid-PPA, and front breadth still lose to classic. |
-| `T54` | `T54_front_slot_lane_qd` | Pre-registered hard/tuning method; fixed 10 percent parent lane for non-elite `elite_pareto_slot` members, preserving T51's one-slot archive and champion pressure. |
+| `T54` | `T54_front_slot_lane_qd` | Completed hard/tuning result, `T0 diagnostic_not_promoted`; fixed front-slot lane is active but loses classic on HV, HV-AUC, valid-PPA count, unique PPA breadth, and front points. |
 
 ## Validity-Gate Note
 
