@@ -1,6 +1,6 @@
 # T72 Source-Aligned RTL Cell QD
 
-Status: bounded live screen passed after a runtime concurrency fix.
+Status: bounded live screen passed and diagnostic visualizations packaged.
 
 T72 is the first proposed live method that uses the exact T71 source-aligned
 MasterRTL/RTL-Timer cell idea instead of the earlier proxy
@@ -64,8 +64,10 @@ surface after the MasterRTL scratch-directory fix.
 - `methodology.md`: full method card and acceptance criteria.
 - `commands/live_screen_v0.md`: preflight, descriptor-gate, live-run, and
   packaging command templates.
-- `artifacts_manifest.md`: expected artifacts and current runtime-gate status.
+- `artifacts_manifest.md`: expected artifacts and current package status.
 - `results_report.md`: fixed live-screen result and caveats.
+- `visualizations/direct_ppa_pareto/`: static PPA plots and raw data.
+- `visualizations/qd_ppa_viewer/`: Phase 03.1 archive/PPA viewer bundle.
 - `tables/source_aligned_descriptor_contract.json`: machine-readable method
   contract.
 - `tables/t72_live_screen_status.csv`: compact per-problem fixed-run status.
@@ -74,7 +76,6 @@ surface after the MasterRTL scratch-directory fix.
 
 ## Current Decision
 
-Package the fixed screen into direct PPA-front and Phase 03.1-compatible
-visualization artifacts before using T72 in any comparison claim. The live
+Use the packaged plots and viewer for diagnostic inspection only. The live
 screen is useful evidence that the RTL-native lane is executable; it is not a
 promotion result without matched classic/QD metrics.

@@ -4037,3 +4037,23 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   MasterRTL/RTL-Timer lane. It is not yet a headline QD-vs-classic result; the
   next step is matched metric packaging, direct PPA-front figures, and the
   Phase 03.1 viewer.
+
+## 2026-06-23T21:43:00Z - T72 Diagnostic Visualization Package
+
+- Checked `/workspace` storage before packaging: `3.5T` free, `87%` used.
+- Generated PPA distribution artifacts from the fixed T72 run:
+  `233` candidate rows, `13` reference-complete problems, and `46` figures.
+- Exported the Phase 03.1 viewer for `source_aligned_rtl_cell_qd` using the
+  fixed run archive artifacts and the frozen hard/tuning subset.
+- Packaged compact committed artifacts under
+  `techniques/T72_source_aligned_rtl_cell_qd/visualizations/`:
+  `direct_ppa_pareto/` for static PPA inspection and `qd_ppa_viewer/` for
+  archive/PPA browsing.
+- Re-ran strict non-Playwright viewer validation and recorded `PASS`.
+- Full Playwright validation produced screenshots but failed because this is a
+  single-method viewer with no `classic` technique and some hover/projection
+  checks did not satisfy the scripted assertions. The caveat is documented in
+  `visualizations/qd_ppa_viewer/playwright_caveat.md`.
+- Decision: T72 now has the required diagnostic visualization package, but it
+  remains single-method evidence. Matched classic-vs-QD metrics are still
+  required before any promotion or headline claim.

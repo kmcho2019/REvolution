@@ -1,11 +1,16 @@
 # T72 Figures
 
-No figures exist yet because T72 is pre-registered but not executed.
+T72 diagnostic figures now live under `visualizations/`.
 
-Required future figures:
+- `visualizations/direct_ppa_pareto/figures/all_backends/`: static raw and
+  gain PPA plots for the fixed live screen.
+- `visualizations/direct_ppa_pareto/screenshot.png`: representative raw
+  area-power plot.
+- `visualizations/qd_ppa_viewer/screenshot.png`: representative Phase 03.1
+  viewer screenshot.
 
-- descriptor probe comparison against the T71 table;
-- direct raw area-power PPA-front panels for all 13 hard/tuning problems;
-- valid-PPA funnel by comparator method;
-- cell occupancy heatmap with out-of-range counts;
-- Phase 03.1 viewer screenshots if archive artifacts are generated.
+Still missing for a promotion claim:
+
+- matched classic-vs-QD valid-PPA funnel;
+- paired front/HV/HV-AUC figures;
+- reference-complete comparison table.
