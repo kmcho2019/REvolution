@@ -9,3 +9,4 @@
   and front markers remain visible.
 - Axes are descriptor-only timing-risk proxies, not PPA objectives; the figure
   should be used as diagnostic geometry, not as a performance claim.
+- Problem-local cell assignment changes archive bins, not raw feature geometry; pair the figure with `tables/comparison_deltas.csv`.

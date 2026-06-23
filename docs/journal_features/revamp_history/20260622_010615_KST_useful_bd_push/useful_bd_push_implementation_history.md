@@ -3532,3 +3532,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Tier decision: `T0 diagnostic_proxy`. Keep the RTL-native lane active, but
   escalate to true RTLTimer or MasterRTL/SOG extraction before any live
   promotion claim.
+
+## T61 Problem-Local Timing-Risk Proxy Audit - 2026-06-23 UTC
+
+- Extended `scripts/package_rtl_timer_timing_risk_audit.py` with
+  `--cell-scope problem` so the same RTL timing-risk features can be binned
+  independently within each RTLLM problem.
+- Packaged `techniques/T61_rtl_timer_problem_local_bd/` as the direct T60
+  ablation using the same 670 valid-PPA candidates and reference-complete PPA
+  completeness table.
+- Result: exact T26 QD gains one pooled front timing-risk cell versus classic
+  (`16` versus `15`) and the problem-balanced front-cell delta changes from
+  T60's `-0.096774` to `+0.129032`.
+- Blocker: occupied-cell breadth remains weaker (`-0.774194` mean delta), and
+  this is still retrospective proxy evidence rather than a live QD run.
+- Tier decision: `T0 positive_proxy_not_promoted`. The next RTL-native live
+  candidate should use true RTLTimer or MasterRTL/SOG extraction with
+  problem-local cells, not the regex proxy.

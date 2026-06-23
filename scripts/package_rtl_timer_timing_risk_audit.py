@@ -10,6 +10,7 @@ import math
 from dataclasses import dataclass, replace
 from pathlib import Path
 import re
+from typing import Literal
 
 import matplotlib
 
@@ -95,6 +96,9 @@ class CandidateFeature:
     control_pipeline_ratio: float
     timing_risk_entropy: float
     timing_risk_cell: str = ""
+
+
+CellScope = Literal["global", "problem"]
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -199,11 +203,23 @@ def feature_entropy(values: list[int]) -> float:
     return entropy
 
 
-def assign_cells(features: list[CandidateFeature]) -> list[CandidateFeature]:
-    risks = sorted(feature.timing_risk_score for feature in features)
-    ratios = sorted(feature.control_pipeline_ratio for feature in features)
+def assign_cells(features: list[CandidateFeature], cell_scope: CellScope) -> list[CandidateFeature]:
+    if cell_scope == "global":
+        return assign_cell_group(features)
+    if cell_scope == "problem":
+        output = []
+        for problem in sorted({feature.problem for feature in features}):
+            group = [feature for feature in features if feature.problem == problem]
+            output.extend(assign_cell_group(group))
+        return output
+    raise AssertionError(f"unknown cell scope: {cell_scope}")
+
+
+def assign_cell_group(group: list[CandidateFeature]) -> list[CandidateFeature]:
+    risks = sorted(feature.timing_risk_score for feature in group)
+    ratios = sorted(feature.control_pipeline_ratio for feature in group)
     output = []
-    for feature in features:
+    for feature in group:
         risk_bin = rank_bin(feature.timing_risk_score, risks)
         ratio_bin = rank_bin(feature.control_pipeline_ratio, ratios)
         output.append(replace(feature, timing_risk_cell=f"{risk_bin},{ratio_bin}"))
@@ -341,7 +357,7 @@ def write_projection(features: list[CandidateFeature], path: Path) -> None:
             edgecolors=colors.get(method, "#59a14f"),
             linewidths=1.1,
         )
-    ax.set_title("T60 RTL Timing-Risk Descriptor Projection")
+    ax.set_title("RTL Timing-Risk Descriptor Projection")
     ax.set_xlabel("Control / Pipeline Ratio")
     ax.set_ylabel("Timing-Risk Score")
     ax.grid(True, alpha=0.25)
@@ -370,32 +386,42 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
-def write_notes(path: Path) -> None:
-    path.write_text(
-        "# T60 Visual Inspection Notes\n\n"
-        "- `timing_risk_projection.png` renders cleanly with separate Classic and\n"
-        "  exact T26 QD colors.\n"
-        "- The legend uses reader-facing method labels, not internal backend keys.\n"
-        "- Hollow markers identify Pareto-front candidates without hiding the raw point\n"
-        "  cloud.\n"
-        "- A few high-risk outliers stretch the y-axis, but the dense low-risk cluster\n"
-        "  and front markers remain visible.\n"
-        "- Axes are descriptor-only timing-risk proxies, not PPA objectives; the figure\n"
-        "  should be used as diagnostic geometry, not as a performance claim.\n",
-        encoding="utf-8",
-    )
+def write_notes(path: Path, cell_scope: CellScope) -> None:
+    lines = [
+        "# RTL Timing-Risk Visual Inspection Notes",
+        "",
+        "- `timing_risk_projection.png` renders cleanly with separate Classic and",
+        "  exact T26 QD colors.",
+        "- The legend uses reader-facing method labels, not internal backend keys.",
+        "- Hollow markers identify Pareto-front candidates without hiding the raw point",
+        "  cloud.",
+        "- A few high-risk outliers stretch the y-axis, but the dense low-risk cluster",
+        "  and front markers remain visible.",
+        "- Axes are descriptor-only timing-risk proxies, not PPA objectives; the figure",
+        "  should be used as diagnostic geometry, not as a performance claim.",
+    ]
+    if cell_scope == "problem":
+        lines.append(
+            "- Problem-local cell assignment changes archive bins, not raw feature geometry; "
+            "pair the figure with `tables/comparison_deltas.csv`."
+        )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate-rows", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--cell-scope", choices=("global", "problem"), default="global")
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    features = assign_cells([extract_feature(row) for row in read_csv(args.candidate_rows)])
+    features = assign_cells(
+        [extract_feature(row) for row in read_csv(args.candidate_rows)],
+        args.cell_scope,
+    )
     table_dir = args.output_dir / "tables"
     figure_dir = args.output_dir / "figures"
     write_csv(table_dir / "rtl_timer_features.csv", feature_rows(features))
@@ -405,10 +431,11 @@ def main(argv: list[str] | None = None) -> int:
     write_csv(table_dir / "problem_metrics.csv", per_problem)
     write_csv(table_dir / "comparison_deltas.csv", comparison_rows(per_problem))
     write_projection(features, figure_dir / "timing_risk_projection.png")
-    write_notes(figure_dir / "visual_inspection_notes.md")
+    write_notes(figure_dir / "visual_inspection_notes.md", args.cell_scope)
     schema = "\n".join(FEATURE_FIELDS).encode("utf-8")
     print(f"feature_schema_sha256={hashlib.sha256(schema).hexdigest()}")
     print(f"candidate_count={len(features)}")
+    print(f"cell_scope={args.cell_scope}")
     print(f"output_dir={args.output_dir}")
     return 0
 

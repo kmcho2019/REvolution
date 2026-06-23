@@ -67,10 +67,10 @@ Start here when resuming the active goal.
 - Active planned live technique: none selected after T59. The next descriptor
   push should prioritize the RTL-native MasterRTL/RTLTimer lane before another
   primary archive tweak.
-- Active planned RTL-native descriptor package:
-  `techniques/T60_rtl_timer_timing_risk_bd/` (scaffolded high-priority
-  RTLTimer timing-risk lane). Pair it with T51/T26-family archive machinery
-  before spending live budget on another primary archive variant.
+- Active RTL-native descriptor package:
+  `techniques/T61_rtl_timer_problem_local_bd/` (`T0 positive_proxy_not_promoted`
+  problem-local timing-risk proxy). Use true RTLTimer or MasterRTL/SOG
+  extraction before spending live budget on this lane.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -193,6 +193,7 @@ Start here when resuming the active goal.
 | `T58` | `T58_t51_t11_pca4_front_slot_qd` | Completed hard/tuning result, `T0 diagnostic_no_promotion`; preserves valid-PPA coverage and improves best score/yield, but loses classic and T51 on HV/HV-AUC/front evidence. |
 | `T59` | `T59_t51_feedback_front_slot_qd` | Completed hard/tuning result, `T0 diagnostic_no_promotion`; improves mean best score but loses HV, HV-AUC, valid PPA, front breadth, unique PPA, and reference-beating count versus classic. |
 | `T60` | `T60_rtl_timer_timing_risk_bd` | Completed first `T0 diagnostic_proxy` timing-risk audit; interpretable RTL-native geometry, but no front-cell advantage over classic. |
+| `T61` | `T61_rtl_timer_problem_local_bd` | Completed `T0 positive_proxy_not_promoted` problem-local timing-risk audit; small front-cell signal, but no live QD claim. |
 
 ## Validity-Gate Note
 

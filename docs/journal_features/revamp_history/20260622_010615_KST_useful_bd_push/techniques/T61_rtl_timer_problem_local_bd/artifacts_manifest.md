@@ -1,6 +1,6 @@
-# T60 RTLTimer Timing-Risk BD Artifacts Manifest
+# T61 RTLTimer Problem-Local BD Artifacts Manifest
 
-Status: `T0 diagnostic_proxy`.
+Status: `T0 positive_proxy_not_promoted`.
 
 ## Source Inputs
 
@@ -13,10 +13,8 @@ Status: `T0 diagnostic_proxy`.
 - Problem manifest:
   `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/presentations/20260623_report/data/rtllm_50_problem_manifest.csv`
 
-No external RTLTimer checkout was used in this first package. This is a
-lightweight RTLTimer-style proxy over existing RTL text, intended to decide
-whether the RTL-native timing-risk lane is worth escalating to a true RTLTimer
-or MasterRTL/SOG extractor.
+No external RTLTimer checkout was used. T61 is a problem-local binning ablation
+over the lightweight T60 timing-risk proxy.
 
 ## Generated Artifacts
 
@@ -27,14 +25,14 @@ or MasterRTL/SOG extractor.
 - `tables/ppa_completeness.csv`
 - `figures/timing_risk_projection.png`
 - `figures/visual_inspection_notes.md`
-- `commands/retrospective_proxy_audit.md`
+- `commands/problem_local_proxy_audit.md`
 
 ## Hashes
 
 | Artifact | SHA-256 |
 | --- | --- |
 | `scripts/package_rtl_timer_timing_risk_audit.py` | `46d337539e771390d353201482cf8ba0694a2e5da0ca18c0ca03ef3e56aff73a` |
-| `tables/rtl_timer_features.csv` | `1dbc85fe545c36f2d990ce5b588342414b9bc053dde6b66d5dc6ef1a9422dcc1` |
+| `tables/rtl_timer_features.csv` | `06bff42817b719b7a2a3e13e64d872c29e344d341e53c87811b905f73ad5b593` |
 | `figures/timing_risk_projection.png` | `fe333aaaa4591eedf3cbf3dabc4943f5904ec08cddf373ee17cb7161ae6d3d63` |
 
 Feature schema SHA-256:
@@ -47,6 +45,5 @@ Feature schema SHA-256:
 - `uv tool run ty check scripts/package_rtl_timer_timing_risk_audit.py tests/scripts/test_package_rtl_timer_timing_risk_audit.py`
 - `uv run pyright scripts/package_rtl_timer_timing_risk_audit.py tests/scripts/test_package_rtl_timer_timing_risk_audit.py`
 
-No artifact is used for a headline QD claim. The result is a diagnostic proxy
-audit and keeps missing/defaulted-reference designs labeled
-`diagnostic_only`.
+This package is not a live QD claim. It is a proxy ablation that justifies
+trying true RTLTimer/MasterRTL problem-local cells in a future live screen.

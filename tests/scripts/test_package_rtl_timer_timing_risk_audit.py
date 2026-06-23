@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from scripts.package_rtl_timer_timing_risk_audit import extract_feature, main
+from scripts.package_rtl_timer_timing_risk_audit import assign_cells, extract_feature, main
 
 
 def test_extract_feature_counts_timing_risk_terms(tmp_path: Path) -> None:
@@ -60,6 +60,26 @@ def test_package_rtl_timer_timing_risk_audit(tmp_path: Path) -> None:
     assert (output / "tables" / "comparison_deltas.csv").is_file()
     assert (output / "figures" / "timing_risk_projection.png").read_bytes().startswith(b"\x89PNG")
     assert (output / "figures" / "visual_inspection_notes.md").is_file()
+
+
+def test_problem_cell_scope_assigns_cells_per_problem(tmp_path: Path) -> None:
+    rows = []
+    for problem in ("Prob001_accu", "Prob002_adder_16bit"):
+        for index in range(4):
+            code = tmp_path / f"{problem}_{index}.sv"
+            code.write_text(f"module top; assign y = a {'+' * (index + 1)} b; endmodule\n", encoding="utf-8")
+            row = _candidate_row(code, "classic_revolution", "Classic")
+            row["problem"] = problem
+            rows.append(extract_feature(row))
+
+    features = assign_cells(rows, "problem")
+    by_problem = {
+        problem: sorted(feature.timing_risk_cell for feature in features if feature.problem == problem)
+        for problem in ("Prob001_accu", "Prob002_adder_16bit")
+    }
+
+    assert by_problem["Prob001_accu"] == by_problem["Prob002_adder_16bit"]
+    assert len(set(by_problem["Prob001_accu"])) > 1
 
 
 def _candidate_row(code_path: Path, method: str, label: str) -> dict[str, str]:

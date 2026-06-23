@@ -76,6 +76,7 @@ Real result packages:
 - `T59_t51_feedback_front_slot_qd` short fail-pool feedback front-slot
   diagnostic
 - `T60_rtl_timer_timing_risk_bd` RTL-native timing-risk proxy diagnostic
+- `T61_rtl_timer_problem_local_bd` problem-local timing-risk proxy diagnostic
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -690,3 +691,9 @@ the best ALU and traffic-light scores.
   front-cell delta mean `-0.096774`. Keep the RTL-native lane active, but
   replace this regex proxy with true RTLTimer or MasterRTL/SOG extraction
   before any live promotion claim.
+- T61 completed the problem-local timing-risk cell ablation as
+  `T0 positive_proxy_not_promoted`. It keeps T60's RTL features but assigns
+  4x4 timing-risk cells within each problem. Exact T26 gains one pooled front
+  timing-risk cell versus classic (`16` versus `15`), and the mean front-cell
+  delta turns positive (`+0.129032`). The broader occupied-cell delta remains
+  negative (`-0.774194`), so this is a live-screen clue, not a promotion.
