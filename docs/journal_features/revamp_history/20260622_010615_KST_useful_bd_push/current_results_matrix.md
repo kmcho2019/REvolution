@@ -598,3 +598,9 @@ the best ALU and traffic-light scores.
   run before any seed `1002` or held-out spend because it changes the mechanism
   back to code individuals while preserving the single-thought operator and
   one local front slot.
+- T51 completed that check as `T0 positive_ablation_not_promoted`. It restores
+  the full 13-problem candidate budget and beats classic on valid-PPA count
+  (`266` versus `257`), HV-AUC (`0.085454` versus `0.082020`), and best score
+  (`0.293480` versus `0.227928`), but loses mean HV (`0.089252` versus
+  `0.092601`) and front breadth (`21` versus `30` front points). Do not use it
+  as the broad RTLLM headline method without a front-preserving follow-up.

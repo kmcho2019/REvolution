@@ -23,18 +23,15 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T50_candidate_matched_thought_front_qd/` (`T0 diagnostic`;
-  partial 12-problem screen; best-score improvement does not recover HV,
-  HV-AUC, valid-PPA, or front coverage).
-- Most recent pre-registered package:
-  `techniques/T51_code_thought_front_slot_qd/` (code-individual
-  single-thought operator plus one local front slot; no live result yet).
+  `techniques/T51_code_thought_front_slot_qd/`
+  (`T0 positive_ablation_not_promoted`; restores T50 yield/HV-AUC and
+  preserves all classic-covered designs, but classic still wins front breadth).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  launch T51 seed `1001` on the hard/tuning surface before any seed `1002` or
-  held-out spend; require front/yield movement, not just best-score movement.
+  keep T51's code-individual yield recovery, but add a stronger
+  front-preserving mechanism before seed `1002` or held-out spend.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -43,28 +40,25 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T50_candidate_matched_thought_front_qd/hard_tuning_package/figures/t50_direct_ppa_fronts_seed1001.png`
-  (partial 12-problem seed-1001 raw area-power fronts for the T50 hard/tuning
+  `techniques/T51_code_thought_front_slot_qd/hard_tuning_package/figures/t51_direct_ppa_fronts_seed1001.png`
+  (13-problem seed-1001 raw area-power fronts for the T51 hard/tuning
   package).
 - Most recent direct PPA HTML viewer:
-  `techniques/T50_candidate_matched_thought_front_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T51_code_thought_front_slot_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T48_t26_gated_near_front_fusion_qd/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T51_code_thought_front_slot_qd/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
-  raw/improvement/normalized PPA modes, raw A-P front mode, screenshots, and a
+  raw/improvement/normalized PPA modes, raw A-P front mode, screenshot, and a
   documented non-strict classic-projection caveat).
 - Current Phase 03.1 visualization contract:
   `phase_03_1_visualization_contract.md` (every completed live QD technique
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T50_candidate_matched_thought_front_qd/` (partial seed-1001
-  hard/tuning diagnostic with direct PPA supplement).
-- Most recent planned live technique:
-  `techniques/T51_code_thought_front_slot_qd/` (pre-registered
-  hard/tuning follow-up).
+  `techniques/T51_code_thought_front_slot_qd/` (seed-1001 hard/tuning
+  positive ablation with direct PPA supplement and Phase 03.1 viewer).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -176,7 +170,7 @@ Start here when resuming the active goal.
 | `T48` | `T48_t26_gated_near_front_fusion_qd` | Completed hard/tuning result, `T0 diagnostic after review`; gated near-front fusion reduces some T47 damage but still loses the primary QD metrics versus classic. |
 | `T49` | `T49_thought_k_role_separated_repair_qd` | Completed hard/tuning result, `T0 mixed_diagnostic`; preserves classic-covered valid-PPA coverage and improves best score, but loses mean HV, valid-PPA count, and front coverage. |
 | `T50` | `T50_candidate_matched_thought_front_qd` | Partial hard/tuning result, `T0 diagnostic`; best-score gain, but HV, HV-AUC, valid-PPA, unique PPA, and front coverage lose. |
-| `T51` | `T51_code_thought_front_slot_qd` | Pre-registered hard/tuning follow-up; direct code individuals plus single-thought operator and one local front slot. |
+| `T51` | `T51_code_thought_front_slot_qd` | Completed hard/tuning result, `T0 positive_ablation_not_promoted`; restores T50 yield/HV-AUC but classic still wins front breadth. |
 
 ## Validity-Gate Note
 

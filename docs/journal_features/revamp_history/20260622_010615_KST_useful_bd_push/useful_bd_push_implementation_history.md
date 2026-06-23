@@ -2951,3 +2951,34 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   would justify an ablation matrix before seed `1002` or held-out spend.
 - Next step: preflight the vLLM endpoint, launch T51 seed `1001`, then package
   against the T47 classic hard/tuning roots and T47-T50 QD packages.
+
+## T51 Code-Thought Front-Slot Result - 2026-06-23 UTC
+
+- Preflight passed against `http://20.0.0.103:8000/v1/models` with
+  `openai/gpt-oss-120b max_model_len=131072`.
+- Ran T51 seed `1001` on the 13-problem hard/tuning surface in
+  `1664.77` seconds:
+  `exp/useful_bd_push/t51_code_thought_front_slot_20260623_030540_UTC/hard_tuning/code_thought_front_slot_qd/seed_1001`.
+- Validation passed:
+  `pareto_front_validation.md` reports `failure_count=0`, and
+  `single_thought_operator_validation.md` reports `failure_count=0`.
+- Packaged results under
+  `techniques/T51_code_thought_front_slot_qd/hard_tuning_package/`.
+- Added direct PPA supplement under
+  `techniques/T51_code_thought_front_slot_qd/visualizations/direct_ppa_pareto/`
+  and a full Phase 03.1 viewer under
+  `techniques/T51_code_thought_front_slot_qd/visualizations/qd_ppa_viewer/`.
+- Non-strict Phase 03.1 validation passed. Strict validation failed because
+  classic candidates have no honest `sr_pca_0/1/2` archive projection.
+- Tier decision: `T0 positive_ablation_not_promoted`. T51 restores the full
+  candidate budget and beats classic on valid-PPA count (`266` versus `257`),
+  HV-AUC (`0.085454` versus `0.082020`), and best score (`0.293480` versus
+  `0.227928`), but loses mean HV (`0.089252` versus `0.092601`) and front
+  points (`21` versus `30`).
+- Against T50 on the same 12 completed problems, T51 improves generated
+  candidates (`576` versus `336`), valid-PPA (`245` versus `156`), mean HV
+  (`0.096588` versus `0.073617`), HV-AUC (`0.092549` versus `0.059753`),
+  unique PPA points (`60` versus `47`), and reference-beating candidates
+  (`39` versus `26`).
+- Next step: keep T51's code-individual yield recovery, but add a stronger
+  front-preserving mechanism before seed `1002` or held-out spend.

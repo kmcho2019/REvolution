@@ -254,9 +254,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T51_code_thought_front_slot_qd` is pre-registered as the next
       front/yield-preserving emitter after T50, using only existing runtime
       controls.
-- [ ] `T51_code_thought_front_slot_qd` seed `1001` is run on the T47
+- [x] `T51_code_thought_front_slot_qd` seed `1001` is run on the T47
       hard/tuning comparator surface, packaged, visually inspected, and
       assigned a tier decision before seed `1002` or held-out spend.
+- [ ] The next T51 follow-up is specified with an explicit front-preserving
+      mechanism before any seed `1002` or held-out spend.
 
 ## Minimum Goal Completion
 

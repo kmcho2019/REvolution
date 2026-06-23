@@ -567,6 +567,22 @@ a numbered `techniques/T##_slug/` package before running it.
   Pareto rank, problem identity, or held-out outcomes to choose the descriptor
   or emitter schedule.
 
+## From `T51_code_thought_front_slot_qd`
+
+- T51 confirms that the direct-code representation is the right recovery from
+  T50's thought-only yield collapse. It restores the full 13-problem candidate
+  budget, improves valid-PPA count, improves HV-AUC, and keeps best-score
+  pressure.
+- T51 is not a promoted useful-BD claim because classic still has more mean HV,
+  more PPA-front points, and more unique PPA points on the all-13 comparison.
+- Candidate follow-up: keep `representation_kind=code_individual` and
+  `single_thought_operator`, but replace the one passive local-front slot with
+  an explicit front-family lane. The lane should upsample already valid
+  low-crowding front families or underrepresented archive-front cells without
+  using held-out outcomes or problem identity.
+- The follow-up should specifically address `Prob015_multi_pipe_8bit`, where
+  T51's valid-PPA recovery does not translate to front breadth.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live

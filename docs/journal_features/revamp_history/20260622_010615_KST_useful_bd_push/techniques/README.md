@@ -64,7 +64,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T48` | `T48_t26_gated_near_front_fusion_qd` | Archive-coupling parent gate | `T0 diagnostic after review`; gated near-front fusion reduces some exact-T26 damage but still loses primary QD metrics versus classic |
 | `T49` | `T49_thought_k_role_separated_repair_qd` | Archive-coupling role-separated emitter | `T0 mixed_diagnostic`; preserves covered valid-PPA designs and improves best score, but loses mean HV, valid-PPA count, and front coverage |
 | `T50` | `T50_candidate_matched_thought_front_qd` | Archive-coupling candidate/front control | `T0 diagnostic`; partial 12-problem screen improves best score but loses HV, HV-AUC, valid-PPA, and front material |
-| `T51` | `T51_code_thought_front_slot_qd` | Archive-coupling code-level front-slot emitter | Pre-registered; tests code individuals plus single-thought operator and one local front slot |
+| `T51` | `T51_code_thought_front_slot_qd` | Archive-coupling code-level front-slot emitter | `T0 positive_ablation_not_promoted`; restores T50 yield/HV-AUC but still loses classic front breadth |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

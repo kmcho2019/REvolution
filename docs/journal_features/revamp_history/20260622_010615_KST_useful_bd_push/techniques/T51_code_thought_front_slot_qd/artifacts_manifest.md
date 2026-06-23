@@ -1,6 +1,6 @@
 # T51 Artifacts Manifest
 
-Status: pre-registered; no generated run artifacts yet.
+Status: seed `1001` hard/tuning package complete.
 
 ## Planned Inputs
 
@@ -14,15 +14,18 @@ Status: pre-registered; no generated run artifacts yet.
 
 ## Planned Outputs
 
-After seed `1001`, this package must add:
+Seed `1001` added:
 
 - `hard_tuning_package/` with matched classic/T51 tables and figures;
 - `visualizations/direct_ppa_pareto/` with `index.html`, `metrics.json`, and
   `screenshot.png`;
-- `visualizations/qd_ppa_viewer/` if archive artifacts support honest export;
-- `figures/visual_inspection_notes.md`;
-- hashes or exact paths for raw experiment roots and generated summaries.
+- `visualizations/qd_ppa_viewer/` with full Phase 03.1 export, validation
+  files, and `screenshot.png`;
+- `hard_tuning_package/validation/` with operator and Pareto validators.
 
-## Current Hashes
+## Raw Roots
 
-No generated artifacts are present yet.
+- T51:
+  `exp/useful_bd_push/t51_code_thought_front_slot_20260623_030540_UTC/hard_tuning/code_thought_front_slot_qd/seed_1001`.
+- Classic:
+  `exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001`.
