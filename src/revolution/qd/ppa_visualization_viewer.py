@@ -985,8 +985,8 @@ function drawArchive(label, sceneName, technique) {
   const ctx = setupCanvas(canvas);
   const archive = activeArchiveDefinition(ds);
   const axes = archive.axes;
-  const shape = effectiveShape(archive);
-  const cells = ((activeCellSummaries(ds)[stepName()] || {})[technique] || {});
+  const shape = renderShape(effectiveShape(archive));
+  const cells = renderCellSummaries(((activeCellSummaries(ds)[stepName()] || {})[technique] || {}));
   const camera = state.cameras[sceneName];
   document.getElementById('archive' + label + 'Title').textContent = 'Archive · ' + technique;
   document.getElementById('archive' + label + 'Badge').textContent = archive.archive_type;
@@ -1847,9 +1847,9 @@ function drawArchiveAxes(ctx, projector, shape, axes) {
   const origin = {x: -1.32, y: -1.28, z: -1.32};
   const axisDefs = [
     ['X', axes[0]?.name || 'x', '#c2185b', {x: 1.35, y: -1.28, z: -1.32}],
-    ['Y', axes[2]?.name || 'y', '#237b35', {x: -1.32, y: -1.28, z: 1.35}],
     ['Z', axes[1]?.name || 'z', '#1768c2', {x: -1.32, y: 1.35, z: -1.32}],
   ];
+  if (axes[2]) axisDefs.splice(1, 0, ['Y', axes[2].name, '#237b35', {x: -1.32, y: -1.28, z: 1.35}]);
   for (const [label, name, color, end] of axisDefs) {
     const a = projector(origin), b = projector(end);
     ctx.strokeStyle = color;
@@ -2082,7 +2082,7 @@ function drawPpaPoint(ctx, sample, screen, selected, shaded) {
   ctx.lineWidth = sample.mode_global_pareto_member ? 2.3 : 1.1;
   ctx.stroke();
   ctx.restore();
-  state.hitMaps.ppa.push({kind: 'ppaSample', sampleId: sample.sample_id, cellId: sample.archive_cell_id, x: screen.x, y: screen.y, radius: Math.max(radius + 5, 13)});
+  state.hitMaps.ppa.push({kind: 'ppaSample', sampleId: sample.sample_id, cellId: renderCellId(sample.archive_cell_id), x: screen.x, y: screen.y, radius: Math.max(radius + 5, 13)});
 }
 function ppaPointAlpha(hot, screen) {
   if (hot) return 1;
@@ -2296,6 +2296,24 @@ function effectiveShape(archive) {
   if (archive.archive_type === 'grid') return archive.axes.map((axis) => Number(axis.bins));
   if (archive.archive_type === 'cvt') return [Math.max(1, Number(archive.num_cells || 1)), 1, 1];
   throw new Error('unknown archive type: ' + archive.archive_type);
+}
+function renderShape(shape) {
+  const out = shape.slice();
+  while (out.length < 3) out.push(1);
+  return out.slice(0, 3);
+}
+function renderCellId(cellId) {
+  const parts = String(cellId).split(',');
+  while (parts.length < 3) parts.push('0');
+  return parts.slice(0, 3).join(',');
+}
+function renderCellSummaries(cells) {
+  const out = {};
+  Object.values(cells).forEach((summary) => {
+    const cellId = renderCellId(summary.cell_id);
+    out[cellId] = {...summary, raw_cell_id: summary.cell_id, cell_id: cellId};
+  });
+  return out;
 }
 function activeAxisCount(archive) {
   return archive.axes.filter((axis) => !axis.collapsed && Number(axis.effective_bins || axis.bins || 1) > 1).length;
@@ -2533,8 +2551,10 @@ function activeReferenceAxisLabels(ds) {
 }
 function axisSummary(ds) {
   const archive = arguments.length > 1 ? arguments[1] : ds.archive_definition;
-  return 'X = ' + archive.axes[0].name + ' · Y = ' + archive.axes[2].name + ' · Z = ' + archive.axes[1].name +
-    ' · collapsed: ' + (archive.collapsed_axes || []).join(', ') || 'none';
+  const labels = ['X = ' + archive.axes[0].name, 'Z = ' + archive.axes[1].name];
+  if (archive.axes[2]) labels.splice(1, 0, 'Y = ' + archive.axes[2].name);
+  const collapsed = (archive.collapsed_axes || []).join(', ') || 'none';
+  return labels.join(' · ') + ' · collapsed: ' + collapsed;
 }
 function axisDetails(ds) {
   const archive = arguments.length > 1 ? arguments[1] : ds.archive_definition;
