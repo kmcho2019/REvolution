@@ -663,3 +663,16 @@ the best ALU and traffic-light scores.
   loses T51 on HV, HV-AUC, best score, valid PPA, unique PPA, and
   reference-beating candidates while adding only one front point. Retire
   coarse SR2 archive geometry as a primary path.
+- T57 completed the adaptive-rebin check as `T0 diagnostic_no_rebin_signal`.
+  It emitted 26 rebin checks and 0 rebins, had one classic-covered valid-PPA
+  loss, and lost classic/T51 on HV and HV-AUC. Retire exact adaptive rebinning.
+- T58 completed the T51 plus T11-PCA4 graph-coordinate check as
+  `T0 diagnostic_no_promotion`. It improves valid PPA and best score versus
+  classic, but loses classic and T51 on HV, HV-AUC, and front breadth. Do not
+  continue frozen graph coordinates as the primary archive geometry.
+- T59 completed the short fail-pool feedback plus front-slot check as
+  `T0 diagnostic_no_promotion`. It improves mean best score by `+0.059826`,
+  but loses classic on mean HV (`-0.005882`), HV-AUC (`-0.002960`), valid PPA
+  (`-16`), front points (`-10`), unique PPA (`-27`), and reference-beating
+  candidates (`-13`). `Prob153_gshare` triggers a yield warning. Do not spend
+  seed `1002` on exact T59.

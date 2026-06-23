@@ -1,15 +1,15 @@
 # T59 Figures
 
-Status: planned.
+Status: generated and visually inspected.
 
-Required figures after the live run:
+- `hard_tuning_package/figures/t59_raw_area_power_fronts_seed1001.png`
+- `hard_tuning_package/figures/t59_direct_ppa_fronts_seed1001.png`
+- `hard_tuning_package/figures/t59_metric_delta_summary.png`
+- `hard_tuning_package/figures/t59_hv_delta_heatmap.png`
+- `hard_tuning_package/figures/t59_validity_funnel.png`
+- `hard_tuning_package/figures/t59_front_counts.png`
+- `hard_tuning_package/figures/t59_operator_counters.png`
 
-- raw area-power PPA-front panels for all 13 hard/tuning problems;
-- HV and HV-AUC delta heatmap versus classic, T51, T54, and T58;
-- validity funnel with small-n labels;
-- front-count and unique-PPA summary;
-- operator counter plot showing front-slot lane requests/hits and fail-pool
-  descendant counts.
-
-Before any claim, inspect the generated PNGs and record visual notes under the
-packaged figure directory.
+The raw area-power figure and HTML supplement screenshots render clearly. The
+direct package plot named `t59_direct_ppa_fronts_seed1001.png` uses
+improvement-vs-reference coordinates and is documented as such.

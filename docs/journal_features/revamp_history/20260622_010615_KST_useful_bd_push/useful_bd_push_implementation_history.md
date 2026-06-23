@@ -3407,3 +3407,39 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   path and evaluated-candidate budget.
 - Next step: preflight the vLLM endpoint, then run seed `1001` on the frozen
   13-problem hard/tuning surface.
+
+## T59 T51 Feedback Front-Slot Result - 2026-06-23 UTC
+
+- Preflight passed against the local vLLM endpoint:
+  `openai/gpt-oss-120b max_model_len=131072`.
+- T59 raw run:
+  `exp/useful_bd_push/t59_t51_feedback_front_slot_20260623_110249_UTC/hard_tuning/t51_feedback_front_slot_qd/seed_1001`.
+- The run completed all 13 hard/tuning problems in `1624.69` seconds.
+- Single-thought and Pareto/front validators passed with
+  `--require-full-subset`.
+- Aggregate T59 versus classic: HV `-0.005882`, HV-AUC `-0.002960`, best
+  score `+0.059826`, valid PPA `-16`, front points `-10`, unique PPA points
+  `-27`, reference-beating candidates `-13`.
+- T59 also loses to T51 on every primary metric in
+  `hard_tuning_package/tables/t59_lineage_comparison.csv`; it partially
+  recovers HV/HV-AUC/best score versus T54 and T58 but still loses front
+  breadth and valid-PPA yield versus both.
+- T59 has one yield warning, `Prob153_gshare`, and one small-n label,
+  `Prob151_review2015_fsm`.
+- Packaged result:
+  `techniques/T59_t51_feedback_front_slot_qd/hard_tuning_package/`.
+- Direct PPA supplement:
+  `techniques/T59_t51_feedback_front_slot_qd/visualizations/direct_ppa_pareto/index.html`.
+- Full Phase 03.1 viewer:
+  `techniques/T59_t51_feedback_front_slot_qd/visualizations/qd_ppa_viewer/index.html`.
+- Non-strict viewer validation passed. Strict validation fails because classic
+  candidates cannot be honestly projected into T59's SR-PCA archive
+  coordinates from the available artifacts; this is documented in
+  `visualizations/qd_ppa_viewer/projection_caveat.md`.
+- Playwright generated screenshots but reported the archive-hover caveat
+  documented in `visualizations/qd_ppa_viewer/playwright_caveat.md`.
+- Manual screenshots were inspected for the direct PPA supplement and full
+  Phase 03.1 viewer; both render readable, nonblank figures without broken
+  assets.
+- Decision: mark T59 `T0 diagnostic_no_promotion`; do not spend seed `1002`
+  on exact T59.

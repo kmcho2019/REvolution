@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T59 Direct PPA Pareto Supplement</title>
+  <style>
+    :root { color-scheme: light; --ink: #17202a; --muted: #5b6572; --line: #d7dde5; --paper: #f7f8fa; --panel: #ffffff; --good: #0f766e; --warn: #a34d12; --bad: #b42318; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 24px 42px; }
+    h1, h2 { margin: 0; line-height: 1.15; font-weight: 650; }
+    h1 { font-size: 26px; }
+    h2 { margin-top: 28px; font-size: 18px; }
+    p { margin: 8px 0 0; color: var(--muted); }
+    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 10px; margin: 18px 0 26px; }
+    .metric { border-left: 3px solid var(--warn); background: var(--panel); padding: 10px 12px; box-shadow: 0 1px 0 var(--line); }
+    .metric.good { border-left-color: var(--good); }
+    .metric.bad { border-left-color: var(--bad); }
+    .metric strong { display: block; font-size: 18px; }
+    .metric span { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    figure { margin: 18px 0 0; padding: 12px; background: var(--panel); border: 1px solid var(--line); }
+    img { display: block; width: 100%; height: auto; }
+    figcaption { margin-top: 8px; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>T59 Direct PPA Pareto Supplement</h1>
+    <p>
+      Static reader-facing figures for the completed 13-problem hard/tuning
+      screen. T59 keeps the T51 direct-code SR-PCA path, uses the fixed
+      front-slot parent lane, and adds short fail-pool feedback. The result is
+      diagnostic: mean best score improves, but HV, HV-AUC, raw front breadth,
+      unique PPA breadth, and reference-beating counts lose to classic.
+    </p>
+
+    <section class="summary" aria-label="Aggregate metrics">
+      <div class="metric bad"><strong>-0.005882</strong><span>Mean HV delta</span></div>
+      <div class="metric bad"><strong>-0.002960</strong><span>Mean HV-AUC delta</span></div>
+      <div class="metric good"><strong>+0.059826</strong><span>Best-score delta</span></div>
+      <div class="metric bad"><strong>-16</strong><span>Valid PPA</span></div>
+      <div class="metric bad"><strong>-10</strong><span>Front points</span></div>
+      <div class="metric bad"><strong>-27</strong><span>Unique PPA points</span></div>
+      <div class="metric bad"><strong>-13</strong><span>Reference beating</span></div>
+      <div class="metric bad"><strong>Prob153</strong><span>Yield warning</span></div>
+    </section>
+
+    <h2>Raw Area-Power Fronts</h2>
+    <figure><img src="t59_raw_area_power_fronts_seed1001.png" alt="Seed 1001 raw area-power fronts"><figcaption>Lower-left is better. Large markers are nondominated within each problem and method using raw area and power.</figcaption></figure>
+
+    <h2>Improvement-Vs-Reference Fronts</h2>
+    <figure><img src="t59_direct_ppa_fronts_seed1001.png" alt="Seed 1001 improvement-coordinate PPA fronts"><figcaption>Improvement coordinates make cross-design gains easier to compare, but do not replace raw area-power inspection.</figcaption></figure>
+
+    <h2>Aggregate Direction</h2>
+    <figure><img src="t59_metric_delta_summary.png" alt="Aggregate relative deltas for T59 against classic"><figcaption>T59's best-score gain comes with weaker HV, HV-AUC, front breadth, and reference-beating count.</figcaption></figure>
+    <figure><img src="t59_hv_delta_heatmap.png" alt="Problem heatmap of T59 relative HV delta"><figcaption>Paired HV evidence remains mixed and negative in aggregate.</figcaption></figure>
+
+    <h2>Validity And Front Coverage</h2>
+    <figure><img src="t59_validity_funnel.png" alt="Validity funnel comparing generated, syntax, functional, and valid PPA counts"><figcaption>T59 passes most relaxed coverage checks but triggers a Prob153 yield warning.</figcaption></figure>
+    <figure><img src="t59_front_counts.png" alt="Front-point counts by problem"><figcaption>Classic retains more aggregate raw front material.</figcaption></figure>
+  </main>
+</body>
+</html>

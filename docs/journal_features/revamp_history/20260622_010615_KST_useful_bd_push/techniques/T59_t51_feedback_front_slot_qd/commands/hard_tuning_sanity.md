@@ -1,7 +1,6 @@
 # T59 Hard/Tuning Sanity Commands
 
-Status: pre-registered; do not edit after launch except to append actual
-paths.
+Status: completed; pre-registration commands retained with actual paths below.
 
 ## Preflight
 
@@ -124,3 +123,25 @@ uv run python scripts/validate_pareto_front_run.py \
 
 Viewer export must follow the Phase 03.1 contract after final analysis data
 exists.
+
+## Completed Run
+
+- `RUN_TS=20260623_110249_UTC`.
+- `RUN_ROOT=exp/useful_bd_push/t59_t51_feedback_front_slot_20260623_110249_UTC/hard_tuning`.
+- Preflight passed:
+  `openai/gpt-oss-120b max_model_len=131072`.
+- T59 completed all 13 hard/tuning problems in `1624.69` seconds.
+- Summary log:
+  `exp/useful_bd_push/t59_t51_feedback_front_slot_20260623_110249_UTC/hard_tuning/t51_feedback_front_slot_qd/seed_1001/openai_gpt-oss-120b/20260623_110317_revolution_summary_results.txt`.
+- Single-thought validation passed with `--require-full-subset`.
+- Pareto/front validation passed with `--require-full-subset`.
+- Packaged result:
+  `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T59_t51_feedback_front_slot_qd/hard_tuning_package/`.
+- Direct PPA supplement:
+  `visualizations/direct_ppa_pareto/index.html`.
+- Full Phase 03.1 viewer:
+  `visualizations/qd_ppa_viewer/index.html`.
+- Non-strict viewer validation passed. Strict validation fails with the
+  documented classic SR-PCA projection caveat.
+- Decision: exact T59 is `T0 diagnostic_no_promotion`; do not spend seed
+  `1002` on this exact feedback front-slot path.

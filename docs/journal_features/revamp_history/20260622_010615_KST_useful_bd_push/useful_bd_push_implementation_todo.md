@@ -389,11 +389,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       seed `1002` spend.
 - [x] T59 T51 feedback front-slot QD is pre-registered as the front-yield
       protected emitter follow-up after T58 retired primary graph coordinates.
-- [ ] T59 seed `1001` is run on the T47/T51/T54/T58 hard/tuning surface after
+- [x] T59 seed `1001` is run on the T47/T51/T54/T58 hard/tuning surface after
       vLLM preflight.
-- [ ] T59 is validated, packaged, visualized, and compared against T47
+- [x] T59 is validated, packaged, visualized, and compared against T47
       classic, T51, T54, and T58.
-- [ ] T59 gets a promotion, ablation, or retirement rationale before any exact
+- [x] T59 gets a promotion, ablation, or retirement rationale before any exact
       seed `1002` spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 

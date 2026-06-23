@@ -1,8 +1,6 @@
 # T59 Visualizations
 
-Status: planned.
-
-T59 must include both visualization bundles if archive artifacts are produced:
+Status: generated.
 
 - `visualizations/direct_ppa_pareto/`: paper-readable raw area-power PPA-front
   supplement with screenshot.
@@ -10,5 +8,7 @@ T59 must include both visualization bundles if archive artifacts are produced:
   manifest, datasets, validation output, screenshots, and any honest
   projection caveat.
 
-The full viewer should use T59 as the archive source backend and project
-classic candidates into the same SR-PCA archive space.
+The full viewer uses T59 as the archive source backend. Classic candidates
+cannot be honestly projected into the SR-PCA archive space with the current
+available artifacts, so `projection_caveat.md` documents the strict validation
+failure.

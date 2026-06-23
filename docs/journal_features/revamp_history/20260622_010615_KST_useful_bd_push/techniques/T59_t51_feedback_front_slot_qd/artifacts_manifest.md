@@ -1,11 +1,11 @@
 # T59 Artifacts Manifest
 
-Status: pre-registered; no run artifacts yet.
+Status: seed `1001` hard/tuning package complete.
 
-## Planned Raw Run
+## Raw Run
 
-- Planned QD root:
-  `exp/useful_bd_push/t59_t51_feedback_front_slot_${RUN_TS}/hard_tuning/t51_feedback_front_slot_qd/seed_1001`
+- QD root:
+  `exp/useful_bd_push/t59_t51_feedback_front_slot_20260623_110249_UTC/hard_tuning/t51_feedback_front_slot_qd/seed_1001`
 - Classic comparator root:
   `exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001`
 - Primary T51 comparator root:
@@ -21,9 +21,7 @@ Status: pre-registered; no run artifacts yet.
 - Required model:
   `openai/gpt-oss-120b max_model_len=131072`
 
-## Planned Package
-
-After the run, package:
+## Package
 
 - `hard_tuning_package/README.md`
 - `hard_tuning_package/tables/t59_problem_seed_metrics.csv`
@@ -31,13 +29,12 @@ After the run, package:
 - `hard_tuning_package/tables/t59_comparison_deltas.csv`
 - `hard_tuning_package/tables/t59_validity_gates.csv`
 - `hard_tuning_package/tables/t59_operator_counters.csv`
+- `hard_tuning_package/tables/t59_lineage_comparison.csv`
 - `hard_tuning_package/data/t59_ppa_candidates.csv`
 - `hard_tuning_package/figures/`
 - `results_report.md`
 
-## Planned Visualizations
-
-T59 must include both visualization bundles if archive artifacts are produced:
+## Visualizations
 
 - `visualizations/direct_ppa_pareto/` with `index.html`, `metrics.json`, and
   `screenshot.png`.
@@ -47,12 +44,13 @@ T59 must include both visualization bundles if archive artifacts are produced:
 
 ## Validation
 
-Before assigning a tier, run:
-
 - `scripts/validate_single_thought_operator_run.py --require-full-subset`;
 - `scripts/validate_pareto_front_run.py --require-full-subset`;
-- `scripts/validate_qd_ppa_visualization.py --strict` after viewer export;
-- visual inspection of the direct PPA screenshot and full viewer screenshot.
+- `scripts/validate_qd_ppa_visualization.py`: passed non-strict;
+- `scripts/validate_qd_ppa_visualization.py --strict`: failed with documented
+  classic SR-PCA projection caveat;
+- visual inspection of the direct PPA screenshot and full viewer screenshot:
+  completed.
 
 ## Anti-Gaming Notes
 

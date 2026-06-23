@@ -1,6 +1,6 @@
 # T59 T51 Feedback Front-Slot QD Methodology
 
-Status: pre-registered; not launched.
+Status: completed; exact T59 is `T0 diagnostic_no_promotion`.
 
 ## Question
 
@@ -16,6 +16,11 @@ failure feedback for fail-pool parents.
 
 This is a front-yield protected emitter test. It is not a bounded local repair
 loop and it does not add extra candidate evaluations.
+
+Measured outcome: T59 did not satisfy the acceptance signals. It improves mean
+best score versus classic, but loses classic and T51 on HV, HV-AUC, valid PPA,
+front points, unique PPA points, and reference-beating count. It also triggers a
+`Prob153_gshare` yield warning.
 
 ## Method Delta From T51 And T54
 
