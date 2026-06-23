@@ -24,9 +24,9 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T70_generated_rtl_extractor_smoke/`
-  (`T0 extractor_smoke_unblocker`; source-aligned MasterRTL/RTL-Timer
-  extraction passes on 19 generated T67 RTL candidates).
+  `techniques/T71_source_aligned_rtl_native_feature_map/`
+  (`T0 descriptor_design_unblocker`; source-aligned extractor outputs occupy
+  9 of 16 proposed RTL-native archive cells without PPA leakage).
 - Most recent live QD package:
   `techniques/T67_rtl_native_seeded_thought_qd/`
   (`T0 diagnostic_yield_positive_front_negative_blocked`; improves aggregate
@@ -37,8 +37,9 @@ Start here when resuming the active goal.
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  extract a larger source-aligned RTL-native feature table and pre-register
-  archive-cell mapping before another live RTL-native QD spend.
+  pre-register a live source-aligned RTL-native QD method that uses T71 cells
+  for parent selection, local-front retention, secondary archive pressure, or
+  source-level repair.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -76,10 +77,10 @@ Start here when resuming the active goal.
   positive_proxy_not_promoted` fused structural/timing proxy). T63, T64, T66,
   and T67 are reference-complete live archive tests, and T65 is a
   secondary-cell audit over T51/T63/T64. Use them as mechanism evidence only:
-  none beats classic headline PPA-front metrics. T68/T69/T70 are the
-  source-verification caveat: do not claim true MasterRTL/RTL-Timer extraction
-  as a promoted QD method until source-aligned descriptors are used in a live
-  reference-complete comparison.
+  none beats classic headline PPA-front metrics. T68/T69/T70/T71 are the
+  source-verification and descriptor-design caveat: do not claim true
+  MasterRTL/RTL-Timer extraction as a promoted QD method until source-aligned
+  descriptors are used in a live reference-complete comparison.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -212,6 +213,7 @@ Start here when resuming the active goal.
 | `T68` | `T68_source_verified_rtl_native_extractors` | Completed `T0 verification_gate`; upstream MasterRTL/RTL-Timer examples are partly verified, but fresh conversion needs Verific or a source-aligned preprocessing adaptation. |
 | `T69` | `T69_open_yosys_rtl_native_preprocessing` | Completed `T0 preprocessing_unblocker`; TinyRocket open-Yosys SOG/BOG preprocessing is source-aligned enough for a generated-candidate extractor smoke, but not a live QD result. |
 | `T70` | `T70_generated_rtl_extractor_smoke` | Completed `T0 extractor_smoke_unblocker`; 19 generated T67 RTL candidates pass both source-aligned extraction paths. |
+| `T71` | `T71_source_aligned_rtl_native_feature_map` | Completed `T0 descriptor_design_unblocker`; 19 candidates occupy 9/16 source-aligned RTL-native cells without PPA leakage. |
 
 ## Validity-Gate Note
 

@@ -94,6 +94,8 @@ Real result packages:
   preprocessing unblocker.
 - `T70_generated_rtl_extractor_smoke` generated-candidate MasterRTL/RTL-Timer
   extractor smoke.
+- `T71_source_aligned_rtl_native_feature_map` source-aligned RTL-native
+  feature-map and archive-cell design package.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`.
@@ -115,6 +117,13 @@ RTL candidates pass both MasterRTL SOG extraction and RTL-Timer SOG BOG
 extraction. This remains an extractor smoke, not a live QD result. The next
 RTL-native package must define descriptor features and archive cells from the
 source-aligned outputs before any larger live spend.
+T71 completes that descriptor-design step for the T70 sample. It maps
+MasterRTL graph-edge scale and RTL-Timer DFF/state morphology into a 4 by 4
+cell proposal, with `9/16` cells occupied, largest cell count `4`, and archive
+entropy `3.010571` bits. It remains a `T0` descriptor-design unblocker, not a
+PPA result: the next RTL-native live method still needs reference-complete
+classic-vs-QD comparison, direct PPA-front plots, and Phase 03.1 viewer
+artifacts when archive data exists.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis

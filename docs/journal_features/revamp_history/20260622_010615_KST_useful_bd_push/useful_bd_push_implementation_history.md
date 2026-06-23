@@ -3925,3 +3925,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   blocker on this generated-candidate sample. The next RTL-native package must
   define feature extraction and archive-cell mapping before any larger live
   spend.
+
+## 2026-06-23T20:19:00Z - T71 Source-Aligned RTL-Native Feature Map
+
+- Checked storage before continuing: `/workspace` remains at about `3.5T`
+  available and `87%` used, with inode usage around `3%`.
+- Added `techniques/T71_source_aligned_rtl_native_feature_map/` as a
+  descriptor-design unblocker, not as a live QD or PPA result.
+- Built a deterministic feature table from the committed T70 extractor CSV
+  without copying the T70 raw SOG/BOG logs or creating new bulk artifacts.
+- Defined a 4 by 4 archive-cell proposal from source-aligned features:
+  MasterRTL graph-edge operator scale quartiles by RTL-Timer DFF-based
+  state/timing classes.
+- Leakage exclusions are explicit: no PPA, fitness, test pass rate, Pareto
+  rank, hypervolume, or reference PPA is used as a descriptor input.
+- Result: `19` candidates across `7` problems occupy `9/16` cells, with
+  largest cell count `4` and archive entropy `3.010571` bits.
+- Visually inspected `figures/t71_descriptor_scatter.png` and
+  `figures/t71_archive_cell_heatmap.png`; both are readable as static report
+  figures.
+- Decision: T71 is sufficient to pre-register the next live source-aligned
+  RTL-native QD method, but it is not promotion evidence. The next method must
+  test these cells under reference-complete PPA comparison and normal
+  visualization gates.

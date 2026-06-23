@@ -58,7 +58,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T58 preserves coverage and improves yield/best score with frozen T11 PCA4 under T51, but still loses HV, HV-AUC, and front breadth. | Stop primary graph-coordinate live archive tests unless the next method uses graph features as a secondary lane or trains a new encoder objective. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
-| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T70 shows source-aligned MasterRTL/RTL-Timer extraction passes on 19 generated T67 candidates. | Before another live RTL-native spend, define and audit archive cells from source-aligned extractor features. |
+| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T71 defines a source-aligned 4 by 4 RTL-native cell map with `9/16` occupied cells on the T70 generated sample. | Pre-register a live method that couples these cells to parent selection, local-front retention, or source-level repair. |
 
 ## Lane Scorecard
 
@@ -71,7 +71,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, T46 PCA4 projection, and T58 T51/T11-PCA4 cross-lane test | T58 is measured `T0 diagnostic_no_promotion`: it preserves coverage and improves yield/best score, but loses classic/T51 on HV, HV-AUC, and front breadth. | Retire frozen T11 PCA4 as a primary archive geometry. | Reopen only as a secondary/reporting lane or with a trained encoder objective that targets front creation without PPA leakage. |
 | `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
-| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, T68 upstream verification, T69 open-Yosys preprocessing, and T70 generated RTL smoke | T70 is measured `T0 extractor_smoke_unblocker`: `19/19` generated candidates pass both source-aligned extraction paths. | RTL-native cells are interpretable, but descriptor-to-archive utility is still unproven. | Build a source-aligned feature table and archive-cell mapping before another RTL-native live spend. |
+| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, T68 upstream verification, T69 open-Yosys preprocessing, T70 generated RTL smoke, and T71 source-aligned feature map | T71 is measured `T0 descriptor_design_unblocker`: source-aligned extractor outputs occupy `9/16` proposed RTL-native cells without PPA leakage. | RTL-native cells are interpretable, but live descriptor-to-archive utility is still unproven. | Pre-register a live source-aligned QD variant using T71 cells before spending model budget. |
 
 ## Current Lineage
 
@@ -167,6 +167,7 @@ flowchart LR
     BM[T68 source verification]
     BN[T69 open-Yosys preprocessing]
     BO[T70 generated RTL smoke]
+    BP[T71 feature map]
   end
 
   A --> Q
@@ -241,6 +242,7 @@ flowchart LR
   BL --> BM
   BM --> BN
   BN --> BO
+  BO --> BP
   G --> M
   G --> W
 ```
@@ -330,6 +332,7 @@ flowchart TD
 | 2026-06-23 | `L7` RTL-native descriptors | T68 source-verified RTL-native extractor check | `gate` upstream-equivalence claims | MasterRTL and RTL-Timer upstream examples can be inspected, but their fresh conversion scripts require Verific. MasterRTL graph parse on shipped SOG yields `51337` node-dict entries and `65938` graph edges; RTL-Timer route-word SOG slack has Pearson `0.846441` and Spearman `0.385196` against net slack. | Do not claim true MasterRTL/RTL-Timer descriptor use until a Verific-capable flow or source-aligned preprocessing adaptation runs on our candidates. |
 | 2026-06-23 | `L7` RTL-native descriptors | T69 open-Yosys RTL-native preprocessing | `advance` candidate extractor smoke | Open-clean TinyRocket preprocessing works without Verific for both MasterRTL and RTL-Timer. MasterRTL graph keys, edges, and node-dict entries stay within about 1.1% of shipped TinyRocket; RTL-Timer preserves the shipped SOG BOG DFF-reference count exactly. | Run the source-aligned extractor on generated RTL candidates before another RTL-native live QD spend. |
 | 2026-06-23 | `L7` RTL-native descriptors | T70 generated RTL extractor smoke | `advance` source-aligned feature table | `19/19` sampled generated T67 candidates pass both MasterRTL SOG extraction and RTL-Timer SOG BOG extraction. The sample includes five candidates without prior `code.syn.v`. | Define source-aligned descriptor features and archive-cell mapping before another RTL-native live QD spend. |
+| 2026-06-23 | `L7` RTL-native descriptors | T71 source-aligned feature map | `advance` live cell-coupled method | The 19 T70 candidates occupy `9/16` cells in a PPA-free map built from MasterRTL graph-edge operator scale and RTL-Timer DFF state/timing class. Largest cell count is `4`; archive entropy is `3.010571` bits. | Pre-register a live QD method that uses T71 cells for parent selection, local-front retention, secondary archive pressure, or source-level repair. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
@@ -537,8 +540,11 @@ open-Yosys path: remove `read -verific`, keep the upstream SOG/BOG lowering
 intent, apply upstream-style generated-attribute cleanup, and confirm that the
 generated MasterRTL and RTL-Timer artifacts stay close to shipped examples.
 T70 applies that path to generated T67 candidates and gets `19/19` pass rates
-for both extractors. The next RTL-native step is feature-table and archive-cell
-design, not another broad live run.
+for both extractors. T71 then defines the first source-aligned archive-cell
+map from those outputs: MasterRTL graph-edge scale by RTL-Timer DFF/state
+class, with `9/16` cells occupied and no PPA leakage. The next RTL-native step
+is a pre-registered live cell-coupled method, not another broad diagnostic
+table.
 
 ## Branching Guidance
 
@@ -570,7 +576,7 @@ unblocks it.
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43, T58 | T58 completed the bounded T51/T11-PCA4 cross-lane test and failed promotion on HV/front breadth. | Stop exact frozen graph-coordinate primary archive tests. | Reopen only with secondary/reporting graph lanes or a trained encoder objective that improves front creation without PPA leakage. |
 | `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
-| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70 | T70 completed as an extractor smoke: generated-candidate source-aligned extraction works, but descriptor/archive utility is unmeasured. | Build a source-aligned feature table and archive-cell map before any live RTL-native spend. | A successor improves live front metrics without default-reference or PPA-leakage claims. |
+| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71 | T71 completed the source-aligned feature map: T70 candidates occupy `9/16` PPA-free RTL-native cells, but live descriptor/archive utility is unmeasured. | Pre-register a live source-aligned method that uses T71 cells in parent selection, local-front retention, secondary archive pressure, or source-level repair. | A successor improves live front metrics without default-reference or PPA-leakage claims. |
 
 ## Branch Split Checklist
 
