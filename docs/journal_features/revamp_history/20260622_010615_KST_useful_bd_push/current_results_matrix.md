@@ -56,6 +56,8 @@ Real result packages:
   live ablation
 - `T46_t11_runtime_pca4_graph` frozen PCA4 T11 runtime graph projection
   live ablation
+- `T47_t26_contract_probe` hard/tuning exact-T26 contract probe
+- `T48_t26_gated_near_front_fusion_qd` gated near-front T26.1 follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T15`, `T16`, and `T18`.
@@ -163,6 +165,26 @@ negative: classic wins mean HV (`0.1588` versus `0.1155`), HV wins (`2` versus
 dimensionality variants as the next live path; graph features should move to a
 secondary archive/reporting role or a trained-encoder input unless a new
 mechanism is specified.
+
+T47 is complete and remains `T0 diagnostic`. It is the hard/tuning
+contract-aligned screen for exact T26 after the one-seed RTLLM package was
+narrowed to diagnostic. Exact T26 keeps positive mean best-score movement and
+preserves every classic-covered design, but the primary QD evidence is weaker
+than classic: mean HV delta is `-0.015483`, mean HV-AUC delta is `-0.018435`,
+valid PPA falls from `538` to `428`, and aggregate PPA-front points fall from
+`61` to `53`. It should not be used for held-out or final-style spend without
+a stronger follow-up.
+
+T48 is complete and remains `T0 diagnostic after review`. It is the T26.1
+follow-up that reintroduced low-probability two-parent fusion only when both
+parents were valid, near-front, and descriptor-compatible. It improves over
+T47's exact-T26 diagnostic in some yield/gating behavior and keeps zero
+classic-covered valid-PPA losses, but it still loses to classic on the
+hard/tuning contract metrics: mean HV delta is `-0.010183`, mean HV-AUC delta
+is `-0.015628`, valid PPA falls from `538` to `452`, aggregate front points
+fall from `61` to `51`, and three yield warnings remain. The Phase 03.1 viewer
+is packaged with an honest non-strict classic-projection caveat; the direct
+raw-PPA supplement is the primary visual comparison.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -493,6 +515,10 @@ the best ALU and traffic-light scores.
     preserve classic/champion pressure on easier designs and reserve the
     sparse-yield one-slot lane for designs where archive activation or hard
     front recovery is the bottleneck.
+26. T48 shows that simply reintroducing gated near-front two-parent fusion is
+    not enough to rescue the T26-family hard/tuning contract. It reduces some
+    exact-T26 damage but still loses HV, HV-AUC, valid-PPA count, and aggregate
+    front points versus classic.
 
 ## Next Decisions
 
@@ -534,3 +560,7 @@ the best ALU and traffic-light scores.
   frozen non-PPA projection and still lost the aggregate comparison, so graph
   features should move to secondary archive/reporting coordinates or trained
   encoder inputs unless a new mechanism is specified.
+- For the T47/T48 T26-family hard/tuning lineage, do not launch exact T26 or
+  gated T26.1 as a held-out claim. The next same-family method needs
+  role-separated champion, local-rank-1, and bounded-repair lanes rather than
+  another direct two-parent fusion tweak.

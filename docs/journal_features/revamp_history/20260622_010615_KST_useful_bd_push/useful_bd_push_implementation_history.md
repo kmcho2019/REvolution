@@ -2804,3 +2804,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   candidates cannot be honestly projected into learned `sr_pca_3d` archive
   cells from raw graph/RTL metrics, so the viewer was exported with
   `--no-classic-descriptor-recovery`.
+
+## Central T48 Navigation Sync - 2026-06-23 UTC
+
+- Updated the local index, current results matrix, technique registry, lane
+  ledger, lineage ledger, and TODO to stop treating T48 as pending.
+- Recorded T48 as `T0 diagnostic after review`: zero classic-covered
+  valid-PPA losses and partial improvement over exact T26, but negative mean
+  HV, mean HV-AUC, valid-PPA count, and aggregate front-count deltas versus
+  classic on the hard/tuning contract surface.
+- Recorded the next direction: do not spend held-out budget on exact T26 or
+  gated T26.1. The next same-family method needs a role-separated champion,
+  local-rank-1, and bounded-repair emitter/archive follow-up.

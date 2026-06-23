@@ -232,7 +232,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       negative HV, HV-AUC, valid-PPA, and aggregate front-count deltas.
 - [x] `T48_t26_gated_near_front_fusion_qd` narrow parent gate implementation
       is added with focused QD engine and backend plumbing tests.
-- [ ] `T48_t26_gated_near_front_fusion_qd` is run on the T47 hard/tuning
+- [x] `T48_t26_gated_near_front_fusion_qd` is run on the T47 hard/tuning
       comparator surface, packaged, visually inspected, and assigned a tier
       decision.
 
@@ -281,6 +281,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T46 has a full Phase 03.1 `qd_ppa_viewer/` bundle with strict
       validation, Playwright screenshot, honest classic projection, and a
       direct raw-PPA supplement.
+- [x] T48 has a full Phase 03.1 `qd_ppa_viewer/` bundle with a documented
+      non-strict classic-projection caveat and a direct raw-PPA supplement.
 - [ ] Conclusions distinguish `T0`, `T1`, `T2`, and `T3`.
 - [ ] Every `T0` result adds a follow-up idea, ablation, hybrid, or retirement
       rationale before the next method starts.
@@ -301,6 +303,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T44 gets a follow-up direction: compress or select fewer T11 runtime
       graph axes, such as a top-3/top-4 profile or frozen non-PPA projection,
       before trying top-16/top-64 fitted projection.
+- [x] T48 gets a follow-up direction: stop direct T26.1 two-parent fusion
+      escalation and specify a role-separated champion, local-rank-1, and
+      bounded-repair emitter before spending held-out budget.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation
