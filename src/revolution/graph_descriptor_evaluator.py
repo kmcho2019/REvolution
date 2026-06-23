@@ -9,16 +9,21 @@ import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable, cast
 
 import numpy as np
 
+csr_matrix: Any
+eigsh: Any
 try:
-    from scipy.sparse import csr_matrix
-    from scipy.sparse.linalg import eigsh
+    from scipy.sparse import csr_matrix as _csr_matrix
+    from scipy.sparse.linalg import eigsh as _eigsh
 except Exception:  # pragma: no cover - scipy import failures are environment-specific
     csr_matrix = None
     eigsh = None
+else:
+    csr_matrix = _csr_matrix
+    eigsh = _eigsh
 
 
 _SEQUENTIAL_CELL_MARKERS = (
@@ -52,6 +57,25 @@ _SEQUENTIAL_CONTROL_PORTS = {
     "S",
     "R",
 }
+_SOG_ARITH_TYPES = {"$add", "$sub", "$mul", "$div", "$mod", "$pow"}
+_SOG_COMPARE_TYPES = {"$eq", "$eqx", "$ge", "$gt", "$le", "$lt", "$ne", "$nex"}
+_SOG_LOGIC_TYPES = {
+    "$and",
+    "$logic_and",
+    "$logic_not",
+    "$logic_or",
+    "$not",
+    "$or",
+    "$reduce_and",
+    "$reduce_bool",
+    "$reduce_or",
+    "$reduce_xnor",
+    "$reduce_xor",
+    "$xnor",
+    "$xor",
+}
+_SOG_MUX_TYPES = {"$bmux", "$demux", "$mux", "$pmux"}
+_SOG_SHIFT_TYPES = {"$shift", "$shiftx", "$shl", "$shr", "$sshl", "$sshr"}
 _CONST_ZERO = {"0", "1'0", "1'b0"}
 _CONST_ONE = {"1", "1'1", "1'b1"}
 _INF_SCORE = 1_000_000.0
@@ -235,16 +259,19 @@ class GraphDescriptorEvaluator:
         modules = payload.get("modules")
         if not isinstance(modules, dict) or not modules:
             return self._empty_graph_model()
+        modules = cast(dict[str, object], modules)
 
         top_key = self._resolve_top_module_key(modules, top_module_name)
         module_raw = modules.get(top_key)
         if not isinstance(module_raw, dict):
             return self._empty_graph_model()
 
-        ports = module_raw.get("ports", {})
-        cells_payload = module_raw.get("cells", {})
-        if not isinstance(ports, dict) or not isinstance(cells_payload, dict):
+        ports_raw = module_raw.get("ports")
+        cells_raw = module_raw.get("cells")
+        if not isinstance(ports_raw, dict) or not isinstance(cells_raw, dict):
             return self._empty_graph_model()
+        ports = cast(dict[str, object], ports_raw)
+        cells_payload = cast(dict[str, object], cells_raw)
         ltp_length_raw = payload.get("__ltp_length__")
 
         cells: dict[str, CellModel] = {}
@@ -263,7 +290,10 @@ class GraphDescriptorEvaluator:
             if not isinstance(port_payload, dict):
                 continue
             direction = str(port_payload.get("direction", "")).lower()
-            bits = tuple(bit for bit in port_payload.get("bits", []) if isinstance(bit, int | str))
+            bits_raw = port_payload.get("bits")
+            if not isinstance(bits_raw, list):
+                continue
+            bits = tuple(bit for bit in bits_raw if isinstance(bit, int | str))
             for bit in bits:
                 if isinstance(bit, int):
                     signal_bits.add(bit)
@@ -282,18 +312,21 @@ class GraphDescriptorEvaluator:
             connections = cell_payload.get("connections", {})
             if not isinstance(port_dirs, dict) or not isinstance(connections, dict):
                 continue
+            port_dirs = cast(dict[str, object], port_dirs)
+            connections = cast(dict[str, object], connections)
             inputs: dict[str, tuple[int | str, ...]] = {}
             outputs: dict[str, tuple[int | str, ...]] = {}
             is_sequential = self._is_sequential_cell(cell_type)
             sequential_data_inputs: list[int] = []
 
-            for port_name, bits_raw in connections.items():
+            for port_name_raw, bits_raw in connections.items():
                 if not isinstance(bits_raw, list):
                     continue
+                port_name = str(port_name_raw)
                 bits = tuple(bit for bit in bits_raw if isinstance(bit, int | str))
                 direction = str(port_dirs.get(port_name, "")).lower()
                 if direction == "output":
-                    outputs[str(port_name)] = bits
+                    outputs[port_name] = bits
                     for bit in bits:
                         if isinstance(bit, int):
                             signal_bits.add(bit)
@@ -302,7 +335,7 @@ class GraphDescriptorEvaluator:
                             if is_sequential:
                                 sequential_output_bits.add(bit)
                 else:
-                    inputs[str(port_name)] = bits
+                    inputs[port_name] = bits
                     for bit in bits:
                         if isinstance(bit, int):
                             signal_bits.add(bit)
@@ -425,11 +458,61 @@ class GraphDescriptorEvaluator:
             "combinational_cells": float(combinational_cells),
         }
         metrics.update(self._extract_t11_runtime_metrics(graph))
+        metrics.update(self._extract_sog_metrics(graph))
         if graph.ltp_length is not None:
             # Online cross-check: yosys ltp counts buffers, ours skips them.
             metrics["logic_depth_ltp"] = float(graph.ltp_length)
             metrics["logic_depth_ltp_delta"] = float(graph.ltp_length) - logic_depth
         return metrics
+
+    def _extract_sog_metrics(self, graph: GraphModel) -> dict[str, float]:
+        cell_types = [cell.cell_type.lower() for cell in graph.cells.values()]
+        module_instances = sum(1 for cell_type in cell_types if not cell_type.startswith("$"))
+        operator_count = len(cell_types) - module_instances
+        arith_count = self._count_sog_types(cell_types, _SOG_ARITH_TYPES)
+        mux_count = self._count_sog_types(cell_types, _SOG_MUX_TYPES)
+        compare_count = self._count_sog_types(cell_types, _SOG_COMPARE_TYPES)
+        logic_count = self._count_sog_types(cell_types, _SOG_LOGIC_TYPES)
+        shift_count = self._count_sog_types(cell_types, _SOG_SHIFT_TYPES)
+        state_count = sum(1 for cell in graph.cells.values() if cell.is_sequential)
+        memory_count = sum(1 for cell_type in cell_types if cell_type.startswith("$mem"))
+        mul_count = self._count_sog_types(cell_types, {"$mul"})
+        complexity = (
+            operator_count
+            + (2 * arith_count)
+            + (3 * mul_count)
+            + mux_count
+            + compare_count
+            + state_count
+        )
+        return {
+            "operator_mix_score": (
+                float(arith_count + shift_count + compare_count + (0.5 * logic_count))
+                / float(operator_count + 1)
+            ),
+            "state_control_ratio": (
+                float(state_count + memory_count + 1)
+                / float(mux_count + compare_count + 1)
+            ),
+            "sog_complexity_score": float(complexity),
+            "sog_entropy": self._entropy(
+                tuple(
+                    float(value)
+                    for value in (
+                        arith_count,
+                        mux_count,
+                        compare_count,
+                        logic_count,
+                        shift_count,
+                        state_count,
+                        module_instances,
+                    )
+                )
+            ),
+        }
+
+    def _count_sog_types(self, cell_types: list[str], names: set[str]) -> int:
+        return sum(1 for cell_type in cell_types if cell_type in names)
 
     def _extract_t11_runtime_metrics(self, graph: GraphModel) -> dict[str, float]:
         """Extract the live-safe graph features closest to T11's top replay axes."""

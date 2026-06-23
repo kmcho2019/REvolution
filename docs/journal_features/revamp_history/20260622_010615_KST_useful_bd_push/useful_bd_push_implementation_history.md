@@ -3591,3 +3591,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   proxy clue so far, but it is still retrospective and breadth-limited. Any
   follow-up should be a guarded live fused RTL-native lane on T51/T26-family
   archive machinery with reference-complete PPA claims.
+
+## T63 Fused RTL-Native Live Screen - 2026-06-23 UTC
+
+- User feedback after the T26 RTLLM correction made the next priority clear:
+  direct classic-vs-QD claims must use reference-complete paired subsets, and
+  missing-reference designs are diagnostic-only.
+- Pre-registered `T63_fused_rtl_native_live_screen` as the first live test of
+  fused MasterRTL/Yosys-SOG and RTLTimer-style timing-risk descriptors inside
+  the T51 archive machinery.
+- Added runtime descriptor profiles for fused RTL-native axes and focused
+  tests proving the primary T63 profile requires graph and RTL metrics, not
+  PPA.
+- Current status: T63 is ready for a seed-1001 hard/tuning screen, but it has
+  no result and must not be used for a headline claim before packaging.

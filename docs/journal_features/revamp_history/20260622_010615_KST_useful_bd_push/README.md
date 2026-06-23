@@ -27,6 +27,9 @@ Start here when resuming the active goal.
   `techniques/T62_fused_rtl_native_bd/`
   (`T0 positive_proxy_not_promoted`; fused Yosys-SOG and RTL timing-risk
   descriptors improve a front-cell proxy but still lose occupied-cell breadth).
+- Active planned live technique:
+  `techniques/T63_fused_rtl_native_live_screen/` (pre-registered screen of
+  fused RTL-native axes inside T51 archive machinery).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
@@ -63,9 +66,9 @@ Start here when resuming the active goal.
   `techniques/T59_t51_feedback_front_slot_qd/` (seed-1001 hard/tuning
   direct-code feedback/front-slot diagnostic with direct PPA supplement and
   Phase 03.1 viewer).
-- Active planned live technique: none selected after T59. The next descriptor
-  push should prioritize the RTL-native MasterRTL/RTLTimer lane before another
-  primary archive tweak.
+- Active planned live technique:
+  `techniques/T63_fused_rtl_native_live_screen/`, which prioritizes the
+  RTL-native MasterRTL/RTLTimer lane before another primary archive tweak.
 - Active RTL-native descriptor packages:
   `techniques/T15_masterrtl_sog_bd/` (`T0 structural_proxy_not_promoted`
   Yosys-SOG proxy with zero lowering failures) and

@@ -58,7 +58,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T58 preserves coverage and improves yield/best score with frozen T11 PCA4 under T51, but still loses HV, HV-AUC, and front breadth. | Stop primary graph-coordinate live archive tests unless the next method uses graph features as a secondary lane or trains a new encoder objective. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
-| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T15 Yosys-SOG lowers all 670 full-RTLLM valid-PPA candidates with zero failures; T62 fused SOG/timing-risk cells improve the front-cell proxy but still lose occupied-cell breadth. | Pair a guarded fused RTL-native lane with T51/T26-family archive machinery only if the live screen uses reference-complete paired claims. |
+| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T15 Yosys-SOG lowers all 670 full-RTLLM valid-PPA candidates with zero failures; T62 fused SOG/timing-risk cells improve the front-cell proxy but still lose occupied-cell breadth. | Run T63 as the guarded fused RTL-native lane inside T51 archive machinery, with reference-complete paired claims only. |
 
 ## Lane Scorecard
 
@@ -71,7 +71,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, T46 PCA4 projection, and T58 T51/T11-PCA4 cross-lane test | T58 is measured `T0 diagnostic_no_promotion`: it preserves coverage and improves yield/best score, but loses classic/T51 on HV, HV-AUC, and front breadth. | Retire frozen T11 PCA4 as a primary archive geometry. | Reopen only as a secondary/reporting lane or with a trained encoder objective that targets front creation without PPA leakage. |
 | `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
-| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, and T62 fused descriptors | Active proxy lane after the T26/T59 corrections. | T62 improves the front-cell proxy, but occupied-cell breadth is still weaker and no live QD run exists. | Use fused structural/timing descriptors as a guarded secondary or local-front lane; use reference-complete paired claims and avoid treating timing prediction as the BD objective. |
+| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, and T63 live screen | Active live-screen lane after the T26/T59 corrections. | T62 improves the front-cell proxy, but occupied-cell breadth is still weaker; T63 is the first live fused RTL-native screen. | Use fused structural/timing descriptors as a guarded secondary or local-front lane; use reference-complete paired claims and avoid treating timing prediction as the BD objective. |
 
 ## Current Lineage
 
@@ -159,6 +159,7 @@ flowchart LR
     BE[T60 RTLTimer timing risk]
     BF[T61 problem-local timing risk]
     BG[T62 fused RTL-native proxy]
+    BH[T63 fused RTL-native live screen]
   end
 
   A --> Q
@@ -225,6 +226,7 @@ flowchart LR
   BE --> BF
   BD --> BG
   BF --> BG
+  BG --> BH
   G --> M
   G --> W
 ```
@@ -304,6 +306,7 @@ flowchart TD
 | 2026-06-23 | `L5/L6` archive coupling and emitters | T59 T51 feedback front-slot result | `retire` exact feedback front-slot path | T59 completes all 13 problems and passes single-thought/Pareto validators, but loses classic on HV (`-0.005882`), HV-AUC (`-0.002960`), valid PPA (`-16`), front points (`-10`), unique PPA (`-27`), and reference-beating candidates (`-13`) despite best score `+0.059826`. Prob153 triggers a yield warning. | Do not spend seed `1002` on exact T59; change front-slot creation, add measured source-level repair, or use secondary archive features. |
 | 2026-06-23 | `L7` RTL-native descriptors | T15/T60/T61 proxy sequence | `hybridize` structural and timing proxies | T15 proves flattened Yosys-SOG lowering works on all 670 full-RTLLM valid-PPA candidates. T61 turns the timing-risk front-cell proxy positive, but both standalone proxies lose occupied-cell breadth. | Fuse SOG structure with timing-risk morphology before any live archive spend. |
 | 2026-06-23 | `L7` RTL-native descriptors | T62 fused RTL-native proxy result | `advance` guarded live screen only | T62 improves mean front-cell delta to `+0.161290` for `operator_timing` and `state_pipeline`, but all fused profiles still lose occupied-cell breadth. The package includes reference-complete completeness data and does not use PPA as descriptor input. | Use T62 as live-screen motivation only; a live lane must be reference-complete, PPA-free, duplicate-aware, and include direct PPA-front figures. |
+| 2026-06-23 | `L7` RTL-native descriptors | T63 fused RTL-native live screen | `advance` seed-1001 screen | T63 wires fused SOG/timing-risk axes into the live descriptor registry and keeps T51 archive machinery fixed. It is pre-registered only; no result exists yet. | Run the hard/tuning seed-1001 screen, then package completeness, front, HV/HV-AUC, direct PPA, and Phase 03.1 artifacts before any claim. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
@@ -489,11 +492,10 @@ raises the best mean front-cell proxy to `+0.161290`, but still loses occupied
 cell breadth, so the lane remains a proxy direction rather than a promoted
 result.
 
-The next L7 step should be a guarded live archive test only if it keeps the
-fused descriptor PPA-free and reports reference-complete PPA, direct raw PPA
-fronts, and duplicate/family checks. T62 suggests `state_pipeline` is worth
-screening alongside `operator_timing` because it ties the front-cell proxy with
-less occupied-cell loss.
+T63 is the guarded live archive test for the `state_pipeline` profile. It
+must keep the fused descriptor PPA-free and report reference-complete PPA,
+direct raw PPA fronts, and duplicate/family checks. `operator_timing` remains
+the first ablation only if T63 preserves coverage but front evidence is weak.
 
 ## Branching Guidance
 
@@ -525,7 +527,7 @@ unblocks it.
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43, T58 | T58 completed the bounded T51/T11-PCA4 cross-lane test and failed promotion on HV/front breadth. | Stop exact frozen graph-coordinate primary archive tests. | Reopen only with secondary/reporting graph lanes or a trained encoder objective that improves front creation without PPA leakage. |
 | `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
-| `L7` RTL-native descriptors | T15, T60, T61, T62 | T15 proves Yosys-SOG frontend viability; T62 gives the strongest fused front-cell proxy so far. | Run only a guarded fused RTL-native live screen, not another standalone proxy. | Fused descriptor improves live front/archive evidence without default-reference or PPA-leakage claims. |
+| `L7` RTL-native descriptors | T15, T60, T61, T62, T63 | T15 proves Yosys-SOG frontend viability; T63 pre-registers the first fused live screen. | Run only the guarded fused RTL-native live screen, not another standalone proxy. | Fused descriptor improves live front/archive evidence without default-reference or PPA-leakage claims. |
 
 ## Branch Split Checklist
 

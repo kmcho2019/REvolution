@@ -172,6 +172,22 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "log_max_level": DescriptorDefinition("log_max_level", "yosys_graph", transform="log1p"),
     "hyper_max_level_delta": DescriptorDefinition("hyper_max_level_delta", "yosys_graph"),
     "share_family_inv": DescriptorDefinition("share_family_inv", "yosys_graph"),
+    "operator_mix_score": DescriptorDefinition("operator_mix_score", "yosys_graph"),
+    "state_control_ratio": DescriptorDefinition("state_control_ratio", "yosys_graph"),
+    "sog_complexity_score": DescriptorDefinition("sog_complexity_score", "yosys_graph"),
+    "sog_entropy": DescriptorDefinition("sog_entropy", "yosys_graph"),
+    "pipeline_event_count": DescriptorDefinition("pipeline_event_count", "rtl_text"),
+    "control_count": DescriptorDefinition("control_count", "rtl_text"),
+    "arith_count": DescriptorDefinition("arith_count", "rtl_text"),
+    "mul_count": DescriptorDefinition("mul_count", "rtl_text"),
+    "compare_count": DescriptorDefinition("compare_count", "rtl_text"),
+    "logic_op_count": DescriptorDefinition("logic_op_count", "rtl_text"),
+    "max_rhs_operator_count": DescriptorDefinition("max_rhs_operator_count", "rtl_text"),
+    "unique_identifier_count": DescriptorDefinition("unique_identifier_count", "rtl_text"),
+    "max_identifier_fanout": DescriptorDefinition("max_identifier_fanout", "rtl_text"),
+    "timing_risk_score": DescriptorDefinition("timing_risk_score", "rtl_text"),
+    "control_pipeline_ratio": DescriptorDefinition("control_pipeline_ratio", "rtl_text"),
+    "timing_risk_entropy": DescriptorDefinition("timing_risk_entropy", "rtl_text"),
     "t11_runtime_pca_0": DescriptorDefinition("t11_runtime_pca_0", "yosys_graph"),
     "t11_runtime_pca_1": DescriptorDefinition("t11_runtime_pca_1", "yosys_graph"),
     "t11_runtime_pca_2": DescriptorDefinition("t11_runtime_pca_2", "yosys_graph"),
@@ -418,6 +434,10 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (-1.0, 1.0)
     if axis in {"seq_ratio", "comb_ratio", "mux_ratio", "adder_ratio", "utilization"}:
         return (0.0, 1.0)
+    if axis in {"operator_mix_score", "state_control_ratio", "control_pipeline_ratio"}:
+        return (0.0, 4.0)
+    if axis in {"timing_risk_entropy", "sog_entropy"}:
+        return (0.0, 4.0)
     if axis in {"laplacian_lambda2", "scoap_signal_smoothness"}:
         return (0.0, 2.0)
     if axis in {
@@ -439,6 +459,8 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         "combinational_cells",
         "mux_cells",
         "arithmetic_cells",
+        "sog_complexity_score",
+        "timing_risk_score",
     }:
         return (0.0, 8192.0)
     if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count", "wire_count_log_est"}:
@@ -481,6 +503,15 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         "if_count",
         "case_count",
         "ternary_count",
+        "pipeline_event_count",
+        "control_count",
+        "arith_count",
+        "mul_count",
+        "compare_count",
+        "logic_op_count",
+        "max_rhs_operator_count",
+        "unique_identifier_count",
+        "max_identifier_fanout",
         "rtl_instance_count_est",
         "fsm_state_count_est",
         "ast_depth_est",

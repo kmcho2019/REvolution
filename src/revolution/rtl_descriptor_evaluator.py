@@ -17,6 +17,8 @@ _STATE_PARAM_RE = re.compile(
     re.I,
 )
 _WIRE_DECL_RE = re.compile(r"^\s*(?:wire|logic|reg)\b", re.M)
+_COMMENT_BLOCK_RE = re.compile(r"/\*.*?\*/", re.S)
+_IDENTIFIER_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_$]*")
 
 _RESERVED_RTL_WORDS = {
     "if",
@@ -103,6 +105,7 @@ class RTLDescriptorEvaluator:
         """Extract source-text descriptor counts from RTL text."""
         lines = code_text.splitlines()
         stripped_lines = [line.strip() for line in lines]
+        timing_text = _strip_comments(code_text)
 
         rtl_instance_count = 0
         for cell_type, _ in _RTL_INSTANCE_RE.findall(code_text):
@@ -116,7 +119,7 @@ class RTLDescriptorEvaluator:
             if re.search(r"(state|^s\d+|_s\d+|idle|wait|run|done|start|stop|error)", name, re.I)
         }
 
-        return {
+        metrics = {
             "rtl_line_count": float(len(lines)),
             "rtl_nonempty_line_count": float(sum(bool(line) for line in stripped_lines)),
             "rtl_char_count": float(len(code_text)),
@@ -130,6 +133,8 @@ class RTLDescriptorEvaluator:
             "rtl_instance_count_est": float(rtl_instance_count),
             "fsm_state_count_est": float(len(state_names)),
         }
+        metrics.update(_timing_risk_metrics(timing_text))
+        return metrics
 
     def extract_ast_metrics(
         self,
@@ -281,3 +286,76 @@ class RTLDescriptorEvaluator:
             return None
         output = "\n".join(part for part in (completed.stdout, completed.stderr) if part).strip()
         return output or None
+
+
+def _strip_comments(text: str) -> str:
+    return re.sub(r"//.*", " ", _COMMENT_BLOCK_RE.sub(" ", text))
+
+
+def _timing_risk_metrics(text: str) -> dict[str, float]:
+    identifiers = [
+        token for token in _IDENTIFIER_RE.findall(text) if token.lower() not in _RESERVED_RTL_WORDS
+    ]
+    counts = {token: identifiers.count(token) for token in set(identifiers)}
+    posedge_count = _count_word(text, "posedge")
+    negedge_count = _count_word(text, "negedge")
+    pipeline_events = posedge_count + negedge_count + text.count("<=")
+    control_count = _count_word(text, "if") + _count_word(text, "case") + text.count("?")
+    mul_count = text.count("*")
+    shift_count = text.count("<<") + text.count(">>")
+    arith_count = len(re.findall(r"(?<![<>=!])[+\-*/%](?![<>=])", text)) + shift_count
+    compare_count = len(re.findall(r"==|!=|>=|<=|(?<!<)<(?![=<])|(?<!>)>(?![=>])", text))
+    logic_count = len(re.findall(r"&&|\|\||[&|^~]", text))
+    max_rhs_operator_count = _max_rhs_operator_count(text)
+    max_fanout = max(counts.values()) if counts else 0
+    risk = (
+        (2.0 * arith_count)
+        + (3.0 * mul_count)
+        + (1.5 * shift_count)
+        + (1.5 * control_count)
+        + compare_count
+        + (2.0 * max_rhs_operator_count)
+        + (0.15 * max_fanout)
+        - (0.5 * pipeline_events)
+    )
+    return {
+        "pipeline_event_count": float(pipeline_events),
+        "control_count": float(control_count),
+        "arith_count": float(arith_count),
+        "mul_count": float(mul_count),
+        "compare_count": float(compare_count),
+        "logic_op_count": float(logic_count),
+        "max_rhs_operator_count": float(max_rhs_operator_count),
+        "unique_identifier_count": float(len(counts)),
+        "max_identifier_fanout": float(max_fanout),
+        "timing_risk_score": max(0.0, float(risk)),
+        "control_pipeline_ratio": float(control_count + 1.0) / float(pipeline_events + 1.0),
+        "timing_risk_entropy": _entropy(
+            [arith_count, control_count, compare_count, logic_count, max_fanout]
+        ),
+    }
+
+
+def _count_word(text: str, word: str) -> int:
+    return len(re.findall(rf"\b{re.escape(word)}\b", text))
+
+
+def _max_rhs_operator_count(text: str) -> int:
+    max_count = 0
+    for match in re.finditer(r"=\s*([^;]+);", text):
+        rhs = match.group(1)
+        count = len(re.findall(r"==|!=|>=|<=|&&|\|\||<<|>>|[+\-*/%&|^~?:<>]", rhs))
+        max_count = max(max_count, count)
+    return max_count
+
+
+def _entropy(values: list[int]) -> float:
+    total = sum(values)
+    if total == 0:
+        return 0.0
+    entropy = 0.0
+    for value in values:
+        if value:
+            probability = value / total
+            entropy -= probability * math.log2(probability)
+    return entropy

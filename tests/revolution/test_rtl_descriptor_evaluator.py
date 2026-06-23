@@ -28,6 +28,9 @@ def test_rtl_descriptor_evaluator_extracts_text_metrics_without_ast():
     assert metrics["ternary_count"] == pytest.approx(1.0)
     assert metrics["wire_count_log_est"] > 0.0
     assert metrics["ast_depth_est"] == pytest.approx(0.0)
+    assert metrics["timing_risk_score"] > 0.0
+    assert metrics["control_pipeline_ratio"] > 0.0
+    assert metrics["timing_risk_entropy"] > 0.0
 
 
 def test_rtl_descriptor_evaluator_merges_ast_and_netlist_estimates(monkeypatch, tmp_path: Path):
@@ -101,3 +104,24 @@ def test_rtl_descriptor_evaluator_extracts_cyclomatic_metrics_from_ast(monkeypat
 
     assert metrics["rtl_cyclomatic_total_log"] == pytest.approx(5.0)
     assert metrics["rtl_cyclomatic_max_log"] == pytest.approx(3.0)
+
+
+def test_rtl_descriptor_evaluator_extracts_timing_risk_metrics() -> None:
+    evaluator = RTLDescriptorEvaluator()
+    metrics = evaluator.extract_text_metrics(
+        "\n".join(
+            [
+                "module demo(input logic clk, input logic [3:0] a, b, output logic [3:0] y);",
+                "  logic [3:0] q;",
+                "  always_ff @(posedge clk) q <= a * b;",
+                "  assign y = q ? (a + b) : (a - b);",
+                "endmodule",
+            ]
+        )
+    )
+
+    assert metrics["pipeline_event_count"] == pytest.approx(2.0)
+    assert metrics["control_count"] == pytest.approx(1.0)
+    assert metrics["mul_count"] == pytest.approx(1.0)
+    assert metrics["max_rhs_operator_count"] > 0.0
+    assert metrics["timing_risk_score"] > 0.0

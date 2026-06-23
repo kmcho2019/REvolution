@@ -73,6 +73,10 @@ def test_graph_descriptor_evaluator_extracts_journal_comb_chain(tmp_path: Path):
     assert metrics["ff_depth"] == pytest.approx(0.0)
     assert metrics["combinational_cells"] == pytest.approx(3.0)
     assert metrics["comb_width_log"] == pytest.approx(math.log1p(3.0))
+    assert metrics["operator_mix_score"] > 0.0
+    assert metrics["state_control_ratio"] > 0.0
+    assert metrics["sog_complexity_score"] >= metrics["combinational_cells"]
+    assert metrics["sog_entropy"] >= 0.0
 
 
 def test_graph_descriptor_evaluator_extracts_t11_runtime_bridge(tmp_path: Path):

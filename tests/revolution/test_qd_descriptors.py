@@ -186,6 +186,18 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
         "hyper_max_level_delta",
         "share_family_inv",
     ]
+    assert profiles["fused_rtl_operator_timing_2d"] == [
+        "operator_mix_score",
+        "timing_risk_score",
+    ]
+    assert profiles["fused_rtl_state_pipeline_2d"] == [
+        "state_control_ratio",
+        "control_pipeline_ratio",
+    ]
+    assert profiles["fused_rtl_complexity_entropy_2d"] == [
+        "sog_complexity_score",
+        "timing_risk_entropy",
+    ]
 
 
 def test_t11_runtime_profile_requires_graph_metrics():
@@ -211,6 +223,22 @@ def test_t11_runtime_pca_profile_requires_graph_metrics():
         ]
     )
     assert requirements["requires_graph_metrics"] is True
+    assert requirements["requires_ppa"] is False
+
+
+def test_fused_rtl_profiles_require_graph_and_rtl_metrics():
+    axes = resolve_descriptor_axes(
+        profile_name="fused_rtl_state_pipeline_2d",
+        explicit_axes=None,
+        descriptor_file=None,
+        archive_type="grid_quantile",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+
+    assert axes == ["state_control_ratio", "control_pipeline_ratio"]
+    assert requirements["requires_graph_metrics"] is True
+    assert requirements["requires_rtl_metrics"] is True
     assert requirements["requires_ppa"] is False
 
 
@@ -514,6 +542,30 @@ def test_extract_descriptor_values_accepts_hard_iteration_structural_counts():
         "mux_cells": pytest.approx(3.0),
         "arithmetic_cells": pytest.approx(5.0),
         "total_cells": pytest.approx(24.0),
+    }
+
+
+def test_extract_descriptor_values_accepts_fused_rtl_axes():
+    values = extract_descriptor_values(
+        {
+            "state_control_ratio": 0.75,
+            "control_pipeline_ratio": 1.25,
+            "operator_mix_score": 0.5,
+            "timing_risk_score": 8.0,
+        },
+        [
+            "state_control_ratio",
+            "control_pipeline_ratio",
+            "operator_mix_score",
+            "timing_risk_score",
+        ],
+    )
+
+    assert values == {
+        "state_control_ratio": pytest.approx(0.75),
+        "control_pipeline_ratio": pytest.approx(1.25),
+        "operator_mix_score": pytest.approx(0.5),
+        "timing_risk_score": pytest.approx(8.0),
     }
 
 

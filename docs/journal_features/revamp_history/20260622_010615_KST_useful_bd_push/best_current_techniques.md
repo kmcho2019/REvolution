@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51 code-thought front slot | Diagnostic lead | Restores much of the yield and best-score damage from thought-only front control while preserving the one-slot archive idea. | Classic still wins front breadth and HV on the hard/tuning surface. |
 | 2 | T26/T30 SR conservative QD | Mechanism clue | Shows champion-biased archive pressure can recover local quality and preserves covered designs in the VerilogEval holdout. | Reference-complete RTLLM comparison is negative; not a headline win. |
-| 3 | RTL-native BD lane | Positive proxy clue | Yosys-SOG, RTLTimer-style, and fused structural/timing descriptors give a more defensible definition of RTL behavior diversity. | T62 improves the front-cell proxy, but occupied breadth is still negative and live validation is not done. |
+| 3 | RTL-native BD lane | Live-screen ready | Yosys-SOG, RTLTimer-style, and fused structural/timing descriptors give a more defensible definition of RTL behavior diversity. | T63 is pre-registered but not run; T62 improves the front-cell proxy while occupied breadth remains negative. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic. |
 
 ## Most Promising Direction
@@ -21,7 +21,8 @@ local front retention, while Yosys-SOG/MasterRTL and RTLTimer-style descriptors
 define cells from RTL operator structure, control/dataflow shape,
 pipeline/register topology, and timing-risk morphology. T62 is the current
 proxy clue for this direction: it improves problem-balanced front-cell evidence
-but does not fix occupied-cell breadth. This is more defensible than opaque
+but does not fix occupied-cell breadth. T63 is the first live screen of this
+idea inside T51-style archive machinery. This is more defensible than opaque
 embedding-only claims and avoids using final PPA as the descriptor.
 
 ## Technique Lanes
