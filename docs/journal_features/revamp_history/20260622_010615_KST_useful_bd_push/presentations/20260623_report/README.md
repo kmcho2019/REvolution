@@ -41,9 +41,10 @@ REvolution and exact T26 QD/MAP-Elites on PPA-centered metrics.
 - Full RTLLM launch: completed and packaged under `full_rtllm/`.
 - Claim status: `diagnostic`.
 - Corrected reference-complete result: exact T26 is negative versus classic on
-  the 46 RTLLM problems with real reference PPA in both arms. The all-50
-  aggregate HV/HV-AUC gain depends on missing/defaulted reference cases and
-  must not be used as a positive QD-effectiveness headline.
+  the 46 RTLLM problems with valid benchmark reference PPA. On the stricter
+  31-problem paired-valid-PPA headline subset, it also loses PPA-front points.
+  The all-50 aggregate HV/HV-AUC gain depends on missing/defaulted reference
+  cases and must not be used as a positive QD-effectiveness headline.
 - Excluded missing/defaulted-reference cases:
   `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
   `Prob018_float_multi`, and `Prob040_synchronizer`.

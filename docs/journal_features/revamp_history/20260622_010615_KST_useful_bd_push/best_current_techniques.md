@@ -35,6 +35,19 @@ state/pipeline archive cells, but use seeded thought-code realization so the
 generator can refine successful parent RTL instead of regenerating every code
 sample from scratch.
 
+## Current Assessment After Reference Fix
+
+The full RTLLM T26 result is diagnostic, not positive. Direct classic-vs-QD
+claims must use the reference-complete paired subset because four RTLLM
+designs lack valid benchmark reference PPA:
+`Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+`Prob018_float_multi`, and `Prob040_synchronizer`.
+
+On the 46 reference-complete problems, exact T26 loses classic on mean HV,
+HV-AUC, best score, valid-PPA yield, and unique PPA points. On the stricter
+31-problem paired-valid-PPA headline subset, it also loses PPA-front points.
+Do not promote any technique from all-50/defaulted-reference aggregates.
+
 ## RTL-Native Descriptor Split
 
 | Lane | Descriptor Meaning | QD Use | Current Read |

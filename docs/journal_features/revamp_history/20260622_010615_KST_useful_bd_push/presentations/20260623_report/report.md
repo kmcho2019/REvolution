@@ -256,28 +256,35 @@ champion-biased exploitation is the sole cause of the gain.
 
 | Cohort | Metric | Classic | Exact T26 QD | Delta |
 | --- | ---: | ---: | ---: | ---: |
+| Reference-complete 46 | Mean HV | 0.102647 | 0.092564 | -0.010083 |
+| Reference-complete 46 | Mean HV-AUC | 0.087995 | 0.079913 | -0.008083 |
+| Reference-complete 46 | Mean best score | 0.285660 | 0.252416 | -0.033244 |
+| Reference-complete 46 | Valid PPA | 1001 | 835 | -166 |
+| Reference-complete 46 | PPA-front points | 61 | 63 | +2 |
+| Reference-complete 46 | Unique PPA points | 352 | 297 | -55 |
+| Headline paired-valid 31 | Mean HV | 0.152314 | 0.134599 | -0.017715 |
+| Headline paired-valid 31 | Mean HV-AUC | 0.130574 | 0.118121 | -0.012453 |
+| Headline paired-valid 31 | Valid PPA | 1001 | 828 | -173 |
+| Headline paired-valid 31 | PPA-front points | 61 | 59 | -2 |
+| Headline paired-valid 31 | Unique PPA points | 352 | 291 | -61 |
 | All RTLLM | Mean HV | 0.094435 | 0.104997 | +0.010562 |
 | All RTLLM | Mean HV-AUC | 0.080956 | 0.093353 | +0.012397 |
 | All RTLLM | Mean best score | 0.260455 | -0.798824 | -1.059279 |
 | All RTLLM | Valid PPA | 1056 | 879 | -177 |
 | All RTLLM | PPA-front points | 61 | 69 | +8 |
 | All RTLLM | Unique PPA points | 352 | 318 | -34 |
-| Prob040-excluded | Mean HV | 0.096362 | 0.086897 | -0.009465 |
-| Prob040-excluded | Mean HV-AUC | 0.082608 | 0.075020 | -0.007588 |
-| Prob040-excluded | Mean best score | 0.268348 | 0.252416 | -0.015932 |
 | Screen-excluded | Mean HV | 0.088690 | 0.103015 | +0.014325 |
 | Screen-excluded | Mean HV-AUC | 0.075581 | 0.093051 | +0.017470 |
 | Screen-excluded | Valid PPA | 989 | 845 | -144 |
 | Screen-excluded | PPA-front points | 52 | 62 | +10 |
-| Screen+Prob040-excluded | Mean HV | 0.090618 | 0.083691 | -0.006927 |
-| Screen+Prob040-excluded | Mean HV-AUC | 0.077224 | 0.073516 | -0.003708 |
-| Screen+Prob040-excluded | Valid PPA | 941 | 813 | -128 |
-| Screen+Prob040-excluded | PPA-front points | 52 | 61 | +9 |
 
-`Screen-excluded` removes the development screen, but it still includes
-defaulted-reference `Prob040_synchronizer`. The
-`Screen+Prob040-excluded` rows are the safer non-defaulted caveat view: QD
-keeps a front-point lead there, but the HV and HV-AUC deltas become negative.
+`Reference-complete 46` excludes the four missing/defaulted-reference RTLLM
+problems: `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+`Prob018_float_multi`, and `Prob040_synchronizer`. Those four rows remain in
+inventory and raw diagnostics only. `Headline paired-valid 31` further
+restricts the view to problems where both methods produced at least one valid
+PPA sample and the reference PPA is valid. The all-50 and screen-excluded rows
+are diagnostic context, not direct classic-vs-QD evidence.
 
 Budget parity:
 
@@ -322,15 +329,17 @@ T26 can add PPA-front points without losing design-level coverage, yet it loses
 paired HV on more problems than it wins and it loses the scalar best-score
 metric.
 
-The aggregate HV/HV-AUC win is outlier-sensitive. `Prob040_synchronizer`
-contributes the largest positive HV delta, is one of the repaired
-missing-reference problems, and uses a defaulted reference rather than a
-benchmark-provided PPA reference. It is internally incoherent as headline
-evidence: the same cell reports QD HV `0.991910` and QD `best_score`
-`-32.336033`. That means it should be quarantined from both optimistic HV
-claims and pessimistic scalar-quality claims. The negative screen subset,
-lower raw valid-PPA yield, fewer audited PPA-point rows, and outlier-sensitive
-HV mean show that the method still needs tuning.
+The aggregate all-50 HV/HV-AUC win is a missing-reference artifact. The four
+missing/defaulted-reference problems contribute diagnostic rows, but cannot
+carry normalized improvement, HV, HV-AUC, or direct classic-vs-QD headline
+claims. `Prob040_synchronizer` is the largest example: it reports QD HV
+`0.991910` and QD `best_score` `-32.336033` under a defaulted reference, so it
+must be quarantined from both optimistic HV claims and pessimistic scalar
+quality claims. After applying the reference-complete rule, exact T26 is
+negative on mean HV, HV-AUC, best score, valid-PPA yield, and unique PPA
+points. Its remaining useful signal is narrow: on the 46 reference-complete
+inventory it has two more PPA-front points, but that front-count signal does
+not survive the stricter 31-problem paired-valid-PPA headline view.
 The full-suite family audit resolves part of the earlier T28-screen caveat:
 using a synthesized standard-cell count signature as a family proxy, exact T26
 has more active-front family-proxy hits and front netlists (`69` versus `61`),
@@ -353,11 +362,15 @@ collapsing into average-fitness-only REvolution.
 ## Provenance And Repair Notes
 
 The original exact T26 full run produced 47 usable problem summaries. Three
-problems, `Prob013_multi_booth_8bit`, `Prob018_float_multi`, and
-`Prob040_synchronizer`, exposed missing-reference PPA handling in RTLLM. The
-code was fixed to use the documented high default reference when a benchmark
-PPA file is absent, then those three problems were rerun in
-`sr_raw_conservative_exploit_qd_ref_default_fix`.
+QD rerun problems, `Prob013_multi_booth_8bit`, `Prob018_float_multi`, and
+`Prob040_synchronizer`, exposed missing-reference PPA handling in RTLLM.
+`Prob006_adder_pipe_64bit` also lacks a benchmark reference and produced no
+valid PPA in either arm. The code was fixed to use the documented high default
+reference when a benchmark PPA file is absent, then the three affected QD
+problem directories were rerun in
+`sr_raw_conservative_exploit_qd_ref_default_fix`. For headline comparisons,
+all four missing-reference designs are excluded instead of treated as repaired
+positive evidence.
 
 The committed package uses a merged symlink root so the 47 original QD problem
 directories remain unchanged and only the three repaired problem directories
@@ -430,13 +443,13 @@ not generic novelty; it is the T26 implementation-response archive bundle with
 quality pressure.
 
 For the presentation, the defensible message is:
-exact T26 preserves every classic-covered problem and adds front points under
-matched generated-candidate and LLM-call budgets, but it does not yet pass the
-paired-PPA or scalar-quality burden for a positive QD claim. The honest caveat
-is that the aggregate HV gain is one-seed, outlier-sensitive, and negative
-without `Prob040_synchronizer`, while the `Prob040`-excluded best score is
-near parity. The remaining weaknesses are visible raw-yield loss, fewer audited
+exact T26 preserves every classic-covered problem and has a small
+reference-complete front-count diagnostic signal, but it does not pass the
+paired-PPA, unique-PPA, yield, HV, HV-AUC, or scalar-quality burden for a
+positive QD claim. The honest caveat is that the all-50 aggregate HV gain is
+one-seed, outlier-sensitive, and dependent on four missing-reference RTLLM
+designs. The remaining weaknesses are visible raw-yield loss, fewer audited
 PPA-point rows, fewer total family-proxy hits, and fewer reference-beating
 family-proxy hits. The next milestone should be multi-seed replication plus
-T26.1-style variants that target yield recovery, non-defaulted-reference
-evidence, and less outlier-dependent front improvement.
+T26.1-style variants that target yield recovery, reference-complete evidence,
+and less outlier-dependent front improvement.

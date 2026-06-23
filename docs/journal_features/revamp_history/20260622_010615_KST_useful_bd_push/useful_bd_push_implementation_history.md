@@ -3784,3 +3784,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   axes `state_control_ratio` and `control_pipeline_ratio`,
   `requires_ppa=false`, `requires_graph_metrics=true`, and
   `requires_rtl_metrics=true`.
+
+## 2026-06-23T17:44:07Z - Reference-Complete Reporting Correction
+
+- Tightened the RTLLM milestone report after the missing-reference audit:
+  direct classic-vs-QD claims now lead with the 46-problem
+  reference-complete subset and the stricter 31-problem paired-valid-PPA
+  headline subset.
+- The all-50 T26 aggregate is retained as diagnostic context only. It depends
+  on four missing/defaulted-reference RTLLM designs:
+  `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+  `Prob018_float_multi`, and `Prob040_synchronizer`.
+- Current assessment: exact T26 loses classic on reference-complete mean HV,
+  HV-AUC, best score, valid-PPA yield, and unique PPA points. On the
+  paired-valid-PPA headline subset it also loses PPA-front points.
+- Updated `best_current_techniques.md` so no method can be promoted from
+  all-50/defaulted-reference metrics. Missing candidate PPA remains a method
+  invalid/non-PPA outcome; missing reference PPA makes the problem
+  `diagnostic_only`.
