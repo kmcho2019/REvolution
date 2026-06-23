@@ -132,8 +132,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       tables, and tier decision.
 - [x] `T14_dehnn_hypergraph_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `T15_masterrtl_sog_bd` has methodology, results, figures, tables, and tier
-      decision.
+- [x] `T15_masterrtl_sog_bd` has methodology, results, figures, tables, and tier
+      decision for the Yosys-SOG structural proxy audit.
 - [x] `T60_rtl_timer_timing_risk_bd` has methodology, results, figures, tables,
       and tier decision for the first diagnostic proxy audit.
 - [x] `T61_rtl_timer_problem_local_bd` has methodology, results, figures,

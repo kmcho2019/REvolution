@@ -3549,3 +3549,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Tier decision: `T0 positive_proxy_not_promoted`. The next RTL-native live
   candidate should use true RTLTimer or MasterRTL/SOG extraction with
   problem-local cells, not the regex proxy.
+
+## T15 Yosys-SOG Structural Proxy Audit - 2026-06-23 UTC
+
+- Added `scripts/package_yosys_sog_audit.py` and focused tests to turn the
+  scaffolded MasterRTL/SOG package into a reproducible Yosys-backed structural
+  descriptor audit.
+- Packaged `techniques/T15_masterrtl_sog_bd/` with candidate-level
+  `sog_features.csv`, `lowering_funnel.csv`, archive summaries, comparison
+  deltas, PPA completeness, and inspected SOG projection/heatmap figures.
+- Source: the same 670 full-RTLLM valid-PPA candidates used by T60/T61.
+- Result: Yosys lowered all 670 candidates with zero failures. Exact T26 has a
+  slightly negative mean problem-balanced front-cell delta (`-0.032258`) and
+  loses occupied-cell breadth (`-0.741935` mean delta).
+- Tier decision: `T0 structural_proxy_not_promoted`. T15 proves frontend
+  viability and gives a reviewer-readable RTL-native structural descriptor,
+  but it is not a live QD win. The next L7 step should fuse SOG structure with
+  T61 timing-risk cells before any T51/T26-family live spend.

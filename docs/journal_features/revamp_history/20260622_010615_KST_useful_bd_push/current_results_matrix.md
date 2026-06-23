@@ -40,6 +40,7 @@ Real result packages:
 - `T13_aurora_incremental_autoencoder_bd` implementation-feature/AURORA replay
   diagnostic
 - `T14_dehnn_hypergraph_bd` directed-hypergraph replay diagnostic
+- `T15_masterrtl_sog_bd` Yosys-SOG structural RTL proxy diagnostic
 - `T11_mgvga_contrastive_bd` structural-contrastive replay diagnostic
 - `T35_t11_pareto_coupling_bd` T11 archive-coupling replay diagnostic
 - `T36_t11_bounded_front_lane_bd` T11 bounded-front-lane replay diagnostic
@@ -79,7 +80,7 @@ Real result packages:
 - `T61_rtl_timer_problem_local_bd` problem-local timing-risk proxy diagnostic
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T15`, `T16`, and `T18`.
+`T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis
@@ -683,14 +684,20 @@ the best ALU and traffic-light scores.
   (`-16`), front points (`-10`), unique PPA (`-27`), and reference-beating
   candidates (`-13`). `Prob153_gshare` triggers a yield warning. Do not spend
   seed `1002` on exact T59.
+- T15 completed the Yosys-backed MasterRTL/SOG proxy audit as
+  `T0 structural_proxy_not_promoted`. It lowered all `670` full-RTLLM
+  valid-PPA candidates with zero Yosys failures. Exact T26 has a slightly
+  negative problem-balanced front-cell delta (`-0.032258`, 6 better, 6 worse,
+  19 ties) and loses occupied-cell breadth (`-0.741935` mean delta), so this is a
+  strong RTL-native frontend result, not a promotion claim.
 - T60 completed the first RTLTimer-style timing-risk proxy audit as
   `T0 diagnostic_proxy`. It extracted RTL-native timing-risk features from
   670 full-RTLLM valid-PPA candidates. Both methods occupy all 16 pooled
   timing-risk cells and all 16 pooled front cells, but problem-balanced exact
   T26 deltas are not favorable: occupied-cell delta mean `-0.612903` and
-  front-cell delta mean `-0.096774`. Keep the RTL-native lane active, but
-  replace this regex proxy with true RTLTimer or MasterRTL/SOG extraction
-  before any live promotion claim.
+  front-cell delta mean `-0.096774`. Keep the RTL-native lane active, but use
+  this as timing-risk evidence beside T15's structural frontend rather than as
+  a live promotion claim.
 - T61 completed the problem-local timing-risk cell ablation as
   `T0 positive_proxy_not_promoted`. It keeps T60's RTL features but assigns
   4x4 timing-risk cells within each problem. Exact T26 gains one pooled front

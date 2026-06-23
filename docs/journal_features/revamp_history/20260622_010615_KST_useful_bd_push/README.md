@@ -67,10 +67,12 @@ Start here when resuming the active goal.
 - Active planned live technique: none selected after T59. The next descriptor
   push should prioritize the RTL-native MasterRTL/RTLTimer lane before another
   primary archive tweak.
-- Active RTL-native descriptor package:
-  `techniques/T61_rtl_timer_problem_local_bd/` (`T0 positive_proxy_not_promoted`
-  problem-local timing-risk proxy). Use true RTLTimer or MasterRTL/SOG
-  extraction before spending live budget on this lane.
+- Active RTL-native descriptor packages:
+  `techniques/T15_masterrtl_sog_bd/` (`T0 structural_proxy_not_promoted`
+  Yosys-SOG proxy with zero lowering failures) and
+  `techniques/T61_rtl_timer_problem_local_bd/` (`T0
+  positive_proxy_not_promoted` problem-local timing-risk proxy). Use fused
+  structural/timing descriptors before spending live budget on this lane.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -147,7 +149,7 @@ Start here when resuming the active goal.
 | `T12` | `T12_lineage_repair_bd` | Scaffolded. |
 | `T13` | `T13_aurora_incremental_autoencoder_bd` | Completed replay diagnostic; raw implementation features are `T1 near_classic_replay_lead`, but PCA/RFF/incremental bottlenecks are `T0 diagnostic`. |
 | `T14` | `T14_dehnn_hypergraph_bd` | Completed replay diagnostic; hypergraph plus implementation features are `T1 near_classic_replay_lead`, but hypergraph-only descriptors are `T0 diagnostic`. |
-| `T15` | `T15_masterrtl_sog_bd` | Scaffolded. |
+| `T15` | `T15_masterrtl_sog_bd` | Completed `T0 structural_proxy_not_promoted` Yosys-SOG proxy audit; zero lowering failures, slightly negative front-cell delta, weaker occupied-cell breadth. |
 | `T16` | `T16_deepcell_multiview_bd` | Scaffolded. |
 | `T17` | `T17_mome_pareto_archive_bd` | Passive local-Pareto audit, `T0 diagnostic`; strong front-diversity signal but no decisive HV gain. |
 | `T18` | `T18_adaptive_emitter_cvt_bd` | Scaffolded. |

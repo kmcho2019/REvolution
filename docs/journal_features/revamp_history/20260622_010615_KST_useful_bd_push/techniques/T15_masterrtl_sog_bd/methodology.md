@@ -1,56 +1,62 @@
-# MasterRTL SOG BD Methodology
+# MasterRTL/Yosys-SOG BD Methodology
 
 ## Intent
 
-Build behavior descriptors from a Simple Operator Graph (SOG)-style bit-level
-RTL representation before full synthesis. This tests whether pre-synthesis
-operator structure gives a cheaper and more stable signal than mapped netlist
-statistics alone.
+Build behavior descriptors from a Simple Operator Graph (SOG)-style RTL
+operator representation before technology mapping. This tests whether
+pre-synthesis operator structure gives a cheaper and more stable signal than
+mapped netlist statistics alone.
 
-T15 is now paired with `T60_rtl_timer_timing_risk_bd` in the RTL-native lane.
-T15 focuses on structural/operator graph shape; T60 focuses on timing-risk and
-path morphology. Both should be used as behavior descriptors, not as direct PPA
-predictors.
+T15 is paired with `T60_rtl_timer_timing_risk_bd` and
+`T61_rtl_timer_problem_local_bd` in the RTL-native lane. T15 focuses on
+structural/operator graph shape; T60/T61 focus on timing-risk and path
+morphology. These are behavior descriptors, not direct PPA predictors.
+
+The current T15 package is a Yosys-backed SOG proxy, not a full MasterRTL
+implementation. It uses Yosys JSON after `read_verilog -sv; hierarchy
+-auto-top; proc; flatten; opt` as the reproducible frontend while keeping the
+MasterRTL-style goal of RTL-native operator-family descriptors.
 
 ## Inputs
 
 - Candidate RTL and fixed benchmark metadata.
-- Parsed AST or Yosys RTLIL before technology mapping.
-- Bit-level operator graph with simple operators, constants, state elements,
-  and bit-vector slicing information.
+- Yosys JSON before technology mapping.
+- Flattened RTL operator cells, ports, wires, state elements, and
+  connection-bit counts.
 
 Descriptor inputs exclude final PPA, reference PPA, fitness, hypervolume,
 Pareto labels, and test pass labels.
 
 ## Preprocessing
 
-1. Parse RTL into a stable intermediate representation.
-2. Lower vector operations into bit-level simple operators where possible.
-3. Preserve operator type, bit width, fanin/fanout, mux/control role,
-   arithmetic role, and sequential boundary tags.
-4. Record unsupported constructs and lowering failures in the validity funnel.
+1. Parse candidate RTL with Yosys.
+2. Run hierarchy, process lowering, flattening, and simple optimization.
+3. Write Yosys JSON and count operator families.
+4. Record every lowering status in `tables/lowering_funnel.csv`.
 
 ## Descriptor
 
-Construct a SOG feature vector with:
+The current proxy constructs a SOG feature vector with:
 
-- bit-level operator counts by type;
-- width histograms for arithmetic, mux, comparator, and shift operations;
-- control/data mixing ratios;
-- SOG depth and critical operator-chain length;
-- state-to-output and input-to-state cone summaries;
-- graph edit distance or hashed neighborhoods between parent and child when
-  lineage data exists.
+- module, port, wire, wire-bit, and cell counts;
+- arithmetic, multiply, mux, comparator, logic, shift, state, memory, and
+  module-instance counts;
+- maximum and mean cell connection-bit counts;
+- operator-mix score;
+- control/data operator ratio;
+- state/control ratio;
+- SOG complexity score;
+- operator-family entropy.
 
-Normalize per benchmark and compare SOG-only, Yosys-only, and fused
-SOG+Yosys descriptors. A later fused variant may add T60 timing-risk features
-if both feature families pass collapse and reference-complete comparison
-checks.
+Cells are assigned problem-locally with a 4x4 quantile grid over operator-mix
+score and state/control ratio. A later fused variant may add T61 timing-risk
+features if both feature families pass collapse and reference-complete
+comparison checks.
 
 ## Archive Mapping
 
-Use 2D grid axes over arithmetic-width entropy and control/data mixing ratio.
-Use CVT over the full SOG or fused vector for higher-dimensional tests.
+Use 2D grid axes over operator-mix score and state/control ratio. Use CVT over
+the full SOG or fused SOG+timing vector for higher-dimensional tests.
 
 ## Parent Selection Coupling
 
@@ -62,6 +68,6 @@ with unsynthesizable designs.
 
 - `tables/sog_features.csv`
 - `tables/lowering_funnel.csv`
-- `tables/sog_yosys_ablation.csv`
 - `figures/sog_projection.png`
-- `figures/sog_vs_yosys_archive.png`
+- `figures/sog_projection_zoom.png`
+- `figures/archive_coverage_heatmap.png`
