@@ -31,10 +31,10 @@ Start here when resuming the active goal.
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  stop exact T58 and primary graph-coordinate archive tests unless graph
-  features move into a secondary lane or trained encoder. For live search,
-  prioritize a front-yield protected emitter that preserves T51's valid-yield
-  path while improving front creation.
+  run `techniques/T59_t51_feedback_front_slot_qd/`, a same-budget T51/T54
+  follow-up that pairs the fixed front-slot parent lane with short fail-pool
+  feedback. Stop exact T58 and primary graph-coordinate archive tests unless
+  graph features move into a secondary lane or trained encoder.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -63,8 +63,9 @@ Start here when resuming the active goal.
   `techniques/T58_t51_t11_pca4_front_slot_qd/` (seed-1001 hard/tuning
   cross-lane T51/T11-PCA4 diagnostic with direct PPA supplement and Phase 03.1
   viewer).
-- Active planned live technique: none selected after T58; next package should
-  be a front-yield protected emitter or a secondary learned-lane test.
+- Active planned live technique:
+  `techniques/T59_t51_feedback_front_slot_qd/` (same-budget front-yield
+  protected emitter; pre-registered, not launched).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -184,6 +185,7 @@ Start here when resuming the active goal.
 | `T56` | `T56_coarse_sr2_t51_control_qd` | Completed hard/tuning result, `T0 diagnostic_retire_coarse_sr2_geometry`; preserves coverage but loses classic/T51 on HV, HV-AUC, yield, and front evidence. |
 | `T57` | `T57_t51_adaptive_rebin_qd` | Completed hard/tuning result, `T0 diagnostic_no_rebin_signal`; emits 26 rebin checks but 0 rebin events, loses classic/T51 on HV/HV-AUC, and has one classic-covered valid-PPA loss. |
 | `T58` | `T58_t51_t11_pca4_front_slot_qd` | Completed hard/tuning result, `T0 diagnostic_no_promotion`; preserves valid-PPA coverage and improves best score/yield, but loses classic and T51 on HV/HV-AUC/front evidence. |
+| `T59` | `T59_t51_feedback_front_slot_qd` | Pre-registered hard/tuning method; keeps T51 direct-code yield path, uses T54 front-slot lane, and adds short same-budget fail-pool feedback. |
 
 ## Validity-Gate Note
 

@@ -3378,3 +3378,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: mark T58 `T0 diagnostic_no_promotion`; do not spend seed `1002`
   on exact T58. Move graph features to secondary/reporting lanes or a trained
   encoder objective, and make the next live method front-yield protected.
+
+## T59 T51 Feedback Front-Slot Method Card - 2026-06-23 UTC
+
+- Created `techniques/T59_t51_feedback_front_slot_qd/` as the same-budget
+  front-yield protected follow-up after T58.
+- T59 keeps T51's code-individual representation, single-thought operator,
+  SR-PCA descriptor, `elite_pareto_slot` archive, warmup `4`, champion lane
+  `0.80`, no repair loop, and no two-parent fusion.
+- T59 changes parent selection to T54's `front_slot_lane_nsga2` and enables
+  short fail-pool feedback with `qd_operator_fail_feedback_chars=600`.
+- This is not bounded local repair. Current bounded repair support is tied to
+  the thought-only loop, while T59 deliberately preserves T51's direct-code
+  path and evaluated-candidate budget.
+- Next step: preflight the vLLM endpoint, then run seed `1001` on the frozen
+  13-problem hard/tuning surface.

@@ -654,6 +654,13 @@ a numbered `techniques/T##_slug/` package before running it.
   Do not run exact T58 seed `1002`. Next ideas should either use graph features
   as a secondary archive/reporting lane or design a front-yield protected
   emitter that keeps T51's yield path while creating more front material.
+- T59 selected: keep T51's direct-code yield path, restore T54's explicit
+  front-slot parent lane, and add short same-budget fail-pool feedback. This
+  avoids claiming bounded repair, because current bounded repair support lives
+  in the thought-only generation path. If T59 does not improve T51/T54 front
+  material, do not keep tuning feedback length; move to a source-level
+  direct-code repair lane, a role-scheduled emitter, or a secondary learned
+  archive/reporting lane.
 
 ## Near-Term Hybrids
 
