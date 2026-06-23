@@ -28,13 +28,17 @@ Start here when resuming the active goal.
   (`T0 diagnostic_yield_positive_front_negative_not_promoted`; improves total
   valid-PPA and mean best score, but classic still wins HV, HV-AUC, and front
   points on the 13-problem reference-complete hard/tuning screen).
+- Most recent pre-registered package:
+  `techniques/T67_rtl_native_seeded_thought_qd/` (RTL-native state/pipeline
+  cells plus source-preserving seeded thought-code realization; seed `1001`
+  pending).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  do not spend seed `1002` on exact T66. The next RTL-native method must
-  change front creation, source-level repair/selection, or the
-  generator/archive coupling while keeping descriptor inputs PPA-free.
+  do not spend seed `1002` on exact T66. Run T67 seed `1001` before any
+  broader RTL-native spend; it tests source-preserving realization rather than
+  another parent-pressure tweak.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -201,6 +205,7 @@ Start here when resuming the active goal.
 | `T64` | `T64_fused_operator_timing_live_screen` | Completed `T0 diagnostic_yield_archive_ablation_not_promoted`; valid-PPA yield improves, but classic wins HV, HV-AUC, front, unique-PPA, and reference-beating metrics. |
 | `T65` | `T65_rtl_native_secondary_cells` | Completed `T0 diagnostic_secondary_cell_not_promoted`; source-level RTLTimer secondary cells around T51/T63/T64 do not beat Classic on problem-paired front-cell coverage. |
 | `T66` | `T66_rtl_native_front_guarded_parent_qd` | Completed `T0 diagnostic_yield_positive_front_negative_not_promoted`; yield and best score improve, but classic wins HV, HV-AUC, and front points. |
+| `T67` | `T67_rtl_native_seeded_thought_qd` | Pre-registered; RTL-native state/pipeline cells with seeded thought-code realization. |
 
 ## Validity-Gate Note
 

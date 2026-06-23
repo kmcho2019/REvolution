@@ -30,6 +30,11 @@ the strongest methodology story because it defines diversity in RTL terms
 rather than opaque embedding space, while the PPA claim remains gated by
 reference-complete paired comparisons.
 
+T67 is the next registered test of this direction: keep the RTL-native
+state/pipeline archive cells, but use seeded thought-code realization so the
+generator can refine successful parent RTL instead of regenerating every code
+sample from scratch.
+
 ## RTL-Native Descriptor Split
 
 | Lane | Descriptor Meaning | QD Use | Current Read |

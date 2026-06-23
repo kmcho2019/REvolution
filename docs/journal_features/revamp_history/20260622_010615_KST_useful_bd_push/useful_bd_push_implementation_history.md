@@ -3761,3 +3761,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `tables/descriptor_probe_fused_rtl_state_pipeline_2d.json`; it confirms
   axes `state_control_ratio` and `control_pipeline_ratio` with
   `requires_ppa=false`.
+
+## 2026-06-23T16:59:00Z - T67 RTL-Native Seeded Thought Method Card
+
+- Added `techniques/T67_rtl_native_seeded_thought_qd/` as the next RTL-native
+  method after T66 showed that weak front-slot parent pressure and gated
+  fusion were not enough.
+- T67 keeps the hard/tuning 13-problem surface, seed `1001`,
+  `fused_rtl_state_pipeline_2d`, grid-quantile warmup `4`,
+  `elite_pareto_slot`, champion lane `0.80`, and no repair.
+- T67 changes the coupling point to source-preserving realization:
+  `representation_kind=thought_only`, `code_samples_per_thought=3`,
+  `qd_thought_code_seeded=true`, and `qd_seed_sample_fraction=0.67`.
+- The method removes T66's front-slot lane and two-parent fusion so the first
+  run isolates seeded parent-code realization rather than another parent-knob
+  sweep.
+- Acceptance is reference-complete and front/yield focused: T67 must improve
+  T50 on valid-PPA plus at least one front metric, preserve classic-covered
+  designs, and match or improve T63/T66 front material before any follow-up.
+- Ran the descriptor probe and saved
+  `tables/descriptor_probe_fused_rtl_state_pipeline_2d.json`; it confirms
+  axes `state_control_ratio` and `control_pipeline_ratio`,
+  `requires_ppa=false`, `requires_graph_metrics=true`, and
+  `requires_rtl_metrics=true`.

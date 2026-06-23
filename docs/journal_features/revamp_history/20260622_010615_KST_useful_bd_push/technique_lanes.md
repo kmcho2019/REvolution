@@ -45,7 +45,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Can pretrained or trained circuit encoders reveal stronger BDs? | Qwen3, DeepGate, DeepSeq, NetTAG, CircuitFusion, AURORA. | Encoder separates behavioral/structural axes after normalization and beats non-learned controls. | Embeddings cluster by identifiers, problem identity, or corpus artifacts. T58 shows frozen T11 PCA4 can preserve yield under T51 but still fails as a primary front-broadening archive. |
 | `L5` archive coupling | Can archive mechanics preserve diversity while retaining hill-climbing pressure? | Local Pareto cells, NSGA-II parent selection, Smooth-QD-style champion lanes. | Same-budget live run improves front/hypervolume metrics while preserving classic-covered designs. | Archive keeps many candidates but does not improve live optimization. |
 | `L6` lineage and emitters | Can we bias search by repair dynamics and operator history? | Parent-child repair features, emitter mixtures, adaptive CVT. | Better valid-yield recovery or underexplored-cell improvement without reward leakage. | Lineage axes duplicate scalar fitness or become post-hoc reward proxies. |
-| `L7` RTL-native descriptors | Can RTL operator/timing structure define useful implementation families? | MasterRTL/Yosys-SOG, RTLTimer timing-risk/path morphology. | Archive cells preserve distinct RTL control/dataflow, pipeline, and timing-risk families while PPA improves. | Descriptor becomes a direct PPA predictor, leaks reference labels, or fails on common RTL constructs. |
+| `L7` RTL-native descriptors | Can RTL operator/timing structure define useful implementation families? | MasterRTL/Yosys-SOG, RTLTimer timing-risk/path morphology, seeded RTL realization. | Archive cells preserve distinct RTL control/dataflow, pipeline, and timing-risk families while PPA improves. | Descriptor becomes a direct PPA predictor, leaks reference labels, or fails on common RTL constructs. |
 
 ## Lane Summary
 
@@ -58,7 +58,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T58 preserves coverage and improves yield/best score with frozen T11 PCA4 under T51, but still loses HV, HV-AUC, and front breadth. | Stop primary graph-coordinate live archive tests unless the next method uses graph features as a secondary lane or trains a new encoder objective. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
-| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T66 improves yield/best-score diagnostics but loses classic on HV, HV-AUC, and front points. | Redesign coupling so RTL-native descriptors affect front creation or repair, not only weak parent pressure. |
+| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T66 improves yield/best-score diagnostics but loses classic on HV, HV-AUC, and front points. T67 is pre-registered to test source-preserving seeded thought-code realization. | Run T67 seed `1001`; do not add repair selectors until this source-preserving coupling is measured. |
 
 ## Lane Scorecard
 
@@ -71,7 +71,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, T46 PCA4 projection, and T58 T51/T11-PCA4 cross-lane test | T58 is measured `T0 diagnostic_no_promotion`: it preserves coverage and improves yield/best score, but loses classic/T51 on HV, HV-AUC, and front breadth. | Retire frozen T11 PCA4 as a primary archive geometry. | Reopen only as a secondary/reporting lane or with a trained encoder objective that targets front creation without PPA leakage. |
 | `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
-| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, and T66 coupled parent method | T66 is measured `T0 diagnostic_yield_positive_front_negative_not_promoted`. | RTL-native cells are interpretable but have not improved live HV/front creation. | Do not run exact T66 seed `1002`; redesign coupling before another live RTL-native spend. |
+| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, and T67 seeded thought-code method | T66 is measured `T0 diagnostic_yield_positive_front_negative_not_promoted`; T67 is pre-registered. | RTL-native cells are interpretable but have not improved live HV/front creation. | Run T67 seed `1001` before deciding whether the lane needs repair selectors or a different descriptor. |
 
 ## Current Lineage
 
@@ -163,6 +163,7 @@ flowchart LR
     BI[T64 operator timing live screen]
     BJ[T65 secondary cells]
     BK[T66 RTL-native guarded parents]
+    BL[T67 seeded thought RTL]
   end
 
   A --> Q
@@ -233,6 +234,7 @@ flowchart LR
   BH --> BI
   BI --> BJ
   BJ --> BK
+  BK --> BL
   G --> M
   G --> W
 ```
@@ -318,6 +320,7 @@ flowchart TD
 | 2026-06-23 | `L7` RTL-native descriptors | T65 RTL-native secondary-cell audit | `retire` pure secondary overlay | T65 scores T51/T63/T64 unique-PPA candidates with source-level RTLTimer secondary cells. Every method/profile loses Classic on problem-paired mean front-cell delta; the closest is T63 `control_pipeline` at `-0.076923`. | Do not run a live method that only adds reporting cells. The next RTL-native method must use descriptors to affect parent choice, repair selection, or another measured coupling point without PPA leakage. |
 | 2026-06-23 | `L7` RTL-native descriptors | T66 RTL-native front-guarded parent method card | `advance` coupled live screen | T66 keeps T63's `fused_rtl_state_pipeline_2d` descriptor and uses it for `front_slot_lane_nsga2` parent pressure plus low-rate `near_front_descriptor` gated fusion. | Run seed `1001` on the hard/tuning surface only after descriptor probe and vLLM preflight; compare against classic, T51, T63, and T64 with reference-complete PPA claims. |
 | 2026-06-23 | `L7` RTL-native descriptors | T66 RTL-native front-guarded parent result | `retire` exact guarded-parent settings | T66 improves best score (`+0.050092`), valid PPA (`+3`), unique PPA (`+3`), and reference-beating candidates (`+2`) on a reference-complete screen, but loses mean HV (`-0.011308`), HV-AUC (`-0.010577`), and front points (`-10`). Two-parent fusion did not trigger. | Do not spend seed `1002` on exact T66. Redesign RTL-native coupling around stronger front creation, source-level repair/selection, or secondary archive evidence. |
+| 2026-06-23 | `L7/L6` RTL-native descriptors and emitters | T67 RTL-native seeded thought method card | `advance` source-preserving live screen | T67 keeps `fused_rtl_state_pipeline_2d`, removes T66's front-slot lane and two-parent fusion, and tests `thought_only` with seeded parent-code realization so most samples refine successful RTL instead of regenerating from scratch. | Run seed `1001`; compare against classic, T50, T51, T63, and T66 before adding bounded repair selectors. |
 | 2026-06-21 | `L5` archive coupling | T17 passive MOME audit | `advance` | Scalar-cell retention discards useful local front material. | Implement bounded local-Pareto retention as a live search variant. |
 | 2026-06-21 | `L5` archive coupling | T23 validation matrix | `advance` | SR-RFF and SR-ReLU beat random on different metrics, so the next run should test the archive mechanism, not another passive table only. | Candidate branch: `feat/journal-useful-bd-exp-20260622-pareto-live`. |
 | 2026-06-21 | `L5` archive coupling | T24 live command package and vLLM preflight | `advance` | Existing `pareto_front` cell mode and NSGA-II parent selection are sufficient for the next live validation; the open item is execution, not archive-code invention. | Run `T24_sr_pareto_live_validation/commands/live_screen_v0.md`. |
@@ -512,6 +515,12 @@ improves best score, but the live screens lose the classic headline front
 metrics. Exact fused RTL-native primary archive geometry should pause until the
 generator/archive coupling changes.
 
+T67 is the next registered coupling change. It keeps the `state_pipeline`
+profile but tests source-preserving seeded thought-code realization instead of
+another parent-pressure or fusion tweak. The first run intentionally avoids
+bounded repair so the result can isolate whether refining successful parent RTL
+fixes the thought-only regeneration weakness seen in T50.
+
 ## Branching Guidance
 
 Continue on `feat/journal-useful-bd-exp-20260622` for lightweight replay
@@ -542,7 +551,7 @@ unblocks it.
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43, T58 | T58 completed the bounded T51/T11-PCA4 cross-lane test and failed promotion on HV/front breadth. | Stop exact frozen graph-coordinate primary archive tests. | Reopen only with secondary/reporting graph lanes or a trained encoder objective that improves front creation without PPA leakage. |
 | `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
-| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66 | T66 completed as a diagnostic guarded-parent screen, not a classic front win. | Pause exact primary fused RTL-native axes, pure secondary overlays, and exact T66. Redesign generator/archive coupling. | A successor improves live front metrics without default-reference or PPA-leakage claims. |
+| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67 | T66 completed as a diagnostic guarded-parent screen, not a classic front win; T67 is pre-registered. | Run T67 seed `1001` before adding repair selectors or another parent-pressure tweak. | T67 or a successor improves live front metrics without default-reference or PPA-leakage claims. |
 
 ## Branch Split Checklist
 

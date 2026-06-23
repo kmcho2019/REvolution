@@ -86,9 +86,11 @@ Real result packages:
 - `T65_rtl_native_secondary_cells` RTL-native secondary-cell audit
 - `T66_rtl_native_front_guarded_parent_qd` RTL-native guarded-parent live
   diagnostic
+- `T67_rtl_native_seeded_thought_qd` is pre-registered but not yet a real
+  result package.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T16`, and `T18`.
+`T16`, `T18`, and `T67`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis
@@ -758,3 +760,7 @@ the best ALU and traffic-light scores.
   `0.081293`), HV-AUC (`0.082020` versus `0.071443`), and front points (`30`
   versus `20`). Two-parent fusion did not trigger, so T66 should not be cited
   as gated-recombination evidence. Do not run exact seed `1002`.
+- T67 is pre-registered as the next RTL-native coupling attempt. It keeps
+  `fused_rtl_state_pipeline_2d`, removes T66's front-slot parent lane and
+  two-parent fusion, and instead tests `thought_only` with seeded parent-code
+  realization. It has no result or tier yet.
