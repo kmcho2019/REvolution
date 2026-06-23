@@ -49,6 +49,10 @@ def test_package_t48_gated_probe(tmp_path: Path) -> None:
                 str(matrix),
                 "--output-dir",
                 str(output_dir),
+                "--package-tag",
+                "t48",
+                "--qd-method",
+                "t26_gated_near_front_fusion_qd",
             ]
         )
         == 0
@@ -151,6 +155,65 @@ def test_gate_row_marks_sparse_cases() -> None:
     )
 
 
+def test_package_t48_gated_probe_derives_missing_summary(tmp_path: Path) -> None:
+    classic_root = tmp_path / "classic"
+    qd_root = tmp_path / "qd"
+    output_dir = tmp_path / "package"
+    matrix = tmp_path / "probe_problem_matrix.csv"
+    row = {
+        "phase": "hard_tuning_sanity",
+        "subset": "data/configs/hard_iteration_subset.yaml",
+        "seed": "1001",
+        "arm": "classic_revolution",
+        "benchmark": "RTLLM",
+        "problem": "Prob004_adder_8bit",
+        "reference_status": "reference_available",
+        "headline_eligible": "true",
+    }
+    _write_problem(classic_root, 1001, "RTLLM", "Prob004_adder_8bit", "classic_revolution")
+    _write_problem(qd_root, 1001, "RTLLM", "Prob004_adder_8bit", "t26_gated_near_front_fusion_qd")
+    qd_problem = (
+        qd_root
+        / "seed_1001"
+        / "openai_gpt-oss-120b"
+        / "RTLLM"
+        / "Prob004_adder_8bit"
+    )
+    (qd_problem / "Prob004_adder_8bit_summary.json").unlink()
+
+    with matrix.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(row), lineterminator="\n")
+        writer.writeheader()
+        writer.writerow(row)
+
+    assert (
+        main(
+            [
+                "--classic-root",
+                str(classic_root),
+                "--qd-root",
+                str(qd_root),
+                "--matrix",
+                str(matrix),
+                "--output-dir",
+                str(output_dir),
+                "--package-tag",
+                "t48",
+                "--qd-method",
+                "t26_gated_near_front_fusion_qd",
+            ]
+        )
+        == 0
+    )
+
+    problem_rows = list(
+        csv.DictReader((output_dir / "tables" / "t48_problem_seed_metrics.csv").open())
+    )
+    qd_rows = [row for row in problem_rows if row["method"] == "t26_gated_near_front_fusion_qd"]
+    assert qd_rows[0]["total_generated"] == "10"
+    assert qd_rows[0]["best_score"] == "4.000000"
+
+
 def _write_problem(
     method_root: Path,
     seed: int,
@@ -174,7 +237,20 @@ def _write_problem(
         }
     ]
     (problem_root / "generation_log.jsonl").write_text(
-        json.dumps({"generation": 0, "population_ppa_details": details}) + "\n",
+        json.dumps(
+            {
+                "generation": 0,
+                "status_counts_this_generation": {"success": 10},
+                "success_rates": {
+                    "total_syntax": 1.0,
+                    "total_functionality": 0.8,
+                    "total_synthesis_ppa": 0.8,
+                },
+                "generation_ppa": {"best_score": method_offset / 10.0},
+                "population_ppa_details": details,
+            }
+        )
+        + "\n",
         encoding="utf-8",
     )
     (problem_root / f"{problem}_summary.json").write_text(

@@ -121,6 +121,36 @@ def test_analyze_problem_pareto_loads_generation_log_and_deduplicates(tmp_path: 
     assert metrics.hypervolume > 0.0
 
 
+def test_analyze_problem_pareto_handles_missing_summary(tmp_path: Path) -> None:
+    problem_dir = tmp_path / "RTLLM" / "Prob004_adder_8bit"
+    problem_dir.mkdir(parents=True, exist_ok=True)
+    (problem_dir / "generation_log.jsonl").write_text(
+        json.dumps(
+            {
+                "generation": 0,
+                "population_ppa_details": [
+                    {
+                        "id": "cand_a",
+                        "strategy": "seed",
+                        "ppa_metrics": {"area": 1.0, "power": 1e-6},
+                    },
+                ],
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    metrics = analyze_problem_pareto(
+        problem_dir,
+        benchmark="RTLLM",
+        problem="Prob004_adder_8bit",
+    )
+
+    assert metrics.candidate_count == 1
+    assert metrics.problem == "Prob004_adder_8bit"
+
+
 def test_collect_backend_problem_pareto_ignores_global_archive_summary(
     tmp_path: Path,
 ) -> None:

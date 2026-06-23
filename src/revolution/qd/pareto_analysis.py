@@ -248,13 +248,20 @@ def analyze_problem_pareto(
     problem: str | None = None,
 ) -> ProblemParetoMetrics:
     summary_path = problem_root / f"{problem_root.name}_summary.json"
-    if not summary_path.is_file():
+    summary_payload: dict[str, Any] | None = None
+    if summary_path.is_file():
+        summary_payload = _load_json(summary_path)
+    else:
         candidates = sorted(problem_root.glob("*_summary.json"))
         candidates = [path for path in candidates if _is_problem_summary_path(path)]
-        if not candidates:
+        if candidates:
+            summary_payload = _load_json(candidates[0])
+        elif benchmark is not None and problem is not None:
+            assert (problem_root / "generation_log.jsonl").is_file()
+            summary_payload = {"benchmark_name": benchmark, "problem_name": problem}
+        else:
             raise FileNotFoundError(f"Could not find problem summary under {problem_root}")
-        summary_path = candidates[0]
-    summary_payload = _load_json(summary_path)
+    assert summary_payload is not None
     benchmark_name = (
         benchmark
         or summary_payload.get("benchmark_name")

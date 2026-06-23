@@ -184,7 +184,7 @@ def read_tasks(matrix_path: Path, seeds: list[int] | None) -> list[Task]:
 def problem_seed_row(method_root: Path, method: str, task: Task) -> dict[str, str]:
     seed, benchmark, problem = task
     problem_root = method_root / f"seed_{seed}" / MODEL_DIR / benchmark / problem
-    summary = load_json(problem_root / f"{problem}_summary.json")
+    summary = load_problem_summary(problem_root, benchmark, problem)
     pareto = analyze_problem_pareto(problem_root, benchmark=benchmark, problem=problem)
     archive = load_optional_json(problem_root / "archive_summary.json")
     global_pareto = load_optional_json(problem_root / "global_pareto_summary.json")
@@ -231,6 +231,56 @@ def problem_seed_row(method_root: Path, method: str, task: Task) -> dict[str, st
     for key in COUNTER_KEYS:
         row[key] = fmt_optional(optional_int(latest, key))
     return row
+
+
+def load_problem_summary(problem_root: Path, benchmark: str, problem: str) -> dict[str, Any]:
+    summary_path = problem_root / f"{problem}_summary.json"
+    if summary_path.is_file():
+        return load_json(summary_path)
+    summaries = [
+        path
+        for path in sorted(problem_root.glob("*_summary.json"))
+        if path.name not in {"archive_summary.json", "global_pareto_summary.json"}
+    ]
+    if summaries:
+        return load_json(summaries[0])
+    rows = load_jsonl(problem_root / "generation_log.jsonl")
+    assert rows
+    total = sum(generation_candidate_count(row) for row in rows)
+    assert total
+    counts = {
+        key: sum(
+            round(generation_candidate_count(row) * generation_success_rate(row, key))
+            for row in rows
+        )
+        for key in ("syntax", "functionality", "synthesis_ppa")
+    }
+    return {
+        "benchmark_name": benchmark,
+        "problem_name": problem,
+        "total_candidates_generated": total,
+        "accumulated_success_rates": {
+            key: counts[key] / total
+            for key in ("syntax", "functionality", "synthesis_ppa")
+        },
+        "final_population_ppa": rows[-1]["generation_ppa"],
+        "final_population_ppa_details": rows[-1]["population_ppa_details"],
+    }
+
+
+def generation_candidate_count(row: dict[str, Any]) -> int:
+    status_counts = row.get("status_counts_this_generation")
+    if isinstance(status_counts, dict):
+        return sum(int(value) for value in status_counts.values())
+    details = row["population_ppa_details"]
+    assert isinstance(details, list)
+    return len(details)
+
+
+def generation_success_rate(row: dict[str, Any], key: str) -> float:
+    rates = row["success_rates"]
+    assert isinstance(rates, dict)
+    return float(rates[f"total_{key}"])
 
 
 def ppa_candidate_rows(roots: dict[str, Path], tasks: list[Task]) -> list[dict[str, str]]:
