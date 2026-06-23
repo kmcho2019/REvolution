@@ -3709,3 +3709,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   predictors or posthoc labels.
 - Added the missing T65 package-count bookkeeping entry and kept the next
   L7 action focused on coupled parent-choice or repair-selection methods.
+
+## 2026-06-23T16:18:00Z - T66 RTL-Native Coupled Parent Method Card
+
+- Added `techniques/T66_rtl_native_front_guarded_parent_qd/` as the next
+  RTL-native live method card after T65 retired pure secondary-cell overlays.
+- T66 keeps T63's hard/tuning surface, seed `1001`, `single_thought_operator`,
+  `grid_quantile` warmup `4`, `elite_pareto_slot`, champion lane `0.80`, and
+  `fused_rtl_state_pipeline_2d` descriptor.
+- T66 changes the coupling point to `qd_parent_selection=front_slot_lane_nsga2`
+  and low-rate gated fusion with `qd_two_parent_probability=0.10`,
+  `qd_two_parent_gate=near_front_descriptor`, and
+  `qd_operator_one_parent_fraction=0.90`.
+- The package records descriptor-probe, vLLM preflight, run, validation,
+  packaging, direct PPA-front, PPA-completeness, and Phase 03.1 viewer
+  requirements. No result or tier claim is made yet.
+- Ran the descriptor probe and saved
+  `tables/descriptor_probe_fused_rtl_state_pipeline_2d.json`; it confirms
+  axes `state_control_ratio` and `control_pipeline_ratio` with
+  `requires_ppa=false`.

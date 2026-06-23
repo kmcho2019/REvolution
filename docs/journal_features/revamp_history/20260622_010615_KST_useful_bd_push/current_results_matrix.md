@@ -86,7 +86,7 @@ Real result packages:
 - `T65_rtl_native_secondary_cells` RTL-native secondary-cell audit
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T16`, and `T18`.
+`T16`, `T18`, and pre-registered T66.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis
@@ -744,3 +744,7 @@ the best ALU and traffic-light scores.
   method/profile loses Classic on problem-paired mean front-cell delta; the
   closest result is T63 `control_pipeline` at `-0.076923`. This retires pure
   secondary/reporting overlays as the next RTL-native step.
+- T66 is pre-registered as the next RTL-native coupling attempt. It keeps the
+  T63 `fused_rtl_state_pipeline_2d` descriptor and uses it for
+  `front_slot_lane_nsga2` parent pressure plus low-rate
+  `near_front_descriptor` gated fusion. It is not a result package yet.

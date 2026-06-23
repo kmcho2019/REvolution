@@ -21,12 +21,13 @@ and local front retention, while Yosys-SOG/MasterRTL and RTLTimer-style
 descriptors define archive cells from RTL operator structure, control/dataflow
 shape, pipeline/register topology, and timing-risk morphology.
 
-The next promotion candidate should use these RTL-native descriptors to affect
-parent choice, repair selection, or another measured coupling point. Do not
-use them only as direct PPA predictors or posthoc visual labels. This is the
-strongest methodology story because it defines diversity in RTL terms rather
-than opaque embedding space, while the PPA claim remains gated by
-reference-complete paired comparisons.
+T66 is the current pre-registered test of that idea: it uses the T63
+state/pipeline RTL-native cells for front-slot parent pressure and low-rate
+near-front descriptor-compatible fusion. Do not use RTL-native descriptors only
+as direct PPA predictors or posthoc visual labels. This is the strongest
+methodology story because it defines diversity in RTL terms rather than opaque
+embedding space, while the PPA claim remains gated by reference-complete
+paired comparisons.
 
 ## Technique Lanes
 

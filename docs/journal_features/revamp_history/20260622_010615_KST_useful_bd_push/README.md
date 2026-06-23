@@ -27,14 +27,17 @@ Start here when resuming the active goal.
   `techniques/T65_rtl_native_secondary_cells/`
   (`T0 diagnostic_secondary_cell_not_promoted`; RTLTimer-style secondary cells
   around T51/T63/T64 do not beat Classic on problem-paired front-cell coverage).
+- Most recent pre-registered package:
+  `techniques/T66_rtl_native_front_guarded_parent_qd/` (uses the T63
+  state/pipeline RTL-native descriptor for front-slot parent pressure and
+  low-rate near-front descriptor-compatible fusion; run pending).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  do not spend seed `1002` on exact T63, T64, or a pure T65 reporting overlay.
-  The next RTL-native method must change generator/archive coupling, such as
-  near-front parent choice or measured repair selection, while keeping
-  descriptor inputs PPA-free.
+  run or review T66 before spending seed `1002` on exact T63, T64, or a pure
+  T65 reporting overlay. The next RTL-native method must change
+  generator/archive coupling while keeping descriptor inputs PPA-free.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
