@@ -64,6 +64,18 @@ Each new run package must include a completeness table:
 | --- | --- | --- | --- | --- |
 | `Prob040_synchronizer` | yes | yes | no | `diagnostic_only` |
 
+Use the committed helper to generate it:
+
+```bash
+uv run python scripts/report_ppa_completeness.py \
+  --ppa-candidates path/to/ppa_candidates.csv \
+  --reference-ppa-metrics path/to/reference_ppa_metrics.csv \
+  --classic-method classic_or_classic_revolution \
+  --qd-method qd_method_key \
+  --reference-missing-problem RTLLM:Prob040_synchronizer \
+  --output path/to/tables/ppa_completeness.csv
+```
+
 ## Primary QD Metrics
 
 Use these as the headline metrics:

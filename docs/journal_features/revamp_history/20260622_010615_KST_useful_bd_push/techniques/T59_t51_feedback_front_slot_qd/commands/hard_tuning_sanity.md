@@ -124,6 +124,17 @@ uv run python scripts/validate_pareto_front_run.py \
 Viewer export must follow the Phase 03.1 contract after final analysis data
 exists.
 
+## PPA Completeness
+
+```bash
+uv run python scripts/report_ppa_completeness.py \
+  --ppa-candidates exp/useful_bd_push/t59_t51_feedback_front_slot_20260623_110249_UTC/qd_ppa_viewer_source/final_analysis/ppa_distribution/data/ppa_candidates.csv \
+  --reference-ppa-metrics exp/useful_bd_push/t59_t51_feedback_front_slot_20260623_110249_UTC/qd_ppa_viewer_source/final_analysis/ppa_distribution/data/reference_ppa_metrics.csv \
+  --classic-method classic \
+  --qd-method t51_feedback_front_slot_qd \
+  --output docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T59_t51_feedback_front_slot_qd/hard_tuning_package/tables/t59_ppa_completeness.csv
+```
+
 ## Completed Run
 
 - `RUN_TS=20260623_110249_UTC`.
@@ -135,6 +146,7 @@ exists.
   `exp/useful_bd_push/t59_t51_feedback_front_slot_20260623_110249_UTC/hard_tuning/t51_feedback_front_slot_qd/seed_1001/openai_gpt-oss-120b/20260623_110317_revolution_summary_results.txt`.
 - Single-thought validation passed with `--require-full-subset`.
 - Pareto/front validation passed with `--require-full-subset`.
+- PPA completeness report generated; all 13 rows are `headline`.
 - Packaged result:
   `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T59_t51_feedback_front_slot_qd/hard_tuning_package/`.
 - Direct PPA supplement:

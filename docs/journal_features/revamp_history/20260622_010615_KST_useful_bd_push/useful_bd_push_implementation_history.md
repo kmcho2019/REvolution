@@ -3482,3 +3482,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   morphology, not as a direct PPA predictor. Any live test should first pair
   it with T51/T26-family archive machinery and use reference-complete paired
   claims.
+
+## PPA Completeness Helper - 2026-06-23 UTC
+
+- Added `scripts/report_ppa_completeness.py` to generate the required
+  per-problem completeness table from `ppa_candidates.csv` and
+  `reference_ppa_metrics.csv`.
+- The helper accepts explicit classic/QD method keys and explicit
+  `--reference-missing-problem` entries for defaulted-reference cases such as
+  `RTLLM:Prob040_synchronizer`.
+- Added focused tests in `tests/scripts/test_report_ppa_completeness.py`.
+- Backfilled the latest T59 package with
+  `hard_tuning_package/tables/t59_ppa_completeness.csv`; all 13 hard/tuning
+  rows are reference-complete headline rows, so the T59 negative decision is
+  metric-driven rather than a missing-reference artifact.

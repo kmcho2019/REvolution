@@ -28,6 +28,7 @@ Status: seed `1001` hard/tuning package complete.
 - `hard_tuning_package/tables/t59_aggregate_metrics.csv`
 - `hard_tuning_package/tables/t59_comparison_deltas.csv`
 - `hard_tuning_package/tables/t59_validity_gates.csv`
+- `hard_tuning_package/tables/t59_ppa_completeness.csv`
 - `hard_tuning_package/tables/t59_operator_counters.csv`
 - `hard_tuning_package/tables/t59_lineage_comparison.csv`
 - `hard_tuning_package/data/t59_ppa_candidates.csv`
@@ -51,6 +52,10 @@ Status: seed `1001` hard/tuning package complete.
   classic SR-PCA projection caveat;
 - visual inspection of the direct PPA screenshot and full viewer screenshot:
   completed.
+- PPA completeness:
+  `scripts/report_ppa_completeness.py` generated
+  `hard_tuning_package/tables/t59_ppa_completeness.csv`; all rows are
+  reference-complete for this hard/tuning screen.
 
 ## Anti-Gaming Notes
 

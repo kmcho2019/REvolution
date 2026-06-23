@@ -27,6 +27,7 @@ T59 T51 Feedback Front-Slot QD root: `exp/useful_bd_push/t59_t51_feedback_front_
 - `tables/t59_aggregate_metrics.csv`
 - `tables/t59_comparison_deltas.csv`
 - `tables/t59_validity_gates.csv`
+- `tables/t59_ppa_completeness.csv`
 - `tables/t59_operator_counters.csv`
 - `data/t59_ppa_candidates.csv`
 - `figures/t59_hv_delta_heatmap.png`
@@ -42,3 +43,8 @@ T59 T51 Feedback Front-Slot QD root: `exp/useful_bd_push/t59_t51_feedback_front_
 This package compares a hard/tuning screen against the T47 classic roots. It is
 not a held-out RTLLM claim. The direct PPA-front plots are reader-facing
 supplements; they do not replace the Phase 03.1 viewer.
+
+The PPA completeness table marks all 13 hard/tuning problems as
+reference-complete and headline-eligible for this screen. That only validates
+the comparison surface; it does not change the `T0 diagnostic_no_promotion`
+decision because T59 still loses the primary QD/PPA metrics versus classic.
