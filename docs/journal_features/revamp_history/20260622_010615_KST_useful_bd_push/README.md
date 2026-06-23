@@ -12,6 +12,12 @@ Start here when resuming the active goal.
 - Current priority milestone:
   `presentations/20260623_report/` (presentation, report, and broad RTLLM
   classic-vs-T26-family comparison plan).
+- Most recent presentation supplement:
+  `presentations/20260623_report/full_rtllm/final_analysis/`
+  (`report_final_analysis_bundle.py` output on the 46-problem
+  reference-complete subset; reinforces diagnostic status because the formal
+  bundle recommends classic overall/Pareto while preserving T26 archive-QD
+  signal).
 - Frozen screening subset: `tables/frozen_screening_subset.csv`.
 - Holdout subset: `tables/holdout_screening_subset.csv`.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`

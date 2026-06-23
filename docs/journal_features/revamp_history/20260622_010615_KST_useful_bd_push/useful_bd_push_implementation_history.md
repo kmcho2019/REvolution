@@ -2913,3 +2913,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Next step: do not run T50 seed `1002` or held-out spend. Specify a new
   front/yield-preserving emitter that keeps the best-score pressure without
   collapsing valid-PPA and front material.
+
+## RTLLM Formal Final-Analysis Supplement - 2026-06-23 UTC
+
+- Added `presentations/20260623_report/full_rtllm/final_analysis/` as a
+  supplemental `scripts/report_final_analysis_bundle.py` output for the full
+  one-seed RTLLM milestone.
+- The bundle uses `rtllm_reference_complete_subset.yaml`, a 46-problem subset
+  that excludes `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+  `Prob018_float_multi`, and `Prob040_synchronizer` because at least one arm
+  lacks reference `area` required by the generic PPA-distribution report.
+- `backend_comparison.md` still scans all 50 backend summaries and reports
+  `N/A` where reference fields are missing.
+- The formal bundle recommends `classic_revolution` for overall,
+  multi-objective, and Pareto winner. It recommends
+  `sr_raw_conservative_exploit_qd` only on score-QD and archive-QD report
+  surfaces.
+- Visual inspection found the aggregate design-space and feature figures
+  readable, but some generated per-problem Pareto figures have title/legend
+  crowding. The formal bundle is an audit supplement, not the primary
+  presentation-facing figure source.
+- Interpretation: this reinforces the diagnostic presentation stance. Exact
+  T26 has archive/front signal, but the current one-seed RTLLM package does
+  not prove a positive QD-effectiveness claim over classic.

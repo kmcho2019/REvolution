@@ -1,0 +1,151 @@
+# Design-Space Analysis
+
+- backends: `classic_revolution, sr_raw_conservative_exploit_qd`
+- successful_candidates: `1836`
+- classical_anchor_backend: `classic_revolution`
+- feature_selection_mode: `auto`
+- selected_features: `none`
+
+## Contents
+
+- [Reports](#reports)
+- [Problems](#problems)
+- [Warnings](#warnings)
+
+## Reports
+
+- aggregate: [report.md](aggregate/report.md)
+- successful candidates: [successful_candidates.csv](successful_candidates.csv)
+- recommended profile: [recommended_profile.json](recommended_profile.json)
+- all-backend feature plots use the report's selected feature subset
+- pairwise classic-vs-QD feature plots use the QD backend's descriptor basis when available
+
+## Problems
+
+- `RTLLM/Prob001_accu`: [report.md](problems/RTLLM/Prob001_accu/report.md)
+- `RTLLM/Prob002_adder_16bit`: [report.md](problems/RTLLM/Prob002_adder_16bit/report.md)
+- `RTLLM/Prob003_adder_32bit`: [report.md](problems/RTLLM/Prob003_adder_32bit/report.md)
+- `RTLLM/Prob004_adder_8bit`: [report.md](problems/RTLLM/Prob004_adder_8bit/report.md)
+- `RTLLM/Prob005_adder_bcd`: [report.md](problems/RTLLM/Prob005_adder_bcd/report.md)
+- `RTLLM/Prob007_comparator_3bit`: [report.md](problems/RTLLM/Prob007_comparator_3bit/report.md)
+- `RTLLM/Prob008_comparator_4bit`: [report.md](problems/RTLLM/Prob008_comparator_4bit/report.md)
+- `RTLLM/Prob009_div_16bit`: [report.md](problems/RTLLM/Prob009_div_16bit/report.md)
+- `RTLLM/Prob010_radix2_div`: [report.md](problems/RTLLM/Prob010_radix2_div/report.md)
+- `RTLLM/Prob011_multi_16bit`: [report.md](problems/RTLLM/Prob011_multi_16bit/report.md)
+- `RTLLM/Prob012_multi_8bit`: [report.md](problems/RTLLM/Prob012_multi_8bit/report.md)
+- `RTLLM/Prob014_multi_pipe_4bit`: [report.md](problems/RTLLM/Prob014_multi_pipe_4bit/report.md)
+- `RTLLM/Prob015_multi_pipe_8bit`: [report.md](problems/RTLLM/Prob015_multi_pipe_8bit/report.md)
+- `RTLLM/Prob016_fixed_point_adder`: [report.md](problems/RTLLM/Prob016_fixed_point_adder/report.md)
+- `RTLLM/Prob017_fixed_point_substractor`: [report.md](problems/RTLLM/Prob017_fixed_point_substractor/report.md)
+- `RTLLM/Prob019_sub_64bit`: [report.md](problems/RTLLM/Prob019_sub_64bit/report.md)
+- `RTLLM/Prob020_JC_counter`: [report.md](problems/RTLLM/Prob020_JC_counter/report.md)
+- `RTLLM/Prob021_counter_12`: [report.md](problems/RTLLM/Prob021_counter_12/report.md)
+- `RTLLM/Prob022_ring_counter`: [report.md](problems/RTLLM/Prob022_ring_counter/report.md)
+- `RTLLM/Prob023_up_down_counter`: [report.md](problems/RTLLM/Prob023_up_down_counter/report.md)
+- `RTLLM/Prob024_fsm`: [report.md](problems/RTLLM/Prob024_fsm/report.md)
+- `RTLLM/Prob025_sequence_detector`: [report.md](problems/RTLLM/Prob025_sequence_detector/report.md)
+- `RTLLM/Prob026_asyn_fifo`: [report.md](problems/RTLLM/Prob026_asyn_fifo/report.md)
+- `RTLLM/Prob027_LIFObuffer`: [report.md](problems/RTLLM/Prob027_LIFObuffer/report.md)
+- `RTLLM/Prob028_LFSR`: [report.md](problems/RTLLM/Prob028_LFSR/report.md)
+- `RTLLM/Prob029_barrel_shifter`: [report.md](problems/RTLLM/Prob029_barrel_shifter/report.md)
+- `RTLLM/Prob030_right_shifter`: [report.md](problems/RTLLM/Prob030_right_shifter/report.md)
+- `RTLLM/Prob031_freq_div`: [report.md](problems/RTLLM/Prob031_freq_div/report.md)
+- `RTLLM/Prob032_freq_divbyeven`: [report.md](problems/RTLLM/Prob032_freq_divbyeven/report.md)
+- `RTLLM/Prob033_freq_divbyfrac`: [report.md](problems/RTLLM/Prob033_freq_divbyfrac/report.md)
+- `RTLLM/Prob034_freq_divbyodd`: [report.md](problems/RTLLM/Prob034_freq_divbyodd/report.md)
+- `RTLLM/Prob035_calendar`: [report.md](problems/RTLLM/Prob035_calendar/report.md)
+- `RTLLM/Prob036_edge_detect`: [report.md](problems/RTLLM/Prob036_edge_detect/report.md)
+- `RTLLM/Prob037_parallel2serial`: [report.md](problems/RTLLM/Prob037_parallel2serial/report.md)
+- `RTLLM/Prob038_pulse_detect`: [report.md](problems/RTLLM/Prob038_pulse_detect/report.md)
+- `RTLLM/Prob039_serial2parallel`: [report.md](problems/RTLLM/Prob039_serial2parallel/report.md)
+- `RTLLM/Prob041_traffic_light`: [report.md](problems/RTLLM/Prob041_traffic_light/report.md)
+- `RTLLM/Prob042_width_8to16`: [report.md](problems/RTLLM/Prob042_width_8to16/report.md)
+- `RTLLM/Prob043_RAM`: [report.md](problems/RTLLM/Prob043_RAM/report.md)
+- `RTLLM/Prob044_ROM`: [report.md](problems/RTLLM/Prob044_ROM/report.md)
+- `RTLLM/Prob045_alu`: [report.md](problems/RTLLM/Prob045_alu/report.md)
+- `RTLLM/Prob046_clkgenerator`: [report.md](problems/RTLLM/Prob046_clkgenerator/report.md)
+- `RTLLM/Prob047_instr_reg`: [report.md](problems/RTLLM/Prob047_instr_reg/report.md)
+- `RTLLM/Prob048_pe`: [report.md](problems/RTLLM/Prob048_pe/report.md)
+- `RTLLM/Prob049_signal_generator`: [report.md](problems/RTLLM/Prob049_signal_generator/report.md)
+- `RTLLM/Prob050_square_wave`: [report.md](problems/RTLLM/Prob050_square_wave/report.md)
+
+## Warnings
+
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob010_radix2_div.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob014_multi_pipe_4bit.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob016_fixed_point_adder.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob017_fixed_point_substractor.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob022_ring_counter.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob026_asyn_fifo.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob028_LFSR.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob029_barrel_shifter.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob032_freq_divbyeven.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob033_freq_divbyfrac.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob034_freq_divbyodd.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob038_pulse_detect.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob039_serial2parallel.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob042_width_8to16.
+- Generation log missing or unusable; using final_population_ppa_details only for classic_revolution/RTLLM/Prob046_clkgenerator.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob014_multi_pipe_4bit.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob016_fixed_point_adder.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob017_fixed_point_substractor.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob022_ring_counter.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob026_asyn_fifo.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob028_LFSR.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob032_freq_divbyeven.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob033_freq_divbyfrac.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob034_freq_divbyodd.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob038_pulse_detect.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob042_width_8to16.
+- Generation log missing or unusable; using final_population_ppa_details only for sr_raw_conservative_exploit_qd/RTLLM/Prob046_clkgenerator.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob001_accu.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob002_adder_16bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob003_adder_32bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob004_adder_8bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob005_adder_bcd.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob007_comparator_3bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob008_comparator_4bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob009_div_16bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob010_radix2_div.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob011_multi_16bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob012_multi_8bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob014_multi_pipe_4bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob015_multi_pipe_8bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob016_fixed_point_adder.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob017_fixed_point_substractor.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob019_sub_64bit.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob020_JC_counter.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob021_counter_12.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob022_ring_counter.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob023_up_down_counter.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob024_fsm.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob025_sequence_detector.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob026_asyn_fifo.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob027_LIFObuffer.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob028_LFSR.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob029_barrel_shifter.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob030_right_shifter.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob031_freq_div.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob032_freq_divbyeven.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob033_freq_divbyfrac.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob034_freq_divbyodd.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob035_calendar.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob036_edge_detect.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob037_parallel2serial.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob038_pulse_detect.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob039_serial2parallel.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob041_traffic_light.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob042_width_8to16.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob043_RAM.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob044_ROM.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob045_alu.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob046_clkgenerator.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob047_instr_reg.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob048_pe.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob049_signal_generator.
+- Could not load descriptor profile 'sr_pca_3d' for sr_raw_conservative_exploit_qd/Prob050_square_wave.
+- classic_revolution vs sr_raw_conservative_exploit_qd: unknown descriptor profile 'sr_pca_3d', falling back to archived axes or global selected features.
+- classic_revolution vs sr_raw_conservative_exploit_qd: descriptor features are cached only for the QD backend; plotting cached QD descriptor rows without offline classic graph recovery.
+- Skipped pairwise feature plots for classic_revolution vs sr_raw_conservative_exploit_qd because one side had no successful candidates.
+- No QD backends were eligible for pairwise feature plots in this problem.
+- No successful candidates were found for this problem.

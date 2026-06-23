@@ -51,6 +51,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       plots, tables, report, or slides on multi-seed replication.
 - [x] Package RTLLM-wide tables, figures, raw PPA data, and direct PPA plots
       for the one-seed milestone.
+- [x] Add supplemental formal final-analysis bundle for the RTLLM
+      reference-complete subset, with backend comparison, Pareto, PPA
+      distribution, design-space, and feature-space sections.
 - [x] Add Phase 03.1 viewer artifacts for the full RTLLM QD archive when the
       archive projection/export contract is ready.
 - [x] Complete `presentations/20260623_report/report.md` and `slides.md` with

@@ -167,6 +167,12 @@ Full token accounting is in `tables/full_budget_parity.csv`.
   PPA-front supplement.
 - `family_audit/`: full-suite canonical RTL/netlist/family-proxy duplicate audit
   with candidate rows, per-problem metrics, aggregate deltas, and figures.
+- `final_analysis/`: supplemental formal `report_final_analysis_bundle.py`
+  output for the reference-complete subset, with backend comparison, Pareto,
+  PPA distribution, design-space, and QD feature-space sections.
+- `rtllm_reference_complete_subset.yaml`: 46-problem subset used by
+  `final_analysis/` because the generic PPA-distribution report requires a
+  reference `area` field in each compared summary.
 
 ## Viewer Scope
 
@@ -190,6 +196,42 @@ and front netlists (`69` versus `61`) and fewer family-proxy duplicates (`7`
 versus `11`). It still has fewer summed family proxies (`311` versus `341`)
 and fewer reference-beating family-proxy hits (`129` versus `179`), so this
 supports a front-material proxy observation rather than broad family dominance.
+
+## Supplemental Formal Analysis
+
+`final_analysis/` was generated with
+`scripts/report_final_analysis_bundle.py` as a compatibility supplement for the
+older formal reporting stack. It is useful for checking the result through the
+standard backend-comparison, Pareto, PPA-distribution, design-space, and
+feature-space report surfaces.
+
+The generator was run through a temporary `/tmp/rtllm_final_analysis_input`
+symlink farm because the merged milestone root stores problem directories as
+symlinks and the generic run-root discovery does not follow those symlinked
+directories. The output directory is permanent; the `/tmp` input is
+reproducible and not part of the artifact.
+
+The formal analysis uses the 46-problem
+`rtllm_reference_complete_subset.yaml` for subset-scoped sections. It excludes
+`Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+`Prob018_float_multi`, and `Prob040_synchronizer` because at least one arm
+lacks reference `area` in the raw summary schema, which the generic
+PPA-distribution section requires. `backend_comparison.md` still scans all 50
+backend summaries and reports `N/A` for missing reference fields.
+
+The formal bundle recommends `classic_revolution` for overall,
+multi-objective, and Pareto winner. It recommends
+`sr_raw_conservative_exploit_qd` for score-QD and archive-QD surfaces. Treat
+this as a supplemental check that reinforces the diagnostic conclusion: exact
+T26 has archive/front signal, but this package does not prove a positive QD
+effectiveness claim over classic.
+
+Visual inspection notes are in `final_analysis/visual_inspection_notes.md`.
+The aggregate design-space and feature figures are readable, but some
+generated per-problem Pareto figures have title/legend crowding. Use this
+formal bundle as an audit supplement; use the manually inspected `figures/`,
+`visualizations/direct_ppa_pareto/`, and `visualizations/qd_ppa_viewer/`
+artifacts for the presentation-facing visuals.
 
 ## Claim Discipline
 
