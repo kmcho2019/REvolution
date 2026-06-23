@@ -3836,3 +3836,35 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `T0 diagnostic_yield_positive_front_negative_blocked`. Do not rerun exact
   T67. Reuse seeded realization only if the next RTL-native method adds
   front-preserving repair or source-selection pressure.
+
+## 2026-06-23T18:46:00Z - T68 Upstream RTL-Native Source Check
+
+- Added `techniques/T68_source_verified_rtl_native_extractors/` as a
+  verification gate for the MasterRTL/RTLTimer lane, not as a live QD method.
+- Cloned upstream repositories under ignored `exp/external_repos/` and
+  recorded commits: MasterRTL
+  `5bccf38f8db7bb511a793a709863e7cb1b333ab5`, RTL-Timer
+  `206ff4078368c251d2fafaffcc648282c68316f1`.
+- Fresh upstream conversion is blocked in this environment because both
+  conversion paths emit Yosys scripts requiring `read -verific`; open-source
+  Yosys `0.54+29` reports that Verific support is not built in.
+- Created isolated environment `exp/venvs/rtl_native_verify` with `uv` to
+  avoid stopping at repository dependency gaps.
+- Verified MasterRTL's shipped `TinyRocket_sog.v` path by invoking
+  `analyze.py` directly with the isolated environment: generated a graph with
+  `51337` node-dict entries and `65938` graph edges.
+- Verified MasterRTL saved XGBoost pickles deserialize and predict on shipped
+  TinyRocket feature vectors, but all predictions are `0.0` despite nonzero
+  feature vectors because the upstream TinyRocket example labels are zero. This
+  is a deserialization check only, not an accuracy or useful-output result.
+- Verified RTL-Timer shipped SOG timing feature-label artifacts: both
+  init-word and route-word files have `166` registers; route-word BOG slack has
+  Pearson `0.846441` and Spearman `0.385196` against net slack.
+- Decision: do not claim true MasterRTL/RTL-Timer descriptor use until a
+  Verific-capable upstream flow or a minimal source-aligned preprocessing
+  adaptation runs on our candidate RTL. Earlier T15/T60/T61 remain proxies.
+- Ran a long-timeout `claude -p` read-only review after more than 10 commits
+  since the prior visible Claude review. It returned `PASS WITH LIMITATIONS`;
+  the package was corrected to use a committed verifier, state the
+  constant-zero model caveat, and show Pearson plus Spearman in the timing
+  alignment figure.

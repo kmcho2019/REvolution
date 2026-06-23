@@ -54,6 +54,10 @@ Check:
 - Are missing-reference designs labeled `diagnostic_only` and excluded from
   headline normalized improvement, HV, HV-AUC, and direct classic-vs-QD
   aggregate claims?
+- For MasterRTL, RTL-Timer, DeepGate, Qwen, AURORA, or any other named
+  external method, does the package prove the actual upstream implementation,
+  weights, preprocessing, and outputs are being used correctly instead of a
+  local proxy being overclaimed?
 - Are generated figures and tables understandable, aesthetically clean,
   manually inspected, and tied to claims?
 - Do per-technique reports and the central report explain the method,
@@ -70,6 +74,10 @@ Check:
 - Are tests, ruff, pyright, and `git diff --check` recorded, or are blocked
   results explicitly justified?
 - Are commits atomic, signed, and message-verified?
+- If at least 10 commits landed since the last Claude read-only review, did
+  the implementer run `claude -p` with a 5-10 minute wait budget and record
+  feedback on goal alignment, GUIDELINES.md simplicity, docs, docstrings,
+  comments, figures, tables, and anti-gaming risks?
 - Does `presentations/20260623_report/` answer whether diversity matters for
   RTL/Verilog PPA evolution and which diversity matters?
 - Was the RTLLM 50-problem manifest frozen from `bench/RTLLM/*_prompt.txt`

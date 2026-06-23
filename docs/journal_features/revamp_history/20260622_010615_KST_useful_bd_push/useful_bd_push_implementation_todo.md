@@ -162,6 +162,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       parent pressure and gated fusion were not enough.
 - [x] `T67_rtl_native_seeded_thought_qd` seed-1001 run is executed,
       validated, packaged, visually inspected, and assigned a tier decision.
+- [x] `T68_source_verified_rtl_native_extractors` is executed and packaged as
+      the upstream MasterRTL/RTL-Timer source-verification gate.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

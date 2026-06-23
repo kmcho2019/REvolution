@@ -87,10 +87,17 @@ Real result packages:
 - `T66_rtl_native_front_guarded_parent_qd` RTL-native guarded-parent live
   diagnostic
 - `T67_rtl_native_seeded_thought_qd` RTL-native seeded thought-code live
-  diagnostic.
+  diagnostic
+- `T68_source_verified_rtl_native_extractors` upstream MasterRTL/RTL-Timer
+  source-verification gate.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`.
+T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
+features are proxies, not source-equivalent upstream extractors. Upstream
+MasterRTL and RTL-Timer shipped examples can be read and partly checked, but
+fresh conversion currently fails under this open-source Yosys build because
+their scripts require `read -verific`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis

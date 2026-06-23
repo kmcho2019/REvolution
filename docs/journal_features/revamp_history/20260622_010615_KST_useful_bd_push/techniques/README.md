@@ -80,6 +80,8 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T64` | `T64_fused_operator_timing_live_screen` | RTL-native fused descriptor | `T0 diagnostic_yield_archive_ablation_not_promoted`; valid-PPA yield improves but classic wins the PPA-front metrics |
 | `T65` | `T65_rtl_native_secondary_cells` | RTL-native secondary-cell audit | `T0 diagnostic_secondary_cell_not_promoted`; source-level RTLTimer cells around T51/T63/T64 do not beat Classic front-cell coverage |
 | `T66` | `T66_rtl_native_front_guarded_parent_qd` | RTL-native archive coupling | Pre-registered; uses RTL state/pipeline cells for front-slot parent pressure and low-rate gated fusion |
+| `T67` | `T67_rtl_native_seeded_thought_qd` | RTL-native source-preserving coupling | `T0 diagnostic_yield_positive_front_negative_blocked`; valid-PPA yield improves but front breadth and `Prob153_gshare` coverage fail |
+| `T68` | `T68_source_verified_rtl_native_extractors` | RTL-native source verification | `T0 verification_gate`; upstream MasterRTL/RTL-Timer example artifacts are partly verified, but fresh conversion is blocked by Verific-dependent Yosys scripts |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

@@ -62,7 +62,7 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67 | Accelerate with coupling | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T63-T67 are useful diagnostics but do not beat classic headline front metrics. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68 | Accelerate with source alignment | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; T68 shows source-equivalent MasterRTL/RTL-Timer extraction still needs a Verific-capable flow or a documented upstream-aligned preprocessing adaptation. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |
@@ -77,3 +77,12 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 - Mark each result as `headline`, `screening`, or `diagnostic`.
 - Keep only the current best few methods at the top.
 - Link detailed evidence through the technique package, not long prose here.
+
+## Source-Verification Caveat
+
+T68 shows that T15/T60/T61 are proxy lanes, not source-equivalent upstream
+MasterRTL or RTL-Timer runs. Upstream example artifacts are partly usable, but
+fresh conversion currently fails on this open-source Yosys build because the
+original scripts require `read -verific`. Do not promote an RTL-native method
+as MasterRTL/RTL-Timer-based until the extractor path is source-aligned and
+measured on our candidate RTL.
