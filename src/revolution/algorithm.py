@@ -27,6 +27,7 @@ from .logging import EoHLogger
 from .prompt_store import PromptStore, safe_format # Able to load prompts from files
 from .rtl_descriptor_evaluator import RTLDescriptorEvaluator
 from .simulation_descriptor_evaluator import SimulationDescriptorEvaluator
+from .source_aligned_descriptor_evaluator import SourceAlignedRTLDescriptorEvaluator
 from .runtime.parallelism import (
     FixedProblemConcurrencyController,
     ProblemConcurrencyController,
@@ -543,6 +544,7 @@ class EoHEngine:
         self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
         self.simulation_descriptor_evaluator = SimulationDescriptorEvaluator()
         self.graph_descriptor_evaluator = GraphDescriptorEvaluator()
+        self.source_aligned_descriptor_evaluator: SourceAlignedRTLDescriptorEvaluator | None = None
 
         # --- Diff application tunables ---
         self.diff_similarity_threshold: float = diff_similarity_threshold
@@ -1036,6 +1038,10 @@ class EoHEngine:
         """Return whether the active engine configuration needs graph descriptor extraction."""
         return False
 
+    def _requires_source_aligned_descriptor_metrics(self) -> bool:
+        """Return whether source-aligned MasterRTL/RTL-Timer metrics are needed."""
+        return False
+
     def _extract_candidate_rtl_metrics(
         self,
         cand: Heuristic,
@@ -1080,6 +1086,22 @@ class EoHEngine:
         if not self._requires_graph_descriptor_metrics():
             return {}
         return self.graph_descriptor_evaluator.extract_metrics(
+            code_file_path=cand.code_file_path,
+            top_module_name=top_module_name,
+        )
+
+    def _extract_candidate_source_aligned_metrics(
+        self,
+        cand: Heuristic,
+        *,
+        top_module_name: str,
+    ) -> dict[str, float]:
+        """Extract source-aligned MasterRTL/RTL-Timer descriptors."""
+        if not self._requires_source_aligned_descriptor_metrics():
+            return {}
+        if self.source_aligned_descriptor_evaluator is None:
+            self.source_aligned_descriptor_evaluator = SourceAlignedRTLDescriptorEvaluator()
+        return self.source_aligned_descriptor_evaluator.extract_metrics(
             code_file_path=cand.code_file_path,
             top_module_name=top_module_name,
         )
@@ -1214,6 +1236,21 @@ class EoHEngine:
             )
             if callable(extract_graph_metrics)
             else {}
+        )
+        extract_source_aligned_metrics = getattr(
+            self,
+            "_extract_candidate_source_aligned_metrics",
+            None,
+        )
+        cand.graph_metrics.update(
+            _coerce_float_metric_dict(
+                extract_source_aligned_metrics(
+                    cand,
+                    top_module_name=synthesis_top_module_name,
+                )
+                if callable(extract_source_aligned_metrics)
+                else {}
+            )
         )
         cand.descriptor_values = _coerce_float_metric_dict(
             self._extract_candidate_descriptor_values(cand, synth_results)

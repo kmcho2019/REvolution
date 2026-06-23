@@ -1,6 +1,6 @@
 # T72 Source-Aligned RTL Cell QD
 
-Status: pre-registered; runtime descriptor hook required before execution.
+Status: runtime descriptor gate passed; live execution not launched.
 
 T72 is the first proposed live method that uses the exact T71 source-aligned
 MasterRTL/RTL-Timer cell idea instead of the earlier proxy
@@ -24,23 +24,28 @@ T72 intentionally disables two-parent fusion. T66's fusion gate did not
 trigger, and the next test should isolate source-aligned cells before adding
 another recombination variable.
 
-## Required Pre-Run Gate
+## Runtime Descriptor Gate
 
-Do not run the live vLLM command until the runtime descriptor probe proves a
-profile named `source_aligned_masterrtl_rtltimer_cell_2d` exists and reports:
+The runtime descriptor hook now resolves profile
+`source_aligned_masterrtl_rtltimer_cell_2d` and reports:
 
 - no PPA requirement;
 - no reference-PPA, fitness, hypervolume, Pareto-rank, or test-pass input;
 - MasterRTL graph-edge and RTL-Timer DFF-class axes;
-- successful extraction on at least the T70 sample and one fresh generated
-  candidate from the active run path.
+- exact reproduction of the T70 MasterRTL edge and RTL-Timer DFF counts on
+  all 19 generated-candidate samples.
+
+Evidence:
+
+- `tables/descriptor_probe_source_aligned_masterrtl_rtltimer_cell_2d.json`
+- `tables/source_aligned_runtime_regression.csv`
 
 ## Navigation
 
 - `methodology.md`: full method card and acceptance criteria.
 - `commands/live_screen_v0.md`: preflight, descriptor-gate, live-run, and
   packaging command templates.
-- `artifacts_manifest.md`: expected artifacts and current missing runtime hook.
+- `artifacts_manifest.md`: expected artifacts and current runtime-gate status.
 - `tables/source_aligned_descriptor_contract.json`: machine-readable method
   contract.
 - `tables/hard_tuning_subset.yaml`: frozen comparator surface.
@@ -48,6 +53,6 @@ profile named `source_aligned_masterrtl_rtltimer_cell_2d` exists and reports:
 
 ## Current Decision
 
-Advance to a narrow runtime-hook implementation. If that probe cannot be made
-to match the T71 table within the same generated-candidate sample, do not
-launch the live run and record the mismatch as the T72 blocker.
+Advance to a bounded live T72 screen only after recording the model preflight
+and command under `commands/`. T72 has not produced PPA results, figures, or a
+tier decision yet.

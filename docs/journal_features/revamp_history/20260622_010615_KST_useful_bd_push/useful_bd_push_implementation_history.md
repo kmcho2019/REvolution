@@ -3966,3 +3966,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: do not launch T72 until a narrow runtime descriptor hook proves
   `source_aligned_masterrtl_rtltimer_cell_2d` resolves, requires no PPA, and
   reproduces the T71 cell assignments on the T70 sample.
+
+## 2026-06-23T20:18:00Z - T72 Runtime Descriptor Gate
+
+- Added a narrow `SourceAlignedRTLDescriptorEvaluator` runtime hook that calls
+  the same local MasterRTL and RTL-Timer preprocessing flows used by T70.
+- Registered `source_aligned_masterrtl_rtltimer_cell_2d` with axes
+  `masterrtl_operator_log_edges` and `rtltimer_state_timing_class`, fixed 4 by
+  4 grid bounds, and an explicit `requires_source_aligned_rtl` requirement.
+- Generated
+  `techniques/T72_source_aligned_rtl_cell_qd/tables/descriptor_probe_source_aligned_masterrtl_rtltimer_cell_2d.json`;
+  the probe reports no PPA, synthesis, simulation, graph-proxy, or dynamic
+  requirement.
+- Added `tools/run_t72_runtime_regression.py` and ran the real external-flow
+  regression on all `19` T70 generated candidates. The runtime hook reproduced
+  every MasterRTL graph-edge count and every RTL-Timer DFF-reference count
+  exactly, with all four DFF state/timing classes represented.
+- Recorded the regression in
+  `techniques/T72_source_aligned_rtl_cell_qd/tables/source_aligned_runtime_regression.csv`.
+- Decision: the T72 descriptor gate is passed. T72 is still not a live PPA
+  result; the next step is vLLM preflight and a bounded hard/tuning live screen
+  with PPA completeness, direct PPA-front, and Phase 03.1 visualization
+  packaging.

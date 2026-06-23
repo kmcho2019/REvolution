@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T72 is pre-registered, but its exact source-aligned runtime hook is not implemented yet. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T72's descriptor gate passes, but live PPA utility is not measured yet. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -24,11 +24,11 @@ morphology.
 
 T72 is now the next registered test of that idea: use T71's source-aligned
 MasterRTL/RTL-Timer cells inside T66-style front-slot parent pressure, with
-two-parent fusion disabled to isolate the descriptor. Do not launch it until
-the exact runtime descriptor hook reproduces T71 cell assignments without PPA
-leakage. This is still the strongest methodology story because it defines
+two-parent fusion disabled to isolate the descriptor. Its runtime descriptor
+gate now passes without PPA leakage on the full T70 generated-candidate
+regression. This is still the strongest methodology story because it defines
 diversity in RTL terms rather than opaque embedding space, while the PPA claim
-remains gated by reference-complete paired comparisons.
+remains gated by reference-complete paired live comparisons.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

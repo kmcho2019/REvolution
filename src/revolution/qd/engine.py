@@ -516,6 +516,13 @@ class QDEngine(EoHEngine):
             descriptor_requirements(self._archive_axes()).get("requires_graph_metrics")
         )
 
+    def _requires_source_aligned_descriptor_metrics(self) -> bool:
+        return bool(
+            descriptor_requirements(self._archive_axes()).get(
+                "requires_source_aligned_rtl"
+            )
+        )
+
     def _requires_auto_bd_hash_metrics(self) -> bool:
         return bool(
             descriptor_requirements(self._archive_axes()).get("requires_auto_bd_hash")

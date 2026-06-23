@@ -1,6 +1,6 @@
 # T72 Artifacts Manifest
 
-Status: pre-run method package. No live results are claimed.
+Status: runtime descriptor gate passed. No live PPA results are claimed.
 
 ## Committed Pre-Run Artifacts
 
@@ -10,18 +10,20 @@ Status: pre-run method package. No live results are claimed.
 | `methodology.md` | Full pre-registered method card. |
 | `commands/live_screen_v0.md` | Preflight, runtime-gate, live-run, validation, and packaging command templates. |
 | `tables/source_aligned_descriptor_contract.json` | Machine-readable descriptor and run contract. |
+| `tables/descriptor_probe_source_aligned_masterrtl_rtltimer_cell_2d.json` | Runtime profile probe showing no PPA, synthesis, simulation, or graph-proxy requirement. |
+| `tables/source_aligned_runtime_regression.csv` | Full 19-candidate regression showing exact T70 MasterRTL edge and RTL-Timer DFF-count reproduction. |
 | `tables/hard_tuning_subset.yaml` | Frozen 13-problem comparator subset. |
 | `tables/t72_method_matrix.csv` | Compact comparison against T51/T66/T67. |
 | `tables/README.md` | Table inventory. |
 | `figures/README.md` | Figure requirements; no figures yet because no live result exists. |
+| `tools/run_t72_runtime_regression.py` | Regenerates the full T70 source-aligned runtime regression CSV. |
 
 ## Required Future Artifacts
 
-The live run is not allowed until these exist:
+The descriptor gate is passed. The live result package is still missing:
 
 | Path | Requirement |
 | --- | --- |
-| `tables/descriptor_probe_source_aligned_masterrtl_rtltimer_cell_2d.json` | Runtime probe proving exact T71-compatible axes with no PPA requirement. |
 | `tables/t72_ppa_completeness.csv` | Reference-complete comparison eligibility table. |
 | `visualizations/direct_ppa_pareto/` | Static raw area-power PPA-front supplement. |
 | `visualizations/qd_ppa_viewer/` | Full Phase 03.1 viewer if archive artifacts are generated. |

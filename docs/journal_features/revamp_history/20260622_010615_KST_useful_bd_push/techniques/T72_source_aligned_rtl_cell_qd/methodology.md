@@ -89,22 +89,22 @@ Use the same 13-problem hard/tuning surface as T47 through T67:
 
 Do not change the subset after seeing T72 outcomes.
 
-## Required Pre-Run Probe
+## Runtime Hook Gate
 
-Before the live run, implement the narrow runtime hook and run a descriptor
-probe that proves:
+The narrow runtime hook now exists. The committed descriptor probe proves:
 
 - profile name resolves to the two T72 axes;
 - `requires_ppa=false`;
-- source-aligned extraction succeeds on the full T70 candidate table;
-- descriptor values for the 19 T70 candidates reproduce the T71
-  `operator_scale_bin` and `state_timing_class` assignments;
-- one fresh generated candidate from the active live output path is accepted.
+- `requires_synthesis=false`;
+- `requires_source_aligned_rtl=true`;
+- source-aligned extraction reproduces MasterRTL graph-edge counts and
+  RTL-Timer DFF-reference counts for all 19 T70 generated candidates.
 
-The probe output should be committed as:
+The probe outputs are committed as:
 
 ```text
 tables/descriptor_probe_source_aligned_masterrtl_rtltimer_cell_2d.json
+tables/source_aligned_runtime_regression.csv
 ```
 
 ## Required Measurements

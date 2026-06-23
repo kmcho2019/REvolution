@@ -26,6 +26,7 @@ from revolution.qd.pareto_analysis import (
 )
 from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
 from revolution.simulation_descriptor_evaluator import SimulationDescriptorEvaluator
+from revolution.source_aligned_descriptor_evaluator import SourceAlignedRTLDescriptorEvaluator
 
 
 IGNORED_SUMMARY_FILENAMES = {
@@ -951,10 +952,15 @@ def recover_candidate_features(
     """Best-effort recovery for missing feature families on successful candidates."""
 
     warnings: list[str] = []
-    recover_rtl, recover_graph, recover_dynamic = _recovery_plan(requested_features)
+    recover_rtl, recover_graph, recover_dynamic, recover_source_aligned = _recovery_plan(
+        requested_features
+    )
     rtl_evaluator = RTLDescriptorEvaluator()
     graph_evaluator = GraphDescriptorEvaluator() if recover_graph else None
     simulation_evaluator = SimulationDescriptorEvaluator() if recover_dynamic else None
+    source_aligned_evaluator = (
+        SourceAlignedRTLDescriptorEvaluator() if recover_source_aligned else None
+    )
 
     for record in candidates:
         _recover_features_for_record(
@@ -962,9 +968,11 @@ def recover_candidate_features(
             recover_rtl=recover_rtl,
             recover_graph=recover_graph,
             recover_dynamic=recover_dynamic,
+            recover_source_aligned=recover_source_aligned,
             rtl_evaluator=rtl_evaluator,
             graph_evaluator=graph_evaluator,
             simulation_evaluator=simulation_evaluator,
+            source_aligned_evaluator=source_aligned_evaluator,
         )
 
     for record in candidates:
@@ -977,13 +985,14 @@ def recover_candidate_features(
 
 def _recovery_plan(
     requested_features: list[str] | tuple[str, ...] | None,
-) -> tuple[bool, bool, bool]:
+) -> tuple[bool, bool, bool, bool]:
     if requested_features is None:
-        return True, True, True
+        return True, True, True, False
     registry = descriptor_registry()
     recover_rtl = False
     recover_graph = False
     recover_dynamic = False
+    recover_source_aligned = False
     for feature in requested_features:
         definition = registry.get(feature)
         if definition is None:
@@ -996,7 +1005,10 @@ def _recovery_plan(
             continue
         if definition.source_tool == "icarus_vcd":
             recover_dynamic = True
-    return recover_rtl, recover_graph, recover_dynamic
+            continue
+        if definition.source_tool == "source_aligned_rtl":
+            recover_source_aligned = True
+    return recover_rtl, recover_graph, recover_dynamic, recover_source_aligned
 
 
 def _recover_features_for_record(
@@ -1005,15 +1017,19 @@ def _recover_features_for_record(
     recover_rtl: bool,
     recover_graph: bool,
     recover_dynamic: bool,
+    recover_source_aligned: bool,
     rtl_evaluator: RTLDescriptorEvaluator,
     graph_evaluator: GraphDescriptorEvaluator | None,
     simulation_evaluator: SimulationDescriptorEvaluator | None,
+    source_aligned_evaluator: SourceAlignedRTLDescriptorEvaluator | None,
 ) -> None:
     if record.has_code_file:
         if recover_rtl:
             _recover_rtl_metrics(record, evaluator=rtl_evaluator)
         if recover_graph and graph_evaluator is not None:
             _recover_graph_metrics(record, evaluator=graph_evaluator)
+        if recover_source_aligned and source_aligned_evaluator is not None:
+            _recover_source_aligned_metrics(record, evaluator=source_aligned_evaluator)
     if recover_dynamic and simulation_evaluator is not None:
         _recover_dynamic_metrics(record, evaluator=simulation_evaluator)
     _fill_missing_gain_components(record)
@@ -1057,6 +1073,21 @@ def _recover_graph_metrics(
     )
     if not metrics:
         return
+    for metric_name, metric_value in metrics.items():
+        record.graph_metrics.setdefault(metric_name, metric_value)
+
+
+def _recover_source_aligned_metrics(
+    record: SuccessfulCandidateRecord,
+    *,
+    evaluator: SourceAlignedRTLDescriptorEvaluator,
+) -> None:
+    if record.code_file_path is None or not record.code_file_path.is_file():
+        return
+    metrics = evaluator.extract_metrics(
+        code_file_path=record.code_file_path,
+        top_module_name=None,
+    )
     for metric_name, metric_value in metrics.items():
         record.graph_metrics.setdefault(metric_name, metric_value)
 

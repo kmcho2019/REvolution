@@ -38,6 +38,7 @@ from revolution.qd.scoring import (
 )
 from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
 from revolution.simulation_descriptor_evaluator import SimulationDescriptorEvaluator
+from revolution.source_aligned_descriptor_evaluator import SourceAlignedRTLDescriptorEvaluator
 
 
 class CandidateStatus(str, Enum):
@@ -222,6 +223,7 @@ class CandidateEvaluator:
         self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
         self.simulation_descriptor_evaluator = SimulationDescriptorEvaluator()
         self.graph_descriptor_evaluator = GraphDescriptorEvaluator()
+        self.source_aligned_descriptor_evaluator: SourceAlignedRTLDescriptorEvaluator | None = None
         if evaluation_mode not in {
             EvaluationMode.STRICT_ABLATION.value,
             EvaluationMode.SEARCH_ACCELERATED.value,
@@ -499,6 +501,18 @@ class CandidateEvaluator:
             top_module_name=self.synthesis_top_module_name,
         )
 
+    def _extract_source_aligned_metrics(
+        self,
+        code_file_path: str | Path,
+    ) -> dict[str, float]:
+        """Extract source-aligned MasterRTL/RTL-Timer descriptors."""
+        if self.source_aligned_descriptor_evaluator is None:
+            self.source_aligned_descriptor_evaluator = SourceAlignedRTLDescriptorEvaluator()
+        return self.source_aligned_descriptor_evaluator.extract_metrics(
+            code_file_path=code_file_path,
+            top_module_name=self.synthesis_top_module_name,
+        )
+
     def _evaluate_pre_synthesis(self, item: CandidateWorkItem) -> CandidateEvaluation:
         """Run format/syntax/functionality stages and return an intermediate result."""
         stages = self._base_stage_statuses()
@@ -702,6 +716,8 @@ class CandidateEvaluator:
             if self.descriptor_requirements.get("requires_graph_metrics", False)
             else {}
         )
+        if self.descriptor_requirements.get("requires_source_aligned_rtl", False):
+            graph_metrics.update(self._extract_source_aligned_metrics(item.code_file_path))
         if synth_success and post_synth_success and ppa_success:
             stages["synthesis"] = True
             stages["synthesis_functionality"] = True

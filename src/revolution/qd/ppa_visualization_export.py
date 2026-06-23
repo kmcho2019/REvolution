@@ -562,12 +562,7 @@ def _descriptor_values(
         if len(values) == len(axis_names):
             return values
         return {}
-    from revolution.graph_descriptor_evaluator import GraphDescriptorEvaluator
-
-    metrics = GraphDescriptorEvaluator(yosys_timeout_seconds=30).extract_metrics(
-        code_file_path=code_file_path,
-        top_module_name=None,
-    )
+    _, metrics = _graph_metrics_for_code((code_file_path, axis_names))
     descriptor_cache[code_file_path] = metrics
     values = {
         axis: float(metrics[axis])
@@ -607,11 +602,17 @@ def _recover_classic_descriptors_for_problem(
 
 def _graph_metrics_for_code(task: tuple[str, tuple[str, ...]]) -> tuple[str, dict[str, float]]:
     from revolution.graph_descriptor_evaluator import GraphDescriptorEvaluator
+    from revolution.qd.descriptors import descriptor_registry
     from revolution.qd.descriptors import extract_descriptor_values
     from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
+    from revolution.source_aligned_descriptor_evaluator import SourceAlignedRTLDescriptorEvaluator
 
     code_file_path, axis_names = task
     graph_evaluator = GraphDescriptorEvaluator(yosys_timeout_seconds=30)
+    registry = descriptor_registry()
+    needs_source_aligned = any(
+        registry[axis].source_tool == "source_aligned_rtl" for axis in axis_names
+    )
     if set(axis_names).issubset({"logic_depth", "ff_depth", "comb_width_log"}):
         payload = graph_evaluator._load_yosys_json(Path(code_file_path), top_module_name=None)
         if payload is None:
@@ -626,6 +627,13 @@ def _graph_metrics_for_code(task: tuple[str, tuple[str, ...]]) -> tuple[str, dic
         code_file_path=code_path,
     )
     metrics.update(graph_evaluator.extract_metrics(code_file_path=code_path, top_module_name=None))
+    if needs_source_aligned:
+        metrics.update(
+            SourceAlignedRTLDescriptorEvaluator().extract_metrics(
+                code_file_path=code_path,
+                top_module_name=None,
+            )
+        )
     return code_file_path, extract_descriptor_values(metrics, axis_names)
 
 

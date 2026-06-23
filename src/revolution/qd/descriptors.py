@@ -188,6 +188,14 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "timing_risk_score": DescriptorDefinition("timing_risk_score", "rtl_text"),
     "control_pipeline_ratio": DescriptorDefinition("control_pipeline_ratio", "rtl_text"),
     "timing_risk_entropy": DescriptorDefinition("timing_risk_entropy", "rtl_text"),
+    "masterrtl_operator_log_edges": DescriptorDefinition(
+        "masterrtl_operator_log_edges",
+        "source_aligned_rtl",
+    ),
+    "rtltimer_state_timing_class": DescriptorDefinition(
+        "rtltimer_state_timing_class",
+        "source_aligned_rtl",
+    ),
     "t11_runtime_pca_0": DescriptorDefinition("t11_runtime_pca_0", "yosys_graph"),
     "t11_runtime_pca_1": DescriptorDefinition("t11_runtime_pca_1", "yosys_graph"),
     "t11_runtime_pca_2": DescriptorDefinition("t11_runtime_pca_2", "yosys_graph"),
@@ -463,6 +471,10 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         "timing_risk_score",
     }:
         return (0.0, 8192.0)
+    if axis == "masterrtl_operator_log_edges":
+        return (4.0, 8.8)
+    if axis == "rtltimer_state_timing_class":
+        return (0.0, 4.0)
     if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count", "wire_count_log_est"}:
         return (0.0, 16.0)
     if axis in {"logic_depth", "ff_depth"}:
@@ -623,6 +635,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         "requires_graph_metrics": any(
             registry[axis].source_tool == "yosys_graph" for axis in axes
         ),
+        "requires_source_aligned_rtl": any(
+            registry[axis].source_tool == "source_aligned_rtl" for axis in axes
+        ),
         "requires_auto_bd_hash": any(
             registry[axis].source_tool == "auto_bd_hash" for axis in axes
         ),
@@ -655,6 +670,8 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             "requires_synthesis": registry[axis].requires_synthesis,
             "requires_simulation": registry[axis].requires_simulation,
             "requires_graph_metrics": registry[axis].source_tool == "yosys_graph",
+            "requires_source_aligned_rtl": registry[axis].source_tool
+            == "source_aligned_rtl",
             "requires_auto_bd_motif": registry[axis].source_tool == "auto_bd_motif",
             "requires_auto_bd_stage_dumps": (
                 registry[axis].source_tool == "auto_bd_stage_dumps"

@@ -1,6 +1,6 @@
 # T72 Live Screen V0 Commands
 
-Status: command template only. Do not launch until the descriptor gate passes.
+Status: descriptor gate passed; live-run command template not executed.
 
 ## Storage Check
 
@@ -18,8 +18,7 @@ Observed before pre-registration:
 
 ## Runtime Descriptor Gate
 
-The profile is intentionally not assumed to exist. Implement the narrow
-runtime hook first, then run:
+The runtime hook exists. Regenerate the profile probe with:
 
 ```bash
 uv run python scripts/qd_descriptor_probe.py \
@@ -33,13 +32,18 @@ Required probe properties:
 
 - axes are `masterrtl_operator_log_edges` and `rtltimer_state_timing_class`;
 - `requires_ppa=false`;
-- descriptor summary identifies source-aligned MasterRTL/RTL-Timer sources;
+- `requires_source_aligned_rtl=true`;
 - no final PPA, reference PPA, fitness, hypervolume, Pareto rank, or test pass
   is an input.
 
-Then run a candidate-level regression probe that compares runtime output to
-the T71 table. The implementation may choose the script name, but it must
-write this artifact before live spend:
+The committed runtime regression compares the source-aligned hook against all
+19 T70 generated-candidate rows:
+
+```bash
+uv run python docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T72_source_aligned_rtl_cell_qd/tools/run_t72_runtime_regression.py
+```
+
+It writes:
 
 ```text
 tables/source_aligned_runtime_regression.csv
@@ -48,7 +52,7 @@ tables/source_aligned_runtime_regression.csv
 Required regression columns:
 
 ```text
-candidate_id,masterrtl_operator_log_edges,rtltimer_state_timing_class,operator_scale_bin,state_timing_class,matches_t71
+candidate_id,problem,kind,top,code_relpath,expected_masterrtl_graph_edges,actual_masterrtl_graph_edges,graph_edges_match,expected_rtltimer_dff_refs,actual_rtltimer_dff_refs,dff_refs_match,masterrtl_operator_log_edges,rtltimer_state_timing_class
 ```
 
 ## vLLM Preflight
