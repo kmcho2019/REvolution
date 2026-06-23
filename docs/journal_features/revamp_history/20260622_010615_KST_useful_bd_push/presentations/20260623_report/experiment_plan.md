@@ -91,6 +91,8 @@ one-seed results are organized into the report, plots, tables, and slides.
 - commands and model metadata under `commands/` and `data/`;
 - one row per method/problem with HV, HV-AUC, best score, valid-PPA count,
   front points, and runtime;
+- `ppa_completeness.csv` with `classic_valid_ppa`, `qd_valid_ppa`,
+  `reference_ppa_valid`, and `comparison_status` for every manifest problem;
 - paired aggregate tables with mean/median deltas; bootstrap intervals are
   deferred because the one-seed package is not a seed-stability claim;
 - all-problem and screen-excluded aggregate tables;
@@ -111,3 +113,8 @@ The two-arm full RTLLM comparison tests a T26-family bundle against classic.
 It does not isolate descriptor contribution from parent-source policy. A
 positive result should be claimed as evidence for the bundle unless an added
 control arm separates SR raw archive effects from champion-biased exploitation.
+
+Headline direct classic-vs-QD claims must use the reference-complete paired
+subset. Missing candidate PPA is counted as a method invalid/non-PPA outcome.
+Missing or defaulted reference `ppa.txt` makes the problem diagnostic-only for
+normalized improvement, HV, HV-AUC, and aggregate direct-comparison claims.

@@ -3694,3 +3694,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   method that only adds RTL-native reporting cells. The next RTL-native method
   must use descriptors to affect parent choice, repair selection, or another
   measured coupling point without PPA leakage.
+
+## 2026-06-23T16:06:00Z - Feedback Alignment On Validity And Lanes
+
+- Reaffirmed the PPA completeness rule in the RTLLM milestone plan: missing
+  candidate PPA is a method invalid/non-PPA outcome, while missing or defaulted
+  reference `ppa.txt` makes the design diagnostic-only for normalized
+  improvement, HV, HV-AUC, and direct classic-vs-QD headline aggregates.
+- Updated the short best-techniques view so T51/T26-family archive machinery,
+  T26.1 gated/low-fusion variants, RTL-native descriptors, and learned
+  encoders are tracked as the current operational lanes.
+- Clarified that MasterRTL/Yosys-SOG and RTLTimer-style features should define
+  RTL-native archive cells and coupling pressure, not serve only as direct PPA
+  predictors or posthoc labels.
+- Added the missing T65 package-count bookkeeping entry and kept the next
+  L7 action focused on coupled parent-choice or repair-selection methods.

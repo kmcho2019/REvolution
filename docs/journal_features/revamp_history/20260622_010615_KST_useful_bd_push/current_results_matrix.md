@@ -83,6 +83,7 @@ Real result packages:
 - `T63_fused_rtl_native_live_screen` fused RTL-native live diagnostic
 - `T64_fused_operator_timing_live_screen` fused operator/timing live
   diagnostic
+- `T65_rtl_native_secondary_cells` RTL-native secondary-cell audit
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`.

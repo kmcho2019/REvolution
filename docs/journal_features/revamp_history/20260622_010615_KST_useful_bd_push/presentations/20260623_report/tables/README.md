@@ -10,6 +10,8 @@ Planned tables:
   screen-excluded aggregate metrics.
 - `full_rtllm/tables/full_comparison_deltas.csv`: paired problem and aggregate
   deltas against classic.
+- `full_rtllm/tables/full_ppa_completeness.csv`: per-problem claim status
+  separating missing candidate PPA from missing/defaulted reference PPA.
 - `full_rtllm/tables/full_validity_gates.csv`: functionality and valid-PPA
   counts with `classic_covered_loss`, `yield_warning`, and `small_n` labels.
 - `full_rtllm/tables/full_budget_parity.csv`: runtime, LLM-call, token, and
