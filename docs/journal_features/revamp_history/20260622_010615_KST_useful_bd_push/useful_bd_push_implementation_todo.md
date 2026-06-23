@@ -257,8 +257,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T51_code_thought_front_slot_qd` seed `1001` is run on the T47
       hard/tuning comparator surface, packaged, visually inspected, and
       assigned a tier decision before seed `1002` or held-out spend.
-- [ ] The next T51 follow-up is specified with an explicit front-preserving
+- [x] The next T51 follow-up is specified with an explicit front-preserving
       mechanism before any seed `1002` or held-out spend.
+- [ ] `T52_code_thought_full_pareto_qd` seed `1001` is run on the T47/T51
+      hard/tuning comparator surface, packaged, visually inspected, and
+      assigned a tier decision before seed `1002` or held-out spend.
 
 ## Minimum Goal Completion
 
@@ -330,6 +333,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T48 gets a follow-up direction: stop direct T26.1 two-parent fusion
       escalation and specify a role-separated champion, local-rank-1, and
       bounded-repair emitter before spending held-out budget.
+- [x] T51 gets a follow-up direction: keep direct code individuals and
+      `single_thought_operator`, but widen the archive from one local front
+      slot to full per-cell Pareto retention in T52.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

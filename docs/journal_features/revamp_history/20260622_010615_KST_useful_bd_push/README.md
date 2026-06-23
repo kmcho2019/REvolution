@@ -30,8 +30,9 @@ Start here when resuming the active goal.
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  keep T51's code-individual yield recovery, but add a stronger
-  front-preserving mechanism before seed `1002` or held-out spend.
+  run `techniques/T52_code_thought_full_pareto_qd/`, which keeps T51's
+  code-individual yield recovery and widens the archive from one local
+  front slot to full per-cell Pareto retention.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -59,6 +60,9 @@ Start here when resuming the active goal.
 - Most recent live technique:
   `techniques/T51_code_thought_front_slot_qd/` (seed-1001 hard/tuning
   positive ablation with direct PPA supplement and Phase 03.1 viewer).
+- Most recent pre-registered technique:
+  `techniques/T52_code_thought_full_pareto_qd/` (T51 full-Pareto retention
+  ablation; no live result yet).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs

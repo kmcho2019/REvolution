@@ -2982,3 +2982,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   (`39` versus `26`).
 - Next step: keep T51's code-individual yield recovery, but add a stronger
   front-preserving mechanism before seed `1002` or held-out spend.
+
+## T52 Code-Thought Full-Pareto Method Card - 2026-06-23 UTC
+
+- Added `T52_code_thought_full_pareto_qd` as the direct front-breadth ablation
+  of T51.
+- The method keeps T51's hard/tuning surface, seed policy, local vLLM model,
+  128k token budgets, SR-PCA descriptor, direct code representation,
+  `single_thought_operator`, sparse warmup `4`, champion lane `0.80`,
+  NSGA-II parent selection, no repair, and no two-parent fusion.
+- The only live-search change is the archive cell rule: T52 uses
+  `qd_cell_mode=pareto_front` and `qd_max_elites_per_cell=5` instead of T51's
+  one-slot `elite_pareto_slot` with capacity `2`.
+- This directly tests whether T51's remaining front-breadth loss came from
+  too little local Pareto retention. It is not a new BD and must not be treated
+  as proof that the code-thought operator itself is sufficient.
+- Next step: preflight the vLLM endpoint, run T52 seed `1001`, validate the
+  single-thought and Pareto artifacts, then package against the T47 classic
+  and T51 hard/tuning results.

@@ -23,8 +23,8 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T46 completed the frozen non-PPA projection follow-up; direct graph-axis live archives should now move to secondary/reporting use or trained encoders. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T51 restores yield/HV-AUC but still loses front breadth. |
-| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Keep T51's code-individual recovery and add a stronger front-preserving lane. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T52 is pre-registered to test full local Pareto retention on T51's recovered substrate. |
+| `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Keep T51's code-individual recovery while testing whether one local front slot was the remaining blocker. |
 
 ## Lineage Graph
 
@@ -152,6 +152,7 @@ flowchart LR
   T49 --> T50
   T50 --> T51
   T39 --> T51
+  T51 --> T52
   T39 --> enc
   T17 --> T12
   T17 --> T18
@@ -189,6 +190,7 @@ flowchart LR
 | T49 | `L5/L6` | Thought-only role separation with champion archive pressure, non-champion NSGA-II near-front pressure, and bounded sample-local repair. | Completed `T0 mixed_diagnostic`: preserves covered valid-PPA coverage and improves best score, but loses mean HV, valid-PPA count, and front coverage. | `ablate` repair-only role separation | Specify a front-preserving follow-up before seed `1002` or held-out spend. |
 | T50 | `L5/L6` | Candidate-matched thought-only front retention: restore the 12-candidate evaluated-code budget, disable repair, and widen per-cell Pareto retention. | Partial `T0 diagnostic`: best-score gain, but HV, HV-AUC, valid-PPA, unique PPA, and front material lose. | `retire` candidate/front control | Do not run seed `1002`; specify a new front/yield-preserving emitter. |
 | T51 | `L5/L6` | Code-thought front-slot QD: restore code individuals, keep the single-thought operator, use one local front slot, and lower sparse-yield warmup to 4. | Completed `T0 positive_ablation_not_promoted`: valid-PPA, HV-AUC, and best-score recovery versus T50/classic, but classic still wins HV and front breadth. | `ablate` front-preserving follow-up | Keep the code-individual yield recovery; add a stronger front-preserving mechanism before seed `1002` or held-out spend. |
+| T52 | `L5/L6` | Code-thought full-Pareto QD: keep T51's code representation and operator, but widen each archive cell from one front slot to full local Pareto retention. | Pre-registered; no live result yet. | `advance` seed `1001` hard/tuning screen | Run before any T51 seed `1002`; gate on front breadth without losing T51's yield/HV-AUC recovery. |
 | T08-T10/T12/T15-T16 | `L4` | DeepSeq, NetTAG, CircuitFusion, lineage repair, MasterRTL, DeepCell. | Scaffolded candidates, not yet validated. | `advance` selectively | Use isolated uv envs or source checkouts as needed for external encoders. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
