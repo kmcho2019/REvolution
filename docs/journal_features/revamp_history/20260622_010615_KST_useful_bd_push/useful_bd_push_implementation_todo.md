@@ -238,7 +238,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T49_thought_k_role_separated_repair_qd` is pre-registered as the next
       same-family role-separated thought-k and bounded-repair follow-up after
       T48 failed the hard/tuning primary metrics.
-- [ ] `T49_thought_k_role_separated_repair_qd` seed `1001` is run on the T47
+- [x] `T49_thought_k_role_separated_repair_qd` seed `1001` is run on the T47
       hard/tuning comparator surface, packaged, visually inspected, and
       assigned a tier decision before seed `1002` is considered.
 

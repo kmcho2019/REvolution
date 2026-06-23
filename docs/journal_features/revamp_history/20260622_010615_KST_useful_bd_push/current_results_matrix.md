@@ -58,11 +58,11 @@ Real result packages:
   live ablation
 - `T47_t26_contract_probe` hard/tuning exact-T26 contract probe
 - `T48_t26_gated_near_front_fusion_qd` gated near-front T26.1 follow-up
+- `T49_thought_k_role_separated_repair_qd` thought-k role-separated repair
+  follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T15`, `T16`, and `T18`. `T49_thought_k_role_separated_repair_qd` is
-pre-registered as the next T48 follow-up, but it has no live result yet and is
-not counted as a real result package.
+`T15`, `T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -187,6 +187,16 @@ is `-0.015628`, valid PPA falls from `538` to `452`, aggregate front points
 fall from `61` to `51`, and three yield warnings remain. The Phase 03.1 viewer
 is packaged with an honest non-strict classic-projection caveat; the direct
 raw-PPA supplement is the primary visual comparison.
+
+T49 is complete and remains `T0 mixed_diagnostic`. It moves the T48 follow-up
+from code-individual two-parent fusion to thought-only role separation with
+bounded sample-local repair. It preserves all classic-covered valid-PPA
+coverage and improves mean best score (`+0.067203`) with a slight HV-AUC gain
+(`+0.001127`), but it loses mean HV (`-0.005704`), valid-PPA candidates
+(`231` versus `257`), aggregate front points (`20` versus `30`), unique PPA
+points (`76` versus `87`), and reference-beating candidates (`40` versus
+`46`). T49 should inform the next front-preserving emitter design, not seed a
+held-out escalation.
 
 ## Comparable Seed-1001 Replay Metrics
 
@@ -562,10 +572,7 @@ the best ALU and traffic-light scores.
   frozen non-PPA projection and still lost the aggregate comparison, so graph
   features should move to secondary archive/reporting coordinates or trained
   encoder inputs unless a new mechanism is specified.
-- For the T47/T48 T26-family hard/tuning lineage, do not launch exact T26 or
-  gated T26.1 as a held-out claim. The next same-family method needs
-  role-separated champion, local-rank-1, and bounded-repair lanes rather than
-  another direct two-parent fusion tweak.
-- T49 is the pre-registered version of that follow-up. Run seed `1001` first
-  and do not add seed `1002` unless seed `1001` preserves classic-covered
-  designs and is not clearly dominated by T48.
+- For the T47/T48/T49 T26-family hard/tuning lineage, do not launch exact T26,
+  gated T26.1, or T49 as a held-out claim. The next same-family method needs
+  explicit front preservation rather than another direct fusion or repair-only
+  role-separation tweak.

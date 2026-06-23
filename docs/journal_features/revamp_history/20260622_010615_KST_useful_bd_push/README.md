@@ -17,20 +17,16 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T48_t26_gated_near_front_fusion_qd/` (`T0 diagnostic after
-  review`; gated near-front fusion improves over exact T26 in some yield/gate
-  behavior, but still loses to classic on HV, HV-AUC, valid-PPA count, and
-  aggregate front points).
-- Most recent pre-registered package:
-  `techniques/T49_thought_k_role_separated_repair_qd/` (thought-k
-  role-separated archive emitter with bounded sample-local repair; no live
-  result yet).
+  `techniques/T49_thought_k_role_separated_repair_qd/` (`T0
+  mixed_diagnostic`; role-separated thought generation preserves
+  classic-covered valid-PPA coverage and improves best score, but loses mean
+  HV, valid-PPA count, and front coverage).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  run T49 seed `1001` on the T47/T48 hard/tuning comparator surface before
-  any held-out spend.
+  design a front-preserving follow-up before any held-out spend; do not treat
+  T49 seed `1001` as a promoted QD lead.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -39,11 +35,11 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T48_t26_gated_near_front_fusion_qd/hard_tuning_package/figures/t48_direct_ppa_fronts_seed1002.png`
-  (straightforward seed-1002 raw area-power fronts for the T48 hard/tuning
+  `techniques/T49_thought_k_role_separated_repair_qd/hard_tuning_package/figures/t49_direct_ppa_fronts_seed1001.png`
+  (straightforward seed-1001 raw area-power fronts for the T49 hard/tuning
   package).
 - Most recent direct PPA HTML viewer:
-  `techniques/T48_t26_gated_near_front_fusion_qd/visualizations/direct_ppa_pareto/index.html`
+  `techniques/T49_thought_k_role_separated_repair_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary table and
   Playwright screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
@@ -56,8 +52,8 @@ Start here when resuming the active goal.
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T48_t26_gated_near_front_fusion_qd/` (two-seed hard/tuning
-  screen with direct PPA supplement and Phase 03.1 viewer package).
+  `techniques/T49_thought_k_role_separated_repair_qd/` (seed-1001
+  hard/tuning diagnostic with direct PPA supplement).
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -167,7 +163,7 @@ Start here when resuming the active goal.
 | `T46` | `T46_t11_runtime_pca4_graph` | Completed live result, `T0 mixed_diagnostic`; frozen PCA4 graph projection preserves coverage and wins ALU HV but loses classic on mean HV, reference-beating count, valid-PPA samples, and traffic-light quality. |
 | `T47` | `T47_t26_contract_probe` | Completed hard/tuning result, `T0 diagnostic`; exact T26 keeps positive best-score movement but loses HV, HV-AUC, valid-PPA count, and aggregate front points versus classic. |
 | `T48` | `T48_t26_gated_near_front_fusion_qd` | Completed hard/tuning result, `T0 diagnostic after review`; gated near-front fusion reduces some T47 damage but still loses the primary QD metrics versus classic. |
-| `T49` | `T49_thought_k_role_separated_repair_qd` | Pre-registered T48 follow-up; thought-k role separation plus bounded sample-local repair, no live result yet. |
+| `T49` | `T49_thought_k_role_separated_repair_qd` | Completed hard/tuning result, `T0 mixed_diagnostic`; preserves classic-covered valid-PPA coverage and improves best score, but loses mean HV, valid-PPA count, and front coverage. |
 
 ## Validity-Gate Note
 

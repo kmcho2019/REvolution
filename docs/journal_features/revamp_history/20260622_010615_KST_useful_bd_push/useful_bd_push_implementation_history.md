@@ -2848,3 +2848,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - First audit checkpoint found `11/13` problem-level `qd_metrics.json` files.
   The run is still in progress, so no quality or tier conclusion is recorded
   yet.
+
+## T49 Thought-K Role-Separated Repair Completion - 2026-06-23 UTC
+
+- Seed `1001` completed with exit code `0` after `3270.46` seconds.
+- Packaged the matched hard/tuning comparison under
+  `techniques/T49_thought_k_role_separated_repair_qd/hard_tuning_package/`.
+- Added the direct PPA supplement under
+  `techniques/T49_thought_k_role_separated_repair_qd/visualizations/direct_ppa_pareto/`
+  with a Playwright screenshot.
+- Tier decision: `T0 mixed_diagnostic`. T49 preserves all classic-covered
+  valid-PPA designs and improves mean best score by `+0.067203`, but loses
+  mean HV (`-0.005704`), valid-PPA count (`231` versus `257`), aggregate front
+  points (`20` versus `30`), unique PPA points (`76` versus `87`), and
+  reference-beating candidates (`40` versus `46`).
+- Next step: do not launch held-out spend or seed `1002` from this result
+  without a front-preserving follow-up design.

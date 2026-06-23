@@ -1,6 +1,6 @@
 # T49 Thought-K Role-Separated Repair Methodology
 
-Status: pre-registered; no live result yet.
+Status: completed; `T0 mixed_diagnostic`.
 
 ## Question
 
@@ -97,3 +97,12 @@ T49 can advance only if it:
 
 If T49 improves only best score while losing HV/HV-AUC/front/yield evidence,
 mark it `T0` and retire this direct thought-repair variant.
+
+## Measured Outcome
+
+Seed `1001` followed this method card and was packaged under
+`hard_tuning_package/`. It preserved every classic-covered valid-PPA design and
+improved mean best score, but lost mean HV, valid-PPA count, aggregate front
+points, unique PPA points, and reference-beating candidates. That matches the
+pre-registered `T0` retirement condition for this direct thought-repair
+variant.

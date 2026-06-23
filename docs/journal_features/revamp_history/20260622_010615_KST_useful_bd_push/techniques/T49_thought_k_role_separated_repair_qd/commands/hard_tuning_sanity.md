@@ -71,8 +71,7 @@ COMMON_ARGS=(
 
 ## T49 QD Arm
 
-Run seed `1001` first. Add seed `1002` only after seed `1001` preserves
-classic-covered designs and is not clearly dominated by T48.
+The completed seed `1001` launch used:
 
 ```bash
 SEED=1001
@@ -105,6 +104,10 @@ uv run python scripts/run_backend.py \
   --qd_descriptor_file docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/descriptor_profile.yaml \
   --save_path "${RUN_ROOT}/thought_k_role_separated_repair_qd/seed_${SEED}"
 ```
+
+Do not add seed `1002` from this result alone. Seed `1001` preserved
+classic-covered valid-PPA coverage, but the packaged result lost mean HV and
+front coverage.
 
 ## Comparators
 
