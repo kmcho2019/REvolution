@@ -275,19 +275,20 @@ a numbered `techniques/T##_slug/` package before running it.
 
 ## From `T27_t26_live_qd_audit`
 
-- T26 now has live HV/HV-AUC support: +11.62% mean HV, +17.62% HV AUC, and
-  +3.02% mean best score versus classic on the fixed screen. The next step
-  should validate this signal, not discard it for another descriptor reset.
+- The original T26/T27 aggregate HV/HV-AUC support is not claim-safe. It used
+  missing/defaulted-reference RTLLM cases, and the reference-complete
+  comparison flips negative versus classic. Treat T26 as a mechanism clue, not
+  as a positive QD result.
 - Front material is still the blocker. T26 has 9 PPA-front points versus
   classic's 18 and SR raw's 16, so the next variant must either recover front
   material or make a narrower HV/best-quality claim.
 - Canonical duplicate/family audit is now covered by T28 on the development
   screen. Unique PPA tuples remain only a proxy for any future screen until the
   same audit is rerun there.
-- Holdout audit should be the next package before repair emitters. If T26
-  keeps HV/HV-AUC on holdout but loses front material, then branch to an
-  emitter schedule that reintroduces SR raw exploration while preserving the
-  champion lane.
+- Any future T26-family audit must use reference-complete comparisons before
+  claiming HV/HV-AUC support. If it keeps best-quality pressure but loses front
+  material, branch to an emitter schedule that reintroduces SR raw exploration
+  while preserving the champion lane.
 - Potential T29: `t26_holdout_family_audit`, a replay/live-audit package that
   extracts canonical netlist hashes or motif-family signatures where available,
   recomputes common passive archive metrics, and decides whether T26 advances
