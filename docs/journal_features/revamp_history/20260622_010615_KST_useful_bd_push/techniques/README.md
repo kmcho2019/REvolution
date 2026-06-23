@@ -63,6 +63,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T47` | `T47_t26_contract_probe` | Archive-coupling contract probe | `T0 diagnostic`; exact T26 has positive best-score delta but is not held-out-ready |
 | `T48` | `T48_t26_gated_near_front_fusion_qd` | Archive-coupling parent gate | `T0 diagnostic after review`; gated near-front fusion reduces some exact-T26 damage but still loses primary QD metrics versus classic |
 | `T49` | `T49_thought_k_role_separated_repair_qd` | Archive-coupling role-separated emitter | `T0 mixed_diagnostic`; preserves covered valid-PPA designs and improves best score, but loses mean HV, valid-PPA count, and front coverage |
+| `T50` | `T50_candidate_matched_thought_front_qd` | Archive-coupling candidate/front control | Pre-registered T49 follow-up; restores the 12-candidate evaluated-code budget and widens local Pareto retention |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

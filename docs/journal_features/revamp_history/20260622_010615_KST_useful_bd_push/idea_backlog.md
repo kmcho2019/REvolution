@@ -398,6 +398,25 @@ a numbered `techniques/T##_slug/` package before running it.
   Pareto plot is mandatory evidence for any follow-up because aggregate valid
   counts alone would overstate the result.
 
+## From `T49_thought_k_role_separated_repair_qd`
+
+- T49 is useful diagnostic evidence, not a lead. It preserves every
+  classic-covered valid-PPA design and improves mean best score, but loses mean
+  HV, valid-PPA count, aggregate front points, unique PPA points, and
+  reference-beating candidates.
+- T49 also exposed a control issue: `thought_only` interprets
+  `population_size` as code-sample budget. With `population_size=9` and
+  `code_samples_per_thought=3`, the run used only nine base code samples per
+  generation, not the classic/T47/T48 twelve-sample base budget.
+- T50 should test a narrow but multi-variable correction before another repair
+  mechanism: restore `population_size=12`, keep `code_samples_per_thought=3`,
+  disable repair so evaluated-candidate budget is visible, and widen the local
+  Pareto cap to preserve more front material. A positive result would motivate
+  ablation; it would not identify a single causal knob.
+- If T50 still loses front/yield evidence, retire direct thought-only
+  role-separated emitters until a genuinely new front-preservation mechanism is
+  specified.
+
 ## From `T35_t11_pareto_coupling_bd`
 
 - T35 shows that the T11 candidate pool contains recoverable front material:

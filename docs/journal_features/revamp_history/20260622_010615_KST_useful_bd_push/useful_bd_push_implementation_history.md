@@ -2864,3 +2864,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   reference-beating candidates (`40` versus `46`).
 - Next step: do not launch held-out spend or seed `1002` from this result
   without a front-preserving follow-up design.
+
+## T50 Candidate-Matched Thought Front Method Card - 2026-06-23 UTC
+
+- Added `T50_candidate_matched_thought_front_qd` as the direct T49 follow-up.
+- The method keeps the T49 SR-PCA descriptor, thought-only representation,
+  single-thought operator, champion lane, NSGA-II parent selection, no
+  two-parent fusion, no fail-feedback prompt injection, and the same
+  hard/tuning surface.
+- The method changes three visible candidate-budget/front-retention controls:
+  `population_size=12`, `code_samples_per_thought=3`, `repair_kind=none`, and
+  `qd_max_elites_per_cell=8`.
+- Rationale: T49 generated fewer base code candidates than classic/T47/T48, so
+  T50 must determine whether thought-only role separation still loses front
+  material when the evaluated-candidate budget is matched and local Pareto
+  retention is widened. T50 is not LLM-call or token matched unless post-run
+  accounting proves parity.
+- Next step: run seed `1001`, package against the T47 classic roots and T49
+  diagnostic package, then decide whether seed `1002` is justified.

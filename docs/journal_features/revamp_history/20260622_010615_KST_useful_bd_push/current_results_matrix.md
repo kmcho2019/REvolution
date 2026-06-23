@@ -62,7 +62,9 @@ Real result packages:
   follow-up
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T15`, `T16`, and `T18`.
+`T15`, `T16`, and `T18`. `T50_candidate_matched_thought_front_qd` is
+pre-registered as the next T49 follow-up, but it has no live result yet and is
+not counted as a real result package.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is the active SR-family
 lead because it recovers ALU and multi-pipe best-score pressure while passing
@@ -576,3 +578,7 @@ the best ALU and traffic-light scores.
   gated T26.1, or T49 as a held-out claim. The next same-family method needs
   explicit front preservation rather than another direct fusion or repair-only
   role-separation tweak.
+- T50 is the pre-registered version of that follow-up. It restores the
+  12-candidate evaluated-code budget, disables repair so the candidate budget
+  is visible, widens the local Pareto cap, and must be compared to
+  T47/T48/T49 before any seed `1002` or held-out spend.

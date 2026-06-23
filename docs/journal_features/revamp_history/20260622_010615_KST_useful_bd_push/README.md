@@ -21,12 +21,16 @@ Start here when resuming the active goal.
   mixed_diagnostic`; role-separated thought generation preserves
   classic-covered valid-PPA coverage and improves best score, but loses mean
   HV, valid-PPA count, and front coverage).
+- Most recent pre-registered package:
+  `techniques/T50_candidate_matched_thought_front_qd/` (candidate-matched
+  thought-only follow-up that restores the 12-candidate evaluated-code budget
+  and widens per-cell Pareto retention).
 - Most recent live ablation:
   `techniques/T39_sparse_yield_warmup_qd/` (`T0 positive_ablation`; sparse
   warmup fixes T38's multi-pipe archive gap).
 - Next direction:
-  design a front-preserving follow-up before any held-out spend; do not treat
-  T49 seed `1001` as a promoted QD lead.
+  run T50 seed `1001` before any held-out spend; do not treat T49 seed `1001`
+  as a promoted QD lead.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -164,6 +168,7 @@ Start here when resuming the active goal.
 | `T47` | `T47_t26_contract_probe` | Completed hard/tuning result, `T0 diagnostic`; exact T26 keeps positive best-score movement but loses HV, HV-AUC, valid-PPA count, and aggregate front points versus classic. |
 | `T48` | `T48_t26_gated_near_front_fusion_qd` | Completed hard/tuning result, `T0 diagnostic after review`; gated near-front fusion reduces some T47 damage but still loses the primary QD metrics versus classic. |
 | `T49` | `T49_thought_k_role_separated_repair_qd` | Completed hard/tuning result, `T0 mixed_diagnostic`; preserves classic-covered valid-PPA coverage and improves best score, but loses mean HV, valid-PPA count, and front coverage. |
+| `T50` | `T50_candidate_matched_thought_front_qd` | Pre-registered T49 follow-up; candidate-matched thought-only front-retention screen, no live result yet. |
 
 ## Validity-Gate Note
 
