@@ -3032,3 +3032,23 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   Keep T51's one-slot/yield behavior and specify any follow-up as a bounded
   front-pressure trigger that avoids in-loop classic results and final-front
   labels.
+
+## T53 Sparse-Front Trigger Method Card - 2026-06-23 UTC
+
+- Added `T53_sparse_front_trigger_qd` as the direct follow-up to T52.
+- The method keeps T51's hard/tuning surface, seed policy, local vLLM model,
+  128k token budgets, SR-PCA descriptor, direct code representation,
+  `single_thought_operator`, sparse warmup `4`, `elite_pareto_slot` capacity
+  `2`, no repair, and no two-parent fusion.
+- The only live-search change is parent selection:
+  `qd_parent_selection=sparse_front_triggered_nsga2`.
+- The trigger uses the same NSGA-II global-rank parent pool as T51. When the
+  active one-slot archive has at least four occupied cells and fewer than two
+  extra local-front slots, it lowers the champion lane from `0.80` to `0.65`
+  for that parent-sampling call.
+- The trigger is not allowed to use classic results, held-out outcomes,
+  problem identity, final PPA-front labels, or reference PPA as a descriptor
+  or trigger input.
+- Next step: preflight the vLLM endpoint, run T53 seed `1001`, validate
+  single-thought and Pareto artifacts, then package against T47 classic, T51,
+  and T52.

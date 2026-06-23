@@ -592,6 +592,15 @@ a numbered `techniques/T##_slug/` package before running it.
   thin. The trigger cannot use classic results, final PPA-front labels, or
   reference PPA as an in-loop BD input.
 
+## From `T53_sparse_front_trigger_qd`
+
+- T53 is the registered follow-up to T52. It is intentionally only a
+  parent-pressure change, not a new descriptor or archive-retention rule.
+- If T53 triggers often but still loses front breadth, the next step should be
+  a role-separated emitter lane rather than another champion-lane scalar tweak.
+- If T53 never triggers, the local-front thinness threshold is too strict for
+  this budget and should be analyzed from archive histories before adjustment.
+
 ## Near-Term Hybrids
 
 - ST-NOD plus motif/pathlet CVT: deterministic, cheap, likely first live
