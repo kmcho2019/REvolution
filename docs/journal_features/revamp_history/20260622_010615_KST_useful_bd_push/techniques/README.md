@@ -76,7 +76,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T60` | `T60_rtl_timer_timing_risk_bd` | RTL-native timing descriptor | `T0 diagnostic_proxy`; pooled timing-risk cells do not separate classic from exact T26 |
 | `T61` | `T61_rtl_timer_problem_local_bd` | RTL-native timing descriptor | `T0 positive_proxy_not_promoted`; problem-local timing-risk front-cell proxy improves, but occupied breadth loses |
 | `T62` | `T62_fused_rtl_native_bd` | RTL-native fused descriptor | `T0 positive_proxy_not_promoted`; fused structural/timing front-cell proxy improves, but occupied breadth still loses |
-| `T63` | `T63_fused_rtl_native_live_screen` | RTL-native fused descriptor | Pre-registered live screen; tests T62-style fused RTL-native axes inside T51 archive machinery |
+| `T63` | `T63_fused_rtl_native_live_screen` | RTL-native fused descriptor | `T0 positive_mechanism_ablation_not_promoted`; front-material signal versus T51, but classic wins HV/HV-AUC/front points |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

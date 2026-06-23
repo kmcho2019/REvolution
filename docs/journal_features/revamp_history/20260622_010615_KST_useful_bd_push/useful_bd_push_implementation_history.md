@@ -3603,5 +3603,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Added runtime descriptor profiles for fused RTL-native axes and focused
   tests proving the primary T63 profile requires graph and RTL metrics, not
   PPA.
-- Current status: T63 is ready for a seed-1001 hard/tuning screen, but it has
-  no result and must not be used for a headline claim before packaging.
+- Completed the seed-1001 hard/tuning run in `1664.03` seconds and packaged
+  `techniques/T63_fused_rtl_native_live_screen/hard_tuning_package/`.
+- Validation passed for the single-thought operator, Pareto/front contract,
+  and strict static Phase 03.1 viewer export. Playwright generated screenshots
+  but returned two compare-guide debug-hook failures, documented in
+  `visualizations/qd_ppa_viewer/playwright_caveat.md`.
+- Completeness: all 13 hard/tuning rows are reference-valid `headline` rows.
+  This package keeps the corrected rule: missing candidate PPA is method
+  invalid, while missing reference PPA is diagnostic-only and excluded from
+  headline normalized HV, HV-AUC, and improvement claims.
+- Result: T63 is `T0 positive_mechanism_ablation_not_promoted`. It ties
+  classic valid-PPA count (`257` versus `257`) and improves best score
+  (`+0.040323`), but classic wins mean HV (`0.092601` versus `0.089551`),
+  HV-AUC (`0.082020` versus `0.074125`), and front points (`30` versus `25`).
+- Lineage clue: versus T51, T63 adds `+4` front points, `+10` unique PPA
+  points, `+7` reference-beating candidates, and `+2` active archive members,
+  but loses HV-AUC, best score, and valid-PPA count.
+- Decision: do not spend seed `1002` on exact `fused_rtl_state_pipeline_2d`.
+  If the RTL-native lane continues, ablate `fused_rtl_operator_timing_2d` or
+  use RTL-native descriptors as a secondary/reporting archive while preserving
+  T51/T26-family quality pressure.

@@ -713,3 +713,14 @@ the best ALU and traffic-light scores.
   all profiles lose occupied-cell breadth; the least bad occupied-cell delta is
   `state_pipeline` at `-0.612903`. Treat T62 as live-screen motivation for the
   L7 lane, not as a promoted QD result.
+- T63 completed that guarded live fused RTL-native screen as
+  `T0 positive_mechanism_ablation_not_promoted`. It is reference-complete on
+  the 13-problem hard/tuning subset and preserves valid-PPA coverage versus
+  classic (`257` versus `257`), while improving best score by `+0.040323`.
+  It is not a classic headline win: classic wins mean HV (`0.092601` versus
+  `0.089551`), HV-AUC (`0.082020` versus `0.074125`), and front points (`30`
+  versus `25`). The useful mechanism clue is versus T51: T63 adds `+4` front
+  points, `+10` unique PPA points, `+7` reference-beating candidates, and `+2`
+  active archive members, but loses T51 on HV-AUC, best score, and valid-PPA
+  count. Do not run exact seed `1002`; ablate `operator_timing` or keep
+  RTL-native axes as secondary archive/reporting evidence.

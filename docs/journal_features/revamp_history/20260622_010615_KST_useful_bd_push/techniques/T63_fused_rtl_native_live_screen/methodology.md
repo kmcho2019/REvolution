@@ -1,6 +1,7 @@
 # T63 Fused RTL-Native Live Screen Methodology
 
-Status: pre-registered; not run yet.
+Status: completed seed `1001` hard/tuning screen;
+`T0 positive_mechanism_ablation_not_promoted`.
 
 ## Question
 
@@ -107,6 +108,7 @@ T63 can advance only if it:
 - has no defaulted-reference headline claim;
 - includes direct raw PPA figures and the Phase 03.1 viewer.
 
-If T63 loses T51 on HV/HV-AUC and front evidence, keep the RTL-native lane as
-reporting or secondary-archive evidence and do not spend seed `1002` on this
-exact profile.
+T63 completed the primary `fused_rtl_state_pipeline_2d` run. It preserves
+classic-covered valid-PPA coverage and improves front-material measures versus
+T51, but it loses classic on mean HV, HV-AUC, and front points. Do not spend
+seed `1002` on this exact profile.

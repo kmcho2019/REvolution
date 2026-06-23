@@ -8,6 +8,17 @@ Present:
 
 Pending after live run:
 
-- final analysis tables;
-- validity and PPA completeness tables;
-- front, HV, HV-AUC, archive, and duplicate/family tables.
+- `../hard_tuning_package/tables/t63_problem_seed_metrics.csv`: per-problem
+  classic and T63 metrics.
+- `../hard_tuning_package/tables/t63_aggregate_metrics.csv`: aggregate method
+  summary.
+- `../hard_tuning_package/tables/t63_comparison_deltas.csv`: T63 versus
+  classic deltas.
+- `../hard_tuning_package/tables/t63_validity_gates.csv`: functionality and
+  valid-PPA regression checks.
+- `../hard_tuning_package/tables/t63_ppa_completeness.csv`: reference-complete
+  headline eligibility table.
+- `../hard_tuning_package/tables/t63_vs_t51_deltas.csv`: lineage comparison
+  against T51.
+- `../visualizations/qd_ppa_viewer_source/final_analysis/`: source tables for
+  the Phase 03.1 viewer.

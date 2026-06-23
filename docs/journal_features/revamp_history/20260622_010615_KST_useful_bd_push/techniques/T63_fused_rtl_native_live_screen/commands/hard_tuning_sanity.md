@@ -1,6 +1,7 @@
 # T63 Hard/Tuning Sanity Commands
 
-Status: pre-registered; not run yet.
+Status: completed seed `1001`; exact profile should not be rerun as seed
+`1002` without a method change.
 
 ## Descriptor Probe
 
@@ -138,3 +139,48 @@ uv run python scripts/validate_pareto_front_run.py \
 
 Viewer export must follow the Phase 03.1 contract after final analysis data
 exists.
+
+## Completed Run
+
+- `RUN_TS=20260623_133903_UTC`.
+- `RUN_ROOT=exp/useful_bd_push/t63_fused_rtl_native_20260623_133903_UTC/hard_tuning`.
+- Preflight passed:
+  `openai/gpt-oss-120b max_model_len=131072`.
+- T63 completed all 13 hard/tuning problems in `1664.03` seconds.
+- Summary log:
+  `exp/useful_bd_push/t63_fused_rtl_native_20260623_133903_UTC/hard_tuning/fused_rtl_state_pipeline_qd/seed_1001/openai_gpt-oss-120b/20260623_133927_revolution_summary_results.txt`.
+- Single-thought validation passed with `--require-full-subset`.
+- Pareto/front validation passed with `--require-full-subset`.
+- Packaged result:
+  `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T63_fused_rtl_native_live_screen/hard_tuning_package/`.
+- Direct PPA supplement:
+  `visualizations/direct_ppa_pareto/index.html`.
+- Full Phase 03.1 viewer:
+  `visualizations/qd_ppa_viewer/index.html`.
+- Strict static viewer validation passed. Playwright produced screenshots but
+  returned the documented compare-guide caveat.
+- Decision: T63 is `T0 positive_mechanism_ablation_not_promoted`.
+
+## Final Analysis And Viewer Export
+
+```bash
+uv run python scripts/report_final_analysis_bundle.py \
+  --backend_run classic=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
+  --backend_run fused_rtl_state_pipeline_qd=exp/useful_bd_push/t63_fused_rtl_native_20260623_133903_UTC/hard_tuning/fused_rtl_state_pipeline_qd/seed_1001 \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T63_fused_rtl_native_live_screen/tables/hard_tuning_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T63_fused_rtl_native_live_screen/visualizations/qd_ppa_viewer_source/final_analysis
+
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T63_fused_rtl_native_live_screen/visualizations/qd_ppa_viewer_source \
+  --backend_run classic=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
+  --backend_run fused_rtl_state_pipeline_qd=exp/useful_bd_push/t63_fused_rtl_native_20260623_133903_UTC/hard_tuning/fused_rtl_state_pipeline_qd/seed_1001 \
+  --archive_source_backend fused_rtl_state_pipeline_qd \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T63_fused_rtl_native_live_screen/tables/hard_tuning_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T63_fused_rtl_native_live_screen/visualizations/qd_ppa_viewer \
+  --strict
+
+uv run python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T63_fused_rtl_native_live_screen/visualizations/qd_ppa_viewer \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T63_fused_rtl_native_live_screen/tables/hard_tuning_subset.yaml \
+  --strict
+```
