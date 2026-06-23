@@ -110,7 +110,7 @@ def main(argv: list[str] | None = None) -> int:
     write_csv(table_dir / "t48_validity_gates.csv", gates)
     write_csv(table_dir / "t48_gate_counters.csv", counters)
     write_csv(data_dir / "t48_ppa_candidates.csv", candidates)
-    write_figures(problem_rows, candidates, figure_dir)
+    write_figures(problem_rows, candidates, deltas, figure_dir)
     write_report(
         args.output_dir / "README.md",
         args.classic_root,
@@ -417,10 +417,11 @@ def gate_counter_rows(rows: list[dict[str, str]]) -> list[dict[str, str]]:
 def write_figures(
     problem_rows: list[dict[str, str]],
     candidates: list[dict[str, str]],
+    deltas: list[dict[str, str]],
     figure_dir: Path,
 ) -> None:
     plot_hv_delta_heatmap(problem_rows, figure_dir / "t48_hv_delta_heatmap.png")
-    plot_metric_delta_summary(problem_rows, figure_dir / "t48_metric_delta_summary.png")
+    plot_metric_delta_summary(deltas, figure_dir / "t48_metric_delta_summary.png")
     plot_validity_funnel(problem_rows, figure_dir / "t48_validity_funnel.png")
     plot_front_counts(problem_rows, figure_dir / "t48_front_counts.png")
     plot_gate_counters(problem_rows, figure_dir / "t48_gate_counters.png")
@@ -446,25 +447,29 @@ def plot_hv_delta_heatmap(rows: list[dict[str, str]], output_path: Path) -> None
     plt.close(fig)
 
 
-def plot_metric_delta_summary(rows: list[dict[str, str]], output_path: Path) -> None:
+def plot_metric_delta_summary(deltas: list[dict[str, str]], output_path: Path) -> None:
     labels = ("HV", "HV-AUC", "Best", "Valid PPA", "Front")
     metrics = (
-        "global_ppa_hypervolume",
-        "hv_auc",
-        "best_score",
+        "mean_global_ppa_hypervolume",
+        "mean_hv_auc",
+        "mean_best_score",
         "valid_ppa_count",
-        "ppa_front_points",
+        "total_ppa_front_points",
     )
-    values = [mean_relative_delta(rows, metric) for metric in metrics]
+    values = [aggregate_relative_delta(deltas, metric) for metric in metrics]
     colors = ["#f28e2b" if value >= 0.0 else "#4e79a7" for value in values]
     fig, axis = plt.subplots(figsize=(7.2, 4.4))
     axis.axhline(0.0, color="#222222", linewidth=1.0)
     axis.bar(labels, values, color=colors, alpha=0.88)
+    y_min = min([0.0, *values])
+    y_max = max([0.0, *values])
+    y_span = max(y_max - y_min, 0.08)
+    axis.set_ylim(y_min - y_span * 0.16, y_max + y_span * 0.34)
     for index, value in enumerate(values):
         va = "bottom" if value >= 0.0 else "top"
-        offset = 0.015 if value >= 0.0 else -0.015
+        offset = y_span * 0.045 if value >= 0.0 else -y_span * 0.045
         axis.text(index, value + offset, f"{value:+.0%}", ha="center", va=va, fontsize=9)
-    axis.set_title("T48 Mean Relative Paired Delta")
+    axis.set_title("T48 Aggregate Relative Delta")
     axis.set_ylabel("Gated QD vs Classic")
     axis.yaxis.set_major_formatter(PercentFormatter(1.0))
     axis.grid(axis="y", color="#e6e6e6", linewidth=0.8)
@@ -587,11 +592,17 @@ def plot_direct_ppa_fronts(rows: list[dict[str, str]], output_path: Path) -> Non
                markerfacecolor=method["color"], markersize=6)
         for method in METHODS
     ]
-    fig.legend(handles=handles, loc="upper center", ncol=2, frameon=False)
-    fig.supxlabel("Area improvement vs reference")
-    fig.supylabel("Power improvement vs reference")
-    fig.suptitle(f"T48 Direct Area-Power Fronts, Seed {rows[0]['seed']}", y=0.995)
-    fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.96))
+    fig.legend(
+        handles=handles,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.955),
+        ncol=2,
+        frameon=False,
+    )
+    fig.supxlabel("Area improvement vs reference", y=0.025)
+    fig.supylabel("Power improvement vs reference", x=0.012)
+    fig.suptitle(f"T48 Direct Area-Power Fronts, Seed {rows[0]['seed']}", y=0.99)
+    fig.tight_layout(rect=(0.0, 0.04, 1.0, 0.92))
     fig.savefig(output_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
@@ -735,6 +746,13 @@ def aggregate_delta(deltas: list[dict[str, str]], name: str, metric: str) -> str
         if row["scope"] == "aggregate" and row["name"] == name and row["metric"] == metric:
             return row["delta"]
     raise AssertionError(f"Missing aggregate delta {name} {metric}")
+
+
+def aggregate_relative_delta(deltas: list[dict[str, str]], metric: str) -> float:
+    for row in deltas:
+        if row["scope"] == "aggregate" and row["name"] == "all:all" and row["metric"] == metric:
+            return parse_optional(row["relative_delta"]) or 0.0
+    raise AssertionError(f"Missing aggregate relative delta {metric}")
 
 
 def counter_total(rows: list[dict[str, str]], key: str) -> str:
