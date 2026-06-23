@@ -24,7 +24,8 @@ P135 reference-beating candidate.
 
 `t32_holdout_live_aggregate.png` and `t32_holdout_family_counts.png` are
 legible. They support the same conclusion: T32 improves some count/breadth
-proxies versus T31, but only T26 has positive mean HV/HV-AUC.
+proxies versus T31, but only T26 is above zero on mean HV/HV-AUC in this local
+VerilogEval holdout view.
 
 Visual conclusion: the figures support `T0 diagnostic`. T32 is a useful
 ablation because it shows the small near-front success-parent lane can recover

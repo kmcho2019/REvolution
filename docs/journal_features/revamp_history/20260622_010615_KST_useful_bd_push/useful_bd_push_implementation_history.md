@@ -3443,3 +3443,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   assets.
 - Decision: mark T59 `T0 diagnostic_no_promotion`; do not spend seed `1002`
   on exact T59.
+
+## T26 Reference-Complete Claim Audit - 2026-06-23 UTC
+
+- User review identified the core issue correctly: the earlier positive T26
+  RTLLM headline depended on four missing/defaulted-reference cases:
+  `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+  `Prob018_float_multi`, and `Prob040_synchronizer`.
+- The claim-safe reference-complete RTLLM comparison excludes those cases and
+  is negative versus classic. T26/T27/T28 should therefore be treated as local
+  mechanism evidence, not as a broad positive QD result.
+- Audited human-written Markdown under the useful-BD revamp package for stale
+  T26-positive language. Updated the T26 result package, T28 family audit, T29
+  follow-up methodology, and local holdout visual notes so each distinguishes
+  local-screen or VerilogEval-holdout evidence from reference-complete RTLLM
+  evidence.
+- Current interpretation: T26 remains useful as a mechanism clue for
+  champion-biased archive pressure and non-duplicate valid candidates, but any
+  future T26-family promotion requires reference-complete proof on PPA/front
+  metrics without missing/defaulted-reference support.

@@ -18,10 +18,10 @@ view. It shows T31 matching the P150/P098 coarse points but falling behind T26
 on the P135 improvement signal that created T30's positive HV.
 
 `t31_holdout_live_aggregate.png`, `t31_holdout_problem_counts.png`, and
-`t31_holdout_family_counts.png` are legible. The aggregate plot correctly
-shows that only T26 has positive mean HV/HV-AUC on this holdout. The counts
-plot shows T31's P098 valid-PPA count is still low, and the family plot shows
-no front-netlist recovery versus T26.
+`t31_holdout_family_counts.png` are legible. The aggregate plot is only a
+local VerilogEval holdout view; within that view, T26 is the only arm above
+zero on mean HV/HV-AUC. The counts plot shows T31's P098 valid-PPA count is
+still low, and the family plot shows no front-netlist recovery versus T26.
 
 Visual conclusion: the figures support `T0 diagnostic`. T31 preserves a
 passing final-best result on all three holdout designs, but it does not repair

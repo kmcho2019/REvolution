@@ -5,11 +5,11 @@ Status: completed canonical/family audit package.
 ## Summary
 
 T28 shows that T26's valid-PPA candidates are mostly distinct implementation
-families, so the T26 HV/HV-AUC signal is not an obvious duplicate artifact.
-However, T28 also confirms the T27 caveat: T26 has fewer unique front families
-than classic and SR raw. This supports continuing T26 as a narrow
-best-quality/HV lead, but it blocks any broad `T2 useful_qd` claim until
-holdout behavior or a front-recovery variant improves the family-front result.
+families on the development screen, so the narrow T26 aggregate signal was not
+an obvious duplicate artifact. However, T28 also confirms the T27 caveat: T26
+has fewer unique front families than classic and SR raw. After the later
+reference-complete RTLLM correction, this package is mechanism context only:
+T26 is not a broad positive QD result.
 
 ## Compared Methods
 
@@ -73,11 +73,11 @@ family count is not better.
 
 ## Interpretation
 
-T28 resolves one concern and sharpens another. It resolves the concern that
-T26's live HV/HV-AUC improvement is only duplicate code: T26 has the best
-valid-family ratio among the compared methods and only 5 family duplicates
-among 57 valid-PPA candidates. It also has 37 reference-beating families, one
-more than classic and fourteen more than SR raw.
+T28 resolves one concern and sharpens another. It resolves the concern that the
+narrow T26 development-screen aggregate signal is only duplicate code: T26 has
+the best valid-family ratio among the compared methods and only 5 family
+duplicates among 57 valid-PPA candidates. It also has 37 reference-beating
+families, one more than classic and fourteen more than SR raw.
 
 The blocker is front-family coverage. T26 has 9 front families, compared with
 classic's 19 and SR raw's 16. That means the conservative-exploit schedule is
@@ -94,10 +94,11 @@ honest post-hoc descriptor basis for classic candidates.
 
 ## Tier Decision
 
-T28 keeps T26 at `T1 near_classic validation_candidate`. It strengthens the
-case that T26 is worth validating because the valid candidates are not mostly
-duplicates. It does not support `T2 useful_qd` because the family-front deficit
-is real and large.
+T28 is downgraded to `T0 diagnostic` mechanism evidence after the later
+reference-complete RTLLM correction. It strengthens the local mechanism read
+because the valid candidates are not mostly duplicates, but it does not support
+`T1 near_classic` or `T2 useful_qd` because the broad RTLLM comparison is
+negative and the family-front deficit is real and large.
 
 ## Next Experiment
 
@@ -105,7 +106,8 @@ The next package should be a holdout or front-recovery validation. Two paths
 are justified:
 
 - `T29_t26_holdout_audit`: rerun or audit T26 on the holdout subset with the
-  same family metrics, then decide whether the HV/HV-AUC signal survives.
+  same family metrics, then decide whether any reference-complete signal
+  survives.
 - `T29_sr_raw_exploit_front_recovery`: keep the T26 champion lane but add a
   fixed SR-raw exploration quota or repair emitter to recover front families.
 

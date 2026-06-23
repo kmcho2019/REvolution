@@ -3,9 +3,10 @@
 ## Purpose
 
 T29 is the direct live follow-up to the T26/T27/T28 evidence and the direct
-PPA-front visualization audit. T26 restored hill-climbing pressure and beat
-classic on aggregate live HV/HV-AUC, but T28 and the direct-front audit show a
-real front-material blocker: T26 has fewer candidate-level and family-level
+PPA-front visualization audit. At the time, T26 appeared to beat classic on
+aggregate development-screen HV/HV-AUC, but that read is now superseded by the
+reference-complete RTLLM correction. T28 and the direct-front audit still show
+a useful mechanism blocker: T26 has fewer candidate-level and family-level
 rank-1 PPA-front options than classic and T24 SR raw, especially on
 `Prob015_multi_pipe_8bit`.
 
@@ -88,16 +89,16 @@ T29 can become `T1` or higher only if it:
 - avoids a 50 percent or larger relative functionality/synthesis-validity
   decline where the classic denominator is at least 10;
 - improves candidate-level or family-level front material versus T26 on the
-  fixed screen without collapsing the T26 HV/HV-AUC signal;
+  fixed screen without worsening the T26 local-screen quality signal;
 - beats random and manual BD on the metric used for any positive QD claim;
 - reports duplicate/canonical family accounting before claiming broader
   diversity;
 - includes direct raw and normalized PPA-front figures.
 
-If T29 recovers front points but loses T26's live HV/HV-AUC and best-quality
-pressure, it stays `T0 diagnostic`. If it keeps T26's HV/HV-AUC while improving
-front material, it becomes a `T1 near_classic` candidate that still needs
-holdout or multi-seed validation.
+If T29 recovers front points but loses T26's local-screen best-quality
+pressure, it stays `T0 diagnostic`. If it keeps that quality pressure while
+improving front material, it becomes a follow-up candidate that still needs
+reference-complete holdout or multi-seed validation before any `T1` claim.
 
 ## Expected Artifacts
 
