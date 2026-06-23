@@ -3513,6 +3513,39 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   rule, and the command log so the corrected T26 conclusion is tied to an
   executable completeness table rather than an implicit exclusion note.
 
+## T66 RTL-Native Guarded-Parent Result - 2026-06-23T16:49:40Z
+
+- Preflight passed against the local vLLM endpoint:
+  `openai/gpt-oss-120b max_model_len=131072`.
+- T66 raw run:
+  `exp/useful_bd_push/t66_rtl_native_front_guarded_parent_20260623_160756_UTC/hard_tuning/rtl_native_front_guarded_parent_qd/seed_1001`.
+- The run completed all 13 hard/tuning problems in `1688.07` seconds.
+- Single-thought and Pareto/front validators passed with
+  `--require-full-subset`.
+- Packaged result:
+  `techniques/T66_rtl_native_front_guarded_parent_qd/hard_tuning_package/`.
+- PPA completeness table:
+  `hard_tuning_package/tables/t66_ppa_completeness.csv`; all 13 rows are
+  headline/reference-complete rows.
+- Direct PPA supplement:
+  `techniques/T66_rtl_native_front_guarded_parent_qd/visualizations/direct_ppa_pareto/index.html`.
+- Full Phase 03.1 viewer:
+  `techniques/T66_rtl_native_front_guarded_parent_qd/visualizations/qd_ppa_viewer/index.html`.
+- Strict viewer validation passed. Playwright screenshots were captured for
+  both the direct supplement and full viewer and manually inspected as readable
+  and nonblank.
+- Aggregate T66 versus classic: HV `-0.011308`, HV-AUC `-0.010577`, best
+  score `+0.050092`, valid PPA `+3`, front points `-10`, unique PPA `+3`,
+  and reference-beating candidates `+2`.
+- Yield warnings appear on two VerilogEval problems:
+  `Prob098_circuit7` and `Prob116_m2014_q3`. `Prob151_review2015_fsm` is
+  small-n.
+- Parent/gate counters show that two-parent fusion did not trigger:
+  attempts, gate attempts, accepts, rejects, and fallbacks are all `0`.
+- Decision: `T0 diagnostic_yield_positive_front_negative_not_promoted`. Do not
+  spend seed `1002` on exact T66; redesign the RTL-native lane around stronger
+  front creation, source-level repair/selection, or secondary archive evidence.
+
 ## T60 RTL Timing-Risk Proxy Audit - 2026-06-23 UTC
 
 - Added `scripts/package_rtl_timer_timing_risk_audit.py` and focused tests to

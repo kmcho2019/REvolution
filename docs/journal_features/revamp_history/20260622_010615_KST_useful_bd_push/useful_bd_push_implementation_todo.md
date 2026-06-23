@@ -155,7 +155,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] `T66_rtl_native_front_guarded_parent_qd` is pre-registered as a coupled
       RTL-native parent-selection/fusion method after T65 retired pure
       secondary-cell overlays.
-- [ ] `T66_rtl_native_front_guarded_parent_qd` seed-1001 run is executed,
+- [x] `T66_rtl_native_front_guarded_parent_qd` seed-1001 run is executed,
       validated, packaged, visually inspected, and assigned a tier decision.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.

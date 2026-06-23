@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T63/T64/T65 are diagnostic only; the descriptors must affect parent choice or repair, not just reporting cells. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T63/T64/T65/T66 are diagnostic only; the descriptors must affect front creation or repair more directly, not just weak parent pressure or reporting cells. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -21,13 +21,14 @@ and local front retention, while Yosys-SOG/MasterRTL and RTLTimer-style
 descriptors define archive cells from RTL operator structure, control/dataflow
 shape, pipeline/register topology, and timing-risk morphology.
 
-T66 is the current pre-registered test of that idea: it uses the T63
-state/pipeline RTL-native cells for front-slot parent pressure and low-rate
-near-front descriptor-compatible fusion. Do not use RTL-native descriptors only
-as direct PPA predictors or posthoc visual labels. This is the strongest
-methodology story because it defines diversity in RTL terms rather than opaque
-embedding space, while the PPA claim remains gated by reference-complete
-paired comparisons.
+T66 tested that idea with T63 state/pipeline RTL-native cells, front-slot
+parent pressure, and low-rate near-front descriptor-compatible fusion. It
+improves valid-PPA and best-score diagnostics, but loses classic on HV,
+HV-AUC, and front points. Do not use RTL-native descriptors only as direct PPA
+predictors, weak parent-pressure labels, or posthoc visual cells. This is still
+the strongest methodology story because it defines diversity in RTL terms
+rather than opaque embedding space, while the PPA claim remains gated by
+reference-complete paired comparisons.
 
 ## Technique Lanes
 

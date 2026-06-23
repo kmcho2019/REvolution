@@ -84,9 +84,11 @@ Real result packages:
 - `T64_fused_operator_timing_live_screen` fused operator/timing live
   diagnostic
 - `T65_rtl_native_secondary_cells` RTL-native secondary-cell audit
+- `T66_rtl_native_front_guarded_parent_qd` RTL-native guarded-parent live
+  diagnostic
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T16`, `T18`, and pre-registered T66.
+`T16`, and `T18`.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis
@@ -744,7 +746,15 @@ the best ALU and traffic-light scores.
   method/profile loses Classic on problem-paired mean front-cell delta; the
   closest result is T63 `control_pipeline` at `-0.076923`. This retires pure
   secondary/reporting overlays as the next RTL-native step.
-- T66 is pre-registered as the next RTL-native coupling attempt. It keeps the
+- T66 completed the RTL-native guarded-parent coupling attempt as
+  `T0 diagnostic_yield_positive_front_negative_not_promoted`. It keeps the
   T63 `fused_rtl_state_pipeline_2d` descriptor and uses it for
   `front_slot_lane_nsga2` parent pressure plus low-rate
-  `near_front_descriptor` gated fusion. It is not a result package yet.
+  `near_front_descriptor` gated fusion. The run is reference-complete on the
+  hard/tuning screen and preserves every classic-covered design. It improves
+  mean best score (`0.278020` versus `0.227928`), valid PPA (`260` versus
+  `257`), unique PPA (`90` versus `87`), and reference-beating candidates
+  (`48` versus `46`), but classic wins mean HV (`0.092601` versus
+  `0.081293`), HV-AUC (`0.082020` versus `0.071443`), and front points (`30`
+  versus `20`). Two-parent fusion did not trigger, so T66 should not be cited
+  as gated-recombination evidence. Do not run exact seed `1002`.

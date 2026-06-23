@@ -1,0 +1,159 @@
+# RTLLM / Prob004_adder_8bit
+
+- circuit_type: `combinational`
+- successful_candidates: `63`
+- backends: `classic, rtl_native_front_guarded_parent_qd`
+
+## Backend counts
+
+- `classic`: `28` successes, `generation plots enabled`
+- `rtl_native_front_guarded_parent_qd`: `35` successes, `generation plots enabled`
+
+## Contents
+
+- [Quick Reference](#quick-reference)
+- [PPA Chronology](#ppa-chronology)
+- [All-backend feature space](#all-backend-feature-space)
+- [classic vs rtl_native_front_guarded_parent_qd](#classic-vs-rtl_native_front_guarded_parent_qd)
+- [Notes](#notes)
+
+## Quick Reference
+
+### Gen 3 accumulated PPA
+
+- `Power vs Area`: ![](ppa_gen003_accumulated_power_area.png)
+
+### Gen 3 accumulated features
+
+- feature basis: `recommended report feature subset`
+- features: `none`
+
+- `PCA`: `too_few_varying_features`
+
+### Gen 3 accumulated features
+
+- feature basis: `fused_rtl_state_pipeline_2d descriptor profile`
+- features: `state_control_ratio, control_pipeline_ratio`
+
+- `PCA`: ![](features_classic_vs_rtl_native_front_guarded_parent_qd_gen003_accumulated_pca.png)
+
+## PPA Chronology
+
+### Gen 1 local PPA
+
+- `Power vs Area`: ![](ppa_gen001_local_power_area.png)
+
+### Gen 1 accumulated PPA
+
+- `Power vs Area`: ![](ppa_gen001_accumulated_power_area.png)
+
+### Gen 2 local PPA
+
+- `Power vs Area`: ![](ppa_gen002_local_power_area.png)
+
+### Gen 2 accumulated PPA
+
+- `Power vs Area`: ![](ppa_gen002_accumulated_power_area.png)
+
+### Gen 3 local PPA
+
+- `Power vs Area`: ![](ppa_gen003_local_power_area.png)
+
+### Gen 3 accumulated PPA
+
+- `Power vs Area`: ![](ppa_gen003_accumulated_power_area.png)
+
+## All-backend feature space
+
+### Gen 1 local features
+
+- feature basis: `recommended report feature subset`
+- features: `none`
+
+- `PCA`: `too_few_varying_features`
+
+### Gen 1 accumulated features
+
+- feature basis: `recommended report feature subset`
+- features: `none`
+
+- `PCA`: `too_few_varying_features`
+
+### Gen 2 local features
+
+- feature basis: `recommended report feature subset`
+- features: `none`
+
+- `PCA`: `too_few_varying_features`
+
+### Gen 2 accumulated features
+
+- feature basis: `recommended report feature subset`
+- features: `none`
+
+- `PCA`: `too_few_varying_features`
+
+### Gen 3 local features
+
+- feature basis: `recommended report feature subset`
+- features: `none`
+
+- `PCA`: `too_few_varying_features`
+
+### Gen 3 accumulated features
+
+- feature basis: `recommended report feature subset`
+- features: `none`
+
+- `PCA`: `too_few_varying_features`
+
+## classic vs rtl_native_front_guarded_parent_qd
+
+- feature basis: `fused_rtl_state_pipeline_2d descriptor profile`
+- features: `state_control_ratio, control_pipeline_ratio`
+
+### Gen 1 local features
+
+- feature basis: `fused_rtl_state_pipeline_2d descriptor profile`
+- features: `state_control_ratio, control_pipeline_ratio`
+
+- `PCA`: ![](features_classic_vs_rtl_native_front_guarded_parent_qd_gen001_local_pca.png)
+
+### Gen 1 accumulated features
+
+- feature basis: `fused_rtl_state_pipeline_2d descriptor profile`
+- features: `state_control_ratio, control_pipeline_ratio`
+
+- `PCA`: ![](features_classic_vs_rtl_native_front_guarded_parent_qd_gen001_accumulated_pca.png)
+
+### Gen 2 local features
+
+- feature basis: `fused_rtl_state_pipeline_2d descriptor profile`
+- features: `state_control_ratio, control_pipeline_ratio`
+
+- `PCA`: ![](features_classic_vs_rtl_native_front_guarded_parent_qd_gen002_local_pca.png)
+
+### Gen 2 accumulated features
+
+- feature basis: `fused_rtl_state_pipeline_2d descriptor profile`
+- features: `state_control_ratio, control_pipeline_ratio`
+
+- `PCA`: ![](features_classic_vs_rtl_native_front_guarded_parent_qd_gen002_accumulated_pca.png)
+
+### Gen 3 local features
+
+- feature basis: `fused_rtl_state_pipeline_2d descriptor profile`
+- features: `state_control_ratio, control_pipeline_ratio`
+
+- `PCA`: ![](features_classic_vs_rtl_native_front_guarded_parent_qd_gen003_local_pca.png)
+
+### Gen 3 accumulated features
+
+- feature basis: `fused_rtl_state_pipeline_2d descriptor profile`
+- features: `state_control_ratio, control_pipeline_ratio`
+
+- `PCA`: ![](features_classic_vs_rtl_native_front_guarded_parent_qd_gen003_accumulated_pca.png)
+
+## Notes
+
+- classic vs rtl_native_front_guarded_parent_qd: descriptor features are cached only for the QD backend; plotting cached QD descriptor rows without offline classic graph recovery.

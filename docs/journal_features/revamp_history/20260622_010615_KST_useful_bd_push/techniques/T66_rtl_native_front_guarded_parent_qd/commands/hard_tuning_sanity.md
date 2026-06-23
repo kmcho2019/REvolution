@@ -1,6 +1,6 @@
 # T66 Hard/Tuning Sanity Commands
 
-Status: pre-registered; not yet executed.
+Status: seed `1001` completed, packaged, and inspected.
 
 ## Descriptor Probe
 
@@ -149,3 +149,76 @@ Package against the matched completed comparators:
 The package must include `t66_ppa_completeness.csv`, direct raw area-power PPA
 fronts, front-slot and two-parent gate counters, and the Phase 03.1 viewer if
 archive artifacts are available.
+
+## Completed Run
+
+```text
+RUN_ROOT=exp/useful_bd_push/t66_rtl_native_front_guarded_parent_20260623_160756_UTC/hard_tuning
+QD_ROOT=${RUN_ROOT}/rtl_native_front_guarded_parent_qd/seed_1001
+MODEL_DIR=${QD_ROOT}/openai_gpt-oss-120b
+SUMMARY=${MODEL_DIR}/20260623_160829_revolution_summary_results.txt
+```
+
+The run completed all 13 hard/tuning problems in `1688.07` seconds.
+
+## Packaging
+
+```bash
+uv run python scripts/package_t48_gated_probe.py \
+  --classic-root exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution \
+  --qd-root exp/useful_bd_push/t66_rtl_native_front_guarded_parent_20260623_160756_UTC/hard_tuning/rtl_native_front_guarded_parent_qd \
+  --matrix docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T47_t26_contract_probe/tables/probe_problem_matrix.csv \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/hard_tuning_package \
+  --seed 1001 \
+  --package-tag t66 \
+  --package-title T66 \
+  --qd-method rtl_native_front_guarded_parent_qd \
+  --qd-label "T66 RTL-native guarded parent QD" \
+  --counter-stem parent_gate_counters \
+  --counter-title "Parent/Gate Counters" \
+  --counter-keys success_parent_requests,front_slot_lane_parent_requests,front_slot_lane_parent_hits,two_parent_attempts,two_parent_fallbacks,two_parent_gate_attempts,two_parent_gate_accepts,two_parent_gate_rejects
+```
+
+```bash
+uv run python scripts/report_final_analysis_bundle.py \
+  --backend_run classic=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
+  --backend_run rtl_native_front_guarded_parent_qd=exp/useful_bd_push/t66_rtl_native_front_guarded_parent_20260623_160756_UTC/hard_tuning/rtl_native_front_guarded_parent_qd/seed_1001 \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/tables/hard_tuning_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/visualizations/qd_ppa_viewer_source/final_analysis
+```
+
+```bash
+uv run python scripts/report_ppa_completeness.py \
+  --ppa-candidates docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/hard_tuning_package/data/t66_ppa_candidates.csv \
+  --reference-ppa-metrics docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/hard_tuning_package/tables/t66_reference_ppa_metrics.csv \
+  --problem-manifest docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/hard_tuning_package/tables/t66_problem_manifest.csv \
+  --manifest-references-complete \
+  --classic-method classic_revolution \
+  --qd-method rtl_native_front_guarded_parent_qd \
+  --output docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/hard_tuning_package/tables/t66_ppa_completeness.csv
+```
+
+## Visualization Export
+
+```bash
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/visualizations/qd_ppa_viewer_source \
+  --backend_run classic=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
+  --backend_run rtl_native_front_guarded_parent_qd=exp/useful_bd_push/t66_rtl_native_front_guarded_parent_20260623_160756_UTC/hard_tuning/rtl_native_front_guarded_parent_qd/seed_1001 \
+  --archive_source_backend rtl_native_front_guarded_parent_qd \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/tables/hard_tuning_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/visualizations/qd_ppa_viewer \
+  --strict
+```
+
+```bash
+uv run python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/visualizations/qd_ppa_viewer \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T66_rtl_native_front_guarded_parent_qd/tables/hard_tuning_subset.yaml \
+  --strict
+```
+
+Strict viewer validation passed. Playwright screenshots were captured for
+`visualizations/direct_ppa_pareto/index.html` and
+`visualizations/qd_ppa_viewer/index.html`; both screenshots were manually
+inspected.
