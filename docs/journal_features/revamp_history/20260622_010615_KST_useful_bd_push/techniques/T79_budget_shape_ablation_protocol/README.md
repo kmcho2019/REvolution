@@ -31,7 +31,7 @@ holdout tables before any T79 live outcome:
 | Shape | Candidate Budget | Classic | QD |
 | --- | ---: | --- | --- |
 | `12x3` | `48` | complete | complete |
-| `8x5` | `48` | complete | planned |
+| `8x5` | `48` | complete | running |
 | `6x7` | `48` | planned | planned |
 
 QD uses the T75 arm: `shape_density_front_pressure_qd`.
