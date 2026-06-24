@@ -11,7 +11,8 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
 | 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T75 is diagnostic but still below classic; T77 blocks direct pretrained Area-head leaves. |
-| 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
+| 4 | Budget-shape ablation | Active protocol | Tests whether equal-candidate deeper runs let QD cells mature more than classic under the same budget. | T79 must finish before making any budget claim. |
+| 5 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
 
@@ -63,6 +64,8 @@ beat it. The next promoted idea should show that QD preserves
 PPA-competitive RTL implementation families while keeping classic-like
 exploitation pressure. A fixed-total-budget shape ablation is now a required
 roadmap item before claiming that `12 x 3` is the right or wrong budget for QD.
+This does not reject QD/MAP-Elites; it says RTL needs constrained diversity
+pressure that earns its evaluation cost.
 
 T78 adds evidence for that ablation but does not replace it. In the existing
 T75 `12 x 3` logs, `9/13` problem archives still add or replace cells in
@@ -70,6 +73,11 @@ generation `2` or later, occupied cells rise through generation `3`, and
 front-slot parent traffic continues increasing. That supports the hypothesis
 that QD may need deeper equal-budget shapes, but it is not a live
 classic-vs-QD budget result.
+
+T79 is the current budget-shape gate. Keep its six matched arms ahead of new
+live descriptor spending unless the run is blocked and the blocker is recorded.
+Promotion requires QD to gain more from depth than classic on the frozen
+reference-complete subset.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
@@ -123,6 +131,10 @@ feature rows, but the pretrained Area head emits one prediction and one leaf
 row for every candidate. Retire direct Area-head leaves unless the model is
 retrained or replaced. Power and timing remain blocked by missing required
 toggle-rate and timing-DAG/path feature flows.
+
+Any future MasterRTL submodule or external-source integration should first
+produce a reproduction package: hashes, upstream inference command, internal
+loader equivalence, schema assertions, and generated-candidate variation.
 
 ## Technique Lanes
 

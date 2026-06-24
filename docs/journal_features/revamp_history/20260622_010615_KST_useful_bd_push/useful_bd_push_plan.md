@@ -53,6 +53,9 @@ be narrower and stronger: useful diversity for RTL PPA evolution means
 preserving PPA-competitive RTL implementation families under validity
 constraints. QD should act as auxiliary memory and front-preserving pressure
 beside classic-like exploitation, not as a wholesale replacement for it.
+This does not invalidate QD/MAP-Elites literature; it means the RTL setting
+requires a constrained, validity-aware variant whose archive cost is earned by
+front material.
 
 This interpretation changes the roadmap in three ways:
 
@@ -63,12 +66,15 @@ This interpretation changes the roadmap in three ways:
    more than classic, not merely whether deeper runs help in general. T78
    supports this concern by showing that existing T75 archives still fill or
    replace cells late in `9/13` problems, but it is not the live ablation.
-   T79 now freezes the subset, shape matrix, and live command contract.
+   T79 now freezes the subset, shape matrix, and live command contract. Finish
+   those matched arms before using budget shape as an explanatory claim.
 3. Continue the verification-gated MasterRTL/RTLTimer pretrained lane. T76
    confirms MasterRTL tree artifacts can be loaded and hashed in the isolated
    env. T77 shows the direct pretrained Area head collapses on generated
    candidates, so live pretrained-model BD claims now require retraining,
-   replacement, or reproduced timing/power feature flows.
+   replacement, or reproduced timing/power feature flows. If MasterRTL becomes
+   a submodule or pinned external source, first produce an inference
+   reproduction package before spending live QD budget.
 
 The current priority milestone is `presentations/20260623_report/`. It must
 prepare a report and Markdown deck answering whether diversity matters for

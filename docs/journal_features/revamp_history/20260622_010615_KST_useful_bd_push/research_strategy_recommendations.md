@@ -24,6 +24,12 @@ the standard QD premise does not transfer automatically when evaluations are
 expensive, validity is brittle, budgets are shallow, and descriptors are easy
 to decouple from useful implementation strategy.
 
+The goal is therefore still valid, but the burden of proof is different from
+the usual cheap-evaluation QD setting. A positive RTL result should show that
+archive pressure protects implementation families that remain competitive on
+PPA. A negative result should identify which part failed: descriptor meaning,
+archive coupling, validity, budget depth, or benchmark saturation.
+
 ## Recommended Framing
 
 Do not frame the claim as "generic MAP-Elites beats classic REvolution." The
@@ -70,6 +76,11 @@ add or replace cells in generation `2` or later, mean occupied cells rise from
 `1.54` to `5.15` through generation `3`, and front-slot requests rise from
 `17` in generation `1` to `77` in generation `3`. This supports the ablation
 but does not answer it. The fixed-total-budget run remains required.
+
+T79 is the active live test of this hypothesis. Do not use the budget argument
+as a reason to keep moving the target; finish the pre-registered matched arms
+or record the infrastructure blocker. Do not promote a deeper shape unless it
+helps QD more than classic on the frozen reference-complete design set.
 
 ## Discriminative Design Set
 
@@ -147,6 +158,12 @@ unless the model is retrained or replaced. The remaining pretrained-model path
 is timing/power only after reproducing the required toggle-rate or timing-DAG
 feature flows.
 
+If MasterRTL is added as a submodule or pinned external source, the first
+deliverable should be a reproduction package, not a live QD run. It should
+compare upstream inference outputs with the internal loader, assert feature
+schema identity, record model hashes, and only then expose tree-leaf, margin,
+or retrained-model embeddings as descriptor candidates.
+
 ## Latest Discussion Review
 
 The latest discussion adds two recommendations that should be treated as
@@ -160,6 +177,20 @@ accepted, but not overclaimed:
 | Choose medium-validity, front-variable designs for screens. | Accepted. This is screening discipline, not cherry-picking, if frozen before outcomes. |
 | Use MasterRTL pretrained tree artifacts as an encoder. | Narrowed after T77. Direct Area-head leaves collapse; continue only through retraining, replacement, or reproduced timing/power feature flows. |
 | Treat T75/T76/T77 as positive enough to launch broad claims. | Rejected. They are useful diagnostics and gates, not classic-beating evidence. |
+
+## Current Goal Evaluation
+
+The goal should not terminate early because classic remains ahead. Classic is
+the benchmark pressure that makes the result useful. The right next actions
+are to finish the budget-shape test, keep headline metrics on
+reference-complete paired subsets, and continue RTL-native descriptor work only
+when it is source-faithful or explicitly labeled as a proxy.
+
+The goal should also not loosen into reward hacking. Archive occupancy, yield,
+or descriptor spread can support an explanation, but they do not replace PPA
+front evidence. A method becomes a promotion candidate only when it preserves
+classic-covered designs and improves, matches, or credibly explains the PPA
+front under the registered comparison.
 
 The current evaluation of the goal remains positive but narrower: the goal is
 not to prove that any diversity measure helps. It is to identify which
