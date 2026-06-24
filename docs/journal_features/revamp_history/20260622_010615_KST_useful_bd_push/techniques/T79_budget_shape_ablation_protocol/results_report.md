@@ -6,9 +6,9 @@
 
 T79 is still primarily a protocol package. It freezes the subset,
 budget-shape matrix, methods, endpoint preflight, and reporting gates. The
-matched `12x3` and `8x5` pairs have completed. No budget-shape result is
-claimed until all matched shape pairs finish or a blocked continuation is
-recorded.
+matched `12x3` and `8x5` pairs have completed, and the classic `6x7` arm is
+running. No budget-shape result is claimed until all matched shape pairs
+finish or a blocked continuation is recorded.
 
 ## Pre-Run Evidence
 
@@ -18,7 +18,7 @@ recorded.
 | Equal-candidate shape matrix | complete |
 | vLLM preflight | complete |
 | Command parser/task-count validation | complete |
-| Live arms | `4/6` complete |
+| Live arms | `4/6` complete, `1/6` running |
 | Final analysis bundle | pending |
 | Direct PPA figures | pending |
 | Phase 03.1 viewer | pending for completed QD arms |
@@ -43,6 +43,7 @@ T79 command matrix parses and maps to 8 tasks per arm.
 | `shape_density_front_pressure_qd_12x3` | complete | `8/8` | `48` | `1217.14` | `18` |
 | `classic_revolution_8x5` | complete | `8/8` | `48` | `1377.83` | `23` |
 | `shape_density_front_pressure_qd_8x5` | complete | `8/8` | `48` | `1589.42` | `18` |
+| `classic_revolution_6x7` | running | pending | `48` | pending | pending |
 
 The completed arm lives under
 `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live`.
