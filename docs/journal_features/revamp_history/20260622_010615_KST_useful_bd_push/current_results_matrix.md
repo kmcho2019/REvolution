@@ -98,16 +98,16 @@ Real result packages:
   feature-map and archive-cell design package.
 - `T72_source_aligned_rtl_cell_qd` measured source-aligned RTL-cell live
   package.
-- `T73_source_aligned_shape_density_qd` pre-registered source-aligned
-  shape-density quantile-cell successor.
+- `T73_source_aligned_shape_density_qd` bounded source-aligned shape-density
+  quantile-cell live screen.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
 near-classic result package: it passes the source-aligned runtime descriptor
 gate, completes the bounded live screen, preserves all `13/13`
 classic-covered designs, and trails classic mean HV by about `0.65%`.
-`T73_source_aligned_shape_density_qd` is only pre-registered. Its audit shows
-less descriptor collapse, not a PPA result.
+`T73_source_aligned_shape_density_qd` has a bounded live screen but is not yet
+a matched classic comparison.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but
@@ -144,8 +144,11 @@ search surface but changes the archive to `grid_quantile` over MasterRTL
 branching, RTL-Timer wire density, and RTL-Timer DFF density. On the same T72
 archive events, T73's problem-local quantile projection averages `5.6923`
 occupied cells versus `1.0769` for T72's live fixed grid. This is only a
-collapse-fix screen signal; it needs the bounded live run and matched classic
-comparison before any tier decision.
+collapse-fix screen signal. The live screen now completes and passes both
+registered validators with `12/13` successful problems, `85` archive members,
+`624` generated candidates, and `294` PPA reports. It is not promoted because
+`Prob151_review2015_fsm` has zero archive members and the matched classic
+comparison is still required before any tier decision.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis

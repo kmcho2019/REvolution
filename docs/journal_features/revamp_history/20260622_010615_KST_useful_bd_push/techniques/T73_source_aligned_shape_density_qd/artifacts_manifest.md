@@ -1,6 +1,6 @@
 # T73 Artifacts Manifest
 
-Status: pre-run package. Large live artifacts must remain under `exp/`.
+Status: bounded live-screen package. Large live artifacts remain under `exp/`.
 
 ## Committed Artifacts
 
@@ -14,20 +14,23 @@ Status: pre-run package. Large live artifacts must remain under `exp/`.
 | `tables/t73_descriptor_collapse_audit.csv` | Per-problem T72 collapse and T73 projection audit. |
 | `tables/t73_axis_screen_summary.json` | Compact machine-readable audit summary. |
 | `tables/source_aligned_shape_density_contract.json` | Method contract used by this package. |
+| `tables/t73_live_screen_status.csv` | Per-problem live-screen status, archive occupancy, and PPA report counts. |
+| `tables/t73_live_screen_summary.json` | Compact aggregate live-screen summary. |
+| `tables/t73_single_thought_operator_validation.md` | Registered single-thought operator validator report. |
+| `tables/t73_pareto_front_validation.md` | Registered Pareto-front validator report. |
 | `figures/t73_descriptor_occupancy_audit.png` | Inspected occupancy figure from the T72 replay audit. |
 | `tools/audit_t73_axes_from_t72.py` | Reproduction script for the audit tables and figure. |
+| `tools/package_t73_live_screen.py` | Reproduction script for compact live-screen CSV/JSON summaries. |
 
 ## Source Run Inputs
 
 | Path | Role |
 | --- | --- |
 | `exp/useful_bd_push/t72_source_aligned_rtl_cell_20260623_204847_UTC/hard_tuning/source_aligned_rtl_cell_qd/seed_1001/openai_gpt-oss-120b` | Source T72 archive events used for the pre-run descriptor audit. |
+| `exp/useful_bd_push/t73_source_aligned_shape_density_20260623_232844_UTC/hard_tuning` | Completed T73 bounded live screen and validator reports. |
 
-## Expected Live Artifacts
+## Remaining Expected Artifacts
 
-After the T73 live run, add or copy compact summaries into this package:
-
-- `tables/t73_live_screen_status.csv`;
 - `visualizations/direct_ppa_pareto/`;
 - `visualizations/qd_ppa_viewer/`;
 - matched classic comparison package;

@@ -24,25 +24,20 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T72_source_aligned_rtl_cell_qd/`
-  (`T1 near_classic_not_promoted`; fixed live screen passed, matched classic
-  comparison is reference-complete, and classic still wins front breadth).
-- Most recent pre-registered package:
   `techniques/T73_source_aligned_shape_density_qd/`
-  (source-aligned MasterRTL/RTL-Timer shape-density `grid_quantile` successor
-  to T72; pre-run audit shows less descriptor collapse, but no live result
-  yet).
+  (`screening_diagnostic_not_promoted`; bounded live screen passed
+  validation with `12/13` success, but matched classic comparison is pending
+  and `Prob151_review2015_fsm` has zero archive members).
 - Most recent live QD package:
-  `techniques/T72_source_aligned_rtl_cell_qd/`
-  (`T1 near_classic_not_promoted`; exact source-aligned RTL cells run end to
-  end and preserve coverage, but classic wins front breadth).
+  `techniques/T73_source_aligned_shape_density_qd/`
+  (`screening_diagnostic_not_promoted`; source-aligned shape-density
+  quantile cells run end to end, with matched comparison still pending).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  run the bounded T73 screen only after storage and vLLM preflight; compare
-  it against classic, T51, T66, T67, and T72 on reference-complete PPA/front
-  metrics before any promotion claim.
+  compare T73 against classic, T51, T66, T67, and T72 on reference-complete
+  PPA/front metrics before any promotion claim.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front

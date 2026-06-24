@@ -1,6 +1,6 @@
 # T73 Source-Aligned Shape-Density QD
 
-Status: pre-registered successor to T72; not yet a live result.
+Status: bounded live screen complete; diagnostic, not promoted.
 
 T73 keeps the source-aligned MasterRTL/RTL-Timer contract from T72, but
 changes the descriptor geometry after the matched comparison showed that
@@ -59,6 +59,30 @@ Key audit result:
 This is not PPA evidence. It is a descriptor-collapse fix that justifies one
 bounded live run.
 
+## Live Screen Result
+
+The live screen ran on `2026-06-23` under:
+
+```text
+exp/useful_bd_push/t73_source_aligned_shape_density_20260623_232844_UTC/hard_tuning
+```
+
+Registered validators pass:
+
+- single-thought operator validation: `valid=True`;
+- Pareto-front validation: `valid=True`, `max_front_size_seen=2`.
+
+The run produced `624` candidate files, `294` PPA reports, and `85` archive
+members. It succeeded on `12/13` problems. The missing success is
+`VerilogEval-Spec-to-RTL/Prob151_review2015_fsm`, which has a problem root
+but zero archive members.
+
+Operator nuance: the QD crossover/fusion setting was disabled with
+`qd_two_parent_probability=0.0`, but the inherited single-thought operator
+kept `qd_operator_one_parent_fraction=0.90`. The archive therefore contains
+`4` two-parent prompt descendants. Treat this as low two-parent prompt
+exposure, not as a pure one-parent ablation.
+
 ## Navigation
 
 - `methodology.md`: method card, leakage rules, and acceptance gates.
@@ -66,7 +90,7 @@ bounded live run.
   validation commands.
 - `artifacts_manifest.md`: committed package artifacts and expected live
   outputs.
-- `results_report.md`: current pre-run conclusion and no-promotion caveat.
+- `results_report.md`: live-screen conclusion and no-promotion caveat.
 - `tables/`: descriptor probe, collapse audit CSV, summary JSON, and method
   contract.
 - `figures/`: inspected descriptor-occupancy audit figure.
@@ -74,7 +98,6 @@ bounded live run.
 
 ## Current Decision
 
-Pre-register T73 as the next source-aligned RTL-native live screen. Do not
-claim QD usefulness from T73 until a matched classic comparison on the
-reference-complete subset shows front/HV evidence and preserves
-classic-covered valid-PPA designs.
+Keep T73 as a valid diagnostic live screen. Do not claim QD usefulness from
+T73 until a matched classic comparison on the reference-complete subset shows
+front/HV evidence and preserves classic-covered valid-PPA designs.

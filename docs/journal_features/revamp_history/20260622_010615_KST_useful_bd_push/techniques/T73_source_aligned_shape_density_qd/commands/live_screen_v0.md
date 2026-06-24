@@ -167,6 +167,23 @@ uv run python scripts/validate_pareto_front_run.py \
   --require-full-subset
 ```
 
+Observed `2026-06-23` run:
+
+```text
+run_root: exp/useful_bd_push/t73_source_aligned_shape_density_20260623_232844_UTC/hard_tuning
+runtime: 1706.23 seconds
+storage: 143M
+summary: 12/13 success; Prob151_review2015_fsm failed
+single_thought_operator_validation: valid=True
+pareto_front_validation: valid=True
+max_front_size_seen: 2
+```
+
+The stored config has `qd_two_parent_probability=0.0`, so QD
+crossover/fusion was disabled. The inherited `single_thought_operator`
+setting `qd_operator_one_parent_fraction=0.90` still allowed low two-parent
+prompt exposure; the archive contains `4` two-parent prompt descendants.
+
 ## Packaging Requirements
 
 Package against:

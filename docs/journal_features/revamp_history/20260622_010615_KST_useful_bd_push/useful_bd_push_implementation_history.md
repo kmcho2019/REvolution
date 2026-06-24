@@ -4115,3 +4115,36 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: T73 is pre-registered for one bounded live screen. It is not PPA
   evidence and must not be promoted without a reference-complete matched
   classic comparison.
+
+## 2026-06-23T23:58:00Z - T73 Live Screen And Guard Fix
+
+- Checked `/workspace` storage before and during the run: `27T` total,
+  `23T` used, `3.5T` free, `87%` used. The completed T73 run root is
+  `143M`, so storage pressure remains low.
+- Fixed a live-run abort path where Yosys-backed graph/source-aligned
+  descriptor extraction ran after candidate synthesis had already failed.
+  Failed candidates now remain failed candidates instead of aborting the whole
+  problem; successful candidates still get the descriptor extraction.
+- Re-ran T73 at
+  `exp/useful_bd_push/t73_source_aligned_shape_density_20260623_232844_UTC/hard_tuning`
+  with local `openai/gpt-oss-120b`, `max_model_len=131072`, seed `1001`,
+  population `12`, and `3` generations.
+- The run completed in `1706.23` seconds with no tracebacks. Summary status:
+  `12/13` success; `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` failed
+  and has zero archive members.
+- Registered validators pass:
+  single-thought operator validation `valid=True`, Pareto-front validation
+  `valid=True`, `max_front_size_seen=2`.
+- Packaged compact live-screen artifacts under
+  `techniques/T73_source_aligned_shape_density_qd/tables/`:
+  `t73_live_screen_status.csv`, `t73_live_screen_summary.json`,
+  `t73_single_thought_operator_validation.md`, and
+  `t73_pareto_front_validation.md`.
+- Recorded the operator nuance: `qd_two_parent_probability=0.0` disables QD
+  crossover/fusion, but inherited `qd_operator_one_parent_fraction=0.90`
+  leaves low two-parent single-thought prompt exposure. The archive has `31`
+  no-parent/initial members, `50` one-parent members, and `4` two-parent
+  prompt descendants.
+- Decision: T73 is a valid bounded live screen, not a promotion result. Next
+  step is a matched classic comparison with reference-complete headline
+  metrics and direct PPA-front/Phase 03.1 visualization packaging.
