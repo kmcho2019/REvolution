@@ -64,6 +64,13 @@ The decision question is not whether deeper runs help absolutely. It is whether
 deeper runs help the selected QD method more than they help classic under the
 same candidate budget.
 
+T78 adds a retrospective diagnostic before spending live budget. It shows that
+the existing T75 `12 x 3` archive still matures late: `9/13` problem archives
+add or replace cells in generation `2` or later, mean occupied cells rise from
+`1.54` to `5.15` through generation `3`, and front-slot requests rise from
+`17` in generation `1` to `77` in generation `3`. This supports the ablation
+but does not answer it. The fixed-total-budget run remains required.
+
 ## Discriminative Design Set
 
 The screening set should be chosen for PPA-front variance and medium validity,
@@ -149,6 +156,7 @@ accepted, but not overclaimed:
 | --- | --- |
 | Classic strength does not falsify QD/MAP-Elites. | Accepted. It means RTL PPA evolution needs constrained, PPA-competitive diversity rather than generic archive coverage. |
 | `12 x 3` may be biased against QD. | Plausible and now roadmap-worthy, but not proven. Test equal-candidate budget shapes before changing headline protocol. |
+| Existing `12 x 3` archives still mature late. | Accepted as T78 diagnostic evidence. Use it to justify the ablation, not to claim that deeper QD wins. |
 | Choose medium-validity, front-variable designs for screens. | Accepted. This is screening discipline, not cherry-picking, if frozen before outcomes. |
 | Use MasterRTL pretrained tree artifacts as an encoder. | Narrowed after T77. Direct Area-head leaves collapse; continue only through retraining, replacement, or reproduced timing/power feature flows. |
 | Treat T75/T76/T77 as positive enough to launch broad claims. | Rejected. They are useful diagnostics and gates, not classic-beating evidence. |
@@ -163,6 +171,8 @@ classic hill-climbing baseline under fair, reference-complete comparisons.
 - Treat T75 as packaged positive diagnostic evidence, not a promotion.
 - Add a fixed-total-budget shape ablation as the next evaluation-structure
   check.
+- Use T78 as the reproducible rationale for that ablation: current archives
+  still change late, but no equal-budget shape has been tested yet.
 - Add a MasterRTL-pretrained verification and tree-leaf embedding lane before
   spending live budget on "pretrained MasterRTL" QD claims.
 - Add a generated-candidate MasterRTL leaf/margin variation gate after T76 and

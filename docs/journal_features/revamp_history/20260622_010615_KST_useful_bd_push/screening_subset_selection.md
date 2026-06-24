@@ -91,6 +91,10 @@ medium validity. The subset should avoid both saturated tasks where every
 method finds the same PPA corner and invalid-heavy tasks where too few samples
 survive for archive pressure to matter.
 
+T78 strengthens this requirement: existing T75 archives still mature late under
+`12 x 3`, but the signal would be noisy on designs that are saturated,
+reference-missing, or nearly all invalid.
+
 Candidate properties:
 
 - valid reference `ppa.txt`;

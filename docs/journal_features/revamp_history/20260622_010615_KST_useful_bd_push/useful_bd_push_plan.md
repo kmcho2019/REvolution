@@ -60,7 +60,9 @@ This interpretation changes the roadmap in three ways:
    result.
 2. Add a fixed-total-budget shape ablation next, because `12 x 3` may be
    too shallow for archive maturation. Compare whether deeper shapes help QD
-   more than classic, not merely whether deeper runs help in general.
+   more than classic, not merely whether deeper runs help in general. T78
+   supports this concern by showing that existing T75 archives still fill or
+   replace cells late in `9/13` problems, but it is not the live ablation.
 3. Continue the verification-gated MasterRTL/RTLTimer pretrained lane. T76
    confirms MasterRTL tree artifacts can be loaded and hashed in the isolated
    env. T77 shows the direct pretrained Area head collapses on generated

@@ -26,7 +26,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T59 failed promotion; the next method must change front-slot creation or use a secondary archive lane. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Short fail-pool feedback was insufficient; escalate only with measured source-level repair or role-separated emitters. |
 | `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T77 blocks direct MasterRTL Area-head leaves; continue only with raw/retrained descriptors, timing/power flow reproduction, or budget-shape tests. |
-| `L8` | Budget and benchmark shape | Test whether the evaluation structure is too wide/shallow or too saturated for QD to show value. | Pre-register equal-candidate budget-shape ablations on a reference-complete medium-validity subset. |
+| `L8` | Budget and benchmark shape | Test whether the evaluation structure is too wide/shallow or too saturated for QD to show value. | T78 supports the concern from existing T75 logs; next run the equal-candidate ablation. |
 
 ## Lineage Graph
 
@@ -129,6 +129,7 @@ flowchart LR
   end
 
   subgraph budgetshape[L8 budget and benchmark shape]
+    T78[T78 budget-depth audit]
     BAbl[Budget-shape ablation]
     DSet[Discriminative design set]
   end
@@ -213,7 +214,9 @@ flowchart LR
   T74 --> T75
   T75 --> T76
   T76 --> T77
-  T75 --> BAbl
+  T75 --> T78
+  T77 --> T78
+  T78 --> BAbl
   DSet --> BAbl
   T39 --> enc
   T17 --> T12
@@ -275,6 +278,7 @@ flowchart LR
 | T75 | `L7/L5` | T73 shape-density cells with explicit `qd_front_slot_lane_fraction=0.30` and one-parent-only single-thought prompts. | Completed `T0 positive_diagnostic_not_promoted`: preserves `13/13`, improves valid-PPA samples versus classic (`274` versus `257`), and beats T73/T74 mean HV, but classic still wins mean HV and Pareto breadth. | `retire` exact pressure tweak | Do not keep nudging front-slot fraction; move to budget-shape ablation or verified MasterRTL tree embeddings. |
 | T76 | `L7` | MasterRTL pretrained model-artifact gate after T75: hash and load saved tree models, assert feature lengths, and inventory RTL-Timer. | `T0 verification_gate_partial`: MasterRTL XGBoost heads and RF model load, but XGBoost TinyRocket outputs are all-zero and RTL-Timer has no confirmed checkpoint. | `advance` only to candidate-variation gate | Run generated-candidate leaf/margin variation before any live pretrained-model BD. |
 | T77 | `L7` | Generated-candidate variation gate for the source-faithful MasterRTL Area feature path and pretrained Area head. | `T0_variation_gate_negative`: `17/19` Area feature rows are unique, but predictions, leaf rows, and leaf IDs all collapse to one value. | `retire` Area-head leaves | Do not use direct pretrained Area leaves as a live BD; reproduce timing/power flows, retrain, or move to budget shape. |
+| T78 | `L8` | Retrospective budget-depth maturation audit over existing T75 `12 x 3` archive histories. | `T0_budget_hypothesis_support_not_live_ablation`: `9/13` archives keep filling or replacing cells in generation `2` or later, but no equal-budget shape comparison has run. | `advance` live budget ablation | Freeze a reference-complete medium-validity subset, then compare classic and the selected QD arm under `12 x 3`, `8 x 5`, and `6 x 7`. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
 | T25 | `L2/L5` | Guarded SR raw: lower fill target, lower improve backfill, lower two-parent fusion. | Completed `T0 diagnostic`; preserves covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. | `ablate` | Use as negative evidence for T26 emitter/parent-source design. |
@@ -307,6 +311,7 @@ Candidate branch names:
 | `L4` external encoders | `feat/journal-useful-bd-exp-20260622-encoder-env` | DeepGate/AURORA-style encoder produces reproducible features and passes the classic-covered-design gate. |
 | `L6` emitter schedule | `feat/journal-useful-bd-exp-20260622-emitter-guard` | Role-separated emitter schedule improves P098 yield or front material versus T30/T31/T32 without losing T26 best-quality recovery. |
 | `L7` RTL-native descriptors | `feat/journal-useful-bd-exp-20260622-rtl-native-bd` | A redesigned RTL-native coupling improves live front metrics on a reference-complete paired subset. |
+| `L8` budget-shape ablation | `feat/journal-useful-bd-exp-20260622-budget-shape` | Equal-candidate shapes show whether deeper budgets help QD more than classic without subset or reference-PPA loopholes. |
 
 ## Update Rule
 

@@ -28,9 +28,11 @@ occupancy, yield-only gains, or defaulted-reference aggregates.
 Current priority: finish the active useful-BD packages and
 presentations/20260623_report/. T75 is packaged as a positive diagnostic, not
 a promotion. T76 partially verifies MasterRTL tree artifacts, and T77 retires
-direct pretrained Area-head leaves after generated-candidate collapse. Next,
-pre-register a fixed-total-budget shape ablation or reproduce timing/power
-feature flows before any live pretrained-BD spend.
+direct pretrained Area-head leaves after generated-candidate collapse. T78
+shows existing T75 archives still mature late under `12 x 3`, supporting but
+not completing the budget-shape question. Next, run the pre-registered
+fixed-total-budget shape ablation or reproduce timing/power feature flows
+before any live pretrained-BD spend.
 
 Metrics: never use average fitness or average best PPA as primary evidence.
 Use reference-complete paired subsets for headline classic-vs-QD claims.

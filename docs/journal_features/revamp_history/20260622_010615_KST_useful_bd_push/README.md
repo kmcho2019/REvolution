@@ -28,17 +28,19 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T77_masterrtl_area_leaf_variation_gate/`
-  (`T0_variation_gate_negative`; MasterRTL Area features vary across generated
-  candidates, but the pretrained Area head collapses to one prediction and one
-  leaf row).
+  `techniques/T78_budget_depth_maturation_audit/`
+  (`T0_budget_hypothesis_support_not_live_ablation`; existing T75 `12 x 3`
+  archives keep filling or replacing cells in generation `2` or later for
+  `9/13` problems, so the fixed-total-budget ablation is justified but still
+  not executed).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  run the fixed-total-budget shape ablation or move to a properly reproduced
-  RTL-Timer/MasterRTL timing path; do not use the direct pretrained Area head
-  as a live BD.
+  run the fixed-total-budget shape ablation on a frozen medium-validity,
+  reference-complete subset, or move to a properly reproduced RTL-Timer/
+  MasterRTL timing path; do not use the direct pretrained Area head as a live
+  BD.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -81,7 +83,9 @@ Start here when resuming the active goal.
   diagnostic that improves over T73/T74 without beating classic, and T76
   verifies MasterRTL pretrained model artifacts. T77 then blocks the direct
   pretrained Area-head leaf BD because generated candidates collapse to one
-  prediction and one leaf row.
+  prediction and one leaf row. T78 moves the budget-shape concern from
+  discussion into a reproducible diagnostic audit, but leaves the live
+  equal-candidate ablation open.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs

@@ -80,6 +80,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Add passive archive scoring for classic and every QD method.
 - [ ] Add global PPA hypervolume, Pareto-cell count, Pareto spread, unique
       front family, QD-score AUC, coverage AUC, and HV AUC metrics.
+- [x] Add a retrospective budget-depth maturation audit before live
+      budget-shape spending (`T78_budget_depth_maturation_audit`).
 - [ ] Pre-register and run a fixed-total-budget shape ablation, comparing
       classic and the best QD arm under at least `12 x 3`, `8 x 5`, and
       `6 x 7`.

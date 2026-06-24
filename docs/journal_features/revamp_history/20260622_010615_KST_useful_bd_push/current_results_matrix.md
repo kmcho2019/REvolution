@@ -108,6 +108,8 @@ Real result packages:
   model-artifact verification gate.
 - `T77_masterrtl_area_leaf_variation_gate` completed generated-candidate
   MasterRTL Area-head variation gate.
+- `T78_budget_depth_maturation_audit` completed existing-run budget-depth
+  maturation audit.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -138,6 +140,11 @@ head. It is negative: T70 candidates have `17/19` unique Area feature rows, but
 the pretrained Area head emits one prediction, one leaf row, and one unique
 leaf ID across all candidates. Direct pretrained Area-head leaves are retired
 unless retrained or replaced.
+T78 audits the existing T75 `12 x 3` archive histories and supports the
+budget-shape concern without promoting a method. `9/13` problem archives add or
+replace cells in generation `2` or later, occupied cells continue rising
+through generation `3`, and front-slot traffic keeps increasing. The live
+equal-candidate budget-shape ablation remains required before any budget claim.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

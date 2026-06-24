@@ -4384,3 +4384,32 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   Area-head tree leaves as a live BD unless the model is retrained or replaced.
   The next RTL-native pretrained path should reproduce timing/power feature
   flows, retrain a model, or move to the fixed-total-budget shape ablation.
+
+## 2026-06-24T04:30:00Z - T78 Budget-Depth Maturation Audit
+
+- Added `techniques/T78_budget_depth_maturation_audit/` as the `L8` diagnostic
+  package for the discussion that `12 x 3` may be too wide and shallow for QD.
+- Ran:
+  `uv run python
+  techniques/T78_budget_depth_maturation_audit/tools/run_t78_budget_depth_audit.py`
+  from the useful-BD revamp root path under `/workspace`.
+- Reused only existing T75 artifacts from
+  `exp/useful_bd_push/t75_shape_density_front_pressure_20260624_024005_UTC/hard_tuning`.
+  No vLLM call or new candidate generation was performed.
+- Generated `tables/t78_generation_metrics.csv`,
+  `tables/t78_archive_maturation_by_problem.csv`,
+  `tables/t78_archive_generation_aggregate.csv`,
+  `tables/t78_budget_shape_recommendation.csv`, and
+  `tables/t78_summary.json`.
+- Result: `9/13` T75 problem archives still add or replace cells in generation
+  `2` or later. Mean occupied cells rise from `1.54` at generation `0` to
+  `5.15` at generation `3`, and mean archive members rise from `1.62` to
+  `6.23`.
+- The audit also records the weak case: `Prob151_review2015_fsm` has an empty
+  final T75 archive in this package.
+- Inspected `figures/t78_generation_metric_curves.png` and
+  `figures/t78_archive_maturation.png`; both are readable and communicate that
+  archive maturation continues late under `12 x 3`.
+- Decision: T78 is `T0_budget_hypothesis_support_not_live_ablation`. It
+  supports running a fixed-total-budget shape ablation, but it does not prove
+  that deeper QD beats classic and does not close the live ablation TODO.
