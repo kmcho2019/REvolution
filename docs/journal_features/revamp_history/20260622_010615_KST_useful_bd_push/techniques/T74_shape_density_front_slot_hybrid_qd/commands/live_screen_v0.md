@@ -181,7 +181,7 @@ uv run python scripts/report_final_analysis_bundle.py \
   --backend_run classic_revolution=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
   --backend_run code_thought_front_slot_qd=exp/useful_bd_push/t51_code_thought_front_slot_20260623_030540_UTC/hard_tuning/code_thought_front_slot_qd/seed_1001 \
   --backend_run rtl_native_front_guarded_parent_qd=exp/useful_bd_push/t66_rtl_native_front_guarded_parent_20260623_160756_UTC/hard_tuning/rtl_native_front_guarded_parent_qd/seed_1001 \
-  --backend_run rtl_native_seeded_thought_qd=exp/useful_bd_push/t67_rtl_native_seeded_thought_20260623_181250_UTC/hard_tuning/rtl_native_seeded_thought_qd/seed_1001 \
+  --backend_run rtl_native_seeded_thought_qd=exp/useful_bd_push/t67_rtl_native_seeded_thought_20260623_170935_UTC/hard_tuning/rtl_native_seeded_thought_qd/seed_1001 \
   --backend_run source_aligned_rtl_cell_qd=exp/useful_bd_push/t72_source_aligned_rtl_cell_20260623_202136_UTC/hard_tuning/source_aligned_rtl_cell_qd/seed_1001 \
   --backend_run source_aligned_shape_density_qd=exp/useful_bd_push/t73_source_aligned_shape_density_20260623_232844_UTC/hard_tuning/source_aligned_shape_density_qd/seed_1001 \
   --backend_run shape_density_front_slot_hybrid_qd="${RUN_ROOT}/shape_density_front_slot_hybrid_qd/seed_${SEED}" \
@@ -197,7 +197,7 @@ uv run python scripts/export_qd_ppa_visualization.py \
   --backend_run classic_revolution=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
   --backend_run code_thought_front_slot_qd=exp/useful_bd_push/t51_code_thought_front_slot_20260623_030540_UTC/hard_tuning/code_thought_front_slot_qd/seed_1001 \
   --backend_run rtl_native_front_guarded_parent_qd=exp/useful_bd_push/t66_rtl_native_front_guarded_parent_20260623_160756_UTC/hard_tuning/rtl_native_front_guarded_parent_qd/seed_1001 \
-  --backend_run rtl_native_seeded_thought_qd=exp/useful_bd_push/t67_rtl_native_seeded_thought_20260623_181250_UTC/hard_tuning/rtl_native_seeded_thought_qd/seed_1001 \
+  --backend_run rtl_native_seeded_thought_qd=exp/useful_bd_push/t67_rtl_native_seeded_thought_20260623_170935_UTC/hard_tuning/rtl_native_seeded_thought_qd/seed_1001 \
   --backend_run source_aligned_rtl_cell_qd=exp/useful_bd_push/t72_source_aligned_rtl_cell_20260623_202136_UTC/hard_tuning/source_aligned_rtl_cell_qd/seed_1001 \
   --backend_run source_aligned_shape_density_qd=exp/useful_bd_push/t73_source_aligned_shape_density_20260623_232844_UTC/hard_tuning/source_aligned_shape_density_qd/seed_1001 \
   --backend_run shape_density_front_slot_hybrid_qd="${RUN_ROOT}/shape_density_front_slot_hybrid_qd/seed_${SEED}" \

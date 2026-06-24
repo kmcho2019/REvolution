@@ -100,7 +100,7 @@ Real result packages:
   package.
 - `T73_source_aligned_shape_density_qd` bounded source-aligned shape-density
   quantile-cell live screen and matched classic comparison.
-- `T74_shape_density_front_slot_hybrid_qd` pre-registered shape-density plus
+- `T74_shape_density_front_slot_hybrid_qd` completed shape-density plus
   near-front-gated single-thought pairing follow-up.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
@@ -156,11 +156,15 @@ validators with `12/13` successful problems, `85` archive members, `624`
 generated candidates, and `294` PPA reports. The matched comparison preserves
 all covered designs and improves valid-PPA yield, but it is not promoted
 because classic still wins mean HV, HV wins, and Pareto breadth.
-T74 is the registered follow-up. It keeps T73's cells and changes only the
-single-thought coupling: `qd_operator_one_parent_fraction=0.90` remains fixed,
-while the existing low-rate two-parent prompt requests are gated by
-`qd_two_parent_gate=near_front_descriptor`. It must prove front/HV value
-against classic, T51, T66, T67, T72, and T73 before any result claim.
+T74 is completed as `T0 diagnostic_regression_not_promoted`. It keeps T73's
+cells and changes only the single-thought coupling:
+`qd_operator_one_parent_fraction=0.90` remains fixed, while the existing
+low-rate two-parent prompt requests are gated by
+`qd_two_parent_gate=near_front_descriptor`. It preserves all 13
+reference-complete comparisons, but classic wins mean HV (`0.0926007600`
+versus `0.0851926237`), HV wins (`8` versus `1`), Pareto points (`2.31`
+versus `1.62`), and valid-PPA count (`257` versus `237`). T73 also beats T74
+on mean HV (`0.0890223082`) and valid-PPA count (`294`). Exact T74 is retired.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis

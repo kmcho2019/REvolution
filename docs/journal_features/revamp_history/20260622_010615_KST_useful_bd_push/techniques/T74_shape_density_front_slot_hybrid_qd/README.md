@@ -1,6 +1,6 @@
 # T74 Shape-Density Front-Slot Hybrid QD
 
-Status: pre-registered; not yet run.
+Status: completed `T0 diagnostic_regression_not_promoted`.
 
 T74 is the next source-aligned RTL-native follow-up after T72 and T73.
 It keeps T73's less-collapsed `source_aligned_shape_density_3d` descriptor
@@ -47,14 +47,17 @@ path.
 - `tables/descriptor_probe_source_aligned_shape_density_3d.json`: descriptor
   probe proving no PPA/synthesis/simulation dependency.
 - `tables/t74_method_contract.json`: compact machine-readable method contract.
-- `results_report.md`: pending report shell with required decision fields.
+- `results_report.md`: live-screen result and tier decision.
 - `artifacts_manifest.md`: expected artifact and command inventory.
+- `matched_classic_comparison/`: compact matched package with data, tables,
+  figures, reports, and Phase 03.1 viewer.
 
 ## Current Decision
 
-`pending_registered`.
+`T0 diagnostic_regression_not_promoted`.
 
-No performance claim exists yet. Promote only after a reference-complete
-matched package shows that T74 preserves every classic-covered design and
-improves at least one primary QD/PPA-front metric without defaulted-reference
-or duplicate-diversity loopholes.
+T74 preserves reference-complete coverage on the 13-problem hard/tuning
+screen, but it does not improve the primary front metrics. Classic wins mean
+HV (`0.0926007600` versus `0.0851926237`), HV wins (`8` versus `1`), Pareto
+points (`2.31` versus `1.62`), valid-PPA samples (`257` versus `237`), and
+functionality/synthesis rates. Exact T74 is retired.

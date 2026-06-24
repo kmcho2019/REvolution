@@ -1,6 +1,6 @@
 # T74 Artifacts Manifest
 
-Status: pre-registered; live artifacts pending.
+Status: completed `T0 diagnostic_regression_not_promoted`.
 
 ## Committed Registration Artifacts
 
@@ -11,19 +11,21 @@ Status: pre-registered; live artifacts pending.
 | `commands/live_screen_v0.md` | Frozen probe, preflight, live-run, validation, and packaging commands. |
 | `tables/descriptor_probe_source_aligned_shape_density_3d.json` | Descriptor probe showing source-aligned RTL-only requirements. |
 | `tables/t74_method_contract.json` | Compact machine-readable method contract. |
-| `results_report.md` | Pending report shell for the eventual result. |
+| `results_report.md` | Completed live-screen result and tier decision. |
+| `matched_classic_comparison/` | Compact matched result package. |
 
-## Expected Live Artifacts
+## Live Artifacts
 
 | Path | Purpose |
 | --- | --- |
-| `exp/useful_bd_push/t74_shape_density_front_slot_hybrid_<timestamp>/hard_tuning/` | Live run root; keep out of `/aux`. |
-| `preflight/models_<timestamp>.json` | Local vLLM `/v1/models` response. |
+| `exp/useful_bd_push/t74_shape_density_front_slot_hybrid_20260624_010922_UTC/hard_tuning/` | Live run root; kept under `exp/`, not `/aux`. |
+| `preflight/models_20260624_010922_UTC.json` | Local vLLM `/v1/models` response. |
 | `shape_density_front_slot_hybrid_qd/seed_1001/` | T74 QD backend run. |
 | `final_analysis/` | Matched final-analysis scratch bundle. |
-| `matched_classic_comparison/` | Compact committed result package after the live run. |
+| `matched_classic_comparison/` | Compact committed result package. |
 
 ## Current Hashes
 
-The live run is not started. Record run-root hashes after packaging, not
-before.
+Run-root content is intentionally left under `exp/`. The committed package
+contains regenerated data, compact tables, figures, validation records, and
+the packager script used to reproduce the package from `final_analysis/`.

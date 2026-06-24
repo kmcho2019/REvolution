@@ -467,13 +467,15 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       source-aligned RTL-native spend, reusing T73 cells with
       `near_front_descriptor` gating for the existing low-rate single-thought
       two-parent prompt requests.
-- [ ] T74 seed `1001` is run on the T72/T73 hard/tuning surface only after
+- [x] T74 seed `1001` is run on the T72/T73 hard/tuning surface only after
       storage and vLLM preflight.
-- [ ] T74 is validated, packaged, visualized, and compared against T47
+- [x] T74 is validated, packaged, visualized, and compared against T47
       classic, T51, T66, T67, T72, and T73 with a reference-complete matched
       package.
-- [ ] T74 gets a promotion, ablation, or retirement rationale before another
+- [x] T74 gets a promotion, ablation, or retirement rationale before another
       same-family source-aligned live spend.
+- [ ] T75 or the next RTL-native follow-up changes front creation directly
+      instead of only gating the existing low-rate two-parent prompt requests.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

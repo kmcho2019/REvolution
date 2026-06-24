@@ -4206,3 +4206,34 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   preserve every classic-covered problem and improve front/HV evidence without
   relying on defaulted references, duplicate diversity, invalid candidates, or
   yield-only overclaiming.
+
+## 2026-06-24T02:30:00Z - T74 Live Screen And Matched Package
+
+- Ran T74 at
+  `exp/useful_bd_push/t74_shape_density_front_slot_hybrid_20260624_010922_UTC/hard_tuning`
+  after storage and vLLM preflight. The endpoint reported
+  `openai/gpt-oss-120b max_model_len=131072`; `/workspace` stayed at `87%`
+  used with `3.5T` free and inode use at `3%`.
+- The live run completed all 13 hard/tuning problems in `1698.28` seconds.
+  Registered single-thought and Pareto validators passed.
+- Fixed the T74 command doc's stale T67 comparator timestamp from
+  `20260623_181250_UTC` to the actual
+  `20260623_170935_UTC` run root before rerunning the matched analysis.
+- Generated the matched final-analysis bundle and compact committed package at
+  `techniques/T74_shape_density_front_slot_hybrid_qd/matched_classic_comparison/`.
+- Headline result: `T0 diagnostic_regression_not_promoted`. T74 preserves all
+  13 reference-complete comparisons, but classic wins mean HV
+  (`0.0926007600` versus `0.0851926237`), HV wins (`8` versus `1`), Pareto
+  points (`2.31` versus `1.62`), and valid-PPA count (`257` versus `237`).
+  T73 also beats T74 on mean HV (`0.0890223082`) and valid-PPA count (`294`).
+- Two-parent audit: `4` two-parent rows, `3` auditable rows, all `3`
+  compatible with the `6.75` near-front descriptor threshold, and `1` missing
+  parent descriptor row. This is mechanically valid but too sparse to recover
+  front/HV evidence.
+- Strict Phase 03.1 viewer validation passed. Playwright interaction validation
+  failed on the known backend-alias/archive-hover class, and the caveat is
+  recorded beside the viewer. Manual screenshot inspection confirmed a
+  nonblank classic-vs-T74 compare view.
+- Decision: retire exact T74. The next RTL-native method should change front
+  creation or source-level repair directly rather than spending another seed
+  on low-rate near-front pair gating.

@@ -213,7 +213,7 @@ Start here when resuming the active goal.
 | `T71` | `T71_source_aligned_rtl_native_feature_map` | Completed `T0 descriptor_design_unblocker`; 19 candidates occupy 9/16 source-aligned RTL-native cells without PPA leakage. |
 | `T72` | `T72_source_aligned_rtl_cell_qd` | Completed `T1 near_classic_not_promoted`; fixed live run preserves coverage and trails classic mean HV by about `0.65%`, but classic wins HV wins, Pareto points, and reference-beating candidates. |
 | `T73` | `T73_source_aligned_shape_density_qd` | Completed `T0 positive_diagnostic_not_promoted`; preserves matched coverage and improves valid-PPA yield, but classic wins mean HV and Pareto breadth. |
-| `T74` | `T74_shape_density_front_slot_hybrid_qd` | Pre-registered; keeps T73 shape-density cells and gates the existing low-rate single-thought two-parent prompts with `near_front_descriptor` to recover front material. |
+| `T74` | `T74_shape_density_front_slot_hybrid_qd` | Completed `T0 diagnostic_regression_not_promoted`; preserves reference-complete coverage, but loses classic/T73 on headline HV and valid-PPA evidence. |
 
 ## Validity-Gate Note
 
