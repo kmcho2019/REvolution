@@ -38,11 +38,11 @@ QD uses the T75 arm: `shape_density_front_pressure_qd`.
 
 ## Status
 
-`one_arm_complete`.
+`partial_live_execution`.
 
 Promotion remains impossible until all six planned arms finish or a blocked
 run is documented with exact partial artifacts and continuation rules.
 
 Completed arms are recorded in `tables/t79_live_arm_status.csv`. The `12x3`
-classic and QD pair has passed the registered validators, but this is still
-not a budget-shape result.
+classic/QD pair and the classic `8x5` arm are complete. The `12x3` pair has
+passed the registered validators, but this is still not a budget-shape result.

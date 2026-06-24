@@ -2,13 +2,13 @@
 
 ## Tier Decision
 
-`one_arm_complete`.
+`partial_live_execution`.
 
 T79 is still primarily a protocol package. It freezes the subset,
 budget-shape matrix, methods, endpoint preflight, and reporting gates. The
-classic `12x3` arm has now completed, but no comparison result is claimed
-until the matched QD and deeper-shape arms finish or a blocked continuation is
-recorded.
+matched `12x3` pair and the classic `8x5` arm have completed, with the QD
+`8x5` arm running. No budget-shape result is claimed until all matched shape
+pairs finish or a blocked continuation is recorded.
 
 ## Pre-Run Evidence
 
@@ -60,8 +60,9 @@ uv run python scripts/validate_single_thought_operator_run.py ... --classic-mode
 ## Non-Claims
 
 No budget-shape result is claimed yet. T79 does not prove that deeper budgets
-help QD, and the completed classic arm alone does not compare QD against
-classic. It only makes the live test auditable.
+help QD, and the completed `12x3` pair alone does not answer whether deeper
+equal-candidate runs help QD more than classic. It only makes the live test
+auditable.
 
 ## Required Completion Package
 

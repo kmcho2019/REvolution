@@ -1,6 +1,6 @@
 # Useful BD Push TODO
 
-Line limit: 160 lines. Keep this checklist concise. Move details to
+Skim rule: keep active unchecked work near the top and move details to
 `useful_bd_push_implementation_history.md`.
 
 Central plan: `useful_bd_push_plan.md`.

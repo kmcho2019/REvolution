@@ -223,10 +223,11 @@ tiers instead:
   visible yield warnings for any large functionality, synthesis-valid, or
   valid-PPA drop.
 - `T2 useful_bd`: any positive reproducible delta over classic or landing
-  Smooth-QD on global PPA hypervolume, passive archive QD score, passive
-  archive coverage, Pareto-cell count, Pareto spread, unique front families,
-  valid-PPA yield, or lineage yield, while preserving coverage and best quality
-  within guardrails.
+  Smooth-QD on reference-complete PPA-front evidence such as global PPA
+  hypervolume, Pareto spread, unique front families, or reference-beating
+  candidates, while preserving coverage and best quality within guardrails.
+  Passive archive QD score, archive coverage, Pareto-cell count, valid-PPA
+  yield, and lineage yield are supporting evidence only.
 - `T3 strong_win`: at least 10% gain or a statistically stable multi-seed win.
 
 Do not discard a method just because it fails `T3`. Anything at `T1` or `T2`
