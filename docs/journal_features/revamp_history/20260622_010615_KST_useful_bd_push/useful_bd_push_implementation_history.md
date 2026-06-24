@@ -4493,3 +4493,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `one_arm_complete`.
 - Decision: no budget-shape or QD claim is made from this arm alone. Continue
   with the matched T79 QD `12x3` arm before comparing methods.
+
+## 2026-06-24T05:02:21Z - T79 QD 12x3 Arm Started
+
+- Started the matched QD `12x3` arm in the same T79 run root:
+  `shape_density_front_pressure_qd_12x3`, seed `1001`.
+- Fresh live preflight:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/preflight/models_summary_20260624_050212_UTC.txt`
+  reports `openai/gpt-oss-120b max_model_len=131072`.
+- Main log:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/logs/shape_density_front_pressure_qd_12x3_seed_1001.log`.
+- Updated `tables/t79_live_arm_status.csv` with an `in_progress` row.
+- Decision: wait for this arm to finish before making even a `12x3`
+  classic-vs-QD comparison.
