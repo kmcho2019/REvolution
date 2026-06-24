@@ -145,6 +145,9 @@ budget-shape concern without promoting a method. `9/13` problem archives add or
 replace cells in generation `2` or later, occupied cells continue rising
 through generation `3`, and front-slot traffic keeps increasing. The live
 equal-candidate budget-shape ablation remains required before any budget claim.
+T79 is the pre-registered ablation protocol, not a real-result package. It
+freezes the eight-design primary subset, shape matrix, T75 QD arm, vLLM
+preflight, and command contract for the next live budget-shape run.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

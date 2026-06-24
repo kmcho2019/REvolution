@@ -85,7 +85,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Pre-register and run a fixed-total-budget shape ablation, comparing
       classic and the best QD arm under at least `12 x 3`, `8 x 5`, and
       `6 x 7`.
-- [ ] Freeze a reference-complete, medium-validity budget-ablation subset with
+- [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live
       methods.

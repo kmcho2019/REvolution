@@ -173,6 +173,8 @@ classic hill-climbing baseline under fair, reference-complete comparisons.
   check.
 - Use T78 as the reproducible rationale for that ablation: current archives
   still change late, but no equal-budget shape has been tested yet.
+- Use T79 as the pre-registered live protocol: eight frozen primary designs,
+  `12x3`, `8x5`, and `6x7`, and matched classic versus T75 QD arms.
 - Add a MasterRTL-pretrained verification and tree-leaf embedding lane before
   spending live budget on "pretrained MasterRTL" QD claims.
 - Add a generated-candidate MasterRTL leaf/margin variation gate after T76 and

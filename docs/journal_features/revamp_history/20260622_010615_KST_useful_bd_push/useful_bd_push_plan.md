@@ -63,6 +63,7 @@ This interpretation changes the roadmap in three ways:
    more than classic, not merely whether deeper runs help in general. T78
    supports this concern by showing that existing T75 archives still fill or
    replace cells late in `9/13` problems, but it is not the live ablation.
+   T79 now freezes the subset, shape matrix, and live command contract.
 3. Continue the verification-gated MasterRTL/RTLTimer pretrained lane. T76
    confirms MasterRTL tree artifacts can be loaded and hashed in the isolated
    env. T77 shows the direct pretrained Area head collapses on generated

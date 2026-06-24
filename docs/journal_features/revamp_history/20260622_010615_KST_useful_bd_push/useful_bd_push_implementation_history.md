@@ -4413,3 +4413,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: T78 is `T0_budget_hypothesis_support_not_live_ablation`. It
   supports running a fixed-total-budget shape ablation, but it does not prove
   that deeper QD beats classic and does not close the live ablation TODO.
+
+## 2026-06-24T04:45:00Z - T79 Budget-Shape Protocol Freeze
+
+- Added `techniques/T79_budget_shape_ablation_protocol/` as the pre-run package
+  for the equal-candidate budget-shape ablation.
+- Froze the primary eight-design subset in
+  `tables/t79_budget_ablation_subset.csv` and
+  `tables/budget_shape_subset.yaml` before any T79 live outcome.
+- The frozen subset includes `RTLLM/Prob015_multi_pipe_8bit`,
+  `RTLLM/Prob024_fsm`, `RTLLM/Prob041_traffic_light`, `RTLLM/Prob045_alu`,
+  `RTLLM/Prob049_signal_generator`,
+  `VerilogEval-Spec-to-RTL/Prob116_m2014_q3`,
+  `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b`, and
+  `VerilogEval-Spec-to-RTL/Prob153_gshare`.
+- Deferred candidates and reasons are recorded in
+  `tables/t79_deferred_candidates.csv`; `Prob151_review2015_fsm` is deferred
+  from the primary set because T78 recorded an empty final T75 archive.
+- Pre-registered the six-arm matrix:
+  classic and `shape_density_front_pressure_qd` under `12x3`, `8x5`, and
+  `6x7`, each with `48` candidates per design and seed `1001`.
+- Captured a fresh vLLM preflight:
+  `tables/preflight_models_20260624_042959_UTC.txt` reports
+  `openai/gpt-oss-120b max_model_len=131072`.
+- Inspected `figures/t79_budget_subset_selection.png`; it is readable and
+  shows the selected and deferred candidates by prior classic valid-PPA count
+  and PPA variance.
+- Decision: T79 is `pre_registered_not_run`. The budget-shape live TODO remains
+  open until all six arms run or a blocked continuation is recorded.

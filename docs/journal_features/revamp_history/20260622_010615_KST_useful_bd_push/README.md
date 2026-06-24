@@ -33,14 +33,17 @@ Start here when resuming the active goal.
   archives keep filling or replacing cells in generation `2` or later for
   `9/13` problems, so the fixed-total-budget ablation is justified but still
   not executed).
+- Most recent pre-registered package:
+  `techniques/T79_budget_shape_ablation_protocol/`
+  (freezes the eight-design primary subset, `12x3`/`8x5`/`6x7`
+  equal-candidate shape matrix, vLLM preflight, and live command contract).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  run the fixed-total-budget shape ablation on a frozen medium-validity,
-  reference-complete subset, or move to a properly reproduced RTL-Timer/
-  MasterRTL timing path; do not use the direct pretrained Area head as a live
-  BD.
+  run the T79 fixed-total-budget shape ablation or move to a properly
+  reproduced RTL-Timer/MasterRTL timing path; do not use the direct pretrained
+  Area head as a live BD.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front

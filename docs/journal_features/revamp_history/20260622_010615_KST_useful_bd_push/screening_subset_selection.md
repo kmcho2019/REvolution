@@ -95,6 +95,12 @@ T78 strengthens this requirement: existing T75 archives still mature late under
 `12 x 3`, but the signal would be noisy on designs that are saturated,
 reference-missing, or nearly all invalid.
 
+T79 freezes the first primary budget-shape subset at
+`techniques/T79_budget_shape_ablation_protocol/tables/t79_budget_ablation_subset.csv`.
+It contains eight reference-complete designs and defers `Prob151_review2015_fsm`
+from the primary set because T78 recorded an empty final T75 archive for that
+problem.
+
 Candidate properties:
 
 - valid reference `ppa.txt`;
