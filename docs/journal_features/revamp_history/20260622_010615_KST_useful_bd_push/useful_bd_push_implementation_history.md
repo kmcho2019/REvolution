@@ -4506,3 +4506,23 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated `tables/t79_live_arm_status.csv` with an `in_progress` row.
 - Decision: wait for this arm to finish before making even a `12x3`
   classic-vs-QD comparison.
+
+## 2026-06-24T05:24:00Z - T79 QD 12x3 Arm Completed
+
+- The matched QD `12x3` arm finished with exit code `0`:
+  `shape_density_front_pressure_qd_12x3`, seed `1001`, eight frozen designs.
+- Terminal runtime: `1217.14` seconds.
+- Summary:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/shape_density_front_pressure_qd_12x3/seed_1001/openai_gpt-oss-120b/20260624_050214_revolution_summary_results.txt`.
+- Scheduler telemetry:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/shape_density_front_pressure_qd_12x3/seed_1001/openai_gpt-oss-120b/20260624_050214_revolution_scheduler_telemetry.json`.
+- Quick inventory check: all `8/8` problems have `success` rows in the summary
+  results and each frozen problem has `48` sample directories.
+- Ran the registered `12x3` validators:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`; both exited `0`.
+- Updated `tables/t79_live_arm_status.csv` and marked the `12x3` pair
+  validator-clean.
+- Decision: continue to the `8x5` arms. Do not make a budget-shape claim until
+  the `8x5` and `6x7` matched pairs finish or a blocked continuation is
+  recorded.

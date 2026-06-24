@@ -30,7 +30,7 @@ holdout tables before any T79 live outcome:
 
 | Shape | Candidate Budget | Classic | QD |
 | --- | ---: | --- | --- |
-| `12x3` | `48` | complete | running |
+| `12x3` | `48` | complete | complete |
 | `8x5` | `48` | planned | planned |
 | `6x7` | `48` | planned | planned |
 
@@ -43,5 +43,6 @@ QD uses the T75 arm: `shape_density_front_pressure_qd`.
 Promotion remains impossible until all six planned arms finish or a blocked
 run is documented with exact partial artifacts and continuation rules.
 
-Completed and active arms are recorded in `tables/t79_live_arm_status.csv`.
-The QD `12x3` arm is running, so no `12x3` comparison is available yet.
+Completed arms are recorded in `tables/t79_live_arm_status.csv`. The `12x3`
+classic and QD pair has passed the registered validators, but this is still
+not a budget-shape result.
