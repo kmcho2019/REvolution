@@ -188,6 +188,8 @@ def test_backend_parser_accepts_qd_options():
             "g_T",
             "--qd_refine_generation_mode",
             "diff",
+            "--qd_front_slot_lane_fraction",
+            "0.25",
         ]
     )
     assert args.search_mode == "revolution_qd"
@@ -198,6 +200,7 @@ def test_backend_parser_accepts_qd_options():
     assert args.qd_descriptor_profile == "hybrid_seq_default"
     assert args.qd_descriptor_axes == ["seq_ratio", "g_A", "g_T"]
     assert args.qd_refine_generation_mode == "diff"
+    assert args.qd_front_slot_lane_fraction == pytest.approx(0.25)
 
 
 def test_backend_parser_includes_diff_controls_and_vllm_threshold():

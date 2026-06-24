@@ -476,6 +476,7 @@ def _build_backend(
             qd_thought_code_seeded=args.qd_thought_code_seeded,
             qd_seed_sample_fraction=args.qd_seed_sample_fraction,
             qd_champion_lane_fraction=args.qd_champion_lane_fraction,
+            qd_front_slot_lane_fraction=args.qd_front_slot_lane_fraction,
             qd_parent_selection=args.qd_parent_selection,
             representative_sample=args.representative_sample,
             repair_kind=args.repair_kind,
@@ -1076,6 +1077,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         help="Fraction of k samples that are seeded vs whole-regen leaps (B\u2032 hybrid; 1.0=pure Fix B).")
     parser.add_argument("--qd_champion_lane_fraction", type=float, default=0.0,
         help="Fraction of QD parents drawn from the global best (doc 15 Fix A champion lane).")
+    parser.add_argument(
+        "--qd_front_slot_lane_fraction",
+        type=float,
+        default=0.10,
+        help="Fraction of front-slot lane parent requests under front_slot_lane_nsga2.",
+    )
     parser.add_argument("--qd_parent_selection", type=str, default="cell_crowded_tournament",
         choices=[
             "cell_crowded_tournament",
@@ -1084,7 +1091,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
             "sparse_front_triggered_nsga2",
         ],
         help="QD parent selection: per-cell crowded tournament (default) or global "
-             "NSGA-II rank. front_slot_lane_nsga2 reserves 10% of parent "
+             "NSGA-II rank. front_slot_lane_nsga2 reserves a fixed fraction of parent "
              "requests for elite_pareto_slot local-front members. "
              "sparse_front_triggered_nsga2 lowers the champion lane to 0.65 "
              "only when elite_pareto_slot local fronts are thin.")

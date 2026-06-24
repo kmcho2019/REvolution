@@ -169,6 +169,7 @@ class QDEngine(EoHEngine):
         qd_thought_code_seeded: bool = False,
         qd_seed_sample_fraction: float = 1.0,
         qd_champion_lane_fraction: float = 0.0,
+        qd_front_slot_lane_fraction: float = FRONT_SLOT_LANE_FRACTION,
         qd_parent_selection: str = "cell_crowded_tournament",
         representative_sample: str = "best_successful_quality",
         repair_kind: str = "none",
@@ -319,6 +320,9 @@ class QDEngine(EoHEngine):
         if not 0.0 <= float(qd_champion_lane_fraction) <= 1.0:
             raise ValueError("qd_champion_lane_fraction must be in [0, 1].")
         self.qd_champion_lane_fraction = float(qd_champion_lane_fraction)
+        if not 0.0 <= float(qd_front_slot_lane_fraction) <= 1.0:
+            raise ValueError("qd_front_slot_lane_fraction must be in [0, 1].")
+        self.qd_front_slot_lane_fraction = float(qd_front_slot_lane_fraction)
         if qd_parent_selection not in {
             "cell_crowded_tournament",
             "front_slot_lane_nsga2",
@@ -1278,7 +1282,7 @@ class QDEngine(EoHEngine):
             "global_pareto_size": self._global_pareto_size(),
             "success_parent_requests": self.qd_success_parent_requests,
             "qd_parent_selection": self.qd_parent_selection,
-            "front_slot_lane_fraction": FRONT_SLOT_LANE_FRACTION,
+            "front_slot_lane_fraction": self.qd_front_slot_lane_fraction,
             "front_slot_lane_parent_requests": (
                 self.qd_front_slot_lane_parent_requests
             ),
@@ -1740,7 +1744,7 @@ class QDEngine(EoHEngine):
                 for _ in range(count):
                     if (
                         self.qd_parent_selection == "front_slot_lane_nsga2"
-                        and random.random() < FRONT_SLOT_LANE_FRACTION
+                        and random.random() < self.qd_front_slot_lane_fraction
                     ):
                         self.qd_front_slot_lane_parent_requests += 1
                         if front_slots:
