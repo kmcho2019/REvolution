@@ -4526,3 +4526,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: continue to the `8x5` arms. Do not make a budget-shape claim until
   the `8x5` and `6x7` matched pairs finish or a blocked continuation is
   recorded.
+
+## 2026-06-24T05:24:39Z - T79 Classic 8x5 Arm Started
+
+- Started the classic `8x5` arm in the same T79 run root:
+  `classic_revolution_8x5`, seed `1001`.
+- Fresh live preflight:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/preflight/models_summary_20260624_052429_UTC.txt`
+  reports `openai/gpt-oss-120b max_model_len=131072`.
+- Main log:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/logs/classic_revolution_8x5_seed_1001.log`.
+- Updated `tables/t79_live_arm_status.csv` with an `in_progress` row.
+- Decision: run the matched QD `8x5` arm after this classic arm completes.
