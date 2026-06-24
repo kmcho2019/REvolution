@@ -455,12 +455,14 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       `grid_quantile` is required instead of fixed density bounds.
 - [x] T73 seed `1001` is run on the T72 hard/tuning surface after storage and
       vLLM preflight.
-- [ ] T73 is visualized and compared against T47 classic, T51, T66, T67, and
-      T72. Current compact live-screen validation package is complete, but
-      direct PPA-front, Phase 03.1, and matched comparison artifacts are
-      still pending.
-- [ ] T73 gets a promotion, ablation, or retirement rationale before another
-      source-aligned live spend.
+- [x] T73 is visualized and compared against T47 classic with a
+      reference-complete matched package, direct PPA panels, and a Phase 03.1
+      viewer. T51/T66/T67/T72 remain cross-method context, not bundled
+      comparison backends in this compact package.
+- [x] T73 gets a promotion, ablation, or retirement rationale before another
+      source-aligned live spend: exact T73 is `T0 positive_diagnostic`, and
+      T74 should hybridize T73 yield/occupancy with stronger front-slot
+      pressure.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

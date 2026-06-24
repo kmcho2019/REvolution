@@ -1,6 +1,7 @@
 # T73 Source-Aligned Shape-Density QD
 
-Status: bounded live screen complete; diagnostic, not promoted.
+Status: matched classic comparison packaged; `T0 positive_diagnostic`, not
+promoted.
 
 T73 keeps the source-aligned MasterRTL/RTL-Timer contract from T72, but
 changes the descriptor geometry after the matched comparison showed that
@@ -91,13 +92,20 @@ exposure, not as a pure one-parent ablation.
 - `artifacts_manifest.md`: committed package artifacts and expected live
   outputs.
 - `results_report.md`: live-screen conclusion and no-promotion caveat.
+- `matched_classic_comparison/`: reference-complete classic-versus-T73
+  comparison, summary figures, raw compact data, and Phase 03.1 viewer.
 - `tables/`: descriptor probe, collapse audit CSV, summary JSON, and method
   contract.
 - `figures/`: inspected descriptor-occupancy audit figure.
-- `visualizations/`: placeholder and requirements for post-run PPA viewers.
+- `visualizations/`: visualization policy note; the matched viewer lives under
+  `matched_classic_comparison/visualizations/`.
 
 ## Current Decision
 
-Keep T73 as a valid diagnostic live screen. Do not claim QD usefulness from
-T73 until a matched classic comparison on the reference-complete subset shows
-front/HV evidence and preserves classic-covered valid-PPA designs.
+Keep T73 as a useful positive diagnostic, not a promoted QD win. The
+reference-complete matched comparison preserves all `13/13` classic-covered
+problems and improves valid-PPA yield (`294` versus classic `257`) plus
+reference-beating candidate count (`3.69` mean versus `3.54`). Classic still
+wins the multi-objective read: mean HV `0.0926007600` versus T73
+`0.0890223082`, HV wins `8` versus `5`, and mean Pareto points `2.31` versus
+`1.46`.

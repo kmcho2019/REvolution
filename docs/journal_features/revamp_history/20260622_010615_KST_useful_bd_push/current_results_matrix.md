@@ -99,15 +99,18 @@ Real result packages:
 - `T72_source_aligned_rtl_cell_qd` measured source-aligned RTL-cell live
   package.
 - `T73_source_aligned_shape_density_qd` bounded source-aligned shape-density
-  quantile-cell live screen.
+  quantile-cell live screen and matched classic comparison.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
 near-classic result package: it passes the source-aligned runtime descriptor
 gate, completes the bounded live screen, preserves all `13/13`
 classic-covered designs, and trails classic mean HV by about `0.65%`.
-`T73_source_aligned_shape_density_qd` has a bounded live screen but is not yet
-a matched classic comparison.
+`T73_source_aligned_shape_density_qd` is not promoted after matched
+comparison: it preserves all `13/13` classic-covered problems and improves
+valid-PPA samples (`294` versus `257`), but classic wins mean HV
+(`0.0926007600` versus `0.0890223082`), HV wins (`8` versus `5`), and mean
+Pareto points (`2.31` versus `1.46`).
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

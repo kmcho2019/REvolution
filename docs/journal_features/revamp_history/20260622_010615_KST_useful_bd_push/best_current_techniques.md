@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T73 passes a bounded live screen but is not matched against classic yet; T72 is executable and near-classic on mean HV, but classic still wins front breadth. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T72 is near-classic on mean HV; T73 improves valid-PPA yield but loses classic on mean HV and Pareto breadth. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -38,9 +38,14 @@ shows mean occupied cells rising from `1.0769` for T72's live fixed grid to
 `5.6923` for the T73 local-quantile projection on the same T72 candidates.
 The bounded live screen completes and passes both registered validators, with
 `12/13` successful problems, `85` archive members, `624` generated candidates,
-and `294` PPA reports. It is not promoted yet because
-`Prob151_review2015_fsm` has zero archive members and no matched classic
-reference-complete comparison has been packaged.
+and `294` PPA reports. The matched reference-complete comparison preserves all
+`13/13` classic-covered problems and improves valid-PPA samples (`294` versus
+classic `257`) plus mean reference-beating candidates (`3.69` versus `3.54`).
+It is still not promoted because classic wins the multi-objective read: mean
+HV `0.0926007600` versus T73 `0.0890223082`, HV wins `8` versus `5`, and mean
+Pareto points `2.31` versus `1.46`. `Prob151_review2015_fsm` also has three
+candidate-PPA rows but zero live archive members, so it remains an
+archive-health caveat.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
@@ -74,7 +79,7 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73 | Package T73 matched comparison | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is executable but too cell-collapsed to beat classic front breadth, and T73 is the live quantile-cell follow-up. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73 | Design T74 hybrid | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic but front-collapsed, while T73 improves yield/occupancy but needs stronger front material. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |
@@ -98,4 +103,6 @@ TinyRocket examples, T70 shows the same open-Yosys path parses `19/19`
 sampled generated T67 candidates with both MasterRTL and RTL-Timer flows, and
 T71 defines a source-aligned 4 by 4 archive-cell map with `9/16` occupied
 cells. T72 evaluates those cells live and lands near classic, but exact T72 is
-not promoted because classic still wins the front-breadth metrics.
+not promoted because classic still wins the front-breadth metrics. T73 widens
+source-aligned archive occupancy and valid-yield signal, but its matched
+comparison still leaves classic ahead on mean HV and Pareto breadth.

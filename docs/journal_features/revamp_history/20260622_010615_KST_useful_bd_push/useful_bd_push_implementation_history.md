@@ -4148,3 +4148,37 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: T73 is a valid bounded live screen, not a promotion result. Next
   step is a matched classic comparison with reference-complete headline
   metrics and direct PPA-front/Phase 03.1 visualization packaging.
+
+## 2026-06-24T00:24:00Z - T73 Matched Classic Comparison
+
+- Generated a matched final-analysis scratch bundle under
+  `exp/useful_bd_push/t73_matched_classic_comparison_20260624_001300_UTC/final_analysis`
+  using explicit `--backend_run` mappings for T47 classic seed `1001` and T73
+  seed `1001`.
+- Packaged compact committed artifacts under
+  `techniques/T73_source_aligned_shape_density_qd/matched_classic_comparison/`:
+  aggregate/per-problem Pareto tables, `t73_ppa_completeness.csv`, compact PPA
+  candidate/reference CSVs, inspected summary PNGs, representative PPA panels,
+  and regeneration script.
+- Completeness gate: all `13/13` problems have valid reference PPA, classic
+  valid-PPA candidates, and T73 valid-PPA candidates. No problem is
+  diagnostic-only for missing reference PPA.
+- Result: T73 preserves all classic-covered problems and improves valid-PPA
+  samples (`294` versus classic `257`) plus mean reference-beating candidates
+  (`3.69` versus `3.54`).
+- Main blocker: classic remains the multi-objective winner. Mean HV is
+  `0.0926007600` for classic versus `0.0890223082` for T73, HV wins are
+  `8` versus `5`, and mean Pareto points are `2.31` versus `1.46`.
+- Caveat: `Prob151_review2015_fsm` has three T73 candidate-PPA rows in final
+  analysis, but the live archive summary failed and has zero archive members.
+  Treat it as candidate-PPA covered with an archive-health failure.
+- Generated the full Phase 03.1 viewer at
+  `matched_classic_comparison/visualizations/qd_ppa_viewer/` with both classic
+  and T73 PPA data. Strict non-Playwright validation passes, and
+  `screenshot.png` was manually inspected as nonblank and readable. The
+  Playwright interaction validator still reports known archive-hover bridge
+  caveats, recorded in `playwright_caveat.md`.
+- Decision: exact T73 is `T0 positive_diagnostic_not_promoted`, not T1/T2.
+  The next source-aligned spend should be a T74 hybrid that keeps T73's
+  shape-density yield/occupancy signal while restoring stronger front-slot or
+  archive-coupling pressure.

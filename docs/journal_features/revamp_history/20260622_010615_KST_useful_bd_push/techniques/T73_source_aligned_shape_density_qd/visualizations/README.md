@@ -1,24 +1,13 @@
 # T73 Visualizations
 
-No live PPA visualization exists yet because T73 has not been run.
-
-After the live run, this directory must include:
+The T73 visualization bundle is stored beside the matched comparison:
 
 ```text
-visualizations/qd_ppa_viewer/
-  index.html
-  manifest.json
-  datasets/*.json
-  validation.json
-  screenshot.png
-  README.md
-
-visualizations/direct_ppa_pareto/
-  index.html
-  metrics.json
-  screenshot.png
+matched_classic_comparison/visualizations/qd_ppa_viewer/
+matched_classic_comparison/figures/pareto_examples/
 ```
 
-The full Phase 03.1 viewer is mandatory if T73 produces archive artifacts.
-The direct PPA supplement is also mandatory for paper-readable area-power
-front inspection.
+The Phase 03.1 viewer includes `index.html`, `manifest.json`,
+`datasets/*.json`, `validation.json`, `screenshot.png`, and local notes. The
+direct PPA supplement is a set of paper-readable raw/gain PPA panels rather
+than a standalone HTML wrapper for this package.

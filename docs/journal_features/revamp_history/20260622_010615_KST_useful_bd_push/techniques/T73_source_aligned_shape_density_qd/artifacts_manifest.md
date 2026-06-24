@@ -1,6 +1,7 @@
 # T73 Artifacts Manifest
 
-Status: bounded live-screen package. Large live artifacts remain under `exp/`.
+Status: bounded live-screen and matched-comparison package. Large live and
+final-analysis artifacts remain under `exp/`.
 
 ## Committed Artifacts
 
@@ -21,6 +22,7 @@ Status: bounded live-screen package. Large live artifacts remain under `exp/`.
 | `figures/t73_descriptor_occupancy_audit.png` | Inspected occupancy figure from the T72 replay audit. |
 | `tools/audit_t73_axes_from_t72.py` | Reproduction script for the audit tables and figure. |
 | `tools/package_t73_live_screen.py` | Reproduction script for compact live-screen CSV/JSON summaries. |
+| `matched_classic_comparison/` | Reference-complete matched classic comparison, compact data, figures, and Phase 03.1 viewer. |
 
 ## Source Run Inputs
 
@@ -28,13 +30,18 @@ Status: bounded live-screen package. Large live artifacts remain under `exp/`.
 | --- | --- |
 | `exp/useful_bd_push/t72_source_aligned_rtl_cell_20260623_204847_UTC/hard_tuning/source_aligned_rtl_cell_qd/seed_1001/openai_gpt-oss-120b` | Source T72 archive events used for the pre-run descriptor audit. |
 | `exp/useful_bd_push/t73_source_aligned_shape_density_20260623_232844_UTC/hard_tuning` | Completed T73 bounded live screen and validator reports. |
+| `exp/useful_bd_push/t73_matched_classic_comparison_20260624_001300_UTC/final_analysis` | Scratch final-analysis bundle for matched classic-versus-T73 metrics. |
 
-## Remaining Expected Artifacts
+## Visualization Status
 
-- `visualizations/direct_ppa_pareto/`;
-- `visualizations/qd_ppa_viewer/`;
-- matched classic comparison package;
-- visual inspection notes for every generated plot and viewer screenshot.
+The matched comparison package includes:
+
+- compact direct PPA/Pareto panels under
+  `matched_classic_comparison/figures/pareto_examples/`;
+- the full Phase 03.1 viewer under
+  `matched_classic_comparison/visualizations/qd_ppa_viewer/`;
+- strict non-Playwright viewer validation `PASS`;
+- manual screenshot inspection notes.
 
 Keep raw run directories and generated final-analysis scratch bundles under
 `exp/useful_bd_push/`.

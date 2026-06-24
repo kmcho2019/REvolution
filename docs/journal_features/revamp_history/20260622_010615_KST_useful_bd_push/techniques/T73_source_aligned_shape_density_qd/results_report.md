@@ -2,11 +2,11 @@
 
 ## Current Tier
 
-`screening_diagnostic_not_promoted`.
+`T0 positive_diagnostic_not_promoted`.
 
-T73 has a valid bounded live vLLM screen, but it must not be used as evidence
-that QD/MAP-Elites beats classic REvolution until matched classic metrics are
-packaged on the reference-complete subset.
+T73 now has a reference-complete matched classic comparison. It is useful
+evidence for the source-aligned RTL-native lane because it preserves coverage
+and improves valid-PPA yield, but it is not a promoted QD/MAP-Elites win.
 
 ## What Is Answered So Far
 
@@ -58,13 +58,43 @@ The best-score summary is:
 | `Prob151_review2015_fsm` | failed |  | `0` |
 | `Prob153_gshare` | success | `0.135603` | `13` |
 
-## What Is Not Answered
+## Matched Classic Comparison
 
-The live screen does not prove better PPA, better HV, or better QD utility.
-It has not yet been compared against matched classic REvolution with
-reference-complete headline metrics. Because `Prob151_review2015_fsm` has zero
-archive members, the next comparison must report both all-problem and
-successful-problem subsets instead of hiding the failure.
+The matched comparison package lives at:
+
+```text
+matched_classic_comparison/
+```
+
+It compares T73 against the T47 classic seed `1001` run on the same
+`13`-problem hard/tuning subset. All problems have valid reference PPA and
+both methods have at least one valid candidate-PPA row, so there are no
+missing-reference headline exclusions.
+
+Primary metrics:
+
+| Metric | Classic | T73 |
+| --- | ---: | ---: |
+| Mean HV | `0.0926007600` | `0.0890223082` |
+| HV wins | `8` | `5` |
+| Mean Pareto points | `2.31` | `1.46` |
+| Mean reference-beating candidates | `3.54` | `3.69` |
+| Valid PPA samples | `257` | `294` |
+
+The mean HV loss is about `3.86%`, outside the strict `2%` near-classic HV
+threshold. T73 therefore stays below promotion even though it improves valid
+PPA yield and reference-beating count.
+
+## Remaining Caveats
+
+The matched comparison does not prove better PPA, better HV, or better QD
+utility. It shows that the source-aligned shape-density cells are executable
+and yield-positive, while classic still owns the multi-objective Pareto read.
+
+`Prob151_review2015_fsm` is a special caveat: final analysis finds three T73
+candidate-PPA rows, but the live archive summary failed and has zero archive
+members. Treat it as a preserved candidate-PPA problem with an archive-health
+failure, not as a clean archive success.
 
 Operator caveat: the run disables QD crossover/fusion with
 `qd_two_parent_probability=0.0`, but keeps the inherited
@@ -81,7 +111,8 @@ projections, and makes the descriptor-collapse fix visually clear.
 
 ## Next Required Step
 
-Package a matched classic comparison with reference-complete headline metrics.
-Promote T73 only if it preserves classic-covered designs and improves
-front-material or HV/HV-AUC evidence without relying on missing-reference or
-duplicate diversity artifacts.
+Do not rerun exact T73 as-is. The next source-aligned RTL-native follow-up
+should keep the valid-yield and occupancy gains, but change archive coupling
+so extra cells create more front material. A T74 hybrid should combine T73
+shape-density cells with a stronger front-slot lane, then compare directly
+against T72/T73/classic on the same reference-complete subset.

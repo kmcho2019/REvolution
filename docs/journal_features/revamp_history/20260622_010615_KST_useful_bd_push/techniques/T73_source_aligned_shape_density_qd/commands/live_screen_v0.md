@@ -197,3 +197,46 @@ Package against:
 The package must include direct raw PPA-front plots, `ppa_completeness.csv`,
 descriptor-health summaries, parent counters, and the Phase 03.1 viewer if
 archive artifacts exist.
+
+## Matched Classic Comparison
+
+Observed matched package run:
+
+```bash
+uv run python scripts/report_final_analysis_bundle.py \
+  --backend_run classic_revolution=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
+  --backend_run source_aligned_shape_density_qd=exp/useful_bd_push/t73_source_aligned_shape_density_20260623_232844_UTC/hard_tuning/source_aligned_shape_density_qd/seed_1001 \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T72_source_aligned_rtl_cell_qd/tables/hard_tuning_subset.yaml \
+  --output-dir exp/useful_bd_push/t73_matched_classic_comparison_20260624_001300_UTC/final_analysis
+```
+
+Compact package:
+
+```bash
+uv run python docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T73_source_aligned_shape_density_qd/matched_classic_comparison/tools/package_t73_matched_summary.py
+```
+
+Phase 03.1 viewer:
+
+```bash
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root exp/useful_bd_push/t73_matched_classic_comparison_20260624_001300_UTC \
+  --backend_run classic_revolution=exp/useful_bd_push/t47_t26_contract_probe_20260622_203146_UTC/hard_tuning/classic_revolution/seed_1001 \
+  --backend_run source_aligned_shape_density_qd=exp/useful_bd_push/t73_source_aligned_shape_density_20260623_232844_UTC/hard_tuning/source_aligned_shape_density_qd/seed_1001 \
+  --archive_source_backend source_aligned_shape_density_qd \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T72_source_aligned_rtl_cell_qd/tables/hard_tuning_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T73_source_aligned_shape_density_qd/matched_classic_comparison/visualizations/qd_ppa_viewer \
+  --strict
+```
+
+Validation:
+
+```bash
+uv run python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T73_source_aligned_shape_density_qd/matched_classic_comparison/visualizations/qd_ppa_viewer \
+  --strict
+```
+
+Observed decision: `T0 positive_diagnostic_not_promoted`. T73 preserves
+matched valid-PPA coverage and improves valid-PPA samples, but classic wins
+mean HV and Pareto breadth.
