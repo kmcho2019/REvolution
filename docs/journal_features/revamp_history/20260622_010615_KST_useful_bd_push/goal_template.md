@@ -27,8 +27,9 @@ occupancy, yield-only gains, or defaulted-reference aggregates.
 
 Current priority: finish the active useful-BD packages and
 presentations/20260623_report/. T75 is packaged as a positive diagnostic, not
-a promotion. Next, pre-register a fixed-total-budget shape ablation or open
-the verified MasterRTL pretrained lane.
+a promotion. T76 partially verifies MasterRTL tree artifacts. Next,
+pre-register a fixed-total-budget shape ablation or run generated-candidate
+MasterRTL tree-leaf/margin variation before any live pretrained-BD spend.
 
 Metrics: never use average fitness or average best PPA as primary evidence.
 Use reference-complete paired subsets for headline classic-vs-QD claims.

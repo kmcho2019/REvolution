@@ -4330,3 +4330,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   small front-slot fraction tweak. The next move should be the
   fixed-total-budget shape ablation or the verified MasterRTL pretrained
   tree-leaf/margin embedding lane.
+
+## 2026-06-24T03:55:00Z - T76 MasterRTL Pretrained Model Gate
+
+- Added `techniques/T76_masterrtl_pretrained_model_gate/` as a verification
+  package, not a live QD result.
+- Ran the verifier with the existing isolated environment:
+  `exp/venvs/rtl_native_verify/bin/python
+  techniques/T76_masterrtl_pretrained_model_gate/tools/verify_masterrtl_pretrained_models.py`.
+- MasterRTL commits and hashes were recorded for all saved models at commit
+  `5bccf38f8db7bb511a793a709863e7cb1b333ab5`; RTL-Timer inventory was recorded
+  at commit `206ff4078368c251d2fafaffcc648282c68316f1`.
+- XGBoost Area, Power, WNS, and TNS heads load through the upstream
+  MasterRTL preprocess contract with asserted feature lengths `14`, `17`,
+  `16`, and `16`.
+- Direct upstream MasterRTL smoke from `ML_model/infer/infer.py` reports
+  `Predicted Power: [0.]`; the T76 script verifies all four heads and records
+  that TinyRocket XGBoost predictions and leaf IDs are all-zero/one-leaf.
+- The RF timing artifact does not load with plain `pickle`
+  (`UnpicklingError`), but it loads with `joblib` as a
+  `RandomForestRegressor` with 8 input features, 50 trees, nonconstant
+  predictions, and `741` unique sampled leaf IDs.
+- RTL-Timer has model scripts and TinyRocket feature/label artifacts, but no
+  confirmed packaged pretrained checkpoint under `RTL_pwr_model` or
+  `RTL_timing_model`.
+- Decision: T76 is `T0 verification_gate_partial`. It opens the MasterRTL
+  tree-leaf/margin lane, but any live pretrained-model BD still requires a
+  generated-candidate variation gate and explicit no-PPA-leakage descriptor
+  contract.

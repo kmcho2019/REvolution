@@ -61,10 +61,10 @@ This interpretation changes the roadmap in three ways:
 2. Add a fixed-total-budget shape ablation next, because `12 x 3` may be
    too shallow for archive maturation. Compare whether deeper shapes help QD
    more than classic, not merely whether deeper runs help in general.
-3. Add a verification-gated MasterRTL/RTLTimer pretrained lane. Current
-   RTL-native live methods use source-aligned extractor/count features; do not
-   claim pretrained model use until weight loading, schema checks, and upstream
-   inference reproduction are verified.
+3. Continue the verification-gated MasterRTL/RTLTimer pretrained lane. T76
+   confirms MasterRTL tree artifacts can be loaded and hashed in the isolated
+   env, but live pretrained-model BD claims still require generated-candidate
+   variation and upstream parity checks.
 
 The current priority milestone is `presentations/20260623_report/`. It must
 prepare a report and Markdown deck answering whether diversity matters for
@@ -198,7 +198,7 @@ Use these as starting evidence and as warnings against repeated mistakes:
    too little depth for archive cells to mature?
 8. Can verified pretrained MasterRTL tree-model outputs or tree-leaf
    embeddings improve RTL-native BDs beyond raw source-aligned graph/count
-   features?
+   features, once generated-candidate variation is proven?
 
 ## Effectiveness Tiers
 

@@ -123,6 +123,32 @@ Area, Power, WNS, TNS, and RF models, then combine them with raw RTL-native
 structure. Treat scalar predicted PPA-risk axes carefully so they do not become
 hidden PPA-proxy descriptors.
 
+T76 partially closes this gate. It confirms that the MasterRTL XGBoost heads
+and RF model artifacts exist, hashes them, asserts the shipped feature-schema
+lengths, and loads the RF model through `joblib`. It does not complete the gate
+because the shipped TinyRocket XGBoost example is all-zero and one-design, and
+because RTLTimer still lacks a confirmed packaged pretrained checkpoint in the
+local clone. The next MasterRTL step should measure generated-candidate
+variation in tree leaves or margins before any live vLLM spend.
+
+## Latest Discussion Review
+
+The latest discussion adds two recommendations that should be treated as
+accepted, but not overclaimed:
+
+| Recommendation | Assessment |
+| --- | --- |
+| Classic strength does not falsify QD/MAP-Elites. | Accepted. It means RTL PPA evolution needs constrained, PPA-competitive diversity rather than generic archive coverage. |
+| `12 x 3` may be biased against QD. | Plausible and now roadmap-worthy, but not proven. Test equal-candidate budget shapes before changing headline protocol. |
+| Choose medium-validity, front-variable designs for screens. | Accepted. This is screening discipline, not cherry-picking, if frozen before outcomes. |
+| Use MasterRTL pretrained tree artifacts as an encoder. | Accepted only as a verification-gated lane. Use tree leaves/margins plus RTL structure, not direct scalar PPA predictions. |
+| Treat T75/T76 as positive enough to launch broad claims. | Rejected. They are useful diagnostics and gates, not classic-beating evidence. |
+
+The current evaluation of the goal remains positive but narrower: the goal is
+not to prove that any diversity measure helps. It is to identify which
+front-preserving and RTL-native diversity mechanisms can survive the strong
+classic hill-climbing baseline under fair, reference-complete comparisons.
+
 ## Roadmap Changes Accepted
 
 - Treat T75 as packaged positive diagnostic evidence, not a promotion.
@@ -130,6 +156,8 @@ hidden PPA-proxy descriptors.
   check.
 - Add a MasterRTL-pretrained verification and tree-leaf embedding lane before
   spending live budget on "pretrained MasterRTL" QD claims.
+- Add a generated-candidate MasterRTL leaf/margin variation gate after T76 and
+  before any live pretrained-model BD run.
 - Use discriminative, reference-complete, medium-validity designs for budget
   and descriptor screens.
 - Keep headline claims on reference-complete paired subsets.

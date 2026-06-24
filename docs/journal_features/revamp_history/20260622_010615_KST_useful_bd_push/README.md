@@ -28,16 +28,16 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T75_shape_density_front_pressure_qd/`
-  (`T0 positive_diagnostic_not_promoted`; preserves `13/13`, improves valid
-  PPA versus classic and mean HV versus T73/T74, but classic still wins mean
-  HV and Pareto breadth).
+  `techniques/T76_masterrtl_pretrained_model_gate/`
+  (`T0 verification_gate_partial`; MasterRTL saved tree artifacts load in the
+  isolated env, but candidate-output variation and upstream parity still gate
+  any live pretrained-model BD claim).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  pre-register the fixed-total-budget shape ablation or the verified
-  MasterRTL pretrained tree-embedding lane; do not keep nudging front-slot
+  run the fixed-total-budget shape ablation or pre-register a generated-candidate
+  MasterRTL tree-leaf/margin variation gate; do not keep nudging front-slot
   fraction alone.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
@@ -47,25 +47,24 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T74_shape_density_front_slot_hybrid_qd/matched_classic_comparison/figures/t74_hv_delta_by_problem.png`
-  (13-problem matched classic-vs-T74 HV-delta summary).
+  `techniques/T75_shape_density_front_pressure_qd/matched_classic_comparison/figures/t75_hv_delta_by_problem.png`
+  (13-problem matched classic-vs-T75 HV-delta summary).
 - Most recent direct PPA HTML viewer:
   `techniques/T72_source_aligned_rtl_cell_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
   screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T74_shape_density_front_slot_hybrid_qd/matched_classic_comparison/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T75_shape_density_front_pressure_qd/matched_classic_comparison/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
-  raw/improvement/normalized PPA modes, raw A-P front mode, and screenshot;
-  browser-hover caveat is documented in that package).
+  raw/improvement/normalized PPA modes, raw A-P front mode, and screenshot).
 - Current Phase 03.1 visualization contract:
   `phase_03_1_visualization_contract.md` (every completed live QD technique
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T74_shape_density_front_slot_hybrid_qd/` (seed-1001 hard/tuning
-  source-aligned shape-density plus near-front two-parent gate screen with
-  direct PPA panels, Phase 03.1 viewer, and matched comparison package).
+  `techniques/T75_shape_density_front_pressure_qd/` (seed-1001 hard/tuning
+  source-aligned shape-density front-pressure screen with direct PPA panels,
+  Phase 03.1 viewer, and matched comparison package).
 - Active RTL-native descriptor packages:
   `techniques/T15_masterrtl_sog_bd/` (`T0 structural_proxy_not_promoted`
   Yosys-SOG proxy with zero lowering failures) and
@@ -78,8 +77,10 @@ Start here when resuming the active goal.
   none beats classic headline PPA-front metrics. T68/T69/T70/T71 are the
   source-verification and descriptor-design bridge; T72 is the first live
   source-aligned comparison, but exact T72 remains not promoted. T73 improves
-  valid-PPA yield but not front breadth, T74 regresses, and T75 is a positive
-  diagnostic that improves over T73/T74 without beating classic.
+  valid-PPA yield but not front breadth, T74 regresses, T75 is a positive
+  diagnostic that improves over T73/T74 without beating classic, and T76
+  verifies MasterRTL pretrained model artifacts before any tree-region BD
+  claim.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -218,6 +219,7 @@ Start here when resuming the active goal.
 | `T73` | `T73_source_aligned_shape_density_qd` | Completed `T0 positive_diagnostic_not_promoted`; preserves matched coverage and improves valid-PPA yield, but classic wins mean HV and Pareto breadth. |
 | `T74` | `T74_shape_density_front_slot_hybrid_qd` | Completed `T0 diagnostic_regression_not_promoted`; preserves reference-complete coverage, but loses classic/T73 on headline HV and valid-PPA evidence. |
 | `T75` | `T75_shape_density_front_pressure_qd` | Completed `T0 positive_diagnostic_not_promoted`; improves valid-PPA yield and beats T73/T74 mean HV, but classic still wins mean HV and Pareto breadth. |
+| `T76` | `T76_masterrtl_pretrained_model_gate` | Completed `T0 verification_gate_partial`; MasterRTL XGBoost/RF assets load, but generated-candidate variation is still required before a live pretrained-model BD. |
 
 ## Validity-Gate Note
 

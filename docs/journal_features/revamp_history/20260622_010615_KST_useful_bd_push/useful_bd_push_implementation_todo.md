@@ -188,12 +188,14 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Launch the bounded T72 hard/tuning live screen only after vLLM preflight,
       then package PPA completeness, direct PPA fronts, Phase 03.1 viewer, and
       tier decision.
-- [ ] Add a MasterRTL pretrained verification package before any live
-      pretrained-model BD claim: model hashes, upstream inference reproduction,
-      internal loader parity, feature-schema assertions, and candidate-output
-      variation.
-- [ ] If MasterRTL verification passes, pre-register a tree-leaf or margin
-      embedding BD that combines pretrained tree-model regions with
+- [x] Add a MasterRTL pretrained verification package before any live
+      pretrained-model BD claim: model hashes, direct upstream Power smoke,
+      internal loader checks, feature-schema assertions, and explicit remaining
+      candidate-output variation blocker.
+- [ ] Run a generated-candidate MasterRTL tree-leaf or margin variation gate
+      before any live pretrained-model BD spend.
+- [ ] If generated-candidate variation passes, pre-register a tree-leaf or
+      margin embedding BD that combines pretrained tree-model regions with
       source-aligned RTL structure without using final PPA as an in-loop
       descriptor.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and

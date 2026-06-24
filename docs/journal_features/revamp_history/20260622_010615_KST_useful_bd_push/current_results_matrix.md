@@ -104,6 +104,8 @@ Real result packages:
   near-front-gated single-thought pairing follow-up.
 - `T75_shape_density_front_pressure_qd` completed direct front-slot pressure
   follow-up.
+- `T76_masterrtl_pretrained_model_gate` completed MasterRTL pretrained
+  model-artifact verification gate.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -122,6 +124,13 @@ comparisons, improves valid-PPA samples versus classic (`274` versus `257`),
 and improves mean HV versus T73/T74, but classic still wins mean HV
 (`0.0926007600` versus `0.0899974770`), mean Pareto points (`2.31` versus
 `1.62`), and mean reference-beating count (`3.54` versus `3.08`).
+T76 is not a live QD result. It verifies that MasterRTL XGBoost Area, Power,
+WNS, and TNS heads load with asserted feature lengths, and that the RF timing
+model loads with `joblib` and nonconstant leaf IDs on saved features. It also
+records the remaining blockers: TinyRocket XGBoost outputs are all zero, and
+the local RTL-Timer clone has no confirmed packaged pretrained checkpoint.
+Treat this as a gate toward generated-candidate tree-leaf or margin
+descriptors, not a promotion claim.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but
