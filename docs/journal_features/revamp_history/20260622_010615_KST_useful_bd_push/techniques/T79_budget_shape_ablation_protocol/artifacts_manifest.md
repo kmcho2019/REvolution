@@ -11,6 +11,8 @@
 | `tables/t79_deferred_candidates.csv` | Deferred candidates and exclusion reasons. |
 | `tables/t79_budget_shape_matrix.csv` | Six planned method/shape arms. |
 | `tables/t79_method_contract.json` | Machine-readable pre-run contract. |
+| `tables/latest_live_run_root.txt` | Current live run root for T79 packaging. |
+| `tables/t79_live_arm_status.csv` | Status ledger for completed or active live arms. |
 | `tables/preflight_models_20260624_042959_UTC.json` | vLLM `/v1/models` response. |
 | `tables/preflight_models_20260624_042959_UTC.txt` | Human-readable preflight summary. |
 | `figures/t79_budget_subset_selection.png` | Frozen subset selection plot. |

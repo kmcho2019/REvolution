@@ -4476,3 +4476,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Status at check-in: in progress. The terminal progress bar reported `1/8`
   completed after about `9:13` runtime. No result claim is made until the arm
   finishes and the generated outputs are validated.
+
+## 2026-06-24T05:02:00Z - T79 Classic 12x3 Arm Completed
+
+- The first T79 live arm finished with exit code `0`:
+  `classic_revolution_12x3`, seed `1001`, eight frozen designs.
+- Terminal runtime: `1250.64` seconds.
+- Summary:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/classic_revolution_12x3/seed_1001/openai_gpt-oss-120b/20260624_043844_revolution_summary_results.txt`.
+- Scheduler telemetry:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/classic_revolution_12x3/seed_1001/openai_gpt-oss-120b/20260624_043844_revolution_scheduler_telemetry.json`.
+- Quick inventory check: all `8/8` problems have `success` rows in the summary
+  results, each frozen problem has `48` sample directories, and each problem
+  has a final `*_summary.json`.
+- Added `tables/t79_live_arm_status.csv` and updated the T79 package status to
+  `one_arm_complete`.
+- Decision: no budget-shape or QD claim is made from this arm alone. Continue
+  with the matched T79 QD `12x3` arm before comparing methods.

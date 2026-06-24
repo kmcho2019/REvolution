@@ -2,11 +2,13 @@
 
 ## Tier Decision
 
-`pre_registered_not_run`.
+`one_arm_complete`.
 
-T79 is a protocol package, not a result package. It freezes the subset,
-budget-shape matrix, methods, endpoint preflight, and reporting gates before
-any T79 live outcome.
+T79 is still primarily a protocol package. It freezes the subset,
+budget-shape matrix, methods, endpoint preflight, and reporting gates. The
+classic `12x3` arm has now completed, but no comparison result is claimed
+until the matched QD and deeper-shape arms finish or a blocked continuation is
+recorded.
 
 ## Pre-Run Evidence
 
@@ -16,7 +18,7 @@ any T79 live outcome.
 | Equal-candidate shape matrix | complete |
 | vLLM preflight | complete |
 | Command parser/task-count validation | complete |
-| Live arms | not run |
+| Live arms | `1/6` complete |
 | Final analysis bundle | pending |
 | Direct PPA figures | pending |
 | Phase 03.1 viewer | pending for completed QD arms |
@@ -33,10 +35,21 @@ The dry parser/task-count validator reports:
 T79 command matrix parses and maps to 8 tasks per arm.
 ```
 
+## Completed Arm Inventory
+
+| Arm | Status | Problems | Samples/Problem | Wall Seconds | Peak Busy Workers |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `classic_revolution_12x3` | complete | `8/8` | `48` | `1250.64` | `18` |
+
+The completed arm lives under
+`exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live`.
+The tracked arm ledger is `tables/t79_live_arm_status.csv`.
+
 ## Non-Claims
 
 No budget-shape result is claimed yet. T79 does not prove that deeper budgets
-help QD. It only makes the live test auditable.
+help QD, and the completed classic arm alone does not compare QD against
+classic. It only makes the live test auditable.
 
 ## Required Completion Package
 
