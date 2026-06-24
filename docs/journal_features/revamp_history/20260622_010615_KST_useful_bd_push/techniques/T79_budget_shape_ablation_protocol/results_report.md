@@ -6,9 +6,9 @@
 
 T79 is still primarily a protocol package. It freezes the subset,
 budget-shape matrix, methods, endpoint preflight, and reporting gates. The
-matched `12x3` pair and the classic `8x5` arm have completed, with the QD
-`8x5` arm running. No budget-shape result is claimed until all matched shape
-pairs finish or a blocked continuation is recorded.
+matched `12x3` and `8x5` pairs have completed. No budget-shape result is
+claimed until all matched shape pairs finish or a blocked continuation is
+recorded.
 
 ## Pre-Run Evidence
 
@@ -18,7 +18,7 @@ pairs finish or a blocked continuation is recorded.
 | Equal-candidate shape matrix | complete |
 | vLLM preflight | complete |
 | Command parser/task-count validation | complete |
-| Live arms | `3/6` complete, `1/6` running |
+| Live arms | `4/6` complete |
 | Final analysis bundle | pending |
 | Direct PPA figures | pending |
 | Phase 03.1 viewer | pending for completed QD arms |
@@ -42,7 +42,7 @@ T79 command matrix parses and maps to 8 tasks per arm.
 | `classic_revolution_12x3` | complete | `8/8` | `48` | `1250.64` | `18` |
 | `shape_density_front_pressure_qd_12x3` | complete | `8/8` | `48` | `1217.14` | `18` |
 | `classic_revolution_8x5` | complete | `8/8` | `48` | `1377.83` | `23` |
-| `shape_density_front_pressure_qd_8x5` | running | pending | `48` | pending | pending |
+| `shape_density_front_pressure_qd_8x5` | complete | `8/8` | `48` | `1589.42` | `18` |
 
 The completed arm lives under
 `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live`.
@@ -57,11 +57,18 @@ uv run python scripts/validate_pareto_front_run.py ... --classic-mode classic_re
 uv run python scripts/validate_single_thought_operator_run.py ... --classic-mode shape_density_front_pressure_qd_12x3 --eoh-mode shape_density_front_pressure_qd_12x3 --unified-mode shape_density_front_pressure_qd_12x3 --require-full-subset
 ```
 
+The completed `8x5` pair passes:
+
+```text
+uv run python scripts/validate_pareto_front_run.py ... --classic-mode classic_revolution_8x5 --pareto-qd-mode shape_density_front_pressure_qd_8x5 --require-full-subset
+uv run python scripts/validate_single_thought_operator_run.py ... --classic-mode shape_density_front_pressure_qd_8x5 --eoh-mode shape_density_front_pressure_qd_8x5 --unified-mode shape_density_front_pressure_qd_8x5 --require-full-subset
+```
+
 ## Non-Claims
 
 No budget-shape result is claimed yet. T79 does not prove that deeper budgets
-help QD, and the completed `12x3` pair alone does not answer whether deeper
-equal-candidate runs help QD more than classic. It only makes the live test
+help QD, and the completed `12x3`/`8x5` pairs do not answer the deeper-shape
+question without the registered `6x7` pair. They only make the live test
 auditable.
 
 ## Required Completion Package
