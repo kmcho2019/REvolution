@@ -54,6 +54,13 @@ falls to `0.0851926237`, HV wins drop to `1`, and valid-PPA samples drop to
 `237`. T75 is the active next check because it changes front creation directly
 with `qd_front_slot_lane_fraction=0.30` and one-parent-only prompts.
 
+The current strategic correction is that classic should be treated as a strong
+small-budget hill climber, not a weak baseline waiting for generic diversity to
+beat it. The next promoted idea should show that QD preserves
+PPA-competitive RTL implementation families while keeping classic-like
+exploitation pressure. A fixed-total-budget shape ablation is now a required
+roadmap item before claiming that `12 x 3` is the right or wrong budget for QD.
+
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
 generator could refine successful parent RTL. It improves aggregate valid-PPA
@@ -81,6 +88,16 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 | --- | --- | --- | --- |
 | MasterRTL/Yosys-SOG | RTL operator graph, control/dataflow shape, arithmetic structure, muxing, pipeline/register topology, module interaction, and signal dependencies. | Define archive cells for distinct RTL implementation families before synthesis. | Strong methodology lane; needs tighter coupling to front creation or repair. |
 | RTLTimer | Timing-risk and path-structure morphology: likely critical-path depth, fanout, pipeline distance, control gating, and timing-sensitive operator chains. | Preserve timing-risk families while the optimizer still chases PPA. | Good reviewer-readable BD candidate; current runs are diagnostic, not promoted. |
+
+## Pretrained Model Caveat
+
+Current live RTL-native descriptors use source-aligned extractor/count
+features, not verified pretrained MasterRTL or RTLTimer inference. MasterRTL
+saved tree models exist locally, including area, power, WNS, TNS, and RF model
+files, but a paper-facing pretrained-model claim still requires upstream
+inference reproduction and feature-schema checks. If that gate passes, the most
+promising next BD is a hybrid of raw RTL-native structure with MasterRTL
+tree-leaf or margin embeddings rather than direct scalar predicted-PPA axes.
 
 ## Technique Lanes
 

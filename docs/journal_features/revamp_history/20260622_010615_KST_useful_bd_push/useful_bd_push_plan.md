@@ -41,9 +41,30 @@ The desired end state is one of:
 - Visualization/reporting policy: `visualization_reporting_policy.md`
 - Local vLLM runtime guide: `vllm_runtime_guide.md`
 - Continuing idea backlog: `idea_backlog.md`
+- Consolidated strategy note: `research_strategy_recommendations.md`
 - Technique packages: `techniques/<technique_slug>/`
 
 ## Current Research State
+
+The strategic interpretation is now explicit: classic REvolution is a strong
+small-budget hill climber, and naive MAP-Elites is unlikely to beat it simply
+by spreading samples across generic descriptor cells. The working claim should
+be narrower and stronger: useful diversity for RTL PPA evolution means
+preserving PPA-competitive RTL implementation families under validity
+constraints. QD should act as auxiliary memory and front-preserving pressure
+beside classic-like exploitation, not as a wholesale replacement for it.
+
+This interpretation changes the roadmap in three ways:
+
+1. Finish and package the active T75 result honestly before opening another
+   branch of the search.
+2. Add a fixed-total-budget shape ablation after T75, because `12 x 3` may be
+   too shallow for archive maturation. Compare whether deeper shapes help QD
+   more than classic, not merely whether deeper runs help in general.
+3. Add a verification-gated MasterRTL/RTLTimer pretrained lane. Current
+   RTL-native live methods use source-aligned extractor/count features; do not
+   claim pretrained model use until weight loading, schema checks, and upstream
+   inference reproduction are verified.
 
 The current priority milestone is `presentations/20260623_report/`. It must
 prepare a report and Markdown deck answering whether diversity matters for
@@ -173,6 +194,11 @@ Use these as starting evidence and as warnings against repeated mistakes:
    fitness or average best PPA?
 6. Which benchmark subset best screens for differentiated PPA/front behavior
    without cherry-picking?
+7. Does the current `12 x 3` budget shape bias results against QD by leaving
+   too little depth for archive cells to mature?
+8. Can verified pretrained MasterRTL tree-model outputs or tree-leaf
+   embeddings improve RTL-native BDs beyond raw source-aligned graph/count
+   features?
 
 ## Effectiveness Tiers
 
@@ -237,6 +263,11 @@ deserves deeper analysis and a method package.
   `exp/useful_bd_push/envs/<technique>/<timestamp>/` or clone the external repo
   under `exp/useful_bd_push/sources/<technique>/`; use submodules only when a
   source repo must become versioned reproducibility material.
+- MasterRTL/RTLTimer paper-facing claims require model-path honesty. Extractor
+  features may be described as source-aligned RTL-native structural descriptors;
+  pretrained-model descriptors require recorded commits, file hashes,
+  successful weight loading, feature-schema assertions, and upstream inference
+  reproduction before any live QD result can claim them.
 - New code must include docstrings for non-obvious helpers and keep docs,
   comments, and report guidance updated with each implementation batch.
 - Figures and reports must follow `visualization_reporting_policy.md`; inspect

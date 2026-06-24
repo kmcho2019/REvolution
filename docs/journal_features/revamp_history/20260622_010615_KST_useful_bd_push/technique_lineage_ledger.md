@@ -26,6 +26,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T59 failed promotion; the next method must change front-slot creation or use a secondary archive lane. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Short fail-pool feedback was insufficient; escalate only with measured source-level repair or role-separated emitters. |
 | `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T75 is the active follow-up: stronger local-front pressure over T73 shape-density cells after T74's rare pair gating regressed. |
+| `L8` | Budget and benchmark shape | Test whether the evaluation structure is too wide/shallow or too saturated for QD to show value. | After T75 packaging, pre-register equal-candidate budget-shape ablations on a reference-complete medium-validity subset. |
 
 ## Lineage Graph
 
@@ -125,6 +126,11 @@ flowchart LR
     T75[T75 shape-density front pressure]
   end
 
+  subgraph budgetshape[L8 budget and benchmark shape]
+    BAbl[Budget-shape ablation]
+    DSet[Discriminative design set]
+  end
+
   prior --> T01
   prior --> T06
   prior --> T22
@@ -203,6 +209,8 @@ flowchart LR
   T72 --> T73
   T73 --> T74
   T74 --> T75
+  T75 --> BAbl
+  DSet --> BAbl
   T39 --> enc
   T17 --> T12
   T17 --> T18

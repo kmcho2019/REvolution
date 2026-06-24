@@ -19,6 +19,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       full `qd_ppa_viewer/` bundle and the `direct_ppa_pareto/` supplement.
 - [x] Add short `best_current_techniques.md` operational ranking and update
       rules.
+- [x] Add `research_strategy_recommendations.md` consolidating the classic
+      strength, QD framing, budget-shape, design-set, and MasterRTL/RTLTimer
+      model-verification feedback.
 - [x] Add reference-complete direct-comparison rule and per-run
       `ppa_completeness.csv` schema.
 - [x] Elevate MasterRTL/RTLTimer-style RTL-native descriptors as the next
@@ -77,6 +80,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Add passive archive scoring for classic and every QD method.
 - [ ] Add global PPA hypervolume, Pareto-cell count, Pareto spread, unique
       front family, QD-score AUC, coverage AUC, and HV AUC metrics.
+- [ ] Pre-register and run a fixed-total-budget shape ablation after T75 is
+      packaged, comparing classic and the best QD arm under at least `12 x 3`,
+      `8 x 5`, and `6 x 7`.
+- [ ] Freeze a reference-complete, medium-validity budget-ablation subset with
+      visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live
       methods.
 - [x] Add a raw area-power Pareto-front mode to the Phase 03.1 HTML viewer and
@@ -180,6 +188,14 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Launch the bounded T72 hard/tuning live screen only after vLLM preflight,
       then package PPA completeness, direct PPA fronts, Phase 03.1 viewer, and
       tier decision.
+- [ ] Add a MasterRTL pretrained verification package before any live
+      pretrained-model BD claim: model hashes, upstream inference reproduction,
+      internal loader parity, feature-schema assertions, and candidate-output
+      variation.
+- [ ] If MasterRTL verification passes, pre-register a tree-leaf or margin
+      embedding BD that combines pretrained tree-model regions with
+      source-aligned RTL structure without using final PPA as an in-loop
+      descriptor.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

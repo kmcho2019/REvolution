@@ -4268,3 +4268,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: T75 is `pending_registered`. It is not a result claim. Run only
   after vLLM preflight, then package a reference-complete matched comparison
   with direct PPA figures and Phase 03.1 viewer before assigning any tier.
+
+## 2026-06-24T03:05:00Z - Strategy Feedback Integrated
+
+- Added `research_strategy_recommendations.md` to consolidate the current
+  classic-vs-QD discussion into an explicit roadmap note.
+- Accepted the main strategic correction: classic REvolution is a strong
+  small-budget hill climber, so the paper-facing claim should not be generic
+  MAP-Elites superiority. The stronger claim is that useful RTL diversity
+  means preserving PPA-competitive implementation families under validity
+  constraints.
+- Added a fixed-total-budget shape ablation as a roadmap item after T75
+  packaging. The planned question is whether deeper budgets help QD more than
+  classic under equal candidate count.
+- Added discriminative design-set guidance: use reference-complete,
+  medium-validity, non-saturated problems with visible PPA-front variance.
+- Added a MasterRTL/RTLTimer credibility gate. Current live RTL-native methods
+  use source-aligned extractor/count features. Pretrained-model claims require
+  commit/hash inventory, weight loading, feature-schema assertions, upstream
+  inference reproduction, and candidate-output variation checks.
+- Rejected overbroad interpretations: do not conclude QD is wrong from
+  classic strength, do not promote archive occupancy or yield-only gains, and
+  do not treat defaulted-reference aggregates as headline evidence.

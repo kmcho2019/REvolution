@@ -83,6 +83,31 @@ The central report must include:
 - evidence that the subset was not changed after method outcomes were known;
 - per-problem results so aggregate wins cannot hide failures.
 
+## Budget-Ablation Design Set Guidance
+
+For the planned fixed-total-budget ablation, prefer a smaller
+reference-complete subset selected for discriminative PPA-front variance and
+medium validity. The subset should avoid both saturated tasks where every
+method finds the same PPA corner and invalid-heavy tasks where too few samples
+survive for archive pressure to matter.
+
+Candidate properties:
+
+- valid reference `ppa.txt`;
+- several classic valid-PPA samples;
+- multiple unique nondominated PPA points in prior runs;
+- nontrivial area/power/timing variance;
+- moderate duplicate rate;
+- enough RTL structure to support distinct implementation families.
+
+Starting candidates are `RTLLM/Prob015_multi_pipe_8bit`,
+`RTLLM/Prob041_traffic_light`, `RTLLM/Prob045_alu`,
+`RTLLM/Prob049_signal_generator`, `RTLLM/Prob024_fsm`,
+`VerilogEval-Spec-to-RTL/Prob116_m2014_q3`,
+`VerilogEval-Spec-to-RTL/Prob135_m2014_q6b`, and
+`VerilogEval-Spec-to-RTL/Prob153_gshare`. This list is only a starting point;
+the final budget-ablation subset must be frozen before reading new outcomes.
+
 ## Frozen Subset - 2026-06-21 UTC
 
 The first active goal pass froze the screening subset from the compared

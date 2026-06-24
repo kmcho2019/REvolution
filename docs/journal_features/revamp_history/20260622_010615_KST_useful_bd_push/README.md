@@ -8,6 +8,10 @@ Start here when resuming the active goal.
 - Active branch: `feat/journal-useful-bd-exp-20260622`.
 - Goal contract: `useful_bd_push_plan.md`.
 - Short operational technique ranking: `best_current_techniques.md`.
+- Consolidated research interpretation:
+  `research_strategy_recommendations.md` (why classic is strong, how to frame
+  QD, budget-shape ablation, discriminative design set, and MasterRTL/RTLTimer
+  pretrained verification gate).
 - Living checklist: `useful_bd_push_implementation_todo.md`.
 - Append-only evidence log: `useful_bd_push_implementation_history.md`.
 - Current priority milestone:
@@ -86,6 +90,7 @@ Start here when resuming the active goal.
 | --- | --- |
 | `README.md` | This local navigation guide. |
 | `best_current_techniques.md` | Short current-best operational ranking and update rules. |
+| `research_strategy_recommendations.md` | Consolidated strategic recommendations from the classic-vs-QD, budget-shape, design-set, and MasterRTL/RTLTimer discussions. |
 | `goal_template.md` | Compact goal body that fits the goal-tool limit. |
 | `useful_bd_push_plan.md` | Main contract: outcome, constraints, method families, gates, and completion criteria. |
 | `technique_lineage_ledger.md` | Skim-first lane/category map with result lineage, branch policy, and Mermaid process graph. |

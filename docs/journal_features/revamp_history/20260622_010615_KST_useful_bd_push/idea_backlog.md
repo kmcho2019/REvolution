@@ -3,6 +3,23 @@
 Use this backlog to keep generating methods during the goal. Move an idea into
 a numbered `techniques/T##_slug/` package before running it.
 
+## Cross-Lane Strategy From Classic/QD Review
+
+- Treat classic REvolution as a strong small-budget hill climber, not as a weak
+  baseline. Future QD methods should preserve classic-like exploitation and use
+  archives as auxiliary memory for PPA-competitive implementation families.
+- Run a fixed-total-budget shape ablation after T75 packaging. Compare classic
+  and the best QD arm under `12 x 3`, `8 x 5`, and `6 x 7` first; add `4 x 11`
+  or `16 x 2` only if the first ablation leaves the budget-shape question open.
+- Use a reference-complete, medium-validity, non-saturated subset for that
+  ablation. The decision question is whether deeper budgets help QD more than
+  classic, not whether deeper runs help absolutely.
+- Add a MasterRTL pretrained verification package before using pretrained
+  model outputs as BDs. If verified, prioritize tree-leaf or margin embeddings
+  combined with raw RTL-native structure over direct scalar PPA-risk axes.
+- Do not frame weak archive occupancy, yield-only gains, or defaulted-reference
+  aggregates as proof that QD works.
+
 ## From `T01_simple_yosys_stat_bd` T0
 
 - Keep simple Yosys-stat as the transparent CAD-native lower bound rather than
