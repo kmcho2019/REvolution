@@ -4694,3 +4694,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Patched the T79 report and viewer notes so generated QD recommendation labels
   are explicitly best-among-QD diagnostic metadata and the Phase 03.1 viewers
   are described as schema-complete with a Playwright interaction caveat.
+
+## 2026-06-24T08:35:00Z - T80 MasterRTL Structural-Mix Gate
+
+- Added runtime source-aligned MasterRTL structural-mix metrics:
+  sequential fraction, mux fraction, xor fraction, and operator log count.
+- Added descriptor profile `source_aligned_masterrtl_structural_mix_3d`.
+- Created `T80_masterrtl_structural_mix_gate` to test the raw structural
+  features that T77 showed were non-collapsed before the pretrained Area head.
+- Ran the T80 gate on the T70/T77 generated-candidate corpus:
+  `17/19` unique descriptor rows, `4` static occupied cells, `15` quantile
+  occupied cells, and one T77 pretrained Area leaf row.
+- Decision: treat T80 as `T0_descriptor_gate_positive_not_live`. It supports a
+  narrow live `grid_quantile` candidate, but it is not PPA-performance
+  evidence.

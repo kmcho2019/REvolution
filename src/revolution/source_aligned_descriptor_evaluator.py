@@ -63,6 +63,8 @@ class SourceAlignedRTLDescriptorEvaluator:
             branching = 0.0
         else:
             branching = graph_edges / graph_keys
+        operator_count = int(master["masterrtl_operator_count"])
+        dff_bits = int(master["masterrtl_dff_bits"])
         return {
             "masterrtl_operator_log_edges": math.log1p(graph_edges),
             "rtltimer_state_timing_class": float(_state_timing_class(dff_refs)),
@@ -70,6 +72,19 @@ class SourceAlignedRTLDescriptorEvaluator:
             "source_aligned_masterrtl_graph_edges": float(graph_edges),
             "source_aligned_masterrtl_node_dict": float(master["masterrtl_node_dict"]),
             "source_aligned_masterrtl_branching": branching,
+            "source_aligned_masterrtl_operator_log_count": math.log1p(operator_count),
+            "source_aligned_masterrtl_seq_fraction": _ratio(
+                dff_bits,
+                dff_bits + operator_count,
+            ),
+            "source_aligned_masterrtl_mux_fraction": _ratio(
+                int(master["masterrtl_mux_ops"]),
+                operator_count,
+            ),
+            "source_aligned_masterrtl_xor_fraction": _ratio(
+                int(master["masterrtl_xor_ops"]),
+                operator_count,
+            ),
             "source_aligned_rtltimer_lines": float(lines),
             "source_aligned_rtltimer_assigns": float(rtltimer["rtltimer_assigns"]),
             "source_aligned_rtltimer_wires": float(wires),
@@ -120,10 +135,12 @@ class SourceAlignedRTLDescriptorEvaluator:
             graph = pickle.load(handle)
         with node_path.open("rb") as handle:
             node_dict = pickle.load(handle)
+        structural_counts = _masterrtl_structural_counts(graph, node_dict)
         return {
             "masterrtl_graph_keys": len(graph),
             "masterrtl_graph_edges": sum(len(edges) for edges in graph.values()),
             "masterrtl_node_dict": len(node_dict),
+            **structural_counts,
         }
 
     def _run_rtltimer(
@@ -208,6 +225,54 @@ def _verilog_counts(path: Path) -> dict[str, int]:
 def _count_lines(lines: list[str], pattern: str) -> int:
     regex = re.compile(pattern)
     return sum(1 for line in lines if regex.search(line))
+
+
+def _masterrtl_structural_counts(
+    graph: dict[object, list[object]],
+    node_dict: dict[object, object],
+) -> dict[str, int]:
+    active_nodes = set(graph)
+    for edges in graph.values():
+        active_nodes.update(edges)
+
+    dff_bits = 0
+    operator_count = 0
+    mux_ops = 0
+    xor_ops = 0
+    for name, node in node_dict.items():
+        if name not in active_nodes:
+            continue
+        node_type = str(getattr(node, "type"))
+        width = int(getattr(node, "width"))
+        if node_type == "Reg":
+            dff_bits += width
+            continue
+        if node_type in {"Operator", "UnaryOperator", "Concat", "Repeat"}:
+            operator_count += 1
+            op_match = re.search(r"([A-Z][A-Za-z]*)(\d+)", str(name))
+            assert op_match is not None, f"unknown MasterRTL operator name: {name}"
+            op = op_match.group(1)
+            if op in {"Cond", "Mux"}:
+                mux_ops += 1
+            if op == "Xor":
+                xor_ops += 1
+            continue
+        if node_type in {"Output", "Input", "Inout", "Constant", "Wire", "Partselect", "Pointer"}:
+            continue
+        raise AssertionError(f"unknown MasterRTL node type: {node_type}")
+
+    return {
+        "masterrtl_dff_bits": dff_bits,
+        "masterrtl_operator_count": operator_count,
+        "masterrtl_mux_ops": mux_ops,
+        "masterrtl_xor_ops": xor_ops,
+    }
+
+
+def _ratio(numerator: int, denominator: int) -> float:
+    if denominator == 0:
+        return 0.0
+    return numerator / denominator
 
 
 def _state_timing_class(dff_refs: int) -> int:

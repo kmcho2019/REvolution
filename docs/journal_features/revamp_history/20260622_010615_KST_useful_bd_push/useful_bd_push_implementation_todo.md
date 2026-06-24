@@ -199,6 +199,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       candidate-output variation blocker.
 - [x] Run a generated-candidate MasterRTL tree-leaf or margin variation gate
       before any live pretrained-model BD spend.
+- [x] Add a raw MasterRTL structural-mix descriptor gate after the direct
+      pretrained Area-head leaf path collapsed (`T80_masterrtl_structural_mix_gate`).
 - [ ] If continuing pretrained MasterRTL/RTLTimer, reproduce the timing/power
       feature flows or retrain a model; do not use direct Area-head leaves.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and

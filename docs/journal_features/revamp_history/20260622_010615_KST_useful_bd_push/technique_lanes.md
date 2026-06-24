@@ -600,6 +600,12 @@ Area-head tree leaves are retired unless retrained or replaced. Power and
 timing remain possible only after reproducing toggle-rate or timing-DAG/path
 feature flows.
 
+T80 keeps the non-collapsed part of T77: raw MasterRTL structural mix. It adds
+runtime axes for sequential fraction, mux fraction, and xor fraction, then
+tests those axes on the T70/T77 generated-candidate corpus. The gate is
+positive for descriptor variation (`17/19` unique rows and `15` occupied
+quantile cells), but remains `T0` because no live PPA comparison has run.
+
 T78 moves the budget-shape concern into a reproducible audit. In the existing
 T75 `12 x 3` logs, `9/13` archives still add or replace cells in generation
 `2` or later, mean occupied cells rise through generation `3`, and front-slot
@@ -643,7 +649,7 @@ unblocks it.
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43, T58 | T58 completed the bounded T51/T11-PCA4 cross-lane test and failed promotion on HV/front breadth. | Stop exact frozen graph-coordinate primary archive tests. | Reopen only with secondary/reporting graph lanes or a trained encoder objective that improves front creation without PPA leakage. |
 | `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
-| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71, T72, T73, T74, T75, T76, T77 | T77 blocks direct pretrained Area-head leaves after T76's model-load gate. | Reproduce timing/power flows, retrain a model, or move to budget-shape ablation. | A successor improves live front metrics without default-reference, PPA-leakage, or unverified-pretrained claims. |
+| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71, T72, T73, T74, T75, T76, T77, T80 | T80 validates raw MasterRTL structural mix as a descriptor gate after T77 blocks direct pretrained Area-head leaves. | Register a narrow live quantile-cell candidate or reproduce timing/power flows. | A successor improves live front metrics without default-reference, PPA-leakage, or unverified-pretrained claims. |
 | `L8` budget and benchmark shape | T78, T79 | T79 is complete and diagnostic-negative for exact T75. | Reopen only with a changed descriptor/coupling mechanism or a registered `4 x 11`/`16 x 2` follow-up. | A successor shows QD benefits more than classic without hidden validity, reference-PPA, or subset-selection loopholes. |
 
 ## Branch Split Checklist

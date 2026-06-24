@@ -110,6 +110,10 @@ Real result packages:
   MasterRTL Area-head variation gate.
 - `T78_budget_depth_maturation_audit` completed existing-run budget-depth
   maturation audit.
+- `T79_budget_shape_ablation_protocol` completed equal-candidate
+  budget-shape ablation.
+- `T80_masterrtl_structural_mix_gate` completed raw MasterRTL structural-mix
+  descriptor gate.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -143,11 +147,15 @@ unless retrained or replaced.
 T78 audits the existing T75 `12 x 3` archive histories and supports the
 budget-shape concern without promoting a method. `9/13` problem archives add or
 replace cells in generation `2` or later, occupied cells continue rising
-through generation `3`, and front-slot traffic keeps increasing. The live
-equal-candidate budget-shape ablation remains required before any budget claim.
-T79 is the pre-registered ablation protocol, not a real-result package. It
-freezes the eight-design primary subset, shape matrix, T75 QD arm, vLLM
-preflight, and command contract for the next live budget-shape run.
+through generation `3`, and front-slot traffic keeps increasing. T79 then
+completes the live equal-candidate budget-shape ablation and is
+diagnostic-negative for exact T75: QD loses matched classic mean HV at `12x3`,
+`8x5`, and `6x7`.
+T80 follows the T77 Area-head collapse by testing raw MasterRTL structural
+mix instead of pretrained leaves. It gets `17/19` unique descriptor rows and
+`15` occupied quantile cells, while T77's pretrained Area leaf path has one
+unique leaf row. Treat T80 as a positive descriptor gate only, not a QD
+performance result.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

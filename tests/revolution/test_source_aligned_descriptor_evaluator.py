@@ -2,6 +2,7 @@ import math
 import pickle
 import subprocess
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -61,6 +62,32 @@ def test_source_aligned_density_profile_resolves_without_ppa() -> None:
     ]
 
 
+def test_source_aligned_masterrtl_structural_profile_resolves_without_ppa() -> None:
+    axes = resolve_descriptor_axes(
+        profile_name="source_aligned_masterrtl_structural_mix_3d",
+        explicit_axes=None,
+        descriptor_file=None,
+        archive_type="grid",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+    specs = resolve_grid_axis_specs(axes, num_cells=64, descriptor_file=None)
+
+    assert axes == [
+        "source_aligned_masterrtl_seq_fraction",
+        "source_aligned_masterrtl_mux_fraction",
+        "source_aligned_masterrtl_xor_fraction",
+    ]
+    assert requirements["requires_source_aligned_rtl"] is True
+    assert requirements["requires_ppa"] is False
+    assert requirements["requires_synthesis"] is False
+    assert [(spec.bins, spec.lower_bound, spec.upper_bound) for spec in specs] == [
+        (4, 0.0, 1.0),
+        (4, 0.0, 1.0),
+        (4, 0.0, 1.0),
+    ]
+
+
 def test_source_aligned_evaluator_projects_t72_axes(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -81,6 +108,10 @@ def test_source_aligned_evaluator_projects_t72_axes(
             "masterrtl_graph_keys": 58,
             "masterrtl_graph_edges": 128,
             "masterrtl_node_dict": 160,
+            "masterrtl_dff_bits": 4,
+            "masterrtl_operator_count": 20,
+            "masterrtl_mux_ops": 5,
+            "masterrtl_xor_ops": 3,
         },
     )
     monkeypatch.setattr(
@@ -104,6 +135,9 @@ def test_source_aligned_evaluator_projects_t72_axes(
     assert values["rtltimer_state_timing_class"] == pytest.approx(0.0)
     assert metrics["source_aligned_rtltimer_dff_refs"] == pytest.approx(0.0)
     assert metrics["source_aligned_masterrtl_branching"] == pytest.approx(128 / 58)
+    assert metrics["source_aligned_masterrtl_seq_fraction"] == pytest.approx(4 / 24)
+    assert metrics["source_aligned_masterrtl_mux_fraction"] == pytest.approx(5 / 20)
+    assert metrics["source_aligned_masterrtl_xor_fraction"] == pytest.approx(3 / 20)
     assert metrics["source_aligned_rtltimer_wire_density"] == pytest.approx(15 / 116)
     assert metrics["source_aligned_rtltimer_dff_density"] == pytest.approx(0.0)
 
@@ -128,6 +162,10 @@ def test_source_aligned_evaluator_projects_empty_masterrtl_graph(
             "masterrtl_graph_keys": 0,
             "masterrtl_graph_edges": 0,
             "masterrtl_node_dict": 0,
+            "masterrtl_dff_bits": 0,
+            "masterrtl_operator_count": 0,
+            "masterrtl_mux_ops": 0,
+            "masterrtl_xor_ops": 0,
         },
     )
     monkeypatch.setattr(
@@ -144,6 +182,8 @@ def test_source_aligned_evaluator_projects_empty_masterrtl_graph(
     metrics = evaluator.extract_metrics(code_file_path=code_path, top_module_name="demo")
 
     assert metrics["source_aligned_masterrtl_branching"] == pytest.approx(0.0)
+    assert metrics["source_aligned_masterrtl_seq_fraction"] == pytest.approx(0.0)
+    assert metrics["source_aligned_masterrtl_mux_fraction"] == pytest.approx(0.0)
     assert metrics["source_aligned_rtltimer_wire_density"] == pytest.approx(1 / 8)
 
 
@@ -170,9 +210,16 @@ def test_masterrtl_uses_candidate_local_parse_cwd(
         else:
             parse_dir = output_dir / "parse"
             with (parse_dir / "demo_sog.pkl").open("wb") as handle:
-                pickle.dump({0: [1, 2]}, handle)
+                pickle.dump({"Reg0": ["And1", "Mux1"]}, handle)
             with (parse_dir / "demo_sog_node_dict.pkl").open("wb") as handle:
-                pickle.dump({0: "demo"}, handle)
+                pickle.dump(
+                    {
+                        "Reg0": SimpleNamespace(type="Reg", width=3),
+                        "And1": SimpleNamespace(type="Operator", width=1),
+                        "Mux1": SimpleNamespace(type="Operator", width=1),
+                    },
+                    handle,
+                )
         return subprocess.CompletedProcess(args, 0, "", "")
 
     monkeypatch.setattr(evaluator, "_run", fake_run)
@@ -182,3 +229,6 @@ def test_masterrtl_uses_candidate_local_parse_cwd(
     assert calls[1][0][1] == str(evaluator.master_vlg2ir / "analyze.py")
     assert calls[1][1] == output_dir / "parse"
     assert metrics["masterrtl_graph_edges"] == 2
+    assert metrics["masterrtl_dff_bits"] == 3
+    assert metrics["masterrtl_operator_count"] == 2
+    assert metrics["masterrtl_mux_ops"] == 1

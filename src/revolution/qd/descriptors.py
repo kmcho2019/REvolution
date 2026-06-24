@@ -200,6 +200,22 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
         "source_aligned_masterrtl_branching",
         "source_aligned_rtl",
     ),
+    "source_aligned_masterrtl_operator_log_count": DescriptorDefinition(
+        "source_aligned_masterrtl_operator_log_count",
+        "source_aligned_rtl",
+    ),
+    "source_aligned_masterrtl_seq_fraction": DescriptorDefinition(
+        "source_aligned_masterrtl_seq_fraction",
+        "source_aligned_rtl",
+    ),
+    "source_aligned_masterrtl_mux_fraction": DescriptorDefinition(
+        "source_aligned_masterrtl_mux_fraction",
+        "source_aligned_rtl",
+    ),
+    "source_aligned_masterrtl_xor_fraction": DescriptorDefinition(
+        "source_aligned_masterrtl_xor_fraction",
+        "source_aligned_rtl",
+    ),
     "source_aligned_rtltimer_wire_density": DescriptorDefinition(
         "source_aligned_rtltimer_wire_density",
         "source_aligned_rtl",
@@ -489,6 +505,14 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 4.0)
     if axis == "source_aligned_masterrtl_branching":
         return (0.0, 8.0)
+    if axis == "source_aligned_masterrtl_operator_log_count":
+        return (0.0, 10.0)
+    if axis in {
+        "source_aligned_masterrtl_seq_fraction",
+        "source_aligned_masterrtl_mux_fraction",
+        "source_aligned_masterrtl_xor_fraction",
+    }:
+        return (0.0, 1.0)
     if axis in {
         "source_aligned_rtltimer_wire_density",
         "source_aligned_rtltimer_dff_density",
