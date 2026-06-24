@@ -192,12 +192,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       pretrained-model BD claim: model hashes, direct upstream Power smoke,
       internal loader checks, feature-schema assertions, and explicit remaining
       candidate-output variation blocker.
-- [ ] Run a generated-candidate MasterRTL tree-leaf or margin variation gate
+- [x] Run a generated-candidate MasterRTL tree-leaf or margin variation gate
       before any live pretrained-model BD spend.
-- [ ] If generated-candidate variation passes, pre-register a tree-leaf or
-      margin embedding BD that combines pretrained tree-model regions with
-      source-aligned RTL structure without using final PPA as an in-loop
-      descriptor.
+- [ ] If continuing pretrained MasterRTL/RTLTimer, reproduce the timing/power
+      feature flows or retrain a model; do not use direct Area-head leaves.
 - [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and

@@ -90,6 +90,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T74` | `T74_shape_density_front_slot_hybrid_qd` | RTL-native archive coupling | `T0 diagnostic_regression_not_promoted`; preserves coverage but loses classic/T73 on headline HV/yield evidence |
 | `T75` | `T75_shape_density_front_pressure_qd` | RTL-native archive coupling | Completed `T0 positive_diagnostic_not_promoted`; stronger front-slot pressure improves T73/T74 mean HV but not classic |
 | `T76` | `T76_masterrtl_pretrained_model_gate` | RTL-native pretrained model verification | Completed `T0 verification_gate_partial`; MasterRTL tree artifacts load, but generated-candidate variation is still required before live pretrained-model BDs |
+| `T77` | `T77_masterrtl_area_leaf_variation_gate` | RTL-native pretrained model verification | Completed `T0_variation_gate_negative`; source-faithful Area features vary, but pretrained Area predictions/leaves collapse |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

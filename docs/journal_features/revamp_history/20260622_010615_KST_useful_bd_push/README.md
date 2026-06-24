@@ -28,17 +28,17 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T76_masterrtl_pretrained_model_gate/`
-  (`T0 verification_gate_partial`; MasterRTL saved tree artifacts load in the
-  isolated env, but candidate-output variation and upstream parity still gate
-  any live pretrained-model BD claim).
+  `techniques/T77_masterrtl_area_leaf_variation_gate/`
+  (`T0_variation_gate_negative`; MasterRTL Area features vary across generated
+  candidates, but the pretrained Area head collapses to one prediction and one
+  leaf row).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  run the fixed-total-budget shape ablation or pre-register a generated-candidate
-  MasterRTL tree-leaf/margin variation gate; do not keep nudging front-slot
-  fraction alone.
+  run the fixed-total-budget shape ablation or move to a properly reproduced
+  RTL-Timer/MasterRTL timing path; do not use the direct pretrained Area head
+  as a live BD.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -79,8 +79,9 @@ Start here when resuming the active goal.
   source-aligned comparison, but exact T72 remains not promoted. T73 improves
   valid-PPA yield but not front breadth, T74 regresses, T75 is a positive
   diagnostic that improves over T73/T74 without beating classic, and T76
-  verifies MasterRTL pretrained model artifacts before any tree-region BD
-  claim.
+  verifies MasterRTL pretrained model artifacts. T77 then blocks the direct
+  pretrained Area-head leaf BD because generated candidates collapse to one
+  prediction and one leaf row.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -220,6 +221,7 @@ Start here when resuming the active goal.
 | `T74` | `T74_shape_density_front_slot_hybrid_qd` | Completed `T0 diagnostic_regression_not_promoted`; preserves reference-complete coverage, but loses classic/T73 on headline HV and valid-PPA evidence. |
 | `T75` | `T75_shape_density_front_pressure_qd` | Completed `T0 positive_diagnostic_not_promoted`; improves valid-PPA yield and beats T73/T74 mean HV, but classic still wins mean HV and Pareto breadth. |
 | `T76` | `T76_masterrtl_pretrained_model_gate` | Completed `T0 verification_gate_partial`; MasterRTL XGBoost/RF assets load, but generated-candidate variation is still required before a live pretrained-model BD. |
+| `T77` | `T77_masterrtl_area_leaf_variation_gate` | Completed `T0_variation_gate_negative`; Area features vary, but pretrained Area predictions and leaf rows collapse across generated candidates. |
 
 ## Validity-Gate Note
 

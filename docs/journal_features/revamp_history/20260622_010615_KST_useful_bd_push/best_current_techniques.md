@@ -10,7 +10,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | ---: | --- | --- | --- | --- |
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T75 is diagnostic but still below classic; T76 verifies model assets only, not live pretrained BDs. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T75 is diagnostic but still below classic; T77 blocks direct pretrained Area-head leaves. |
 | 4 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -110,11 +110,18 @@ for MasterRTL tree-leaf or margin embeddings, combined with raw RTL-native
 structure. Do not use direct scalar predicted-PPA axes as the primary archive
 coordinates.
 
+T77 runs that first variation gate for the source-faithful MasterRTL Area
+head. The result is negative: `17/19` generated candidates have unique Area
+feature rows, but the pretrained Area head emits one prediction and one leaf
+row for every candidate. Retire direct Area-head leaves unless the model is
+retrained or replaced. Power and timing remain blocked by missing required
+toggle-rate and timing-DAG/path feature flows.
+
 ## Technique Lanes
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76 | T76 packaged | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, and T76 opens but does not complete the pretrained tree-model lane. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77 | T77 packaged | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, and T77 retires direct Area-head leaves. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |

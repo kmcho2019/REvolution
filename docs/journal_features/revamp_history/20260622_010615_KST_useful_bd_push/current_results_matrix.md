@@ -106,6 +106,8 @@ Real result packages:
   follow-up.
 - `T76_masterrtl_pretrained_model_gate` completed MasterRTL pretrained
   model-artifact verification gate.
+- `T77_masterrtl_area_leaf_variation_gate` completed generated-candidate
+  MasterRTL Area-head variation gate.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -131,6 +133,11 @@ records the remaining blockers: TinyRocket XGBoost outputs are all zero, and
 the local RTL-Timer clone has no confirmed packaged pretrained checkpoint.
 Treat this as a gate toward generated-candidate tree-leaf or margin
 descriptors, not a promotion claim.
+T77 runs the generated-candidate gate for the source-faithful MasterRTL Area
+head. It is negative: T70 candidates have `17/19` unique Area feature rows, but
+the pretrained Area head emits one prediction, one leaf row, and one unique
+leaf ID across all candidates. Direct pretrained Area-head leaves are retired
+unless retrained or replaced.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

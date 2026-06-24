@@ -63,8 +63,9 @@ This interpretation changes the roadmap in three ways:
    more than classic, not merely whether deeper runs help in general.
 3. Continue the verification-gated MasterRTL/RTLTimer pretrained lane. T76
    confirms MasterRTL tree artifacts can be loaded and hashed in the isolated
-   env, but live pretrained-model BD claims still require generated-candidate
-   variation and upstream parity checks.
+   env. T77 shows the direct pretrained Area head collapses on generated
+   candidates, so live pretrained-model BD claims now require retraining,
+   replacement, or reproduced timing/power feature flows.
 
 The current priority milestone is `presentations/20260623_report/`. It must
 prepare a report and Markdown deck answering whether diversity matters for
@@ -196,9 +197,10 @@ Use these as starting evidence and as warnings against repeated mistakes:
    without cherry-picking?
 7. Does the current `12 x 3` budget shape bias results against QD by leaving
    too little depth for archive cells to mature?
-8. Can verified pretrained MasterRTL tree-model outputs or tree-leaf
-   embeddings improve RTL-native BDs beyond raw source-aligned graph/count
-   features, once generated-candidate variation is proven?
+8. Can any verified pretrained or retrained MasterRTL/RTLTimer tree-model
+   outputs improve RTL-native BDs beyond raw source-aligned graph/count
+   features, now that direct MasterRTL Area-head leaves failed the variation
+   gate?
 
 ## Effectiveness Tiers
 

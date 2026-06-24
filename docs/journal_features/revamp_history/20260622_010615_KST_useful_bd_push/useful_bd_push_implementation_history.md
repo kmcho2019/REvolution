@@ -4358,3 +4358,29 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   tree-leaf/margin lane, but any live pretrained-model BD still requires a
   generated-candidate variation gate and explicit no-PPA-leakage descriptor
   contract.
+
+## 2026-06-24T04:05:00Z - T77 MasterRTL Area Leaf Variation Gate
+
+- Added `techniques/T77_masterrtl_area_leaf_variation_gate/` as the
+  generated-candidate follow-up to T76.
+- Ran the gate with the existing isolated environment:
+  `exp/venvs/rtl_native_verify/bin/python
+  techniques/T77_masterrtl_area_leaf_variation_gate/tools/run_t77_area_leaf_gate.py`.
+- Reused the `19` generated RTL candidates from T70 and their source-aligned
+  MasterRTL SOG graph pickles. No vLLM, final PPA, reference PPA, hypervolume,
+  Pareto rank, or test-pass signal is used in the descriptor check.
+- Evaluated the only source-faithful pretrained head available without extra
+  side-channel data: MasterRTL Area through the 14-feature `cal_oper` vector.
+- Result: `17/19` generated candidates have unique Area feature rows, but the
+  pretrained Area XGBoost model maps every candidate to one scalar prediction,
+  one tree-leaf row, and one unique leaf ID.
+- Recorded Power, WNS, and TNS as blocked for this package because they require
+  toggle-rate or timing-DAG/path feature flows that are not present in the T70
+  generated-candidate artifacts.
+- Inspected `figures/t77_area_leaf_variation_gate.png`; the heatmap is
+  readable and clearly shows feature variation versus prediction/leaf
+  collapse.
+- Decision: T77 is `T0_variation_gate_negative`. Retire direct pretrained
+  Area-head tree leaves as a live BD unless the model is retrained or replaced.
+  The next RTL-native pretrained path should reproduce timing/power feature
+  flows, retrain a model, or move to the fixed-total-budget shape ablation.

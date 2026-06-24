@@ -131,6 +131,15 @@ because RTLTimer still lacks a confirmed packaged pretrained checkpoint in the
 local clone. The next MasterRTL step should measure generated-candidate
 variation in tree leaves or margins before any live vLLM spend.
 
+T77 runs that generated-candidate variation check for the only source-faithful
+head available without extra side-channel data: MasterRTL Area. The result is
+negative. Generated candidates produce `17` unique Area feature rows out of
+`19`, but the pretrained Area XGBoost head emits one scalar prediction and one
+tree-leaf row for all candidates. Direct Area-head leaves should be retired
+unless the model is retrained or replaced. The remaining pretrained-model path
+is timing/power only after reproducing the required toggle-rate or timing-DAG
+feature flows.
+
 ## Latest Discussion Review
 
 The latest discussion adds two recommendations that should be treated as
@@ -141,8 +150,8 @@ accepted, but not overclaimed:
 | Classic strength does not falsify QD/MAP-Elites. | Accepted. It means RTL PPA evolution needs constrained, PPA-competitive diversity rather than generic archive coverage. |
 | `12 x 3` may be biased against QD. | Plausible and now roadmap-worthy, but not proven. Test equal-candidate budget shapes before changing headline protocol. |
 | Choose medium-validity, front-variable designs for screens. | Accepted. This is screening discipline, not cherry-picking, if frozen before outcomes. |
-| Use MasterRTL pretrained tree artifacts as an encoder. | Accepted only as a verification-gated lane. Use tree leaves/margins plus RTL structure, not direct scalar PPA predictions. |
-| Treat T75/T76 as positive enough to launch broad claims. | Rejected. They are useful diagnostics and gates, not classic-beating evidence. |
+| Use MasterRTL pretrained tree artifacts as an encoder. | Narrowed after T77. Direct Area-head leaves collapse; continue only through retraining, replacement, or reproduced timing/power feature flows. |
+| Treat T75/T76/T77 as positive enough to launch broad claims. | Rejected. They are useful diagnostics and gates, not classic-beating evidence. |
 
 The current evaluation of the goal remains positive but narrower: the goal is
 not to prove that any diversity measure helps. It is to identify which
@@ -157,7 +166,8 @@ classic hill-climbing baseline under fair, reference-complete comparisons.
 - Add a MasterRTL-pretrained verification and tree-leaf embedding lane before
   spending live budget on "pretrained MasterRTL" QD claims.
 - Add a generated-candidate MasterRTL leaf/margin variation gate after T76 and
-  before any live pretrained-model BD run.
+  before any live pretrained-model BD run. T77 completes the Area-head gate and
+  retires direct Area leaves.
 - Use discriminative, reference-complete, medium-validity designs for budget
   and descriptor screens.
 - Keep headline claims on reference-complete paired subsets.
