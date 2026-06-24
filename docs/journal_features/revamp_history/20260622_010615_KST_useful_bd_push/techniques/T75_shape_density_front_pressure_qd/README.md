@@ -1,6 +1,6 @@
 # T75 Shape-Density Front-Pressure QD
 
-Status: pre-registered; not run yet.
+Status: completed; `T0 positive_diagnostic_not_promoted`.
 
 T75 is the direct post-T74 RTL-native follow-up. It keeps T73/T74's
 source-aligned MasterRTL/RTL-Timer shape-density descriptor, but changes the
@@ -43,13 +43,15 @@ pressure rather than mixing it with another fusion variant.
 - `tables/descriptor_probe_source_aligned_shape_density_3d.json`: descriptor
   probe proving no PPA/synthesis/simulation dependency.
 - `tables/t75_method_contract.json`: compact method contract.
-- `results_report.md`: pending result placeholder.
+- `results_report.md`: completed tier decision and matched comparison summary.
 - `artifacts_manifest.md`: expected artifacts and comparison paths.
+- `matched_classic_comparison/`: compact committed T75 comparison package.
 
 ## Current Decision
 
-`pending_registered`.
+`T0 positive_diagnostic_not_promoted`.
 
-Do not promote from registration. T75 must preserve the 13-problem
-reference-complete hard/tuning coverage and improve at least one primary
-front metric versus T73 or classic before it can leave diagnostic status.
+T75 preserves all `13/13` reference-complete hard/tuning comparisons and
+improves valid-PPA samples versus classic (`274` versus `257`). It also
+improves mean HV versus T73 and T74. It is not promoted because classic remains
+ahead on mean HV, Pareto breadth, and reference-beating count.

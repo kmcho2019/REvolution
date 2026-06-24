@@ -102,8 +102,8 @@ Real result packages:
   quantile-cell live screen and matched classic comparison.
 - `T74_shape_density_front_slot_hybrid_qd` completed shape-density plus
   near-front-gated single-thought pairing follow-up.
-- `T75_shape_density_front_pressure_qd` pre-registered direct front-slot
-  pressure follow-up.
+- `T75_shape_density_front_pressure_qd` completed direct front-slot pressure
+  follow-up.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -116,10 +116,12 @@ valid-PPA samples (`294` versus `257`), but classic wins mean HV
 (`0.0926007600` versus `0.0890223082`), HV wins (`8` versus `5`), and mean
 Pareto points (`2.31` versus `1.46`). `T74_shape_density_front_slot_hybrid_qd`
 is completed as `T0 diagnostic_regression_not_promoted`: it preserves coverage
-but loses classic/T73 on mean HV and valid-PPA yield. T75 is the active
-pre-registered follow-up: it keeps T73's shape-density cells, raises the
-front-slot lane fraction to `0.30`, and disables two-parent prompts so the
-next run tests front creation pressure directly.
+but loses classic/T73 on mean HV and valid-PPA yield. T75 is completed as
+`T0 positive_diagnostic_not_promoted`: it preserves all `13/13` headline
+comparisons, improves valid-PPA samples versus classic (`274` versus `257`),
+and improves mean HV versus T73/T74, but classic still wins mean HV
+(`0.0926007600` versus `0.0899974770`), mean Pareto points (`2.31` versus
+`1.62`), and mean reference-beating count (`3.54` versus `3.08`).
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

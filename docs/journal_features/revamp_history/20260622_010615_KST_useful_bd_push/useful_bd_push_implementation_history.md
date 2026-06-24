@@ -4290,3 +4290,43 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Rejected overbroad interpretations: do not conclude QD is wrong from
   classic strength, do not promote archive occupancy or yield-only gains, and
   do not treat defaulted-reference aggregates as headline evidence.
+
+## 2026-06-24T03:45:00Z - T75 Live Screen And Matched Package
+
+- Ran T75 at
+  `exp/useful_bd_push/t75_shape_density_front_pressure_20260624_024005_UTC/hard_tuning`
+  after storage and vLLM preflight. The endpoint reported
+  `openai/gpt-oss-120b max_model_len=131072`; `/workspace` stayed at `87%`
+  used with `3.4T` available and inode use at `3%`.
+- The live run completed the 13-problem hard/tuning subset in `1696.55`
+  seconds. The summary reports 12 successful problems and one failed headline
+  best-result row for `Prob151_review2015_fsm`, but the PPA-distribution
+  analysis still finds one valid-PPA T75 candidate for that problem.
+- Registered single-thought and Pareto validators passed.
+- Generated PPA/Pareto final-analysis sections comparing classic, T51, T66,
+  T67, T72, T73, T74, and T75. The broad final-analysis command was
+  interrupted in `design_space_analysis` while recovering source-aligned
+  features after `backend_comparison`, `hard_iteration_analysis`,
+  `pareto_analysis`, `evolutionary_reports`, and `ppa_distribution` had been
+  written. The caveat is committed in
+  `techniques/T75_shape_density_front_pressure_qd/matched_classic_comparison/tables/t75_final_analysis_caveat.json`.
+- Packaged the compact matched comparison at
+  `techniques/T75_shape_density_front_pressure_qd/matched_classic_comparison/`
+  with PPA candidates, reference PPA, backend/problem Pareto metrics,
+  completeness data, direct comparison deltas, inspected summary figures, and
+  representative PPA panels.
+- T75 preserves all `13/13` reference-complete comparisons and improves
+  valid-PPA samples versus classic (`274` versus `257`), T73/T74 mean HV
+  (`0.0899974770` versus `0.0890223082` and `0.0851926237`), and T74 valid
+  PPA (`274` versus `237`).
+- Classic remains ahead on mean HV (`0.0926007600` versus `0.0899974770`),
+  mean Pareto points (`2.31` versus `1.62`), and mean reference-beating count
+  (`3.54` versus `3.08`).
+- Exported the full Phase 03.1 viewer at
+  `matched_classic_comparison/visualizations/qd_ppa_viewer/`; strict
+  validation passed and `screenshot.png` was manually inspected as nonblank
+  and readable.
+- Decision: exact T75 is `T0 positive_diagnostic_not_promoted`. Retire another
+  small front-slot fraction tweak. The next move should be the
+  fixed-total-budget shape ablation or the verified MasterRTL pretrained
+  tree-leaf/margin embedding lane.

@@ -28,19 +28,17 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T74_shape_density_front_slot_hybrid_qd/`
-  (`T0 diagnostic_regression_not_promoted`; preserves `13/13`
-  reference-complete coverage but loses classic/T73 on HV and valid-PPA yield).
-- Most recent registered package:
   `techniques/T75_shape_density_front_pressure_qd/`
-  (`pending_registered`; directly raises source-aligned shape-density
-  front-slot pressure after T74 retired low-rate two-parent gating).
+  (`T0 positive_diagnostic_not_promoted`; preserves `13/13`, improves valid
+  PPA versus classic and mean HV versus T73/T74, but classic still wins mean
+  HV and Pareto breadth).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  run T75 after vLLM preflight and compare it against classic, T73, and T74 on
-  the reference-complete hard/tuning subset.
+  pre-register the fixed-total-budget shape ablation or the verified
+  MasterRTL pretrained tree-embedding lane; do not keep nudging front-slot
+  fraction alone.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -80,8 +78,8 @@ Start here when resuming the active goal.
   none beats classic headline PPA-front metrics. T68/T69/T70/T71 are the
   source-verification and descriptor-design bridge; T72 is the first live
   source-aligned comparison, but exact T72 remains not promoted. T73 improves
-  valid-PPA yield but not front breadth, T74 regresses, and T75 is the active
-  front-pressure follow-up.
+  valid-PPA yield but not front breadth, T74 regresses, and T75 is a positive
+  diagnostic that improves over T73/T74 without beating classic.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -219,7 +217,7 @@ Start here when resuming the active goal.
 | `T72` | `T72_source_aligned_rtl_cell_qd` | Completed `T1 near_classic_not_promoted`; fixed live run preserves coverage and trails classic mean HV by about `0.65%`, but classic wins HV wins, Pareto points, and reference-beating candidates. |
 | `T73` | `T73_source_aligned_shape_density_qd` | Completed `T0 positive_diagnostic_not_promoted`; preserves matched coverage and improves valid-PPA yield, but classic wins mean HV and Pareto breadth. |
 | `T74` | `T74_shape_density_front_slot_hybrid_qd` | Completed `T0 diagnostic_regression_not_promoted`; preserves reference-complete coverage, but loses classic/T73 on headline HV and valid-PPA evidence. |
-| `T75` | `T75_shape_density_front_pressure_qd` | Pre-registered; raises `front_slot_lane_nsga2` pressure to `0.30` and disables two-parent prompts to isolate direct front creation pressure. |
+| `T75` | `T75_shape_density_front_pressure_qd` | Completed `T0 positive_diagnostic_not_promoted`; improves valid-PPA yield and beats T73/T74 mean HV, but classic still wins mean HV and Pareto breadth. |
 
 ## Validity-Gate Note
 

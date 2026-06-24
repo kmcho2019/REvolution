@@ -26,9 +26,9 @@ validity constraints. Do not overclaim generic MAP-Elites success from archive
 occupancy, yield-only gains, or defaulted-reference aggregates.
 
 Current priority: finish the active useful-BD packages and
-presentations/20260623_report/. T75 is the immediate source-aligned RTL-native
-front-pressure check. After T75 is packaged honestly, add a fixed-total-budget
-shape ablation because 12x3 may be too shallow.
+presentations/20260623_report/. T75 is packaged as a positive diagnostic, not
+a promotion. Next, pre-register a fixed-total-budget shape ablation or open
+the verified MasterRTL pretrained lane.
 
 Metrics: never use average fitness or average best PPA as primary evidence.
 Use reference-complete paired subsets for headline classic-vs-QD claims.

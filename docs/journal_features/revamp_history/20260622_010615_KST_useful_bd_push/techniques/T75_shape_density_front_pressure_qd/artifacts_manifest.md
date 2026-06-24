@@ -1,6 +1,6 @@
 # T75 Artifacts Manifest
 
-Status: pre-run.
+Status: completed compact package.
 
 ## Committed Artifacts
 
@@ -14,30 +14,36 @@ Status: pre-run.
 | `tables/README.md` | Table inventory. |
 | `figures/README.md` | Figure expectations. |
 | `visualizations/README.md` | Visualization expectations. |
-| `results_report.md` | Pending result slot. |
+| `results_report.md` | T75 result and tier decision. |
+| `matched_classic_comparison/` | Compact committed matched comparison package. |
 
-## Expected Live Run Root
+## Live Run Root
 
 ```text
-exp/useful_bd_push/t75_shape_density_front_pressure_<UTC>/hard_tuning
+exp/useful_bd_push/t75_shape_density_front_pressure_20260624_024005_UTC/hard_tuning
 ```
 
 Do not write new run artifacts under `/aux`.
 
-## Required Result Artifacts
+## Result Artifacts
 
-After the live run, add or link:
+- vLLM preflight:
+  `exp/useful_bd_push/t75_shape_density_front_pressure_20260624_024005_UTC/hard_tuning/preflight/`
+- live run:
+  `exp/useful_bd_push/t75_shape_density_front_pressure_20260624_024005_UTC/hard_tuning/shape_density_front_pressure_qd/seed_1001/`
+- compact comparison:
+  `matched_classic_comparison/`
+- completeness table:
+  `matched_classic_comparison/tables/t75_ppa_completeness.csv`
+- direct comparison table:
+  `matched_classic_comparison/tables/t75_direct_comparisons.csv`
+- summary figures:
+  `matched_classic_comparison/figures/t75_hv_delta_by_problem.png` and
+  `matched_classic_comparison/figures/t75_valid_ppa_counts.png`
 
-- validator outputs from `validate_single_thought_operator_run.py`;
-- validator outputs from `validate_pareto_front_run.py`;
-- final-analysis bundle under the run root;
-- compact matched classic comparison package;
-- `ppa_completeness.csv`;
-- direct raw PPA-front figures;
-- visual inspection notes;
-- Phase 03.1 `qd_ppa_viewer/` bundle with `screenshot.png` and strict
-  validation output;
-- tier decision in `results_report.md`.
+The full final-analysis command was interrupted in `design_space_analysis`
+after PPA/Pareto outputs were written. The caveat is committed at
+`matched_classic_comparison/tables/t75_final_analysis_caveat.json`.
 
 ## Source Commit
 

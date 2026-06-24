@@ -125,9 +125,9 @@ hidden PPA-proxy descriptors.
 
 ## Roadmap Changes Accepted
 
-- Keep T75 packaging/evaluation as the immediate open item.
-- Add a fixed-total-budget shape ablation once the current T75 result is
-  honestly packaged.
+- Treat T75 as packaged positive diagnostic evidence, not a promotion.
+- Add a fixed-total-budget shape ablation as the next evaluation-structure
+  check.
 - Add a MasterRTL-pretrained verification and tree-leaf embedding lane before
   spending live budget on "pretrained MasterRTL" QD claims.
 - Use discriminative, reference-complete, medium-validity designs for budget

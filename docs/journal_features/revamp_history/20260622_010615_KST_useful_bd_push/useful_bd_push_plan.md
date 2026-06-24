@@ -56,9 +56,9 @@ beside classic-like exploitation, not as a wholesale replacement for it.
 
 This interpretation changes the roadmap in three ways:
 
-1. Finish and package the active T75 result honestly before opening another
-   branch of the search.
-2. Add a fixed-total-budget shape ablation after T75, because `12 x 3` may be
+1. Treat T75 as a packaged positive diagnostic, not as a promoted useful-BD
+   result.
+2. Add a fixed-total-budget shape ablation next, because `12 x 3` may be
    too shallow for archive maturation. Compare whether deeper shapes help QD
    more than classic, not merely whether deeper runs help in general.
 3. Add a verification-gated MasterRTL/RTLTimer pretrained lane. Current

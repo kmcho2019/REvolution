@@ -51,8 +51,11 @@ T74 tested whether the existing low-rate two-parent prompt exposure could help
 T73's cells create front material by gating pairs through
 `near_front_descriptor`. It is now retired: coverage is preserved, but mean HV
 falls to `0.0851926237`, HV wins drop to `1`, and valid-PPA samples drop to
-`237`. T75 is the active next check because it changes front creation directly
-with `qd_front_slot_lane_fraction=0.30` and one-parent-only prompts.
+`237`. T75 changed front creation directly with
+`qd_front_slot_lane_fraction=0.30` and one-parent-only prompts. It is now
+packaged as `T0 positive_diagnostic_not_promoted`: mean HV improves over T73
+and T74, and valid-PPA samples improve over classic, but classic still wins
+mean HV, Pareto breadth, and reference-beating count.
 
 The current strategic correction is that classic should be treated as a strong
 small-budget hill climber, not a weak baseline waiting for generic diversity to
@@ -103,7 +106,7 @@ tree-leaf or margin embeddings rather than direct scalar predicted-PPA axes.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75 | Active T75 | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic but front-collapsed, T73 improves yield/occupancy, T74 shows low-rate near-front pair gating does not recover front/HV evidence, and T75 now tests direct front-slot pressure. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75 | T75 packaged | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, and T75 is positive diagnostic but not classic-beating. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |

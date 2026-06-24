@@ -80,9 +80,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Add passive archive scoring for classic and every QD method.
 - [ ] Add global PPA hypervolume, Pareto-cell count, Pareto spread, unique
       front family, QD-score AUC, coverage AUC, and HV AUC metrics.
-- [ ] Pre-register and run a fixed-total-budget shape ablation after T75 is
-      packaged, comparing classic and the best QD arm under at least `12 x 3`,
-      `8 x 5`, and `6 x 7`.
+- [ ] Pre-register and run a fixed-total-budget shape ablation, comparing
+      classic and the best QD arm under at least `12 x 3`, `8 x 5`, and
+      `6 x 7`.
 - [ ] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live
@@ -493,11 +493,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T75 shape-density front-pressure QD is pre-registered as the next
       source-aligned RTL-native follow-up, using the new configurable
       `qd_front_slot_lane_fraction=0.30` knob and one-parent-only prompts.
-- [ ] T75 seed `1001` is run on the T72/T73/T74 hard/tuning surface only after
+- [x] T75 seed `1001` is run on the T72/T73/T74 hard/tuning surface only after
       storage and vLLM preflight.
-- [ ] T75 is validated, packaged, visualized, and compared against T47
+- [x] T75 is validated, packaged, visualized, and compared against T47
       classic, T73, and T74 with a reference-complete matched package.
-- [ ] T75 gets a promotion, ablation, or retirement rationale before another
+- [x] T75 gets a promotion, ablation, or retirement rationale before another
       same-family source-aligned live spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
