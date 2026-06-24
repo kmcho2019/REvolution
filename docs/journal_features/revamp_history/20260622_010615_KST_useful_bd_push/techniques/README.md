@@ -87,6 +87,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T71` | `T71_source_aligned_rtl_native_feature_map` | RTL-native source alignment | `T0 descriptor_design_unblocker`; source-aligned extractor outputs cover 9/16 proposed RTL-native cells without PPA leakage |
 | `T72` | `T72_source_aligned_rtl_cell_qd` | RTL-native archive coupling | `T1 near_classic_not_promoted`; preserves `13/13` covered designs and trails classic mean HV by about `0.65%`, but loses HV wins and front breadth |
 | `T73` | `T73_source_aligned_shape_density_qd` | RTL-native archive coupling | Matched comparison packaged; preserves coverage and improves valid-PPA yield, but classic wins HV/front breadth |
+| `T74` | `T74_shape_density_front_slot_hybrid_qd` | RTL-native archive coupling | Pre-registered; applies `near_front_descriptor` gating to T73's low-rate single-thought two-parent prompts |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

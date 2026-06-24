@@ -79,7 +79,7 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73 | Design T74 hybrid | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic but front-collapsed, while T73 improves yield/occupancy but needs stronger front material. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74 | Run T74 hybrid | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic but front-collapsed, while T73 improves yield/occupancy but needs stronger front material. T74 is the registered shape-density plus near-front-gated single-thought pairing follow-up. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |

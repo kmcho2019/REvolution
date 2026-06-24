@@ -100,6 +100,8 @@ Real result packages:
   package.
 - `T73_source_aligned_shape_density_qd` bounded source-aligned shape-density
   quantile-cell live screen and matched classic comparison.
+- `T74_shape_density_front_slot_hybrid_qd` pre-registered shape-density plus
+  near-front-gated single-thought pairing follow-up.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -110,7 +112,10 @@ classic-covered designs, and trails classic mean HV by about `0.65%`.
 comparison: it preserves all `13/13` classic-covered problems and improves
 valid-PPA samples (`294` versus `257`), but classic wins mean HV
 (`0.0926007600` versus `0.0890223082`), HV wins (`8` versus `5`), and mean
-Pareto points (`2.31` versus `1.46`).
+Pareto points (`2.31` versus `1.46`). `T74_shape_density_front_slot_hybrid_qd`
+is now pre-registered as the next follow-up: it keeps T73's shape-density
+cells and gates the existing low-rate single-thought two-parent prompts with
+`near_front_descriptor`.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but
@@ -142,16 +147,20 @@ T71 source-aligned MasterRTL/RTL-Timer cell contract, and removes two-parent
 fusion to keep the variable count low. The runtime descriptor gate passes
 without PPA leakage, but exact T72 is not promoted because classic wins HV
 wins, Pareto points, and reference-beating candidates.
-T73 is the registered follow-up: it keeps T72's source-aligned extractor and
-search surface but changes the archive to `grid_quantile` over MasterRTL
-branching, RTL-Timer wire density, and RTL-Timer DFF density. On the same T72
-archive events, T73's problem-local quantile projection averages `5.6923`
-occupied cells versus `1.0769` for T72's live fixed grid. This is only a
-collapse-fix screen signal. The live screen now completes and passes both
-registered validators with `12/13` successful problems, `85` archive members,
-`624` generated candidates, and `294` PPA reports. It is not promoted because
-`Prob151_review2015_fsm` has zero archive members and the matched classic
-comparison is still required before any tier decision.
+T73 keeps T72's source-aligned extractor and search surface but changes the
+archive to `grid_quantile` over MasterRTL branching, RTL-Timer wire density,
+and RTL-Timer DFF density. On the same T72 archive events, T73's problem-local
+quantile projection averages `5.6923` occupied cells versus `1.0769` for
+T72's live fixed grid. The live screen completes and passes both registered
+validators with `12/13` successful problems, `85` archive members, `624`
+generated candidates, and `294` PPA reports. The matched comparison preserves
+all covered designs and improves valid-PPA yield, but it is not promoted
+because classic still wins mean HV, HV wins, and Pareto breadth.
+T74 is the registered follow-up. It keeps T73's cells and changes only the
+single-thought coupling: `qd_operator_one_parent_fraction=0.90` remains fixed,
+while the existing low-rate two-parent prompt requests are gated by
+`qd_two_parent_gate=near_front_descriptor`. It must prove front/HV value
+against classic, T51, T66, T67, T72, and T73 before any result claim.
 `T24`, `T25`, and `T26` are complete three-problem live development-screen
 results. T24 and T25 remain negative diagnostics. T26 is now only a mechanism
 clue, not a positive broad result: the reference-complete RTLLM analysis

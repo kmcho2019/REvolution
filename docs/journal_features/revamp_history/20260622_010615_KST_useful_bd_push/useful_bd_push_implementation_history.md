@@ -4182,3 +4182,27 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   The next source-aligned spend should be a T74 hybrid that keeps T73's
   shape-density yield/occupancy signal while restoring stronger front-slot or
   archive-coupling pressure.
+
+## 2026-06-24T00:40:00Z - T74 Hybrid Registration
+
+- Registered `techniques/T74_shape_density_front_slot_hybrid_qd/` as the next
+  source-aligned RTL-native spend.
+- T74 keeps T73's `source_aligned_shape_density_3d` descriptor and
+  `grid_quantile`/`elite_pareto_slot` geometry. It also keeps
+  `qd_operator_one_parent_fraction=0.90`, which is the single-thought
+  operator's arity control, and changes the existing low-rate two-parent
+  prompt requests from ungated to `qd_two_parent_gate=near_front_descriptor`.
+  `qd_two_parent_probability` remains `0.0` because it is not the arity
+  control for the single-thought operator path.
+- Re-ran the descriptor probe:
+  `uv run python scripts/qd_descriptor_probe.py --profile
+  source_aligned_shape_density_3d --archive_type grid_quantile --circuit_type
+  sequential`. The probe confirms `requires_ppa=false`,
+  `requires_synthesis=false`, `requires_graph_metrics=false`,
+  `requires_simulation=false`, and `requires_source_aligned_rtl=true`.
+- Storage at registration remains acceptable: `/workspace` has `27T` total,
+  `23T` used, `3.5T` available, `87%` used, and inode use is `3%`.
+- Decision: T74 is `pending_registered`. It is not a result claim. It must
+  preserve every classic-covered problem and improve front/HV evidence without
+  relying on defaulted references, duplicate diversity, invalid candidates, or
+  yield-only overclaiming.
