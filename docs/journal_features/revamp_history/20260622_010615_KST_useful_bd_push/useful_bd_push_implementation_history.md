@@ -4614,3 +4614,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   complete.
 - Decision: run the matched QD `6x7` arm before running the registered `6x7`
   validators or producing the final budget-shape analysis.
+
+## 2026-06-24T06:45:08Z - T79 QD 6x7 Arm Started
+
+- Started the matched QD `6x7` arm in the same T79 run root:
+  `shape_density_front_pressure_qd_6x7`, seed `1001`.
+- Fresh live preflight:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/preflight/models_summary_20260624_064459_UTC.txt`
+  reports `openai/gpt-oss-120b max_model_len=131072`.
+- Main log:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/logs/shape_density_front_pressure_qd_6x7_seed_1001.log`.
+- Updated `tables/t79_live_arm_status.csv` with an `in_progress` row.
+- Decision: wait for this arm to finish before running the registered `6x7`
+  validators or producing the final budget-shape analysis.

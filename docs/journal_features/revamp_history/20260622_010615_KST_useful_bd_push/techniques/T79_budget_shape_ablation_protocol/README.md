@@ -32,7 +32,7 @@ holdout tables before any T79 live outcome:
 | --- | ---: | --- | --- |
 | `12x3` | `48` | complete | complete |
 | `8x5` | `48` | complete | complete |
-| `6x7` | `48` | complete | planned |
+| `6x7` | `48` | complete | running |
 
 QD uses the T75 arm: `shape_density_front_pressure_qd`.
 
@@ -45,5 +45,5 @@ run is documented with exact partial artifacts and continuation rules.
 
 Completed arms are recorded in `tables/t79_live_arm_status.csv`. The `12x3`
 and `8x5` classic/QD pairs are complete and have passed the registered
-validators. The classic `6x7` arm is complete, but the matched QD `6x7` arm
-is still pending. This is still not a budget-shape result.
+validators. The matched QD `6x7` arm is running. This is still not a
+budget-shape result.
