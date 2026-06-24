@@ -2,14 +2,12 @@
 
 ## Tier Decision
 
-`partial_live_execution`.
+`T0 diagnostic_negative`.
 
-T79 is still primarily a protocol package. It freezes the subset,
-budget-shape matrix, methods, endpoint preflight, and reporting gates. The
-matched `12x3` and `8x5` pairs have completed, and the classic `6x7` arm is
-complete. The matched QD `6x7` arm is complete. No budget-shape conclusion is
-claimed until the final analysis bundle, figures, and visual checks are
-packaged.
+T79 is a completed live budget-shape ablation for the T75
+`shape_density_front_pressure_qd` arm. The result is diagnostic-negative:
+deeper equal-candidate budgets did not make this QD method beat matched
+classic on the primary PPA-front metrics.
 
 ## Pre-Run Evidence
 
@@ -20,9 +18,9 @@ packaged.
 | vLLM preflight | complete |
 | Command parser/task-count validation | complete |
 | Live arms | `6/6` complete |
-| Final analysis bundle | pending |
-| Direct PPA figures | pending |
-| Phase 03.1 viewer | pending for completed QD arms |
+| Final analysis bundle | complete |
+| Direct PPA figures | complete |
+| Phase 03.1 viewer | schema-complete with Playwright caveats |
 
 The preflight at `tables/preflight_models_20260624_042959_UTC.txt` reports:
 
@@ -51,6 +49,52 @@ The completed arm lives under
 `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live`.
 The tracked arm ledger is `tables/t79_live_arm_status.csv`.
 
+## Final Analysis
+
+The full ignored run bundle is under:
+
+```text
+exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/final_analysis
+```
+
+The tracked package copies the key outputs into:
+
+- `reports/final_analysis/`
+- `tables/final_analysis/`
+- `figures/final_analysis/`
+
+Top-level recommendations from `reports/final_analysis/report.md`:
+
+| Recommendation | Backend |
+| --- | --- |
+| Overall | `classic_revolution_6x7` |
+| Score-oriented QD | `shape_density_front_pressure_qd_12x3` |
+| Archive-health QD | `shape_density_front_pressure_qd_8x5` |
+| Multi-objective | `classic_revolution_12x3` |
+| Pareto winner | `classic_revolution_12x3` |
+
+Matched shape-pair summary:
+
+| Shape | Classic HV | QD HV | QD - Classic HV | Classic Points | QD Points | QD - Classic Ref-Beating | QD - Classic Synthesis |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `12x3` | `0.1864` | `0.1060` | `-0.0804` | `2.25` | `2.25` | `-3.25` | `+0.0521` |
+| `8x5` | `0.1414` | `0.1231` | `-0.0183` | `2.62` | `1.62` | `-2.25` | `-0.0313` |
+| `6x7` | `0.1701` | `0.1194` | `-0.0507` | `2.62` | `2.00` | `-3.00` | `-0.0885` |
+
+Interpretation:
+
+- `8x5` is the least negative QD shape by mean HV, but it still loses matched
+  classic on HV, Pareto points, reference-beating candidates, synthesis yield,
+  and best score.
+- `6x7` helps classic more than QD: it is the overall best score/yield backend
+  but the QD `6x7` arm has the largest synthesis drop versus matched classic.
+- QD archive coverage did not convert into PPA-front gain. The highest QD
+  archive coverage mean is `8x5` at `0.2982`, but its mean HV delta is still
+  `-0.0183`.
+- This does not refute QD/MAP-Elites generally; it says exact T75's
+  source-aligned shape-density archive pressure is not sufficient under this
+  one-seed, eight-design, fixed-48-candidate test.
+
 ## Validator Status
 
 The completed `12x3` pair passes:
@@ -74,21 +118,35 @@ uv run python scripts/validate_pareto_front_run.py ... --classic-mode classic_re
 uv run python scripts/validate_single_thought_operator_run.py ... --classic-mode shape_density_front_pressure_qd_6x7 --eoh-mode shape_density_front_pressure_qd_6x7 --unified-mode shape_density_front_pressure_qd_6x7 --require-full-subset
 ```
 
+## Visual Inspection
+
+- Clean aggregate figures:
+  `figures/final_analysis/summary_mean_hypervolume.png`,
+  `figures/final_analysis/summary_yield_and_score.png`, and
+  `figures/final_analysis/summary_archive_coverage_vs_hv_delta.png`.
+- The static direct PPA/Pareto supplement is
+  `visualizations/direct_ppa_pareto/index.html`.
+- Raw per-problem Pareto figures are copied under
+  `figures/final_analysis/pareto_fronts/`. They are useful diagnostics, but
+  several have crowded legends and should not be treated as final slide
+  figures without layout cleanup.
+- Phase 03.1 QD/PPA viewers are under
+  `visualizations/qd_ppa_viewer/{12x3,8x5,6x7}/`. All three passed strict
+  schema validation. Non-strict Playwright rendered screenshots, but strict
+  Playwright interaction checks reported expected validation-subset and sparse
+  archive hover warnings.
+
 ## Non-Claims
 
-No budget-shape result is claimed yet. T79 does not prove that deeper budgets
-help QD from live completion alone. The all-arm run only makes the live test
-auditable; the conclusion requires the final paired analysis bundle and visual
-inspection.
+T79 is one seed on eight reference-complete designs. It does not prove that
+deeper budgets are globally bad for QD, or that QD/MAP-Elites is wrong. It
+does show that this exact T75 implementation should not be promoted as a
+positive QD result without a changed descriptor/coupling mechanism.
 
 ## Required Completion Package
 
-After live execution, this package must add:
-
-- one row per method/shape/problem with validity and PPA metrics;
-- aggregate paired HV/HV-AUC/front metrics;
-- validity gate table;
-- direct raw area-power Pareto figures;
-- Phase 03.1 viewer bundles for completed QD arms with archive artifacts;
-- visual inspection notes;
-- final tier decision.
+- Presentation-specific figure cleanup pass for crowded per-problem Pareto
+  plots if those plots are promoted to slides.
+- Optional viewer test harness improvement so strict Playwright can validate
+  arbitrary reference-complete subsets instead of expecting the built-in
+  `RTLLM/Prob004_adder_8bit` validation problem.

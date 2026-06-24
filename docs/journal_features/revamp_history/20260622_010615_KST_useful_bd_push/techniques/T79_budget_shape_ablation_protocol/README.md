@@ -1,7 +1,6 @@
 # T79 Budget-Shape Ablation Protocol
 
-T79 pre-registers the live `L8` budget-shape ablation. It is not a completed
-result package yet.
+T79 is the live `L8` budget-shape ablation package.
 
 ## Question
 
@@ -38,12 +37,27 @@ QD uses the T75 arm: `shape_density_front_pressure_qd`.
 
 ## Status
 
-`partial_live_execution`.
+`live_complete_diagnostic_negative`.
 
-Promotion remains impossible until all six planned arms finish or a blocked
-run is documented with exact partial artifacts and continuation rules.
+All six planned arms finished with `8/8` successful frozen designs and `48`
+samples per design.
 
-Completed arms are recorded in `tables/t79_live_arm_status.csv`. The `12x3`
+Completed arms are recorded in `tables/t79_live_arm_status.csv`. The `12x3`,
 `8x5`, and `6x7` classic/QD pairs are complete and have passed the registered
-validators. This is still not a final budget-shape result until the analysis
-bundle, figures, and visual checks are packaged.
+validators. The aggregate analysis bundle, tracked summary figures, raw CSVs,
+and visual notes are packaged. The remaining visualization gap is the full
+Phase 03.1 viewer bundle for the QD archive arms.
+
+## Result Summary
+
+T79 does not support the hypothesis that this T75 QD arm benefits more than
+classic from deeper equal-candidate budgets. QD loses matched classic on mean
+Pareto hypervolume for all three shapes:
+
+- `12x3`: QD HV delta `-0.0804`.
+- `8x5`: QD HV delta `-0.0183`.
+- `6x7`: QD HV delta `-0.0507`.
+
+The least negative QD shape is `8x5`, but it still trails classic on HV,
+Pareto points, reference-beating count, synthesis yield, and best score. The
+current conclusion is diagnostic-negative for exact T75 under T79 settings.

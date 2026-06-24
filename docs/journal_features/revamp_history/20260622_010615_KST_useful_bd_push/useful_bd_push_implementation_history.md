@@ -4646,3 +4646,35 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   complete.
 - Decision: run the final analysis bundle and visual packaging before making
   any budget-shape conclusion.
+
+## 2026-06-24T07:21:00Z - T79 Final Analysis Packaged
+
+- Ran `scripts/report_final_analysis_bundle.py` over all six T79 backend arms.
+- Output bundle:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/final_analysis`.
+- Copied tracked reports, raw CSV tables, and per-problem Pareto-front PNGs
+  into the T79 package under `reports/final_analysis/`,
+  `tables/final_analysis/`, and `figures/final_analysis/`.
+- Added `tools/build_t79_summary_figures.py` and generated clean aggregate
+  figures for mean HV, yield/score, and archive coverage versus HV delta.
+- Visual inspection found the compact summary figures presentation-suitable.
+  The generated per-problem Pareto diagnostics are useful but have crowded
+  legends, so they should not be promoted to slides without layout cleanup.
+- Result: diagnostic-negative for exact T75 under T79. QD loses matched classic
+  on mean HV at all three equal-candidate shapes: `-0.0804` at `12x3`,
+  `-0.0183` at `8x5`, and `-0.0507` at `6x7`.
+
+## 2026-06-24T07:26:00Z - T79 Phase 03.1 Viewers Packaged
+
+- Exported Phase 03.1-compatible QD/PPA viewers for the matched `12x3`, `8x5`,
+  and `6x7` T79 pairs under `visualizations/qd_ppa_viewer/`.
+- Added `visualizations/direct_ppa_pareto/` as the static reader-facing PPA
+  supplement, with `index.html`, `metrics.json`, and `screenshot.png`.
+- Ran `scripts/validate_qd_ppa_visualization.py --strict` for all three
+  viewer roots; all passed schema validation.
+- Ran non-strict Playwright render smoke and copied compare-mode screenshots
+  to `screenshot.png` for each viewer.
+- Strict Playwright interaction validation did not fully pass because the
+  validator expects the built-in `RTLLM/Prob004_adder_8bit` problem and several
+  hover checks assume denser archive cells than the T79 subset provides.
+  Record this as a viewer-test harness limitation, not a data export failure.
