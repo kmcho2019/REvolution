@@ -4458,3 +4458,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `commands/live_budget_shape_v0.md`.
 - Decision: T79 remains `pre_registered_not_run`; the command matrix is now
   parser-validated before any live T79 outcome.
+
+## 2026-06-24T04:55:00Z - T79 First Live Arm Started
+
+- Started the first T79 live arm:
+  `classic_revolution_12x3`, seed `1001`, eight frozen T79 designs.
+- Run root:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live`.
+- Recorded the same path in
+  `techniques/T79_budget_shape_ablation_protocol/tables/latest_live_run_root.txt`
+  so later packaging can find the active run root.
+- Captured a fresh live vLLM preflight under the run root:
+  `preflight/models_20260624_043841_UTC.json` and
+  `preflight/models_summary_20260624_043841_UTC.txt`.
+- Main log:
+  `logs/classic_revolution_12x3_seed_1001.log`.
+- Status at check-in: in progress. The terminal progress bar reported `1/8`
+  completed after about `9:13` runtime. No result claim is made until the arm
+  finishes and the generated outputs are validated.
