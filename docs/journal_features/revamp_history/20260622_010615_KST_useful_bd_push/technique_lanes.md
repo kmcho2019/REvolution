@@ -58,7 +58,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T58 preserves coverage and improves yield/best score with frozen T11 PCA4 under T51, but still loses HV, HV-AUC, and front breadth. | Stop primary graph-coordinate live archive tests unless the next method uses graph features as a secondary lane or trains a new encoder objective. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
-| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T72 runs the source-aligned T71 cells live and lands near classic on mean HV; T73 improves valid-PPA yield and archive occupancy but loses classic on HV/Pareto breadth; T74 preserves coverage but regresses on HV/yield. | Retire exact T74; the next RTL-native method must change front creation directly instead of only gating rare two-parent prompts. |
+| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T72 runs the source-aligned T71 cells live and lands near classic on mean HV; T73 improves valid-PPA yield and archive occupancy but loses classic on HV/Pareto breadth; T74 preserves coverage but regresses on HV/yield. | T75 is pre-registered to change front creation directly with stronger front-slot pressure and one-parent-only prompts. |
 
 ## Lane Scorecard
 
@@ -71,7 +71,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, T46 PCA4 projection, and T58 T51/T11-PCA4 cross-lane test | T58 is measured `T0 diagnostic_no_promotion`: it preserves coverage and improves yield/best score, but loses classic/T51 on HV, HV-AUC, and front breadth. | Retire frozen T11 PCA4 as a primary archive geometry. | Reopen only as a secondary/reporting lane or with a trained encoder objective that targets front creation without PPA leakage. |
 | `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
-| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, T68 upstream verification, T69 open-Yosys preprocessing, T70 generated RTL smoke, T71 source-aligned feature map, T72 source-aligned cell QD, T73 shape-density QD, and T74 shape-density front-slot hybrid | T72 is measured `T1 near_classic_not_promoted`; T73 is `T0 positive_diagnostic_not_promoted`; T74 is `T0 diagnostic_regression_not_promoted`. | Exact T72 cells are interpretable but too collapsed; T73 cells improve yield but do not create enough front material; T74's rare gated pairs do not fix that. | Change front creation or source-level repair directly before another RTL-native live spend. |
+| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, T68 upstream verification, T69 open-Yosys preprocessing, T70 generated RTL smoke, T71 source-aligned feature map, T72 source-aligned cell QD, T73 shape-density QD, T74 shape-density front-slot hybrid, and T75 shape-density front-pressure QD | T72 is measured `T1 near_classic_not_promoted`; T73 is `T0 positive_diagnostic_not_promoted`; T74 is `T0 diagnostic_regression_not_promoted`; T75 is pending. | Exact T72 cells are interpretable but too collapsed; T73 cells improve yield but do not create enough front material; T74's rare gated pairs do not fix that. | Run T75 to test whether higher local-front sampling directly improves front material. |
 
 ## Current Lineage
 
@@ -170,6 +170,8 @@ flowchart LR
     BP[T71 feature map]
     BQ[T72 source-aligned cell QD]
     BR[T73 shape-density quantile QD]
+    BS[T74 gated shape-density pairing]
+    BT[T75 shape-density front pressure]
   end
 
   A --> Q
@@ -247,6 +249,8 @@ flowchart LR
   BO --> BP
   BP --> BQ
   BQ --> BR
+  BR --> BS
+  BS --> BT
   G --> M
   G --> W
 ```
@@ -589,7 +593,7 @@ unblocks it.
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43, T58 | T58 completed the bounded T51/T11-PCA4 cross-lane test and failed promotion on HV/front breadth. | Stop exact frozen graph-coordinate primary archive tests. | Reopen only with secondary/reporting graph lanes or a trained encoder objective that improves front creation without PPA leakage. |
 | `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
-| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71, T72, T73 | T73 completes a valid bounded screen after T72's near-classic but front-negative result. | Compare T73 as the less-collapsed source-aligned quantile-cell screen. | A successor improves live front metrics without default-reference or PPA-leakage claims. |
+| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71, T72, T73, T74, T75 | T74 completed as a regression after T73's yield-positive but front-negative result. | Run T75 as the direct front-pressure follow-up. | A successor improves live front metrics without default-reference or PPA-leakage claims. |
 
 ## Branch Split Checklist
 

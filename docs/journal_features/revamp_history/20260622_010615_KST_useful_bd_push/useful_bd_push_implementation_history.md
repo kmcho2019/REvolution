@@ -4237,3 +4237,34 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: retire exact T74. The next RTL-native method should change front
   creation or source-level repair directly rather than spending another seed
   on low-rate near-front pair gating.
+
+## 2026-06-24T02:40:00Z - T75 Front-Pressure Registration
+
+- Added the configurable QD implementation knob
+  `qd_front_slot_lane_fraction` in commit `a4c2c0ac99`. The default preserves
+  the historical `0.10` behavior, and T75 pre-registers `0.30`.
+- Focused implementation validation passed:
+  `uv run pytest` on the new front-slot, backend propagation, and parser
+  tests; `uv run ruff check` on touched files; pyright and ty on the touched
+  source modules; and `git diff --check`. Broader pyright/ty over the touched
+  tests still hit pre-existing test-helper and `run_backend.py` typing debt.
+- Registered `techniques/T75_shape_density_front_pressure_qd/` as the direct
+  post-T74 source-aligned RTL-native follow-up.
+- T75 keeps T73/T74's `source_aligned_shape_density_3d`,
+  `grid_quantile`, `elite_pareto_slot`, champion lane `0.80`, fixed subset,
+  seed `1001`, local vLLM endpoint, 128k token budgets, and no repair.
+- T75 changes front creation directly with
+  `qd_front_slot_lane_fraction=0.30`, disables two-parent prompt exposure with
+  `qd_operator_one_parent_fraction=1.0`, and keeps
+  `qd_two_parent_gate=none`.
+- Descriptor probe was written to
+  `techniques/T75_shape_density_front_pressure_qd/tables/descriptor_probe_source_aligned_shape_density_3d.json`.
+  It confirms `requires_ppa=false`, `requires_synthesis=false`,
+  `requires_graph_metrics=false`, `requires_simulation=false`, and
+  `requires_source_aligned_rtl=true`.
+- Storage at registration remains acceptable:
+  `/workspace` has `27T` total, `23T` used, `3.4T` available, `87%` used,
+  and inode use is `3%`.
+- Decision: T75 is `pending_registered`. It is not a result claim. Run only
+  after vLLM preflight, then package a reference-complete matched comparison
+  with direct PPA figures and Phase 03.1 viewer before assigning any tier.

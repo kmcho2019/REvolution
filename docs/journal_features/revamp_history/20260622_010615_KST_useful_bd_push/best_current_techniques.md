@@ -31,7 +31,7 @@ comparison is near-classic on mean HV (`0.0920` versus classic `0.0926`) but
 not promoted because classic wins HV wins, Pareto points, and
 reference-beating candidates.
 
-T73 is the immediate source-aligned follow-up. It replaces T72's collapsed
+T73 was the immediate source-aligned follow-up. It replaces T72's collapsed
 `log_edges/state_class` grid with problem-local quantile cells over MasterRTL
 branching, RTL-Timer wire density, and RTL-Timer DFF density. The pre-run audit
 shows mean occupied cells rising from `1.0769` for T72's live fixed grid to
@@ -46,6 +46,13 @@ HV `0.0926007600` versus T73 `0.0890223082`, HV wins `8` versus `5`, and mean
 Pareto points `2.31` versus `1.46`. `Prob151_review2015_fsm` also has three
 candidate-PPA rows but zero live archive members, so it remains an
 archive-health caveat.
+
+T74 tested whether the existing low-rate two-parent prompt exposure could help
+T73's cells create front material by gating pairs through
+`near_front_descriptor`. It is now retired: coverage is preserved, but mean HV
+falls to `0.0851926237`, HV wins drop to `1`, and valid-PPA samples drop to
+`237`. T75 is the active next check because it changes front creation directly
+with `qd_front_slot_lane_fraction=0.30` and one-parent-only prompts.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
@@ -79,7 +86,7 @@ Do not promote any technique from all-50/defaulted-reference aggregates.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74 | Redesign after T74 | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic but front-collapsed, T73 improves yield/occupancy, and T74 shows low-rate near-front pair gating does not recover front/HV evidence. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75 | Active T75 | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic but front-collapsed, T73 improves yield/occupancy, T74 shows low-rate near-front pair gating does not recover front/HV evidence, and T75 now tests direct front-slot pressure. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |

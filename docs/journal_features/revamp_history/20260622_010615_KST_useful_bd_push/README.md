@@ -24,20 +24,19 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T73_source_aligned_shape_density_qd/`
-  (`T0 positive_diagnostic_not_promoted`; matched comparison preserves
-  `13/13` classic-covered problems and improves valid-PPA yield, but classic
-  still wins HV/front breadth).
-- Most recent live QD package:
-  `techniques/T73_source_aligned_shape_density_qd/`
-  (`T0 positive_diagnostic_not_promoted`; source-aligned shape-density
-  quantile cells run end to end and are matched against classic).
+  `techniques/T74_shape_density_front_slot_hybrid_qd/`
+  (`T0 diagnostic_regression_not_promoted`; preserves `13/13`
+  reference-complete coverage but loses classic/T73 on HV and valid-PPA yield).
+- Most recent registered package:
+  `techniques/T75_shape_density_front_pressure_qd/`
+  (`pending_registered`; directly raises source-aligned shape-density
+  front-slot pressure after T74 retired low-rate two-parent gating).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  design a T74 hybrid that keeps T73's shape-density yield/occupancy signal
-  while restoring stronger front-slot pressure.
+  run T75 after vLLM preflight and compare it against classic, T73, and T74 on
+  the reference-complete hard/tuning subset.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -46,14 +45,14 @@ Start here when resuming the active goal.
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
 - Most recent per-technique direct PPA visualization:
-  `techniques/T73_source_aligned_shape_density_qd/matched_classic_comparison/figures/t73_hv_delta_by_problem.png`
-  (13-problem matched classic-vs-T73 HV-delta summary).
+  `techniques/T74_shape_density_front_slot_hybrid_qd/matched_classic_comparison/figures/t74_hv_delta_by_problem.png`
+  (13-problem matched classic-vs-T74 HV-delta summary).
 - Most recent direct PPA HTML viewer:
   `techniques/T72_source_aligned_rtl_cell_qd/visualizations/direct_ppa_pareto/index.html`
   (filesystem-openable raw area-power Pareto supplement with summary cards and
   screenshot; not the full Phase 03.1 viewer).
 - Most recent full Phase 03.1 viewer:
-  `techniques/T73_source_aligned_shape_density_qd/matched_classic_comparison/visualizations/qd_ppa_viewer/index.html`
+  `techniques/T74_shape_density_front_slot_hybrid_qd/matched_classic_comparison/visualizations/qd_ppa_viewer/index.html`
   (linked archive/PPA timeline viewer with compare mode, archive projection,
   raw/improvement/normalized PPA modes, raw A-P front mode, and screenshot;
   browser-hover caveat is documented in that package).
@@ -62,9 +61,9 @@ Start here when resuming the active goal.
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
 - Most recent live technique:
-  `techniques/T73_source_aligned_shape_density_qd/` (seed-1001 hard/tuning
-  source-aligned shape-density QD screen with direct PPA panels, Phase 03.1
-  viewer, and matched classic comparison package).
+  `techniques/T74_shape_density_front_slot_hybrid_qd/` (seed-1001 hard/tuning
+  source-aligned shape-density plus near-front two-parent gate screen with
+  direct PPA panels, Phase 03.1 viewer, and matched comparison package).
 - Active RTL-native descriptor packages:
   `techniques/T15_masterrtl_sog_bd/` (`T0 structural_proxy_not_promoted`
   Yosys-SOG proxy with zero lowering failures) and
@@ -76,8 +75,9 @@ Start here when resuming the active goal.
   secondary-cell audit over T51/T63/T64. Use them as mechanism evidence only:
   none beats classic headline PPA-front metrics. T68/T69/T70/T71 are the
   source-verification and descriptor-design bridge; T72 is the first live
-  source-aligned comparison, but exact T72 remains not promoted. T73 is the
-  matched quantile-cell successor and is also not promoted.
+  source-aligned comparison, but exact T72 remains not promoted. T73 improves
+  valid-PPA yield but not front breadth, T74 regresses, and T75 is the active
+  front-pressure follow-up.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -214,6 +214,7 @@ Start here when resuming the active goal.
 | `T72` | `T72_source_aligned_rtl_cell_qd` | Completed `T1 near_classic_not_promoted`; fixed live run preserves coverage and trails classic mean HV by about `0.65%`, but classic wins HV wins, Pareto points, and reference-beating candidates. |
 | `T73` | `T73_source_aligned_shape_density_qd` | Completed `T0 positive_diagnostic_not_promoted`; preserves matched coverage and improves valid-PPA yield, but classic wins mean HV and Pareto breadth. |
 | `T74` | `T74_shape_density_front_slot_hybrid_qd` | Completed `T0 diagnostic_regression_not_promoted`; preserves reference-complete coverage, but loses classic/T73 on headline HV and valid-PPA evidence. |
+| `T75` | `T75_shape_density_front_pressure_qd` | Pre-registered; raises `front_slot_lane_nsga2` pressure to `0.30` and disables two-parent prompts to isolate direct front creation pressure. |
 
 ## Validity-Gate Note
 

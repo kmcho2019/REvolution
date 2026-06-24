@@ -474,8 +474,15 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       package.
 - [x] T74 gets a promotion, ablation, or retirement rationale before another
       same-family source-aligned live spend.
-- [ ] T75 or the next RTL-native follow-up changes front creation directly
-      instead of only gating the existing low-rate two-parent prompt requests.
+- [x] T75 shape-density front-pressure QD is pre-registered as the next
+      source-aligned RTL-native follow-up, using the new configurable
+      `qd_front_slot_lane_fraction=0.30` knob and one-parent-only prompts.
+- [ ] T75 seed `1001` is run on the T72/T73/T74 hard/tuning surface only after
+      storage and vLLM preflight.
+- [ ] T75 is validated, packaged, visualized, and compared against T47
+      classic, T73, and T74 with a reference-complete matched package.
+- [ ] T75 gets a promotion, ablation, or retirement rationale before another
+      same-family source-aligned live spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation
