@@ -4,7 +4,7 @@
 | --- | --- |
 | `README.md` | Package index and current status. |
 | `methodology.md` | Budget-shape protocol and selection rules. |
-| `results_report.md` | Pre-run status and required completion package. |
+| `results_report.md` | Completed diagnostic-negative result and remaining follow-up. |
 | `commands/live_budget_shape_v0.md` | Pre-registered live command matrix. |
 | `tables/t79_budget_ablation_subset.csv` | Frozen eight-design primary subset. |
 | `tables/budget_shape_subset.yaml` | Validator/reporting subset config. |

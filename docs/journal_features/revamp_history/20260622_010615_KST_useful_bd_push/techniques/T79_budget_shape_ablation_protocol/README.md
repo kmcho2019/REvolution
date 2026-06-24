@@ -45,8 +45,10 @@ samples per design.
 Completed arms are recorded in `tables/t79_live_arm_status.csv`. The `12x3`,
 `8x5`, and `6x7` classic/QD pairs are complete and have passed the registered
 validators. The aggregate analysis bundle, tracked summary figures, raw CSVs,
-and visual notes are packaged. The remaining visualization gap is the full
-Phase 03.1 viewer bundle for the QD archive arms.
+visual notes, direct PPA/Pareto supplement, and Phase 03.1 viewer bundles are
+packaged. The remaining visualization caveat is strict Playwright interaction
+validation on arbitrary T79 subsets; strict schema validation passes for all
+three viewer bundles.
 
 ## Result Summary
 

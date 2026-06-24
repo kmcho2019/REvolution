@@ -15,6 +15,9 @@
 
 ## Recommendations
 
+These generated labels are diagnostic metadata. The QD-specific rows are
+best-among-QD only and must not be read as QD beating matched classic.
+
 - overall: `classic_revolution_6x7`
 - score_qd: `shape_density_front_pressure_qd_12x3`
 - archive_qd: `shape_density_front_pressure_qd_8x5`

@@ -4678,3 +4678,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   validator expects the built-in `RTLLM/Prob004_adder_8bit` problem and several
   hover checks assume denser archive cells than the T79 subset provides.
   Record this as a viewer-test harness limitation, not a data export failure.
+
+## 2026-06-24T08:00:00Z - Claude Review And Rollup Refresh
+
+- Ran `claude -p` in read-only mode with `timeout 900` for the periodic
+  third-party review requested after a run of commits.
+- Review record:
+  `reviews/claude_periodic_review_20260624_t79.md`.
+- The review passed the T79 package for honesty and commit hygiene, but found
+  the parent rollup docs stale because they still described T79 as pending.
+- Patched `best_current_techniques.md`, `technique_lanes.md`,
+  `research_strategy_recommendations.md`, `useful_bd_push_plan.md`, and
+  `useful_bd_push_implementation_todo.md` to mark T79 complete and
+  diagnostic-negative.
+- Patched the T79 report and viewer notes so generated QD recommendation labels
+  are explicitly best-among-QD diagnostic metadata and the Phase 03.1 viewers
+  are described as schema-complete with a Playwright interaction caveat.

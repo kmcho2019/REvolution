@@ -61,13 +61,12 @@ This interpretation changes the roadmap in three ways:
 
 1. Treat T75 as a packaged positive diagnostic, not as a promoted useful-BD
    result.
-2. Add a fixed-total-budget shape ablation next, because `12 x 3` may be
-   too shallow for archive maturation. Compare whether deeper shapes help QD
-   more than classic, not merely whether deeper runs help in general. T78
-   supports this concern by showing that existing T75 archives still fill or
-   replace cells late in `9/13` problems, but it is not the live ablation.
-   T79 now freezes the subset, shape matrix, and live command contract. Finish
-   those matched arms before using budget shape as an explanatory claim.
+2. Treat the completed T79 fixed-total-budget ablation as diagnostic-negative
+   for exact T75. T78 showed that existing T75 archives still fill or replace
+   cells late in `9/13` problems, but T79 shows that this maturation did not
+   convert into a PPA-front win: QD loses matched classic HV at `12x3`, `8x5`,
+   and `6x7`. Future budget-shape claims need a changed descriptor/coupling
+   mechanism or a separately registered follow-up shape.
 3. Continue the verification-gated MasterRTL/RTLTimer pretrained lane. T76
    confirms MasterRTL tree artifacts can be loaded and hashed in the isolated
    env. T77 shows the direct pretrained Area head collapses on generated

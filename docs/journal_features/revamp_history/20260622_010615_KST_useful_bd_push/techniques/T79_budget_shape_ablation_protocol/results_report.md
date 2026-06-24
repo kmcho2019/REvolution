@@ -9,7 +9,7 @@ T79 is a completed live budget-shape ablation for the T75
 deeper equal-candidate budgets did not make this QD method beat matched
 classic on the primary PPA-front metrics.
 
-## Pre-Run Evidence
+## Execution Evidence
 
 | Item | Status |
 | --- | --- |
@@ -63,7 +63,7 @@ The tracked package copies the key outputs into:
 - `tables/final_analysis/`
 - `figures/final_analysis/`
 
-Top-level recommendations from `reports/final_analysis/report.md`:
+Top-level generated labels from `reports/final_analysis/report.md`:
 
 | Recommendation | Backend |
 | --- | --- |
@@ -72,6 +72,12 @@ Top-level recommendations from `reports/final_analysis/report.md`:
 | Archive-health QD | `shape_density_front_pressure_qd_8x5` |
 | Multi-objective | `classic_revolution_12x3` |
 | Pareto winner | `classic_revolution_12x3` |
+
+The QD-specific rows are best-among-QD diagnostic labels only. They are not
+promotion evidence, and they should not be quoted without the matched classic
+comparison. `Score-oriented QD` comes from the generated bundle heuristic; the
+T79 shape decision uses the matched HV/front table below, where `8x5` is the
+least negative QD shape and classic still wins every headline category.
 
 Matched shape-pair summary:
 
@@ -143,7 +149,7 @@ deeper budgets are globally bad for QD, or that QD/MAP-Elites is wrong. It
 does show that this exact T75 implementation should not be promoted as a
 positive QD result without a changed descriptor/coupling mechanism.
 
-## Required Completion Package
+## Remaining Follow-Up
 
 - Presentation-specific figure cleanup pass for crowded per-problem Pareto
   plots if those plots are promoted to slides.

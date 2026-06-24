@@ -60,7 +60,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
 | `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T72 lands near classic on mean HV; T73 improves valid-PPA yield and archive occupancy but loses HV/Pareto breadth; T74 regresses; T75 improves over T73/T74 but still trails classic; T76 verifies model loading; T77 blocks direct Area-head leaves. | After T79, continue only with raw/retrained RTL-native descriptors or reproduced timing/power feature flows. |
-| `L8` budget and benchmark shape | Test whether wide/shallow budgets and saturated tasks hide QD value. | T78 shows existing T75 `12 x 3` archives still mature late, and T79 freezes the equal-budget ablation protocol. | Finish the six T79 live arms before using budget shape as an explanatory claim. |
+| `L8` budget and benchmark shape | Test whether wide/shallow budgets and saturated tasks hide QD value. | T78 shows existing T75 `12 x 3` archives still mature late, but completed T79 is diagnostic-negative for exact T75. | Do not use depth as an explanatory escape for exact T75; only reopen with a changed descriptor/coupling mechanism or a registered new shape. |
 
 ## Lane Scorecard
 
@@ -74,7 +74,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
 | `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, T68 upstream verification, T69 open-Yosys preprocessing, T70 generated RTL smoke, T71 source-aligned feature map, T72 source-aligned cell QD, T73 shape-density QD, T74 shape-density front-slot hybrid, T75 shape-density front-pressure QD, T76 MasterRTL pretrained model gate, and T77 Area leaf variation gate | T72 is `T1 near_classic_not_promoted`; T73 is `T0 positive_diagnostic_not_promoted`; T74 is `T0 diagnostic_regression_not_promoted`; T75 is `T0 positive_diagnostic_not_promoted`; T76 is `T0 verification_gate_partial`; T77 is `T0_variation_gate_negative`. | T75 improves over T73/T74 but does not close the classic mean-HV/Pareto gap; T77 shows direct pretrained Area leaves collapse despite varying source features. | Retire Area-head leaves; require source-faithful pretrained reproduction before tree-leaf or margin descriptors; otherwise use raw/retrained RTL-native descriptors. |
-| `L8` | T78 budget-depth audit and T79 protocol | T79 pre-registered; live ablation still open. | Current live evidence cannot distinguish descriptor failure from an evaluation shape that is too wide/shallow for QD. | Run `12 x 3`, `8 x 5`, and `6 x 7` at equal candidate budget, then compare whether depth helps QD more than classic. |
+| `L8` | T78 budget-depth audit and T79 ablation | T79 diagnostic-negative. | Exact T75 does not benefit more from depth than classic on the frozen eight-design subset. | Reopen only with a changed descriptor/coupling mechanism or a separately registered `4 x 11`/`16 x 2` follow-up. |
 
 ## Current Lineage
 
@@ -606,9 +606,12 @@ T75 `12 x 3` logs, `9/13` archives still add or replace cells in generation
 parent traffic keeps increasing. This supports an equal-budget shape ablation;
 it does not prove that deeper QD beats classic.
 
-T79 pre-registers that ablation. It freezes an eight-design primary subset,
-the T75 QD arm, the classic comparator, the `12x3`/`8x5`/`6x7` shape matrix,
-and the vLLM preflight before any T79 outcome. It is not a result package yet.
+T79 completes that ablation on the frozen eight-design primary subset. Exact
+T75 loses matched classic on mean Pareto HV at every tested equal-candidate
+shape: `-0.0804` at `12x3`, `-0.0183` at `8x5`, and `-0.0507` at `6x7`.
+The `8x5` QD arm is least negative, but it still loses Pareto points,
+reference-beating count, synthesis yield, and best score. This is evidence
+against exact T75, not a reason to keep moving the budget target.
 
 ## Branching Guidance
 
@@ -641,7 +644,7 @@ unblocks it.
 | `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
 | `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71, T72, T73, T74, T75, T76, T77 | T77 blocks direct pretrained Area-head leaves after T76's model-load gate. | Reproduce timing/power flows, retrain a model, or move to budget-shape ablation. | A successor improves live front metrics without default-reference, PPA-leakage, or unverified-pretrained claims. |
-| `L8` budget and benchmark shape | T78, T79 | T78 supports the budget-depth concern and T79 freezes the live protocol. | Run the equal-candidate shape ablation on the frozen T79 subset. | QD benefits more than classic under deeper shapes without hidden validity, reference-PPA, or subset-selection loopholes. |
+| `L8` budget and benchmark shape | T78, T79 | T79 is complete and diagnostic-negative for exact T75. | Reopen only with a changed descriptor/coupling mechanism or a registered `4 x 11`/`16 x 2` follow-up. | A successor shows QD benefits more than classic without hidden validity, reference-PPA, or subset-selection loopholes. |
 
 ## Branch Split Checklist
 

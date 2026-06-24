@@ -70,6 +70,11 @@ The decision question is not whether deeper runs help absolutely. It is whether
 deeper runs help the selected QD method more than they help classic under the
 same candidate budget.
 
+T79 completed the first live version of this ablation on the three primary
+shapes, `12 x 3`, `8 x 5`, and `6 x 7`. The `4 x 11` and `16 x 2` shapes
+remain possible follow-ups, but they were not part of the completed T79 live
+matrix.
+
 T78 adds a retrospective diagnostic before spending live budget. It shows that
 the existing T75 `12 x 3` archive still matures late: `9/13` problem archives
 add or replace cells in generation `2` or later, mean occupied cells rise from
@@ -77,10 +82,11 @@ add or replace cells in generation `2` or later, mean occupied cells rise from
 `17` in generation `1` to `77` in generation `3`. This supports the ablation
 but does not answer it. The fixed-total-budget run remains required.
 
-T79 is the active live test of this hypothesis. Do not use the budget argument
-as a reason to keep moving the target; finish the pre-registered matched arms
-or record the infrastructure blocker. Do not promote a deeper shape unless it
-helps QD more than classic on the frozen reference-complete design set.
+T79 is diagnostic-negative for exact T75. QD loses matched classic on mean
+Pareto HV at all three tested shapes: `-0.0804` at `12x3`, `-0.0183` at
+`8x5`, and `-0.0507` at `6x7`. Do not use the budget argument as a reason to
+keep moving the target for exact T75. Any new budget claim now needs a changed
+descriptor/coupling mechanism or an explicitly registered follow-up shape.
 
 ## Discriminative Design Set
 

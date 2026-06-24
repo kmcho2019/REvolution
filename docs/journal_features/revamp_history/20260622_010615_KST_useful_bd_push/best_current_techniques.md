@@ -11,7 +11,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
 | 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T75 is diagnostic but still below classic; T77 blocks direct pretrained Area-head leaves. |
-| 4 | Budget-shape ablation | Active protocol | Tests whether equal-candidate deeper runs let QD cells mature more than classic under the same budget. | T79 must finish before making any budget claim. |
+| 4 | Budget-shape ablation | Diagnostic-negative | T79 tests whether equal-candidate deeper runs let exact T75 mature more than classic under the same budget. | QD loses matched classic HV at `12x3`, `8x5`, and `6x7`; do not use budget shape as an excuse for exact T75. |
 | 5 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -74,10 +74,12 @@ front-slot parent traffic continues increasing. That supports the hypothesis
 that QD may need deeper equal-budget shapes, but it is not a live
 classic-vs-QD budget result.
 
-T79 is the current budget-shape gate. Keep its six matched arms ahead of new
-live descriptor spending unless the run is blocked and the blocker is recorded.
-Promotion requires QD to gain more from depth than classic on the frozen
-reference-complete subset.
+T79 completed the budget-shape gate on the frozen eight-design subset. Exact
+T75 loses matched classic on mean Pareto HV for every tested equal-candidate
+shape: `-0.0804` at `12x3`, `-0.0183` at `8x5`, and `-0.0507` at `6x7`. The
+least negative QD shape is `8x5`, but it still trails classic on Pareto
+points, reference-beating count, synthesis yield, and best score. Treat T79 as
+evidence that exact T75 does not benefit more from depth than classic.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
@@ -142,7 +144,7 @@ loader equivalence, schema assertions, and generated-candidate variation.
 | --- | --- | --- | --- |
 | RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77 | T77 packaged | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, and T77 retires direct Area-head leaves. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
-| Budget-shape evaluation | T78, T79 planned `12 x 3`/`8 x 5`/`6 x 7` equal-budget ablation | T79 pre-registered | Existing T75 archives continue maturing late, and T79 now freezes the subset and command matrix; the live ablation is still required before making any budget claim. |
+| Budget-shape evaluation | T78 audit and T79 `12 x 3`/`8 x 5`/`6 x 7` equal-budget ablation | T79 diagnostic-negative | T78 shows archive maturation can continue late, but T79 shows exact T75 still loses classic at every tested equal-candidate shape. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |
 

@@ -82,12 +82,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       front family, QD-score AUC, coverage AUC, and HV AUC metrics.
 - [x] Add a retrospective budget-depth maturation audit before live
       budget-shape spending (`T78_budget_depth_maturation_audit`).
-- [ ] Pre-register and run a fixed-total-budget shape ablation, comparing
-      classic and the best QD arm under at least `12 x 3`, `8 x 5`, and
-      `6 x 7`.
-- [ ] Finish the six T79 matched live arms before using budget shape as a
-      classic-vs-QD explanatory claim or launching another live descriptor
-      family.
+- [x] Pre-register and run a fixed-total-budget shape ablation, comparing
+      classic and exact T75 under `12 x 3`, `8 x 5`, and `6 x 7`
+      (`T79_budget_shape_ablation_protocol`).
+- [x] Finish the six T79 matched live arms before using budget shape as a
+      classic-vs-QD explanatory claim. Outcome: diagnostic-negative; exact T75
+      loses matched classic mean HV at all three tested shapes.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live
