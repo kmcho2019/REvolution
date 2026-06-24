@@ -4627,3 +4627,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated `tables/t79_live_arm_status.csv` with an `in_progress` row.
 - Decision: wait for this arm to finish before running the registered `6x7`
   validators or producing the final budget-shape analysis.
+
+## 2026-06-24T07:18:27Z - T79 QD 6x7 Arm Completed
+
+- The matched QD `6x7` arm finished with exit code `0`:
+  `shape_density_front_pressure_qd_6x7`, seed `1001`, eight frozen designs.
+- Terminal runtime: `1964.23` seconds.
+- Summary:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/shape_density_front_pressure_qd_6x7/seed_1001/openai_gpt-oss-120b/20260624_064502_revolution_summary_results.txt`.
+- Scheduler telemetry:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/shape_density_front_pressure_qd_6x7/seed_1001/openai_gpt-oss-120b/20260624_064502_revolution_scheduler_telemetry.json`.
+- Quick inventory check: all `8/8` problems have `success` rows in the summary
+  results and each frozen problem has `48` sample directories.
+- Ran the registered `6x7` validators:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`; both exited `0`.
+- Updated `tables/t79_live_arm_status.csv` and marked all six T79 live arms
+  complete.
+- Decision: run the final analysis bundle and visual packaging before making
+  any budget-shape conclusion.
