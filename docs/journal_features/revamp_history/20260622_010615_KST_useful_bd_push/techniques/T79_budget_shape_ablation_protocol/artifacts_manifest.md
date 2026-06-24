@@ -16,3 +16,4 @@
 | `figures/t79_budget_subset_selection.png` | Frozen subset selection plot. |
 | `figures/visual_inspection_notes.md` | Manual visual inspection notes. |
 | `tools/build_t79_budget_shape_tables.py` | Reproducer for subset tables and figure. |
+| `tools/validate_t79_command_matrix.py` | Dry parser/task-count validator for the six planned arms. |

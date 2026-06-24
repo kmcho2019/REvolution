@@ -15,6 +15,7 @@ any T79 live outcome.
 | Primary subset frozen | complete |
 | Equal-candidate shape matrix | complete |
 | vLLM preflight | complete |
+| Command parser/task-count validation | complete |
 | Live arms | not run |
 | Final analysis bundle | pending |
 | Direct PPA figures | pending |
@@ -24,6 +25,12 @@ The preflight at `tables/preflight_models_20260624_042959_UTC.txt` reports:
 
 ```text
 openai/gpt-oss-120b max_model_len=131072
+```
+
+The dry parser/task-count validator reports:
+
+```text
+T79 command matrix parses and maps to 8 tasks per arm.
 ```
 
 ## Non-Claims

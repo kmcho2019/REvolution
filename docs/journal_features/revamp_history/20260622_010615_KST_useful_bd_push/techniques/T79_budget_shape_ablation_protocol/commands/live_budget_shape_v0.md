@@ -13,6 +13,7 @@ df -ih /workspace
 RUN_TS="$(date -u +%Y%m%d_%H%M%S_UTC)"
 RUN_ROOT="exp/useful_bd_push/t79_budget_shape_ablation_${RUN_TS}/live"
 mkdir -p "${RUN_ROOT}/preflight"
+mkdir -p "${RUN_ROOT}/logs"
 
 curl -sS --max-time 10 http://20.0.0.103:8000/v1/models \
   > "${RUN_ROOT}/preflight/models_${RUN_TS}.json"
@@ -95,6 +96,8 @@ for ITEM in "${SHAPES[@]}"; do
     --population_size "${POP}" \
     --num_generations "${GEN}" \
     --search_mode revolution \
+    --classic_operator_kind eoh_strategies \
+    --representation_kind code_individual \
     --save_path "${RUN_ROOT}/classic_revolution_${SHAPE}/seed_${SEED}"
 done
 ```

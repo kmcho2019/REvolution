@@ -4441,3 +4441,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   and PPA variance.
 - Decision: T79 is `pre_registered_not_run`. The budget-shape live TODO remains
   open until all six arms run or a blocked continuation is recorded.
+
+## 2026-06-24T04:50:00Z - T79 Command Matrix Validation
+
+- Added `tools/validate_t79_command_matrix.py` to parse the six planned T79
+  commands through `scripts/run_backend.py` without launching vLLM.
+- The validator asserts the frozen subset has `8` tasks, each shape has `48`
+  candidates per design, and every classic/QD arm discovers exactly `8`
+  benchmark/problem tasks.
+- Ran:
+  `uv run python
+  docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T79_budget_shape_ablation_protocol/tools/validate_t79_command_matrix.py`.
+- Output:
+  `T79 command matrix parses and maps to 8 tasks per arm.`
+- Also pinned `--classic_operator_kind eoh_strategies` explicitly in
+  `commands/live_budget_shape_v0.md`.
+- Decision: T79 remains `pre_registered_not_run`; the command matrix is now
+  parser-validated before any live T79 outcome.
