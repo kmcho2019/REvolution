@@ -4598,3 +4598,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/logs/classic_revolution_6x7_seed_1001.log`.
 - Updated `tables/t79_live_arm_status.csv` with an `in_progress` row.
 - Decision: run the matched QD `6x7` arm after this classic arm completes.
+
+## 2026-06-24T06:43:43Z - T79 Classic 6x7 Arm Completed
+
+- The classic `6x7` arm finished with exit code `0`:
+  `classic_revolution_6x7`, seed `1001`, eight frozen designs.
+- Terminal runtime: `1481.27` seconds.
+- Summary:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/classic_revolution_6x7/seed_1001/openai_gpt-oss-120b/20260624_061843_revolution_summary_results.txt`.
+- Scheduler telemetry:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/classic_revolution_6x7/seed_1001/openai_gpt-oss-120b/20260624_061843_revolution_scheduler_telemetry.json`.
+- Quick inventory check: all `8/8` problems have `success` rows in the summary
+  results and each frozen problem has `48` sample directories.
+- Updated `tables/t79_live_arm_status.csv` and marked five of six T79 live arms
+  complete.
+- Decision: run the matched QD `6x7` arm before running the registered `6x7`
+  validators or producing the final budget-shape analysis.
