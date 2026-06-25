@@ -118,9 +118,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       canonical renumbering and constant repair produce `60` embeddings across
       `5/8` screening problems, but large-design coverage and same-problem
       clustering still block promotion.
-- [ ] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
+- [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.
+      Outcome: best screened QD by mean HV, but still not promoted.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live

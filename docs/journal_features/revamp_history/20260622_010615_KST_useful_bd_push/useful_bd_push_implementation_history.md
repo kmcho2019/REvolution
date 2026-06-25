@@ -16,6 +16,18 @@ evidence.
   archive but lowers fill/backfill pressure and uses a high-exploitation global
   NSGA-II parent pool.
 - This should be read as a mechanism test, not a promoted method.
+- Live run completed `8/8` problems in `1664.25` seconds after vLLM preflight
+  reported `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Validators passed:
+  `validate_pareto_front_run.py` and `validate_single_thought_operator_run.py`.
+- Final-analysis bundle was interrupted in source-aligned design-space feature
+  recovery after backend, Pareto, PPA, hard-iteration, and evolutionary
+  reports were written.
+- Result: `diagnostic_not_promoted`. Mean HV is `0.1339` versus classic
+  `0.1406`; Pareto points are `1.75` versus `3.25`; reference-beating
+  candidates are `4.00` versus `8.00`.
+- Interpretation: the auxiliary archive mechanism is the best screened QD arm
+  by mean HV, but not close enough for full-RTLLM spend.
 
 ## Scaffold Start - 2026-06-22 KST
 

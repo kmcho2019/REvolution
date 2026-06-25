@@ -5,8 +5,8 @@
 The best actual pretrained encoder signal to date is Qwen3 canonical RTL, but
 its first live screen lost to classic. The best encoder-like signal is still
 T36/T11 bounded front graph, but the exact live conversion in T58 lost. The
-best screened QD arm right now is the MasterRTL structural front-slot
-follow-up, and it also does not clear the full-RTLLM promotion gate.
+best screened QD arm right now is the MasterRTL auxiliary-archive high-exploit
+probe, and it also does not clear the full-RTLLM promotion gate.
 
 ## Candidate Ranking
 
@@ -14,11 +14,12 @@ follow-up, and it also does not clear the full-RTLLM promotion gate.
 | --- | --- | --- | --- |
 | 1 | Qwen3 canonical RTL | Actual pretrained text/code embedding | Model-valid and live-screened. Preserved `8/8` problem coverage, but mean HV was `0.1108` versus classic `0.1406`, so it is not promoted as-is. |
 | 2 | T36/T11 bounded front graph | Encoder-like graph representation | Strongest replay signal: about `+4.04%` HV versus lexical and more front hits. Exact T58 live conversion lost HV/front breadth, and the T11 top-4 front-slot successor also lost the frozen screen. |
-| 3 | T51-style SR front slot | Custom BD/archive coupling | Most practical custom-BD live base. It preserves conservative archive pressure and is already commandable. |
-| 4 | MasterRTL structural front-slot | RTL-native custom BD/archive coupling | Best current screened QD arm by mean HV after the follow-up: `0.1227` versus classic `0.1406`. It only narrowly improves plain MasterRTL structural mix and still loses front breadth. |
-| 5 | DeepGate2 transition-AIG bridge | Pretrained netlist encoder candidate | Official pretrained model embeds transition AIGs with nonconstant signal on `60` rows across `5/8` screen problems, but large designs and same-problem clustering still block promotion. |
-| 6 | AURORA-style raw implementation features | Learned auto-BD lane | Raw features had replay signal, but compressed bottlenecks lost and no live profile is frozen. |
-| 7 | MasterRTL pretrained prediction/leaf heads | Pretrained model candidate | Artifacts exist, but the direct Area-head leaf lane collapsed on generated candidates. Keep as future bridge work, not a live arm today. |
+| 3 | MasterRTL auxiliary archive | RTL-native auxiliary archive mechanism | Best current screened QD arm by mean HV: `0.1339` versus classic `0.1406`. It narrows the loss but still loses front breadth and reference-beating candidates. |
+| 4 | T51-style SR front slot | Custom BD/archive coupling | Most practical custom-BD live base. It preserves conservative archive pressure and is already commandable. |
+| 5 | MasterRTL structural front-slot | RTL-native custom BD/archive coupling | Improves plain MasterRTL structural mix only slightly: `0.1227` versus classic `0.1406`. It loses front breadth. |
+| 6 | DeepGate2 transition-AIG bridge | Pretrained netlist encoder candidate | Official pretrained model embeds transition AIGs with nonconstant signal on `60` rows across `5/8` screen problems, but large designs and same-problem clustering still block promotion. |
+| 7 | AURORA-style raw implementation features | Learned auto-BD lane | Raw features had replay signal, but compressed bottlenecks lost and no live profile is frozen. |
+| 8 | MasterRTL pretrained prediction/leaf heads | Pretrained model candidate | Artifacts exist, but the direct Area-head leaf lane collapsed on generated candidates. Keep as future bridge work, not a live arm today. |
 
 ## Colleague-Facing Interpretation
 
@@ -101,16 +102,15 @@ produced `192` valid-PPA files, but mean HV was `0.1108` versus classic
 Decision: Qwen canonical RTL is a real pretrained-encoder BD implementation,
 but it should not be promoted to the final full-RTLLM comparison as-is.
 
-## Next Mechanism Probe
+## Auxiliary Archive Mechanism Probe
 
-The next registered run is
-`masterrtl_aux_archive_high_exploit_8x5`, tracked under
+The completed `masterrtl_aux_archive_high_exploit_8x5` run is tracked under
 `../20260625_aux_archive_high_exploit_probe/`. It is not another descriptor
 geometry tweak. It keeps the best live RTL-native archive profile, but reduces
 forced diversity pressure and makes the archive an auxiliary memory behind
 classic-like exploitation.
 
-This is the right next test because every spend-ready descriptor-only arm has
-lost the frozen screen. If this arm still trails classic by more than the
-promotion tolerance, the current preliminary evidence argues against launching
-full RTLLM with the screened QD family.
+Outcome: this is the best screened QD arm by mean HV, improving over the
+descriptor-only QD arms, but it still trails classic by about `4.78%` mean HV
+and loses Pareto breadth (`1.75` versus `3.25`). The current preliminary
+evidence argues against launching full RTLLM with the screened QD family as-is.

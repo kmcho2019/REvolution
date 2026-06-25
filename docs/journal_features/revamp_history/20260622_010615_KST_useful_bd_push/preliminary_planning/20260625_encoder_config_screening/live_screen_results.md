@@ -99,3 +99,22 @@ replay graph lane a live frozen-screen check.
 
 Decision: diagnostic, not promoted. The graph lane still loses classic on
 headline HV/front metrics and no longer looks like the best screened QD arm.
+
+## Follow-Up Auxiliary Archive High-Exploit Probe
+
+`masterrtl_aux_archive_high_exploit_8x5` tested the current mechanism
+hypothesis: keep MasterRTL structural archive memory active, but lower forced
+fill/backfill pressure and use high classic-like exploitation through global
+NSGA-II rank plus a `0.90` champion lane.
+
+| Backend | Mean HV | Pareto Points | Ref-Beating | HV Wins |
+| --- | ---: | ---: | ---: | ---: |
+| `classic_revolution_8x5` | 0.1406 | 3.25 | 8.00 | 5 |
+| `masterrtl_aux_archive_high_exploit_8x5` | 0.1339 | 1.75 | 4.00 | 1 |
+| `masterrtl_structural_front_slot_8x5` | 0.1227 | 1.75 | 6.62 | 1 |
+| `t11_runtime_top4_front_slot_8x5` | 0.1208 | 1.88 | 5.38 | 0 |
+
+Decision: diagnostic, not promoted. This is the strongest screened QD arm by
+mean HV and supports treating QD as auxiliary archive memory under the small
+budget, but it remains about `4.78%` below classic mean HV and loses front
+breadth plus reference-beating count.
