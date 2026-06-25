@@ -24,6 +24,15 @@ Only configurations with a working live descriptor path enter an expensive
 screening run. Replay-positive encoder lanes stay in the package as bridge
 work until they have a verified runtime hook and non-collapse checks.
 
+The preliminary plan is not finished enough to choose final full-RTLLM QD
+configs. The periodic 2026-06-25 Claude review recorded
+`PASS_WITH_ACTIONS`: the package is honest, but every screened QD arm still
+loses classic, all current screens are single-seed, and the best auxiliary
+archive aggregate is dominated by `Prob135_m2014_q6b`. The next decision gate
+is seed replication of classic plus the auxiliary high-exploit arm and a
+genuinely adaptive archive-pressure mechanism, not another minor MasterRTL
+geometry tweak.
+
 The current pretrained-encoder rule is stricter: an external model must load
 from pinned checkpoints, pass an upstream or fixture smoke, and show
 nonconstant generated-candidate descriptors before it can be called a live

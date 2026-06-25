@@ -47,3 +47,9 @@ The matched `qwen_canonical_rtl_pca3_8x5` screen is now complete in the
 encoder screening package. Qwen preserved `8/8` problem coverage but lost the
 headline aggregate comparison: mean HV `0.1108` versus classic `0.1406`.
 Treat the hook as valid but not promoted as-is.
+
+The live-screen numbers are tabulated in
+`../20260625_encoder_config_screening/tables/live_screen_aggregate_pareto_metrics.csv`.
+The generated probe recorded a cosine max above one because the script used
+float32 normalized embeddings; future regenerated probe tables clip cosine
+values to `[-1, 1]`.

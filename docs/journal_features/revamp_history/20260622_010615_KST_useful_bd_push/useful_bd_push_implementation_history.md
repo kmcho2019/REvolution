@@ -4,6 +4,26 @@ Unbounded journal for `useful_bd_push`. Record notable decisions, commands,
 outputs, experiments, failed attempts, blockers, commits, and validation
 evidence.
 
+## Periodic Claude Review Gate - 2026-06-25 UTC
+
+- Ran the required long read-only `claude -p` review after more than ten
+  commits since the prior external review.
+- Prompt:
+  `reviews/claude_periodic_review_20260625_aux_archive_prompt.md`.
+- Output:
+  `reviews/claude_periodic_review_20260625_aux_archive.md`.
+- Verdict: `PASS_WITH_ACTIONS`.
+- Key finding: the current preliminary plan is honest but not finished enough
+  to select final full-RTLLM QD configurations. Every screened QD arm still
+  loses classic, all current comparisons are single-seed, and the best
+  auxiliary archive mean-HV result is heavily influenced by
+  `Prob135_m2014_q6b`.
+- Follow-up actions accepted into the plan: add the one-problem robustness
+  caveat to the auxiliary archive report and rollups; make the Qwen live
+  result cite the concrete aggregate table; treat the review bundle as stale
+  until refreshed; and prioritize seed replication or a genuinely adaptive
+  archive-pressure mechanism over further small MasterRTL geometry retunes.
+
 ## Auxiliary Archive High-Exploit Probe - 2026-06-25 UTC
 
 - Current preliminary plan is not complete: no screened QD or pretrained

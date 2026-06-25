@@ -231,7 +231,7 @@ def enrich_rows(
 
 
 def nearest_rows(rows: list[dict[str, object]], embeddings: np.ndarray) -> list[dict[str, object]]:
-    similarity = embeddings @ embeddings.T
+    similarity = np.clip(embeddings @ embeddings.T, -1.0, 1.0)
     np.fill_diagonal(similarity, -np.inf)
     nearest = np.argmax(similarity, axis=1)
     output: list[dict[str, object]] = []
@@ -276,7 +276,7 @@ def summary_payload(
     explained: list[float],
     seconds: float,
 ) -> dict[str, object]:
-    similarity = embeddings @ embeddings.T
+    similarity = np.clip(embeddings @ embeddings.T, -1.0, 1.0)
     mask = ~np.eye(similarity.shape[0], dtype=bool)
     return {
         "run_root": str(args.run_root),

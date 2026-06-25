@@ -131,6 +131,19 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       screened auxiliary-archive mechanism benefits from deeper equal-budget
       evolution against the existing T79 classic `6x7` baseline. Outcome:
       mean HV `0.1229` versus matched classic `0.1701`; do not promote.
+- [x] Run the periodic `claude -p` adversarial review after the 20260625
+      auxiliary archive commits. Outcome: `PASS_WITH_ACTIONS`; the plan is
+      honest but not finished enough for final RTLLM config selection.
+- [ ] Replicate the best diagnostic auxiliary archive comparison with at least
+      seeds `1002` and `1003`, using one canonical matched-classic run per
+      shape and explicit per-problem robustness checks.
+- [ ] Pre-register an adaptive archive-pressure arm that increases diversity
+      pressure only after stagnation or near-front archive evidence. Do not
+      spend another run on a minor MasterRTL geometry tweak without a new
+      coupling mechanism.
+- [ ] Refresh or supersede the 20260625 review bundle so it includes the
+      auxiliary archive high-exploit, front-breadth, and depth negatives before
+      using it for colleague-facing review.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live

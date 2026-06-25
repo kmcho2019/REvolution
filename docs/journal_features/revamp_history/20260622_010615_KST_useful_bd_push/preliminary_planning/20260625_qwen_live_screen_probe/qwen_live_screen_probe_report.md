@@ -14,6 +14,10 @@ live-hook screen, not a full RTLLM spend.
 - unique canonical RTL hashes: `424`
 - embedding shape: `[540, 1024]`
 - off-diagonal cosine mean: `0.791654`
+- off-diagonal cosine max: `1.007359` before clipping; this is a float32
+  numerical artifact from normalized embedding matrix multiplication, not a
+  semantic similarity above one. The probe tool now clips future regenerated
+  cosine tables to `[-1, 1]`.
 - nearest same-problem fraction: `0.992593`
 - nearest same-backend fraction: `0.531481`
 - nearest duplicate-canonical fraction: `0.266667`
@@ -39,8 +43,10 @@ Two bounded smokes were run:
   `[0.432236536166232, -0.014105572094552859, 0.08188936911901099]`.
 
 The bridge is therefore runnable. The matched `8x5` screen completed after
-this smoke and preserved `8/8` problem coverage, but Qwen-QD did not beat
-classic: mean HV was `0.1108` versus classic `0.1406`, and mean Pareto points
+this smoke and preserved `8/8` problem coverage. The decisive live-screen
+evidence is in
+`../20260625_encoder_config_screening/tables/live_screen_aggregate_pareto_metrics.csv`:
+Qwen-QD mean HV was `0.1108` versus classic `0.1406`, and mean Pareto points
 were `1.62` versus classic `3.25`.
 
 Decision: keep Qwen canonical RTL as a validated pretrained-encoder lane, but
