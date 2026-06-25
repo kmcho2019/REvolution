@@ -33,6 +33,27 @@ evidence.
   champion lane from `0.90` to `0.80`, adds `front_slot_lane_nsga2`, and raises
   front-slot sampling to `0.20` to target the observed Pareto-breadth deficit.
 
+## Auxiliary Archive Front-Breadth Probe - 2026-06-25 UTC
+
+- Completed `masterrtl_aux_archive_front_breadth_8x5` on the same frozen
+  eight-design `8x5` screen.
+- Live run completed `8/8` problems in `1545.01` seconds after vLLM preflight
+  reported `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Final-analysis bundle hit the planned `600` second timeout during
+  source-aligned design-space feature recovery, after backend, Pareto, PPA,
+  hard-iteration, and evolutionary reports were written.
+- Packaged results under
+  `preliminary_planning/20260625_aux_archive_front_breadth_probe/`.
+- Result: `diagnostic_not_promoted`. Mean HV is `0.1134` versus classic
+  `0.1406` and high-exploit auxiliary archive `0.1339`. Mean Pareto points are
+  `2.125` versus classic `3.25` and high-exploit `1.75`.
+- Interpretation: bounded front-slot sampling recovers some front material,
+  but it erases the high-exploit auxiliary archive's main HV advantage. Do not
+  launch full RTLLM with this variant.
+
 ## Scaffold Start - 2026-06-22 KST
 
 - Branch: `feat/journal-useful-bd-exp-20260622`.

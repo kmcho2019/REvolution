@@ -1,0 +1,413 @@
+#!/usr/bin/env python3
+"""Package the auxiliary archive front-breadth live probe."""
+
+from __future__ import annotations
+
+import csv
+import json
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+
+
+PACKAGE = Path(__file__).resolve().parents[1]
+RUN_ROOT = Path(
+    "exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live"
+)
+ANALYSIS = RUN_ROOT / "final_analysis_with_aux_archive_front_breadth"
+RUN_DIR = RUN_ROOT / "masterrtl_aux_archive_front_breadth_8x5/seed_1001"
+RUN_OUTPUT = next(RUN_DIR.glob("openai_gpt-oss-120b"))
+BASE = "classic_revolution_8x5"
+NEW = "masterrtl_aux_archive_front_breadth_8x5"
+BACKENDS = [
+    BASE,
+    "masterrtl_aux_archive_high_exploit_8x5",
+    NEW,
+    "masterrtl_structural_front_slot_8x5",
+    "masterrtl_structural_mix_8x5",
+    "t11_runtime_top4_front_slot_8x5",
+    "code_thought_sr_front_slot_8x5",
+    "qwen_canonical_rtl_pca3_8x5",
+]
+TableValue = str | float | int
+TableRow = dict[str, TableValue]
+
+
+def main() -> None:
+    assert ANALYSIS.is_dir(), ANALYSIS
+    tables = PACKAGE / "tables"
+    figures = PACKAGE / "figures"
+    reports = PACKAGE / "reports"
+    logs = PACKAGE / "logs"
+    commands = PACKAGE / "commands"
+    for path in (tables, figures, reports, logs, commands):
+        path.mkdir(exist_ok=True)
+
+    aggregate = read_csv(ANALYSIS / "pareto_analysis/aggregate_backend_metrics.csv")
+    problem_rows = read_csv(ANALYSIS / "pareto_analysis/backend_problem_metrics.csv")
+    copy_text(
+        ANALYSIS / "pareto_analysis/aggregate_backend_metrics.csv",
+        tables / "aggregate_backend_metrics.csv",
+    )
+    copy_text(
+        ANALYSIS / "pareto_analysis/backend_problem_metrics.csv",
+        tables / "backend_problem_metrics.csv",
+    )
+    copy_text(
+        ANALYSIS / "ppa_distribution/data/ppa_candidates.csv",
+        tables / "ppa_candidates.csv",
+    )
+    copy_text(ANALYSIS / "backend_comparison.md", reports / "backend_comparison.md")
+    copy_text(ANALYSIS / "pareto_analysis/report.md", reports / "pareto_report.md")
+    copy_text(
+        ANALYSIS / "ppa_distribution/report.md",
+        reports / "ppa_distribution_report.md",
+    )
+
+    deltas = problem_deltas(problem_rows)
+    archive_rows = archive_summary_rows()
+    summary = run_summary(aggregate, deltas, archive_rows)
+    write_csv(tables / "front_breadth_problem_deltas.csv", deltas)
+    write_csv(tables / "archive_summary.csv", archive_rows)
+    write_json(tables / "run_summary.json", summary)
+    plot_mean_hv(aggregate, figures / "mean_hv_by_backend.png")
+    plot_problem_deltas(deltas, figures / "front_breadth_hv_delta.png")
+    write_validation_log(logs / "validation_log.md")
+    write_command_log(commands / "run_aux_archive_front_breadth_probe.md")
+    write_report(PACKAGE / "aux_archive_front_breadth_probe_report.md", summary)
+
+
+def read_csv(path: Path) -> list[dict[str, str]]:
+    assert path.is_file(), path
+    with path.open(newline="", encoding="utf-8") as stream:
+        return list(csv.DictReader(stream))
+
+
+def write_csv(path: Path, rows: list[TableRow]) -> None:
+    assert rows
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def write_json(path: Path, payload: dict[str, object]) -> None:
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def copy_text(source: Path, target: Path) -> None:
+    assert source.is_file(), source
+    target.write_text(source.read_text(encoding="utf-8").rstrip() + "\n", encoding="utf-8")
+
+
+def problem_deltas(rows: list[dict[str, str]]) -> list[TableRow]:
+    by_key = {(r["backend"], r["benchmark"], r["problem"]): r for r in rows}
+    result: list[TableRow] = []
+    for backend, benchmark, problem in sorted(by_key):
+        if backend != BASE:
+            continue
+        base = by_key[(BASE, benchmark, problem)]
+        new = by_key[(NEW, benchmark, problem)]
+        result.append(
+            {
+                "benchmark": benchmark,
+                "problem": problem,
+                "classic_hv": fnum(base["hypervolume"]),
+                "front_breadth_hv": fnum(new["hypervolume"]),
+                "hv_delta": fnum(new["hypervolume"]) - fnum(base["hypervolume"]),
+                "classic_pareto_points": fnum(base["pareto_point_count"]),
+                "front_breadth_pareto_points": fnum(new["pareto_point_count"]),
+                "pareto_point_delta": fnum(new["pareto_point_count"])
+                - fnum(base["pareto_point_count"]),
+                "classic_ref_beating": fnum(base["reference_beating_count"]),
+                "front_breadth_ref_beating": fnum(new["reference_beating_count"]),
+                "ref_beating_delta": fnum(new["reference_beating_count"])
+                - fnum(base["reference_beating_count"]),
+            }
+        )
+    return result
+
+
+def archive_summary_rows() -> list[TableRow]:
+    rows: list[TableRow] = []
+    for path in sorted(RUN_OUTPUT.rglob("archive_summary.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        assert isinstance(payload, dict)
+        rows.append(
+            {
+                "benchmark": path.parent.parent.name,
+                "problem": path.parent.name,
+                "coverage": float(payload["coverage"]),
+                "occupied_cells": int(payload["occupied_cells"]),
+                "num_cells": int(payload["num_cells"]),
+                "archive_members": int(payload["archive_member_count"]),
+                "global_pareto_size": int(payload["global_pareto_size"]),
+                "mean_front_size": float(payload["mean_front_size"]),
+            }
+        )
+    assert rows
+    return rows
+
+
+def run_summary(
+    aggregate: list[dict[str, str]],
+    deltas: list[TableRow],
+    archive_rows: list[TableRow],
+) -> dict[str, object]:
+    all_rows = {row["backend"]: row for row in aggregate if row["benchmark"] == "ALL"}
+    new_row = all_rows[NEW]
+    base_row = all_rows[BASE]
+    telemetry = json.loads(next(RUN_OUTPUT.glob("*_scheduler_telemetry.json")).read_text())
+    mean_hv = fnum(new_row["mean_hypervolume"])
+    classic_hv = fnum(base_row["mean_hypervolume"])
+    return {
+        "run_root": str(RUN_ROOT),
+        "analysis_root": str(ANALYSIS),
+        "candidate": NEW,
+        "decision": "diagnostic_not_promoted",
+        "mean_hv": mean_hv,
+        "classic_mean_hv": classic_hv,
+        "mean_hv_delta": mean_hv - classic_hv,
+        "relative_hv_delta": (mean_hv - classic_hv) / classic_hv,
+        "mean_pareto_points": fnum(new_row["mean_pareto_point_count"]),
+        "classic_mean_pareto_points": fnum(base_row["mean_pareto_point_count"]),
+        "mean_reference_beating": fnum(new_row["mean_reference_beating_count"]),
+        "classic_mean_reference_beating": fnum(
+            base_row["mean_reference_beating_count"]
+        ),
+        "hv_wins": int(new_row["hypervolume_win_count"]),
+        "problem_hv_wins_vs_classic": sum(
+            1 for row in deltas if row_float(row, "hv_delta") > 0.0
+        ),
+        "problem_count": len(deltas),
+        "mean_archive_coverage": sum(row_float(r, "coverage") for r in archive_rows)
+        / len(archive_rows),
+        "mean_archive_members": sum(row_float(r, "archive_members") for r in archive_rows)
+        / len(archive_rows),
+        "wall_seconds": float(telemetry["wall_seconds"]),
+        "peak_busy_workers": int(telemetry["peak_busy_workers"]),
+        "reporting_caveat": (
+            "report_final_analysis_bundle hit the 600 second timeout during "
+            "source-aligned design-space feature recovery after backend, "
+            "Pareto, PPA, hard-iteration, and evolutionary reports were "
+            "written."
+        ),
+    }
+
+
+def plot_mean_hv(rows: list[dict[str, str]], path: Path) -> None:
+    order = {backend: index for index, backend in enumerate(BACKENDS)}
+    selected = [
+        row for row in rows if row["benchmark"] == "ALL" and row["backend"] in order
+    ]
+    selected.sort(key=lambda row: order[row["backend"]])
+    values = [fnum(row["mean_hypervolume"]) for row in selected]
+    labels = [short_name(row["backend"]) for row in selected]
+    colors = ["#4c78a8" if row["backend"] == BASE else "#f58518" for row in selected]
+    fig, ax = plt.subplots(figsize=(11.0, 4.8))
+    ax.bar(labels, values, color=colors)
+    ax.set_ylabel("Mean hypervolume")
+    ax.set_title("Frozen 8-design screen: mean PPA hypervolume")
+    ax.grid(axis="y", alpha=0.25)
+    ax.set_axisbelow(True)
+    for index, value in enumerate(values):
+        ax.text(index, value + 0.003, f"{value:.4f}", ha="center", fontsize=9)
+    fig.autofmt_xdate(rotation=18, ha="right")
+    fig.tight_layout()
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+
+
+def plot_problem_deltas(rows: list[TableRow], path: Path) -> None:
+    labels = [str(row["problem"]).replace("Prob", "P") for row in rows]
+    values = [row_float(row, "hv_delta") for row in rows]
+    colors = ["#54a24b" if value > 0.0 else "#e45756" for value in values]
+    fig, ax = plt.subplots(figsize=(10.0, 4.4))
+    ax.axhline(0.0, color="#333333", linewidth=1.0)
+    ax.bar(labels, values, color=colors)
+    ax.set_ylabel("HV delta vs classic")
+    ax.set_title("Auxiliary archive front-breadth: per-problem HV delta")
+    ax.grid(axis="y", alpha=0.25)
+    ax.set_axisbelow(True)
+    for index, value in enumerate(values):
+        if abs(value) < 0.001:
+            continue
+        va = "bottom" if value >= 0 else "top"
+        offset = 0.002 if value >= 0 else -0.002
+        ax.text(index, value + offset, f"{value:+.4f}", ha="center", va=va, fontsize=8)
+    fig.autofmt_xdate(rotation=25, ha="right")
+    fig.tight_layout()
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+
+
+def write_validation_log(path: Path) -> None:
+    path.write_text(
+        "\n".join(
+            [
+                "# Validation Log",
+                "",
+                "- vLLM preflight: `openai/gpt-oss-120b`, `max_model_len=131072`.",
+                "- Live run: completed `8/8` problems in `1545.01` seconds.",
+                "- `validate_pareto_front_run.py`: passed with no output.",
+                "- `validate_single_thought_operator_run.py`: passed with no output.",
+                "- Final-analysis bundle: timed out after `600` seconds in",
+                "  source-aligned design-space recovery after backend/Pareto/PPA",
+                "  reports were written.",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def write_command_log(path: Path) -> None:
+    path.write_text(
+        """# Run Command
+
+```bash
+env OPENAI_API_KEY=vllm-local-placeholder PYTHONPATH=src uv run python scripts/run_backend.py \\
+  --backend revolution \\
+  --benchmarks RTLLM VerilogEval-Spec-to-RTL \\
+  --problems Prob015_multi_pipe_8bit Prob024_fsm Prob041_traffic_light Prob045_alu Prob049_signal_generator Prob116_m2014_q3 Prob135_m2014_q6b Prob153_gshare \\
+  --api_backend vllm \\
+  --vllm_host 20.0.0.103 \\
+  --vllm_port 8000 \\
+  --vllm_min_model_len 128000 \\
+  --model_name openai/gpt-oss-120b \\
+  --max_tokens 128000 \\
+  --diff_max_tokens 128000 \\
+  --population_size 8 \\
+  --num_generations 5 \\
+  --evaluation_mode strict_ablation \\
+  --temperature 1.0 \\
+  --top_p 1.0 \\
+  --total_worker_slots 32 \\
+  --max_active_problems 8 \\
+  --max_workers_per_problem 4 \\
+  --seed 1001 \\
+  --no-backend_subdir \\
+  --search_mode revolution_qd \\
+  --qd_archive_type grid_quantile \\
+  --qd_grid_quantile_warmup_successes 4 \\
+  --qd_fill_target_fraction 0.10 \\
+  --qd_improve_backfill_fraction 0.10 \\
+  --qd_cell_mode elite_pareto_slot \\
+  --qd_max_elites_per_cell 2 \\
+  --qd_objectives ppa \\
+  --qd_champion_lane_fraction 0.80 \\
+  --qd_parent_selection front_slot_lane_nsga2 \\
+  --qd_front_slot_lane_fraction 0.20 \\
+  --qd_two_parent_probability 0.0 \\
+  --qd_two_parent_gate none \\
+  --qd_operator_kind single_thought_operator \\
+  --qd_operator_one_parent_fraction 1.0 \\
+  --qd_operator_archive_context_size 4 \\
+  --qd_operator_fail_feedback_chars 0 \\
+  --representation_kind code_individual \\
+  --repair_kind none \\
+  --repair_max_attempts_per_sample 0 \\
+  --repair_max_attempts_per_thought 0 \\
+  --repair_evidence stage_scoped_logs \\
+  --qd_descriptor_profile source_aligned_masterrtl_structural_mix_3d \\
+  --save_path exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/masterrtl_aux_archive_front_breadth_8x5/seed_1001
+```
+""",
+        encoding="utf-8",
+    )
+
+
+def write_report(path: Path, summary: dict[str, object]) -> None:
+    classic_hv = summary_float(summary, "classic_mean_hv")
+    mean_hv = summary_float(summary, "mean_hv")
+    mean_hv_delta = summary_float(summary, "mean_hv_delta")
+    rel = summary_float(summary, "relative_hv_delta") * 100.0
+    classic_pareto = summary_float(summary, "classic_mean_pareto_points")
+    pareto = summary_float(summary, "mean_pareto_points")
+    classic_ref = summary_float(summary, "classic_mean_reference_beating")
+    ref = summary_float(summary, "mean_reference_beating")
+    wins = summary["problem_hv_wins_vs_classic"]
+    count = summary["problem_count"]
+    caveat = summary["reporting_caveat"]
+    assert isinstance(wins, int)
+    assert isinstance(count, int)
+    assert isinstance(caveat, str)
+    text = f"""# Auxiliary Archive Front-Breadth Probe
+
+## Question
+
+Can the auxiliary-archive variant recover the PPA-front breadth that the
+high-exploit auxiliary archive lost by adding a small front-slot lane?
+
+## Method
+
+This probe keeps the same source-aligned MasterRTL structural descriptor as the
+high-exploit run. It relaxes exploitation pressure by lowering the champion lane
+from `0.90` to `0.80`, raising improve backfill from `0.05` to `0.10`, and using
+`front_slot_lane_nsga2` parent selection with a `0.20` front-slot lane.
+
+## Result
+
+| Metric | Classic | Front-breadth QD | Delta |
+| --- | ---: | ---: | ---: |
+| Mean HV | {classic_hv:.6f} | {mean_hv:.6f} | {mean_hv_delta:.6f} |
+| Relative HV | 0.00% | {rel:.2f}% | {rel:.2f}% |
+| Mean Pareto points | {classic_pareto:.3f} | {pareto:.3f} | {pareto - classic_pareto:.3f} |
+| Mean reference-beating candidates | {classic_ref:.3f} | {ref:.3f} | {ref - classic_ref:.3f} |
+| Problem HV wins vs classic | - | {wins}/{count} | - |
+
+## Decision
+
+Do not promote this variant. The front-slot lane did not recover enough
+PPA-front material: mean HV dropped below both classic and the prior high-exploit
+auxiliary-archive probe. It improved mean Pareto points relative to the
+high-exploit auxiliary run, but still remained below classic and paid a large HV
+penalty.
+
+## Evidence
+
+- `tables/run_summary.json`: machine-readable run summary.
+- `tables/front_breadth_problem_deltas.csv`: per-design comparison against
+  classic.
+- `figures/mean_hv_by_backend.png`: screen-wide mean HV comparison.
+- `figures/front_breadth_hv_delta.png`: per-design HV delta.
+- `reports/pareto_report.md`: copied final-analysis Pareto report.
+- `reports/ppa_distribution_report.md`: copied PPA distribution report.
+
+## Caveat
+
+{caveat}
+"""
+    path.write_text(text, encoding="utf-8")
+
+
+def fnum(value: str) -> float:
+    return float(value)
+
+
+def row_float(row: TableRow, key: str) -> float:
+    return float(row[key])
+
+
+def summary_float(summary: dict[str, object], key: str) -> float:
+    value = summary[key]
+    assert isinstance(value, float | int)
+    return float(value)
+
+
+def short_name(name: str) -> str:
+    return (
+        name.replace("_8x5", "")
+        .replace("classic_revolution", "classic")
+        .replace("masterrtl_aux_archive_high_exploit", "aux high-exploit")
+        .replace("masterrtl_aux_archive_front_breadth", "aux front-breadth")
+        .replace("masterrtl_structural_front_slot", "MasterRTL front-slot")
+        .replace("masterrtl_structural_mix", "MasterRTL mix")
+        .replace("t11_runtime_top4_front_slot", "T11 top4 front-slot")
+        .replace("code_thought_sr_front_slot", "SR front-slot")
+        .replace("qwen_canonical_rtl_pca3", "Qwen RTL PCA3")
+    )
+
+
+if __name__ == "__main__":
+    main()

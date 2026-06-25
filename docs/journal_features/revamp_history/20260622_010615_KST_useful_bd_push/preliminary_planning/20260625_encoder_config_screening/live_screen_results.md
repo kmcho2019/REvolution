@@ -118,3 +118,22 @@ Decision: diagnostic, not promoted. This is the strongest screened QD arm by
 mean HV and supports treating QD as auxiliary archive memory under the small
 budget, but it remains about `4.78%` below classic mean HV and loses front
 breadth plus reference-beating count.
+
+## Follow-Up Auxiliary Archive Front-Breadth Probe
+
+`masterrtl_aux_archive_front_breadth_8x5` tested whether the high-exploit
+auxiliary archive could recover front breadth by lowering champion pressure to
+`0.80`, adding `front_slot_lane_nsga2`, and allocating a `0.20` front-slot
+parent lane.
+
+| Backend | Mean HV | Pareto Points | Ref-Beating | HV Wins |
+| --- | ---: | ---: | ---: | ---: |
+| `classic_revolution_8x5` | 0.1406 | 3.25 | 8.00 | 5 |
+| `masterrtl_aux_archive_high_exploit_8x5` | 0.1339 | 1.75 | 4.00 | 1 |
+| `masterrtl_aux_archive_front_breadth_8x5` | 0.1134 | 2.12 | 5.25 | 1 |
+
+Decision: diagnostic, not promoted. The front-slot lane recovered some
+front-breadth evidence relative to high-exploit auxiliary archive, but it
+erased the mean-HV gain that made the auxiliary archive interesting. This
+pushes the next mechanism search away from simply adding more explicit front
+sampling to the same descriptor geometry.

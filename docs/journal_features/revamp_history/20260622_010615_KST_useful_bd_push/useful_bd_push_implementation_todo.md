@@ -122,9 +122,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.
       Outcome: best screened QD by mean HV, but still not promoted.
-- [ ] Run `masterrtl_aux_archive_front_breadth_8x5` to test whether the
+- [x] Run `masterrtl_aux_archive_front_breadth_8x5` to test whether the
       auxiliary archive HV gain can recover Pareto breadth and reference-
-      beating count through bounded front-slot sampling.
+      beating count through bounded front-slot sampling. Outcome: some
+      Pareto-point recovery versus high-exploit, but mean HV falls to `0.1134`;
+      do not promote.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live

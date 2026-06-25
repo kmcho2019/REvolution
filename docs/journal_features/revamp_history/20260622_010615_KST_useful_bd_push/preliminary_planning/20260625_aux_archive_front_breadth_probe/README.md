@@ -27,9 +27,23 @@ reference-beating candidates.
 
 ## Status
 
-Preregistered. Use the same frozen eight-design `8x5` screen as the other
-preliminary candidates.
+Completed. The run covers all eight frozen-screen problems and is packaged as a
+negative ablation.
+
+Headline result: mean HV `0.1134` versus classic `0.1406` and high-exploit
+auxiliary archive `0.1339`. Mean Pareto points improve over high-exploit
+auxiliary archive (`2.125` versus `1.75`), but still trail classic (`3.25`).
+
+Decision: `diagnostic_not_promoted`.
 
 ## Files
 
 - `preregistration.md`: hypothesis, command shape, gates, and expected read.
+- `aux_archive_front_breadth_probe_report.md`: concise result and decision.
+- `tables/`: aggregate metrics, per-problem deltas, archive summaries, and raw
+  PPA candidate rows.
+- `figures/`: mean-HV comparison and per-problem HV-delta plots.
+- `reports/`: copied final-analysis backend, Pareto, and PPA reports.
+- `commands/`: exact live-run command.
+- `logs/`: validation and timeout notes.
+- `tools/`: local packaging script.

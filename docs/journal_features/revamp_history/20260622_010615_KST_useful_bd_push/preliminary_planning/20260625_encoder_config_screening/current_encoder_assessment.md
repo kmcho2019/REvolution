@@ -114,3 +114,10 @@ Outcome: this is the best screened QD arm by mean HV, improving over the
 descriptor-only QD arms, but it still trails classic by about `4.78%` mean HV
 and loses Pareto breadth (`1.75` versus `3.25`). The current preliminary
 evidence argues against launching full RTLLM with the screened QD family as-is.
+
+The follow-up `masterrtl_aux_archive_front_breadth_8x5` run is tracked under
+`../20260625_aux_archive_front_breadth_probe/`. It added a bounded front-slot
+lane to recover Pareto breadth. The result is negative: mean HV dropped to
+`0.1134`, far below the high-exploit auxiliary archive (`0.1339`) and classic
+(`0.1406`). Mean Pareto points recovered only to `2.125`, still below classic
+`3.25`. Decision: useful ablation, not a full-RTLLM candidate.
