@@ -114,6 +114,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Outcome: official DeepGate2 embeddings are noncollapsed on `24`
       generated AIG rows, but only `2/8` screening problems cover under the
       current latch-free bounded bridge; do not promote yet.
+- [x] Escalate DeepGate with transition AIG state abstraction. Outcome:
+      sequential export coverage improves, but full-design transition AIGs
+      still block in the official parser's topological-sort path.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live

@@ -9,7 +9,8 @@ Run from `/workspace`.
   --output-dir exp/useful_bd_push/deepgate_generated_bridge_probe_20260625_182350_UTC \
   --package-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260625_deepgate_generated_bridge_probe \
   --max-per-backend-problem 3 \
-  --max-aig-vars 400
+  --max-aig-vars 400 \
+  --state-policy latch_free
 ```
 
 The script copies compact CSV, JSON, and PNG artifacts into this package. Full

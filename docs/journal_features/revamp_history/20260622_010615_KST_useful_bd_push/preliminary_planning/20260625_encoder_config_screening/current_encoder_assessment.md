@@ -59,11 +59,13 @@ provides the strongest true-pretrained replay signal.
 DeepGate should not be treated as invalid: the official python-deepgate
 pretrained path works on shipped examples. The newer generated bridge probe
 improves the old collapsed result: it embeds `24` bounded generated AIG rows
-with pairwise cosine mean `0.9315` and all four screen backends represented.
+with pairwise cosine mean `0.9318` and all four screen backends represented.
 The remaining blocker is coverage, because only `Prob116_m2014_q3` and
 `Prob135_m2014_q6b` embed under the current latch-free and `400`-variable
-policy. MasterRTL pretrained artifacts also load, but T77 blocks the
-generated-candidate Area-head leaf BD.
+policy. A transition-abstraction smoke improves sequential AIG export coverage
+but still blocks in the official parser's topological sort. MasterRTL
+pretrained artifacts also load, but T77 blocks the generated-candidate
+Area-head leaf BD.
 
 ## Qwen Generated-Candidate Probe
 

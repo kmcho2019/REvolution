@@ -20,10 +20,10 @@ bounded bridge only covers two of the eight screening problems.
 | Embedded bounded AIGs | 24 |
 | Embedded problems | 2 |
 | Embedded backends | 4 |
-| Pairwise cosine mean | 0.9315 |
-| Pairwise cosine min | 0.7700 |
-| Same-problem nearest ratio | 0.6667 |
-| Same-backend nearest ratio | 0.0417 |
+| Pairwise cosine mean | 0.9318 |
+| Pairwise cosine min | 0.8124 |
+| Same-problem nearest ratio | 0.5417 |
+| Same-backend nearest ratio | 0.2083 |
 
 ## Decision
 

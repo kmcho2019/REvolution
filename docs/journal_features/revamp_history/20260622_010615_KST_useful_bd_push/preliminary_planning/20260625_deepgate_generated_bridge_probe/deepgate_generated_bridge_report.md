@@ -6,8 +6,8 @@ The DeepGate lane is not ready for the final RTLLM comparison, but it should
 not be discarded. This probe fixed the most severe old symptom: the previous
 generated-candidate run produced only three embeddings with mean pairwise
 cosine near `0.9999`. The new official DeepGate2 bridge produced `24`
-generated-candidate embeddings with mean pairwise cosine `0.9315` and minimum
-cosine `0.7700`.
+generated-candidate embeddings with mean pairwise cosine `0.9318` and minimum
+cosine `0.8124`.
 
 That is enough to say the pretrained model can produce nontrivial signals on
 some generated RTL-derived AIGs. It is not enough to call DeepGate spend-ready,
@@ -86,6 +86,11 @@ pre-register one of these bridge fixes:
    `Prob045_alu`-scale designs.
 3. Compare pooled DeepGate embeddings against simple AIG statistics on the
    same generated rows to confirm the pretrained model adds signal beyond size.
+
+The follow-up transition-abstraction smoke improved sequential AIG export
+headers but still blocked in the official parser's topological-sort path. That
+reinforces cone extraction or parser replacement as the next DeepGate bridge
+step.
 
 Until one of those passes on at least most of the eight screening problems,
 DeepGate remains a bridge-required lane rather than a final RTLLM arm.

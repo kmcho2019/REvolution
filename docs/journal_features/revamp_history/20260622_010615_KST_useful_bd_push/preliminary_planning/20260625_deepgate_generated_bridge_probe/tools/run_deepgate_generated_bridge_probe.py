@@ -25,6 +25,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--package-dir", required=True, type=Path)
     parser.add_argument("--max-per-backend-problem", required=True, type=int)
     parser.add_argument("--max-aig-vars", required=True, type=int)
+    parser.add_argument("--state-policy", required=True, choices=["latch_free", "transition"])
     return parser.parse_args()
 
 
@@ -45,18 +46,58 @@ def collect_candidates(live_root: Path, max_per_backend_problem: int) -> list[Pa
     return paths
 
 
-def export_aig(code_path: Path, aig_path: Path) -> tuple[str, str]:
+def yosys_script(code_path: Path, aig_path: Path, state_policy: str) -> str:
+    if state_policy == "latch_free":
+        return (
+            f"read_verilog -sv {code_path}; hierarchy -auto-top; proc; "
+            f"flatten; opt; setundef -zero; techmap; opt; aigmap; "
+            f"write_aiger -ascii {aig_path}"
+        )
+    if state_policy == "transition":
+        return (
+            f"read_verilog -sv {code_path}; hierarchy -auto-top; proc; "
+            f"async2sync; clk2fflogic; flatten; opt; setundef -zero; "
+            f"techmap; opt; aigmap; write_aiger -ascii {aig_path}"
+        )
+    raise AssertionError(state_policy)
+
+
+def abstract_latches_as_transition(aig_path: Path) -> None:
+    lines = aig_path.read_text().splitlines()
+    header = lines[0].split()
+    assert header[0] == "aag"
+    variables, inputs, latches, outputs, ands = map(int, header[1:6])
+    input_lines = lines[1 : 1 + inputs]
+    latch_lines = lines[1 + inputs : 1 + inputs + latches]
+    output_lines = lines[1 + inputs + latches : 1 + inputs + latches + outputs]
+    and_lines = lines[1 + inputs + latches + outputs : 1 + inputs + latches + outputs + ands]
+    state_inputs = [line.split()[0] for line in latch_lines]
+    next_outputs = [line.split()[1] for line in latch_lines]
+    aig_path.write_text(
+        "\n".join(
+            [
+                f"aag {variables} {inputs + latches} 0 {outputs + latches} {ands}",
+                *input_lines,
+                *state_inputs,
+                *output_lines,
+                *next_outputs,
+                *and_lines,
+            ]
+        )
+        + "\n"
+    )
+
+
+def export_aig(code_path: Path, aig_path: Path, state_policy: str) -> tuple[str, str]:
     command = [
         "yosys",
         "-q",
         "-p",
-        (
-            f"read_verilog -sv {code_path}; hierarchy -auto-top; proc; "
-            f"flatten; opt; setundef -zero; techmap; opt; aigmap; "
-            f"write_aiger -ascii {aig_path}"
-        ),
+        yosys_script(code_path, aig_path, state_policy),
     ]
     result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=60)
+    if result.returncode == 0 and state_policy == "transition":
+        abstract_latches_as_transition(aig_path)
     return ("exported", result.stderr[-600:]) if result.returncode == 0 else ("export_failed", result.stderr[-600:])
 
 
@@ -179,7 +220,7 @@ def main() -> None:
     for index, code_path in enumerate(collect_candidates(args.live_root, args.max_per_backend_problem)):
         row = metadata(code_path, args.live_root)
         aig_path = args.output_dir / "aigs" / f"candidate_{index:04d}.aag"
-        status, stderr_tail = export_aig(code_path, aig_path)
+        status, stderr_tail = export_aig(code_path, aig_path, args.state_policy)
         row.update({"aig_path": str(aig_path), "status": status, "stderr_tail": stderr_tail})
         if status == "exported":
             header = read_aig_header(aig_path)
@@ -201,6 +242,7 @@ def main() -> None:
         "output_dir": str(args.output_dir),
         "max_per_backend_problem": args.max_per_backend_problem,
         "max_aig_vars": args.max_aig_vars,
+        "state_policy": args.state_policy,
         "candidate_count": len(rows),
         "export_success_count": sum(row["status"] != "export_failed" for row in rows),
         "embedded_problem_count": len({row["problem"] for row in embed_ready}),

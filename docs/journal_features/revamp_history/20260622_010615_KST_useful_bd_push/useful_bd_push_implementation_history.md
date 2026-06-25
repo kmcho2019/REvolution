@@ -4856,7 +4856,7 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Sampled `96` valid-PPA generated candidate directories, exported `36` AIGs,
   skipped `12` oversized AIGs, and embedded `24` bounded latch-free AIGs.
 - The generated embeddings were no longer trivially collapsed:
-  pairwise cosine mean `0.9315`, min `0.7700`, max `0.9932`.
+  pairwise cosine mean `0.9318`, min `0.8124`, max `0.9904`.
 - The embedded rows covered all four screened backends but only two problems:
   `Prob116_m2014_q3` and `Prob135_m2014_q6b`.
 - Visual inspection of `figures/deepgate_embedding_pca.png` confirmed that the
@@ -4865,3 +4865,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: DeepGate is partially unblocked as a pretrained encoder bridge,
   but it is not live-spend-ready. Fix sequential and large-AIG coverage before
   adding a live QD arm.
+
+## 2026-06-25T18:45:00Z - DeepGate Transition Bridge Escalation
+
+- Created preliminary planning package:
+  `preliminary_planning/20260625_deepgate_transition_bridge_probe/`.
+- Added explicit `--state-policy` support to the DeepGate bridge probe:
+  `latch_free` preserves the previous policy, while `transition` uses
+  `clk2fflogic` and rewrites latch state as primary inputs plus next-state
+  outputs.
+- Header smoke showed improved sequential export coverage:
+  `Prob024_fsm` became `aag 79 12 0 10 67`, and
+  `Prob049_signal_generator` became `aag 163 15 0 18 148`.
+- Three transition embedding runs were attempted at caps of `700`, `300`, and
+  `200` variables. Each was manually interrupted after the official DeepGate
+  parser remained in `return_order_info` / `top_sort`.
+- Decision: full-design transition abstraction is methodologically plausible
+  but not spend-ready. The next DeepGate bridge needs cone-level extraction or
+  a faster AIG-to-DeepGate graph converter before any live QD arm.
