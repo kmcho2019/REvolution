@@ -4708,3 +4708,27 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: treat T80 as `T0_descriptor_gate_positive_not_live`. It supports a
   narrow live `grid_quantile` candidate, but it is not PPA-performance
   evidence.
+
+## 2026-06-25T13:45:00Z - Encoder Config Screening Planned
+
+- Created preliminary planning package:
+  `preliminary_planning/20260625_encoder_config_screening/`.
+- Ranked pretrained and encoder-like candidates for the colleague-facing
+  comparison:
+  T33 Qwen3 canonical RTL is the best actual pretrained replay signal; T36/T11
+  is the strongest encoder-like replay signal; DeepGate3 has checkpoints but a
+  near-collapsed prior embedding probe; AURORA raw features remain replay-only.
+- Froze the immediate spend-ready screen to three arms:
+  `classic_revolution_8x5`, `code_thought_sr_front_slot_8x5`, and
+  `masterrtl_structural_mix_8x5`.
+- Froze an eight-design reference-complete screening subset and generated
+  launch commands in `commands/screening_matrix_v0.md`.
+- Re-checked the local vLLM endpoint:
+  `openai/gpt-oss-120b`, `max_model_len=131072`.
+- Ran descriptor/matrix validation and local checks on the package helper
+  scripts: `ruff`, `ty`, `pyright`, and `git diff --check` pass.
+- Ran a tiny live `1x0` smoke on `RTLLM/Prob045_alu` for all spend-ready arms.
+  All three launched; the MasterRTL structural-mix QD smoke produced one
+  valid-PPA/global-Pareto candidate, while the classic and SR-PCA smoke samples
+  failed functionality. Treat this only as launch/descriptor-path validation,
+  not method-ranking evidence.

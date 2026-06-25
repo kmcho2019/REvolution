@@ -88,6 +88,16 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Finish the six T79 matched live arms before using budget shape as a
       classic-vs-QD explanatory claim. Outcome: diagnostic-negative; exact T75
       loses matched classic mean HV at all three tested shapes.
+- [x] Create `preliminary_planning/20260625_encoder_config_screening/` to rank
+      pretrained encoder, encoder-like, RTL-native, and custom-BD candidates
+      before the next full RTLLM spend.
+- [x] Run descriptor probes, vLLM preflight, matrix validation, and a tiny
+      live `1x0` smoke for the spend-ready screening arms.
+- [ ] Run the registered eight-design `8x5` screen for
+      `classic_revolution_8x5`, `code_thought_sr_front_slot_8x5`, and
+      `masterrtl_structural_mix_8x5`.
+- [ ] Add a live runtime Qwen3 embedding bridge only after defining
+      preprocessing, cache keys, and descriptor-collapse diagnostics.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live
