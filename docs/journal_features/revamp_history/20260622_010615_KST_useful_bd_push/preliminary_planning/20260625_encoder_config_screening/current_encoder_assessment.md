@@ -16,7 +16,7 @@ does not clear the full-RTLLM promotion gate.
 | 2 | T36/T11 bounded front graph | Encoder-like graph representation | Strongest replay signal: about `+4.04%` HV versus lexical and more front hits. Exact T58 live conversion lost HV/front breadth, so it needs a successor design. |
 | 3 | T51-style SR front slot | Custom BD/archive coupling | Most practical custom-BD live base. It preserves conservative archive pressure and is already commandable. |
 | 4 | T80 MasterRTL structural mix | RTL-native custom BD | Best current methodology story and strongest screened QD arm by mean HV, but still trails classic. |
-| 5 | DeepGate2 generated-AIG bridge | Pretrained netlist encoder candidate | Official pretrained model embeds generated AIGs with nonconstant signal on `24` rows, but only `2/8` screen problems cover under the bounded latch-free policy. |
+| 5 | DeepGate2 transition-AIG bridge | Pretrained netlist encoder candidate | Official pretrained model embeds transition AIGs with nonconstant signal on `60` rows across `5/8` screen problems, but large designs and same-problem clustering still block promotion. |
 | 6 | AURORA-style raw implementation features | Learned auto-BD lane | Raw features had replay signal, but compressed bottlenecks lost and no live profile is frozen. |
 | 7 | MasterRTL pretrained prediction/leaf heads | Pretrained model candidate | Artifacts exist, but the direct Area-head leaf lane collapsed on generated candidates. Keep as future bridge work, not a live arm today. |
 
@@ -62,8 +62,11 @@ improves the old collapsed result: it embeds `24` bounded generated AIG rows
 with pairwise cosine mean `0.9318` and all four screen backends represented.
 The remaining blocker is coverage, because only `Prob116_m2014_q3` and
 `Prob135_m2014_q6b` embed under the current latch-free and `400`-variable
-policy. A transition-abstraction smoke improves sequential AIG export coverage
-but still blocks in the official parser's topological sort. MasterRTL
+policy. The corrected transition bridge improves coverage to five problems:
+`Prob024_fsm`, `Prob041_traffic_light`, `Prob049_signal_generator`,
+`Prob116_m2014_q3`, and `Prob135_m2014_q6b`. It still misses
+`Prob015_multi_pipe_8bit`, `Prob045_alu`, and `Prob153_gshare` under the
+practical cap, and nearest neighbors are `83.33%` same-problem. MasterRTL
 pretrained artifacts also load, but T77 blocks the generated-candidate
 Area-head leaf BD.
 

@@ -11,7 +11,7 @@ configurations before spending full RTLLM budget.
 | `20260625_pretrained_encoder_bridge_validation/` | Validate whether pretrained and encoder-like lanes are real enough to spend live RTLLM budget. | Active; Qwen3 is the next live-hook candidate |
 | `20260625_qwen_live_screen_probe/` | Probe Qwen3 canonical-RTL embeddings and bridge them into a live QD descriptor hook. | Probe, smoke, and matched screen complete; not promoted as-is |
 | `20260625_deepgate_generated_bridge_probe/` | Re-test official DeepGate2 embeddings on generated RTL-derived AIGs after Qwen lost the live screen. | Partially unblocked; embeddings are nonconstant on 24 rows, but only 2/8 problems cover |
-| `20260625_deepgate_transition_bridge_probe/` | Test state-as-input transition AIG abstraction for sequential DeepGate coverage. | Export coverage improves, but official parser remains too slow |
+| `20260625_deepgate_transition_bridge_probe/` | Test state-as-input transition AIG abstraction for sequential DeepGate coverage. | Corrected bridge embeds 60 rows across 5/8 problems; not promoted |
 
 ## Current Rule
 
@@ -36,6 +36,7 @@ cosine mean `0.9318`. It is still not spend-ready because the bounded
 latch-free AIG policy covers only `2/8` screening problems.
 
 Transition abstraction can rewrite sequential AIGs into latch-free one-cycle
-transition logic, but full-design transition AIGs still hit the official
-DeepGate parser's topological-sort bottleneck. The next DeepGate escalation
-should use cone extraction or a faster graph converter.
+transition logic. After canonical renumbering and constant repair, it embeds
+`60` rows across `5/8` screening problems with pairwise cosine mean `0.9213`.
+It still misses the largest designs, so the next DeepGate escalation should
+use cone extraction, caching, or a faster graph converter.

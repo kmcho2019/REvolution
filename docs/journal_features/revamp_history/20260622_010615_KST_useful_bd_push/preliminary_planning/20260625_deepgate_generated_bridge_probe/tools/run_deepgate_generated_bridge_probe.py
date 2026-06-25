@@ -66,22 +66,52 @@ def abstract_latches_as_transition(aig_path: Path) -> None:
     lines = aig_path.read_text().splitlines()
     header = lines[0].split()
     assert header[0] == "aag"
-    variables, inputs, latches, outputs, ands = map(int, header[1:6])
-    input_lines = lines[1 : 1 + inputs]
+    _, inputs, latches, outputs, ands = map(int, header[1:6])
+    input_literals = [int(line.split()[0]) for line in lines[1 : 1 + inputs]]
     latch_lines = lines[1 + inputs : 1 + inputs + latches]
-    output_lines = lines[1 + inputs + latches : 1 + inputs + latches + outputs]
-    and_lines = lines[1 + inputs + latches + outputs : 1 + inputs + latches + outputs + ands]
-    state_inputs = [line.split()[0] for line in latch_lines]
-    next_outputs = [line.split()[1] for line in latch_lines]
+    output_literals = [int(line.split()[0]) for line in lines[1 + inputs + latches : 1 + inputs + latches + outputs]]
+    and_lines = [line.split() for line in lines[1 + inputs + latches + outputs : 1 + inputs + latches + outputs + ands]]
+    latch_current_literals = [int(line.split()[0]) for line in latch_lines]
+    latch_next_literals = [int(line.split()[1]) for line in latch_lines]
+    old_input_vars = [literal // 2 for literal in [*input_literals, *latch_current_literals]]
+    var_map = {old_var: index + 1 for index, old_var in enumerate(old_input_vars)}
+    constant_literals = [
+        literal
+        for literal in [
+            *output_literals,
+            *latch_next_literals,
+            *(int(item) for line in and_lines for item in line[1:]),
+        ]
+        if literal < 2
+    ]
+    constant_var = len(old_input_vars) + 1 if constant_literals else None
+    next_var = len(old_input_vars) + 1
+    if constant_var is not None:
+        next_var += 1
+    for line in and_lines:
+        var_map[int(line[0]) // 2] = next_var
+        next_var += 1
+
+    def remap_literal(literal: int) -> int:
+        if literal < 2:
+            assert constant_var is not None
+            return constant_var * 2 + literal
+        return var_map[literal // 2] * 2 + literal % 2
+
+    new_input_count = len(old_input_vars) + int(constant_var is not None)
+    new_inputs = [str((index + 1) * 2) for index in range(new_input_count)]
+    new_outputs = [str(remap_literal(literal)) for literal in [*output_literals, *latch_next_literals]]
+    new_ands = [
+        f"{remap_literal(int(line[0]))} {remap_literal(int(line[1]))} {remap_literal(int(line[2]))}"
+        for line in and_lines
+    ]
     aig_path.write_text(
         "\n".join(
             [
-                f"aag {variables} {inputs + latches} 0 {outputs + latches} {ands}",
-                *input_lines,
-                *state_inputs,
-                *output_lines,
-                *next_outputs,
-                *and_lines,
+                f"aag {next_var - 1} {len(new_inputs)} 0 {len(new_outputs)} {len(new_ands)}",
+                *new_inputs,
+                *new_outputs,
+                *new_ands,
             ]
         )
         + "\n"

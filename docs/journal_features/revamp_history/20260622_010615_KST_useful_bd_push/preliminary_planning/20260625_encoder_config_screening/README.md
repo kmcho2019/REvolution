@@ -107,8 +107,8 @@ headline HV, Pareto-point count, and reference-beating count. Qwen canonical
 RTL preserved coverage and had positive deltas on two problems versus classic,
 but it lost aggregate HV and front breadth.
 
-DeepGate is no longer blocked only by descriptor collapse: the follow-up bridge
-probe embeds `24` generated rows with nonconstant cosine structure. It remains
-blocked by generated-candidate coverage, because the current latch-free and
-bounded-size bridge covers only `2/8` screening problems. MasterRTL
-pretrained-head lanes remain blocked by generated-candidate collapse.
+DeepGate is no longer blocked only by descriptor collapse: the latch-free
+bridge embeds `24` generated rows, and the corrected transition bridge embeds
+`60` rows across `5/8` screening problems. It remains blocked by large-design
+coverage and same-problem clustering. MasterRTL pretrained-head lanes remain
+blocked by generated-candidate collapse.

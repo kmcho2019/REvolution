@@ -24,8 +24,10 @@ The matched screen preserved `8/8` coverage but produced mean HV `0.1108`
 versus classic `0.1406`, so exact `qwen_canonical_rtl_pca3` is not promoted.
 
 DeepGate and MasterRTL pretrained artifacts are real. DeepGate now has a
-noncollapsed generated-AIG subset result, but the current bridge covers only
-`2/8` screening problems. AURORA and T36 remain useful encoder-like or learned
+noncollapsed generated-AIG subset result, and transition abstraction improves
+coverage to `5/8` screening problems. It is still not a full RTLLM arm because
+the largest designs exceed the practical cap and nearest neighbors remain
+mostly same-problem. AURORA and T36 remain useful encoder-like or learned
 lanes, but they are not validated external pretrained encoder arms.
 
 ## Package Contents

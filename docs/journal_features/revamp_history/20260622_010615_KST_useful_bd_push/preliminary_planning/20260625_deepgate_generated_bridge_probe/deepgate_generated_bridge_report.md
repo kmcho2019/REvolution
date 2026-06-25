@@ -87,10 +87,10 @@ pre-register one of these bridge fixes:
 3. Compare pooled DeepGate embeddings against simple AIG statistics on the
    same generated rows to confirm the pretrained model adds signal beyond size.
 
-The follow-up transition-abstraction smoke improved sequential AIG export
-headers but still blocked in the official parser's topological-sort path. That
-reinforces cone extraction or parser replacement as the next DeepGate bridge
-step.
+The follow-up transition-abstraction probe fixed the parser issue through
+canonical renumbering and constant-literal repair, then embedded `60` rows
+across `5/8` screen problems. That is a stronger bridge, but it still needs
+large-design coverage or cone extraction before live spending.
 
 Until one of those passes on at least most of the eight screening problems,
 DeepGate remains a bridge-required lane rather than a final RTLLM arm.

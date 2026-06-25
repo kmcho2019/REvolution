@@ -4877,9 +4877,27 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Header smoke showed improved sequential export coverage:
   `Prob024_fsm` became `aag 79 12 0 10 67`, and
   `Prob049_signal_generator` became `aag 163 15 0 18 148`.
-- Three transition embedding runs were attempted at caps of `700`, `300`, and
-  `200` variables. Each was manually interrupted after the official DeepGate
-  parser remained in `return_order_info` / `top_sort`.
-- Decision: full-design transition abstraction is methodologically plausible
-  but not spend-ready. The next DeepGate bridge needs cone-level extraction or
-  a faster AIG-to-DeepGate graph converter before any live QD arm.
+- The first transition rewrite caused parser stalls because it preserved sparse
+  latch variable numbers and let constant literals become node `-1` in
+  DeepGate's parser.
+- Fixed the bridge by densely renumbering state inputs and AND variables, plus
+  mapping constants to a surrogate primary input.
+- Corrected transition run:
+  `exp/useful_bd_push/deepgate_transition_bridge_probe_20260625_190300_UTC`.
+- The run sampled `96` valid-PPA generated candidate directories, exported all
+  `96`, embedded `60`, and skipped `36` oversized AIGs.
+- Coverage improved from the latch-free bridge's `2/8` problems to `5/8`:
+  `Prob024_fsm`, `Prob041_traffic_light`, `Prob049_signal_generator`,
+  `Prob116_m2014_q3`, and `Prob135_m2014_q6b`.
+- The transition embeddings were not trivially collapsed: pairwise cosine mean
+  `0.9213`, min `0.7024`, max `0.99995`.
+- The descriptor is still not spend-ready because nearest neighbors are
+  `83.33%` same-problem and `Prob015_multi_pipe_8bit`, `Prob045_alu`, and
+  `Prob153_gshare` remain above the practical cap.
+- One `Prob015_multi_pipe_8bit` transition AIG parsed in `39.76s`, showing the
+  large-design path is possible offline but too slow for the current in-loop
+  descriptor.
+- Decision: DeepGate transition AIG is now a stronger pretrained bridge
+  candidate, not a promoted live QD arm. Next step should be cone extraction,
+  cached/offline descriptors, or a tiny live smoke only on transition-covered
+  problems.
