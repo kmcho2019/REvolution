@@ -4755,3 +4755,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Added `pretrained_encoder_validation.md` to make explicit that no
   pretrained-weight arm should enter live budget until upstream checkpoint,
   preprocessing, schema, and non-collapse validation pass.
+
+## 2026-06-25T16:45:00Z - Pretrained Encoder Bridge Validation
+
+- Created preliminary planning package:
+  `preliminary_planning/20260625_pretrained_encoder_bridge_validation/`.
+- Ran a current Qwen3 model smoke through the isolated Qwen env:
+  `Qwen/Qwen3-Embedding-0.6B` loaded on CUDA and embedded four toy RTL strings
+  as `4x1024`; off-diagonal cosine mean was `0.6888227462768555`.
+- Ran an official python-deepgate pretrained smoke through the isolated
+  DeepGate env on three shipped AIG examples. The model loaded and produced
+  pooled graph embeddings with off-diagonal cosine mean
+  `0.9657183289527893`.
+- Re-ran the MasterRTL pretrained verifier through the documented
+  `exp/venvs/rtl_native_verify` env. The repo `uv` env lacks `sklearn`, so
+  the isolated env remains the required verification path.
+- Decision: Qwen3 canonical RTL is the next live-hook candidate. DeepGate's
+  upstream model is valid, but the generated-candidate bridge remains blocked
+  by the prior near-collapse probe. MasterRTL pretrained artifacts are real,
+  but the generated-candidate Area-head leaf BD remains blocked by T77.

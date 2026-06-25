@@ -48,3 +48,20 @@ The result does not invalidate all encoder/BD research, but it does mean the
 next full-RTLLM run should not use either of these two QD configs as-is.
 Pretrained encoder work should first close the validation gap described in
 `pretrained_encoder_validation.md`.
+
+## Post-Bridge Update
+
+The follow-up bridge validation moves Qwen3 canonical RTL to the front of the
+pretrained queue. The actual `Qwen/Qwen3-Embedding-0.6B` model loads in the
+isolated Qwen env and produces nonconstant toy RTL embeddings, while T33 still
+provides the strongest true-pretrained replay signal.
+
+DeepGate should not be treated as invalid: the official python-deepgate
+pretrained path works on shipped examples. The blocker is our generated RTL to
+AIG/embedding bridge, which previously produced only three usable embeddings
+with near-identical pairwise cosine. MasterRTL pretrained artifacts also load,
+but T77 blocks the generated-candidate Area-head leaf BD.
+
+Next action: implement `qd_qwen3_canonical_rtl_8x5` with explicit
+preprocessing, embedding cache keys, descriptor projection, and collapse
+diagnostics before spending any full RTLLM budget.

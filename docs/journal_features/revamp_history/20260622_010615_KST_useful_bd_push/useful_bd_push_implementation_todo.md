@@ -97,6 +97,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       `classic_revolution_8x5`, `code_thought_sr_front_slot_8x5`, and
       `masterrtl_structural_mix_8x5`. Outcome: classic remains the headline
       Pareto/HV winner; do not promote either QD arm to full RTLLM yet.
+- [x] Add pretrained-encoder bridge validation after the first screen. Outcome:
+      Qwen3 loads and is the next live-hook candidate; DeepGate and MasterRTL
+      pretrained generated-candidate bridges remain blocked.
 - [ ] Add a live runtime Qwen3 embedding bridge only after defining
       preprocessing, cache keys, and descriptor-collapse diagnostics.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with

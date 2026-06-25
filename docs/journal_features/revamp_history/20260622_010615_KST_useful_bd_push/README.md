@@ -21,6 +21,10 @@ Start here when resuming the active goal.
   `preliminary_planning/20260625_encoder_config_screening/` (pretrained
   encoder, encoder-like, RTL-native, and custom-BD candidate ranking plus the
   completed eight-design screening matrix and result package).
+- Current pretrained-encoder bridge package:
+  `preliminary_planning/20260625_pretrained_encoder_bridge_validation/`
+  (Qwen3 model smoke passes and is the next live-hook candidate; DeepGate and
+  MasterRTL pretrained generated-candidate bridges remain blocked).
 - Most recent presentation supplement:
   `presentations/20260623_report/full_rtllm/final_analysis/`
   (`report_final_analysis_bundle.py` output on the 46-problem
@@ -44,9 +48,10 @@ Start here when resuming the active goal.
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
   do not launch full RTLLM with the two spend-ready QD arms from the
-  preliminary screen. Keep Qwen3, DeepGate3, T11/T36, and AURORA lanes as
-  bridge work until their live descriptor paths and pretrained-weight
-  validation pass.
+  preliminary screen. Implement and screen a Qwen3 canonical-RTL live
+  descriptor hook first; keep DeepGate3, MasterRTL pretrained heads, T11/T36,
+  and AURORA lanes behind bridge validation until their generated-candidate
+  descriptor paths pass.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front

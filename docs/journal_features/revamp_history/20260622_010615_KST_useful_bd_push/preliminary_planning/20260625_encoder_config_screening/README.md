@@ -54,6 +54,7 @@ The launch commands are in `commands/screening_matrix_v0.md`.
 | `screening_plan.md` | Exact subset, gates, and promotion logic. |
 | `live_screen_results.md` | Completed hard-data screen result and decision. |
 | `pretrained_encoder_validation.md` | Validation gate for future pretrained-weight live arms. |
+| `../20260625_pretrained_encoder_bridge_validation/` | Follow-up package deciding which pretrained or encoder-like lanes are ready for the next live hook. |
 | `commands/screening_matrix_v0.md` | Launch commands for the live screening arms. |
 | `tables/candidate_shortlist.csv` | Machine-readable candidate ranking. |
 | `tables/encoder_legitimacy_checks.csv` | Evidence table for pretrained and encoder-like candidates. |
@@ -99,3 +100,8 @@ The full registered `8x5` screen completed for all three arms.
 Decision: neither QD arm should be promoted to the full RTLLM run yet. The
 best QD arm is `masterrtl_structural_mix_8x5`, but it still trails classic on
 headline HV, Pareto-point count, and reference-beating count.
+
+The follow-up bridge validation promotes Qwen3 canonical RTL as the next
+implementation target because its actual pretrained model path loads and its
+T33 replay signal is positive. DeepGate and MasterRTL pretrained-head lanes
+remain blocked by generated-candidate descriptor collapse.
