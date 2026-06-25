@@ -53,6 +53,11 @@ evidence.
 - Interpretation: bounded front-slot sampling recovers some front material,
   but it erases the high-exploit auxiliary archive's main HV advantage. Do not
   launch full RTLLM with this variant.
+- Added `preliminary_planning/20260625_aux_archive_high_exploit_depth_probe/`
+  as the next continuation. It keeps the high-exploit auxiliary archive
+  mechanism unchanged and changes only the equal-candidate shape from `8x5` to
+  `6x7`, using the existing T79 `classic_revolution_6x7` run as the matched
+  baseline.
 
 ## Scaffold Start - 2026-06-22 KST
 

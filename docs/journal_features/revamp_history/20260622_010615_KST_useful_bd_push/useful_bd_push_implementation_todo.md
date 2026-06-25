@@ -127,6 +127,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       beating count through bounded front-slot sampling. Outcome: some
       Pareto-point recovery versus high-exploit, but mean HV falls to `0.1134`;
       do not promote.
+- [ ] Run `masterrtl_aux_archive_high_exploit_6x7` to test whether the best
+      screened auxiliary-archive mechanism benefits from deeper equal-budget
+      evolution against the existing T79 classic `6x7` baseline.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live

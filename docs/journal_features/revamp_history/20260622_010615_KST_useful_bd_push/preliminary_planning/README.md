@@ -16,6 +16,7 @@ configurations before spending full RTLLM budget.
 | `20260625_t11_top4_front_slot_probe/` | Test raw T11 top-4 runtime graph axes with the conservative front-slot parent lane as a T36/T58 successor. | Completed; trails classic and MasterRTL front-slot, not promoted |
 | `20260625_aux_archive_high_exploit_probe/` | Test whether QD archive memory works better as an auxiliary side channel with classic-like exploitation pressure. | Completed; best screened QD by mean HV, still not promoted |
 | `20260625_aux_archive_front_breadth_probe/` | Test whether the best-HV auxiliary archive arm can recover Pareto breadth with bounded front-slot sampling. | Completed; front-breadth tax erased the high-exploit HV gain, not promoted |
+| `20260625_aux_archive_high_exploit_depth_probe/` | Test whether the high-exploit auxiliary archive mechanism benefits from `6x7` depth against the existing T79 classic `6x7` baseline. | Preregistered next live probe |
 
 ## Current Rule
 
@@ -73,3 +74,9 @@ high-exploit HV signal: mean HV fell to `0.1134` versus classic `0.1406` and
 high-exploit auxiliary archive `0.1339`. It improves mean Pareto points over
 the high-exploit variant (`2.125` versus `1.75`), but still trails classic
 (`3.25`) and is not promoted.
+
+The next registered continuation is
+`masterrtl_aux_archive_high_exploit_6x7`. It keeps the high-exploit mechanism
+unchanged and only changes the equal-candidate shape from `8x5` to `6x7`. The
+comparison will reuse T79's matched `classic_revolution_6x7` baseline on the
+identical eight-design subset.
