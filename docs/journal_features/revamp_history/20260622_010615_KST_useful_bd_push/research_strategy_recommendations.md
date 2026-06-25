@@ -180,7 +180,7 @@ accepted, but not overclaimed:
 | Classic strength does not falsify QD/MAP-Elites. | Accepted. It means RTL PPA evolution needs constrained, PPA-competitive diversity rather than generic archive coverage. |
 | `12 x 3` may be biased against QD. | Plausible and now roadmap-worthy, but not proven. Test equal-candidate budget shapes before changing headline protocol. |
 | Existing `12 x 3` archives still mature late. | Accepted as T78 diagnostic evidence. Use it to justify the ablation, not to claim that deeper QD wins. |
-| Auxiliary archive memory helps more than descriptor-only pressure. | Partially accepted after the 20260625 preliminary probes. The high-exploit auxiliary archive is the best screened QD arm by mean HV, but still fails the full-spend gate. The front-breadth follow-up recovers some Pareto points but loses too much HV. |
+| Auxiliary archive memory helps more than descriptor-only pressure. | Partially accepted after the 20260625 preliminary probes. The high-exploit auxiliary archive is the best screened QD arm by mean HV, but still fails the full-spend gate. Front-breadth and depth-only follow-ups both lose too much HV. |
 | Choose medium-validity, front-variable designs for screens. | Accepted. This is screening discipline, not cherry-picking, if frozen before outcomes. |
 | Use MasterRTL pretrained tree artifacts as an encoder. | Narrowed after T77. Direct Area-head leaves collapse; continue only through retraining, replacement, or reproduced timing/power feature flows. |
 | Treat T75/T76/T77 as positive enough to launch broad claims. | Rejected. They are useful diagnostics and gates, not classic-beating evidence. |
@@ -216,7 +216,8 @@ classic hill-climbing baseline under fair, reference-complete comparisons.
 - Treat the 20260625 high-exploit auxiliary archive screen as the current best
   preliminary QD mechanism signal: it narrows the mean-HV gap. The front-
   breadth follow-up shows that adding explicit front-slot sampling to the same
-  descriptor geometry is too costly under the current budget.
+  descriptor geometry is too costly under the current budget. The `6x7`
+  follow-up shows depth-only continuation does not rescue the mechanism.
 - Add a MasterRTL-pretrained verification and tree-leaf embedding lane before
   spending live budget on "pretrained MasterRTL" QD claims.
 - Add a generated-candidate MasterRTL leaf/margin variation gate after T76 and

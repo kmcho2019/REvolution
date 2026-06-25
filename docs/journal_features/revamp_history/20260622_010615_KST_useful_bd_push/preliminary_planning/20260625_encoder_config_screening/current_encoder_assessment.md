@@ -121,3 +121,9 @@ lane to recover Pareto breadth. The result is negative: mean HV dropped to
 `0.1134`, far below the high-exploit auxiliary archive (`0.1339`) and classic
 (`0.1406`). Mean Pareto points recovered only to `2.125`, still below classic
 `3.25`. Decision: useful ablation, not a full-RTLLM candidate.
+
+The follow-up `masterrtl_aux_archive_high_exploit_6x7` run is tracked under
+`../20260625_aux_archive_high_exploit_depth_probe/`. It tests depth without
+changing the mechanism. The result is also negative: mean HV `0.1229` versus
+matched classic `6x7` `0.1701`, and below the prior high-exploit `8x5` QD arm
+`0.1339`. Decision: depth-only continuation is not a full-RTLLM candidate.

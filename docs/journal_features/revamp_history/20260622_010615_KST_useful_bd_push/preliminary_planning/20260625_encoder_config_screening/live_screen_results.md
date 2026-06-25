@@ -137,3 +137,20 @@ front-breadth evidence relative to high-exploit auxiliary archive, but it
 erased the mean-HV gain that made the auxiliary archive interesting. This
 pushes the next mechanism search away from simply adding more explicit front
 sampling to the same descriptor geometry.
+
+## Follow-Up Auxiliary Archive Depth Probe
+
+`masterrtl_aux_archive_high_exploit_6x7` kept the high-exploit auxiliary
+archive mechanism fixed and changed only the equal-candidate budget shape from
+`8x5` to `6x7`. It reused the existing T79 `classic_revolution_6x7` baseline
+on the identical eight-design subset.
+
+| Backend | Mean HV | Pareto Points | Ref-Beating | HV Wins |
+| --- | ---: | ---: | ---: | ---: |
+| `classic_revolution_6x7` | 0.1701 | 2.62 | 8.38 | 3 |
+| `masterrtl_aux_archive_high_exploit_6x7` | 0.1229 | 1.88 | 5.12 | 1 |
+| `masterrtl_aux_archive_high_exploit_8x5` | 0.1339 | 1.75 | 4.00 | 1 |
+
+Decision: diagnostic, not promoted. Depth improves the matched classic
+baseline more than this QD mechanism, and the QD `6x7` arm is worse than the
+same high-exploit mechanism at `8x5`.

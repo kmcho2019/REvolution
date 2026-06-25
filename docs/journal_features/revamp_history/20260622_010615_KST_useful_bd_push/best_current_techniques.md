@@ -8,7 +8,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | MasterRTL auxiliary archive | Diagnostic lead | Best screened QD arm by mean HV after the `8x5` preliminary screen: high-exploit auxiliary archive reaches `0.1339` versus classic `0.1406`. It supports QD as auxiliary archive memory with classic-like exploitation. | Still not promoted: high-exploit is `4.78%` below classic and loses front breadth; the front-breadth follow-up recovers some Pareto points but falls to `0.1134` mean HV. |
+| 1 | MasterRTL auxiliary archive | Diagnostic lead | Best screened QD arm by mean HV after the `8x5` preliminary screen: high-exploit auxiliary archive reaches `0.1339` versus classic `0.1406`. It supports QD as auxiliary archive memory with classic-like exploitation. | Still not promoted: high-exploit is `4.78%` below classic and loses front breadth; front-breadth drops to `0.1134`, and depth-only `6x7` drops to `0.1229` versus matched classic `0.1701`. |
 | 2 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | Source-aligned descriptors are credible, but live runs still need stronger front creation. |
 | 4 | Budget-shape ablation | Diagnostic-negative | T79 tests whether equal-candidate deeper runs let exact T75 mature more than classic under the same budget. | QD loses matched classic HV at `12x3`, `8x5`, and `6x7`; do not use budget shape as an excuse for exact T75. |
@@ -96,6 +96,12 @@ screened arm. This suggests that simply reintroducing explicit front-slot
 pressure on the same MasterRTL geometry is too expensive under the current
 budget.
 
+The depth follow-up, `masterrtl_aux_archive_high_exploit_6x7`, also failed.
+It keeps the high-exploit mechanism unchanged and changes only the
+equal-candidate shape. Mean HV is `0.1229` versus matched classic `6x7`
+`0.1701`, and below the same QD mechanism at `8x5` (`0.1339`). This closes the
+simple depth-only continuation for the current auxiliary-archive mechanism.
+
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
 generator could refine successful parent RTL. It improves aggregate valid-PPA
@@ -157,7 +163,7 @@ loader equivalence, schema assertions, and generated-candidate variation.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77/T80 and the 20260625 auxiliary archive probes | Best screened QD family | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, T77 retires direct Area-head leaves, T80 advances raw MasterRTL structural mix as a live-candidate gate, high-exploit auxiliary archive narrows the live-screen HV gap, and the front-breadth follow-up shows explicit front sampling is too costly as configured. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77/T80 and the 20260625 auxiliary archive probes | Best screened QD family | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, T77 retires direct Area-head leaves, T80 advances raw MasterRTL structural mix as a live-candidate gate, high-exploit auxiliary archive narrows the live-screen HV gap, front-breadth is too costly, and depth-only 6x7 does not help. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Budget-shape evaluation | T78 audit and T79 `12 x 3`/`8 x 5`/`6 x 7` equal-budget ablation | T79 diagnostic-negative | T78 shows archive maturation can continue late, but T79 shows exact T75 still loses classic at every tested equal-candidate shape. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |

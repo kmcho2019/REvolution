@@ -59,6 +59,27 @@ evidence.
   `6x7`, using the existing T79 `classic_revolution_6x7` run as the matched
   baseline.
 
+## Auxiliary Archive High-Exploit Depth Probe - 2026-06-25 UTC
+
+- Completed `masterrtl_aux_archive_high_exploit_6x7` on the same frozen
+  eight-design subset.
+- Live run completed `8/8` problems in `1850.21` seconds after vLLM preflight
+  reported `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Compared against the existing T79 `classic_revolution_6x7` baseline through
+  explicit `report_final_analysis_bundle.py --backend_run` paths.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Final-analysis bundle completed all sections, including design-space and
+  feature analysis.
+- Packaged results under
+  `preliminary_planning/20260625_aux_archive_high_exploit_depth_probe/`.
+- Result: `diagnostic_not_promoted`. Mean HV is `0.1229` versus matched
+  classic `6x7` `0.1701`, and below the earlier high-exploit `8x5` QD arm
+  `0.1339`. Mean Pareto points are `1.875` versus classic `2.625`.
+- Interpretation: depth helps classic more than the current auxiliary-archive
+  QD mechanism. Do not launch full RTLLM with this depth-only continuation.
+
 ## Scaffold Start - 2026-06-22 KST
 
 - Branch: `feat/journal-useful-bd-exp-20260622`.
