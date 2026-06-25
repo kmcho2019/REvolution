@@ -13,7 +13,12 @@ encoder lane with:
 
 - a working current model-load smoke;
 - nonconstant toy RTL embeddings;
+- nonconstant generated-candidate RTL embeddings;
 - positive replay HV evidence from T33.
+
+The generated-candidate probe also shows a risk: nearest-neighbor structure is
+still almost entirely same-problem. That means Qwen is the next live-hook
+candidate, not a full RTLLM candidate yet.
 
 DeepGate and MasterRTL pretrained artifacts are real, but their generated-RTL
 bridges are not spend-ready. AURORA and T36 remain useful encoder-like or

@@ -32,7 +32,7 @@ not answer the pretrained-encoder question.
 
 | Candidate | Status | Evidence | Decision |
 | --- | --- | --- | --- |
-| Qwen3 canonical RTL | Highest-priority bridge | Current model smoke passes on CUDA with `4x1024` nonconstant toy RTL embeddings. T33 replay showed about `+2.63%` selected-HV gain versus lexical for canonical RTL. | Implement live hook and small screen. |
+| Qwen3 canonical RTL | Highest-priority bridge | Current model smoke passes on CUDA with `4x1024` nonconstant toy RTL embeddings. The generated-candidate probe produced `540 x 1024` embeddings over `424` unique canonical RTL hashes, but nearest neighbors were `99.26%` same-problem. T33 replay showed about `+2.63%` selected-HV gain versus lexical for canonical RTL. | Implement live hook with collapse diagnostics and small screen. |
 | DeepGate / DeepGate2 | Model valid, bridge blocked | Official python-deepgate pretrained path works on shipped AIG examples, but generated-candidate DeepGate3 probe had only 3 usable embeddings and pairwise cosine mean `0.999923`. | Fix AIG/export/pooling bridge before live spend. |
 | MasterRTL pretrained heads | Model artifacts valid, generated leaves blocked | XGBoost/RF artifacts load in the isolated env. T77 generated-candidate Area-head leaves collapsed to one prediction and one leaf row. | Do not use Area leaves as a BD. Revisit RF/timing only after feature parity. |
 | AURORA-style learned BD | Not pretrained | Raw implementation features had `+1.06%` replay HV, but compressed AURORA/PCA/RFF bottlenecks lost. | Use only as a custom learned feature lane. |
@@ -52,8 +52,10 @@ budget:
 7. Integrate the descriptor into the live QD archive without using final PPA
    as archive coordinates.
 
-Qwen3 currently satisfies 1-3 for a small smoke and has replay evidence, but
-still needs 4-7 in the live path.
+Qwen3 currently satisfies 1-5 for the model/probe path and has replay
+evidence. It does not yet satisfy 6-7 in the live path, because the generated
+candidate probe shows strong same-problem nearest-neighbor clustering and no
+archive-integrated QD run has been executed.
 
 ## Next Implementation Target
 

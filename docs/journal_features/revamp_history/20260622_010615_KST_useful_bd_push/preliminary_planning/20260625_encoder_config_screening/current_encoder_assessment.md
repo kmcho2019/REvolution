@@ -62,6 +62,17 @@ AIG/embedding bridge, which previously produced only three usable embeddings
 with near-identical pairwise cosine. MasterRTL pretrained artifacts also load,
 but T77 blocks the generated-candidate Area-head leaf BD.
 
+## Qwen Generated-Candidate Probe
+
+The `20260625_qwen_live_screen_probe` package embeds the completed live-screen
+candidate corpus with Qwen3 canonical RTL. It confirms the model is usable on
+actual generated RTL: `540` valid-PPA rows produce `424` unique canonical RTL
+hashes and a `540 x 1024` embedding table.
+
+The warning is that Qwen is still dominated by problem structure:
+nearest-neighbor matches are `99.26%` same-problem, `53.15%` same-backend, and
+`26.67%` duplicate canonical RTL. This is not a full spend-ready result.
+
 Next action: implement `qd_qwen3_canonical_rtl_8x5` with explicit
 preprocessing, embedding cache keys, descriptor projection, and collapse
 diagnostics before spending any full RTLLM budget.

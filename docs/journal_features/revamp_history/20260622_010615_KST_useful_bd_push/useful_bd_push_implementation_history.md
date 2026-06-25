@@ -4774,3 +4774,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   upstream model is valid, but the generated-candidate bridge remains blocked
   by the prior near-collapse probe. MasterRTL pretrained artifacts are real,
   but the generated-candidate Area-head leaf BD remains blocked by T77.
+
+## 2026-06-25T17:25:00Z - Qwen Generated-Candidate Probe
+
+- Created preliminary planning package:
+  `preliminary_planning/20260625_qwen_live_screen_probe/`.
+- Ran `Qwen/Qwen3-Embedding-0.6B` on T33-style canonical RTL for the completed
+  live-screen valid-PPA candidate corpus.
+- Artifact root:
+  `exp/useful_bd_push/qwen_live_screen_probe_20260625_164500_UTC`.
+- Embedded `540` candidate rows as a `540 x 1024` matrix in the isolated Qwen
+  env. The corpus had `424` unique canonical RTL hashes and an off-diagonal
+  cosine mean of `0.791654`.
+- Collapse diagnostics: nearest neighbors were `99.26%` same-problem,
+  `53.15%` same-backend, and `26.67%` duplicate canonical RTL.
+- Decision: Qwen3 canonical RTL is still the next true-pretrained live-hook
+  candidate, but it is not full-RTLLM spend-ready. The live hook must emit
+  descriptor-health diagnostics and pass a small matched screen first.

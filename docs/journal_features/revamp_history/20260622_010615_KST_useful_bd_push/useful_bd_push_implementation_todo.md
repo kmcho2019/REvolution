@@ -100,6 +100,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Add pretrained-encoder bridge validation after the first screen. Outcome:
       Qwen3 loads and is the next live-hook candidate; DeepGate and MasterRTL
       pretrained generated-candidate bridges remain blocked.
+- [x] Probe Qwen3 canonical RTL on the completed live-screen candidate corpus.
+      Outcome: generated-candidate embeddings are nonconstant, but nearest
+      neighbors are strongly same-problem, so a live Qwen arm needs explicit
+      collapse diagnostics.
 - [ ] Add a live runtime Qwen3 embedding bridge only after defining
       preprocessing, cache keys, and descriptor-collapse diagnostics.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
