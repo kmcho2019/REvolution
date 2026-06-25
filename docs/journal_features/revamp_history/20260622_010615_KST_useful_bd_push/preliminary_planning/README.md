@@ -13,6 +13,7 @@ configurations before spending full RTLLM budget.
 | `20260625_deepgate_generated_bridge_probe/` | Re-test official DeepGate2 embeddings on generated RTL-derived AIGs after Qwen lost the live screen. | Partially unblocked; embeddings are nonconstant on 24 rows, but only 2/8 problems cover |
 | `20260625_deepgate_transition_bridge_probe/` | Test state-as-input transition AIG abstraction for sequential DeepGate coverage. | Corrected bridge embeds 60 rows across 5/8 problems; not promoted |
 | `20260625_masterrtl_front_slot_probe/` | Test whether the closest MasterRTL structural-mix live arm improves when explicit front-slot parent sampling is enabled. | Completed; small diagnostic gain over MasterRTL mix, still trails classic and not promoted |
+| `20260625_t11_top4_front_slot_probe/` | Test raw T11 top-4 runtime graph axes with the conservative front-slot parent lane as a T36/T58 successor. | Completed; trails classic and MasterRTL front-slot, not promoted |
 
 ## Current Rule
 
@@ -48,3 +49,9 @@ over plain MasterRTL structural mix (`0.1227` versus `0.1218`) and improved
 mean reference-beating candidates (`6.62` versus `5.50`), but classic remains
 ahead on mean HV (`0.1406`) and Pareto breadth (`3.25` versus `1.75`). It is
 not a final-RTLLM candidate as-is.
+
+The T11 top-4 front-slot follow-up completed the same screen as
+`t11_runtime_top4_front_slot_8x5`. It avoids exact T58's PCA4 geometry but
+still trails classic on mean HV (`0.1208` versus `0.1406`), Pareto breadth
+(`1.88` versus `3.25`), and HV wins (`0` versus `6`). It is diagnostic, not a
+full-RTLLM candidate.

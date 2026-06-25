@@ -13,7 +13,7 @@ follow-up, and it also does not clear the full-RTLLM promotion gate.
 | Rank | Candidate | Type | Assessment |
 | --- | --- | --- | --- |
 | 1 | Qwen3 canonical RTL | Actual pretrained text/code embedding | Model-valid and live-screened. Preserved `8/8` problem coverage, but mean HV was `0.1108` versus classic `0.1406`, so it is not promoted as-is. |
-| 2 | T36/T11 bounded front graph | Encoder-like graph representation | Strongest replay signal: about `+4.04%` HV versus lexical and more front hits. Exact T58 live conversion lost HV/front breadth, so it needs a successor design. |
+| 2 | T36/T11 bounded front graph | Encoder-like graph representation | Strongest replay signal: about `+4.04%` HV versus lexical and more front hits. Exact T58 live conversion lost HV/front breadth, and the T11 top-4 front-slot successor also lost the frozen screen. |
 | 3 | T51-style SR front slot | Custom BD/archive coupling | Most practical custom-BD live base. It preserves conservative archive pressure and is already commandable. |
 | 4 | MasterRTL structural front-slot | RTL-native custom BD/archive coupling | Best current screened QD arm by mean HV after the follow-up: `0.1227` versus classic `0.1406`. It only narrowly improves plain MasterRTL structural mix and still loses front breadth. |
 | 5 | DeepGate2 transition-AIG bridge | Pretrained netlist encoder candidate | Official pretrained model embeds transition AIGs with nonconstant signal on `60` rows across `5/8` screen problems, but large designs and same-problem clustering still block promotion. |
@@ -54,6 +54,12 @@ frozen screen. It edged plain MasterRTL structural mix on mean HV (`0.1227`
 versus `0.1218`) and reference-beating candidates (`6.62` versus `5.50`), but
 classic still wins mean HV (`0.1406`), Pareto points (`3.25` versus `1.75`),
 and HV wins (`6` versus `1`). Decision: diagnostic improvement, not promoted.
+
+The follow-up `t11_runtime_top4_front_slot_8x5` arm also completed the frozen
+screen. It tests raw T11 graph axes rather than T58's PCA4 geometry. The result
+is still negative: mean HV `0.1208`, Pareto points `1.88`, reference-beating
+`5.38`, and HV wins `0`, all behind classic and behind the MasterRTL front-slot
+mean-HV result. Decision: diagnostic, not promoted.
 
 ## Post-Bridge Update
 

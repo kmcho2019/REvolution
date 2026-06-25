@@ -4927,3 +4927,28 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   evolutionary reports were written. The package records this reporting
   caveat and uses the completed Pareto/PPA/evolution sections.
 - Decision: diagnostic, not promoted to final full-RTLLM spending.
+
+## 2026-06-25T20:36:00Z - T11 Top-4 Front-Slot Follow-Up Screen
+
+- Created preliminary planning package:
+  `preliminary_planning/20260625_t11_top4_front_slot_probe/`.
+- Ran `t11_runtime_top4_front_slot_8x5` on the frozen eight-design `8x5`
+  screen to test the strongest replay graph lane without repeating exact T58's
+  PCA4 descriptor geometry.
+- The run completed `8/8` problems in `1691.70s`, wrote scheduler telemetry,
+  and produced a complete summary under the existing preliminary live root.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Aggregate result: mean HV `0.1208`, mean Pareto points `1.88`, mean
+  reference-beating candidates `5.38`, and HV wins `0`.
+- Classic remains ahead: mean HV `0.1406`, mean Pareto points `3.25`, mean
+  reference-beating candidates `8.00`, and HV wins `6`.
+- The MasterRTL structural front-slot follow-up also remains ahead of this T11
+  graph successor on mean HV (`0.1227` versus `0.1208`).
+- Per-problem losses are concentrated on `Prob041_traffic_light`,
+  `Prob045_alu`, and `Prob049_signal_generator`.
+- `report_final_analysis_bundle.py` was interrupted only during source-aligned
+  design-space feature recovery after Pareto, PPA distribution, hard-iteration,
+  backend comparison, and evolutionary report sections were written.
+- Decision: diagnostic, not promoted to final full-RTLLM spending.

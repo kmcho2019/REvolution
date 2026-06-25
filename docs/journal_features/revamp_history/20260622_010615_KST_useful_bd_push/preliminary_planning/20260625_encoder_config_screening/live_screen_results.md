@@ -83,3 +83,19 @@ and is packaged at `../20260625_masterrtl_front_slot_probe/`.
 Decision: the front-slot follow-up is a diagnostic improvement over plain
 MasterRTL structural mix, not a promotion candidate. It still loses classic on
 mean HV and front breadth.
+
+## Follow-Up T11 Top-4 Front-Slot Probe
+
+`t11_runtime_top4_front_slot_8x5` tested raw T11 runtime graph axes with the
+same conservative `front_slot_lane_nsga2` parent lane. This intentionally avoids
+repeating exact T58's PCA4 descriptor geometry while still giving the strongest
+replay graph lane a live frozen-screen check.
+
+| Backend | Mean HV | Pareto Points | Ref-Beating | HV Wins |
+| --- | ---: | ---: | ---: | ---: |
+| `classic_revolution_8x5` | 0.1406 | 3.25 | 8.00 | 6 |
+| `masterrtl_structural_front_slot_8x5` | 0.1227 | 1.75 | 6.62 | 1 |
+| `t11_runtime_top4_front_slot_8x5` | 0.1208 | 1.88 | 5.38 | 0 |
+
+Decision: diagnostic, not promoted. The graph lane still loses classic on
+headline HV/front metrics and no longer looks like the best screened QD arm.

@@ -544,6 +544,13 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] MasterRTL front-slot follow-up gets a decision before any full RTLLM
       spend: diagnostic small gain over MasterRTL mix, but not promoted because
       classic remains ahead on HV and Pareto breadth.
+- [x] T11 top-4 graph front-slot successor is run on the frozen eight-design
+      `8x5` screen instead of repeating exact T58 PCA4 geometry.
+- [x] T11 top-4 front-slot successor is validated, packaged, visualized, and
+      compared against the frozen-screen classic baseline.
+- [x] T11 top-4 front-slot successor gets a decision before any full RTLLM
+      spend: diagnostic, not promoted because classic and MasterRTL front-slot
+      remain ahead on mean HV and front evidence.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation
