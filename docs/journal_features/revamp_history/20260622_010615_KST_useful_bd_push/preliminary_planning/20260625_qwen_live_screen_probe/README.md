@@ -23,9 +23,25 @@ canonical-RTL live descriptor hook.
 | Path | Purpose |
 | --- | --- |
 | `tools/run_qwen_live_screen_probe.py` | Probe script, run inside the isolated Qwen env. |
+| `tools/plot_qwen_live_screen_probe.py` | Figure generator for the PCA/collapse summary. |
+| `qwen_descriptor_profile.yaml` | Package-local live descriptor profile using the frozen Qwen projection artifact. |
+| `commands/qwen_live_hook_smoke.md` | Env prep, real descriptor smoke, and bounded launch-smoke commands. |
 | `qwen_live_screen_probe_report.md` | Generated decision report. |
 | `tables/qwen_live_screen_probe_summary.json` | Main collapse and variation metrics. |
 | `tables/qwen_live_screen_probe_candidates.csv` | Candidate rows with canonical hashes and PCA projection axes. |
 | `tables/qwen_live_screen_probe_nearest.csv` | Nearest-neighbor diagnostics. |
 | `tables/qwen_live_screen_probe_axis_correlations.csv` | Simple Qwen-PCA versus PPA-gain correlations. |
+| `tables/qwen_projection_artifact_v0.json` | Frozen PCA projection artifact used by the live hook. |
+| `tables/qwen_live_hook_smoke_summary.csv` | Bounded live-hook smoke outcomes. |
 | `figures/qwen_live_screen_probe.png` | PCA scatter plus nearest-neighbor collapse summary. |
+
+## Live-Hook Status
+
+The live descriptor hook is implemented and smoke-tested:
+
+- `Prob045_alu` `1x0` launched but produced no valid-PPA candidate.
+- `Prob135_m2014_q6b` `2x0` produced one valid-PPA candidate and one archive
+  member with Qwen descriptor values.
+
+This is not a matched method result. It only clears the runtime bridge for the
+next small `8x5` screen.

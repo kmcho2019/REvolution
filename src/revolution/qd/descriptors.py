@@ -277,6 +277,10 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "sr_vq_2": DescriptorDefinition("sr_vq_2", "auto_bd_sr_vq", requires_synthesis=True),
     "sr_vq_3": DescriptorDefinition("sr_vq_3", "auto_bd_sr_vq", requires_synthesis=True),
     "sr_vq_4": DescriptorDefinition("sr_vq_4", "auto_bd_sr_vq", requires_synthesis=True),
+    "qwen_pc0": DescriptorDefinition("qwen_pc0", "qwen_rtl_embedding"),
+    "qwen_pc1": DescriptorDefinition("qwen_pc1", "qwen_rtl_embedding"),
+    "qwen_pc2": DescriptorDefinition("qwen_pc2", "qwen_rtl_embedding"),
+    "qwen_pc3": DescriptorDefinition("qwen_pc3", "qwen_rtl_embedding"),
 }
 
 
@@ -372,6 +376,20 @@ def load_sr_vq_artifact_path(path: str | Path | None) -> Path:
     profile_path = Path(path)
     payload = _load_descriptor_config(profile_path)
     artifact_path = payload["sr_vq_artifact"]
+    assert isinstance(artifact_path, str)
+    resolved = Path(artifact_path)
+    if resolved.is_absolute():
+        return resolved
+    return profile_path.parent / resolved
+
+
+def load_qwen_projection_artifact_path(path: str | Path | None) -> Path:
+    """Load the frozen Qwen projection artifact path from a profile file."""
+
+    assert path is not None
+    profile_path = Path(path)
+    payload = _load_descriptor_config(profile_path)
+    artifact_path = payload["qwen_projection_artifact"]
     assert isinstance(artifact_path, str)
     resolved = Path(artifact_path)
     if resolved.is_absolute():
@@ -595,6 +613,8 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 1.0)
     if axis.startswith("sr_pca_") or axis.startswith("sr_vq_"):
         return (-3.0, 3.0)
+    if axis.startswith("qwen_pc"):
+        return (-1.0, 1.0)
     if axis in {"wire_cell_ratio_est", "resource_sharing_ratio_est"}:
         return (0.0, 4.0)
     if axis == "ltp_noff":
@@ -696,6 +716,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         "requires_auto_bd_sr_vq": any(
             registry[axis].source_tool == "auto_bd_sr_vq" for axis in axes
         ),
+        "requires_qwen_rtl_embedding": any(
+            registry[axis].source_tool == "qwen_rtl_embedding" for axis in axes
+        ),
     }
 
 
@@ -721,6 +744,9 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             ),
             "requires_auto_bd_sr_pca": registry[axis].source_tool == "auto_bd_sr_pca",
             "requires_auto_bd_sr_vq": registry[axis].source_tool == "auto_bd_sr_vq",
+            "requires_qwen_rtl_embedding": (
+                registry[axis].source_tool == "qwen_rtl_embedding"
+            ),
         }
         for axis in axes
     ]

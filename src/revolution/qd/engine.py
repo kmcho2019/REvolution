@@ -68,11 +68,13 @@ from revolution.qd.artifacts import (
 from revolution.qd.descriptors import (
     descriptor_requirements,
     extract_descriptor_values,
+    load_qwen_projection_artifact_path,
     load_sr_pca_artifact_path,
     load_sr_vq_artifact_path,
     resolve_descriptor_axes,
     resolve_grid_axis_specs,
 )
+from revolution.qwen_descriptor_evaluator import QwenCanonicalRTLEmbeddingEvaluator
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import (
     QDBudgetSplit,
@@ -389,6 +391,7 @@ class QDEngine(EoHEngine):
         self._qd_last_corrected_threshold: float | None = None
         self._sr_pca_artifact: SrPcaArtifact | None = None
         self._sr_vq_artifact: SrVqArtifact | None = None
+        self._qwen_rtl_embedding_evaluator: QwenCanonicalRTLEmbeddingEvaluator | None = None
 
     def _uses_descriptor_guided_generation(self) -> bool:
         return self.qd_descriptor_profile not in _ARCHIVE_ONLY_DESCRIPTOR_PROFILES
@@ -554,6 +557,23 @@ class QDEngine(EoHEngine):
             descriptor_requirements(self._archive_axes()).get("requires_auto_bd_sr_vq")
         )
 
+    def _requires_qwen_rtl_embedding_metrics(self) -> bool:
+        return bool(
+            descriptor_requirements(self._archive_axes()).get(
+                "requires_qwen_rtl_embedding"
+            )
+        )
+
+    def _extract_candidate_qwen_rtl_metrics(self, cand: Heuristic) -> dict[str, float]:
+        if not self._requires_qwen_rtl_embedding_metrics():
+            return {}
+        if self._qwen_rtl_embedding_evaluator is None:
+            artifact_path = load_qwen_projection_artifact_path(self.qd_descriptor_file)
+            self._qwen_rtl_embedding_evaluator = QwenCanonicalRTLEmbeddingEvaluator(
+                artifact_path
+            )
+        return self._qwen_rtl_embedding_evaluator.extract_metrics(cand.code)
+
     def _load_sr_pca_artifact(self) -> SrPcaArtifact:
         if self._sr_pca_artifact is None:
             artifact_path = load_sr_pca_artifact_path(self.qd_descriptor_file)
@@ -580,7 +600,15 @@ class QDEngine(EoHEngine):
         needs_stage = self._requires_auto_bd_stage_metrics()
         needs_sr_pca = self._requires_auto_bd_sr_pca_metrics()
         needs_sr_vq = self._requires_auto_bd_sr_vq_metrics()
-        if not (needs_hash or needs_motif or needs_stage or needs_sr_pca or needs_sr_vq):
+        needs_qwen = self._requires_qwen_rtl_embedding_metrics()
+        if not (
+            needs_hash
+            or needs_motif
+            or needs_stage
+            or needs_sr_pca
+            or needs_sr_vq
+            or needs_qwen
+        ):
             return {}
         if not (
             synthesis_result.get("synthesis_success")
@@ -590,6 +618,8 @@ class QDEngine(EoHEngine):
         values: dict[str, float] = {}
         netlist_text: str | None = None
         raw_values: dict[str, float] | None = None
+        if needs_qwen:
+            values.update(self._extract_candidate_qwen_rtl_metrics(cand))
         if needs_hash or needs_motif or needs_sr_pca or needs_sr_vq:
             path = Path(str(synthesis_result["synthesized_netlist_path"]))
             assert path.is_file(), f"missing synthesized netlist: {path}"

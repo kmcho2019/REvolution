@@ -75,12 +75,16 @@ def main() -> None:
     embeddings = embed_texts(texts, args.model_id, args.batch_size)
     np.save(args.output_root / "qwen_live_screen_embeddings.npy", embeddings)
 
-    pcs, explained = pca_projection(embeddings, dims=4)
+    pcs, explained, mean, components = pca_projection(embeddings, dims=4)
     enriched = enrich_rows(rows, texts, embeddings, pcs)
     nearest = nearest_rows(enriched, embeddings)
     write_csv(package / "tables/qwen_live_screen_probe_candidates.csv", enriched)
     write_csv(package / "tables/qwen_live_screen_probe_nearest.csv", nearest)
     write_csv(package / "tables/qwen_live_screen_probe_axis_correlations.csv", correlation_rows(enriched))
+    write_json(
+        package / "tables/qwen_projection_artifact_v0.json",
+        projection_payload(args, rows, mean, components, explained),
+    )
     write_json(
         package / "tables/qwen_live_screen_probe_summary.json",
         summary_payload(args, rows, texts, embeddings, nearest, explained, time.perf_counter() - started),
@@ -189,13 +193,21 @@ def embed_texts(texts: list[str], model_id: str, batch_size: int) -> np.ndarray:
     return np.asarray(matrix, dtype=np.float32)
 
 
-def pca_projection(matrix: np.ndarray, dims: int) -> tuple[np.ndarray, list[float]]:
+def pca_projection(
+    matrix: np.ndarray,
+    dims: int,
+) -> tuple[np.ndarray, list[float], np.ndarray, np.ndarray]:
     centered = matrix - matrix.mean(axis=0, keepdims=True)
     _, singular_values, vt = np.linalg.svd(centered, full_matrices=False)
     projected = centered @ vt[:dims].T
     variance = singular_values**2
     explained = (variance[:dims] / variance.sum()).tolist()
-    return projected.astype(np.float32), [float(value) for value in explained]
+    return (
+        projected.astype(np.float32),
+        [float(value) for value in explained],
+        matrix.mean(axis=0).astype(np.float32),
+        vt[:dims].astype(np.float32),
+    )
 
 
 def enrich_rows(
@@ -285,6 +297,25 @@ def summary_payload(
     }
 
 
+def projection_payload(
+    args: argparse.Namespace,
+    rows: list[dict[str, str]],
+    mean: np.ndarray,
+    components: np.ndarray,
+    explained: list[float],
+) -> dict[str, object]:
+    return {
+        "artifact_kind": "qwen_canonical_rtl_projection_v0",
+        "model_id": args.model_id,
+        "source_run_root": str(args.run_root),
+        "candidate_count": len(rows),
+        "axes": [f"qwen_pc{index}" for index in range(components.shape[0])],
+        "mean": [float(value) for value in mean],
+        "components": [[float(value) for value in component] for component in components],
+        "explained_variance": explained,
+    }
+
+
 def write_report(package: Path, output_root: Path) -> None:
     summary = json.loads((package / "tables/qwen_live_screen_probe_summary.json").read_text(encoding="utf-8"))
     lines = [
@@ -297,6 +328,8 @@ def write_report(package: Path, output_root: Path) -> None:
         "live-hook screen, not a full RTLLM spend.",
         "",
         "## Summary",
+        "",
+        "![Qwen probe](figures/qwen_live_screen_probe.png)",
         "",
         f"- candidate rows: `{summary['candidate_count']}`",
         f"- unique canonical RTL hashes: `{summary['unique_canonical_sha256']}`",

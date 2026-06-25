@@ -73,6 +73,8 @@ The warning is that Qwen is still dominated by problem structure:
 nearest-neighbor matches are `99.26%` same-problem, `53.15%` same-backend, and
 `26.67%` duplicate canonical RTL. This is not a full spend-ready result.
 
-Next action: implement `qd_qwen3_canonical_rtl_8x5` with explicit
-preprocessing, embedding cache keys, descriptor projection, and collapse
-diagnostics before spending any full RTLLM budget.
+The live runtime hook now passes a bounded smoke: `Prob135_m2014_q6b` `2x0`
+created one valid-PPA candidate and one archive member with Qwen descriptor
+values. Next action: run `qd_qwen3_canonical_rtl_8x5` with explicit
+descriptor-health and collapse diagnostics before spending any full RTLLM
+budget.

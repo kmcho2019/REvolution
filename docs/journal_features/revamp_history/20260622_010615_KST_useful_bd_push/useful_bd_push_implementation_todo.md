@@ -104,8 +104,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Outcome: generated-candidate embeddings are nonconstant, but nearest
       neighbors are strongly same-problem, so a live Qwen arm needs explicit
       collapse diagnostics.
-- [ ] Add a live runtime Qwen3 embedding bridge only after defining
+- [x] Add a live runtime Qwen3 embedding bridge only after defining
       preprocessing, cache keys, and descriptor-collapse diagnostics.
+- [ ] Run the matched `qd_qwen3_canonical_rtl_8x5` screen with the same
+      reference-complete subset and explicit same-problem/duplicate-collapse
+      diagnostics before full RTLLM promotion.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live

@@ -24,3 +24,19 @@ live-hook screen, not a full RTLLM spend.
 Implement a live Qwen hook only with descriptor-health reporting. The first screen
 must check same-problem clustering and duplicate-canonical collapse before any
 promotion decision.
+
+## Live-Hook Smoke
+
+The live runtime hook now exists and reads
+`qwen_descriptor_profile.yaml`.
+
+Two bounded smokes were run:
+
+- `Prob045_alu`, `1x0`: launch passed but no candidate reached valid PPA, so
+  archive insertion was not exercised.
+- `Prob135_m2014_q6b`, `2x0`: one candidate reached valid PPA, one archive
+  member was written, and `archive_cells.csv` recorded descriptor values
+  `[0.432236536166232, -0.014105572094552859, 0.08188936911901099]`.
+
+The bridge is therefore runnable, but this is not evidence that Qwen-QD beats
+classic. The next step is a matched `8x5` screen with collapse diagnostics.

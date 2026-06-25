@@ -8,6 +8,7 @@ from revolution.qd.descriptors import (
     extract_descriptor_values,
     load_grid_axis_specs,
     load_descriptor_profiles,
+    load_qwen_projection_artifact_path,
     load_sr_pca_artifact_path,
     load_sr_vq_artifact_path,
     resolve_descriptor_axes,
@@ -240,6 +241,33 @@ def test_fused_rtl_profiles_require_graph_and_rtl_metrics():
     assert requirements["requires_graph_metrics"] is True
     assert requirements["requires_rtl_metrics"] is True
     assert requirements["requires_ppa"] is False
+
+
+def test_qwen_profile_requires_qwen_embedding(tmp_path: Path):
+    cfg = tmp_path / "profiles.yaml"
+    cfg.write_text(
+        "qwen_projection_artifact: qwen_projection.json\n"
+        "profiles:\n"
+        "  qwen_canonical_rtl_pca3:\n"
+        "    - qwen_pc0\n"
+        "    - qwen_pc1\n"
+        "    - qwen_pc2\n",
+        encoding="utf-8",
+    )
+
+    axes = resolve_descriptor_axes(
+        profile_name="qwen_canonical_rtl_pca3",
+        explicit_axes=None,
+        descriptor_file=cfg,
+        archive_type="grid_quantile",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+
+    assert axes == ["qwen_pc0", "qwen_pc1", "qwen_pc2"]
+    assert requirements["requires_qwen_rtl_embedding"] is True
+    assert requirements["requires_ppa"] is False
+    assert load_qwen_projection_artifact_path(cfg) == tmp_path / "qwen_projection.json"
 
 
 def test_t11_runtime_pca_descriptor_values_are_frozen():

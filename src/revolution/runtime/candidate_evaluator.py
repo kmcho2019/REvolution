@@ -26,6 +26,7 @@ from revolution.runtime.problem_spec import ProblemSpec
 from revolution.qd.descriptors import (
     descriptor_requirements,
     extract_descriptor_values,
+    load_qwen_projection_artifact_path,
     resolve_descriptor_axes,
 )
 from revolution.qd.scoring import (
@@ -37,6 +38,7 @@ from revolution.qd.scoring import (
     normalize_code_hash,
 )
 from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
+from revolution.qwen_descriptor_evaluator import QwenCanonicalRTLEmbeddingEvaluator
 from revolution.simulation_descriptor_evaluator import SimulationDescriptorEvaluator
 from revolution.source_aligned_descriptor_evaluator import SourceAlignedRTLDescriptorEvaluator
 
@@ -212,6 +214,7 @@ class CandidateEvaluator:
         if resolved_profile is None and problem_spec is not None:
             resolved_profile = problem_spec.default_descriptor_profile
         self.descriptor_profile = resolved_profile
+        self.descriptor_file = descriptor_file
         self.descriptor_axes = resolve_descriptor_axes(
             profile_name=self.descriptor_profile,
             explicit_axes=descriptor_axes,
@@ -224,6 +227,7 @@ class CandidateEvaluator:
         self.simulation_descriptor_evaluator = SimulationDescriptorEvaluator()
         self.graph_descriptor_evaluator = GraphDescriptorEvaluator()
         self.source_aligned_descriptor_evaluator: SourceAlignedRTLDescriptorEvaluator | None = None
+        self.qwen_rtl_embedding_evaluator: QwenCanonicalRTLEmbeddingEvaluator | None = None
         if evaluation_mode not in {
             EvaluationMode.STRICT_ABLATION.value,
             EvaluationMode.SEARCH_ACCELERATED.value,
@@ -366,7 +370,11 @@ class CandidateEvaluator:
             "ppa": False,
         }
 
-    def _extract_descriptor_values(self, result: CandidateEvaluation) -> dict[str, float]:
+    def _extract_descriptor_values(
+        self,
+        item: CandidateWorkItem,
+        result: CandidateEvaluation,
+    ) -> dict[str, float]:
         descriptor_metrics: dict[str, float] = {}
         descriptor_metrics.update(result.structural_metrics)
         descriptor_metrics.update(result.rtl_metrics)
@@ -375,6 +383,7 @@ class CandidateEvaluator:
         descriptor_metrics.update(result.physical_metrics)
         descriptor_metrics.update(self._extract_auto_bd_netlist_metrics(result))
         descriptor_metrics.update(self._extract_auto_bd_stage_metrics(result))
+        descriptor_metrics.update(self._extract_qwen_rtl_metrics(item.code))
         descriptor_metrics.update(
             {
                 axis: float(result.score_components[axis])
@@ -383,6 +392,16 @@ class CandidateEvaluator:
             }
         )
         return extract_descriptor_values(descriptor_metrics, self.descriptor_axes)
+
+    def _extract_qwen_rtl_metrics(self, code: str) -> dict[str, float]:
+        if not self.descriptor_requirements.get("requires_qwen_rtl_embedding", False):
+            return {}
+        if self.qwen_rtl_embedding_evaluator is None:
+            artifact_path = load_qwen_projection_artifact_path(self.descriptor_file)
+            self.qwen_rtl_embedding_evaluator = QwenCanonicalRTLEmbeddingEvaluator(
+                artifact_path
+            )
+        return self.qwen_rtl_embedding_evaluator.extract_metrics(code)
 
     def _extract_auto_bd_netlist_metrics(
         self,
@@ -466,7 +485,7 @@ class CandidateEvaluator:
             and (self.quality_mode != "ppa" or result.ppa_success)
         )
         if result.archiveable and not result.descriptor_values and self.descriptor_axes:
-            result.descriptor_values = self._extract_descriptor_values(result)
+            result.descriptor_values = self._extract_descriptor_values(item, result)
         if not result.archiveable:
             if result.status != CandidateStatus.SUCCESS.value:
                 result.archive_rejection_reason = result.status

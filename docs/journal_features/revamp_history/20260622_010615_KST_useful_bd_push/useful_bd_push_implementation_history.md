@@ -4791,3 +4791,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: Qwen3 canonical RTL is still the next true-pretrained live-hook
   candidate, but it is not full-RTLLM spend-ready. The live hook must emit
   descriptor-health diagnostics and pass a small matched screen first.
+
+## 2026-06-25T17:35:00Z - Qwen Live Hook Implemented
+
+- Added a lazy Qwen canonical-RTL descriptor evaluator and registered
+  `qwen_pc0` through `qwen_pc3` as `qwen_rtl_embedding` descriptor axes.
+- Added package-local profile `qwen_canonical_rtl_pca3` backed by the frozen
+  projection artifact from the generated-candidate probe.
+- Installed project runtime deps into the isolated Qwen env and restored
+  `regex>=2025.10.22` after the project install downgraded the version needed
+  by `transformers`.
+- Real descriptor smoke returned Qwen projection values for a toy RTL module.
+- Live launch smoke on `Prob045_alu` `1x0` launched cleanly but produced no
+  valid-PPA candidate.
+- Live archive-insertion smoke on `Prob135_m2014_q6b` `2x0` produced one
+  valid-PPA candidate and one archive member with descriptor values
+  `[0.432236536166232, -0.014105572094552859, 0.08188936911901099]`.
+- Decision: the Qwen live bridge is implemented. It is not a method result
+  yet; run the matched `8x5` screen before any full RTLLM promotion.
