@@ -10,6 +10,7 @@ configurations before spending full RTLLM budget.
 | `20260625_encoder_config_screening/` | Shortlist pretrained-encoder, encoder-like, RTL-native, and custom-BD candidates for the next RTLLM comparison. | Completed Qwen-inclusive live screen; no screened QD arm promoted |
 | `20260625_pretrained_encoder_bridge_validation/` | Validate whether pretrained and encoder-like lanes are real enough to spend live RTLLM budget. | Active; Qwen3 is the next live-hook candidate |
 | `20260625_qwen_live_screen_probe/` | Probe Qwen3 canonical-RTL embeddings and bridge them into a live QD descriptor hook. | Probe, smoke, and matched screen complete; not promoted as-is |
+| `20260625_deepgate_generated_bridge_probe/` | Re-test official DeepGate2 embeddings on generated RTL-derived AIGs after Qwen lost the live screen. | Partially unblocked; embeddings are nonconstant on 24 rows, but only 2/8 problems cover |
 
 ## Current Rule
 
@@ -27,3 +28,8 @@ the live hook now inserts a Qwen descriptor archive member in a bounded smoke.
 Its nearest-neighbor graph is still almost entirely same-problem. The matched
 `8x5` screen completed with `8/8` problem coverage, but Qwen mean HV
 (`0.1108`) trailed classic (`0.1406`), so it is not a full-RTLLM arm as-is.
+
+The DeepGate generated bridge probe now shows a stronger diagnostic signal than
+the old three-sample collapsed probe: `24` generated rows embed with pairwise
+cosine mean `0.9315`. It is still not spend-ready because the bounded
+latch-free AIG policy covers only `2/8` screening problems.

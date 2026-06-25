@@ -7,9 +7,12 @@ plan.
 
 ## Verdict
 
-The current plan is not finished. The next candidate to implement for live
-screening is Qwen3 canonical RTL, because it is the only true pretrained
-encoder lane with:
+The current plan is not finished. Qwen3 canonical RTL has now been implemented
+and live-screened, but it lost the headline Pareto/HV gate. The DeepGate
+follow-up bridge is partially unblocked, but it is not ready for a live RTLLM
+arm.
+
+Qwen3 was the first true pretrained encoder lane with:
 
 - a working current model-load smoke;
 - nonconstant toy RTL embeddings;
@@ -17,13 +20,13 @@ encoder lane with:
 - a bounded archive-insertion live smoke;
 - positive replay HV evidence from T33.
 
-The generated-candidate probe also shows a risk: nearest-neighbor structure is
-still almost entirely same-problem. That means Qwen is the next live-hook
-screen candidate, not a full RTLLM candidate yet.
+The matched screen preserved `8/8` coverage but produced mean HV `0.1108`
+versus classic `0.1406`, so exact `qwen_canonical_rtl_pca3` is not promoted.
 
-DeepGate and MasterRTL pretrained artifacts are real, but their generated-RTL
-bridges are not spend-ready. AURORA and T36 remain useful encoder-like or
-learned lanes, but they are not validated external pretrained encoder arms.
+DeepGate and MasterRTL pretrained artifacts are real. DeepGate now has a
+noncollapsed generated-AIG subset result, but the current bridge covers only
+`2/8` screening problems. AURORA and T36 remain useful encoder-like or learned
+lanes, but they are not validated external pretrained encoder arms.
 
 ## Package Contents
 
@@ -34,9 +37,10 @@ learned lanes, but they are not validated external pretrained encoder arms.
 | `tables/encoder_bridge_status.csv` | Candidate-level pass/block decision table. |
 | `tables/model_artifact_inventory.csv` | Checkpoint/model file hashes and pinned commits. |
 | `tables/model_smoke_summary.csv` | Current model-load and non-collapse smoke results. |
+| `../20260625_deepgate_generated_bridge_probe/` | New generated RTL-to-AIG DeepGate bridge result. |
 
 ## Current Spend Decision
 
-Do not launch full RTLLM on the current QD arms as-is. First implement and run
-a small live Qwen3 canonical-RTL descriptor hook, then compare it against
-classic and the best custom/RTL-native controls on the same screening subset.
+Do not launch full RTLLM on the current QD arms as-is. Qwen has already lost
+the small screen, and DeepGate needs sequential/large-AIG bridge fixes before
+live spending.

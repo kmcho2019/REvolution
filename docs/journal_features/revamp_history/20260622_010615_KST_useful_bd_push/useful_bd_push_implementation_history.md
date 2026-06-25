@@ -4843,3 +4843,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: Qwen canonical RTL is validated as a real pretrained-encoder BD
   implementation, but this exact `qwen_canonical_rtl_pca3` config should not
   be promoted to the final full-RTLLM comparison as-is.
+
+## 2026-06-25T18:25:00Z - DeepGate Generated Bridge Probe
+
+- Created preliminary planning package:
+  `preliminary_planning/20260625_deepgate_generated_bridge_probe/`.
+- Re-tested the official `python-deepgate` pretrained model on generated
+  RTL-derived AIGs from the completed eight-design screen after Qwen lost the
+  live Pareto/HV gate.
+- Artifact root:
+  `exp/useful_bd_push/deepgate_generated_bridge_probe_20260625_182350_UTC`.
+- Sampled `96` valid-PPA generated candidate directories, exported `36` AIGs,
+  skipped `12` oversized AIGs, and embedded `24` bounded latch-free AIGs.
+- The generated embeddings were no longer trivially collapsed:
+  pairwise cosine mean `0.9315`, min `0.7700`, max `0.9932`.
+- The embedded rows covered all four screened backends but only two problems:
+  `Prob116_m2014_q3` and `Prob135_m2014_q6b`.
+- Visual inspection of `figures/deepgate_embedding_pca.png` confirmed that the
+  plot is readable and that the noncollapse signal is visible, while the narrow
+  two-problem coverage is also obvious.
+- Decision: DeepGate is partially unblocked as a pretrained encoder bridge,
+  but it is not live-spend-ready. Fix sequential and large-AIG coverage before
+  adding a live QD arm.

@@ -110,6 +110,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       reference-complete subset and explicit same-problem/duplicate-collapse
       diagnostics before full RTLLM promotion. Outcome: coverage preserved,
       but aggregate HV/front breadth lost to classic; do not promote as-is.
+- [x] Re-test the DeepGate pretrained-netlist lane after the Qwen screen.
+      Outcome: official DeepGate2 embeddings are noncollapsed on `24`
+      generated AIG rows, but only `2/8` screening problems cover under the
+      current latch-free bounded bridge; do not promote yet.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live

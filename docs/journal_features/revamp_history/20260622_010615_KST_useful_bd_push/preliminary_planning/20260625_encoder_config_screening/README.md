@@ -56,6 +56,7 @@ The launch commands are in `commands/screening_matrix_v0.md`.
 | `live_screen_results.md` | Completed hard-data screen result and decision. |
 | `pretrained_encoder_validation.md` | Validation gate for future pretrained-weight live arms. |
 | `../20260625_pretrained_encoder_bridge_validation/` | Follow-up package deciding which pretrained or encoder-like lanes are ready for the next live hook. |
+| `../20260625_deepgate_generated_bridge_probe/` | Follow-up DeepGate bridge probe after Qwen lost the live screen. |
 | `commands/screening_matrix_v0.md` | Launch commands for the live screening arms. |
 | `tables/candidate_shortlist.csv` | Machine-readable candidate ranking. |
 | `tables/encoder_legitimacy_checks.csv` | Evidence table for pretrained and encoder-like candidates. |
@@ -106,5 +107,8 @@ headline HV, Pareto-point count, and reference-beating count. Qwen canonical
 RTL preserved coverage and had positive deltas on two problems versus classic,
 but it lost aggregate HV and front breadth.
 
-DeepGate and MasterRTL pretrained-head lanes remain blocked by
-generated-candidate descriptor collapse.
+DeepGate is no longer blocked only by descriptor collapse: the follow-up bridge
+probe embeds `24` generated rows with nonconstant cosine structure. It remains
+blocked by generated-candidate coverage, because the current latch-free and
+bounded-size bridge covers only `2/8` screening problems. MasterRTL
+pretrained-head lanes remain blocked by generated-candidate collapse.

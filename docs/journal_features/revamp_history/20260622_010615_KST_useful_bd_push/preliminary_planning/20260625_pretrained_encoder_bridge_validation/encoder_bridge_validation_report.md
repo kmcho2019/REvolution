@@ -3,12 +3,12 @@
 ## Answer
 
 The preliminary plan is only partially complete. We completed the spend-ready
-live screen, but we have not yet run a live QD arm that actually uses a
-validated pretrained encoder.
+live screen and the first true pretrained Qwen3 live arm, but no pretrained
+encoder configuration has cleared the full-RTLLM promotion gate.
 
-The best next pretrained candidate is `Qwen3 canonical RTL`. It should be the
-next implementation target, not because it is proven live, but because it is
-the only pretrained lane with a working model path and positive replay signal.
+The best current pretrained follow-up is the DeepGate bridge, not a live run:
+the official DeepGate2 model is valid and now embeds a bounded generated-AIG
+subset without trivial collapse, but coverage is too narrow.
 
 ## Completed Live Screen Context
 
@@ -32,8 +32,8 @@ not answer the pretrained-encoder question.
 
 | Candidate | Status | Evidence | Decision |
 | --- | --- | --- | --- |
-| Qwen3 canonical RTL | Highest-priority bridge | Current model smoke passes on CUDA with `4x1024` nonconstant toy RTL embeddings. The generated-candidate probe produced `540 x 1024` embeddings over `424` unique canonical RTL hashes, but nearest neighbors were `99.26%` same-problem. The live hook now passes a bounded archive-insertion smoke. T33 replay showed about `+2.63%` selected-HV gain versus lexical for canonical RTL. | Run matched small screen with collapse diagnostics. |
-| DeepGate / DeepGate2 | Model valid, bridge blocked | Official python-deepgate pretrained path works on shipped AIG examples, but generated-candidate DeepGate3 probe had only 3 usable embeddings and pairwise cosine mean `0.999923`. | Fix AIG/export/pooling bridge before live spend. |
+| Qwen3 canonical RTL | Live-screened, not promoted | Current model smoke passes on CUDA with `4x1024` nonconstant toy RTL embeddings. The generated-candidate probe produced `540 x 1024` embeddings over `424` unique canonical RTL hashes. The matched `8x5` screen preserved coverage but lost mean HV: `0.1108` versus classic `0.1406`. | Do not promote exact `qwen_canonical_rtl_pca3` as-is. |
+| DeepGate / DeepGate2 | Model valid, bridge partially unblocked | Official python-deepgate pretrained path works on shipped AIG examples. The new generated bridge probe embeds `24` bounded AIG rows with pairwise cosine mean `0.9315`, all four backends represented, and `2/8` problems covered. | Fix sequential and large-AIG coverage before live spend. |
 | MasterRTL pretrained heads | Model artifacts valid, generated leaves blocked | XGBoost/RF artifacts load in the isolated env. T77 generated-candidate Area-head leaves collapsed to one prediction and one leaf row. | Do not use Area leaves as a BD. Revisit RF/timing only after feature parity. |
 | AURORA-style learned BD | Not pretrained | Raw implementation features had `+1.06%` replay HV, but compressed AURORA/PCA/RFF bottlenecks lost. | Use only as a custom learned feature lane. |
 | T36 bounded front graph | Encoder-like replay candidate | T36 replay had `+4.04%` HV over lexical and front-hit recovery, but exact T58 live conversion failed. | Redesign live successor; do not rerun exact T58. |
@@ -52,22 +52,19 @@ budget:
 7. Integrate the descriptor into the live QD archive without using final PPA
    as archive coordinates.
 
-Qwen3 currently satisfies 1-5 for the model/probe path and now has a bounded
-archive-integrated smoke. It does not yet satisfy the final promotion gate,
-because the generated-candidate probe shows strong same-problem
-nearest-neighbor clustering and no matched `8x5` screen has been executed.
+Qwen3 satisfies the implementation gate but fails the small-screen promotion
+gate. DeepGate satisfies the model and partial generated-noncollapse gates,
+but fails generated-candidate coverage.
 
 ## Next Implementation Target
 
-Run `qd_qwen3_canonical_rtl_8x5` as a small-screen candidate:
+Do not launch another expensive live arm yet. The next DeepGate target should
+be a bridge-only fix:
 
-- generate canonical RTL text for each candidate;
-- embed with `Qwen/Qwen3-Embedding-0.6B` through the isolated Qwen env;
-- cache embeddings by text hash;
-- project to a fixed descriptor space learned only from non-PPA text
-  embeddings;
-- emit descriptor-health diagnostics;
-- run the same 8-design `8x5` screen before any full RTLLM spend.
+- handle sequential designs by cone extraction or an explicit state policy;
+- handle `Prob045_alu`-scale AIGs with a faster parser or a tighter graph
+  summary;
+- compare DeepGate embeddings against simple AIG statistics on the same rows.
 
 DeepGate and MasterRTL pretrained heads should not receive live budget until
 their generated-candidate bridge issues are fixed.
