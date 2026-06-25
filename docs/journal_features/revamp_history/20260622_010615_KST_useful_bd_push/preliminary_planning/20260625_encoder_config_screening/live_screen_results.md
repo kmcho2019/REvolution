@@ -2,17 +2,24 @@
 
 ## Verdict
 
-Do not promote either spend-ready QD arm to the full RTLLM run yet.
+Do not promote any screened QD arm to the full RTLLM run yet.
 Classic REvolution remains the headline winner on mean HV, Pareto
 point count, reference-beating count, and per-problem HV wins.
 
 The strongest QD arm in this screen is `masterrtl_structural_mix_8x5`,
-but it is still below classic on the headline Pareto metrics.
+but it is still below classic on the headline Pareto metrics. Qwen
+canonical RTL preserved 8/8 problem coverage and won `Prob153_gshare`,
+but its aggregate HV and front breadth are weaker than classic.
+
+Note: the full final-analysis bundle lists Qwen as the generic score-style
+`overall` recommendation, but the pre-registered promotion gate for this
+milestone is the Pareto/HV comparison. That gate selects
+`classic_revolution_8x5` as `pareto_overall`.
 
 ## Run Roots
 
 - live root: `/workspace/exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live`
-- final analysis: `/workspace/exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/final_analysis`
+- final analysis: `/workspace/exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/final_analysis_with_qwen`
 
 ## Aggregate Pareto Metrics
 
@@ -20,9 +27,10 @@ but it is still below classic on the headline Pareto metrics.
 
 | Backend | Mean HV | Pareto Points | Ref-Beating | HV Wins |
 | --- | ---: | ---: | ---: | ---: |
-| `classic_revolution_8x5` | 0.1406 | 3.25 | 8.00 | 7 |
+| `classic_revolution_8x5` | 0.1406 | 3.25 | 8.00 | 6 |
 | `code_thought_sr_front_slot_8x5` | 0.1141 | 1.88 | 4.12 | 0 |
 | `masterrtl_structural_mix_8x5` | 0.1218 | 2.00 | 5.50 | 1 |
+| `qwen_canonical_rtl_pca3_8x5` | 0.1108 | 1.62 | 4.38 | 1 |
 
 ## QD Delta Summary
 
@@ -32,11 +40,11 @@ but it is still below classic on the headline Pareto metrics.
 | --- | ---: | ---: | ---: |
 | `code_thought_sr_front_slot_8x5` | -0.0266 | 1/8 | -1.38 |
 | `masterrtl_structural_mix_8x5` | -0.0189 | 1/8 | -1.25 |
+| `qwen_canonical_rtl_pca3_8x5` | -0.0298 | 2/8 | -1.62 |
 
 ## Encoder Status
 
-No pretrained encoder was used in this live screen. Qwen3, DeepGate3,
-AURORA, and T11/T36 remain bridge-required because their current evidence
-is replay-only, near-collapsed, or failed in a prior live conversion.
-Pretrained-weight configurations should not enter the next live spend
-until model-loading, schema, and non-collapse validation pass.
+Qwen3 canonical RTL is now a real live-screened pretrained encoder
+arm. It is not strong enough to promote as-is. DeepGate3, AURORA,
+and T11/T36 remain bridge-required because their current evidence is
+replay-only, near-collapsed, or failed in a prior live conversion.

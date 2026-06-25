@@ -4809,3 +4809,34 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `[0.432236536166232, -0.014105572094552859, 0.08188936911901099]`.
 - Decision: the Qwen live bridge is implemented. It is not a method result
   yet; run the matched `8x5` screen before any full RTLLM promotion.
+
+## 2026-06-25T18:00:00Z - Qwen Matched Screen Completed
+
+- Ran `qwen_canonical_rtl_pca3_8x5` on the same eight-design
+  reference-complete screen as classic, SR front-slot QD, and MasterRTL
+  structural-mix QD.
+- Used the isolated Qwen env and the package-local descriptor profile backed
+  by `tables/qwen_projection_artifact_v0.json`.
+- Artifact root:
+  `exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/qwen_canonical_rtl_pca3_8x5/seed_1001`.
+- The Qwen arm completed `8/8` problem-summary success rows in `2264.24`
+  seconds and produced `192` valid-PPA files.
+- Regenerated the Qwen-inclusive final-analysis package under
+  `exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/final_analysis_with_qwen`.
+- The full final-analysis bundle completed with no skipped sections. Its
+  generic score-style `overall` recommendation is Qwen, but its
+  `pareto_overall` recommendation is classic; use the pre-registered Pareto/HV
+  promotion gate for this milestone.
+- Headline Pareto result:
+  classic mean HV `0.1406`, MasterRTL structural-mix QD `0.1218`, SR
+  front-slot QD `0.1141`, Qwen canonical RTL QD `0.1108`.
+- Qwen preserved coverage and had positive HV deltas versus classic on
+  `Prob024_fsm` and `Prob153_gshare`, but lost aggregate HV, mean Pareto
+  points (`1.62` versus classic `3.25`), and mean reference-beating count
+  (`4.38` versus classic `8.00`).
+- Regenerated the package figures and visually inspected them. The
+  per-problem HV-delta figure is now an annotated heatmap for clearer
+  presentation use.
+- Decision: Qwen canonical RTL is validated as a real pretrained-encoder BD
+  implementation, but this exact `qwen_canonical_rtl_pca3` config should not
+  be promoted to the final full-RTLLM comparison as-is.

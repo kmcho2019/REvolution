@@ -15,6 +15,12 @@ PACKAGE = Path(__file__).resolve().parents[1]
 TABLES = PACKAGE / "tables"
 REPORTS = PACKAGE / "reports"
 FIGURES = PACKAGE / "figures"
+BASE_BACKEND = "classic_revolution_8x5"
+QD_BACKENDS = (
+    "code_thought_sr_front_slot_8x5",
+    "masterrtl_structural_mix_8x5",
+    "qwen_canonical_rtl_pca3_8x5",
+)
 
 
 def main() -> None:
@@ -54,15 +60,16 @@ def copy_text(source: Path, target: Path) -> None:
 def write_summary_tables(analysis_root: Path, run_root: Path) -> None:
     rows = read_csv(analysis_root / "pareto_analysis/backend_problem_metrics.csv")
     aggregates = read_csv(analysis_root / "pareto_analysis/aggregate_backend_metrics.csv")
-    base = "classic_revolution_8x5"
     problems = sorted({(row["benchmark"], row["problem"]) for row in rows})
     by_key = {(row["backend"], row["benchmark"], row["problem"]): row for row in rows}
     delta_rows = []
     for benchmark, problem in problems:
-        base_row = by_key[(base, benchmark, problem)]
+        base_row = by_key[(BASE_BACKEND, benchmark, problem)]
         base_hv = as_float(base_row["hypervolume"])
         base_front = as_float(base_row["pareto_point_count"])
-        for backend in ["code_thought_sr_front_slot_8x5", "masterrtl_structural_mix_8x5"]:
+        for backend in QD_BACKENDS:
+            if (backend, benchmark, problem) not in by_key:
+                continue
             row = by_key[(backend, benchmark, problem)]
             hv = as_float(row["hypervolume"])
             delta_rows.append(
@@ -89,7 +96,7 @@ def write_summary_tables(analysis_root: Path, run_root: Path) -> None:
         {
             "run_root": str(run_root.resolve()),
             "analysis_root": str(analysis_root.resolve()),
-            "headline_recommendation": "do_not_promote_qd_to_full_rtllm_yet",
+            "headline_recommendation": "do_not_promote_screened_qd_arms_to_full_rtllm_yet",
             "aggregate_metrics": aggregates,
         },
     )
@@ -124,12 +131,19 @@ def write_report(analysis_root: Path, run_root: Path) -> None:
         "",
         "## Verdict",
         "",
-        "Do not promote either spend-ready QD arm to the full RTLLM run yet.",
+        "Do not promote any screened QD arm to the full RTLLM run yet.",
         "Classic REvolution remains the headline winner on mean HV, Pareto",
         "point count, reference-beating count, and per-problem HV wins.",
         "",
         "The strongest QD arm in this screen is `masterrtl_structural_mix_8x5`,",
-        "but it is still below classic on the headline Pareto metrics.",
+        "but it is still below classic on the headline Pareto metrics. Qwen",
+        "canonical RTL preserved 8/8 problem coverage and won `Prob153_gshare`,",
+        "but its aggregate HV and front breadth are weaker than classic.",
+        "",
+        "Note: the full final-analysis bundle lists Qwen as the generic score-style",
+        "`overall` recommendation, but the pre-registered promotion gate for this",
+        "milestone is the Pareto/HV comparison. That gate selects",
+        "`classic_revolution_8x5` as `pareto_overall`.",
         "",
         "## Run Roots",
         "",
@@ -163,8 +177,10 @@ def write_report(analysis_root: Path, run_root: Path) -> None:
         "| QD Backend | Mean HV Delta | HV Wins vs Classic | Mean Pareto Delta |",
         "| --- | ---: | ---: | ---: |",
     ]
-    for backend in ["code_thought_sr_front_slot_8x5", "masterrtl_structural_mix_8x5"]:
+    for backend in QD_BACKENDS:
         selected = [row for row in delta_rows if row["backend"] == backend]
+        if not selected:
+            continue
         lines.append(
             f"| `{backend}` | {mean(selected, 'hv_delta'):.4f} | "
             f"{sum(1 for row in selected if as_float(row['hv_delta']) > 0)}/8 | "
@@ -174,11 +190,10 @@ def write_report(analysis_root: Path, run_root: Path) -> None:
         "",
         "## Encoder Status",
         "",
-        "No pretrained encoder was used in this live screen. Qwen3, DeepGate3,",
-        "AURORA, and T11/T36 remain bridge-required because their current evidence",
-        "is replay-only, near-collapsed, or failed in a prior live conversion.",
-        "Pretrained-weight configurations should not enter the next live spend",
-        "until model-loading, schema, and non-collapse validation pass.",
+        "Qwen3 canonical RTL is now a real live-screened pretrained encoder",
+        "arm. It is not strong enough to promote as-is. DeepGate3, AURORA,",
+        "and T11/T36 remain bridge-required because their current evidence is",
+        "replay-only, near-collapsed, or failed in a prior live conversion.",
     ]
     (PACKAGE / "live_screen_results.md").write_text("\n".join(lines) + "\n")
 
@@ -191,9 +206,19 @@ def write_figures() -> None:
     ]
     names = [label(row["backend"]) for row in aggregates]
     hvs = [as_float(row["mean_hypervolume"]) for row in aggregates]
-    colors = ["#4b5563", "#2563eb", "#059669"]
-    plt.figure(figsize=(7.2, 4.2))
-    plt.bar(names, hvs, color=colors)
+    colors = ["#4b5563", "#2563eb", "#059669", "#d97706"]
+    fig, ax = plt.subplots(figsize=(7.2, 4.2))
+    bars = ax.bar(names, hvs, color=colors)
+    for bar, value in zip(bars, hvs, strict=True):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            value + 0.003,
+            f"{value:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=9,
+        )
+    ax.set_ylim(0.0, max(hvs) * 1.18)
     plt.ylabel("Mean hypervolume")
     plt.title("Preliminary screen mean HV")
     plt.xticks(rotation=15, ha="right")
@@ -203,21 +228,22 @@ def write_figures() -> None:
 
     rows = read_csv(TABLES / "live_screen_problem_hv_deltas.csv")
     problems = sorted({row["problem"] for row in rows})
-    x = list(range(len(problems)))
-    width = 0.36
-    series = [
-        ("code_thought_sr_front_slot_8x5", "#2563eb", -width / 2),
-        ("masterrtl_structural_mix_8x5", "#059669", width / 2),
+    backends = [backend for backend in QD_BACKENDS if any(row["backend"] == backend for row in rows)]
+    matrix = [
+        [as_float(find_row(rows, backend, problem)["hv_delta"]) for problem in problems]
+        for backend in backends
     ]
-    plt.figure(figsize=(10.5, 4.8))
-    for backend, color, offset in series:
-        values = [as_float(find_row(rows, backend, problem)["hv_delta"]) for problem in problems]
-        plt.bar([item + offset for item in x], values, width=width, color=color, label=label(backend))
-    plt.axhline(0.0, color="#111827", linewidth=1)
-    plt.ylabel("HV delta vs classic")
-    plt.title("Per-problem HV delta")
-    plt.xticks(x, problems, rotation=30, ha="right")
-    plt.legend(frameon=False)
+    max_abs = max(abs(value) for row in matrix for value in row)
+    fig, ax = plt.subplots(figsize=(11.4, 4.8))
+    image = ax.imshow(matrix, cmap="RdBu", vmin=-max_abs, vmax=max_abs, aspect="auto")
+    ax.set_title("Per-problem HV delta vs classic")
+    ax.set_xticks(range(len(problems)), problems, rotation=30, ha="right")
+    ax.set_yticks(range(len(backends)), [label(backend) for backend in backends])
+    for y, row in enumerate(matrix):
+        for x, value in enumerate(row):
+            color = "white" if abs(value) > max_abs * 0.55 else "#111827"
+            ax.text(x, y, f"{value:+.3f}", ha="center", va="center", color=color)
+    fig.colorbar(image, ax=ax, label="HV delta")
     plt.tight_layout()
     plt.savefig(FIGURES / "live_screen_hv_delta_by_problem.png", dpi=180)
     plt.close()
@@ -266,6 +292,7 @@ def label(backend: str) -> str:
         "classic_revolution_8x5": "Classic",
         "code_thought_sr_front_slot_8x5": "SR front-slot QD",
         "masterrtl_structural_mix_8x5": "MasterRTL mix QD",
+        "qwen_canonical_rtl_pca3_8x5": "Qwen RTL QD",
     }
     return labels[backend]
 

@@ -34,6 +34,7 @@ subset and a deeper fixed budget of `8x5`.
 | `classic_revolution_8x5` | Baseline | Direct hill-climbing comparator. |
 | `code_thought_sr_front_slot_8x5` | Custom BD | T51-style conservative archive coupling is the strongest practical custom-BD base. |
 | `masterrtl_structural_mix_8x5` | RTL-native BD | T80 showed non-collapsed source-aligned MasterRTL structural axes. |
+| `qwen_canonical_rtl_pca3_8x5` | Pretrained encoder BD | Actual Qwen3 embedding hook after model, probe, and smoke validation. |
 
 The launch commands are in `commands/screening_matrix_v0.md`.
 
@@ -89,19 +90,21 @@ descriptor paths work before the real 8-problem screen.
 
 ## Completed Screen Outcome
 
-The full registered `8x5` screen completed for all three arms.
+The registered `8x5` screen completed for the original three arms and the
+follow-up Qwen pretrained-encoder arm.
 
 | Arm | Problem Success | Valid-PPA Files | Mean HV |
 | --- | ---: | ---: | ---: |
 | `classic_revolution_8x5` | 8/8 | 191 | 0.1406 |
 | `code_thought_sr_front_slot_8x5` | 8/8 | 168 | 0.1141 |
 | `masterrtl_structural_mix_8x5` | 8/8 | 181 | 0.1218 |
+| `qwen_canonical_rtl_pca3_8x5` | 8/8 | 192 | 0.1108 |
 
-Decision: neither QD arm should be promoted to the full RTLLM run yet. The
+Decision: no screened QD arm should be promoted to the full RTLLM run yet. The
 best QD arm is `masterrtl_structural_mix_8x5`, but it still trails classic on
-headline HV, Pareto-point count, and reference-beating count.
+headline HV, Pareto-point count, and reference-beating count. Qwen canonical
+RTL preserved coverage and had positive deltas on two problems versus classic,
+but it lost aggregate HV and front breadth.
 
-The follow-up bridge validation promotes Qwen3 canonical RTL as the next
-implementation target because its actual pretrained model path loads and its
-T33 replay signal is positive. DeepGate and MasterRTL pretrained-head lanes
-remain blocked by generated-candidate descriptor collapse.
+DeepGate and MasterRTL pretrained-head lanes remain blocked by
+generated-candidate descriptor collapse.

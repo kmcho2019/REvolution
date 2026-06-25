@@ -154,6 +154,58 @@ Figure inspection:
 - `figures/live_screen_hv_delta_by_problem.png`: readable; shows QD deltas are
   mostly negative with only a tiny positive on `Prob024_fsm`.
 
+### Qwen Matched Screen
+
+Ran the Qwen canonical-RTL pretrained encoder arm on the same eight-design
+`8x5` subset.
+
+Command profile:
+
+- env: `exp/diversity_check/encoder_envs/qwen3_probe/bin/python`
+- vLLM preflight raw output:
+  `tables/preflight_models_20260625_qwen_screen.txt`
+- descriptor profile:
+  `preliminary_planning/20260625_qwen_live_screen_probe/qwen_descriptor_profile.yaml`
+- backend: `revolution_qd`
+- budget: `population_size=8`, `num_generations=5`
+- concurrency: `total_worker_slots=8`, `max_active_problems=4`,
+  `max_workers_per_problem=2`
+
+Artifact root:
+
+```text
+/workspace/exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/qwen_canonical_rtl_pca3_8x5/seed_1001
+```
+
+Outcome:
+
+- completed `8/8` problem-summary success rows;
+- produced `192` valid-PPA files;
+- preserved coverage on `Prob153_gshare`, the hardest screen case;
+- mean HV `0.1108` versus classic `0.1406`;
+- mean Pareto points `1.62` versus classic `3.25`;
+- positive HV delta versus classic on `Prob024_fsm` and `Prob153_gshare`;
+- not promoted as-is because aggregate HV and front breadth remain worse.
+- full final-analysis bundle completed with no skipped sections. Its generic
+  score-style `overall` recommendation is Qwen, but its `pareto_overall`
+  recommendation is classic; the promotion decision follows the Pareto/HV
+  gate.
+
+Regenerated the package from:
+
+```bash
+uv run python docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260625_encoder_config_screening/tools/package_live_screen_results.py \
+  exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/final_analysis_with_qwen \
+  exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live
+```
+
+Figure inspection:
+
+- `figures/live_screen_mean_hv.png`: readable with value labels.
+- `figures/live_screen_hv_delta_by_problem.png`: regenerated as an annotated
+  heatmap so small deltas and the large Qwen `Prob041_traffic_light` loss are
+  visible.
+
 ### Local Checks
 
 Commands:

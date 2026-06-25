@@ -43,5 +43,7 @@ The live descriptor hook is implemented and smoke-tested:
 - `Prob135_m2014_q6b` `2x0` produced one valid-PPA candidate and one archive
   member with Qwen descriptor values.
 
-This is not a matched method result. It only clears the runtime bridge for the
-next small `8x5` screen.
+The matched `qwen_canonical_rtl_pca3_8x5` screen is now complete in the
+encoder screening package. Qwen preserved `8/8` problem coverage but lost the
+headline aggregate comparison: mean HV `0.1108` versus classic `0.1406`.
+Treat the hook as valid but not promoted as-is.

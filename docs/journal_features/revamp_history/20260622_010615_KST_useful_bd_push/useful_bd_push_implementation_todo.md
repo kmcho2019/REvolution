@@ -106,9 +106,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       collapse diagnostics.
 - [x] Add a live runtime Qwen3 embedding bridge only after defining
       preprocessing, cache keys, and descriptor-collapse diagnostics.
-- [ ] Run the matched `qd_qwen3_canonical_rtl_8x5` screen with the same
+- [x] Run the matched `qd_qwen3_canonical_rtl_8x5` screen with the same
       reference-complete subset and explicit same-problem/duplicate-collapse
-      diagnostics before full RTLLM promotion.
+      diagnostics before full RTLLM promotion. Outcome: coverage preserved,
+      but aggregate HV/front breadth lost to classic; do not promote as-is.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live
