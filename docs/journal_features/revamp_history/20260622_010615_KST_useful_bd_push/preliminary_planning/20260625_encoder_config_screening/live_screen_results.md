@@ -66,3 +66,20 @@ Qwen3 canonical RTL is now a real live-screened pretrained encoder
 arm. It is not strong enough to promote as-is. DeepGate3, AURORA,
 and T11/T36 remain bridge-required because their current evidence is
 replay-only, near-collapsed, or failed in a prior live conversion.
+
+## Follow-Up MasterRTL Front-Slot Probe
+
+After this four-arm screen, `masterrtl_structural_front_slot_8x5` tested the
+same MasterRTL structural descriptor with explicit `front_slot_lane_nsga2`
+parent selection. The arm completed the same frozen eight-design `8x5` screen
+and is packaged at `../20260625_masterrtl_front_slot_probe/`.
+
+| Backend | Mean HV | Pareto Points | Ref-Beating | HV Wins |
+| --- | ---: | ---: | ---: | ---: |
+| `classic_revolution_8x5` | 0.1406 | 3.25 | 8.00 | 6 |
+| `masterrtl_structural_front_slot_8x5` | 0.1227 | 1.75 | 6.62 | 1 |
+| `masterrtl_structural_mix_8x5` | 0.1218 | 2.00 | 5.50 | 1 |
+
+Decision: the front-slot follow-up is a diagnostic improvement over plain
+MasterRTL structural mix, not a promotion candidate. It still loses classic on
+mean HV and front breadth.

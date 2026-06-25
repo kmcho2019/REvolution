@@ -4901,3 +4901,29 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   candidate, not a promoted live QD arm. Next step should be cone extraction,
   cached/offline descriptors, or a tiny live smoke only on transition-covered
   problems.
+
+## 2026-06-25T19:45:00Z - MasterRTL Front-Slot Follow-Up Screen
+
+- Created preliminary planning package:
+  `preliminary_planning/20260625_masterrtl_front_slot_probe/`.
+- Ran `masterrtl_structural_front_slot_8x5` on the frozen eight-design `8x5`
+  screen to test whether the closest RTL-native screened arm improves when
+  `front_slot_lane_nsga2` parent sampling is enabled.
+- The run completed `8/8` problems in `1520.65s`, wrote scheduler telemetry,
+  and produced `182` PPA reports.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- The arm is a small diagnostic improvement over plain MasterRTL structural
+  mix: mean HV `0.1227` versus `0.1218`, and mean reference-beating candidates
+  `6.62` versus `5.50`.
+- It still trails classic on the promotion metrics: classic mean HV `0.1406`,
+  classic mean Pareto points `3.25` versus front-slot `1.75`, and classic HV
+  wins `6` versus front-slot `1`.
+- Per-problem losses remain concentrated on `Prob041_traffic_light`,
+  `Prob045_alu`, and `Prob049_signal_generator`.
+- The final-analysis script was interrupted only during source-aligned
+  design-space feature recovery after Pareto, PPA distribution, and
+  evolutionary reports were written. The package records this reporting
+  caveat and uses the completed Pareto/PPA/evolution sections.
+- Decision: diagnostic, not promoted to final full-RTLLM spending.

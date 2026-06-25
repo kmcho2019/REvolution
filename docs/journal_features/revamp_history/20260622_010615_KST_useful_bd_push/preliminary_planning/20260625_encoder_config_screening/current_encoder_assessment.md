@@ -5,8 +5,8 @@
 The best actual pretrained encoder signal to date is Qwen3 canonical RTL, but
 its first live screen lost to classic. The best encoder-like signal is still
 T36/T11 bounded front graph, but the exact live conversion in T58 lost. The
-best screened QD arm right now is the T80 MasterRTL structural mix, and it also
-does not clear the full-RTLLM promotion gate.
+best screened QD arm right now is the MasterRTL structural front-slot
+follow-up, and it also does not clear the full-RTLLM promotion gate.
 
 ## Candidate Ranking
 
@@ -15,7 +15,7 @@ does not clear the full-RTLLM promotion gate.
 | 1 | Qwen3 canonical RTL | Actual pretrained text/code embedding | Model-valid and live-screened. Preserved `8/8` problem coverage, but mean HV was `0.1108` versus classic `0.1406`, so it is not promoted as-is. |
 | 2 | T36/T11 bounded front graph | Encoder-like graph representation | Strongest replay signal: about `+4.04%` HV versus lexical and more front hits. Exact T58 live conversion lost HV/front breadth, so it needs a successor design. |
 | 3 | T51-style SR front slot | Custom BD/archive coupling | Most practical custom-BD live base. It preserves conservative archive pressure and is already commandable. |
-| 4 | T80 MasterRTL structural mix | RTL-native custom BD | Best current methodology story and strongest screened QD arm by mean HV, but still trails classic. |
+| 4 | MasterRTL structural front-slot | RTL-native custom BD/archive coupling | Best current screened QD arm by mean HV after the follow-up: `0.1227` versus classic `0.1406`. It only narrowly improves plain MasterRTL structural mix and still loses front breadth. |
 | 5 | DeepGate2 transition-AIG bridge | Pretrained netlist encoder candidate | Official pretrained model embeds transition AIGs with nonconstant signal on `60` rows across `5/8` screen problems, but large designs and same-problem clustering still block promotion. |
 | 6 | AURORA-style raw implementation features | Learned auto-BD lane | Raw features had replay signal, but compressed bottlenecks lost and no live profile is frozen. |
 | 7 | MasterRTL pretrained prediction/leaf heads | Pretrained model candidate | Artifacts exist, but the direct Area-head leaf lane collapsed on generated candidates. Keep as future bridge work, not a live arm today. |
@@ -48,6 +48,12 @@ The result does not invalidate all encoder/BD research, but it does mean the
 next full-RTLLM run should not use either of these two QD configs as-is.
 Pretrained encoder work should first close the validation gap described in
 `pretrained_encoder_validation.md`.
+
+The follow-up `masterrtl_structural_front_slot_8x5` arm completed the same
+frozen screen. It edged plain MasterRTL structural mix on mean HV (`0.1227`
+versus `0.1218`) and reference-beating candidates (`6.62` versus `5.50`), but
+classic still wins mean HV (`0.1406`), Pareto points (`3.25` versus `1.75`),
+and HV wins (`6` versus `1`). Decision: diagnostic improvement, not promoted.
 
 ## Post-Bridge Update
 

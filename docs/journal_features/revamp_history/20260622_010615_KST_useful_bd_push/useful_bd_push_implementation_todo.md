@@ -536,6 +536,14 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       classic, T73, and T74 with a reference-complete matched package.
 - [x] T75 gets a promotion, ablation, or retirement rationale before another
       same-family source-aligned live spend.
+- [x] Preliminary MasterRTL structural front-slot follow-up is run on the
+      frozen eight-design `8x5` screen after Qwen, MasterRTL mix, and DeepGate
+      bridge checks.
+- [x] MasterRTL front-slot follow-up is validated, packaged, visualized, and
+      compared against the existing frozen-screen classic baseline.
+- [x] MasterRTL front-slot follow-up gets a decision before any full RTLLM
+      spend: diagnostic small gain over MasterRTL mix, but not promoted because
+      classic remains ahead on HV and Pareto breadth.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

@@ -12,6 +12,7 @@ configurations before spending full RTLLM budget.
 | `20260625_qwen_live_screen_probe/` | Probe Qwen3 canonical-RTL embeddings and bridge them into a live QD descriptor hook. | Probe, smoke, and matched screen complete; not promoted as-is |
 | `20260625_deepgate_generated_bridge_probe/` | Re-test official DeepGate2 embeddings on generated RTL-derived AIGs after Qwen lost the live screen. | Partially unblocked; embeddings are nonconstant on 24 rows, but only 2/8 problems cover |
 | `20260625_deepgate_transition_bridge_probe/` | Test state-as-input transition AIG abstraction for sequential DeepGate coverage. | Corrected bridge embeds 60 rows across 5/8 problems; not promoted |
+| `20260625_masterrtl_front_slot_probe/` | Test whether the closest MasterRTL structural-mix live arm improves when explicit front-slot parent sampling is enabled. | Completed; small diagnostic gain over MasterRTL mix, still trails classic and not promoted |
 
 ## Current Rule
 
@@ -40,3 +41,10 @@ transition logic. After canonical renumbering and constant repair, it embeds
 `60` rows across `5/8` screening problems with pairwise cosine mean `0.9213`.
 It still misses the largest designs, so the next DeepGate escalation should
 use cone extraction, caching, or a faster graph converter.
+
+The MasterRTL front-slot follow-up completed the frozen eight-design `8x5`
+screen as `masterrtl_structural_front_slot_8x5`. It improved mean HV slightly
+over plain MasterRTL structural mix (`0.1227` versus `0.1218`) and improved
+mean reference-beating candidates (`6.62` versus `5.50`), but classic remains
+ahead on mean HV (`0.1406`) and Pareto breadth (`3.25` versus `1.75`). It is
+not a final-RTLLM candidate as-is.
