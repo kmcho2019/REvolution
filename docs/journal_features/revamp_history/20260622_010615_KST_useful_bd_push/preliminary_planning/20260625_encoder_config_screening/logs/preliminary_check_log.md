@@ -182,6 +182,8 @@ Outcome:
 - completed `8/8` problem-summary success rows;
 - produced `192` valid-PPA files;
 - preserved coverage on `Prob153_gshare`, the hardest screen case;
+- emitted descriptor-health files for all eight problems, summarized in
+  `tables/live_screen_qwen_descriptor_health.csv`;
 - mean HV `0.1108` versus classic `0.1406`;
 - mean Pareto points `1.62` versus classic `3.25`;
 - positive HV delta versus classic on `Prob024_fsm` and `Prob153_gshare`;

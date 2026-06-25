@@ -42,6 +42,24 @@ milestone is the Pareto/HV comparison. That gate selects
 | `masterrtl_structural_mix_8x5` | -0.0189 | 1/8 | -1.25 |
 | `qwen_canonical_rtl_pca3_8x5` | -0.0298 | 2/8 | -1.62 |
 
+## Qwen Descriptor Health
+
+All eight Qwen screen problems emitted descriptor-health files.
+No Qwen PCA axis was marked collapsed in the live archive health
+reports, so the negative result is not caused by a trivial
+all-zero or single-value descriptor failure.
+
+| Problem | Observations | Archive Entries | Occupied Cells | Collapsed Axes |
+| --- | ---: | ---: | ---: | --- |
+| `Prob015_multi_pipe_8bit` | 7 | 7 | 7 | `none` |
+| `Prob024_fsm` | 27 | 21 | 17 | `none` |
+| `Prob041_traffic_light` | 25 | 23 | 16 | `none` |
+| `Prob045_alu` | 15 | 14 | 10 | `none` |
+| `Prob049_signal_generator` | 40 | 15 | 15 | `none` |
+| `Prob116_m2014_q3` | 29 | 17 | 14 | `none` |
+| `Prob135_m2014_q6b` | 41 | 10 | 10 | `none` |
+| `Prob153_gshare` | 8 | 8 | 8 | `none` |
+
 ## Encoder Status
 
 Qwen3 canonical RTL is now a real live-screened pretrained encoder

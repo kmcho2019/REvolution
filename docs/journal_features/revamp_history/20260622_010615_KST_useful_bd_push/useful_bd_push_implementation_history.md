@@ -4834,6 +4834,9 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `Prob024_fsm` and `Prob153_gshare`, but lost aggregate HV, mean Pareto
   points (`1.62` versus classic `3.25`), and mean reference-beating count
   (`4.38` versus classic `8.00`).
+- Added `tables/live_screen_qwen_descriptor_health.csv`; all eight problems
+  emitted descriptor-health files and no Qwen PCA archive axis was marked
+  collapsed.
 - Regenerated the package figures and visually inspected them. The
   per-problem HV-delta figure is now an annotated heatmap for clearer
   presentation use.

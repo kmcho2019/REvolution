@@ -91,6 +91,7 @@ def write_summary_tables(analysis_root: Path, run_root: Path) -> None:
             )
     write_csv(TABLES / "live_screen_problem_hv_deltas.csv", delta_rows)
     write_csv(TABLES / "live_screen_run_completion.csv", completion_rows(run_root))
+    write_qwen_descriptor_health(run_root)
     write_json(
         TABLES / "live_screen_result_summary.json",
         {
@@ -100,6 +101,43 @@ def write_summary_tables(analysis_root: Path, run_root: Path) -> None:
             "aggregate_metrics": aggregates,
         },
     )
+
+
+def write_qwen_descriptor_health(run_root: Path) -> None:
+    qwen_root = (
+        run_root
+        / "qwen_canonical_rtl_pca3_8x5"
+        / "seed_1001"
+        / "openai_gpt-oss-120b"
+    )
+    if not qwen_root.is_dir():
+        return
+    rows = []
+    for path in sorted(qwen_root.glob("*/*/descriptor_health.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        summary = json.loads((path.parent / "archive_summary.json").read_text(encoding="utf-8"))
+        axis_stats = {
+            item["axis"]: item["archive_stats"]
+            for item in payload["axis_health"]
+        }
+        rows.append(
+            {
+                "benchmark": path.parent.parent.name,
+                "problem": path.parent.name,
+                "observation_count": payload["observation_count"],
+                "archive_entry_count": payload["archive_entry_count"],
+                "occupied_cells": payload["occupied_cells"],
+                "archive_member_count": summary["archive_member_count"],
+                "collapsed_axes": ";".join(payload["collapsed_axes"]),
+                "qwen_pc0_unique": axis_stats["qwen_pc0"]["unique_count"],
+                "qwen_pc0_stddev": axis_stats["qwen_pc0"]["stddev"],
+                "qwen_pc1_unique": axis_stats["qwen_pc1"]["unique_count"],
+                "qwen_pc1_stddev": axis_stats["qwen_pc1"]["stddev"],
+                "qwen_pc2_unique": axis_stats["qwen_pc2"]["unique_count"],
+                "qwen_pc2_stddev": axis_stats["qwen_pc2"]["stddev"],
+            }
+        )
+    write_csv(TABLES / "live_screen_qwen_descriptor_health.csv", rows)
 
 
 def completion_rows(run_root: Path) -> list[dict[str, Any]]:
@@ -186,6 +224,32 @@ def write_report(analysis_root: Path, run_root: Path) -> None:
             f"{sum(1 for row in selected if as_float(row['hv_delta']) > 0)}/8 | "
             f"{mean(selected, 'pareto_point_delta'):.2f} |"
         )
+    health_path = TABLES / "live_screen_qwen_descriptor_health.csv"
+    if health_path.exists():
+        health_rows = read_csv(health_path)
+        lines += [
+            "",
+            "## Qwen Descriptor Health",
+            "",
+            "All eight Qwen screen problems emitted descriptor-health files.",
+            "No Qwen PCA axis was marked collapsed in the live archive health",
+            "reports, so the negative result is not caused by a trivial",
+            "all-zero or single-value descriptor failure.",
+            "",
+            "| Problem | Observations | Archive Entries | Occupied Cells | Collapsed Axes |",
+            "| --- | ---: | ---: | ---: | --- |",
+        ]
+        for row in health_rows:
+            lines.append(
+                "| {problem} | {observation_count} | {archive_entry_count} | "
+                "{occupied_cells} | {collapsed_axes} |".format(
+                    problem=f"`{row['problem']}`",
+                    observation_count=row["observation_count"],
+                    archive_entry_count=row["archive_entry_count"],
+                    occupied_cells=row["occupied_cells"],
+                    collapsed_axes=row["collapsed_axes"] or "`none`",
+                )
+            )
     lines += [
         "",
         "## Encoder Status",
