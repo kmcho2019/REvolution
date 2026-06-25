@@ -23,6 +23,10 @@ evidence.
   result cite the concrete aggregate table; treat the review bundle as stale
   until refreshed; and prioritize seed replication or a genuinely adaptive
   archive-pressure mechanism over further small MasterRTL geometry retunes.
+- Added preregistration package
+  `preliminary_planning/20260625_aux_archive_seed_replication_gate/` to run
+  classic and high-exploit auxiliary archive seeds `1002` and `1003` before any
+  final full-RTLLM spend decision.
 
 ## Auxiliary Archive High-Exploit Probe - 2026-06-25 UTC
 
