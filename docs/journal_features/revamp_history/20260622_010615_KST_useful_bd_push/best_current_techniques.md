@@ -8,11 +8,11 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | T51/T26-family conservative QD | Diagnostic lead | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
-| 2 | T26.1 gated/low-fusion variants | Mechanism candidate | Tests whether limited, descriptor-compatible recombination can keep hill-climbing quality without global parent mismatch. | T48 reduced some damage but still lost classic on HV, HV-AUC, valid-PPA, and front points. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | T75 is diagnostic but still below classic; T77 blocks direct pretrained Area-head leaves. |
+| 1 | MasterRTL auxiliary archive | Diagnostic lead | Best screened QD arm by mean HV after the `8x5` preliminary screen: `0.1339` versus classic `0.1406`. It supports QD as auxiliary archive memory with classic-like exploitation. | Still not promoted: mean HV is `4.78%` below classic, Pareto breadth is `1.75` versus `3.25`, and reference-beating count is `4.00` versus `8.00`. |
+| 2 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
+| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | Source-aligned descriptors are credible, but live runs still need stronger front creation. |
 | 4 | Budget-shape ablation | Diagnostic-negative | T79 tests whether equal-candidate deeper runs let exact T75 mature more than classic under the same budget. | QD loses matched classic HV at `12x3`, `8x5`, and `6x7`; do not use budget shape as an excuse for exact T75. |
-| 5 | Learned/graph encoder lane | Exploratory | T11/T36 show replay signal from graph/structural features and bounded front slots. | Live graph-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
+| 5 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
 
@@ -62,10 +62,8 @@ The current strategic correction is that classic should be treated as a strong
 small-budget hill climber, not a weak baseline waiting for generic diversity to
 beat it. The next promoted idea should show that QD preserves
 PPA-competitive RTL implementation families while keeping classic-like
-exploitation pressure. A fixed-total-budget shape ablation is now a required
-roadmap item before claiming that `12 x 3` is the right or wrong budget for QD.
-This does not reject QD/MAP-Elites; it says RTL needs constrained diversity
-pressure that earns its evaluation cost.
+exploitation pressure. This does not reject QD/MAP-Elites; it says RTL needs
+constrained diversity pressure that earns its evaluation cost.
 
 T78 adds evidence for that ablation but does not replace it. In the existing
 T75 `12 x 3` logs, `9/13` problem archives still add or replace cells in
@@ -80,6 +78,15 @@ shape: `-0.0804` at `12x3`, `-0.0183` at `8x5`, and `-0.0507` at `6x7`. The
 least negative QD shape is `8x5`, but it still trails classic on Pareto
 points, reference-beating count, synthesis yield, and best score. Treat T79 as
 evidence that exact T75 does not benefit more from depth than classic.
+
+The 20260625 auxiliary-archive preliminary probe applies the same strategic
+correction more directly: keep MasterRTL structural archive cells, lower forced
+fill/backfill pressure, and sample parents through global NSGA-II rank with a
+`0.90` champion lane. It is now the strongest screened QD arm by mean HV
+(`0.1339`), but it is still not promoted because classic remains ahead on mean
+HV (`0.1406`), Pareto breadth (`3.25` versus `1.75`), and reference-beating
+count (`8.00` versus `4.00`). The next follow-up should target front breadth
+without losing the high-exploitation gain.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
@@ -142,7 +149,7 @@ loader equivalence, schema assertions, and generated-candidate variation.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77/T80 | T80 descriptor gate | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, T77 retires direct Area-head leaves, and T80 advances raw MasterRTL structural mix only as a live-candidate gate. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77/T80 and the 20260625 auxiliary archive probe | Best screened QD family | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, T77 retires direct Area-head leaves, T80 advances raw MasterRTL structural mix as a live-candidate gate, and auxiliary archive pressure narrows the live-screen HV gap but still loses front breadth. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Budget-shape evaluation | T78 audit and T79 `12 x 3`/`8 x 5`/`6 x 7` equal-budget ablation | T79 diagnostic-negative | T78 shows archive maturation can continue late, but T79 shows exact T75 still loses classic at every tested equal-candidate shape. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |

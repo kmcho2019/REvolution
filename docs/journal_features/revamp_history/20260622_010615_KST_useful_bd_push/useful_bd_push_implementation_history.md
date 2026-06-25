@@ -28,6 +28,10 @@ evidence.
   candidates are `4.00` versus `8.00`.
 - Interpretation: the auxiliary archive mechanism is the best screened QD arm
   by mean HV, but not close enough for full-RTLLM spend.
+- Added `preliminary_planning/20260625_aux_archive_front_breadth_probe/` as
+  the follow-up. It keeps the same descriptor and low fill target, lowers
+  champion lane from `0.90` to `0.80`, adds `front_slot_lane_nsga2`, and raises
+  front-slot sampling to `0.20` to target the observed Pareto-breadth deficit.
 
 ## Scaffold Start - 2026-06-22 KST
 

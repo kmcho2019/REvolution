@@ -15,6 +15,7 @@ configurations before spending full RTLLM budget.
 | `20260625_masterrtl_front_slot_probe/` | Test whether the closest MasterRTL structural-mix live arm improves when explicit front-slot parent sampling is enabled. | Completed; small diagnostic gain over MasterRTL mix, still trails classic and not promoted |
 | `20260625_t11_top4_front_slot_probe/` | Test raw T11 top-4 runtime graph axes with the conservative front-slot parent lane as a T36/T58 successor. | Completed; trails classic and MasterRTL front-slot, not promoted |
 | `20260625_aux_archive_high_exploit_probe/` | Test whether QD archive memory works better as an auxiliary side channel with classic-like exploitation pressure. | Completed; best screened QD by mean HV, still not promoted |
+| `20260625_aux_archive_front_breadth_probe/` | Test whether the best-HV auxiliary archive arm can recover Pareto breadth with bounded front-slot sampling. | Preregistered next live probe |
 
 ## Current Rule
 
@@ -64,3 +65,9 @@ best screened QD arm by mean HV (`0.1339` versus classic `0.1406`), but it
 still fails promotion because it is about `4.78%` behind classic and loses
 Pareto breadth (`1.75` versus `3.25`) plus reference-beating candidates (`4.00`
 versus `8.00`).
+
+The next registered follow-up is
+`masterrtl_aux_archive_front_breadth_8x5`. It keeps the same descriptor and
+low forced-fill setup, but lowers champion pressure to `0.80` and adds a
+`0.20` front-slot lane. The specific question is whether QD can keep the
+high-exploit mean-HV gain while restoring front material.

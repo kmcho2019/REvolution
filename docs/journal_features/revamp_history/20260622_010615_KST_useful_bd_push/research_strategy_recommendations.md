@@ -180,6 +180,7 @@ accepted, but not overclaimed:
 | Classic strength does not falsify QD/MAP-Elites. | Accepted. It means RTL PPA evolution needs constrained, PPA-competitive diversity rather than generic archive coverage. |
 | `12 x 3` may be biased against QD. | Plausible and now roadmap-worthy, but not proven. Test equal-candidate budget shapes before changing headline protocol. |
 | Existing `12 x 3` archives still mature late. | Accepted as T78 diagnostic evidence. Use it to justify the ablation, not to claim that deeper QD wins. |
+| Auxiliary archive memory helps more than descriptor-only pressure. | Partially accepted after the 20260625 preliminary probe. The high-exploit auxiliary archive is the best screened QD arm by mean HV, but still fails the full-spend gate on HV tolerance and front breadth. |
 | Choose medium-validity, front-variable designs for screens. | Accepted. This is screening discipline, not cherry-picking, if frozen before outcomes. |
 | Use MasterRTL pretrained tree artifacts as an encoder. | Narrowed after T77. Direct Area-head leaves collapse; continue only through retraining, replacement, or reproduced timing/power feature flows. |
 | Treat T75/T76/T77 as positive enough to launch broad claims. | Rejected. They are useful diagnostics and gates, not classic-beating evidence. |
@@ -212,6 +213,9 @@ classic hill-climbing baseline under fair, reference-complete comparisons.
   still change late, but no equal-budget shape has been tested yet.
 - Use T79 as the pre-registered live protocol: eight frozen primary designs,
   `12x3`, `8x5`, and `6x7`, and matched classic versus T75 QD arms.
+- Treat the 20260625 auxiliary archive screen as the current best preliminary
+  QD mechanism signal: it narrows the mean-HV gap, but the next follow-up must
+  explicitly target front breadth and reference-beating count.
 - Add a MasterRTL-pretrained verification and tree-leaf embedding lane before
   spending live budget on "pretrained MasterRTL" QD claims.
 - Add a generated-candidate MasterRTL leaf/margin variation gate after T76 and
