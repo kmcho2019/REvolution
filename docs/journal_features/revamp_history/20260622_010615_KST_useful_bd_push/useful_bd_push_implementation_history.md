@@ -4732,3 +4732,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   valid-PPA/global-Pareto candidate, while the classic and SR-PCA smoke samples
   failed functionality. Treat this only as launch/descriptor-path validation,
   not method-ranking evidence.
+
+## 2026-06-25T15:20:00Z - Encoder Config Screen Completed
+
+- Ran the registered preliminary `8x5` screen for all three spend-ready arms:
+  `classic_revolution_8x5`, `code_thought_sr_front_slot_8x5`, and
+  `masterrtl_structural_mix_8x5`.
+- Artifact root:
+  `exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live`.
+- All three arms completed `8/8` problem-summary success rows. Valid-PPA file
+  counts: classic `191`, SR front-slot QD `168`, MasterRTL structural-mix QD
+  `181`.
+- Ran `scripts/report_final_analysis_bundle.py` over the three completed arms;
+  all sections completed with no skips.
+- Headline Pareto result:
+  classic mean HV `0.1406`, mean Pareto points `3.25`, mean reference-beating
+  count `8.00`, HV wins `7/8`; SR front-slot QD mean HV `0.1141`; MasterRTL
+  structural-mix QD mean HV `0.1218`.
+- Decision: do not promote either spend-ready QD arm to the full RTLLM run yet.
+  MasterRTL structural mix is the stronger QD arm in this screen, but it still
+  trails classic on headline HV, Pareto breadth, and reference-beating count.
+- Added `pretrained_encoder_validation.md` to make explicit that no
+  pretrained-weight arm should enter live budget until upstream checkpoint,
+  preprocessing, schema, and non-collapse validation pass.

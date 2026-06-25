@@ -52,11 +52,15 @@ The launch commands are in `commands/screening_matrix_v0.md`.
 | --- | --- |
 | `current_encoder_assessment.md` | Short presentation-oriented ranking and interpretation. |
 | `screening_plan.md` | Exact subset, gates, and promotion logic. |
+| `live_screen_results.md` | Completed hard-data screen result and decision. |
+| `pretrained_encoder_validation.md` | Validation gate for future pretrained-weight live arms. |
 | `commands/screening_matrix_v0.md` | Launch commands for the live screening arms. |
 | `tables/candidate_shortlist.csv` | Machine-readable candidate ranking. |
 | `tables/encoder_legitimacy_checks.csv` | Evidence table for pretrained and encoder-like candidates. |
 | `tables/descriptor_probe_summary.csv` | Runtime descriptor dependency probe summary. |
 | `tables/live_smoke_summary.csv` | Tiny live vLLM smoke outcome for the spend-ready arms. |
+| `tables/live_screen_aggregate_pareto_metrics.csv` | Formal aggregate HV/Pareto table from the completed screen. |
+| `tables/live_screen_problem_hv_deltas.csv` | Per-problem QD-minus-classic HV deltas. |
 | `tables/screening_matrix.csv` | Machine-readable run matrix. |
 | `tables/prelim_screen_subset.yaml` | Frozen screening subset. |
 | `logs/preliminary_check_log.md` | Commands run and validation outcomes. |
@@ -81,3 +85,17 @@ against `openai/gpt-oss-120b`.
 
 This does not rank methods. It only verifies that the live command surface and
 descriptor paths work before the real 8-problem screen.
+
+## Completed Screen Outcome
+
+The full registered `8x5` screen completed for all three arms.
+
+| Arm | Problem Success | Valid-PPA Files | Mean HV |
+| --- | ---: | ---: | ---: |
+| `classic_revolution_8x5` | 8/8 | 191 | 0.1406 |
+| `code_thought_sr_front_slot_8x5` | 8/8 | 168 | 0.1141 |
+| `masterrtl_structural_mix_8x5` | 8/8 | 181 | 0.1218 |
+
+Decision: neither QD arm should be promoted to the full RTLLM run yet. The
+best QD arm is `masterrtl_structural_mix_8x5`, but it still trails classic on
+headline HV, Pareto-point count, and reference-beating count.

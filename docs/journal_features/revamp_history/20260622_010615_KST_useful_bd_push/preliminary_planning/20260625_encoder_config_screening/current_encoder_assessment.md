@@ -36,3 +36,15 @@ The strongest claim we can test next is therefore:
 
 The next screen is designed to reject weak descriptor stories before the full
 RTLLM spend.
+
+## Post-Screen Update
+
+The completed `8x5` live screen rejected both spend-ready QD arms as full-RTLLM
+candidates. Classic REvolution won the headline Pareto comparison with mean HV
+`0.1406`; SR front-slot QD reached `0.1141`; MasterRTL structural-mix QD
+reached `0.1218`.
+
+The result does not invalidate all encoder/BD research, but it does mean the
+next full-RTLLM run should not use either of these two QD configs as-is.
+Pretrained encoder work should first close the validation gap described in
+`pretrained_encoder_validation.md`.

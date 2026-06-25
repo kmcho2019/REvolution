@@ -109,6 +109,51 @@ Table output:
 - `tables/live_smoke_summary.csv`
 - `tables/live_smoke_root.txt`
 
+### Full Preliminary Screen
+
+Ran the registered eight-design `8x5` screen for:
+
+- `classic_revolution_8x5`
+- `code_thought_sr_front_slot_8x5`
+- `masterrtl_structural_mix_8x5`
+
+Artifact root:
+
+```text
+/workspace/exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live
+```
+
+All three arms completed with `8/8` successful problem-summary rows. Valid-PPA
+file counts were:
+
+- classic: `191`
+- SR front-slot QD: `168`
+- MasterRTL structural-mix QD: `181`
+
+Formal analysis command:
+
+```bash
+uv run python scripts/report_final_analysis_bundle.py \
+  --backend_run classic_revolution_8x5=exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/classic_revolution_8x5/seed_1001 \
+  --backend_run code_thought_sr_front_slot_8x5=exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/code_thought_sr_front_slot_8x5/seed_1001 \
+  --backend_run masterrtl_structural_mix_8x5=exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/masterrtl_structural_mix_8x5/seed_1001 \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260625_encoder_config_screening/tables/prelim_screen_subset.yaml \
+  --output-dir exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/final_analysis
+```
+
+Result:
+
+- formal bundle completed with no skipped sections;
+- overall/Pareto recommendation: `classic_revolution_8x5`;
+- score/archive-QD recommendation: `masterrtl_structural_mix_8x5`;
+- package report: `../live_screen_results.md`.
+
+Figure inspection:
+
+- `figures/live_screen_mean_hv.png`: readable; clearly shows classic ahead.
+- `figures/live_screen_hv_delta_by_problem.png`: readable; shows QD deltas are
+  mostly negative with only a tiny positive on `Prob024_fsm`.
+
 ### Local Checks
 
 Commands:

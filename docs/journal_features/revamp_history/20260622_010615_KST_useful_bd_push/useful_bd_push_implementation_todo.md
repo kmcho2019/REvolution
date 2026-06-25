@@ -93,9 +93,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       before the next full RTLLM spend.
 - [x] Run descriptor probes, vLLM preflight, matrix validation, and a tiny
       live `1x0` smoke for the spend-ready screening arms.
-- [ ] Run the registered eight-design `8x5` screen for
+- [x] Run the registered eight-design `8x5` screen for
       `classic_revolution_8x5`, `code_thought_sr_front_slot_8x5`, and
-      `masterrtl_structural_mix_8x5`.
+      `masterrtl_structural_mix_8x5`. Outcome: classic remains the headline
+      Pareto/HV winner; do not promote either QD arm to full RTLLM yet.
 - [ ] Add a live runtime Qwen3 embedding bridge only after defining
       preprocessing, cache keys, and descriptor-collapse diagnostics.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with

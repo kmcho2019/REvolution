@@ -20,7 +20,7 @@ Start here when resuming the active goal.
 - Current preliminary planning package:
   `preliminary_planning/20260625_encoder_config_screening/` (pretrained
   encoder, encoder-like, RTL-native, and custom-BD candidate ranking plus the
-  next eight-design screening matrix).
+  completed eight-design screening matrix and result package).
 - Most recent presentation supplement:
   `presentations/20260623_report/full_rtllm/final_analysis/`
   (`report_final_analysis_bundle.py` output on the 46-problem
@@ -43,10 +43,10 @@ Start here when resuming the active goal.
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  run the registered eight-design `8x5` screen for classic, T51-style
-  synthesis-response front-slot QD, and T80 MasterRTL structural-mix QD before
-  spending full RTLLM budget. Keep Qwen3, DeepGate3, T11/T36, and AURORA lanes
-  as bridge work until their live descriptor paths are verified.
+  do not launch full RTLLM with the two spend-ready QD arms from the
+  preliminary screen. Keep Qwen3, DeepGate3, T11/T36, and AURORA lanes as
+  bridge work until their live descriptor paths and pretrained-weight
+  validation pass.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
