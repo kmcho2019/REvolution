@@ -4,6 +4,19 @@ Unbounded journal for `useful_bd_push`. Record notable decisions, commands,
 outputs, experiments, failed attempts, blockers, commits, and validation
 evidence.
 
+## Auxiliary Archive High-Exploit Probe - 2026-06-25 UTC
+
+- Current preliminary plan is not complete: no screened QD or pretrained
+  encoder arm has cleared the full-RTLLM promotion gate.
+- Added a preregistered mechanism probe under
+  `preliminary_planning/20260625_aux_archive_high_exploit_probe/`.
+- Candidate: `masterrtl_aux_archive_high_exploit_8x5`.
+- Rationale: the latest hard data suggests descriptor pressure is too costly
+  under the small live budget. The next test keeps a real MasterRTL structural
+  archive but lowers fill/backfill pressure and uses a high-exploitation global
+  NSGA-II parent pool.
+- This should be read as a mechanism test, not a promoted method.
+
 ## Scaffold Start - 2026-06-22 KST
 
 - Branch: `feat/journal-useful-bd-exp-20260622`.

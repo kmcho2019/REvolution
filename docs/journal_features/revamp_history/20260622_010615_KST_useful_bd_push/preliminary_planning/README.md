@@ -14,6 +14,7 @@ configurations before spending full RTLLM budget.
 | `20260625_deepgate_transition_bridge_probe/` | Test state-as-input transition AIG abstraction for sequential DeepGate coverage. | Corrected bridge embeds 60 rows across 5/8 problems; not promoted |
 | `20260625_masterrtl_front_slot_probe/` | Test whether the closest MasterRTL structural-mix live arm improves when explicit front-slot parent sampling is enabled. | Completed; small diagnostic gain over MasterRTL mix, still trails classic and not promoted |
 | `20260625_t11_top4_front_slot_probe/` | Test raw T11 top-4 runtime graph axes with the conservative front-slot parent lane as a T36/T58 successor. | Completed; trails classic and MasterRTL front-slot, not promoted |
+| `20260625_aux_archive_high_exploit_probe/` | Test whether QD archive memory works better as an auxiliary side channel with classic-like exploitation pressure. | Preregistered next live probe |
 
 ## Current Rule
 
@@ -55,3 +56,10 @@ The T11 top-4 front-slot follow-up completed the same screen as
 still trails classic on mean HV (`0.1208` versus `0.1406`), Pareto breadth
 (`1.88` versus `3.25`), and HV wins (`0` versus `6`). It is diagnostic, not a
 full-RTLLM candidate.
+
+The next preregistered probe is `masterrtl_aux_archive_high_exploit_8x5`.
+It keeps MasterRTL structural archive cells active, but lowers forced fill
+pressure and samples parents by global NSGA-II rank with a high champion lane.
+This directly tests the current mechanism hypothesis: QD may need to act as
+auxiliary archive memory rather than primary diversity pressure under the
+small live budget.

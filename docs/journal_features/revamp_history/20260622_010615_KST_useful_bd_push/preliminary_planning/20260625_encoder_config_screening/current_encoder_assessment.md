@@ -100,3 +100,17 @@ produced `192` valid-PPA files, but mean HV was `0.1108` versus classic
 
 Decision: Qwen canonical RTL is a real pretrained-encoder BD implementation,
 but it should not be promoted to the final full-RTLLM comparison as-is.
+
+## Next Mechanism Probe
+
+The next registered run is
+`masterrtl_aux_archive_high_exploit_8x5`, tracked under
+`../20260625_aux_archive_high_exploit_probe/`. It is not another descriptor
+geometry tweak. It keeps the best live RTL-native archive profile, but reduces
+forced diversity pressure and makes the archive an auxiliary memory behind
+classic-like exploitation.
+
+This is the right next test because every spend-ready descriptor-only arm has
+lost the frozen screen. If this arm still trails classic by more than the
+promotion tolerance, the current preliminary evidence argues against launching
+full RTLLM with the screened QD family.
