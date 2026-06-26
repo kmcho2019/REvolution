@@ -4,6 +4,34 @@ Unbounded journal for `useful_bd_push`. Record notable decisions, commands,
 outputs, experiments, failed attempts, blockers, commits, and validation
 evidence.
 
+## T86 Random-Memory FG-QDM Control - 2026-06-26 UTC
+
+- Identified the existing deterministic `random_hash_3d` descriptor profile:
+  `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/00_random_descriptor/descriptor_profile.yaml`.
+- vLLM preflight passed for `openai/gpt-oss-120b` with
+  `max_model_len=131072`; preflight output is under
+  `exp/useful_bd_push/front_guarded_memory_controls_20260626/preflight/models.json`.
+- Ran the matched three-problem random-memory FG-QDM smoke on
+  `Prob045_alu`, `Prob041_traffic_light`, and `Prob015_multi_pipe_8bit`.
+- Run root:
+  `exp/useful_bd_push/front_guarded_memory_controls_20260626/fg_qdm_random_memory_12x3/seed_1001/openai_gpt-oss-120b`.
+- The run completed `3/3` problems in `698.27s`.
+- Analysis roots:
+  `techniques/T86_front_guarded_memory_controls/analysis/random_memory_pareto_analysis/`
+  and
+  `techniques/T86_front_guarded_memory_controls/analysis/random_memory_ppa_distribution/`.
+- Result: classic mean HV is `0.190331`, random-memory FG-QDM is `0.138162`,
+  and SR-memory FG-QDM is `0.137536`. Classic has `3` HV wins; both FG-QDM
+  arms have `0`.
+- Mechanism read: random-memory FG-QDM has noncollapsed random-hash axes on
+  all three problems and memory-refine global-front adds on `Prob015` and
+  `Prob041`. SR-memory warmup-4 has zero memory-lane global-front adds.
+- Decision: `T86` is `T0_control_negative_not_promoted`. Exact `sr_pca_3d`
+  FG-QDM is not descriptor-positive because it does not beat the random-memory
+  control. Do not launch another FG-QDM descriptor swap before addressing the
+  memory-credit complexity review finding or choosing a materially stronger
+  descriptor.
+
 ## Periodic Claude Review Gate - 2026-06-26 UTC
 
 - Ran the required long read-only `claude -p` review after the T83/T84/T85

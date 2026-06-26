@@ -15,7 +15,8 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 5 | Qwen3 canonical RTL | Pretrained text/code representative | Real pretrained embedding path with live-screened QD archive coordinates. | Mean HV `0.1108` trails classic `0.1406`; keep as category representative, not spend-ready. |
 | 6 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
 | 7 | RF leaf-ID front-slot delayed QD | Completed negative | Tests whether T83's RF model-state axes need explicit local front-slot parent sampling to recover Pareto breadth. | Mean HV drops to `0.1162`, with `0/8` HV wins; keep only as failed coupling evidence. |
-| 8 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
+| 8 | FG-QDM memory controls | Completed smoke negative | Tests QD as guarded auxiliary memory rather than a replacement optimizer. | Random-memory FG-QDM slightly beats SR-memory but trails classic, so exact `sr_pca_3d` memory is not descriptor-positive. |
+| 9 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 
 ## Most Promising Direction
 
@@ -68,6 +69,12 @@ PPA-competitive RTL implementation families while keeping classic-like
 exploitation pressure. This does not reject QD/MAP-Elites; it says RTL needs
 constrained diversity pressure that earns its evaluation cost.
 
+T85/T86 sharpen that correction. Front-guarded memory can run, and its memory
+lanes do fire, but exact `sr_pca_3d` memory loses classic and does not beat a
+random-hash memory control on the three-problem smoke. Any next FG-QDM attempt
+needs a materially stronger descriptor or a simpler, justified memory-credit
+mechanism.
+
 T85 implements that correction directly as FG-QDM, or front-guarded QD memory.
 It keeps a separate classic-style primary success pool, inserts valid-PPA
 candidates into the archive passively, gives no budget to empty-cell fill, and
@@ -75,8 +82,9 @@ samples memory parents only from credited retained cells. The warmup-4 smoke
 fixes the initial `Prob015_multi_pipe_8bit` coverage failure, but it is
 negative on the headline PPA-front read: classic mean HV is `0.1903` and T85
 mean HV is `0.1375`. Classic wins `2/3` nonzero-HV comparisons and ties
-`Prob015` at zero HV for both arms. The next step is not another descriptor
-swap; it is the T86 random-memory FG-QDM control.
+`Prob015` at zero HV for both arms. T86 has now run the random-memory control:
+random memory reaches mean HV `0.1382`, slightly above SR memory, so exact
+`sr_pca_3d` memory is not descriptor-positive.
 
 T78 adds evidence for that ablation but does not replace it. In the existing
 T75 `12 x 3` logs, `9/13` problem archives still add or replace cells in

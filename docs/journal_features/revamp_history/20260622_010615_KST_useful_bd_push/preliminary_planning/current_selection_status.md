@@ -33,7 +33,7 @@ different budget or replication caveat are marked explicitly.
 | T11/T36 graph-like bridge | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Best live graph-like representative; replay signals remain stronger than live results. |
 | Code-thought/SR front-slot | `code_thought_sr_front_slot_8x5` | `0.1141` | Best current SR/code-thought representative in this preliminary pool. |
 | Qwen3 pretrained text/code | `qwen_canonical_rtl_pca3_8x5` | `0.1108` | Best actual pretrained text/code embedding live arm; keep as the Qwen representative despite weak HV. |
-| Front-guarded QD memory | `T85_fg_qdm_sr_memory_warmup4_12x3` | `0.1375` smoke-only | Mechanism representative only; three-problem `12x3` smoke is not top-10 comparable and loses classic mean HV `0.1903`. |
+| Front-guarded QD memory control | `T86_fg_qdm_random_memory_12x3` | `0.1382` smoke-only | Control representative only; random-memory FG-QDM trails classic and slightly beats SR-memory, so exact `sr_pca_3d` memory is not descriptor-positive. |
 | DeepGate / synthesized-netlist encoder | `DeepGate transition-AIG bridge` | n/a | Keep as category placeholder; not top-10 until a verified pretrained live screen has comparable HV. |
 | AURORA / AutoQD learned descriptor | `AURORA-style raw implementation-feature lane` | n/a | Keep as category placeholder; current evidence is replay/diagnostic, not frozen live HV. |
 
@@ -138,10 +138,16 @@ but do not rank it in the frozen eight-design top-10 table or promote it to
 final RTLLM spend. A future T85 continuation must change the mechanism or
 descriptor materially; exact `sr_pca_3d` warmup-4 FG-QDM is a negative smoke.
 
-Next lane: `T86_front_guarded_memory_controls` should test random-memory FG-QDM
-before any verified-descriptor swap. If SR memory cannot beat random memory in
-the same scheduler, the next result strengthens the negative map rather than
-spending on another descriptor-first live arm.
+T86 random-memory control: the matched smoke completed on the same three
+problems. Classic mean HV is `0.1903`, random-memory FG-QDM is `0.1382`, and
+SR-memory FG-QDM is `0.1375`. Random memory also has higher mean Pareto points
+than SR memory (`2.67` versus `2.00`) and produces memory-refine global-front
+adds on two problems while SR memory produces none.
+
+Decision: exact `sr_pca_3d` FG-QDM is not descriptor-positive because it does
+not beat the random-memory control. Keep T86 as control evidence, but do not
+promote either T85 or T86 to the frozen eight-design screen or full RTLLM
+spend.
 
 Measured archive-stagnation activation is now complete and negative. It kept
 passive archive logging from the start and activated archive pressure only

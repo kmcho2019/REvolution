@@ -185,23 +185,25 @@ accepted, but not overclaimed:
 | Use MasterRTL pretrained tree artifacts as an encoder. | Narrowed after T77. Direct Area-head leaves collapse; continue only through retraining, replacement, or reproduced timing/power feature flows. |
 | Treat T75/T76/T77 as positive enough to launch broad claims. | Rejected. They are useful diagnostics and gates, not classic-beating evidence. |
 
-## 2026-06-26 T83-T85 Checkpoint
+## 2026-06-26 T83-T86 Checkpoint
 
-The latest periodic review after T83, T84, and T85 keeps the same strategic
-stance but narrows the next action:
+The latest periodic review after T83, T84, and T85 kept the same strategic
+stance and led to the T86 random-memory control. The combined read narrows the
+next action:
 
 | Result | Strategy Update |
 | --- | --- |
 | T83 RF leaf-ID structural delayed QD is near classic only on the all-design mean. | Keep it as the current pretrained MasterRTL RF representative, but do not spend full RTLLM budget because the signal is `Prob135`-dependent and RTLLM-only HV is negative. |
 | T84 RF leaf-ID front-slot delayed QD regresses. | Do not keep adding local front-slot parent pressure to the same RF leaf-ID axes. |
 | T85 FG-QDM warmup-4 fixes coverage but loses mean HV. | Keep front-guarded memory as a mechanism idea, but exact `sr_pca_3d` memory is negative. |
-| No next lane was named after T85. | Add T86 as the next materially different control: random-memory FG-QDM first, then a verified descriptor swap only if the control justifies it. |
+| T86 random-memory FG-QDM slightly beats SR-memory FG-QDM but loses classic. | Exact `sr_pca_3d` memory is not descriptor-positive; do not spend on another FG-QDM descriptor swap without a materially stronger descriptor or a simpler justified memory-credit mechanism. |
 
-The important scientific question for T86 is whether the memory mechanism
-itself earns budget. If SR memory is indistinguishable from random memory, the
-negative map becomes stronger. If SR memory beats random memory but still loses
-classic, then a verified descriptor swap such as RF leaf-ID structural axes or
-DeepGate transition-AIG embeddings is a justified follow-up.
+The important scientific result from T86 is that the memory mechanism itself
+can fire, but current SR memory does not earn its descriptor cost. Random
+memory produced memory-refine global-front adds on two smoke problems, while
+SR memory produced none in the matched warmup-4 run. This strengthens the
+negative map for exact SR-memory FG-QDM rather than justifying an immediate
+verified-descriptor swap.
 
 ## Current Goal Evaluation
 

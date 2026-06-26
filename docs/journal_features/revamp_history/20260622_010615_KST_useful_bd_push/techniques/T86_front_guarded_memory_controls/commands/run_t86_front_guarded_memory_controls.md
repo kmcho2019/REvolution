@@ -1,10 +1,5 @@
 # T86 Command Notes
 
-T86 is not launched yet. Before launch:
-
-1. run the same three-problem smoke subset used by T85;
-2. compare against both classic and T85 warmup-4.
-
 Base command mirrors T85 warmup-4 and changes only the descriptor profile,
 descriptor file, and save path:
 
@@ -63,4 +58,10 @@ uv run python scripts/run_backend.py \
   --no-backend_subdir
 ```
 
-Record `/v1/models` preflight under the T86 run root before the live command.
+The completed run used this command and wrote artifacts to:
+
+`exp/useful_bd_push/front_guarded_memory_controls_20260626/fg_qdm_random_memory_12x3/seed_1001/openai_gpt-oss-120b`
+
+The `/v1/models` preflight is stored at:
+
+`exp/useful_bd_push/front_guarded_memory_controls_20260626/preflight/models.json`

@@ -26,11 +26,14 @@ validity constraints. Do not overclaim generic MAP-Elites success from archive
 occupancy, yield-only gains, or defaulted-reference aggregates.
 
 Current priority: keep the preliminary selection honest after the T83/T84/T85
-negatives. T83 is the closest recent QD result but is `Prob135`-dependent and
-RTLLM-negative. T84 regresses with front-slot sampling. T85 proves the
-front-guarded memory scheduler can run, but exact `sr_pca_3d` FG-QDM loses the
-three-problem smoke on mean HV. Next, run the T86 random-memory FG-QDM control
-before spending on a verified-descriptor swap or any full RTLLM arm.
+and T86 negatives. T83 is the closest recent QD result but is
+`Prob135`-dependent and RTLLM-negative. T84 regresses with front-slot sampling.
+T85 proves the front-guarded memory scheduler can run, but exact `sr_pca_3d`
+FG-QDM loses the three-problem smoke on mean HV. T86 shows random-memory
+FG-QDM slightly beats SR-memory FG-QDM while both trail classic, so exact
+`sr_pca_3d` memory is not descriptor-positive. Do not spend on another FG-QDM
+descriptor swap until the memory-credit complexity finding is addressed or the
+descriptor is materially stronger.
 
 Metrics: never use average fitness or average best PPA as primary evidence.
 Use reference-complete paired subsets for headline classic-vs-QD claims.

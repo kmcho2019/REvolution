@@ -660,9 +660,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       commits and record the `PASS_WITH_ACTIONS` output under `reviews/`.
 - [x] Correct T85 tracking drift: registry status, technique package,
       lineage ledger, and the over-precise all-three-HV-win wording.
-- [ ] Add a legal deterministic random descriptor profile for T86
+- [x] Add a legal deterministic random descriptor profile for T86
       `front_guarded_memory_controls`.
-- [ ] Run the T86 random-memory FG-QDM smoke on the same three-problem subset
+- [x] Run the T86 random-memory FG-QDM smoke on the same three-problem subset
       before any verified-descriptor FG-QDM continuation.
 - [ ] Before any T85/T86 continuation, simplify or justify the FG-QDM credit
       constants and remove defensive metadata defaults called out by the

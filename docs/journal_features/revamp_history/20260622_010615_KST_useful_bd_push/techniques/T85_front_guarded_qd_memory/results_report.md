@@ -36,8 +36,9 @@ two nonzero-HV problems.
 
 The negative result is not a generic rejection of front-guarded memory. It is a
 rejection of exact `sr_pca_3d` FG-QDM at the three-problem `12x3` smoke gate.
-The required next control is random-memory FG-QDM in the same scheduler. If SR
-memory does not beat random memory, the descriptor is not earning its budget.
+T86 has now run the required random-memory control and random memory slightly
+beats SR memory on this smoke, so exact `sr_pca_3d` memory is not earning its
+budget.
 
 ## Visual Inspection
 
