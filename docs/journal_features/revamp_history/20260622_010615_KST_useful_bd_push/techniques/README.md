@@ -31,7 +31,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T15` | `T15_masterrtl_sog_bd` | RTL operator-graph descriptor | `T0 structural_proxy_not_promoted`; zero-failure Yosys-SOG lowering, but front-cell and occupied-cell evidence do not beat classic |
 | `T16` | `T16_deepcell_multiview_bd` | Multiview circuit descriptor | Scaffolded |
 | `T17` | `T17_mome_pareto_archive_bd` | Archive-coupling/Pareto variant | `T0 diagnostic`, passive live-candidate |
-| `T18` | `T18_adaptive_emitter_cvt_bd` | Archive-coupling/emitter variant | Scaffolded |
+| `T18` | `T18_adaptive_emitter_cvt_bd` | Archive-coupling/emitter variant | `T0 retrospective_retired`; T57/T32 synthesis blocks exact spend |
 | `T19` | `T19_sr_relu_pca_bd` | Automatic QD descriptor | `T0 diagnostic`, high-priority HV lead |
 | `T20` | `T20_sr_raw_pca_bd` | Automatic QD descriptor | `T0 diagnostic`, projection ablation near-miss |
 | `T21` | `T21_stnod_motif_hybrid_bd` | Deterministic netlist descriptor | `T0 diagnostic`, archive-coverage ablation |

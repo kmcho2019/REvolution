@@ -6057,3 +6057,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   deduplication. Classic passive archive metrics remain `not_available`
   because RF leaf-ID descriptor projection is intentionally disabled for
   classic candidates.
+
+## 2026-06-26T17:45:00Z - T18 Adaptive Emitter Retrospective Closed
+
+- Converted `T18_adaptive_emitter_cvt_bd` from a scaffold into a
+  `T0 retrospective_retired` evidence package.
+- Used existing measured T57 and T32 artifacts instead of launching a fresh
+  live run: T57 already tests adaptive archive-boundary rebinning and records
+  `26` checks with `0` rebin events, while T32 already tests a small
+  front-preserving emitter schedule and fails to preserve T26's holdout
+  quality/HV signal.
+- Added T18-local evidence and gate tables, copied two source figures, recorded
+  source hashes, and updated the technique indexes, lineage notes, and TODO.
+- Decision: do not spend on exact adaptive-emitter/CVT boundary or schedule
+  tweaks. Continue only with a materially different source-level repair or
+  front-rescue emitter that logs per-lane valid-PPA and front-add contribution.

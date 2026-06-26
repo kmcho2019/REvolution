@@ -188,7 +188,7 @@ Start here when resuming the active goal.
 | `T15` | `T15_masterrtl_sog_bd` | Completed `T0 structural_proxy_not_promoted` Yosys-SOG proxy audit; zero lowering failures, slightly negative front-cell delta, weaker occupied-cell breadth. |
 | `T16` | `T16_deepcell_multiview_bd` | Scaffolded. |
 | `T17` | `T17_mome_pareto_archive_bd` | Passive local-Pareto audit, `T0 diagnostic`; strong front-diversity signal but no decisive HV gain. |
-| `T18` | `T18_adaptive_emitter_cvt_bd` | Scaffolded. |
+| `T18` | `T18_adaptive_emitter_cvt_bd` | Retrospective synthesis, `T0 retrospective_retired`; T57 archive adaptation and T32 front-emitter evidence block a fresh exact T18 spend. |
 | `T19` | `T19_sr_relu_pca_bd` | Replay result, `T0 diagnostic`; strong SR ReLU HV/AUC lead but quality and coverage tradeoffs. |
 | `T20` | `T20_sr_raw_pca_bd` | Replay result, `T0 diagnostic`; raw synthesis-response PCA ablation with front-diversity signal. |
 | `T21` | `T21_stnod_motif_hybrid_bd` | Replay result, `T0 diagnostic`; ST-NOD+motif expands archive coverage but loses quality. |

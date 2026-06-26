@@ -16,7 +16,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 6 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
 | 7 | RF/DeepGate hybrid delayed QD | Hybrid pretrained representative | Combines MasterRTL RF timing model-state, RTL structural branching, and official DeepGate pooled netlist signal under the delayed high-exploit schedule. | Mean HV `0.1199` improves over pure T95 DeepGate but regresses versus same-seed T83 `0.1369` and still trails classic `0.1406`, with lower Pareto breadth. |
 | 8 | AURORA raw implementation delayed QD | Best AURORA/raw representative | Tests the positive T13 clue: raw implementation-side features, not compressed AURORA bottlenecks, on the delayed high-exploit substrate. | Mean HV `0.1201` trails classic `0.1406`; not a pretrained or autoencoder claim. |
-| 9 | T97 front-credit FG-QDM memory | Best FG-QDM smoke, not promoted | Tests QD as guarded auxiliary memory with stricter credited-cell recall instead of broad archive sampling. | T98 confirms T97 beats same-threshold random memory (`0.1534` versus `0.1048`), but classic still leads at `0.1903` and memory-front contribution is not quality-productive enough. |
+| 9 | T100 RF-leaf FG-QDM memory | Best FG-QDM smoke, not promoted | Tests QD as guarded auxiliary memory with validated MasterRTL RF timing model-state axes and stricter credited-cell recall. | Mean HV `0.1566` improves over T97 SR front-credit `0.1534` and T98 random `0.1048`, but classic still leads at `0.1903`. |
 | 10 | DeepGate delayed high-exploit bridge | Screened pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats, T90 reaches `8/8` offline coverage, T91 builds pooled descriptors, T92 wires runtime axes, T93 inserts one live archive member, T94 completes the first matched screen, and T95 tests delayed high-exploit coupling. | Best DeepGate mean HV is `0.1153`, improved over T94 but still below classic `0.1406`, with lower Pareto breadth. |
 
 ## Most Promising Direction
@@ -106,6 +106,13 @@ mean HV `0.1048`, so T97 is descriptor-positive against this direct control.
 That still does not promote FG-QDM because T98's one memory-refine global-front
 add does not translate into final PPA-front quality, and T97 itself still
 trails classic.
+
+T100 swaps the T97 front-credit FG-QDM policy onto T83's validated RF leaf-ID
+structural axes. It is now the FG-QDM category representative: mean HV rises
+to `0.1566`, front-rescue produces `2` global-front additions, and the result
+beats both T97 and T98. It is still smoke-only and not promoted because classic
+remains ahead at `0.1903`, and the memory-refine lane produces no global-front
+adds.
 
 T99 closes the AURORA/raw implementation-feature category gap. It tests the
 T13 replay clue directly with `implemented_structural_compact_3d` axes on the
