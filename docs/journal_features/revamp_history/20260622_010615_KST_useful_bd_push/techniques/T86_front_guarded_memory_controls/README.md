@@ -4,7 +4,7 @@ T86 is the next control lane after T85. It keeps the front-guarded memory
 scheduler but asks whether descriptor-indexed memory is doing more than random
 retention.
 
-Status: pre-registered; not run.
+Status: pre-registered; random-hash descriptor profile identified; not run.
 
 ## Purpose
 
@@ -20,3 +20,12 @@ another descriptor, T86 tests a stricter control:
 - [methodology.md](methodology.md)
 - [commands/run_t86_front_guarded_memory_controls.md](commands/run_t86_front_guarded_memory_controls.md)
 - [artifacts_manifest.md](artifacts_manifest.md)
+
+## Descriptor Profile
+
+Use the existing deterministic random-hash control profile:
+
+`docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/00_random_descriptor/descriptor_profile.yaml`
+
+It defines `random_hash_3d` from `random_hash_0`, `random_hash_1`, and
+`random_hash_2` over canonical synthesized-netlist hashes.

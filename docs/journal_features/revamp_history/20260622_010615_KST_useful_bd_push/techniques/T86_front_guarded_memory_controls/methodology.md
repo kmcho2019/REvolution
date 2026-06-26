@@ -15,9 +15,11 @@ Use the same front-guarded scheduler as T85:
 - `qd_two_parent_probability=0.00`
 - `qd_grid_quantile_warmup_successes=4`
 
-The descriptor must be random but deterministic from candidate identity and
-problem-independent seed. It must not use PPA, reference PPA, fitness, test
-pass rate, hypervolume, Pareto rank, problem identity, or final outcome.
+The descriptor is the existing `random_hash_3d` profile from the prior random
+descriptor control package. It is random-looking but deterministic from
+canonical synthesized-netlist content. It must not use PPA, reference PPA,
+fitness, test pass rate, hypervolume, Pareto rank, problem identity, or final
+outcome.
 
 ## Stage B: Verified-Descriptor Swap
 
