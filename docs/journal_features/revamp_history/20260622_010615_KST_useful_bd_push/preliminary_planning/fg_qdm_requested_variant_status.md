@@ -3,13 +3,13 @@
 ## Short Answer
 
 The requested front-guarded QD memory algorithm has already been implemented
-and smoke-tested as the T85/T97 FG-QDM family. It is not promoted.
+and smoke-tested as the T85/T97/T100 FG-QDM family. It is not promoted.
 
-T97 is the current FG-QDM representative because it improves over the first
-SR-memory smoke and beats the same-threshold T98 random-memory control. It
-still trails classic on every smoke HV comparison and has zero memory-lane
-global-front additions, so it should not enter the frozen eight-design screen
-or final RTLLM spend without a stronger mechanism result.
+T100 is the current FG-QDM representative because it improves over T97's SR
+front-credit memory and beats the same-threshold T98 random-memory control.
+It still trails classic on every smoke HV comparison, so it should not enter
+the frozen eight-design screen or final RTLLM spend without a stronger
+mechanism result.
 
 ## Implementation Mapping
 
@@ -47,6 +47,7 @@ memory while classic-like exploitation remains dominant.
 | T87 | RTL-native shape-density memory | `0.126367` | classic `0.190331` | Negative; no valid-PPA memory-lane children. |
 | T97 | stricter SR front-credit memory | `0.153384` | classic `0.190331` | Best FG-QDM smoke, still not promoted. |
 | T98 | same-threshold random front-credit control | `0.104805` | classic `0.190331` | T97 beats direct random control, but classic still wins. |
+| T100 | RF leaf-ID front-credit memory | `0.156553` | classic `0.190331` | New best FG-QDM smoke; not promoted. |
 
 T97 mechanism telemetry:
 
@@ -54,18 +55,25 @@ T97 mechanism telemetry:
   `0` global-front adds.
 - `front_rescue`: `4` calls, `0` valid-PPA children.
 
+T100 mechanism telemetry:
+
+- `memory_refine`: `6` calls, `2` valid-PPA children, `2` local-front adds,
+  `0` global-front adds.
+- `front_rescue`: `4` calls, `4` valid-PPA children, `4` local-front adds,
+  `2` global-front adds.
+
 ## Current Assessment
 
 FG-QDM is conceptually the right family to keep alive, because it tests QD as
 selective memory rather than as a replacement optimizer. The current evidence
-does not justify more full-screen or full-RTLLM spend on the exact T97
+does not justify more full-screen or full-RTLLM spend on the exact T100
 configuration.
 
 The next FG-QDM attempt needs one of these before escalation:
 
 1. a one-problem diagnostic where memory-refine adds quality-productive global
    front material;
-2. a reduced-complexity credit rule that improves T97 without adding more
+2. a reduced-complexity credit rule that improves T100 without adding more
    heuristic state;
 3. a stronger descriptor input, such as validated MasterRTL/RTLTimer-native
    features, while preserving the T97 stricter credit threshold.

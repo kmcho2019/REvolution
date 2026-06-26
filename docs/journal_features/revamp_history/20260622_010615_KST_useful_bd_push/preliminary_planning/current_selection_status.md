@@ -8,17 +8,20 @@ comparison.
 The preliminary plan is not finished. It has produced hard screening data,
 including a three-seed replication of the best diagnostic arm, the T84
 front-slot follow-up, the T96 RF/DeepGate hybrid screen, the T97/T98
-front-credit FG-QDM smoke/control pair, and the T99 AURORA-style raw
-implementation screen, but it has not
+front-credit FG-QDM smoke/control pair, the T99 AURORA-style raw
+implementation screen, and the T100 RF-leaf FG-QDM smoke, but it has not
 identified a QD/MAP-Elites configuration that is strong enough to spend the
 full RTLLM budget on as a positive candidate. T96 improves over pure T95
 DeepGate on mean HV, but it regresses against its closer T83 RF sibling and is
 still negative versus classic on aggregate HV and front breadth. T97 improves
 the FG-QDM smoke mean HV and beats the same-threshold T98 random-memory
 control, but it still trails classic and does not add global front material
-from memory lanes. T99 gives the AURORA/raw implementation-feature lane a real
-live representative at mean HV `0.1201`, but it still trails classic `0.1406`
-and loses front breadth.
+from memory-refine lanes. T100 improves the FG-QDM smoke again using the RF
+leaf-ID descriptor (`0.1566` mean HV versus T97 `0.1534` and random control
+`0.1048`) and gets `2` global-front additions from `front_rescue`, but classic
+still leads the same smoke at `0.1903`. T99 gives the AURORA/raw
+implementation-feature lane a real live representative at mean HV `0.1201`,
+but it still trails classic `0.1406` and loses front breadth.
 
 Selection should not discard whole encoder/config categories just because the
 current best member is below classic. Maintain:
@@ -42,7 +45,7 @@ different budget or replication caveat are marked explicitly.
 | T11/T36 graph-like bridge | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Best live graph-like representative; replay signals remain stronger than live results. |
 | Code-thought/SR front-slot | `code_thought_sr_front_slot_8x5` | `0.1141` | Best current SR/code-thought representative in this preliminary pool. |
 | Qwen3 pretrained text/code | `qwen_canonical_rtl_pca3_8x5` | `0.1108` | Best actual pretrained text/code embedding live arm; keep as the Qwen representative despite weak HV. |
-| Front-guarded QD memory | `T97_fg_qdm_sr_front_credit_12x3` | `0.1534` smoke-only | Best FG-QDM smoke by mean HV; beats same-threshold T98 random control `0.1048`, but still trails classic `0.1903` and has no memory-lane global-front adds. |
+| Front-guarded QD memory | `T100_fg_qdm_rf_leafid_front_credit_12x3` | `0.1566` smoke-only | Best FG-QDM smoke by mean HV; beats T97 SR front-credit `0.1534` and T98 random control `0.1048`, but still trails classic `0.1903`. |
 | DeepGate / synthesized-netlist encoder | `T95_deepgate_delayed_high_exploit_8x5` | `0.1153` | Best pure DeepGate representative; delayed high-exploit coupling improves over T94 but trails classic. |
 | Hybrid pretrained RTL/netlist encoder | `T96_rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Best RF/DeepGate hybrid representative; improves over pure T95 DeepGate but regresses versus same-seed T83 `0.1369`, trails classic, and loses front breadth. |
 | AURORA / AutoQD learned descriptor | `T99_aurora_raw_impl_delayed_qd` | `0.1201` | Best live AURORA-style raw implementation-feature representative; screened negative versus classic `0.1406`, but stronger than Qwen and pure DeepGate by mean HV. |
@@ -206,6 +209,15 @@ Decision: keep T97 as the current FG-QDM category representative, but do not
 promote it to the frozen eight-design screen. A follow-up must prove
 memory-refine can add quality-productive global-front material before any
 full-RTLLM spend.
+
+T100 tests that follow-up with the existing T97 front-credit policy and T83's
+RF leaf-ID structural descriptor axes. It becomes the new FG-QDM category
+representative: mean HV `0.1566` beats T97 `0.1534` and T98 random
+front-credit `0.1048`, and `front_rescue` contributes `2` global-front
+additions across `4` generated calls. The result is still not promoted because
+classic wins the same smoke at mean HV `0.1903`, wins all three per-problem
+HV comparisons, and the `memory_refine` lane still has `0` global-front
+additions.
 
 ## Pre-RF Archive-Pressure Context
 

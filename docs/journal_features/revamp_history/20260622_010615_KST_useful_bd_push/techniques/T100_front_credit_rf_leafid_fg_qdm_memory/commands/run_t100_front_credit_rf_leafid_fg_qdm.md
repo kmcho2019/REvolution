@@ -89,3 +89,59 @@ uv run python scripts/validate_single_thought_operator_run.py \
   --eoh-mode fg_qdm_rf_leafid_front_credit_12x3 \
   --unified-mode fg_qdm_rf_leafid_front_credit_12x3
 ```
+
+## Reports
+
+```bash
+OUT=docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/techniques/T100_front_credit_rf_leafid_fg_qdm_memory
+SUBSET=docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_front_guarded_qd_memory_probe/tables/smoke_subset.yaml
+CLASSIC=exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/classic_revolution_12x3/seed_1001/openai_gpt-oss-120b
+T100=exp/useful_bd_push/front_credit_rf_leafid_fg_qdm_20260626/fg_qdm_rf_leafid_front_credit_12x3/seed_1001/openai_gpt-oss-120b
+T97=exp/useful_bd_push/front_credit_fg_qdm_20260626/fg_qdm_sr_front_credit_12x3/seed_1001/openai_gpt-oss-120b
+T98=exp/useful_bd_push/front_credit_fg_qdm_controls_20260626/fg_qdm_random_front_credit_12x3/seed_1001/openai_gpt-oss-120b
+
+uv run python scripts/report_ppa_distribution.py \
+  --backend_run classic_revolution_12x3="$CLASSIC" \
+  --backend_run fg_qdm_rf_leafid_front_credit_12x3="$T100" \
+  --backend_run fg_qdm_sr_front_credit_12x3="$T97" \
+  --backend_run fg_qdm_random_front_credit_12x3="$T98" \
+  --subset-config "$SUBSET" \
+  --output-dir "$OUT/analysis/ppa_distribution"
+
+uv run python scripts/report_pareto_analysis.py \
+  --backend_run classic_revolution_12x3="$CLASSIC" \
+  --backend_run fg_qdm_rf_leafid_front_credit_12x3="$T100" \
+  --backend_run fg_qdm_sr_front_credit_12x3="$T97" \
+  --backend_run fg_qdm_random_front_credit_12x3="$T98" \
+  --subset-config "$SUBSET" \
+  --output-dir "$OUT/analysis/pareto_analysis"
+```
+
+## Phase 03.1 Viewer
+
+```bash
+RUN_ROOT=exp/useful_bd_push/front_credit_rf_leafid_fg_qdm_20260626
+mkdir -p "$RUN_ROOT/final_analysis/ppa_distribution/data"
+cp "$OUT/analysis/ppa_distribution/data/ppa_candidates.csv" \
+  "$RUN_ROOT/final_analysis/ppa_distribution/data/ppa_candidates.csv"
+cp "$OUT/analysis/ppa_distribution/data/reference_ppa_metrics.csv" \
+  "$RUN_ROOT/final_analysis/ppa_distribution/data/reference_ppa_metrics.csv"
+
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root "$RUN_ROOT" \
+  --backend_run classic_revolution_12x3="$CLASSIC" \
+  --backend_run fg_qdm_rf_leafid_front_credit_12x3="$T100" \
+  --archive_source_backend fg_qdm_rf_leafid_front_credit_12x3 \
+  --subset-config "$SUBSET" \
+  --output-dir "$OUT/visualizations/qd_ppa_viewer" \
+  --strict \
+  --no-classic-descriptor-recovery
+
+uv run python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root "$OUT/visualizations/qd_ppa_viewer" \
+  --strict
+```
+
+Classic descriptor recovery is disabled because the generic recovery path
+cannot honestly recompute `source_aligned_rf_timing_leaf_ids` for classic
+candidates.

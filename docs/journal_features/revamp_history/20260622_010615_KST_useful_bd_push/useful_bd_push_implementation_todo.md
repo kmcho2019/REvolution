@@ -164,9 +164,13 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Outcome: T96 improves mean HV over pure T95 DeepGate (`0.1199` versus
       `0.1153`) but still trails classic (`0.1406`) and loses front breadth,
       so it is kept only as a hybrid category representative.
-- [ ] Run T100 front-credit RF-leaf FG-QDM smoke to test whether the best
+- [x] Run T100 front-credit RF-leaf FG-QDM smoke to test whether the best
       validated RF leaf-ID structural descriptor improves the existing T97
       front-guarded memory mechanism without adding scheduler complexity.
+      Outcome: T100 becomes the best FG-QDM smoke by mean HV (`0.1566`
+      versus T97 `0.1534` and T98 random `0.1048`), and its `front_rescue`
+      lane adds `2` global-front candidates, but classic still leads at
+      `0.1903`; keep T100 as a category representative only.
 - [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.

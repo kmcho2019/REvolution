@@ -6020,3 +6020,26 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Stop/go gate: do not spend beyond the three-problem smoke unless memory
   lanes produce useful front material and the result is near T97's mean HV
   without losing classic-covered designs.
+
+## 2026-06-26T20:20:00Z - T100 RF-Leaf FG-QDM Smoke Packaged
+
+- Ran the T100 three-problem smoke under the existing
+  `front_guarded_memory` scheduler with T83 RF leaf-ID structural descriptor
+  axes. The run completed under
+  `exp/useful_bd_push/front_credit_rf_leafid_fg_qdm_20260626/`.
+- Packaged PPA distribution and Pareto reports under
+  `techniques/T100_front_credit_rf_leafid_fg_qdm_memory/analysis/`.
+- Result: T100 mean HV is `0.156553`, above T97 SR front-credit FG-QDM
+  `0.153384` and T98 random front-credit control `0.104805`, but below
+  classic `0.190331`.
+- Mechanism result: `front_rescue` produced `4/4` valid-PPA children,
+  `4` local-front additions, and `2` global-front additions. `memory_refine`
+  produced `2/6` valid-PPA children and `0` global-front additions.
+- Exported the Phase 03.1 viewer to
+  `visualizations/qd_ppa_viewer/` with `--no-classic-descriptor-recovery`
+  because the generic recovery path cannot honestly project classic
+  candidates into the RF leaf-ID axis. Strict non-browser validation passed.
+- Added `visualizations/direct_ppa_pareto/` with an inspected direct
+  `Prob041_traffic_light` area-power gain plot.
+- Decision: keep T100 as the FG-QDM category representative, but do not
+  promote exact T100 to the eight-design screen or full RTLLM spend.

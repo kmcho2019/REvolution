@@ -16,5 +16,16 @@ T97 front-credit FG-QDM plus T83 RF leaf-ID structural axes.
 
 ## Current Read
 
-Pending. This probe should only proceed beyond the smoke if memory-lane calls
-produce useful front material under a validated RF-leaf descriptor.
+Completed. T100 is the new FG-QDM smoke representative, but it is not promoted
+for an eight-design or full-RTLLM run.
+
+Summary:
+
+- mean HV `0.156553` versus classic `0.190331`;
+- mean HV above T97 SR front-credit FG-QDM `0.153384`;
+- mean HV above T98 same-threshold random control `0.104805`;
+- `front_rescue` produced `4/4` valid-PPA children and `2` global-front adds;
+- `memory_refine` produced `2/6` valid-PPA children and `0` global-front adds.
+
+Decision: keep T100 as the category representative, but do not spend beyond
+the smoke without a new mechanism improvement.
