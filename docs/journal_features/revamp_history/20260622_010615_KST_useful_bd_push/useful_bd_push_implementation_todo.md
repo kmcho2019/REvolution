@@ -134,6 +134,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       registers `deepgate_pool_pc0..2`, wires both runtime descriptor paths,
       builds `deepgate_pooled_pc3`, and passes an isolated official-model
       smoke; next step is bounded matched live HV, not full RTLLM spend.
+- [x] Run a bounded live DeepGate runtime smoke. Outcome: T93 shows a
+      `Prob045_alu` `4x1` run can insert one valid-PPA archive member with
+      finite `deepgate_pool_pc0..2` values; matched live HV remains missing.
 - [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.

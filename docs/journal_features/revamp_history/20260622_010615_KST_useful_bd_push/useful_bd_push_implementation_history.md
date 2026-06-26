@@ -4,6 +4,25 @@ Unbounded journal for `useful_bd_push`. Record notable decisions, commands,
 outputs, experiments, failed attempts, blockers, commits, and validation
 evidence.
 
+## 2026-06-26T11:25:00Z - T93 DeepGate Runtime Live Smoke Completed
+
+- Added `preliminary_planning/20260626_deepgate_runtime_live_smoke/` to record
+  the first bounded live smoke for the T92 `deepgate_pooled_pc3` runtime
+  descriptor profile.
+- Ran three generation-0 smokes first: `Prob024_fsm` `2x0`,
+  `Prob041_traffic_light` `4x0`, and `Prob045_alu` `4x0`. Each produced zero
+  valid-PPA candidates, so no DeepGate descriptor observation was possible.
+- Ran a bounded `Prob045_alu` `4x1` continuation. It produced one valid-PPA
+  candidate from eight generated candidates, initialized one QD archive cell,
+  and wrote finite DeepGate pooled descriptor values:
+  `0.0002696719071487415`, `0.08077756043733988`, and
+  `-0.09394080465509182`.
+- The archive has one member, so descriptor collapse is expected and this is
+  not matched HV evidence.
+- Decision: DeepGate advances to runtime-smoke-positive. It remains a
+  category representative only; the next valid gate is a matched small screen
+  against classic, not full RTLLM spend.
+
 ## 2026-06-26T11:10:00Z - T92 DeepGate Runtime Descriptor Gate Completed
 
 - Added `preliminary_planning/20260626_deepgate_runtime_descriptor_gate/` to
