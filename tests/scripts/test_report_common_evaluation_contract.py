@@ -78,6 +78,17 @@ def test_common_evaluation_contract_reports_passive_archive_gaps(tmp_path: Path)
     assert passive_by_method["qd_method"]["unique_front_family_count"] == "not_available"
     assert passive_by_method["qd_method"]["notes"] == "candidate_level_no_canonical_dedup"
 
+    summary_rows = _read_csv(output_dir / "method_seed_summary.csv")
+    summary_by_method = {row["method_key"]: row for row in summary_rows}
+    assert summary_by_method["classic_revolution_8x5"]["mean_global_ppa_hv"] == "0.5"
+    assert summary_by_method["classic_revolution_8x5"]["classic_delta_mean_hv"] == "0"
+    assert summary_by_method["qd_method"]["headline_problem_count"] == "1"
+    assert summary_by_method["qd_method"]["mean_global_ppa_hv"] == "0.4"
+    assert summary_by_method["qd_method"]["classic_delta_mean_hv"] == "-0.1"
+    assert summary_by_method["qd_method"]["classic_hv_loss_count"] == "1"
+    assert summary_by_method["qd_method"]["mean_passive_archive_qd_auc"] == "0.65"
+    assert summary_by_method["qd_method"]["notes"] == "candidate_level_no_canonical_dedup"
+
     config = json.loads((output_dir / "passive_archive_config.json").read_text())
     assert config["scope"] == "per_problem_phase_03_1_viewer_archive"
     assert config["problem_archives"][0]["cell_count"] == 4

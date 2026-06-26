@@ -26,6 +26,7 @@ exp/useful_bd_push/prelim_aurora_raw_impl_delayed_20260626/live/aurora_raw_impl_
 | `analysis/ppa_distribution/data/reference_ppa_metrics.csv` | Reference PPA rows used by normalized comparisons. |
 | `analysis/ppa_completeness.csv` | Missing-candidate and missing-reference comparison gate. |
 | `tables/method_problem_seed_metrics.csv` | Common-evaluation method/problem/seed rows. |
+| `tables/method_seed_summary.csv` | Common-evaluation method/seed aggregate shortlist rows. |
 | `tables/passive_archive_metrics.csv` | Passive archive metrics from the Phase 03.1 viewer projection. |
 | `tables/passive_archive_config.json` | Per-problem archive definitions used for the table export. |
 | `tables/ppa_completeness.csv` | Copy of the completeness gate used by the common table export. |

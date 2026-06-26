@@ -5932,3 +5932,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   rows.
 - Remaining caveat: rows are still candidate-level because the viewer datasets
   do not contain canonical netlist hashes for duplicate suppression.
+
+## 2026-06-26T18:35:00Z - Common Evaluation Summary Rows Added
+
+- Extended `scripts/report_common_evaluation_contract.py` to write
+  `tables/method_seed_summary.csv` beside the per-problem and passive archive
+  tables.
+- The summary aggregates headline rows by method and seed, including mean HV,
+  HV-AUC, Pareto points, reference-beating count, valid-PPA count, passive
+  archive coverage/QD score, passive archive AUC metrics, Pareto-cell count,
+  Pareto spread, and paired HV wins/losses/ties versus the matched classic row.
+- Regenerated T99 common tables. The aggregate row records T99 mean HV
+  `0.120094`, classic mean HV `0.140740`, and T99 mean HV delta `-0.020646`.
+- Decision: use this table for future operational shortlist updates, while
+  preserving per-problem yield warnings and duplicate-accounting caveats.

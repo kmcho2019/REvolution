@@ -79,6 +79,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       `common_evaluation_contract.md`.
 - [x] Add first common-evaluation table exporter and apply it to T99 with
       posthoc classic archive projection.
+- [x] Add aggregate method/seed summary rows for shortlist and category
+      representative decisions.
 - [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime
       reporting.
 - [ ] Add passive archive scoring for classic and every QD method.

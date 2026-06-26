@@ -97,6 +97,24 @@ When generation history exists, add:
 passive_archive_qd_auc,passive_archive_coverage_auc,hv_auc
 ```
 
+## Aggregate Summary Schema
+
+Each generated package should also include:
+
+```text
+tables/method_seed_summary.csv
+```
+
+This table has one row per method and seed. It aggregates headline rows from
+`method_problem_seed_metrics.csv` and records mean HV, HV-AUC, Pareto points,
+reference-beating count, valid-PPA count, passive archive coverage/QD score,
+passive archive AUC metrics, Pareto-cell count, Pareto spread, and paired HV
+wins/losses/ties against the matched classic row when one is present.
+
+Use this table for operational shortlist updates. Do not use it to hide
+per-problem coverage losses, yield warnings, diagnostic-only rows, missing
+reference PPA, or duplicate-accounting caveats.
+
 ## Reporting Bundle
 
 Every completed live screen should include these files or a documented
@@ -105,6 +123,7 @@ Every completed live screen should include these files or a documented
 | Path | Purpose |
 | --- | --- |
 | `tables/method_problem_seed_metrics.csv` | Normalized result rows. |
+| `tables/method_seed_summary.csv` | Method/seed aggregate shortlist summary. |
 | `tables/ppa_completeness.csv` | Reference and candidate-PPA comparison gate. |
 | `tables/passive_archive_config.json` | Frozen passive archive definition. |
 | `tables/passive_archive_metrics.csv` | Common archive metrics for all methods. |

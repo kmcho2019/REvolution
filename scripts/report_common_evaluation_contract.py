@@ -66,6 +66,34 @@ PASSIVE_FIELDS = [
     "notes",
 ]
 
+SUMMARY_FIELDS = [
+    "method_key",
+    "method_family",
+    "seed",
+    "budget_shape",
+    "headline_problem_count",
+    "method_covered_count",
+    "yield_warning_count",
+    "missing_method_coverage_count",
+    "diagnostic_problem_count",
+    "mean_global_ppa_hv",
+    "mean_hv_auc",
+    "mean_pareto_point_count",
+    "mean_reference_beating_count",
+    "mean_valid_ppa_count",
+    "mean_passive_archive_coverage",
+    "mean_passive_archive_qd_score",
+    "mean_passive_archive_qd_auc",
+    "mean_passive_archive_coverage_auc",
+    "mean_pareto_cell_count",
+    "mean_pareto_spread",
+    "classic_delta_mean_hv",
+    "classic_hv_win_count",
+    "classic_hv_loss_count",
+    "classic_hv_tie_count",
+    "notes",
+]
+
 CELL_FIELDS = (
     "final_fixed_archive_cell_id",
     "archive_cell_id",
@@ -101,6 +129,22 @@ def fmt(value: object) -> str:
         assert math.isfinite(value)
         return f"{value:.12g}"
     return str(value)
+
+
+def parse_metric(value: str) -> float | None:
+    if value == NOT_AVAILABLE:
+        return None
+    parsed = float(value)
+    assert math.isfinite(parsed)
+    return parsed
+
+
+def mean_metric(rows: list[dict[str, str]], field: str) -> str:
+    values = [parse_metric(row[field]) for row in rows]
+    numeric = [value for value in values if value is not None]
+    if not numeric:
+        return NOT_AVAILABLE
+    return fmt(sum(numeric) / len(numeric))
 
 
 def parse_method_families(values: list[str]) -> dict[str, str]:
@@ -272,6 +316,91 @@ def reference_beating_count(samples: list[dict[str, Any]], objective_keys: list[
     return count
 
 
+def summary_rows(method_rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    by_method = {row["method_key"] for row in method_rows}
+    classic_methods = sorted(
+        method for method in by_method if any(
+            row["method_key"] == method and row["method_family"] == "classic"
+            for row in method_rows
+        )
+    )
+    classic_by_problem: dict[tuple[str, str], float] = {}
+    if classic_methods:
+        assert len(classic_methods) == 1
+        classic = classic_methods[0]
+        for row in method_rows:
+            if row["method_key"] == classic:
+                hv = parse_metric(row["global_ppa_hv"])
+                if hv is not None:
+                    classic_by_problem[(row["benchmark"], row["problem"])] = hv
+
+    summaries = []
+    for method in sorted(by_method):
+        rows = [row for row in method_rows if row["method_key"] == method]
+        headline = [row for row in rows if row["comparison_status"] == "headline"]
+        rows_for_mean = headline if headline else rows
+        wins = losses = ties = 0
+        for row in headline:
+            key = (row["benchmark"], row["problem"])
+            if key not in classic_by_problem:
+                continue
+            hv = parse_metric(row["global_ppa_hv"])
+            if hv is None:
+                continue
+            diff = hv - classic_by_problem[key]
+            if abs(diff) <= 1e-12:
+                ties += 1
+            elif diff > 0:
+                wins += 1
+            else:
+                losses += 1
+
+        notes = []
+        if not headline:
+            notes.append("no_headline_rows")
+        if any("candidate_level_no_canonical_dedup" in row["notes"] for row in rows):
+            notes.append("candidate_level_no_canonical_dedup")
+        summaries.append(
+            {
+                "method_key": method,
+                "method_family": rows[0]["method_family"],
+                "seed": rows[0]["seed"],
+                "budget_shape": rows[0]["budget_shape"],
+                "headline_problem_count": fmt(len(headline)),
+                "method_covered_count": fmt(sum(row["method_covered"] == "yes" for row in rows)),
+                "yield_warning_count": fmt(sum(row["valid_ppa_yield_status"] == "yield_warning" for row in rows)),
+                "missing_method_coverage_count": fmt(sum(row["comparison_status"] == "missing_method_coverage" for row in rows)),
+                "diagnostic_problem_count": fmt(sum(row["comparison_status"] == "diagnostic_only" for row in rows)),
+                "mean_global_ppa_hv": mean_metric(rows_for_mean, "global_ppa_hv"),
+                "mean_hv_auc": mean_metric(rows_for_mean, "hv_auc"),
+                "mean_pareto_point_count": mean_metric(rows_for_mean, "pareto_point_count"),
+                "mean_reference_beating_count": mean_metric(rows_for_mean, "reference_beating_count"),
+                "mean_valid_ppa_count": mean_metric(rows_for_mean, "valid_ppa_count"),
+                "mean_passive_archive_coverage": mean_metric(rows_for_mean, "passive_archive_coverage"),
+                "mean_passive_archive_qd_score": mean_metric(rows_for_mean, "passive_archive_qd_score"),
+                "mean_passive_archive_qd_auc": mean_metric(rows_for_mean, "passive_archive_qd_auc"),
+                "mean_passive_archive_coverage_auc": mean_metric(rows_for_mean, "passive_archive_coverage_auc"),
+                "mean_pareto_cell_count": mean_metric(rows_for_mean, "pareto_cell_count"),
+                "mean_pareto_spread": mean_metric(rows_for_mean, "pareto_spread"),
+                "classic_delta_mean_hv": NOT_AVAILABLE,
+                "classic_hv_win_count": fmt(wins),
+                "classic_hv_loss_count": fmt(losses),
+                "classic_hv_tie_count": fmt(ties),
+                "notes": ";".join(notes),
+            }
+        )
+
+    classic_mean = None
+    for row in summaries:
+        if row["method_family"] == "classic":
+            classic_mean = parse_metric(row["mean_global_ppa_hv"])
+    if classic_mean is not None:
+        for row in summaries:
+            mean_hv = parse_metric(row["mean_global_ppa_hv"])
+            row["classic_delta_mean_hv"] = NOT_AVAILABLE if mean_hv is None else fmt(mean_hv - classic_mean)
+    return summaries
+
+
 def metric_rows(
     dataset: dict[str, Any],
     completeness: dict[tuple[str, str], dict[str, str]],
@@ -396,6 +525,7 @@ def main(argv: list[str] | None = None) -> int:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     write_csv(args.output_dir / "method_problem_seed_metrics.csv", METHOD_FIELDS, method_rows)
     write_csv(args.output_dir / "passive_archive_metrics.csv", PASSIVE_FIELDS, passive_rows)
+    write_csv(args.output_dir / "method_seed_summary.csv", SUMMARY_FIELDS, summary_rows(method_rows))
     shutil.copyfile(args.ppa_completeness, args.output_dir / "ppa_completeness.csv")
     config = {
         "schema_version": 1,
