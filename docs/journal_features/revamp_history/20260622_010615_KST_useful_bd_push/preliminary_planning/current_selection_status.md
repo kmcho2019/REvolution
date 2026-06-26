@@ -33,6 +33,7 @@ different budget or replication caveat are marked explicitly.
 | T11/T36 graph-like bridge | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Best live graph-like representative; replay signals remain stronger than live results. |
 | Code-thought/SR front-slot | `code_thought_sr_front_slot_8x5` | `0.1141` | Best current SR/code-thought representative in this preliminary pool. |
 | Qwen3 pretrained text/code | `qwen_canonical_rtl_pca3_8x5` | `0.1108` | Best actual pretrained text/code embedding live arm; keep as the Qwen representative despite weak HV. |
+| Front-guarded QD memory | `T85_fg_qdm_sr_memory_warmup4_12x3` | `0.1375` smoke-only | Mechanism representative only; three-problem `12x3` smoke is not top-10 comparable and loses classic mean HV `0.1903`. |
 | DeepGate / synthesized-netlist encoder | `DeepGate transition-AIG bridge` | n/a | Keep as category placeholder; not top-10 until a verified pretrained live screen has comparable HV. |
 | AURORA / AutoQD learned descriptor | `AURORA-style raw implementation-feature lane` | n/a | Keep as category placeholder; current evidence is replay/diagnostic, not frozen live HV. |
 
@@ -110,29 +111,31 @@ pressure.
 ## Front-Guarded QD-Memory Candidate
 
 `T85_front_guarded_qd_memory` is implemented, pre-registered, and has completed
-its first three-problem live smoke. It is materially different from the fixed
+two three-problem live smokes. It is materially different from the fixed
 auxiliary archive family: the archive is passive memory, the primary success
 pool remains separate, empty-cell fill gets no budget, and only credited
 retained cells can receive the small memory-refine or front-rescue lanes.
 
-Smoke result: the run completed on `Prob045_alu`, `Prob041_traffic_light`, and
-`Prob015_multi_pipe_8bit` at `12x3`. `Prob045_alu` produced a useful mechanism
-signal: four memory-refine calls, two front-rescue calls, two valid-PPA memory
-children, and one front-rescue global-front add. `Prob041_traffic_light`
-produced one valid memory-refine child. `Prob015_multi_pipe_8bit` never
-initialized the grid because it ended with `7` warmup successes against the
-`8`-success threshold.
+First smoke result: `Prob045_alu` produced a useful mechanism signal,
+including one front-rescue global-front add, but `Prob015_multi_pipe_8bit`
+never initialized the grid because it ended with `7` warmup successes against
+the `8`-success threshold.
 
-Existing same-seed `12x3` classic results from T79 are stronger on the same
-three problems: classic summary scores are `0.416550`, `0.420875`, and
-`0.061050` for `Prob045_alu`, `Prob041_traffic_light`, and
-`Prob015_multi_pipe_8bit`, while T85 reports `0.401605`, `0.341137`, and
-`failed`.
+Warmup-4 rerun: lowering `qd_grid_quantile_warmup_successes` to `4` fixed the
+coverage failure and produced valid winners on all three problems. The scalar
+score read was mixed: T85 beat classic on `Prob015_multi_pipe_8bit` but lost on
+`Prob041_traffic_light` and `Prob045_alu`.
 
-Decision: keep T85 active, but do not rank it in the top-10 HV table or promote
-it to final RTLLM spend yet. The next T85 check should lower grid-quantile
-warmup to `4`, rerun the three-problem smoke, and add a matched classic
-comparison before the frozen eight-design screen.
+The formal HV/Pareto read blocks promotion. On the same three
+reference-complete problems, classic mean HV is `0.1903` and T85 warmup-4 mean
+HV is `0.1375`; classic wins all three HV comparisons, with mean Pareto points
+`3.00` versus `2.00` and mean reference-beating candidates `17.33` versus
+`9.00`.
+
+Decision: keep T85 as the current front-guarded memory category representative,
+but do not rank it in the frozen eight-design top-10 table or promote it to
+final RTLLM spend. A future T85 continuation must change the mechanism or
+descriptor materially; exact `sr_pca_3d` warmup-4 FG-QDM is a negative smoke.
 
 Measured archive-stagnation activation is now complete and negative. It kept
 passive archive logging from the start and activated archive pressure only

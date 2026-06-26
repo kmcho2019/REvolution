@@ -4,6 +4,27 @@ Unbounded journal for `useful_bd_push`. Record notable decisions, commands,
 outputs, experiments, failed attempts, blockers, commits, and validation
 evidence.
 
+## Front-Guarded QD Memory Warmup-4 Smoke - 2026-06-26 UTC
+
+- Completed the T85 warmup-4 three-problem smoke after the first smoke showed
+  that `qd_grid_quantile_warmup_successes=8` could prevent archive
+  initialization on lower-yield `Prob015_multi_pipe_8bit`.
+- Run root:
+  `exp/useful_bd_push/front_guarded_qd_memory_20260626/fg_qdm_sr_memory_warmup4_12x3/seed_1001/openai_gpt-oss-120b`.
+- Analysis roots:
+  `preliminary_planning/20260626_front_guarded_qd_memory_probe/analysis/warmup4_pareto_analysis/`
+  and
+  `preliminary_planning/20260626_front_guarded_qd_memory_probe/analysis/warmup4_ppa_distribution/`.
+- Warmup-4 fixed problem coverage: all three smoke problems completed with
+  valid winners. It also produced memory-lane valid-PPA children on all three
+  problems.
+- Result: negative on the pre-registered promotion gate. Classic wins mean HV
+  `0.190331` to `0.137536`, wins all three per-problem HV comparisons, and
+  has higher mean Pareto points (`3.00` versus `2.00`).
+- Decision: keep T85 as a front-guarded memory mechanism representative, but
+  do not promote exact `sr_pca_3d` warmup-4 FG-QDM to the frozen eight-design
+  screen or full RTLLM spend.
+
 ## Periodic Claude Review Gate - 2026-06-25 UTC
 
 - Ran the required long read-only `claude -p` review after more than ten

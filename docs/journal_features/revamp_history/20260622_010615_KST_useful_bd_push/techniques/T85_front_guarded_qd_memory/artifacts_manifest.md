@@ -17,13 +17,24 @@
   tests.
 - `tests/scripts/test_run_backend.py`: CLI parser coverage.
 
-## Planned Runtime Artifacts
+## Runtime Artifacts
 
-Live run artifacts should be written under:
+Live run artifacts are written under:
 
 `exp/useful_bd_push/front_guarded_qd_memory_<timestamp>/`
 
 Do not place new run artifacts under `/aux`.
+
+Completed roots:
+
+- First smoke:
+  `exp/useful_bd_push/front_guarded_qd_memory_20260626/fg_qdm_sr_memory_12x3/seed_1001/openai_gpt-oss-120b`
+- Warmup-4 smoke:
+  `exp/useful_bd_push/front_guarded_qd_memory_20260626/fg_qdm_sr_memory_warmup4_12x3/seed_1001/openai_gpt-oss-120b`
+- Warmup-4 Pareto/HV analysis:
+  `../../preliminary_planning/20260626_front_guarded_qd_memory_probe/analysis/warmup4_pareto_analysis/`
+- Warmup-4 PPA distribution figures:
+  `../../preliminary_planning/20260626_front_guarded_qd_memory_probe/analysis/warmup4_ppa_distribution/`
 
 Expected per-problem artifacts include `archive_cells.csv`,
 `archive_history.jsonl`, `archive_summary.json`, `qd_metrics.json`,

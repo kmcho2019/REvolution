@@ -10,8 +10,13 @@ whether auxiliary QD memory can help without paying the old archive-fill tax.
 
 ## Status
 
-Pre-registered and implemented. Stage 0 unit/type/lint checks pass. Live smoke
-is pending.
+Pre-registered and implemented. Stage 0 unit/type/lint checks pass. Two
+three-problem live smokes completed.
+
+The warmup-4 rerun fixes the first smoke's `Prob015_multi_pipe_8bit` coverage
+failure, but it is a negative promotion result: classic wins three-problem
+mean HV `0.1903` to `0.1375` and wins all three per-problem HV comparisons.
+Do not promote exact `sr_pca_3d` FG-QDM to the frozen eight-design screen.
 
 ## Key Contract
 

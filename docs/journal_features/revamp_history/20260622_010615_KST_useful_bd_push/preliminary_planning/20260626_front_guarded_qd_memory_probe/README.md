@@ -6,13 +6,13 @@ screen.
 
 ## Current State
 
-Implementation, Stage 0 local checks, and the first three-problem live smoke
-are complete. The smoke ran end to end, but it is not a matched classic
-comparison and does not promote T85 to the full-RTLLM shortlist.
+Implementation, Stage 0 local checks, the first three-problem live smoke, and
+the warmup-4 rerun are complete. Warmup-4 fixed the first smoke's `Prob015`
+coverage failure, but the matched Pareto/HV comparison is negative and does
+not promote T85 to the full-RTLLM shortlist.
 
-Key read: `Prob045_alu` produced a real memory-lane signal, including one
-front-rescue global-front add. `Prob015_multi_pipe_8bit` never initialized the
-grid because the warmup threshold was too high for its valid-PPA yield.
+Key read: memory lanes now fire on every smoke problem, but classic wins mean
+HV `0.1903` to `0.1375` and wins all three per-problem HV comparisons.
 
 ## Decision Rule
 
@@ -33,3 +33,6 @@ spend the eight-design budget.
 - [commands/run_t85_front_guarded_qd_memory.md](commands/run_t85_front_guarded_qd_memory.md)
 - [logs/validation_log.md](logs/validation_log.md)
 - [smoke_result.md](smoke_result.md)
+- [analysis/warmup4_pareto_analysis/report.md](analysis/warmup4_pareto_analysis/report.md)
+- [analysis/warmup4_ppa_distribution/report.md](analysis/warmup4_ppa_distribution/report.md)
+- [analysis/warmup4_visual_inspection_notes.md](analysis/warmup4_visual_inspection_notes.md)

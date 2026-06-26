@@ -64,9 +64,34 @@ uv run python scripts/run_backend.py \
   --no-backend_subdir
 ```
 
+## Three-Problem Warmup-4 Rerun
+
+The warmup-4 rerun uses the same command as the first smoke, changing only:
+
+```bash
+--qd_grid_quantile_warmup_successes 4 \
+--save_path exp/useful_bd_push/front_guarded_qd_memory_20260626/fg_qdm_sr_memory_warmup4_12x3/seed_1001
+```
+
+## Warmup-4 Analysis
+
+```bash
+uv run python scripts/report_ppa_distribution.py \
+  --backend_run classic=exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/classic_revolution_12x3/seed_1001/openai_gpt-oss-120b \
+  --backend_run fg_qdm_sr_memory_warmup4_12x3=exp/useful_bd_push/front_guarded_qd_memory_20260626/fg_qdm_sr_memory_warmup4_12x3/seed_1001/openai_gpt-oss-120b \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_front_guarded_qd_memory_probe/tables/smoke_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_front_guarded_qd_memory_probe/analysis/warmup4_ppa_distribution
+
+uv run python scripts/report_pareto_analysis.py \
+  --backend_run classic=exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/classic_revolution_12x3/seed_1001/openai_gpt-oss-120b \
+  --backend_run fg_qdm_sr_memory_warmup4_12x3=exp/useful_bd_push/front_guarded_qd_memory_20260626/fg_qdm_sr_memory_warmup4_12x3/seed_1001/openai_gpt-oss-120b \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_front_guarded_qd_memory_probe/tables/smoke_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_front_guarded_qd_memory_probe/analysis/warmup4_pareto_analysis
+```
+
 ## Frozen Eight-Design Screen
 
-Run only after the three-problem smoke passes the mechanism gate. Use the
+Run only after a three-problem smoke passes the mechanism gate. Use the
 current `prelim_screen_subset.yaml` reference-complete screening subset and
 the same settings, changing only:
 

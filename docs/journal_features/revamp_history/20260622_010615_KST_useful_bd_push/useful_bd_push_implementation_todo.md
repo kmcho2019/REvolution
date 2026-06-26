@@ -651,10 +651,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       pyright.
 - [x] Run the first T85 three-problem mechanism smoke and package the result in
       `preliminary_planning/20260626_front_guarded_qd_memory_probe/smoke_result.md`.
-- [ ] Rerun T85 with lower grid-quantile warmup and a matched classic
+- [x] Rerun T85 with lower grid-quantile warmup and a matched classic
       comparator before any frozen eight-design or full-RTLLM spend.
-- [ ] If the smoke passes, run the frozen eight-design `8x5` T85 screen and
-      decide whether it enters the mean-HV ranked top-10 table.
+- [x] Decide the T85 warmup-4 smoke before the frozen eight-design screen:
+      exact `sr_pca_3d` FG-QDM is negative on three-problem mean HV and is not
+      promoted to eight-design or full-RTLLM spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation
