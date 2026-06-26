@@ -4,6 +4,28 @@ Unbounded journal for `useful_bd_push`. Record notable decisions, commands,
 outputs, experiments, failed attempts, blockers, commits, and validation
 evidence.
 
+## 2026-06-26T12:15:00Z - T94 DeepGate Runtime Screen Completed
+
+- Added `preliminary_planning/20260626_deepgate_runtime_screen/` to record the
+  first matched `8x5` screen for the T92/T93 `deepgate_pooled_pc3` runtime
+  descriptor profile.
+- Run root:
+  `exp/useful_bd_push/prelim_deepgate_runtime_screen_20260626_113100_UTC/live/deepgate_pooled_pc3_8x5/seed_1001/openai_gpt-oss-120b`.
+- The run completed all eight frozen preliminary-screen problems with seed
+  `1001`, 128k token budgets, and the local `openai/gpt-oss-120b` vLLM
+  endpoint.
+- Validators passed: `validate_pareto_front_run.py` and
+  `validate_single_thought_operator_run.py`.
+- Corrected `ppa_completeness.csv` marks all eight problems as `headline`:
+  classic and DeepGate both have valid-PPA candidates, and every reference PPA
+  is valid.
+- Result: classic wins aggregate mean HV (`0.1406` versus DeepGate `0.1040`),
+  mean Pareto points (`3.25` versus `1.75`), mean reference-beating candidates
+  (`8.00` versus `4.50`), and HV wins (`6` versus `2`).
+- Decision: `T94` is `T0_screened_negative_not_promoted`. Keep
+  `deepgate_pooled_pc3_8x5` as the synthesized-netlist pretrained encoder
+  category representative, but do not spend full RTLLM budget on exact T94.
+
 ## 2026-06-26T11:25:00Z - T93 DeepGate Runtime Live Smoke Completed
 
 - Added `preliminary_planning/20260626_deepgate_runtime_live_smoke/` to record

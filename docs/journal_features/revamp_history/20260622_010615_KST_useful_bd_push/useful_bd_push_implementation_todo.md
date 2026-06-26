@@ -137,6 +137,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Run a bounded live DeepGate runtime smoke. Outcome: T93 shows a
       `Prob045_alu` `4x1` run can insert one valid-PPA archive member with
       finite `deepgate_pool_pc0..2` values; matched live HV remains missing.
+- [x] Run a matched DeepGate runtime screen before final RTLLM promotion.
+      Outcome: T94 covers all eight preliminary problems with valid references
+      and valid-PPA candidates, but mean HV `0.1040` trails classic `0.1406`;
+      keep DeepGate as a category representative only.
 - [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.

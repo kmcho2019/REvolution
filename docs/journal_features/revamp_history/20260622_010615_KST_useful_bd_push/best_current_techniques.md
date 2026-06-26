@@ -17,7 +17,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 7 | RF leaf-ID front-slot delayed QD | Completed negative | Tests whether T83's RF model-state axes need explicit local front-slot parent sampling to recover Pareto breadth. | Mean HV drops to `0.1162`, with `0/8` HV wins; keep only as failed coupling evidence. |
 | 8 | FG-QDM memory controls | Completed smoke negative | Tests QD as guarded auxiliary memory rather than a replacement optimizer. | Random-memory FG-QDM slightly beats SR-memory but trails classic, so exact `sr_pca_3d` memory is not descriptor-positive. |
 | 9 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
-| 10 | DeepGate runtime pooled bridge | Pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats, T90 reaches `8/8` offline coverage, T91 builds pooled descriptors, T92 wires runtime axes, and T93 inserts one live archive member. | Matched live HV evidence is still missing, so it is not spend-ready. |
+| 10 | DeepGate runtime pooled bridge | Screened pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats, T90 reaches `8/8` offline coverage, T91 builds pooled descriptors, T92 wires runtime axes, T93 inserts one live archive member, and T94 completes a matched `8x5` screen. | Screened negative: mean HV `0.1040` trails classic `0.1406`, with lower Pareto breadth and ref-beating counts. |
 
 ## Most Promising Direction
 

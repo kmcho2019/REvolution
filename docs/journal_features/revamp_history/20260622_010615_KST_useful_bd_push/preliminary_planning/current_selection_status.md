@@ -9,7 +9,8 @@ The preliminary plan is not finished. It has produced hard screening data,
 including a three-seed replication of the best diagnostic arm and the T84
 front-slot follow-up, but it has not identified a QD/MAP-Elites configuration
 that is strong enough to spend the full RTLLM budget on as a positive
-candidate.
+candidate. T94 adds matched DeepGate runtime-screen data, but it is also
+negative on aggregate HV and front breadth.
 
 Selection should not discard whole encoder/config categories just because the
 current best member is below classic. Maintain:
@@ -34,7 +35,7 @@ different budget or replication caveat are marked explicitly.
 | Code-thought/SR front-slot | `code_thought_sr_front_slot_8x5` | `0.1141` | Best current SR/code-thought representative in this preliminary pool. |
 | Qwen3 pretrained text/code | `qwen_canonical_rtl_pca3_8x5` | `0.1108` | Best actual pretrained text/code embedding live arm; keep as the Qwen representative despite weak HV. |
 | Front-guarded QD memory control | `T86_fg_qdm_random_memory_12x3` | `0.1382` smoke-only | Control representative only; random-memory FG-QDM trails classic and slightly beats SR-memory, so exact `sr_pca_3d` memory is not descriptor-positive. |
-| DeepGate / synthesized-netlist encoder | `T93_deepgate_runtime_live_smoke` | smoke-only | Keep as category representative; pooled descriptors now insert into a live archive on `Prob045_alu` `4x1`, but no matched HV exists. |
+| DeepGate / synthesized-netlist encoder | `T94_deepgate_pooled_pc3_8x5` | `0.1040` | Best screened DeepGate representative; reference-complete and operational, but aggregate HV/front breadth trail classic. |
 | AURORA / AutoQD learned descriptor | `AURORA-style raw implementation-feature lane` | n/a | Keep as category placeholder; current evidence is replay/diagnostic, not frozen live HV. |
 
 ## Top 10 Current Configs By Mean HV
@@ -57,9 +58,12 @@ replicated, and category-useful.
 
 Dropped just below the top 10: `masterrtl_aux_archive_front_breadth_8x5`
 (`0.1134`), `qwen_canonical_rtl_pca3_8x5` (`0.1108`),
-`masterrtl_archive_stagnation_activation_8x5` (`0.1089`), and
+`masterrtl_archive_stagnation_activation_8x5` (`0.1089`),
+`deepgate_pooled_pc3_8x5` (`0.1040`), and
 `masterrtl_aux_archive_adaptive_sparse_front_8x5` (`0.0946`). Keep Qwen anyway
-as the best current actual pretrained text/code encoder representative.
+as the best current actual pretrained text/code encoder representative. Keep
+DeepGate anyway as the best current synthesized-netlist pretrained encoder
+representative.
 
 ## Best Replicated Result So Far
 
@@ -81,7 +85,7 @@ promoted.
 | Lane | Current Status | Decision |
 | --- | --- | --- |
 | Qwen3 canonical RTL | Real pretrained live hook; matched screen completed at `8x5`. | Not promoted: mean HV `0.1108` versus classic `0.1406`. |
-| DeepGate transition/cone AIG | Official pretrained bridge now has pooled candidate descriptors across all `96` sampled candidates, `8/8` screen problems, a runtime hook for `deepgate_pool_pc0..2`, and one live archive insertion. | Runtime-smoke-positive, not spend-ready: matched live HV is still missing. |
+| DeepGate transition/cone AIG | Official pretrained bridge now has pooled candidate descriptors across all `96` sampled candidates, `8/8` screen problems, a runtime hook for `deepgate_pool_pc0..2`, one live archive insertion, and a matched `8x5` screen. | Screened negative: mean HV `0.1040` versus classic `0.1406`, with lower Pareto breadth and ref-beating counts. |
 | MasterRTL pretrained Area leaf | Pretrained model artifact loads, but generated candidates collapse to one Area prediction and one leaf row. | Retire direct Area-head leaves unless retrained or replaced. |
 | MasterRTL RF timing model-state | Pretrained RF timing flow has a runtime descriptor hook and two frozen `8x5` screens. | T82 is negative; T83 is nearer on all-design HV but still not promoted. |
 | MasterRTL raw structural mix | Credible RTL-native descriptor lane. | Needs stronger coupling; fixed auxiliary archive failed replication. |
@@ -101,6 +105,16 @@ valid-PPA candidate, so no descriptor could be observed. A bounded
 archive cell, and wrote finite DeepGate descriptors
 (`0.00027`, `0.08078`, `-0.09394`) into `archive_cells.csv`. DeepGate still
 lacks matched HV evidence and is not a final RTLLM arm.
+
+T94 supplies that matched HV evidence and keeps the conclusion negative. The
+`deepgate_pooled_pc3_8x5` screen covers all eight frozen preliminary problems,
+and the corrected completeness table marks every problem as `headline`.
+Classic remains stronger on aggregate mean HV (`0.1406` versus `0.1040`),
+mean Pareto points (`3.25` versus `1.75`), and mean reference-beating
+candidates (`8.00` versus `4.50`). DeepGate narrowly wins HV on `Prob024_fsm`
+and `Prob153_gshare`, and ties `Prob116_m2014_q3`, but it loses the larger
+RTLLM front-material cases. Keep it as the DeepGate category representative;
+do not spend full RTLLM budget on exact `deepgate_pooled_pc3_8x5`.
 
 ## Pre-RF Archive-Pressure Context
 

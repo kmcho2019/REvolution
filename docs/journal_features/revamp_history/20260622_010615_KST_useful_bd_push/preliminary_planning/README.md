@@ -20,6 +20,7 @@ category representatives, and top-10 mean-HV shortlist.
 | `20260626_deepgate_pooled_descriptor_replay/` | Pool full-transition and cone DeepGate embeddings into candidate-level descriptors and replay area-power cell structure. | Completed; 96/96 candidates cover with nonzero Pareto cells, but live HV still missing |
 | `20260626_deepgate_runtime_descriptor_gate/` | Freeze T91 pooled DeepGate PCA axes and wire them into runtime descriptor extraction. | Completed runtime gate; bounded live smoke is now authorized, but no matched HV yet |
 | `20260626_deepgate_runtime_live_smoke/` | Test whether the T92 DeepGate runtime profile can populate a live QD archive when generated RTL reaches valid PPA. | Completed; `Prob045_alu` `4x1` inserts one live archive member with finite DeepGate descriptors, but no matched HV yet |
+| `20260626_deepgate_runtime_screen/` | Run the first matched `8x5` screen for the T92/T93 DeepGate runtime descriptor profile. | Completed; reference-complete negative, classic wins aggregate HV and front metrics |
 | `20260625_masterrtl_front_slot_probe/` | Test whether the closest MasterRTL structural-mix live arm improves when explicit front-slot parent sampling is enabled. | Completed; small diagnostic gain over MasterRTL mix, still trails classic and not promoted |
 | `20260625_t11_top4_front_slot_probe/` | Test raw T11 top-4 runtime graph axes with the conservative front-slot parent lane as a T36/T58 successor. | Completed; trails classic and MasterRTL front-slot, not promoted |
 | `20260625_aux_archive_high_exploit_probe/` | Test whether QD archive memory works better as an auxiliary side channel with classic-like exploitation pressure. | Completed; best screened QD by mean HV, still not promoted |
@@ -114,6 +115,15 @@ worker `CandidateEvaluator` tests pass. A real isolated DeepGate smoke on
 `Prob024_fsm` emits finite projected values from the official pretrained model.
 This moves DeepGate from replay-only to bounded-live-smoke-ready; it still
 does not authorize final RTLLM spend without matched HV data.
+
+The matched DeepGate runtime screen is now complete. All eight preliminary
+screen problems are headline-comparable with valid references and valid-PPA
+candidate coverage in both classic and DeepGate. The exact
+`deepgate_pooled_pc3_8x5` arm is negative: mean HV is `0.1040` versus classic
+`0.1406`, mean Pareto points are `1.75` versus `3.25`, and mean
+reference-beating candidates are `4.50` versus `8.00`. DeepGate remains the
+current synthesized-netlist pretrained encoder representative, but it is not
+a final RTLLM spend arm.
 
 The MasterRTL front-slot follow-up completed the frozen eight-design `8x5`
 screen as `masterrtl_structural_front_slot_8x5`. It improved mean HV slightly
