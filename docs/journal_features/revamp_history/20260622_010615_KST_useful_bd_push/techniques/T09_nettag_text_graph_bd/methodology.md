@@ -2,62 +2,48 @@
 
 ## Intent
 
-Adapt text-attributed graph netlist modeling to RTL evolution. The method uses
-gate graph structure plus short textual attributes so it can capture operator
-and Boolean-expression context without relying only on raw RTL embeddings.
+Adapt text-attributed graph netlist modeling to RTL evolution. The intended
+method uses gate graph structure plus short textual attributes so it can
+capture operator and Boolean-expression context without relying only on raw RTL
+embeddings.
 
-## Inputs
+This completed T09 package is a retrospective proxy audit. It does not claim a
+true NetTAG model. It uses measured text, graph, and graph/netlist hybrid
+evidence already produced on this branch.
 
-- Candidate RTL and fixed benchmark metadata.
-- Mapped netlist graph from Yosys.
-- Node text attributes: gate type, local Boolean expression, cone role,
-  source span summary, and optional module-level structural summary.
+## Completed Proxy Scope
 
-Descriptor fitting excludes final PPA, reference PPA, fitness, hypervolume,
-Pareto labels, and test pass labels.
+The proxy evidence covers four related surfaces:
 
-## Preprocessing
+- T33 Qwen3 preprocessing ladder over canonical RTL, identifier-role RTL,
+  canonical Yosys netlists, and summary-plus-netlist text views.
+- T36 T11 graph-contrastive replay with a bounded local-front lane.
+- T58 live T51 plus frozen T11-PCA4 graph-coordinate archive.
+- T96 hybrid RF/DeepGate descriptor combining MasterRTL RF model-state,
+  source-aligned branching, and official DeepGate pooled netlist signal.
 
-1. Generate mapped graph nodes and edges.
-2. Build text attributes from canonical non-identifying fields. Strip raw
-   signal names unless the ablation explicitly tests name sensitivity.
-3. Tokenize text attributes with a fixed tokenizer or hashing vectorizer.
-4. Align graph nodes with source spans when available; otherwise record missing
-   alignment in the manifest.
+This scope tests whether text and graph representations produce useful BD
+signals, and whether those signals survive when moved from replay into live
+archive pressure. It does not validate a learned text-attributed graph model.
 
-## Descriptor
+## Leakage Limits
 
-Evaluate a cheap and an escalated variant:
+The summarized descriptor inputs exclude final PPA, reference PPA, fitness,
+hypervolume, Pareto labels, and test pass labels. PPA is used only for offline
+replay scoring, matched comparison, and tier decisions.
 
-- cheap variant: Weisfeiler-Lehman graph hashes augmented with hashed text
-  attributes, followed by TF-IDF or count vectors;
-- escalated variant: graph neural network or text-graph transformer trained by
-  masked node/text reconstruction over replay candidates.
+## Evaluated Descriptor Families
 
-Pool node embeddings by mean, max, and role-specific histograms. Run collapse
-checks against duplicate netlists, graph size, and identifier perturbations.
+| Family | Evidence | Read |
+| --- | --- | --- |
+| Text-only and text-plus-netlist | T33 Qwen3 preprocessing ladder | RTL views improve replay selected HV, while netlist views reduce collapse but lose selected HV. |
+| Graph-only replay | T36 T11 bounded front lane | Strong replay candidate that beats lexical and fitness-top selected HV. |
+| Graph-coordinate live archive | T58 T51 T11-PCA4 front-slot QD | Live graph archive loses classic/T51 on HV and front breadth. |
+| Graph/netlist hybrid | T96 RF/DeepGate delayed QD | Hybrid improves pure DeepGate but regresses versus T83 and trails classic. |
 
-## Archive Mapping
+## Archive Implication
 
-Use CVT over the pooled text-graph descriptor as the main archive. Use fixed
-PCA axes for figures. Also report grid performance over graph-text entropy and
-source-span alignment coverage if those axes are interpretable.
-
-## Parent Selection Coupling
-
-Use text-graph cells only for archive coverage. Do not reward natural-language
-novelty unless it corresponds to unique canonical netlists and valid designs.
-
-## Dependency Plan
-
-Start with hashing/TF-IDF using existing dependencies. Escalate to learned
-text-graph models only after the cheap variant produces a non-collapsed
-descriptor or a clear failure needing model capacity.
-
-## Expected Outputs
-
-- `tables/text_graph_schema.csv`
-- `tables/text_graph_embeddings.csv`
-- `tables/collapse_diagnostics.csv`
-- `figures/text_graph_projection.png`
-- `figures/name_sensitivity.png`
+Text/graph descriptors should not be used as the primary live archive geometry
+without a new mechanism. The better next use is secondary reporting,
+front-rescue memory, or a trained objective that proves graph-text cells
+produce valid-PPA and front-adding children.

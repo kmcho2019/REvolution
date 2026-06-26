@@ -260,8 +260,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Outcome: closed as `T0 retrospective_sequential_proxy_not_promoted` using
       measured T63/T67/T72/T73/T75 sequential/state proxy evidence. Do not claim
       true DeepSeq pretrained reproduction.
-- [ ] `T09_nettag_text_graph_bd` has methodology, results, figures, tables, and
+- [x] `T09_nettag_text_graph_bd` has methodology, results, figures, tables, and
       tier decision.
+      Outcome: closed as `T0 retrospective_text_graph_proxy_not_promoted` using
+      measured T33/T36/T58/T96 text, graph, and hybrid evidence. Do not claim
+      true NetTAG reproduction.
 - [ ] `T10_circuitfusion_multimodal_bd` has methodology, results, figures, tables,
       and tier decision.
 - [x] `T11_mgvga_contrastive_bd` has methodology, results, figures, tables, and

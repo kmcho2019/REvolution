@@ -6117,3 +6117,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   only with validated DeepSeq weights, a trained state-aware encoder objective,
   or a front-rescue/source-selection mechanism that proves sequential memory
   contributes quality-productive children.
+
+## 2026-06-26T22:35:00Z - T09 Text-Graph Proxy Retrospective Closed
+
+- Converted `T09_nettag_text_graph_bd` from a scaffold into a
+  `T0 retrospective_text_graph_proxy_not_promoted` evidence package.
+- Used measured T33 Qwen text/netlist, T36 T11 graph replay, T58 live graph
+  archive, and T96 RF/DeepGate hybrid evidence instead of launching a fresh
+  live run.
+- Recorded the key distinction: this closes a text-graph proxy lane, but it
+  does not claim a true NetTAG implementation or trained text-attributed graph
+  transformer.
+- Added T09-local methodology, results, manifest, commands, evidence/gate
+  tables, copied figures, source hashes, and visual inspection notes.
+- Decision: do not spend on exact primary text-graph archive axes. Reopen only
+  with true text-graph training, secondary archive use, or front-rescue memory
+  contribution evidence.
