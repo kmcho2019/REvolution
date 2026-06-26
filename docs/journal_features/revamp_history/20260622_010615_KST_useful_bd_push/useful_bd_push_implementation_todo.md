@@ -122,6 +122,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       statistics before live spend. Outcome: residual signal remains after
       removing AIG stats, but only `5/8` screen problems cover, so DeepGate
       stays a category representative rather than a final RTLLM candidate.
+- [x] Add a bounded DeepGate cone bridge for large skipped transition AIGs.
+      Outcome: output-cone extraction embeds `108` cones and extends offline
+      bridge coverage to all `8/8` preliminary screen problems; live spend
+      still requires candidate-level pooling and replay.
 - [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.

@@ -16,6 +16,7 @@ category representatives, and top-10 mean-HV shortlist.
 | `20260625_deepgate_generated_bridge_probe/` | Re-test official DeepGate2 embeddings on generated RTL-derived AIGs after Qwen lost the live screen. | Partially unblocked; embeddings are nonconstant on 24 rows, but only 2/8 problems cover |
 | `20260625_deepgate_transition_bridge_probe/` | Test state-as-input transition AIG abstraction for sequential DeepGate coverage. | Corrected bridge embeds 60 rows across 5/8 problems; not promoted |
 | `20260626_deepgate_signal_vs_aig_stats_gate/` | Test whether official DeepGate transition embeddings add signal beyond simple AIG size/count statistics. | Completed; residual signal exists, but coverage and problem clustering still block live spend |
+| `20260626_deepgate_cone_bridge_probe/` | Test bounded output-cone extraction for the large transition AIGs skipped by the full DeepGate bridge. | Completed; offline bridge coverage reaches 8/8 screen problems, but no live HV yet |
 | `20260625_masterrtl_front_slot_probe/` | Test whether the closest MasterRTL structural-mix live arm improves when explicit front-slot parent sampling is enabled. | Completed; small diagnostic gain over MasterRTL mix, still trails classic and not promoted |
 | `20260625_t11_top4_front_slot_probe/` | Test raw T11 top-4 runtime graph axes with the conservative front-slot parent lane as a T36/T58 successor. | Completed; trails classic and MasterRTL front-slot, not promoted |
 | `20260625_aux_archive_high_exploit_probe/` | Test whether QD archive memory works better as an auxiliary side channel with classic-like exploitation pressure. | Completed; best screened QD by mean HV, still not promoted |
@@ -86,6 +87,15 @@ neighbors fall to `0.4667` and residual vectors remain nonconstant. This keeps
 DeepGate alive as a real pretrained-netlist encoder lane, but it does not
 authorize full RTLLM spend because the bridge still covers only `5/8`
 screening problems.
+
+The cone bridge then fixes the offline coverage blocker. It extracts smallest
+bounded output cones from the three large skipped transition-AIG problems and
+embeds `108` cones with the same official pretrained DeepGate model. Combined
+with the previous full-transition rows, DeepGate now has offline coverage for
+all `8/8` preliminary screen problems. This still is not live QD evidence: the
+next DeepGate step must pool full-transition and cone embeddings into a
+candidate-level descriptor table and replay archive behavior before spending
+LLM budget.
 
 The MasterRTL front-slot follow-up completed the frozen eight-design `8x5`
 screen as `masterrtl_structural_front_slot_8x5`. It improved mean HV slightly

@@ -5513,6 +5513,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   until coverage improves beyond the current `5/8` screen problems or a
   bounded covered-subset smoke produces comparable HV evidence.
 
+## 2026-06-26T11:25:00Z - T90 DeepGate Cone Bridge Gate Completed
+
+- Added `preliminary_planning/20260626_deepgate_cone_bridge_probe/` to test
+  bounded output-cone extraction for large transition AIGs skipped by the full
+  DeepGate bridge.
+- Initial largest-cone selection under a `700`-AND cap entered the official
+  `aiger` parser for several minutes and was interrupted. The final script
+  selects the smallest nontrivial bounded cones first.
+- Final run used the official `python-deepgate` pretrained model, `700` max
+  cone ANDs, and `3` cones per skipped large row. It completed in about `13s`.
+- Result: `108` cone embeddings, with `36` each for
+  `Prob015_multi_pipe_8bit`, `Prob045_alu`, and `Prob153_gshare`.
+  Combined with the previous full-transition rows, DeepGate now has offline
+  coverage for all `8/8` preliminary screen problems.
+- Decision: T90 passes as an offline bridge fix, but it does not promote
+  DeepGate to live RTLLM spend. The next step is candidate-level pooling and
+  replay before any LLM-backed live smoke.
+
 ## 2026-06-26T06:52:00Z - T84 RF Leaf-ID Front-Slot Delayed Screen Completed
 
 - Ran `masterrtl_rf_leafid_front_slot_delayed_8x5` on the frozen eight-design
