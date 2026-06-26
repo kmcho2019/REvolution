@@ -56,7 +56,8 @@ Record the `/v1/models` response and resolved model id for every live run.
 
 ## Method Run Order
 
-1. Build central candidate index and passive archive schema.
+1. Use `common_evaluation_contract.md` for the shared baseline set, central
+   result row schema, and passive archive schema.
 2. Re-score classic and landing Smooth-QD with the same metrics.
 3. Run P0 deterministic descriptors on replay data.
 4. Run P1 QD/archive variants on replay data.

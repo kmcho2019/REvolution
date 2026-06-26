@@ -5874,3 +5874,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: keep T99 as the AURORA/raw-implementation category
   representative and add it to the top-10 preliminary shortlist, but do not
   promote exact T99 to full RTLLM spend.
+
+## 2026-06-26T17:10:00Z - Common Evaluation Contract Added
+
+- Added `common_evaluation_contract.md` as the shared comparison surface for
+  future screens.
+- The contract freezes the baseline roles, required method/problem/seed result
+  row schema, passive archive metric table shape, and reporting bundle paths.
+- Marked the baseline-definition and central-result-schema TODO items
+  complete.
+- Left passive archive scoring and AUC reporting unchecked because the
+  implementation/report integration still needs to produce
+  `tables/passive_archive_metrics.csv` and AUC rows for future packages.

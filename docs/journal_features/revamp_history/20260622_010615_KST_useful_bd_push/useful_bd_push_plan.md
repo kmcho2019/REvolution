@@ -35,6 +35,8 @@ The desired end state is one of:
 - Literature search and method map: `literature_method_search.md`
 - Repeatable setup: `experimental_setup.md`
 - QD metrics and tier definitions: `metrics_and_acceptance.md`
+- Common baseline/schema/passive-archive contract:
+  `common_evaluation_contract.md`
 - Screening subset selection: `screening_subset_selection.md`
 - Anti-reward-hacking policy: `anti_reward_hacking_policy.md`
 - Code organization policy: `code_organization_policy.md`

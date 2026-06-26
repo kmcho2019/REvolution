@@ -73,8 +73,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       package status; do not treat it as positive `useful_qd` sign-off.
 - [x] Map the one-seed RTLLM package to the accepted `journal_narrative.md`
       contract and mark it not final-gate eligible.
-- [ ] Define shared classic/manual/random/simple-control baselines.
-- [ ] Define central method result schema.
+- [x] Define shared classic/manual/random/simple-control baselines in
+      `common_evaluation_contract.md`.
+- [x] Define central method result schema in
+      `common_evaluation_contract.md`.
 - [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime
       reporting.
 - [ ] Add passive archive scoring for classic and every QD method.
