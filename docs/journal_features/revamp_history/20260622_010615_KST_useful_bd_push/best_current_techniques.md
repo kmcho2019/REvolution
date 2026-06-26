@@ -15,8 +15,8 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 5 | Qwen3 canonical RTL | Pretrained text/code representative | Real pretrained embedding path with live-screened QD archive coordinates. | Mean HV `0.1108` trails classic `0.1406`; keep as category representative, not spend-ready. |
 | 6 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
 | 7 | RF/DeepGate hybrid delayed QD | Hybrid pretrained representative | Combines MasterRTL RF timing model-state, RTL structural branching, and official DeepGate pooled netlist signal under the delayed high-exploit schedule. | Mean HV `0.1199` improves over pure T95 DeepGate but regresses versus same-seed T83 `0.1369` and still trails classic `0.1406`, with lower Pareto breadth. |
-| 8 | T97 front-credit FG-QDM memory | Best FG-QDM smoke, not promoted | Tests QD as guarded auxiliary memory with stricter credited-cell recall instead of broad archive sampling. | T98 confirms T97 beats same-threshold random memory (`0.1534` versus `0.1048`), but classic still leads at `0.1903` and memory-front contribution is not quality-productive enough. |
-| 9 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
+| 8 | AURORA raw implementation delayed QD | Best AURORA/raw representative | Tests the positive T13 clue: raw implementation-side features, not compressed AURORA bottlenecks, on the delayed high-exploit substrate. | Mean HV `0.1201` trails classic `0.1406`; not a pretrained or autoencoder claim. |
+| 9 | T97 front-credit FG-QDM memory | Best FG-QDM smoke, not promoted | Tests QD as guarded auxiliary memory with stricter credited-cell recall instead of broad archive sampling. | T98 confirms T97 beats same-threshold random memory (`0.1534` versus `0.1048`), but classic still leads at `0.1903` and memory-front contribution is not quality-productive enough. |
 | 10 | DeepGate delayed high-exploit bridge | Screened pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats, T90 reaches `8/8` offline coverage, T91 builds pooled descriptors, T92 wires runtime axes, T93 inserts one live archive member, T94 completes the first matched screen, and T95 tests delayed high-exploit coupling. | Best DeepGate mean HV is `0.1153`, improved over T94 but still below classic `0.1406`, with lower Pareto breadth. |
 
 ## Most Promising Direction
@@ -106,6 +106,13 @@ mean HV `0.1048`, so T97 is descriptor-positive against this direct control.
 That still does not promote FG-QDM because T98's one memory-refine global-front
 add does not translate into final PPA-front quality, and T97 itself still
 trails classic.
+
+T99 closes the AURORA/raw implementation-feature category gap. It tests the
+T13 replay clue directly with `implemented_structural_compact_3d` axes on the
+delayed high-exploit substrate. The live result is stronger than Qwen and pure
+DeepGate by mean HV, but still screened negative: T99 reaches `0.1201` mean HV
+versus classic `0.1406`, with lower Pareto breadth and a `Prob045_alu`
+valid-PPA yield warning.
 
 T85 implements that correction directly as FG-QDM, or front-guarded QD memory.
 It keeps a separate classic-style primary success pool, inserts valid-PPA
@@ -345,7 +352,7 @@ loader equivalence, schema assertions, and generated-candidate variation.
 | RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77/T80/T81/T82/T83 and the 20260625 auxiliary archive probes | Best methodology lane | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, T77 retires direct Area-head leaves, T80 advances raw MasterRTL structural mix as a live-candidate gate, T81 finds noncollapsed RF timing model-state descriptors, T82 exposes them through the live descriptor registry, high-exploit auxiliary archive and T83 both narrow the live-screen gap at seed `1001`, but seed replication retires both exact configurations as full-spend candidates. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Budget-shape evaluation | T78 audit and T79 `12 x 3`/`8 x 5`/`6 x 7` equal-budget ablation | T79 diagnostic-negative | T78 shows archive maturation can continue late, but T79 shows exact T75 still loses classic at every tested equal-candidate shape. |
-| Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |
+| Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Screened negative | Qwen, DeepGate, graph-like T11/T36, and T99 AURORA/raw implementation features now all have live or bounded-live evidence, but none beats classic on the frozen screen. |
 | Retrospective clustering | PPA cluster replay, Qwen probes, family audits | Diagnostic | Explains failed/won mechanisms but is not direct promotion evidence. |
 
 ## Update Rules

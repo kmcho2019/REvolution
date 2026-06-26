@@ -5855,3 +5855,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision rule: compare against the existing matched
   `classic_revolution_8x5` baseline on the frozen eight-design preliminary
   screen, then update the category representatives and top-10 shortlist.
+
+## 2026-06-26T16:55:00Z - T99 AURORA Raw Implementation Screen Packaged
+
+- Ran `aurora_raw_impl_compact_delayed_8x5` on the frozen eight-design
+  preliminary screen.
+- Run root:
+  `exp/useful_bd_push/prelim_aurora_raw_impl_delayed_20260626/live/aurora_raw_impl_compact_delayed_8x5/seed_1001/openai_gpt-oss-120b/`.
+- Validation passed with `scripts/validate_pareto_front_run.py`,
+  `scripts/validate_single_thought_operator_run.py`, and strict
+  `scripts/validate_qd_ppa_visualization.py`.
+- Headline result: classic mean HV `0.1406`, mean Pareto points `3.25`, and
+  mean reference-beating count `8.00`; T99 mean HV `0.1201`, mean Pareto
+  points `2.00`, and mean reference-beating count `4.38`.
+- Completeness: all eight problems are reference-complete headline
+  comparisons. `Prob045_alu` has a T99 valid-PPA yield warning (`9` valid-PPA
+  rows versus classic `36`).
+- Decision: keep T99 as the AURORA/raw-implementation category
+  representative and add it to the top-10 preliminary shortlist, but do not
+  promote exact T99 to full RTLLM spend.

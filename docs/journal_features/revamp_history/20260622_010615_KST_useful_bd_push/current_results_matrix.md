@@ -150,6 +150,8 @@ Real result packages:
   smoke.
 - `T98_front_credit_random_memory_control` completed the same-threshold random
   memory control for T97.
+- `T99_aurora_raw_impl_delayed_qd` completed the live AURORA-style raw
+  implementation-feature screen.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -262,6 +264,13 @@ classic `0.1406`. T96 improves over T95 with a compact RF/DeepGate hybrid
 (`0.1199` mean HV), but regresses versus the closer same-seed T83 RF leaf-ID
 arm (`0.1369`) and loses front breadth. Keep T96 as the hybrid
 pretrained-encoder representative, not a final RTLLM candidate.
+
+T99 closes the live AURORA/raw implementation-feature category gap. It runs
+the `implemented_structural_compact_3d` axes on the delayed high-exploit
+substrate and reaches mean HV `0.1201` versus classic `0.1406`. It is stronger
+than Qwen canonical RTL and pure DeepGate by mean HV, but classic still wins
+Pareto breadth and reference-beating count, so T99 is a screened-negative
+category representative rather than a full-RTLLM candidate.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but
@@ -620,6 +629,12 @@ features keep 120 all-valid front hits versus lexical's 122. The primary
 figure is
 `techniques/T13_aurora_incremental_autoencoder_bd/figures/aurora_multi_problem_ppa_pareto_fronts.png`.
 
+`T99_aurora_raw_impl_delayed_qd` is the corresponding live category
+representative. It keeps only the raw implementation-feature idea from T13,
+not the compressed AURORA bottleneck, and screens at mean HV `0.1201` versus
+classic `0.1406`. This is enough to keep AURORA/raw features in the category
+representative table, but not enough to promote exact T99.
+
 `T14_dehnn_hypergraph_bd` is the completed directed-hypergraph replay. The
 hypergraph-only descriptors improve selected PPA breadth but lose HV versus
 lexical. The hybrid that concatenates hypergraph incidence features with T13
@@ -757,9 +772,11 @@ the best ALU and traffic-light scores.
 16. T07 shows graph-structured learned-encoder features are more promising
     than label-free whole-design Qwen projections, but the current surrogate is
     still not a front win.
-17. T13 shows raw implementation features are a better L4 signal than
-    unsupervised AURORA-style compression. The next L4 step should preserve
-    that signal and target front hits explicitly.
+17. T13 and T99 show raw implementation features are a better L4 signal than
+    unsupervised AURORA-style compression, but the live raw-feature arm still
+    trails classic (`0.1201` versus `0.1406`). The next L4 step should change
+    the training objective, coupling, or feature-selection pressure rather
+    than rerun exact raw implementation axes.
 18. T14 shows hypergraph structure can add unique PPA breadth when combined
     with the T13 signal, but simple concatenation still does not recover direct
     front hits.

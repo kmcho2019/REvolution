@@ -7,15 +7,18 @@ comparison.
 
 The preliminary plan is not finished. It has produced hard screening data,
 including a three-seed replication of the best diagnostic arm, the T84
-front-slot follow-up, the T96 RF/DeepGate hybrid screen, and the T97/T98
-front-credit FG-QDM smoke/control pair, but it has not
+front-slot follow-up, the T96 RF/DeepGate hybrid screen, the T97/T98
+front-credit FG-QDM smoke/control pair, and the T99 AURORA-style raw
+implementation screen, but it has not
 identified a QD/MAP-Elites configuration that is strong enough to spend the
 full RTLLM budget on as a positive candidate. T96 improves over pure T95
 DeepGate on mean HV, but it regresses against its closer T83 RF sibling and is
 still negative versus classic on aggregate HV and front breadth. T97 improves
 the FG-QDM smoke mean HV and beats the same-threshold T98 random-memory
 control, but it still trails classic and does not add global front material
-from memory lanes.
+from memory lanes. T99 gives the AURORA/raw implementation-feature lane a real
+live representative at mean HV `0.1201`, but it still trails classic `0.1406`
+and loses front breadth.
 
 Selection should not discard whole encoder/config categories just because the
 current best member is below classic. Maintain:
@@ -42,7 +45,7 @@ different budget or replication caveat are marked explicitly.
 | Front-guarded QD memory | `T97_fg_qdm_sr_front_credit_12x3` | `0.1534` smoke-only | Best FG-QDM smoke by mean HV; beats same-threshold T98 random control `0.1048`, but still trails classic `0.1903` and has no memory-lane global-front adds. |
 | DeepGate / synthesized-netlist encoder | `T95_deepgate_delayed_high_exploit_8x5` | `0.1153` | Best pure DeepGate representative; delayed high-exploit coupling improves over T94 but trails classic. |
 | Hybrid pretrained RTL/netlist encoder | `T96_rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Best RF/DeepGate hybrid representative; improves over pure T95 DeepGate but regresses versus same-seed T83 `0.1369`, trails classic, and loses front breadth. |
-| AURORA / AutoQD learned descriptor | `AURORA-style raw implementation-feature lane` | n/a | Keep as category placeholder; current evidence is replay/diagnostic, not frozen live HV. |
+| AURORA / AutoQD learned descriptor | `T99_aurora_raw_impl_delayed_qd` | `0.1201` | Best live AURORA-style raw implementation-feature representative; screened negative versus classic `0.1406`, but stronger than Qwen and pure DeepGate by mean HV. |
 
 ## Top 10 Current Configs By Mean HV
 
@@ -58,18 +61,21 @@ replicated, and category-useful.
 | 5 | `masterrtl_structural_front_slot_8x5` | `0.1227` | Classic `8x5` `0.1406` | Best raw MasterRTL structural-cell variant. |
 | 6 | `masterrtl_structural_mix_8x5` | `0.1218` | Classic `8x5` `0.1406` | Plain structural mix; category baseline. |
 | 7 | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Classic `8x5` `0.1406` | Best live graph-like bridge arm. |
-| 8 | `rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Classic `8x5` `0.1406` | Best hybrid pretrained RTL/netlist representative; improves over T95 but regresses versus T83 and remains negative. |
-| 9 | `T84_rf_leafid_front_slot_delayed_qd` | `0.1162` | Classic `8x5` `0.1406` | Completed negative; keep only as failed coupling evidence. |
-| 10 | `deepgate_delayed_high_exploit_8x5` | `0.1153` | Classic `8x5` `0.1406` | Best screened pure synthesized-netlist pretrained encoder representative; improves over T94 but remains negative. |
+| 8 | `aurora_raw_impl_compact_delayed_8x5` | `0.1201` | Classic `8x5` `0.1406` | Best AURORA/raw implementation-feature representative; screened negative but enters top 10. |
+| 9 | `rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Classic `8x5` `0.1406` | Best hybrid pretrained RTL/netlist representative; improves over T95 but regresses versus T83 and remains negative. |
+| 10 | `T84_rf_leafid_front_slot_delayed_qd` | `0.1162` | Classic `8x5` `0.1406` | Completed negative; keep only as failed coupling evidence. |
 
-Dropped just below the top 10: `code_thought_sr_front_slot_8x5` (`0.1141`),
+Dropped just below the top 10: `deepgate_delayed_high_exploit_8x5`
+(`0.1153`), `code_thought_sr_front_slot_8x5` (`0.1141`),
 `masterrtl_rf_timing_state_8x5` (`0.1140`),
 `masterrtl_aux_archive_front_breadth_8x5` (`0.1134`),
 `qwen_canonical_rtl_pca3_8x5` (`0.1108`),
 `masterrtl_archive_stagnation_activation_8x5` (`0.1089`),
 `deepgate_pooled_pc3_8x5` (`0.1040`), and
 `masterrtl_aux_archive_adaptive_sparse_front_8x5` (`0.0946`). Keep Qwen anyway
-as the best current actual pretrained text/code encoder representative.
+as the best current actual pretrained text/code encoder representative, and
+keep T95 as the best pure DeepGate representative despite falling just outside
+the mean-HV top 10.
 
 ## Best Replicated Result So Far
 
@@ -96,6 +102,7 @@ promoted.
 | MasterRTL RF timing model-state | Pretrained RF timing flow has a runtime descriptor hook and two frozen `8x5` screens. | T82 is negative; T83 is nearer on all-design HV but still not promoted. |
 | MasterRTL raw structural mix | Credible RTL-native descriptor lane. | Needs stronger coupling; fixed auxiliary archive failed replication. |
 | T11/T36 graph-like lane | Replay signal exists; live top-4/front-slot successor ran. | Not promoted: live `8x5` mean HV `0.1208` versus classic `0.1406`. |
+| AURORA-style raw implementation features | Raw implementation features had the strongest T13 AURORA replay clue, and T99 now gives the lane a live `8x5` result. | Not promoted: mean HV `0.1201` versus classic `0.1406`; keep as the AURORA/raw category representative. |
 
 T92 changes the DeepGate status from replay-only to bounded-live-smoke-ready.
 It freezes T91's pooled candidate embedding PCA into `deepgate_pool_pc0..2`,
