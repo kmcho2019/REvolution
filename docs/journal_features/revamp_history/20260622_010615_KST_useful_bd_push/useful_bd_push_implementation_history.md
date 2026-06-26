@@ -40,6 +40,19 @@ evidence.
   exploitation before retiring the DeepGate lane more broadly.
 - Live run pending.
 
+## 2026-06-26T12:45:00Z - T95 DeepGate Delayed High-Exploit Completed
+
+- Completed the matched frozen eight-design `8x5` screen:
+  `deepgate_delayed_high_exploit_8x5/seed_1001/openai_gpt-oss-120b`.
+- Validators passed: Pareto-front run, single-thought operator run, PPA
+  completeness, and strict Phase 03.1 viewer validation.
+- All eight problems are headline-comparable. T95 improves over T94 on mean HV
+  (`0.1153` versus `0.1040`) and mean reference-beating candidates (`5.25`
+  versus `4.50`), but classic remains ahead at mean HV `0.1406`, mean Pareto
+  points `3.25` versus `1.88`, and HV wins `7` versus `1`.
+- Decision: keep T95 as the current DeepGate / synthesized-netlist pretrained
+  encoder representative, but do not promote it for full RTLLM spend.
+
 ## 2026-06-26T11:25:00Z - T93 DeepGate Runtime Live Smoke Completed
 
 - Added `preliminary_planning/20260626_deepgate_runtime_live_smoke/` to record
