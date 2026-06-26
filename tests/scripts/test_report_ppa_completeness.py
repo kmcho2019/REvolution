@@ -53,11 +53,14 @@ def test_report_ppa_completeness_labels_headline_and_diagnostic(tmp_path: Path) 
     assert rows["Prob001"]["comparison_status"] == "headline"
     assert rows["Prob001"]["classic_valid_ppa"] == "yes"
     assert rows["Prob001"]["qd_valid_ppa"] == "yes"
+    assert rows["Prob001"]["valid_ppa_yield_status"] == "small_n"
     assert rows["Prob040"]["reference_ppa_valid"] == "no"
     assert rows["Prob040"]["comparison_status"] == "diagnostic_only"
     assert rows["Prob040"]["reference_missing_reason"] == "marked_missing"
+    assert rows["Prob040"]["valid_ppa_yield_status"] == "diagnostic_only"
     assert rows["Prob041"]["comparison_status"] == "candidate_missing"
     assert rows["Prob041"]["qd_valid_ppa"] == "no"
+    assert rows["Prob041"]["valid_ppa_yield_status"] == "small_n"
 
 
 def test_completeness_rows_accept_backend_column() -> None:
@@ -96,9 +99,34 @@ def test_completeness_rows_accept_backend_column() -> None:
             "comparison_status": "headline",
             "classic_valid_ppa_count": "1",
             "qd_valid_ppa_count": "1",
+            "valid_ppa_yield_status": "small_n",
             "reference_missing_reason": "",
         }
     ]
+
+
+def test_completeness_rows_marks_large_yield_drop() -> None:
+    candidate_rows = [
+        _candidate("classic", "Prob001", f"c{i}", "10", "1")
+        for i in range(12)
+    ]
+    candidate_rows += [
+        _candidate("qd", "Prob001", f"q{i}", "9", "1")
+        for i in range(6)
+    ]
+
+    rows = completeness_rows(
+        candidate_rows,
+        [_reference("Prob001", "10", "1")],
+        [],
+        "classic",
+        "qd",
+        set(),
+        False,
+    )
+
+    assert rows[0]["comparison_status"] == "headline"
+    assert rows[0]["valid_ppa_yield_status"] == "yield_warning"
 
 
 def test_problem_manifest_keeps_absent_problem_rows(tmp_path: Path) -> None:

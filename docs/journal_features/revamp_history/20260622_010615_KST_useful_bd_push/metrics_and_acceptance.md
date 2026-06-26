@@ -60,9 +60,14 @@ not use defaulted reference PPA in headline aggregates.
 
 Each new run package must include a completeness table:
 
-| problem | classic_valid_ppa | qd_valid_ppa | reference_ppa_valid | comparison_status |
-| --- | --- | --- | --- | --- |
-| `Prob040_synchronizer` | yes | yes | no | `diagnostic_only` |
+| problem | classic_valid_ppa | qd_valid_ppa | reference_ppa_valid | comparison_status | valid_ppa_yield_status |
+| --- | --- | --- | --- | --- | --- |
+| `Prob040_synchronizer` | yes | yes | no | `diagnostic_only` | `diagnostic_only` |
+
+`valid_ppa_yield_status` is `yield_warning` when classic has at least `10`
+valid-PPA candidates and QD has `50%` or less of that count. It is `small_n`
+when the classic valid-PPA denominator is below `10`, so noisy low-count
+designs stay visible without becoming promotion blockers by themselves.
 
 Use the committed helper to generate it:
 

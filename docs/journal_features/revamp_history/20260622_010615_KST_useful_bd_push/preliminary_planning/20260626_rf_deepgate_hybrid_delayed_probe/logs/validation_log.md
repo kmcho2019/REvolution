@@ -30,6 +30,8 @@ Status: completed.
 - `scripts/validate_pareto_front_run.py`: passed.
 - `scripts/validate_single_thought_operator_run.py`: passed.
 - `scripts/report_ppa_completeness.py`: all eight problems are `headline`.
+  `valid_ppa_yield_status` flags `yield_warning` on
+  `Prob015_multi_pipe_8bit` and `Prob045_alu`.
 - `scripts/report_pareto_analysis.py`: completed.
 - `scripts/report_ppa_distribution.py`: completed without warnings.
 - `scripts/validate_qd_ppa_visualization.py --strict`: passed.

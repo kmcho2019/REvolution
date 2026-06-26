@@ -19,8 +19,11 @@ FIELDS = [
     "comparison_status",
     "classic_valid_ppa_count",
     "qd_valid_ppa_count",
+    "valid_ppa_yield_status",
     "reference_missing_reason",
 ]
+
+YIELD_WARNING_MIN_CLASSIC = 10
 
 
 @dataclass(frozen=True)
@@ -134,6 +137,7 @@ def completeness_rows(
                 "comparison_status": comparison_status(classic_count, qd_count, reference_valid),
                 "classic_valid_ppa_count": str(classic_count),
                 "qd_valid_ppa_count": str(qd_count),
+                "valid_ppa_yield_status": yield_status(classic_count, qd_count, reference_valid),
                 "reference_missing_reason": reason,
             }
         )
@@ -150,6 +154,18 @@ def comparison_status(classic_count: int, qd_count: int, reference_valid: str) -
     if classic_count == 0 or qd_count == 0:
         return "candidate_missing"
     return "headline"
+
+
+def yield_status(classic_count: int, qd_count: int, reference_valid: str) -> str:
+    if reference_valid == "no":
+        return "diagnostic_only"
+    if classic_count < YIELD_WARNING_MIN_CLASSIC:
+        return "small_n"
+    if qd_count == 0:
+        return "classic_covered_loss"
+    if qd_count * 2 <= classic_count:
+        return "yield_warning"
+    return "pass"
 
 
 def write_rows(path: Path, rows: list[dict[str, str]]) -> None:

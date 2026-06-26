@@ -5748,3 +5748,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/`.
 - Decision: keep T96 as the hybrid pretrained RTL/netlist encoder category
   representative. Do not promote exact T96 to final full-RTLLM spend.
+
+## 2026-06-26T13:58:00Z - PPA Completeness Yield Warnings Added
+
+- Extended `scripts/report_ppa_completeness.py` with
+  `valid_ppa_yield_status`.
+- Rule: if classic has at least `10` valid-PPA candidates and QD has `50%` or
+  less of the classic count, mark `yield_warning`; if classic has fewer than
+  `10`, mark `small_n` instead.
+- Regenerated T96 `analysis/ppa_completeness.csv`. All eight problems remain
+  `headline`, but `Prob015_multi_pipe_8bit` and `Prob045_alu` now explicitly
+  flag `yield_warning`.
+- Added focused tests in `tests/scripts/test_report_ppa_completeness.py`.
