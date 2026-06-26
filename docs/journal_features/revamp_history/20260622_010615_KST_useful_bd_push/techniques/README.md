@@ -100,6 +100,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T84` | `T84_rf_leafid_front_slot_delayed_qd` | RTL-native pretrained model archive coupling | `T0 diagnostic_regression_not_promoted`; front-slot sampling loses T83's near-classic HV and does not recover front material |
 | `T85` | `T85_front_guarded_qd_memory` | Archive-coupling search policy | `T0 smoke_negative_not_promoted`; warmup-4 fixes coverage but classic wins mean HV and the only tied design has zero HV for both arms |
 | `T86` | `T86_front_guarded_memory_controls` | Archive-coupling search policy | `T0 control_negative_not_promoted`; random-memory FG-QDM slightly beats SR-memory but loses classic, blocking exact `sr_pca_3d` FG-QDM continuation |
+| `T87` | `T87_front_guarded_rtl_native_memory` | RTL-native archive coupling | Pre-registered FG-QDM descriptor swap to `source_aligned_shape_density_3d` |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

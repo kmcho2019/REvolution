@@ -664,9 +664,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       `front_guarded_memory_controls`.
 - [x] Run the T86 random-memory FG-QDM smoke on the same three-problem subset
       before any verified-descriptor FG-QDM continuation.
-- [ ] Before any T85/T86 continuation, simplify or justify the FG-QDM credit
+- [x] Before any T85/T86 continuation, simplify or justify the FG-QDM credit
       constants and remove defensive metadata defaults called out by the
       periodic review.
+- [ ] Run T87 source-aligned shape-density FG-QDM smoke before promoting any
+      FG-QDM continuation.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

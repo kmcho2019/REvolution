@@ -4,6 +4,19 @@ Unbounded journal for `useful_bd_push`. Record notable decisions, commands,
 outputs, experiments, failed attempts, blockers, commits, and validation
 evidence.
 
+## T87 RTL-Native FG-QDM Pre-Registration - 2026-06-26 UTC
+
+- Addressed the T85 review blocker first by simplifying the FG-QDM memory
+  credit rule and removing defensive metadata defaults in QD summary/event
+  paths.
+- Added `T87_front_guarded_rtl_native_memory` as the next FG-QDM continuation.
+- Fixed scheduler to the T85/T86 front-guarded memory policy and changed only
+  the descriptor to `source_aligned_shape_density_3d`.
+- Registered the live smoke command under
+  `techniques/T87_front_guarded_rtl_native_memory/commands/`.
+- Promotion rule: T87 must beat both SR-memory and random-memory FG-QDM on the
+  matched three-problem smoke before any larger FG-QDM screen.
+
 ## T86 Random-Memory FG-QDM Control - 2026-06-26 UTC
 
 - Identified the existing deterministic `random_hash_3d` descriptor profile:
