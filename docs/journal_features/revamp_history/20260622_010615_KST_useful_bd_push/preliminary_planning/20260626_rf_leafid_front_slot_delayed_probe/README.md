@@ -1,6 +1,6 @@
 # RF Leaf-ID Front-Slot Delayed Probe
 
-Status: pre-registered, not run.
+Status: completed diagnostic; not promoted for full RTLLM spend.
 
 This package freezes the next preliminary candidate after T83 came close on
 all-design mean HV but lost Pareto breadth and RTLLM-only HV. It corresponds
@@ -48,14 +48,33 @@ Preflight is recorded in
 requirements are recorded in
 `tables/descriptor_probe_20260626_rf_leafid_front_slot.json`.
 
-## Expected Outcome
+## Result
 
-The run should either:
+The frozen screen completed on all eight selected designs. It is a valid
+headline-paired comparison: both classic and T84 have valid candidate PPA on
+every screened problem, and all eight benchmark references are valid.
 
-- improve T83's front-material metrics without losing the near-classic mean-HV
-  signal; or
-- retire this front-slot coupling as too expensive for RF leaf-ID model-state
-  descriptors.
+| Metric | Classic | T83 | T84 |
+| --- | ---: | ---: | ---: |
+| Mean HV | `0.1406` | `0.1369` | `0.1162` |
+| Mean Pareto points | `3.25` | `2.00` | `1.88` |
+| Mean reference-beating candidates | `8.00` | `4.50` | `3.75` |
+| HV wins versus classic | - | `3/8` | `0/8` |
 
-No full RTLLM spend is allowed before the frozen screen result is packaged and
-compared to classic and T83.
+Decision: do not promote exact T84. The bounded front-slot lane did not recover
+T83's front-material loss, and it destroyed the near-classic all-design HV
+signal that made T83 worth testing.
+
+## Files
+
+- `results_report.md`: conclusion and terminology.
+- `analysis/pareto_analysis/`: generated Pareto/HV report.
+- `tables/screen_decision_metrics.csv`: aggregate promotion metrics.
+- `tables/problem_hv_deltas.csv`: per-problem HV deltas.
+- `tables/comparison_completeness.csv`: reference/candidate completeness.
+- `tables/descriptor_health_summary.csv`: descriptor health summary.
+- `tables/sensitivity_no_prob135.csv`: robustness check excluding
+  `Prob135_m2014_q6b`.
+- `figures/rf_leafid_front_slot_delayed_summary.png`: inspected
+  reader-facing summary figure.
+- `logs/validation_log.md`: validators, analysis command, and visual checks.

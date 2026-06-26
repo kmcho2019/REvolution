@@ -121,8 +121,8 @@ Real result packages:
   eight-design screen.
 - `T83_rf_leafid_structural_delayed_qd` completed the RF leaf-ID plus
   source-aligned structural delayed-activation follow-up.
-- `T84_rf_leafid_front_slot_delayed_qd` pre-registered the RF leaf-ID
-  front-slot delayed follow-up.
+- `T84_rf_leafid_front_slot_delayed_qd` completed the RF leaf-ID front-slot
+  delayed follow-up.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -194,11 +194,12 @@ versus `4.50`), and HV wins (`5` versus `3`). Removing
 `Prob135_m2014_q6b` widens the mean-HV gap to `-20.29%`, so the near-classic
 aggregate is too fragile for full RTLLM spend.
 
-T84 is pre-registered as the next coupling test, not a result. It keeps T83's
-axes and delayed archive activation, but switches parent selection to
-`front_slot_lane_nsga2` with a bounded `0.20` local front-slot lane. It must
-show that T83's front-breadth loss can be repaired without relying on
-`Prob135_m2014_q6b`.
+T84 is the completed coupling test after T83. It keeps T83's axes and delayed
+archive activation, but switches parent selection to `front_slot_lane_nsga2`
+with a bounded `0.20` local front-slot lane. The result is negative: mean HV
+falls to `0.1162`, Pareto points fall to `1.875`, reference-beating candidates
+fall to `3.75`, and T84 has `0/8` HV wins against classic. Keep T83, not T84,
+as the current pretrained MasterRTL RF model-state representative.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

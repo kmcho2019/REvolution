@@ -9,12 +9,13 @@ or claim correction; keep detailed evidence in the per-technique package,
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
 | 1 | RF leaf-ID structural delayed QD | Near-classic diagnostic | Uses validated MasterRTL RF timing model-state as a secondary coordinate beside source-aligned structure and delayed archive pressure. | Mean HV is close to classic (`0.1369` versus `0.1406`), but the result is `Prob135`-dependent and RTLLM-only negative. |
-| 2 | Delayed archive activation | Timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
-| 3 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
-| 4 | Stagnation-triggered archive pressure | Diagnostic negative | Uses only archive growth state to activate QD pressure after passive archive growth stalls. | Trigger fired lightly, but mean HV regressed to `0.1089`; not promoted. |
-| 5 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
-| 6 | RF leaf-ID front-slot delayed QD | Pre-registered | Tests whether T83's RF model-state axes need explicit local front-slot parent sampling to recover Pareto breadth. | Not run yet; must improve T83 front metrics without leaning on `Prob135`. |
-| 7 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, DeepGate transition embeddings are partially unblocked, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
+| 2 | MasterRTL auxiliary archive high-exploit | Best auxiliary-archive single seed | Treats QD as side-channel archive memory while keeping classic-like exploitation pressure. | Seed replication is negative: three-seed mean HV `0.1261` versus classic `0.1442`. |
+| 3 | Delayed archive activation | Timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
+| 4 | T11/T36 graph-like bridge | Category representative | Keeps the best live graph/encoder-like bridge arm in the shortlist. | Live `8x5` mean HV `0.1208` still trails classic `0.1406`. |
+| 5 | Qwen3 canonical RTL | Pretrained text/code representative | Real pretrained embedding path with live-screened QD archive coordinates. | Mean HV `0.1108` trails classic `0.1406`; keep as category representative, not spend-ready. |
+| 6 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
+| 7 | RF leaf-ID front-slot delayed QD | Completed negative | Tests whether T83's RF model-state axes need explicit local front-slot parent sampling to recover Pareto breadth. | Mean HV drops to `0.1162`, with `0/8` HV wins; keep only as failed coupling evidence. |
+| 8 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 
 ## Most Promising Direction
 
@@ -168,12 +169,13 @@ promoted. Pareto points fall from classic `3.25` to `2.00`,
 reference-beating candidates fall from `8.00` to `4.50`, and removing
 `Prob135_m2014_q6b` widens the mean-HV gap to `-20.29%`.
 
-T84 is pre-registered to test the obvious failure mode without changing the
-descriptor after seeing T83's result. It keeps the same axes and delayed
-archive activation but switches parent selection to `front_slot_lane_nsga2`,
-with `0.20` local front-slot traffic and `0.80` champion pressure. If it loses
-T83's near-classic HV without improving front material and no-`Prob135`
-robustness, retire this exact RF front-slot coupling.
+T84 tested that obvious failure mode without changing the descriptor after
+seeing T83's result. It keeps the same axes and delayed archive activation but
+switches parent selection to `front_slot_lane_nsga2`, with `0.20` local
+front-slot traffic and `0.80` champion pressure. The result is negative:
+mean HV falls to `0.1162`, HV wins fall to `0/8`, and front material does not
+recover. Retire exact T84 and keep T83 as the current RF model-state
+representative.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

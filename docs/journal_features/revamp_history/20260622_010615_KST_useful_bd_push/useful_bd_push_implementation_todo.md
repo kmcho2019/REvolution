@@ -634,13 +634,15 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       full RTLLM spend: exact T83 is near-classic on all-design mean HV but
       not promoted because the signal is `Prob135`-dependent, RTLLM-only HV is
       negative, and front metrics lose.
-- [ ] Choose the next materially different full-RTLLM candidate lane after the
+- [x] Choose the next materially different full-RTLLM candidate lane after the
       T83 diagnostic, or explicitly record that no current screened QD arm is
-      spend-ready.
+      spend-ready: `current_selection_status.md` now records no spend-ready
+      QD arm, while preserving category representatives and the top-10
+      mean-HV shortlist.
 - [x] Pre-register T84 RF leaf-ID front-slot delayed QD as the next targeted
       follow-up to T83's front-breadth failure.
-- [ ] Run T84 on the frozen eight-design `8x5` screen and decide before any
-      full RTLLM spend.
+- [x] Run T84 on the frozen eight-design `8x5` screen and decide before any
+      full RTLLM spend: exact T84 is completed negative and not promoted.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

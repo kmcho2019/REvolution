@@ -5352,3 +5352,30 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   Qwen embeddings, or auto-BD artifacts.
 - Decision: run the frozen eight-design `8x5` screen next; do not change axes,
   subset, seed, budget, or token settings after seeing outcomes.
+
+## 2026-06-26T06:52:00Z - T84 RF Leaf-ID Front-Slot Delayed Screen Completed
+
+- Ran `masterrtl_rf_leafid_front_slot_delayed_8x5` on the frozen eight-design
+  `8x5` preliminary screen.
+- Run root:
+  `exp/useful_bd_push/prelim_rf_leafid_front_slot_delayed_20260626_062400_UTC/live/`.
+- The run completed `8/8` problems in `1651.69s`.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Comparison package:
+  `preliminary_planning/20260626_rf_leafid_front_slot_delayed_probe/`.
+- Headline result: classic mean HV `0.1406`, T84 mean HV `0.1162`, classic
+  mean Pareto points `3.25`, T84 mean Pareto points `1.875`, classic mean
+  reference-beating candidates `8.00`, T84 `3.75`, and HV wins `5` versus
+  `0`.
+- T84 improves the no-`Prob135_m2014_q6b` mean-HV read versus T83
+  (`0.1328` versus `0.1281`), but still trails classic (`0.1607`) and does
+  not recover front material.
+- Descriptor health: the RF leaf-ID axis still collapses in archive entries on
+  `Prob045_alu`, `Prob116_m2014_q3`, and `Prob135_m2014_q6b`.
+- Decision: exact T84 is `T0_diagnostic_regression_not_promoted`. Keep T83 as
+  the current pretrained MasterRTL RF model-state category representative.
+- Updated `preliminary_planning/current_selection_status.md` to maintain one
+  representative per encoder/config category and a top-10 current
+  configuration table ranked primarily by mean HV.

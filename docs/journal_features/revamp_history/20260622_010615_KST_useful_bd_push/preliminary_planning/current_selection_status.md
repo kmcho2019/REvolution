@@ -5,10 +5,60 @@ comparison.
 
 ## Answer
 
-The preliminary plan is not finished. It has produced hard negative screening
-data, including a three-seed replication of the best diagnostic arm, but it has
-not identified a QD/MAP-Elites configuration that is strong enough to spend the
-full RTLLM budget on as a positive candidate.
+The preliminary plan is not finished. It has produced hard screening data,
+including a three-seed replication of the best diagnostic arm and the T84
+front-slot follow-up, but it has not identified a QD/MAP-Elites configuration
+that is strong enough to spend the full RTLLM budget on as a positive
+candidate.
+
+Selection should not discard whole encoder/config categories just because the
+current best member is below classic. Maintain:
+
+1. one best current representative per encoder/config category; and
+2. a top-10 current configuration table ranked primarily by mean HV.
+
+The top-10 table below is operational, not a final paper claim. Mean HV is most
+comparable inside the frozen eight-design preliminary screen; rows with a
+different budget or replication caveat are marked explicitly.
+
+## Current Category Representatives
+
+| Category | Keep Representative | Mean HV | Status |
+| --- | --- | ---: | --- |
+| Baseline | `classic_revolution_8x5` | `0.1406` | Comparator, not QD. |
+| Pretrained MasterRTL RF model-state | `T83_rf_leafid_structural_delayed_qd` | `0.1369` | Best current QD by single-seed mean HV; not promoted because front breadth and no-`Prob135` robustness fail. |
+| MasterRTL auxiliary archive | `masterrtl_aux_archive_high_exploit_8x5` | `0.1339` | Best auxiliary-archive single seed; three-seed mean HV falls to `0.1261`, so keep only as a category representative. |
+| Delayed archive timing | `masterrtl_delayed_archive_activation_8x5` | `0.1324` | Best timing/schedule clue; still below classic. |
+| Raw MasterRTL structural cells | `masterrtl_structural_front_slot_8x5` | `0.1227` | Best raw structural-cell variant on the frozen screen. |
+| T11/T36 graph-like bridge | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Best live graph-like representative; replay signals remain stronger than live results. |
+| Code-thought/SR front-slot | `code_thought_sr_front_slot_8x5` | `0.1141` | Best current SR/code-thought representative in this preliminary pool. |
+| Qwen3 pretrained text/code | `qwen_canonical_rtl_pca3_8x5` | `0.1108` | Best actual pretrained text/code embedding live arm; keep as the Qwen representative despite weak HV. |
+| DeepGate / synthesized-netlist encoder | `DeepGate transition-AIG bridge` | n/a | Keep as category placeholder; not top-10 until a verified pretrained live screen has comparable HV. |
+| AURORA / AutoQD learned descriptor | `AURORA-style raw implementation-feature lane` | n/a | Keep as category placeholder; current evidence is replay/diagnostic, not frozen live HV. |
+
+## Top 10 Current Configs By Mean HV
+
+Primary sort key is mean HV. Secondary read is whether the row is comparable,
+replicated, and category-useful.
+
+| Rank | Config | Mean HV | Comparator | Read |
+| ---: | --- | ---: | --- | --- |
+| 1 | `T83_rf_leafid_structural_delayed_qd` | `0.1369` | Classic `8x5` `0.1406` | Best current QD by single-seed mean HV; diagnostic, not promoted. |
+| 2 | `masterrtl_aux_archive_high_exploit_8x5` | `0.1339` | Classic `8x5` `0.1406` | Best auxiliary archive single seed; replication negative. |
+| 3 | `masterrtl_delayed_archive_activation_8x5` | `0.1324` | Classic `8x5` `0.1406` | Best archive-timing clue; still below classic. |
+| 4 | `masterrtl_aux_archive_high_exploit_6x7` | `0.1229` | Classic `6x7` `0.1701` | Different budget shape; depth-only continuation failed. |
+| 5 | `masterrtl_structural_front_slot_8x5` | `0.1227` | Classic `8x5` `0.1406` | Best raw MasterRTL structural-cell variant. |
+| 6 | `masterrtl_structural_mix_8x5` | `0.1218` | Classic `8x5` `0.1406` | Plain structural mix; category baseline. |
+| 7 | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Classic `8x5` `0.1406` | Best live graph-like bridge arm. |
+| 8 | `T84_rf_leafid_front_slot_delayed_qd` | `0.1162` | Classic `8x5` `0.1406` | Completed negative; keep only as failed coupling evidence. |
+| 9 | `code_thought_sr_front_slot_8x5` | `0.1141` | Classic `8x5` `0.1406` | SR/code-thought representative. |
+| 10 | `masterrtl_rf_timing_state_8x5` | `0.1140` | Classic `8x5` `0.1406` | T82 exact RF timing-state profile; negative but model-state integration is valid. |
+
+Dropped just below the top 10: `masterrtl_aux_archive_front_breadth_8x5`
+(`0.1134`), `qwen_canonical_rtl_pca3_8x5` (`0.1108`),
+`masterrtl_archive_stagnation_activation_8x5` (`0.1089`), and
+`masterrtl_aux_archive_adaptive_sparse_front_8x5` (`0.0946`). Keep Qwen anyway
+as the best current actual pretrained text/code encoder representative.
 
 ## Best Replicated Result So Far
 
@@ -88,7 +138,7 @@ Decision: valid implementation, negative screen. The final RTLLM plan remains
 unfinished because no QD configuration is promoted. Do not spend the full
 RTLLM budget on the exact `source_aligned_rf_timing_state_3d` profile.
 
-## Latest RF Gate
+## RF Leaf-ID Structural Gate
 
 `T83_rf_leafid_structural_delayed_qd` completed the next materially different
 RF timing candidate. It uses explicit descriptor axes:
@@ -119,13 +169,22 @@ negative (`0.0995` versus classic `0.1453`). The preliminary plan therefore
 remains unfinished: no QD configuration is currently promoted for final
 full-RTLLM spend.
 
-## Next Gate
+## RF Leaf-ID Front-Slot Gate
 
-Do not run another exact T83 geometry tweak. The next registered live spend is
-`T84_rf_leafid_front_slot_delayed_qd`, which keeps T83's RF leaf-ID axes but
-changes the coupling to `front_slot_lane_nsga2`.
+`T84_rf_leafid_front_slot_delayed_qd` completed the registered follow-up to
+T83. It keeps T83's RF leaf-ID axes and delayed activation, but changes the
+coupling to `front_slot_lane_nsga2`.
 
-T84 is allowed because it tests a specific failure mode from T83: weak Pareto
-breadth and RTLLM-only performance. It is not a promotion claim. It must
-improve front-material metrics and the no-`Prob135_m2014_q6b` robustness read
-without losing the near-classic HV signal.
+| Metric | Classic | T83 QD | T84 QD |
+| --- | ---: | ---: | ---: |
+| Screened problems | `8` | `8` | `8` |
+| Headline-paired comparisons | `8` | `8` | `8` |
+| Mean HV | `0.1406` | `0.1369` | `0.1162` |
+| Mean Pareto points | `3.25` | `2.00` | `1.88` |
+| Mean reference-beating candidates | `8.00` | `4.50` | `3.75` |
+| HV wins | `5/8` | `3/8` | `0/8` |
+
+Decision: exact T84 is retired. It slightly improves the no-`Prob135_m2014_q6b`
+mean-HV read versus T83 (`0.1328` versus `0.1281`), but it loses the
+all-design mean-HV signal and does not recover front material. Keep T83, not
+T84, as the current MasterRTL RF model-state representative.
