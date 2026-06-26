@@ -99,6 +99,8 @@ Start here when resuming the active goal.
 | `research_strategy_recommendations.md` | Consolidated strategic recommendations from the classic-vs-QD, budget-shape, design-set, and MasterRTL/RTLTimer discussions. |
 | `goal_template.md` | Compact goal body that fits the goal-tool limit. |
 | `useful_bd_push_plan.md` | Main contract: outcome, constraints, method families, gates, and completion criteria. |
+| `central_comparison_report.md` | Current central comparison report: no promoted QD arm, category representatives, and negative-map conclusion. |
+| `stop_condition_audit.md` | Anti-reward-hacking stop-condition audit for pausing broad live spend on tested families. |
 | `technique_lineage_ledger.md` | Skim-first lane/category map with result lineage, branch policy, and Mermaid process graph. |
 | `technique_lanes.md` | Lane-based process map with method families, lineage graph, decision ledger, branch guidance, and next actions. |
 | `completion_gap_audit.md` | Current proof gaps before a positive or negative final sign-off can be claimed. |

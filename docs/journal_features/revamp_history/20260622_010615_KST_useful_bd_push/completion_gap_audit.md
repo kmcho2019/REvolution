@@ -39,10 +39,10 @@ REvolution on reference-complete PPA-front evidence.
 | --- | --- | --- |
 | Passive archive scoring for classic and every QD method | `tables/completion_gap_inventory.csv` shows recent T95/T96/T99/T100-style surfaces are covered, while Qwen, T83/T88, and auxiliary-archive replication are legacy/partial. | Either backfill legacy rows or label them as non-headline/representative-only in the final report. |
 | Full metric set across headline methods | `tables/completion_gap_inventory.csv` records which representatives have HV-AUC, passive archive, completeness, direct PPA, and viewer coverage. QD-score AUC, coverage AUC, unique front-family, and Pareto-spread coverage are still uneven. | Add final-report caveats or backfill only for rows used as headline evidence. |
-| Central comparison report | Current selection docs are operational; no single final report states the accepted claim. | Write a concise central report comparing category reps against classic and landing/manual QD where available. |
+| Central comparison report | `central_comparison_report.md` states the current negative-map claim and compares category representatives against classic. | Final adversarial validation must review this exact claim before sign-off. |
 | Visualization policy for every completed result | Many packages have inspected figures, but a branch-wide figure-completeness inventory is missing. | Add a figure inventory that marks direct raw PPA PNG, Phase 03.1 viewer, and visual-inspection status by package. |
 | Final adversarial validation | `useful_bd_push_subagent_validation_report.md` still says not run. | Run read-only adversarial review on the exact final claim and record PASS or action items. |
-| Stop condition | The branch has enough negative evidence, but the anti-reward-hacking stop audit has not been written. | If no new mechanism is launched, write a stop-condition audit showing the broad negative map is rigorous and not premature. |
+| Stop condition | `stop_condition_audit.md` records that broad live-spend stop criteria are satisfied for the tested families. | Final adversarial validation must confirm the stop audit before goal completion. |
 
 ## Latest External Review
 
@@ -75,9 +75,11 @@ selection document. The short read is:
 
 ## Next Valid Actions
 
-1. Add metric-completeness and figure-completeness inventories.
-2. Write the central comparison report for the current negative-map claim.
-3. Run a long read-only adversarial review after those inventories are present.
+1. Backfill or caveat any legacy representative row used in the final report.
+2. Run a long read-only adversarial review on `central_comparison_report.md`
+   and `stop_condition_audit.md`.
+3. Write `useful_bd_push_subagent_validation_report.md` with PASS or action
+   items.
 4. Launch another live run only if it changes the mechanism, not just one
    descriptor axis, and if it can plausibly improve memory-lane front
    contribution per LLM call.

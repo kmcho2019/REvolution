@@ -501,7 +501,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T32 front-preserving emitter is specified from T31's failed repair result
       with `0.72` champion pressure, `0.08` two-parent success-parent sampling,
       and a mandatory raw area-power PPA Pareto figure gate.
-- [ ] Central comparison report states whether QD/MAP-Elites is useful,
+- [x] Central comparison report states whether QD/MAP-Elites is useful,
       near-classic, or still negative.
 - [ ] Central and per-technique reports pass
       `visualization_reporting_policy.md`, including the direct raw PPA-front
@@ -747,7 +747,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       periodic review.
 - [x] Run T87 source-aligned shape-density FG-QDM smoke before promoting any
       FG-QDM continuation.
-- [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
+- [x] Stop condition satisfies `anti_reward_hacking_policy.md` for pausing
+      broad live spend on tested families; final goal sign-off still requires
+      adversarial PASS.
 
 ## Validation
 

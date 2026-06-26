@@ -6203,3 +6203,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   visual-inspection coverage.
 - Decision: use the inventory to decide whether to backfill legacy rows or
   label them representative-only in the final central comparison report.
+
+## 2026-06-26T18:43:00Z - Central Comparison And Stop Audit Added
+
+- Added `central_comparison_report.md` as the current central negative-map
+  comparison report.
+- Added `stop_condition_audit.md` to show that the broad live-spend stop
+  condition is satisfied for tested families, without claiming final goal
+  completion.
+- Added T100 visual inspection notes for the direct PPA supplement and Phase
+  03.1 viewer screenshots.
+- Decision: do not launch another live run unless the mechanism changes enough
+  to plausibly improve memory-lane front contribution per LLM call. The final
+  goal still requires adversarial PASS in
+  `useful_bd_push_subagent_validation_report.md`.
