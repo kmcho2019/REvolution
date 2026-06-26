@@ -23,7 +23,7 @@ the next gate.
 | `20260625_aux_archive_seed_replication_gate/` | Replicate classic and high-exploit auxiliary archive at seeds `1002` and `1003` to measure noise and the `Prob135_m2014_q6b` robustness caveat. | Completed; negative, not promoted |
 | `20260626_aux_archive_adaptive_sparse_front_probe/` | Test adaptive sparse-front parent pressure after fixed high-exploit auxiliary archive failed seed replication. | Completed; trigger fired, but HV regressed and not promoted |
 | `20260626_delayed_archive_activation_probe/` | Test whether passive early archive logging plus delayed archive pressure preserves classic-like hill climbing before QD activation. | Completed; close to high-exploit, still below classic and not promoted |
-| `20260626_archive_stagnation_activation_probe/` | Test whether archive pressure should activate only after passive archive cells and members stop growing. | Preregistered; code hook validated, run pending |
+| `20260626_archive_stagnation_activation_probe/` | Test whether archive pressure should activate only after passive archive cells and members stop growing. | Completed; trigger fired lightly, but HV regressed and not promoted |
 
 ## Current Rule
 
@@ -117,9 +117,11 @@ Mean HV is `0.1324` versus classic `0.1406`, with mean Pareto points `2.00`
 and mean reference-beating candidates `6.00`. It is close to fixed
 high-exploit but still outside the registered promotion tolerance.
 
-`masterrtl_archive_stagnation_activation_8x5` is preregistered as the next
-timing gate. It replaces the fixed generation trigger with a scheduler-visible
-archive-health trigger: activate QD pressure only after two consecutive
-archive-history intervals show no occupied-cell or archive-member growth. The
-trigger is not allowed to use final PPA, reference PPA, fitness, hypervolume,
-Pareto rank, functional pass rate, or synthesis pass rate.
+`masterrtl_archive_stagnation_activation_8x5` completed the frozen screen. It
+replaces the fixed generation trigger with a scheduler-visible archive-health
+trigger: activate QD pressure only after two consecutive archive-history
+intervals show no occupied-cell or archive-member growth. The trigger fired on
+`3/8` problems and `7/49` archive-history rows, but the arm regressed to mean
+HV `0.1089` versus classic `0.1406`. It is diagnostic negative and not
+promoted. Do not spend another run on this simple MasterRTL auxiliary archive
+timing family without a materially different mechanism.

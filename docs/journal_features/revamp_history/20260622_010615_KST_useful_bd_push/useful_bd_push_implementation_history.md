@@ -5181,3 +5181,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `pytest` for the archive-pressure tests, `ruff check` on touched files,
   `ty check` on touched source modules, source-module `pyright`, and
   `git diff --check`.
+
+## 2026-06-26T03:43:00Z - Archive Stagnation Activation Probe Completed
+
+- Ran `masterrtl_archive_stagnation_activation_8x5` on the frozen eight-design
+  `8x5` preliminary screen.
+- Run root:
+  `exp/useful_bd_push/prelim_archive_stagnation_activation_20260626_031337_UTC/live/masterrtl_archive_stagnation_activation_8x5/seed_1001`.
+- The run completed `8/8` problems in `1433.52s`.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Targeted Pareto and PPA-distribution reports completed under
+  `exp/useful_bd_push/prelim_archive_stagnation_activation_20260626_031337_UTC/live/final_analysis_with_archive_stagnation_activation`.
+- Result: classic remains ahead on mean HV (`0.1406`) and mean Pareto points
+  (`3.25`). Stagnation activation has mean HV `0.1089`, mean Pareto points
+  `2.00`, and mean reference-beating candidates `5.62`.
+- Mechanism check: the trigger fired on `3/8` problems and `7/49`
+  archive-history rows. Most rows stayed in `phase="delayed"`.
+- Decision: archive-stagnation activation is diagnostic negative and not
+  promoted. Stop this simple MasterRTL auxiliary archive timing family for
+  full-RTLLM spending unless the next method changes the descriptor or
+  coupling mechanism materially.

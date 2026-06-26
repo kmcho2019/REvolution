@@ -56,15 +56,12 @@ No QD configuration is promoted for final full-RTLLM spend yet. The next
 candidate should be materially different from fixed MasterRTL auxiliary archive
 pressure.
 
-Measured archive-stagnation activation is now the next preregistered gate. It
-keeps passive archive logging from the start, but activates archive pressure
-only after two consecutive archive-history intervals show no growth in
-occupied cells or archive-member count. The trigger is intentionally
-scheduler-side and must not use final PPA, reference PPA, fitness, hypervolume,
-Pareto rank, functional pass rate, or synthesis pass rate as descriptor or
-activation inputs.
+Measured archive-stagnation activation is now complete and negative. It kept
+passive archive logging from the start and activated archive pressure only
+after two consecutive archive-history intervals showed no growth in occupied
+cells or archive-member count. The trigger fired on `3/8` problems and `7/49`
+archive-history rows, but mean HV fell to `0.1089` versus classic `0.1406`.
 
-If this gate also loses clearly, the next candidate should move to validated
-MasterRTL pretrained model-state descriptors or another materially different
-front-preserving archive coupling, rather than another fixed MasterRTL timing
-or geometry tweak.
+The next candidate should move to validated MasterRTL pretrained model-state
+descriptors or another materially different front-preserving archive coupling,
+rather than another fixed MasterRTL timing or geometry tweak.

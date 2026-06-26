@@ -8,10 +8,10 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | Stagnation-triggered archive pressure | Preregistered next gate | Delayed activation was better than adaptive sparse-front pressure, but a fixed generation is still too blunt. Measured archive stagnation can activate QD only when passive archive growth slows. | Code hook is validated; live screen is pending and must avoid using final PPA/HV as an in-loop BD. |
-| 2 | Delayed archive activation | Diagnostic negative | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
-| 3 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
-| 4 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | Source-aligned descriptors are credible, but live runs still need stronger front creation. |
+| 1 | Validated MasterRTL model-state descriptors | Proposed next lane | The raw structural archive family is now well tested and negative. A pretrained tree-leaf or margin state may offer a stronger RTL-native learned descriptor if upstream weights and schemas are validated. | Must prove real model loading, feature-schema match, and generated-candidate non-collapse before any live run. |
+| 2 | Delayed archive activation | Best recent timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
+| 3 | Stagnation-triggered archive pressure | Diagnostic negative | Uses only archive growth state to activate QD pressure after passive archive growth stalls. | Trigger fired lightly, but mean HV regressed to `0.1089`; not promoted. |
+| 4 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 5 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, DeepGate transition embeddings are partially unblocked, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -129,12 +129,14 @@ fixed-MasterRTL geometry variant; it must be a materially different mechanism
 such as measured stagnation-triggered archive pressure or validated
 pretrained MasterRTL model-state descriptors.
 
-The stagnation-triggered archive-pressure gate is now preregistered. It uses
-only scheduler-visible archive growth signals, `occupied_cells` and
-`archive_member_count`, to decide when archive pressure turns on. This keeps
-the anti-gaming boundary intact: no final PPA, reference PPA, fitness,
-hypervolume, Pareto rank, functional pass rate, or synthesis pass rate can
-enter the descriptor or activation trigger.
+The stagnation-triggered archive-pressure gate is now complete and negative.
+It used only scheduler-visible archive growth signals, `occupied_cells` and
+`archive_member_count`, to decide when archive pressure turns on. This kept
+the anti-gaming boundary intact, but it fired on only `3/8` problems and
+`7/49` archive-history rows. Mean HV regressed to `0.1089`, below delayed
+activation (`0.1324`) and classic (`0.1406`). The next live-candidate lane
+should shift to validated MasterRTL pretrained model-state descriptors or
+another materially different coupling mechanism.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
