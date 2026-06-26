@@ -5331,3 +5331,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: exact T83 is `T0_near_classic_diagnostic_not_promoted`. It is
   evidence that validated MasterRTL RF model-state descriptors can run live
   and sometimes approach classic, but not enough evidence for full RTLLM spend.
+
+## 2026-06-26T06:24:00Z - T84 RF Leaf-ID Front-Slot Delayed QD Pre-Registered
+
+- Added `T84_rf_leafid_front_slot_delayed_qd` as a targeted follow-up to T83.
+- Rationale: T83 came close on all-design mean HV but lost Pareto breadth,
+  reference-beating candidates, and RTLLM-only mean HV.
+- Frozen explicit descriptor axes:
+  `source_aligned_rf_timing_leaf_ids`,
+  `source_aligned_masterrtl_branching`, and
+  `source_aligned_rtltimer_wire_density`.
+- Search surface: delayed archive activation with generation `3`,
+  `front_slot_lane_nsga2`, `0.20` local front-slot lane, `0.80` champion lane,
+  `0.10` fill, `0.05` backfill, one-parent single-thought operator, and no
+  repair.
+- vLLM preflight passed for `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+- Descriptor probe confirms the axes require source-aligned RTL and RF timing
+  metrics, but not PPA, synthesis result metrics, formal/dynamic metrics,
+  Qwen embeddings, or auto-BD artifacts.
+- Decision: run the frozen eight-design `8x5` screen next; do not change axes,
+  subset, seed, budget, or token settings after seeing outcomes.

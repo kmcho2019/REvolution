@@ -637,6 +637,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [ ] Choose the next materially different full-RTLLM candidate lane after the
       T83 diagnostic, or explicitly record that no current screened QD arm is
       spend-ready.
+- [x] Pre-register T84 RF leaf-ID front-slot delayed QD as the next targeted
+      follow-up to T83's front-breadth failure.
+- [ ] Run T84 on the frozen eight-design `8x5` screen and decide before any
+      full RTLLM spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

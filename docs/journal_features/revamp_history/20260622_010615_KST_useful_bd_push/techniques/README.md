@@ -97,6 +97,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T81` | `T81_masterrtl_rf_timing_state_gate` | RTL-native pretrained model verification | Completed `T0_model_state_gate_positive_not_live`; RF timing model states do not collapse on generated timing-path candidates |
 | `T82` | `T82_masterrtl_rf_timing_runtime_hook` | RTL-native pretrained model runtime hook | Completed `T0_screened_negative_not_promoted`; RF timing model-state metrics resolve through the live descriptor registry, but the frozen `8x5` screen trails classic |
 | `T83` | `T83_rf_leafid_structural_delayed_qd` | RTL-native pretrained model archive coupling | `T0 near_classic_diagnostic_not_promoted`; close all-design mean HV but `Prob135`-dependent and RTLLM-negative |
+| `T84` | `T84_rf_leafid_front_slot_delayed_qd` | RTL-native pretrained model archive coupling | Pre-registered; T83 RF leaf-ID axes plus delayed activation and bounded front-slot parent sampling |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

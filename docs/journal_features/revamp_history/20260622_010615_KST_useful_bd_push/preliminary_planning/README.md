@@ -29,6 +29,7 @@ the next gate.
 | `20260626_masterrtl_rf_timing_live_smoke/` | Run the first one-problem live smoke for `source_aligned_rf_timing_state_3d`. | Completed; one valid PPA/archive member, superseded by completed screen |
 | `20260626_masterrtl_rf_timing_state_screen/` | Run the frozen eight-design `8x5` screen for the validated MasterRTL RF timing-state descriptor profile. | Completed; all eight headline-paired comparisons valid, but classic wins mean HV and front metrics |
 | `20260626_rf_leafid_structural_delayed_probe/` | Test RF timing leaf-ID model-state as a secondary coordinate beside source-aligned structural axes and delayed archive activation. | Completed; near-classic all-design mean HV, but RTLLM-only and robustness checks block promotion |
+| `20260626_rf_leafid_front_slot_delayed_probe/` | Test whether T83's RF leaf-ID axes recover front material with bounded local front-slot parent sampling. | Pre-registered; endpoint preflight and descriptor probe passed |
 
 ## Current Rule
 
@@ -157,3 +158,10 @@ activation. This is the closest recent pretrained-model-state screen by
 all-design mean HV (`0.1369` versus classic `0.1406`), but it is not promoted.
 The result depends heavily on `Prob135_m2014_q6b`: excluding that problem gives
 a `-20.29%` mean-HV gap, and the RTLLM-only slice remains clearly negative.
+
+The next registered gate is
+`20260626_rf_leafid_front_slot_delayed_probe/`. It keeps T83's descriptor axes
+and delayed archive activation, but changes parent selection to
+`front_slot_lane_nsga2` with a `0.20` local front-slot lane and `0.80`
+champion lane. This directly tests whether T83's front-breadth failure is a
+coupling problem before spending on any full RTLLM comparison.

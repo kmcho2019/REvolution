@@ -121,7 +121,11 @@ full-RTLLM spend.
 
 ## Next Gate
 
-Do not run another exact T83 geometry tweak. The next live spend should either
-add a materially stronger front-preserving coupling around RF model-state
-features, or switch to another validated encoder/BD lane with noncollapse and
-classic-like exploitation pressure already documented.
+Do not run another exact T83 geometry tweak. The next registered live spend is
+`T84_rf_leafid_front_slot_delayed_qd`, which keeps T83's RF leaf-ID axes but
+changes the coupling to `front_slot_lane_nsga2`.
+
+T84 is allowed because it tests a specific failure mode from T83: weak Pareto
+breadth and RTLLM-only performance. It is not a promotion claim. It must
+improve front-material metrics and the no-`Prob135_m2014_q6b` robustness read
+without losing the near-classic HV signal.
