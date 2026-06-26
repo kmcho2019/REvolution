@@ -1,25 +1,42 @@
 # CircuitFusion Multimodal BD Results Report
 
-Status: scaffold only. No experimental tier is assigned yet.
+Status: `T0 retrospective_multimodal_proxy_not_promoted`.
 
-## Required Tables
+## Answer
 
-- `tables/validity_funnel.csv`
-- `tables/missing_modality_funnel.csv`
-- `tables/ppa_comparison.csv`
-- `tables/archive_metrics.csv`
-- `tables/modality_manifest.csv`
-- `tables/fusion_ablation.csv`
-- `tables/runtime.csv`
+The branch has not reproduced CircuitFusion. The measured multimodal proxy
+evidence is negative for full-RTLLM promotion.
 
-## Required Figures
+The closest live hybrid is T96 RF/DeepGate:
 
-- `figures/fusion_projection.png`
-- `figures/modality_ablation.png`
-- `figures/archive_coverage_heatmap.png`
-- `figures/ppa_delta_vs_classic.png`
+- mean HV `0.1199` versus classic `0.1406`;
+- mean Pareto points `1.625` versus classic `3.25`;
+- improves over pure DeepGate T95 (`0.1153`) but regresses versus T83 RF-only
+  same-seed (`0.1369`).
 
-## Conclusion
+T99 raw implementation features are also below classic:
 
-Pending. The report must identify which modality carries signal and whether
-fusion reaches near-classic or useful tiers.
+- mean HV `0.1201` versus classic `0.1406`;
+- mean Pareto points `2.00` versus classic `3.25`;
+- useful as the AURORA/raw category representative, not as a promoted method.
+
+## Evidence Matrix
+
+The compact source table is `tables/t10_multimodal_proxy_evidence.csv`.
+
+| Source | Modalities | Useful Signal | Blocking Signal |
+| --- | --- | --- | --- |
+| T33 | RTL/netlist text | Canonical RTL Qwen views beat lexical selected HV by about `+2.63%`. | Netlist views reduce collapse but lose selected HV. |
+| T95 | Official DeepGate netlist graph | Delayed high-exploit improves over T94 (`0.1153` versus `0.1040`). | Classic still wins mean HV `0.1406` and front breadth. |
+| T96 | RF timing state + RTL structure + DeepGate | Hybrid improves over pure T95 DeepGate. | Loses classic and regresses versus T83 RF-only. |
+| T99 | Raw implementation structure | Stronger than Qwen and pure DeepGate by mean HV. | Loses classic mean HV and Pareto breadth. |
+
+## Decision
+
+Do not spend on exact primary multimodal proxy axes. The current evidence says
+plain fusion of existing text, graph, RTL-native, and implementation axes does
+not recover enough PPA-front material.
+
+Reopen only if the branch adds a real functional-sketch modality, trains a
+non-PPA cross-modal objective, or uses multimodal descriptors as a guarded
+secondary memory/reporting signal rather than the main archive coordinate.

@@ -265,8 +265,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Outcome: closed as `T0 retrospective_text_graph_proxy_not_promoted` using
       measured T33/T36/T58/T96 text, graph, and hybrid evidence. Do not claim
       true NetTAG reproduction.
-- [ ] `T10_circuitfusion_multimodal_bd` has methodology, results, figures, tables,
+- [x] `T10_circuitfusion_multimodal_bd` has methodology, results, figures, tables,
       and tier decision.
+      Outcome: closed as `T0 retrospective_multimodal_proxy_not_promoted`
+      using measured T33/T95/T96/T99 text, netlist-graph, hybrid, and
+      implementation-feature evidence. Do not claim true CircuitFusion
+      reproduction.
 - [x] `T11_mgvga_contrastive_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T12_lineage_repair_bd` has methodology, results, figures, tables, and tier

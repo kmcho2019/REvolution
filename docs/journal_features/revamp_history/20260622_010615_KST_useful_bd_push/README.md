@@ -180,7 +180,7 @@ Start here when resuming the active goal.
 | `T07` | `T07_deepgate_family_bd` | Completed replay diagnostic, `T1 near_classic_replay_lead`; graph WL/combo barely beat lexical HV but do not beat lexical direct front hits. |
 | `T08` | `T08_sequential_deepseq_bd` | Retrospective sequential proxy, `T0 retrospective_sequential_proxy_not_promoted`; state/pipeline evidence is yield/near-classic useful but not a true DeepSeq pretrained reproduction or PPA-front win. |
 | `T09` | `T09_nettag_text_graph_bd` | Retrospective text-graph proxy, `T0 retrospective_text_graph_proxy_not_promoted`; replay text/graph signals do not survive as a promoted live archive method. |
-| `T10` | `T10_circuitfusion_multimodal_bd` | Scaffolded. |
+| `T10` | `T10_circuitfusion_multimodal_bd` | Retrospective multimodal proxy, `T0 retrospective_multimodal_proxy_not_promoted`; Qwen, DeepGate, RF/DeepGate, and AURORA/raw evidence does not justify a primary multimodal archive spend. |
 | `T11` | `T11_mgvga_contrastive_bd` | Completed replay diagnostic, `T1 near_classic_replay_lead`; top-64/weighted structural contrastive descriptors improve HV by +1.82% but still trail lexical direct front hits. |
 | `T12` | `T12_lineage_repair_bd` | Retrospective synthesis, `T0 retrospective_direct_repair_retired`; T31/T49/T51/T59 evidence retires direct repair and short feedback while keeping T51 as recovery context. |
 | `T13` | `T13_aurora_incremental_autoencoder_bd` | Completed replay diagnostic; raw implementation features are `T1 near_classic_replay_lead`, but PCA/RFF/incremental bottlenecks are `T0 diagnostic`. |

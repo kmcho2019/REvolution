@@ -6133,3 +6133,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: do not spend on exact primary text-graph archive axes. Reopen only
   with true text-graph training, secondary archive use, or front-rescue memory
   contribution evidence.
+
+## 2026-06-26T23:15:00Z - T10 Multimodal Proxy Retrospective Closed
+
+- Converted `T10_circuitfusion_multimodal_bd` from a scaffold into a
+  `T0 retrospective_multimodal_proxy_not_promoted` evidence package.
+- Used measured T33 Qwen text/netlist, T95 official DeepGate, T96 RF/DeepGate
+  hybrid, and T99 AURORA/raw implementation-feature evidence instead of
+  launching a fresh live run.
+- Recorded the key distinction: this closes the cheap multimodal proxy path,
+  but it does not claim a true CircuitFusion reproduction or functional-sketch
+  modality.
+- Added T10-local methodology, results, manifest, commands, evidence/gate
+  tables, copied figures, source hashes, and visual inspection notes.
+- Decision: do not spend on exact primary multimodal proxy axes. Reopen only
+  with a real functional-sketch modality, trained cross-modal objective, or
+  secondary memory/reporting role.

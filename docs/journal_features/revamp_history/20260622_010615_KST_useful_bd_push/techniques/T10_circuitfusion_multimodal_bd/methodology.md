@@ -6,59 +6,58 @@ Fuse RTL text, mapped graph structure, and lightweight functional summaries to
 test whether multimodal circuit representations are more useful than any
 single modality for QD archives.
 
+This package is a retrospective proxy audit. It does not reproduce
+CircuitFusion and does not train a multimodal hardware foundation model.
+
 ## Inputs
 
-- Candidate RTL and fixed benchmark metadata.
-- Canonical RTL text view.
-- Mapped graph or AIG view.
-- Fixed non-reward functional sketches, such as random-vector output sketches
-  or Boolean summaries, generated without comparing to expected outputs.
+- T33 Qwen3 canonical RTL and netlist text-view evidence.
+- T95 official DeepGate pooled synthesized-netlist evidence.
+- T96 RF/DeepGate hybrid evidence combining RTL-native model-state,
+  structural branching, and DeepGate netlist embedding axes.
+- T99 raw implementation-feature evidence from the AURORA-style lane.
 
 Descriptor fitting excludes final PPA, reference PPA, fitness, hypervolume,
 Pareto labels, and functional pass/fail labels.
 
-## Preprocessing
+## Proxy Modalities
 
-1. Produce text, graph, and functional-sketch records for each unique
-   canonical netlist.
-2. Normalize each modality independently.
-3. Record missing modality reasons: text parse, graph conversion, sketch
-   timeout, or dependency failure.
-4. Freeze train/replay splits before fitting projections.
+| Modality | Measured Proxy | Source |
+| --- | --- | --- |
+| RTL/code text | Qwen3 canonical RTL and netlist embeddings | T33 |
+| Synthesized netlist graph | Official DeepGate pooled AIG/cone embeddings | T95 |
+| RTL-native model state | MasterRTL RF timing leaf IDs and branching | T83/T96 |
+| Implementation structure | Comb/adder/cell-count features | T99 |
+| Functional sketch | Not implemented | none |
 
 ## Descriptor
 
-Build one descriptor per modality and one fused descriptor:
+The measured fused descriptors are compact concatenations of existing
+non-PPA axes:
 
-- text: Qwen or hashed RTL/summary projection with identifier controls;
-- graph: motif/pathlet, DeepGate surrogate, or text-graph pooled embedding;
-- function: fixed-stimulus output sketch, toggle sketch, or Boolean hash;
-- fusion: concatenate normalized modality embeddings, then fit PCA, CCA, or a
-  shallow autoencoder using only non-PPA reconstruction or cross-modal losses.
+- T96: `source_aligned_rf_timing_leaf_ids`,
+  `source_aligned_masterrtl_branching`, and `deepgate_pool_pc0`.
+- T99: `comb_ratio`, `adder_ratio`, and `cell_count_log`.
 
-Report modality ablations so a fused win can be explained.
+T96 is the closest multimodal proxy because it combines an RTL-native
+pretrained model-state axis, an RTL structural axis, and a synthesized-netlist
+encoder axis in a live QD screen.
 
 ## Archive Mapping
 
-Use CVT over the fused embedding as the primary archive. Use fixed 2D PCA for
-figures and compare against single-modality archives with the same cell count.
+The live proxy screens use the same delayed high-exploit QD substrate as their
+source packages. Figures are copied from source visualizations instead of
+recomputing descriptor cells.
 
-## Parent Selection Coupling
+## Leakage Exclusions
 
-Only candidates with enough modalities for the frozen descriptor schema can
-occupy the multimodal archive. Missing-modality rates are part of the validity
-and runtime report.
+The source packages exclude final PPA, reference PPA, hypervolume, Pareto
+rank, pass/fail labels, problem identity, and model identity from descriptor
+inputs. T10 preserves those decisions and uses PPA only for retrospective
+scoring.
 
-## Dependency Plan
+## Reopen Rule
 
-Start with concatenated deterministic vectors. Escalate to learned fusion only
-if deterministic fusion reaches a non-collapsed diagnostic and dependency cost
-is justified.
-
-## Expected Outputs
-
-- `tables/modality_manifest.csv`
-- `tables/fusion_ablation.csv`
-- `tables/missing_modality_funnel.csv`
-- `figures/fusion_projection.png`
-- `figures/modality_ablation.png`
+Reopen T10 only with a real fixed functional-sketch modality, a trained
+cross-modal objective, or a secondary archive/reporting role that improves
+front creation without replacing classic hill climbing.
