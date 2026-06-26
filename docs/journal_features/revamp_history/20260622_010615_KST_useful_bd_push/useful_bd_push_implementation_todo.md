@@ -150,6 +150,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       candidate non-collapse checks before any live run.
 - [x] Design and test a narrow runtime MasterRTL RF timing-state descriptor
       hook before any live QD spend.
+- [ ] Replicate T83 RF leaf-ID structural delayed QD on seeds `1002` and
+      `1003` against existing matched classic baselines before considering it
+      for any larger RTLLM spend.
 - [ ] Refresh or supersede the 20260625 review bundle so it includes the
       auxiliary archive high-exploit, front-breadth, and depth negatives before
       using it for colleague-facing review.

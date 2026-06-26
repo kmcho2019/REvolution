@@ -5454,6 +5454,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: run the frozen eight-design `8x5` screen next; do not change axes,
   subset, seed, budget, or token settings after seeing outcomes.
 
+## 2026-06-26T08:44:00Z - T83 Seed Robustness Gate Preregistered
+
+- Added `preliminary_planning/20260626_rf_leafid_seed_robustness_gate/` to
+  replicate the closest current QD arm before considering any larger RTLLM
+  spend.
+- Frozen QD arm:
+  `masterrtl_rf_leafid_structural_delayed_8x5`, using
+  `source_aligned_rf_timing_leaf_ids`,
+  `source_aligned_masterrtl_branching`, and
+  `source_aligned_rtltimer_wire_density`.
+- Planned QD seeds: `1002` and `1003`, plus existing seed `1001`.
+- Reused classic baselines: existing `classic_revolution_8x5` seeds `1002`
+  and `1003` from
+  `exp/useful_bd_push/prelim_aux_archive_seed_replication_20260625_232854_UTC/live/`,
+  plus seed `1001` from the original encoder-config screen.
+- Decision rule: T83 remains unpromoted unless three-seed mean HV is
+  near-classic, coverage is preserved, and the no-`Prob135_m2014_q6b`
+  aggregate is not materially worse than classic.
+
 ## 2026-06-26T06:52:00Z - T84 RF Leaf-ID Front-Slot Delayed Screen Completed
 
 - Ran `masterrtl_rf_leafid_front_slot_delayed_8x5` on the frozen eight-design

@@ -33,6 +33,7 @@ category representatives, and top-10 mean-HV shortlist.
 | `20260626_front_guarded_qd_memory_probe/` | Test FG-QDM, a front-guarded auxiliary QD memory scheduler using the T26 SR descriptor as a search-policy probe. | Warmup-4 smoke complete; memory lanes fire, but classic wins mean HV and T85 is not promoted |
 | `../techniques/T86_front_guarded_memory_controls/` | Test whether FG-QDM SR memory beats a deterministic random-memory control before any verified-descriptor swap. | Completed; random memory slightly beats SR memory but both trail classic |
 | `../techniques/T87_front_guarded_rtl_native_memory/` | Swap FG-QDM to the registered source-aligned RTL shape-density descriptor after SR memory fails the random-memory control. | Completed smoke; negative, with zero valid-PPA memory-lane children |
+| `20260626_rf_leafid_seed_robustness_gate/` | Replicate T83's closest single-seed RF leaf-ID structural delayed QD arm on seeds `1002` and `1003` using existing matched classic baselines. | Preregistered; QD seeds pending |
 
 ## Current Rule
 
