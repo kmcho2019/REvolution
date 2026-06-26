@@ -133,9 +133,11 @@ uv run python scripts/report_common_evaluation_contract.py \
   --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_deepgate_runtime_screen/visualizations/qd_ppa_viewer \
   --ppa-completeness docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_deepgate_runtime_screen/analysis/ppa_completeness.csv \
   --pareto-problem-metrics docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_deepgate_runtime_screen/analysis/pareto_analysis/backend_problem_metrics.csv \
+  --backend-run classic_revolution_8x5=exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/classic_revolution_8x5/seed_1001/openai_gpt-oss-120b \
+  --backend-run deepgate_pooled_pc3_8x5=exp/useful_bd_push/prelim_deepgate_runtime_screen_20260626_113100_UTC/live/deepgate_pooled_pc3_8x5/seed_1001/openai_gpt-oss-120b \
   --seed 1001 \
   --budget-shape 8x5 \
   --method-family classic_revolution_8x5=classic \
-  --method-family deepgate_pooled_pc3_8x5=deepgate \
+  --method-family deepgate_pooled_pc3_8x5=encoder \
   --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_deepgate_runtime_screen/tables
 ```

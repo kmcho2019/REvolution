@@ -139,7 +139,11 @@ Use `scripts/report_common_evaluation_contract.py` to generate the normalized
 `--pareto-problem-metrics analysis/pareto_analysis/backend_problem_metrics.csv`
 when that file exists so paper-facing HV, Pareto point count, and
 reference-beating count stay aligned with the deduplicated Pareto analysis
-report.
+report. Pass `--backend-run method_key=exp/.../backend_root` for each method
+when `generation_log.jsonl` artifacts are available. That fills
+`generated_count`, `syntax_valid_count`, `functional_count`,
+`synthesis_valid_count`, and `runtime_seconds` from the recorded generation
+logs.
 
 The exporter is intentionally conservative. If a method has no honest
 descriptor projection in the viewer, its passive-archive columns are
@@ -154,11 +158,12 @@ in that case. Native warmup-only cell ids remain viewer provenance and are not
 counted as final passive archive occupancy.
 
 The current T94, T95, T96, and T99 packages include hash-backed QD passive
-archive rows. T99 also includes posthoc classic projection into the QD archive
-space, so both T99 and classic passive archive rows are
-canonical-netlist-deduplicated. T94/T95/T96 classic passive archive fields
-remain `not_available` because those DeepGate/RF-DeepGate viewers intentionally
-avoid recomputing official descriptor cells for classic candidates.
+archive rows and generation-log-backed validity/runtime columns. T99 also
+includes posthoc classic projection into the QD archive space, so both T99 and
+classic passive archive rows are canonical-netlist-deduplicated.
+T94/T95/T96 classic passive archive fields remain `not_available` because
+those DeepGate/RF-DeepGate viewers intentionally avoid recomputing official
+descriptor cells for classic candidates.
 
 ## Promotion Use
 

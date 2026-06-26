@@ -5984,3 +5984,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   those viewers intentionally avoid recomputing official DeepGate/RF-DeepGate
   descriptor cells for classic candidates. T99 has canonical-deduplicated
   passive archive rows for both T99 and classic.
+
+## 2026-06-26T19:45:00Z - Common Validity Funnel Columns Populated
+
+- Extended `scripts/report_common_evaluation_contract.py` so each method can
+  pass a backend run root with `--backend-run method_key=exp/...`.
+- The common exporter now fills `generated_count`, `syntax_valid_count`,
+  `functional_count`, `synthesis_valid_count`, and `runtime_seconds` from
+  each problem's `generation_log.jsonl`.
+- Regenerated T94, T95, T96, and T99 common tables. The shared classic screen
+  now reports `384` generated, `371` syntax-valid, `196` functional,
+  `196` synthesis-valid, `191` valid-PPA candidates, and `8361.05` seconds
+  of aggregate logged problem runtime.
+- The QD/encoder arms now expose the same funnel fields: T94 DeepGate
+  `384/368/184/184/180`, T95 DeepGate delayed `384/374/206/206/200`,
+  T96 RF/DeepGate hybrid `384/375/203/203/202`, and T99 AURORA raw
+  `384/368/176/176/172`.
+- Marked the common-surface validity/PPA/HV/duplicate/archive/runtime reporting
+  TODO complete for the current T94 through T99 preliminary packages.

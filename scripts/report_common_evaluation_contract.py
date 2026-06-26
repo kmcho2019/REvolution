@@ -13,6 +13,9 @@ from typing import Any
 
 
 NOT_AVAILABLE = "not_available"
+SYNTAX_BLOCKING_STATUSES = ("failed_format", "failed_diff", "failed_syntax")
+FUNCTIONAL_BLOCKING_STATUSES = (*SYNTAX_BLOCKING_STATUSES, "failed_functionality")
+SYNTHESIS_VALID_STATUSES = ("success", "failed_synthesis_functionality")
 
 METHOD_FIELDS = [
     "method_key",
@@ -156,6 +159,63 @@ def read_pareto_metrics(path: Path | None) -> dict[tuple[str, str, str], dict[st
     return {
         (row["backend"], row["benchmark"], row["problem"]): row
         for row in read_csv(path)
+    }
+
+
+def parse_backend_runs(values: list[str]) -> dict[str, Path]:
+    roots: dict[str, Path] = {}
+    for value in values:
+        method, path = value.split("=", 1)
+        assert method
+        root = Path(path)
+        assert root.is_dir()
+        roots[method] = root
+    return roots
+
+
+def run_metrics(
+    roots: dict[str, Path],
+    method: str,
+    benchmark: str,
+    problem: str,
+) -> dict[str, str]:
+    if method not in roots:
+        return {
+            "generated_count": NOT_AVAILABLE,
+            "syntax_valid_count": NOT_AVAILABLE,
+            "functional_count": NOT_AVAILABLE,
+            "synthesis_valid_count": NOT_AVAILABLE,
+            "runtime_seconds": NOT_AVAILABLE,
+            "notes": "",
+        }
+
+    path = roots[method] / benchmark / problem / "generation_log.jsonl"
+    assert path.is_file()
+    generated = syntax = functional = synthesis = 0
+    runtime = 0.0
+    for line in path.read_text(encoding="utf-8").splitlines():
+        row = json.loads(line)
+        assert isinstance(row, dict)
+        runtime += float(row["runtime_seconds"])
+        candidates = row["generated_candidates"]
+        assert isinstance(candidates, list)
+        generated += len(candidates)
+        for candidate in candidates:
+            assert isinstance(candidate, dict)
+            status = str(candidate["status"])
+            if status not in SYNTAX_BLOCKING_STATUSES:
+                syntax += 1
+            if status not in FUNCTIONAL_BLOCKING_STATUSES:
+                functional += 1
+            if status in SYNTHESIS_VALID_STATUSES:
+                synthesis += 1
+    return {
+        "generated_count": fmt(generated),
+        "syntax_valid_count": fmt(syntax),
+        "functional_count": fmt(functional),
+        "synthesis_valid_count": fmt(synthesis),
+        "runtime_seconds": fmt(runtime),
+        "notes": "generation_log_counts",
     }
 
 
@@ -436,6 +496,7 @@ def metric_rows(
     dataset: dict[str, Any],
     completeness: dict[tuple[str, str], dict[str, str]],
     pareto_metrics: dict[tuple[str, str, str], dict[str, str]],
+    backend_roots: dict[str, Path],
     seed: str,
     budget_shape: str,
     method_families: dict[str, str],
@@ -478,6 +539,9 @@ def metric_rows(
 
         method_covered = "yes" if method_samples else "no"
         notes = [passive["notes"]] if passive["notes"] else []
+        runtime = run_metrics(backend_roots, method, benchmark, problem)
+        if runtime["notes"]:
+            notes.append(runtime["notes"])
         unique_count = unique_hash_count(method_samples)
         if unique_count == NOT_AVAILABLE and method_samples:
             notes.append("valid_netlist_hash_missing")
@@ -492,10 +556,10 @@ def metric_rows(
                 "benchmark": benchmark,
                 "problem": problem,
                 "budget_shape": budget_shape,
-                "generated_count": NOT_AVAILABLE,
-                "syntax_valid_count": NOT_AVAILABLE,
-                "functional_count": NOT_AVAILABLE,
-                "synthesis_valid_count": NOT_AVAILABLE,
+                "generated_count": runtime["generated_count"],
+                "syntax_valid_count": runtime["syntax_valid_count"],
+                "functional_count": runtime["functional_count"],
+                "synthesis_valid_count": runtime["synthesis_valid_count"],
                 "valid_ppa_count": fmt(len(method_samples)),
                 "unique_valid_netlist_count": unique_count,
                 "pareto_point_count": fmt(pareto_point_count),
@@ -514,7 +578,7 @@ def metric_rows(
                 "reference_ppa_valid": gate["reference_ppa_valid"],
                 "comparison_status": comparison_status,
                 "valid_ppa_yield_status": gate["valid_ppa_yield_status"],
-                "runtime_seconds": NOT_AVAILABLE,
+                "runtime_seconds": runtime["runtime_seconds"],
                 "notes": ";".join(notes),
             }
         )
@@ -538,6 +602,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--budget-shape", required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--pareto-problem-metrics", type=Path)
+    parser.add_argument("--backend-run", action="append", default=[])
     parser.add_argument("--method-family", action="append", default=[])
     return parser.parse_args(argv)
 
@@ -551,6 +616,7 @@ def main(argv: list[str] | None = None) -> int:
         for row in read_csv(args.ppa_completeness)
     }
     pareto_metrics = read_pareto_metrics(args.pareto_problem_metrics)
+    backend_roots = parse_backend_runs(args.backend_run)
     method_families = parse_method_families(args.method_family)
 
     method_rows = []
@@ -561,6 +627,7 @@ def main(argv: list[str] | None = None) -> int:
             read_json(path),
             completeness,
             pareto_metrics,
+            backend_roots,
             args.seed,
             args.budget_shape,
             method_families,

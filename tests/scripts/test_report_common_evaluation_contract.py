@@ -114,6 +114,7 @@ def test_common_evaluation_contract_dedupes_canonical_netlists(tmp_path: Path) -
     dataset_dir.mkdir(parents=True)
     completeness = tmp_path / "ppa_completeness.csv"
     output_dir = tmp_path / "tables"
+    qd_run_root = tmp_path / "qd_run"
 
     dataset = _dataset()
     samples = dataset["samples"]  # type: ignore[index]
@@ -153,6 +154,7 @@ def test_common_evaluation_contract_dedupes_canonical_netlists(tmp_path: Path) -
             }
         ],
     )
+    _write_generation_log(qd_run_root / "RTLLM" / "Prob001" / "generation_log.jsonl")
 
     assert (
         main(
@@ -169,6 +171,8 @@ def test_common_evaluation_contract_dedupes_canonical_netlists(tmp_path: Path) -
                 "classic_revolution_8x5=classic",
                 "--method-family",
                 "qd_method=encoder",
+                "--backend-run",
+                f"qd_method={qd_run_root}",
                 "--output-dir",
                 str(output_dir),
             ]
@@ -178,12 +182,17 @@ def test_common_evaluation_contract_dedupes_canonical_netlists(tmp_path: Path) -
 
     rows = _read_csv(output_dir / "method_problem_seed_metrics.csv")
     by_method = {row["method_key"]: row for row in rows}
+    assert by_method["qd_method"]["generated_count"] == "5"
+    assert by_method["qd_method"]["syntax_valid_count"] == "4"
+    assert by_method["qd_method"]["functional_count"] == "3"
+    assert by_method["qd_method"]["synthesis_valid_count"] == "3"
     assert by_method["qd_method"]["unique_valid_netlist_count"] == "2"
     assert by_method["qd_method"]["passive_archive_qd_score"] == "1.9"
     assert by_method["qd_method"]["passive_archive_coverage"] == "0.5"
     assert by_method["qd_method"]["passive_archive_qd_auc"] == "1.1"
     assert by_method["qd_method"]["passive_archive_coverage_auc"] == "0.375"
-    assert by_method["qd_method"]["notes"] == "canonical_netlist_dedup"
+    assert by_method["qd_method"]["runtime_seconds"] == "12.5"
+    assert by_method["qd_method"]["notes"] == "canonical_netlist_dedup;generation_log_counts"
 
     passive_rows = _read_csv(output_dir / "passive_archive_metrics.csv")
     passive_by_method = {row["method_key"]: row for row in passive_rows}
@@ -289,6 +298,22 @@ def _write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
+
+
+def _write_generation_log(path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    statuses = [
+        "success",
+        "failed_synthesis_functionality",
+        "failed_functionality",
+        "failed_syntax",
+        "success",
+    ]
+    row = {
+        "runtime_seconds": 12.5,
+        "generated_candidates": [{"status": status} for status in statuses],
+    }
+    path.write_text(json.dumps(row) + "\n", encoding="utf-8")
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:

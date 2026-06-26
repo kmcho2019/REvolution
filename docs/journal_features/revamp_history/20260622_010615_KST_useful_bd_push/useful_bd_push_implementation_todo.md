@@ -85,7 +85,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Phase 03.1 viewers and deduplicated Pareto-analysis metrics.
 - [x] Add canonical netlist hash duplicate suppression to Phase 03.1 common
       passive archive tables for T94, T95, T96, and T99.
-- [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime
+- [x] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime
       reporting.
 - [ ] Add passive archive scoring for classic and every QD method.
 - [ ] Add global PPA hypervolume, Pareto-cell count, Pareto spread, unique

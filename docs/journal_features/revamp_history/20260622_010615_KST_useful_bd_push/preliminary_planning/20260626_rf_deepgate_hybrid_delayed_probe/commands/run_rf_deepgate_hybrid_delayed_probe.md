@@ -78,9 +78,11 @@ uv run python scripts/report_common_evaluation_contract.py \
   --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/visualizations/qd_ppa_viewer \
   --ppa-completeness docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/analysis/ppa_completeness.csv \
   --pareto-problem-metrics docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/analysis/pareto_analysis/backend_problem_metrics.csv \
+  --backend-run classic_revolution_8x5=exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/classic_revolution_8x5/seed_1001/openai_gpt-oss-120b \
+  --backend-run rf_deepgate_hybrid_delayed_8x5=exp/useful_bd_push/prelim_rf_deepgate_hybrid_delayed_20260626_125819_UTC/live/rf_deepgate_hybrid_delayed_8x5/seed_1001/openai_gpt-oss-120b \
   --seed 1001 \
   --budget-shape 8x5 \
   --method-family classic_revolution_8x5=classic \
-  --method-family rf_deepgate_hybrid_delayed_8x5=hybrid_encoder \
+  --method-family rf_deepgate_hybrid_delayed_8x5=encoder \
   --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/tables
 ```
