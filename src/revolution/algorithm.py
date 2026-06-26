@@ -1042,6 +1042,10 @@ class EoHEngine:
         """Return whether source-aligned MasterRTL/RTL-Timer metrics are needed."""
         return False
 
+    def _requires_source_aligned_rf_timing_metrics(self) -> bool:
+        """Return whether source-aligned RF timing metrics are needed."""
+        return False
+
     def _extract_candidate_rtl_metrics(
         self,
         cand: Heuristic,
@@ -1100,7 +1104,9 @@ class EoHEngine:
         if not self._requires_source_aligned_descriptor_metrics():
             return {}
         if self.source_aligned_descriptor_evaluator is None:
-            self.source_aligned_descriptor_evaluator = SourceAlignedRTLDescriptorEvaluator()
+            self.source_aligned_descriptor_evaluator = SourceAlignedRTLDescriptorEvaluator(
+                include_rf_timing=self._requires_source_aligned_rf_timing_metrics()
+            )
         return self.source_aligned_descriptor_evaluator.extract_metrics(
             code_file_path=cand.code_file_path,
             top_module_name=top_module_name,

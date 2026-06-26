@@ -148,7 +148,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Pre-register a validated MasterRTL pretrained model-state descriptor
       probe with upstream-weight loading, schema assertions, and generated-
       candidate non-collapse checks before any live run.
-- [ ] Design and test a narrow runtime MasterRTL RF timing-state descriptor
+- [x] Design and test a narrow runtime MasterRTL RF timing-state descriptor
       hook before any live QD spend.
 - [ ] Refresh or supersede the 20260625 review bundle so it includes the
       auxiliary archive high-exploit, front-breadth, and depth negatives before
@@ -610,9 +610,21 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       eight-design `8x5` screen.
 - [x] Validate, package, and decide the adaptive sparse-front probe before any
       full RTLLM spend.
-- [ ] Decide whether to implement a meaningfully different delayed archive
+- [x] Decide whether to implement a meaningfully different delayed archive
       activation mechanism or write the current family as a rigorous negative
-      screen.
+      screen: delayed activation and archive-stagnation activation are both
+      packaged diagnostic negatives, so simple MasterRTL auxiliary archive
+      timing is retired.
+- [x] Run the T81 offline MasterRTL RF timing model-state gate with pinned
+      pretrained RF timing weights and generated-candidate non-collapse
+      metrics.
+- [x] Add the T82 runtime descriptor hook for
+      `source_aligned_rf_timing_state_3d` and verify one full evaluator smoke.
+- [ ] Run a tiny live vLLM smoke for
+      `source_aligned_rf_timing_state_3d`, including archive insertion,
+      descriptor-value logging, and artifact checks.
+- [ ] If the tiny smoke passes, run the frozen eight-design `8x5` screen before
+      considering any full RTLLM spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation
@@ -621,8 +633,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Run `ruff check` on touched files.
 - [x] Run `python -m pyright` on touched source/report scripts.
 - [x] Run `git diff --check`.
-- [ ] Record blocked dependency or live-run smoke results explicitly.
-- [ ] For dependency blockers, try `uv add`, isolated uv env, source checkout,
+- [x] Record blocked dependency or live-run smoke results explicitly through
+      the latest T82 runtime-hook package; live QD smoke remains pending.
+- [x] For dependency blockers, try `uv add`, isolated uv env, source checkout,
       and submodule decision before stopping a method.
 - [x] Record vLLM endpoint, model id, token budgets, and timeout/preflight
       status for live runs.

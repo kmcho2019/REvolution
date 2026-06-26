@@ -5219,3 +5219,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   is a timing-path descriptor candidate, not a universal RTL descriptor.
 - Decision: treat T81 as `T0_model_state_gate_positive_not_live`. It supports
   a narrow runtime-hook design, not a PPA or full-RTLLM promotion claim.
+
+## 2026-06-26T04:23:00Z - T82 RF Timing Runtime Hook
+
+- Added `T82_masterrtl_rf_timing_runtime_hook` as the implementation gate that
+  turns the T81 RF timing model-state signal into a selectable live descriptor
+  profile.
+- New profile:
+  `source_aligned_rf_timing_state_3d`, using RF timing leaf rows, RF timing
+  path count, and source-aligned MasterRTL branching.
+- Added `scripts/extract_masterrtl_rf_timing_metrics.py` to run the MasterRTL
+  RF timing path under the isolated
+  `exp/useful_bd_push/envs/masterrtl_rf_timing/` uv environment with
+  `scikit-learn==1.3.0` and `numpy==1.26.4`.
+- Updated both the runtime `CandidateEvaluator` path and the live `QDEngine`
+  source-aligned extraction path so selecting the RF timing profile actually
+  enables RF timing metrics during live runs.
+- Full evaluator smoke on `Prob015_multi_pipe_8bit` emitted `51` timing paths,
+  `14` unique RF leaf rows, `161` unique RF leaf IDs, and no no-path fallback.
+- Decision: T82 is `T0_runtime_hook_positive_not_live_screened`. It clears the
+  implementation blocker but is not PPA evidence. The next gate is a tiny live
+  vLLM smoke before any frozen eight-design `8x5` screen.

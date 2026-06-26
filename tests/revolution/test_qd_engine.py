@@ -1441,6 +1441,48 @@ def test_qd_engine_builds_grid_quantile_from_journal_profile(tmp_path, monkeypat
     assert engine.success_archive.warmup_successes == 8
 
 
+def test_qd_engine_enables_source_aligned_rf_timing_metrics(tmp_path, monkeypatch):
+    seen: dict[str, bool] = {}
+
+    class FakeSourceAlignedEvaluator:
+        def __init__(self, *, include_rf_timing: bool = False) -> None:
+            seen["include_rf_timing"] = include_rf_timing
+
+        def extract_metrics(self, *, code_file_path, top_module_name):
+            return {"source_aligned_rf_timing_leaf_rows": 3.0}
+
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    monkeypatch.setattr(
+        "revolution.algorithm.SourceAlignedRTLDescriptorEvaluator",
+        FakeSourceAlignedEvaluator,
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="source_aligned_rf_timing_state_3d",
+    )
+    cand = Heuristic("h", "module m; endmodule", "", status="success")
+    cand.code_file_path = tmp_path / "code.sv"
+
+    metrics = engine._extract_candidate_source_aligned_metrics(
+        cand,
+        top_module_name="m",
+    )
+
+    assert engine._requires_source_aligned_descriptor_metrics() is True
+    assert engine._requires_source_aligned_rf_timing_metrics() is True
+    assert seen["include_rf_timing"] is True
+    assert metrics == {"source_aligned_rf_timing_leaf_rows": 3.0}
+
+
 def test_qd_engine_grid_quantile_warmup_budget_uses_success_pool(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "revolution.algorithm.EoHEngine.load_problem_description",

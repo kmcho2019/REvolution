@@ -59,7 +59,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T58 preserves coverage and improves yield/best score with frozen T11 PCA4 under T51, but still loses HV, HV-AUC, and front breadth. | Stop primary graph-coordinate live archive tests unless the next method uses graph features as a secondary lane or trains a new encoder objective. |
 | `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
-| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T72 lands near classic on mean HV; T73 improves valid-PPA yield and archive occupancy but loses HV/Pareto breadth; T74 regresses; T75 improves over T73/T74 but still trails classic; T76 verifies model loading; T77 blocks direct Area-head leaves; T81 finds noncollapsed RF timing model states. | Design a narrow RF timing-state runtime hook before any live spend. |
+| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T72 lands near classic on mean HV; T73 improves valid-PPA yield and archive occupancy but loses HV/Pareto breadth; T74 regresses; T75 improves over T73/T74 but still trails classic; T76 verifies model loading; T77 blocks direct Area-head leaves; T81 finds noncollapsed RF timing model states; T82 exposes them through the live descriptor registry. | Run a tiny live RF timing-state smoke before any frozen screen. |
 | `L8` budget and benchmark shape | Test whether wide/shallow budgets and saturated tasks hide QD value. | T78 shows existing T75 `12 x 3` archives still mature late, but completed T79 is diagnostic-negative for exact T75. | Do not use depth as an explanatory escape for exact T75; only reopen with a changed descriptor/coupling mechanism or a registered new shape. |
 
 ## Lane Scorecard
@@ -73,7 +73,7 @@ and the next artifact or branch. Use these tags consistently:
 | `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, T46 PCA4 projection, and T58 T51/T11-PCA4 cross-lane test | T58 is measured `T0 diagnostic_no_promotion`: it preserves coverage and improves yield/best score, but loses classic/T51 on HV, HV-AUC, and front breadth. | Retire frozen T11 PCA4 as a primary archive geometry. | Reopen only as a secondary/reporting lane or with a trained encoder objective that targets front creation without PPA leakage. |
 | `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
-| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, T68 upstream verification, T69 open-Yosys preprocessing, T70 generated RTL smoke, T71 source-aligned feature map, T72 source-aligned cell QD, T73 shape-density QD, T74 shape-density front-slot hybrid, T75 shape-density front-pressure QD, T76 MasterRTL pretrained model gate, T77 Area leaf variation gate, T80 raw structural gate, and T81 RF timing state gate | T72 is `T1 near_classic_not_promoted`; T73 is `T0 positive_diagnostic_not_promoted`; T74 is `T0 diagnostic_regression_not_promoted`; T75 is `T0 positive_diagnostic_not_promoted`; T76 is `T0 verification_gate_partial`; T77 is `T0_variation_gate_negative`; T81 is `T0_model_state_gate_positive_not_live`. | T75 improves over T73/T74 but does not close the classic mean-HV/Pareto gap; T77 shows direct pretrained Area leaves collapse; T81 shows RF timing leaves do not collapse but only cover timing-path candidates. | Design a runtime RF timing-state descriptor hook with explicit no-clock handling before any live spend. |
+| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, T68 upstream verification, T69 open-Yosys preprocessing, T70 generated RTL smoke, T71 source-aligned feature map, T72 source-aligned cell QD, T73 shape-density QD, T74 shape-density front-slot hybrid, T75 shape-density front-pressure QD, T76 MasterRTL pretrained model gate, T77 Area leaf variation gate, T80 raw structural gate, T81 RF timing state gate, and T82 RF timing runtime hook | T72 is `T1 near_classic_not_promoted`; T73 is `T0 positive_diagnostic_not_promoted`; T74 is `T0 diagnostic_regression_not_promoted`; T75 is `T0 positive_diagnostic_not_promoted`; T76 is `T0 verification_gate_partial`; T77 is `T0_variation_gate_negative`; T81 is `T0_model_state_gate_positive_not_live`; T82 is `T0_runtime_hook_positive_not_live_screened`. | T75 improves over T73/T74 but does not close the classic mean-HV/Pareto gap; T77 shows direct pretrained Area leaves collapse; T81 shows RF timing leaves do not collapse but only cover timing-path candidates; T82 clears the runtime-hook blocker. | Run a tiny live RF timing-state smoke before any frozen `8x5` screen. |
 | `L8` | T78 budget-depth audit and T79 ablation | T79 diagnostic-negative. | Exact T75 does not benefit more from depth than classic on the frozen eight-design subset. | Reopen only with a changed descriptor/coupling mechanism or a separately registered `4 x 11`/`16 x 2` follow-up. |
 
 ## Current Lineage
@@ -179,6 +179,7 @@ flowchart LR
     BV[T77 Area leaf variation gate]
     BV2[T80 structural mix gate]
     BV3[T81 RF timing state gate]
+    BV4[T82 RF timing runtime hook]
   end
 
   subgraph L8[L8 budget and benchmark shape]
@@ -266,6 +267,9 @@ flowchart LR
   BS --> BT
   BT --> BU
   BU --> BV
+  BV --> BV2
+  BU --> BV3
+  BV3 --> BV4
   BT --> BW
   BV --> BW
   BW --> BX
@@ -615,6 +619,11 @@ noncollapsed pretrained MasterRTL model-state signal on generated RTL, but it
 is not live evidence because no-clock candidates are skipped and no archive
 run has used the descriptor.
 
+T82 exposes that RF timing model-state signal as a live descriptor profile.
+The full evaluator smoke on one generated `Prob015_multi_pipe_8bit` candidate
+emits `51` timing paths, `14` unique RF leaf rows, `161` unique RF leaf IDs,
+and no no-path fallback. It is a runtime-hook result, not a QD/PPA result.
+
 T78 moves the budget-shape concern into a reproducible audit. In the existing
 T75 `12 x 3` logs, `9/13` archives still add or replace cells in generation
 `2` or later, mean occupied cells rise through generation `3`, and front-slot
@@ -658,7 +667,7 @@ unblocks it.
 | `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43, T58 | T58 completed the bounded T51/T11-PCA4 cross-lane test and failed promotion on HV/front breadth. | Stop exact frozen graph-coordinate primary archive tests. | Reopen only with secondary/reporting graph lanes or a trained encoder objective that improves front creation without PPA leakage. |
 | `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
-| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71, T72, T73, T74, T75, T76, T77, T80, T81 | T81 validates noncollapsed MasterRTL RF timing model-state leaves on generated timing-path candidates. | Design and test a narrow runtime RF timing-state descriptor hook. | A successor improves live front metrics without default-reference, PPA-leakage, or unverified-pretrained claims. |
+| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71, T72, T73, T74, T75, T76, T77, T80, T81, T82 | T82 exposes noncollapsed MasterRTL RF timing model-state leaves through a live descriptor profile. | Run a tiny live RF timing-state smoke, then only run the frozen `8x5` screen if archive and descriptor artifacts are clean. | A successor improves live front metrics without default-reference, PPA-leakage, or unverified-pretrained claims. |
 | `L8` budget and benchmark shape | T78, T79 | T79 is complete and diagnostic-negative for exact T75. | Reopen only with a changed descriptor/coupling mechanism or a registered `4 x 11`/`16 x 2` follow-up. | A successor shows QD benefits more than classic without hidden validity, reference-PPA, or subset-selection loopholes. |
 
 ## Branch Split Checklist

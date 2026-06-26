@@ -537,8 +537,19 @@ class QDEngine(EoHEngine):
 
     def _requires_source_aligned_descriptor_metrics(self) -> bool:
         return bool(
+            self._requires_source_aligned_rtl_metrics()
+            or self._requires_source_aligned_rf_timing_metrics()
+        )
+
+    def _requires_source_aligned_rtl_metrics(self) -> bool:
+        return bool(
+            descriptor_requirements(self._archive_axes()).get("requires_source_aligned_rtl")
+        )
+
+    def _requires_source_aligned_rf_timing_metrics(self) -> bool:
+        return bool(
             descriptor_requirements(self._archive_axes()).get(
-                "requires_source_aligned_rtl"
+                "requires_source_aligned_rf_timing"
             )
         )
 

@@ -25,6 +25,7 @@ the next gate.
 | `20260626_delayed_archive_activation_probe/` | Test whether passive early archive logging plus delayed archive pressure preserves classic-like hill climbing before QD activation. | Completed; close to high-exploit, still below classic and not promoted |
 | `20260626_archive_stagnation_activation_probe/` | Test whether archive pressure should activate only after passive archive cells and members stop growing. | Completed; trigger fired lightly, but HV regressed and not promoted |
 | `20260626_masterrtl_rf_timing_state_gate/` | Record the T81 MasterRTL pretrained RF timing model-state gate and decide whether it is ready for a live hook. | Completed offline; positive non-collapse gate, not a live QD result |
+| `20260626_masterrtl_rf_timing_runtime_hook/` | Record the T82 runtime hook that exposes RF timing model-state metrics as a live descriptor profile. | Completed implementation gate; live QD smoke still pending |
 
 ## Current Rule
 
@@ -128,9 +129,9 @@ promoted. Do not spend another run on this simple MasterRTL auxiliary archive
 timing family without a materially different mechanism.
 
 The current materially different lane is
-`20260626_masterrtl_rf_timing_state_gate/`, backed by
-`techniques/T81_masterrtl_rf_timing_state_gate/`. T81 reproduces MasterRTL's
-RF timing-path feature flow and shows noncollapsed model states on generated
-timing-path candidates: `13/19` candidates evaluate, `166` timing paths are
-captured, and the RF leaves produce `53` unique leaf rows. This is not a live
-QD run. It authorizes a narrow runtime-hook design, not final RTLLM spend.
+`20260626_masterrtl_rf_timing_runtime_hook/`, backed by
+`techniques/T82_masterrtl_rf_timing_runtime_hook/`. T82 exposes the
+noncollapsed T81 RF timing model-state signal as a live descriptor profile and
+passes a full evaluator smoke on one generated RTLLM candidate: `51` timing
+paths, `14` unique RF leaf rows, and `161` unique RF leaf IDs. This is not a
+live QD run. It authorizes a tiny live vLLM smoke, not final RTLLM spend.

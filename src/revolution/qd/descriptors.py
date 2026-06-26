@@ -224,6 +224,29 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
         "source_aligned_rtltimer_dff_density",
         "source_aligned_rtl",
     ),
+    "source_aligned_rf_timing_path_count": DescriptorDefinition(
+        "source_aligned_rf_timing_path_count",
+        "source_aligned_rf_timing",
+        transform="log1p",
+    ),
+    "source_aligned_rf_timing_leaf_rows": DescriptorDefinition(
+        "source_aligned_rf_timing_leaf_rows",
+        "source_aligned_rf_timing",
+        transform="log1p",
+    ),
+    "source_aligned_rf_timing_leaf_ids": DescriptorDefinition(
+        "source_aligned_rf_timing_leaf_ids",
+        "source_aligned_rf_timing",
+        transform="log1p",
+    ),
+    "source_aligned_rf_timing_no_path_flag": DescriptorDefinition(
+        "source_aligned_rf_timing_no_path_flag",
+        "source_aligned_rf_timing",
+    ),
+    "source_aligned_rf_timing_prediction_mean": DescriptorDefinition(
+        "source_aligned_rf_timing_prediction_mean",
+        "source_aligned_rf_timing",
+    ),
     "t11_runtime_pca_0": DescriptorDefinition("t11_runtime_pca_0", "yosys_graph"),
     "t11_runtime_pca_1": DescriptorDefinition("t11_runtime_pca_1", "yosys_graph"),
     "t11_runtime_pca_2": DescriptorDefinition("t11_runtime_pca_2", "yosys_graph"),
@@ -536,6 +559,16 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         "source_aligned_rtltimer_dff_density",
     }:
         return (0.0, 1.0)
+    if axis in {
+        "source_aligned_rf_timing_path_count",
+        "source_aligned_rf_timing_leaf_rows",
+        "source_aligned_rf_timing_leaf_ids",
+    }:
+        return (0.0, 5.0)
+    if axis == "source_aligned_rf_timing_no_path_flag":
+        return (0.0, 1.0)
+    if axis == "source_aligned_rf_timing_prediction_mean":
+        return (-1.0, 1.0)
     if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count", "wire_count_log_est"}:
         return (0.0, 16.0)
     if axis in {"logic_depth", "ff_depth"}:
@@ -701,6 +734,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         "requires_source_aligned_rtl": any(
             registry[axis].source_tool == "source_aligned_rtl" for axis in axes
         ),
+        "requires_source_aligned_rf_timing": any(
+            registry[axis].source_tool == "source_aligned_rf_timing" for axis in axes
+        ),
         "requires_auto_bd_hash": any(
             registry[axis].source_tool == "auto_bd_hash" for axis in axes
         ),
@@ -738,6 +774,9 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             "requires_graph_metrics": registry[axis].source_tool == "yosys_graph",
             "requires_source_aligned_rtl": registry[axis].source_tool
             == "source_aligned_rtl",
+            "requires_source_aligned_rf_timing": (
+                registry[axis].source_tool == "source_aligned_rf_timing"
+            ),
             "requires_auto_bd_motif": registry[axis].source_tool == "auto_bd_motif",
             "requires_auto_bd_stage_dumps": (
                 registry[axis].source_tool == "auto_bd_stage_dumps"

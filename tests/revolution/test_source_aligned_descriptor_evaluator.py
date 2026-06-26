@@ -88,6 +88,32 @@ def test_source_aligned_masterrtl_structural_profile_resolves_without_ppa() -> N
     ]
 
 
+def test_source_aligned_rf_timing_profile_resolves_without_ppa() -> None:
+    axes = resolve_descriptor_axes(
+        profile_name="source_aligned_rf_timing_state_3d",
+        explicit_axes=None,
+        descriptor_file=None,
+        archive_type="grid",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+    specs = resolve_grid_axis_specs(axes, num_cells=64, descriptor_file=None)
+
+    assert axes == [
+        "source_aligned_rf_timing_leaf_rows",
+        "source_aligned_rf_timing_path_count",
+        "source_aligned_masterrtl_branching",
+    ]
+    assert requirements["requires_source_aligned_rtl"] is True
+    assert requirements["requires_source_aligned_rf_timing"] is True
+    assert requirements["requires_ppa"] is False
+    assert [(spec.bins, spec.lower_bound, spec.upper_bound) for spec in specs] == [
+        (4, 0.0, 5.0),
+        (4, 0.0, 5.0),
+        (4, 0.0, 8.0),
+    ]
+
+
 def test_source_aligned_evaluator_projects_t72_axes(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -185,6 +211,69 @@ def test_source_aligned_evaluator_projects_empty_masterrtl_graph(
     assert metrics["source_aligned_masterrtl_seq_fraction"] == pytest.approx(0.0)
     assert metrics["source_aligned_masterrtl_mux_fraction"] == pytest.approx(0.0)
     assert metrics["source_aligned_rtltimer_wire_density"] == pytest.approx(1 / 8)
+
+
+def test_source_aligned_evaluator_projects_rf_timing_axes(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    code_path = tmp_path / "demo.sv"
+    code_path.write_text("module demo; endmodule\n", encoding="utf-8")
+    (tmp_path / "exp/external_repos/MasterRTL/vlg2ir").mkdir(parents=True)
+    (tmp_path / "exp/venvs/rtl_native_verify/bin").mkdir(parents=True)
+    (tmp_path / "exp/venvs/rtl_native_verify/bin/python").write_text("", encoding="utf-8")
+    (tmp_path / "exp/useful_bd_push/envs/masterrtl_rf_timing/bin").mkdir(parents=True)
+    (tmp_path / "exp/useful_bd_push/envs/masterrtl_rf_timing/bin/python").write_text("", encoding="utf-8")
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts/extract_masterrtl_rf_timing_metrics.py").write_text("", encoding="utf-8")
+    (tmp_path / "exp/external_repos/MasterRTL/ML_model/saved_model").mkdir(parents=True)
+    (tmp_path / "exp/external_repos/MasterRTL/ML_model/saved_model/rfr_model.pkl").write_text("", encoding="utf-8")
+    rtltimer_lib = tmp_path / "exp/external_repos/RTL-Timer/vlg2bog/scr_ys/lib/nangate45_sog.lib"
+    rtltimer_lib.parent.mkdir(parents=True)
+    rtltimer_lib.write_text("", encoding="utf-8")
+    evaluator = SourceAlignedRTLDescriptorEvaluator(
+        repo_root=tmp_path,
+        include_rf_timing=True,
+    )
+    monkeypatch.setattr(
+        evaluator,
+        "_run_masterrtl",
+        lambda code, top, out: {
+            "masterrtl_graph_keys": 4,
+            "masterrtl_graph_edges": 8,
+            "masterrtl_node_dict": 12,
+            "masterrtl_dff_bits": 2,
+            "masterrtl_operator_count": 6,
+            "masterrtl_mux_ops": 1,
+            "masterrtl_xor_ops": 1,
+            "rf_timing_path_count": 12,
+            "rf_timing_unique_leaf_rows": 5,
+            "rf_timing_unique_leaf_ids": 38,
+            "rf_timing_no_path_flag": 0,
+            "rf_timing_prediction_mean": 0.25,
+        },
+    )
+    monkeypatch.setattr(
+        evaluator,
+        "_run_rtltimer",
+        lambda code, top, out: {
+            "rtltimer_lines": 16,
+            "rtltimer_assigns": 1,
+            "rtltimer_wires": 4,
+            "rtltimer_dff_refs": 2,
+        },
+    )
+
+    metrics = evaluator.extract_metrics(code_file_path=code_path, top_module_name="demo")
+    values = extract_descriptor_values(
+        metrics,
+        ["source_aligned_rf_timing_leaf_rows", "source_aligned_rf_timing_path_count"],
+    )
+
+    assert values["source_aligned_rf_timing_leaf_rows"] == pytest.approx(math.log1p(5))
+    assert values["source_aligned_rf_timing_path_count"] == pytest.approx(math.log1p(12))
+    assert metrics["source_aligned_rf_timing_leaf_ids"] == pytest.approx(38)
+    assert metrics["source_aligned_rf_timing_no_path_flag"] == pytest.approx(0)
 
 
 def test_masterrtl_uses_candidate_local_parse_cwd(

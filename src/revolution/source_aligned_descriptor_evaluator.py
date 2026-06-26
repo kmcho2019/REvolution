@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import math
+import os
 import pickle
 import re
 import shlex
@@ -22,12 +24,19 @@ class SourceAlignedRTLDescriptorEvaluator:
         repo_root: Path | None = None,
         yosys_path: str = "yosys",
         timeout_seconds: int = 60,
+        include_rf_timing: bool = False,
     ) -> None:
         root = repo_root or Path(__file__).resolve().parents[2]
+        self.root = root
         self.yosys_path = yosys_path
         self.timeout_seconds = max(1, int(timeout_seconds))
-        self.master_vlg2ir = root / "exp/external_repos/MasterRTL/vlg2ir"
+        self.include_rf_timing = include_rf_timing
+        self.master_root = root / "exp/external_repos/MasterRTL"
+        self.master_vlg2ir = self.master_root / "vlg2ir"
         self.master_python = root / "exp/venvs/rtl_native_verify/bin/python"
+        self.rf_python = root / "exp/useful_bd_push/envs/masterrtl_rf_timing/bin/python"
+        self.rf_model = self.master_root / "ML_model/saved_model/rfr_model.pkl"
+        self.rf_timing_script = root / "scripts/extract_masterrtl_rf_timing_metrics.py"
         self.rtltimer_lib = (
             root / "exp/external_repos/RTL-Timer/vlg2bog/scr_ys/lib/nangate45_sog.lib"
         )
@@ -45,6 +54,10 @@ class SourceAlignedRTLDescriptorEvaluator:
         assert self.master_python.is_file(), f"missing MasterRTL python: {self.master_python}"
         assert self.master_vlg2ir.is_dir(), f"missing MasterRTL vlg2ir: {self.master_vlg2ir}"
         assert self.rtltimer_lib.is_file(), f"missing RTL-Timer library: {self.rtltimer_lib}"
+        if self.include_rf_timing:
+            assert self.rf_python.is_file(), f"missing RF timing python: {self.rf_python}"
+            assert self.rf_model.is_file(), f"missing MasterRTL RF timing model: {self.rf_model}"
+            assert self.rf_timing_script.is_file(), f"missing RF timing script: {self.rf_timing_script}"
         top = top_module_name or _infer_top(code_path)
 
         with tempfile.TemporaryDirectory(prefix="source_aligned_rtl_") as tmp:
@@ -65,7 +78,7 @@ class SourceAlignedRTLDescriptorEvaluator:
             branching = graph_edges / graph_keys
         operator_count = int(master["masterrtl_operator_count"])
         dff_bits = int(master["masterrtl_dff_bits"])
-        return {
+        metrics = {
             "masterrtl_operator_log_edges": math.log1p(graph_edges),
             "rtltimer_state_timing_class": float(_state_timing_class(dff_refs)),
             "source_aligned_masterrtl_graph_keys": float(graph_keys),
@@ -92,13 +105,16 @@ class SourceAlignedRTLDescriptorEvaluator:
             "source_aligned_rtltimer_wire_density": wires / lines,
             "source_aligned_rtltimer_dff_density": dff_refs / lines,
         }
+        if self.include_rf_timing:
+            metrics.update(_rf_timing_metrics(master))
+        return metrics
 
     def _run_masterrtl(
         self,
         code_path: Path,
         top: str,
         output_dir: Path,
-    ) -> dict[str, int]:
+    ) -> dict[str, int | float]:
         output_dir.mkdir(parents=True)
         raw_path = output_dir / "sog.v"
         clean_path = output_dir / "sog.clean.v"
@@ -136,11 +152,46 @@ class SourceAlignedRTLDescriptorEvaluator:
         with node_path.open("rb") as handle:
             node_dict = pickle.load(handle)
         structural_counts = _masterrtl_structural_counts(graph, node_dict)
+        rf_timing = (
+            self._run_rf_timing(parse_dir, name)
+            if self.include_rf_timing
+            else {}
+        )
         return {
             "masterrtl_graph_keys": len(graph),
             "masterrtl_graph_edges": sum(len(edges) for edges in graph.values()),
             "masterrtl_node_dict": len(node_dict),
             **structural_counts,
+            **rf_timing,
+        }
+
+    def _run_rf_timing(self, parse_dir: Path, stem: str) -> dict[str, int | float]:
+        output_path = parse_dir / f"{stem}_rf_timing_metrics.json"
+        self._run(
+            [
+                str(self.rf_python),
+                str(self.rf_timing_script),
+                "--master-root",
+                str(self.master_root),
+                "--parse-dir",
+                str(parse_dir),
+                "--stem",
+                stem,
+                "--model",
+                str(self.rf_model),
+                "--output",
+                str(output_path),
+            ],
+            env={**os.environ, "PYTHONHASHSEED": "0"},
+        )
+        payload = json.loads(output_path.read_text(encoding="utf-8"))
+        assert isinstance(payload, dict)
+        return {
+            "rf_timing_path_count": int(payload["path_count"]),
+            "rf_timing_unique_leaf_rows": int(payload["unique_leaf_rows"]),
+            "rf_timing_unique_leaf_ids": int(payload["unique_leaf_ids"]),
+            "rf_timing_no_path_flag": int(payload["no_path_flag"]),
+            "rf_timing_prediction_mean": float(payload["prediction_mean"]),
         }
 
     def _run_rtltimer(
@@ -178,10 +229,12 @@ class SourceAlignedRTLDescriptorEvaluator:
         args: list[str],
         *,
         cwd: Path | None = None,
+        env: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         result = subprocess.run(
             args,
             cwd=cwd,
+            env=env,
             text=True,
             capture_output=True,
             check=False,
@@ -273,6 +326,16 @@ def _ratio(numerator: int, denominator: int) -> float:
     if denominator == 0:
         return 0.0
     return numerator / denominator
+
+
+def _rf_timing_metrics(master: dict[str, int | float]) -> dict[str, float]:
+    return {
+        "source_aligned_rf_timing_path_count": float(master["rf_timing_path_count"]),
+        "source_aligned_rf_timing_leaf_rows": float(master["rf_timing_unique_leaf_rows"]),
+        "source_aligned_rf_timing_leaf_ids": float(master["rf_timing_unique_leaf_ids"]),
+        "source_aligned_rf_timing_no_path_flag": float(master["rf_timing_no_path_flag"]),
+        "source_aligned_rf_timing_prediction_mean": float(master["rf_timing_prediction_mean"]),
+    }
 
 
 def _state_timing_class(dff_refs: int) -> int:

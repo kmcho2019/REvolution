@@ -25,7 +25,7 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T58 completed the final bounded frozen T11 PCA4 primary-archive check and failed promotion on HV/front breadth. |
 | `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T59 failed promotion; the next method must change front-slot creation or use a secondary archive lane. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Short fail-pool feedback was insufficient; escalate only with measured source-level repair or role-separated emitters. |
-| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T81 finds noncollapsed MasterRTL RF timing model states; next design a narrow runtime hook before live spend. |
+| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T82 exposes noncollapsed MasterRTL RF timing model-state metrics through a live descriptor hook; next run a tiny live smoke before screen spend. |
 | `L8` | Budget and benchmark shape | Test whether the evaluation structure is too wide/shallow or too saturated for QD to show value. | T79 freezes the equal-candidate ablation; next run and package the live arms. |
 
 ## Lineage Graph
@@ -128,6 +128,7 @@ flowchart LR
     T77[T77 Area leaf variation gate]
     T80[T80 structural mix gate]
     T81[T81 RF timing state gate]
+    T82[T82 RF timing runtime hook]
   end
 
   subgraph budgetshape[L8 budget and benchmark shape]
@@ -219,6 +220,7 @@ flowchart LR
   T76 --> T77
   T77 --> T80
   T76 --> T81
+  T81 --> T82
   T75 --> T78
   T77 --> T78
   T78 --> T79
@@ -286,6 +288,7 @@ flowchart LR
 | T77 | `L7` | Generated-candidate variation gate for the source-faithful MasterRTL Area feature path and pretrained Area head. | `T0_variation_gate_negative`: `17/19` Area feature rows are unique, but predictions, leaf rows, and leaf IDs all collapse to one value. | `retire` Area-head leaves | Do not use direct pretrained Area leaves as a live BD; reproduce timing/power flows, retrain, or move to budget shape. |
 | T80 | `L7` | Raw MasterRTL structural-mix descriptor gate after the Area-head collapse. | `T0_descriptor_gate_positive_not_live`: generated candidates have noncollapsed structural rows and `8/16` cell occupancy. | `advance` only through a live hook | Use as a structural axis, but not as proof of pretrained model usefulness. |
 | T81 | `L7` | MasterRTL RF timing model-state gate using upstream timing-DAG/path features and the saved RF model. | `T0_model_state_gate_positive_not_live`: `13/19` candidates evaluate, `166` timing paths are captured, and RF leaves are noncollapsed (`53` leaf rows, `414` leaf IDs). | `advance` runtime-hook design | Define fixed BD coordinates from RF timing state plus a structural axis, with explicit no-clock handling before any live spend. |
+| T82 | `L7` | Runtime descriptor hook for MasterRTL RF timing model-state metrics. | `T0_runtime_hook_positive_not_live_screened`: one full evaluator smoke emits `51` timing paths, `14` unique RF leaf rows, and `161` unique RF leaf IDs. | `advance` tiny live smoke | Confirm archive insertion, descriptor logging, and artifact emission before any frozen `8x5` screen. |
 | T78 | `L8` | Retrospective budget-depth maturation audit over existing T75 `12 x 3` archive histories. | `T0_budget_hypothesis_support_not_live_ablation`: `9/13` archives keep filling or replacing cells in generation `2` or later, but no equal-budget shape comparison has run. | `advance` live budget ablation | Freeze a reference-complete medium-validity subset, then compare classic and the selected QD arm under `12 x 3`, `8 x 5`, and `6 x 7`. |
 | T79 | `L8` | Pre-registered equal-budget shape ablation protocol over the T75 QD arm and classic comparator. | `pre_registered_not_run`: eight-design subset, endpoint preflight, and six-arm `12x3`/`8x5`/`6x7` command matrix are frozen. | `advance` live budget ablation | Run and package the six planned arms without changing subset, model, seed, method, or metrics after reading outcomes. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |

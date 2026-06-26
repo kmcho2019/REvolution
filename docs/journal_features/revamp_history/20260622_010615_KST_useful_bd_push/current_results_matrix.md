@@ -116,6 +116,8 @@ Real result packages:
   descriptor gate.
 - `T81_masterrtl_rf_timing_state_gate` completed generated-candidate
   MasterRTL RF timing model-state gate.
+- `T82_masterrtl_rf_timing_runtime_hook` completed the live descriptor-registry
+  runtime hook for MasterRTL RF timing model-state metrics.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -164,6 +166,12 @@ timing paths, and finds `53` unique RF leaf rows with `414` unique leaf IDs.
 This is the first noncollapsed pretrained MasterRTL model-state signal on
 generated RTL, but it remains an offline gate because `6/19` candidates lack
 clock-split timing paths and no live QD comparison has run.
+T82 completes the next implementation gate by exposing the T81 signal as the
+`source_aligned_rf_timing_state_3d` live descriptor profile. A full evaluator
+smoke on one generated RTLLM candidate emits `51` RF timing paths, `14` unique
+RF leaf rows, `161` unique RF leaf IDs, and no no-path fallback. This is still
+not PPA evidence; it authorizes a tiny live vLLM smoke before any frozen
+`8x5` screen.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

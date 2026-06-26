@@ -8,7 +8,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | MasterRTL RF timing model-state descriptors | Offline gate positive | T81 reproduces the upstream timing-DAG/path feature flow and shows noncollapsed RF timing leaves on generated timing-path candidates. | Needs a narrow runtime hook, fixed pooling into BD axes, and explicit no-clock handling before live spend. |
+| 1 | MasterRTL RF timing model-state descriptors | Runtime hook positive | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and passes one full evaluator smoke. | Needs tiny live vLLM smoke and frozen `8x5` screen before any PPA claim. |
 | 2 | Delayed archive activation | Best recent timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
 | 3 | Stagnation-triggered archive pressure | Diagnostic negative | Uses only archive growth state to activate QD pressure after passive archive growth stalls. | Trigger fired lightly, but mean HV regressed to `0.1089`; not promoted. |
 | 4 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
@@ -143,11 +143,15 @@ model-state lane. It uses MasterRTL's saved `rfr_model.pkl` timing model, the
 upstream timing-DAG split, delay initialization, and path-feature flow rather
 than direct scalar Area leaves. On the T70 generated RTL corpus, it evaluates
 `13/19` candidates, captures `166` timing paths, and finds `53` unique RF leaf
-rows with `414` unique leaf IDs. This is not a live QD result and cannot
-support a PPA claim, but it is materially stronger than T77's collapsed
-Area-head result. The next step is a focused runtime descriptor hook that
-pools RF timing state into fixed archive coordinates and handles no-clock
-candidates explicitly.
+rows with `414` unique leaf IDs.
+
+T82 then turns that signal into a live descriptor profile:
+`source_aligned_rf_timing_state_3d`. A full evaluator smoke on
+`Prob015_multi_pipe_8bit` emits `51` RF timing paths, `14` unique RF leaf
+rows, `161` unique RF leaf IDs, and no no-path fallback. This is still not a
+live QD result and cannot support a PPA claim. The next step is a tiny live
+vLLM smoke that proves archive insertion, descriptor logging, and artifact
+emission.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the
@@ -210,7 +214,7 @@ loader equivalence, schema assertions, and generated-candidate variation.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77/T80/T81 and the 20260625 auxiliary archive probes | Best methodology lane | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, T77 retires direct Area-head leaves, T80 advances raw MasterRTL structural mix as a live-candidate gate, T81 advances RF timing model-state descriptors to a runtime-hook design, high-exploit auxiliary archive narrows the live-screen HV gap only at seed `1001`, and seed replication retires that fixed geometry as a full-spend candidate. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77/T80/T81/T82 and the 20260625 auxiliary archive probes | Best methodology lane | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, T77 retires direct Area-head leaves, T80 advances raw MasterRTL structural mix as a live-candidate gate, T81 finds noncollapsed RF timing model-state descriptors, T82 exposes them through the live descriptor registry, high-exploit auxiliary archive narrows the live-screen HV gap only at seed `1001`, and seed replication retires that fixed geometry as a full-spend candidate. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Budget-shape evaluation | T78 audit and T79 `12 x 3`/`8 x 5`/`6 x 7` equal-budget ablation | T79 diagnostic-negative | T78 shows archive maturation can continue late, but T79 shows exact T75 still loses classic at every tested equal-candidate shape. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |

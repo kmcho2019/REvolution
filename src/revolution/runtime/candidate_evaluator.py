@@ -527,7 +527,14 @@ class CandidateEvaluator:
     ) -> dict[str, float]:
         """Extract source-aligned MasterRTL/RTL-Timer descriptors."""
         if self.source_aligned_descriptor_evaluator is None:
-            self.source_aligned_descriptor_evaluator = SourceAlignedRTLDescriptorEvaluator()
+            self.source_aligned_descriptor_evaluator = SourceAlignedRTLDescriptorEvaluator(
+                include_rf_timing=bool(
+                    self.descriptor_requirements.get(
+                        "requires_source_aligned_rf_timing",
+                        False,
+                    )
+                )
+            )
         return self.source_aligned_descriptor_evaluator.extract_metrics(
             code_file_path=code_file_path,
             top_module_name=self.synthesis_top_module_name,
@@ -738,7 +745,13 @@ class CandidateEvaluator:
                 if self.descriptor_requirements.get("requires_graph_metrics", False)
                 else {}
             )
-            if self.descriptor_requirements.get("requires_source_aligned_rtl", False):
+            if (
+                self.descriptor_requirements.get("requires_source_aligned_rtl", False)
+                or self.descriptor_requirements.get(
+                    "requires_source_aligned_rf_timing",
+                    False,
+                )
+            ):
                 graph_metrics.update(
                     self._extract_source_aligned_metrics(item.code_file_path)
                 )
