@@ -37,8 +37,9 @@ promoted.
 
 ## Next Gate
 
-Do not run another fixed MasterRTL geometry tweak. The next candidate should be
-a preregistered adaptive archive-pressure mechanism that pays diversity cost
-only after stagnation or near-front evidence. If that also loses on the frozen
-screen, the current milestone should report a rigorous negative result for the
-tested QD families rather than escalating to full RTLLM spend.
+Do not run another fixed MasterRTL geometry tweak. The active next candidate is
+`20260626_aux_archive_adaptive_sparse_front_probe/`, which uses the existing
+`sparse_front_triggered_nsga2` selector to lower champion pressure only when
+local archive fronts are thin. If that also loses on the frozen screen, the
+current milestone should report a rigorous negative result for the tested QD
+families rather than escalating to full RTLLM spend.

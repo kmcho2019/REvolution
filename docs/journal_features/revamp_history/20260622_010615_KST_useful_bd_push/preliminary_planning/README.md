@@ -21,6 +21,7 @@ the next gate.
 | `20260625_aux_archive_front_breadth_probe/` | Test whether the best-HV auxiliary archive arm can recover Pareto breadth with bounded front-slot sampling. | Completed; front-breadth tax erased the high-exploit HV gain, not promoted |
 | `20260625_aux_archive_high_exploit_depth_probe/` | Test whether the high-exploit auxiliary archive mechanism benefits from `6x7` depth against the existing T79 classic `6x7` baseline. | Completed; depth helps classic more than QD, not promoted |
 | `20260625_aux_archive_seed_replication_gate/` | Replicate classic and high-exploit auxiliary archive at seeds `1002` and `1003` to measure noise and the `Prob135_m2014_q6b` robustness caveat. | Completed; negative, not promoted |
+| `20260626_aux_archive_adaptive_sparse_front_probe/` | Test adaptive sparse-front parent pressure after fixed high-exploit auxiliary archive failed seed replication. | Preregistered; next live gate |
 
 ## Current Rule
 
@@ -37,8 +38,9 @@ all three seed-level mean-HV comparisons against
 `masterrtl_aux_archive_high_exploit_8x5`; the three-seed mean HV is `0.1442`
 for classic versus `0.1261` for auxiliary archive, a `-12.51%` relative gap.
 Removing `Prob135_m2014_q6b` leaves a `-18.25%` relative gap. The next
-decision gate should be a genuinely adaptive archive-pressure mechanism, not
-another minor fixed MasterRTL geometry tweak.
+decision gate is `20260626_aux_archive_adaptive_sparse_front_probe/`, which
+uses the existing `sparse_front_triggered_nsga2` parent selector to lower
+champion pressure only when local archive fronts are thin.
 
 The current pretrained-encoder rule is stricter: an external model must load
 from pinned checkpoints, pass an upstream or fixture smoke, and show

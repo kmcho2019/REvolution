@@ -5088,3 +5088,20 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   negative and should not be promoted to full RTLLM spending. The next QD gate
   should change the coupling mechanism, for example adaptive archive pressure,
   rather than retuning the same MasterRTL geometry.
+
+## 2026-06-26T01:35:00Z - Adaptive Sparse-Front Probe Preregistered
+
+- Created preliminary planning package:
+  `preliminary_planning/20260626_aux_archive_adaptive_sparse_front_probe/`.
+- Reused the existing `sparse_front_triggered_nsga2` parent selector instead
+  of adding new source code. This keeps global NSGA-II parent sampling and a
+  `0.90` champion lane in the normal state, but caps the champion lane at
+  `0.65` when local archive fronts are thin.
+- Frozen run name:
+  `masterrtl_aux_archive_adaptive_sparse_front_8x5`.
+- Frozen run root:
+  `exp/useful_bd_push/prelim_adaptive_sparse_front_20260626_013437_UTC/live`.
+- Decision rule: promote only if the arm is within the registered `1-2%`
+  mean-HV tolerance versus classic or better, preserves classic-covered
+  designs, improves front material, and does not depend on
+  `Prob135_m2014_q6b`.

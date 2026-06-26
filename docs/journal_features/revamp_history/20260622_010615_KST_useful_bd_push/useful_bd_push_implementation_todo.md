@@ -595,8 +595,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Pareto and single-thought-operator checks.
 - [x] Seed-replication gate gets a decision before full RTLLM spend: fixed
       high-exploit auxiliary archive is diagnostic negative and not promoted.
-- [ ] Pre-register an adaptive archive-pressure mechanism before any further
+- [x] Pre-register an adaptive archive-pressure mechanism before any further
       QD live spend on this lane.
+- [ ] Run `masterrtl_aux_archive_adaptive_sparse_front_8x5` on the frozen
+      eight-design `8x5` screen.
+- [ ] Validate, package, and decide the adaptive sparse-front probe before any
+      full RTLLM spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation
