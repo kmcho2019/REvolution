@@ -56,11 +56,11 @@ and the next artifact or branch. Use these tags consistently:
 | `L1` transparent CAD descriptors | Test cheap, reviewer-readable structure: Yosys stats, motifs, pathlets, ST-NOD. | T01/T02 are `T0`; T03 is a near-miss `T0`; T21 expands coverage but loses quality. | Stop pure concatenation; use feature selection, CVT, or local-Pareto retention. |
 | `L2` synthesis-response automatic BDs | Use AutoQD-like transformations over non-PPA synthesis-response vectors. | T04/T19/T20 replay leads survive as live diagnostics but not as promoted methods. | Add a quality/yield guard before larger SR-family runs. |
 | `L3` codebook/discrete archives | Test VQ/codebook cells over stable hardware vectors. | T05 direct VQ is `T0`, with one small per-problem HV win. | Reuse codebooks only as side archives or local-Pareto cells, not as direct parent pressure. |
-| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | T58 preserves coverage and improves yield/best score with frozen T11 PCA4 under T51, but still loses HV, HV-AUC, and front breadth. | Stop primary graph-coordinate live archive tests unless the next method uses graph features as a secondary lane or trains a new encoder objective. |
-| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | T59 confirms short fail-pool feedback does not fix T51's front-breadth blocker. | Change front-slot creation directly or move features into a secondary archive lane before seed `1002`. |
+| `L4` learned encoders | Try Qwen, DeepGate, DeepSeq, NetTAG, CircuitFusion, MGVGA, DE-HNN, DeepCell, AURORA. | Qwen, T11/T36-derived graph axes, official DeepGate pooled descriptors, and the T96 RF/DeepGate hybrid now all have bounded live evidence; none beats classic on the frozen screen. | Keep best category representatives, but do not spend on another primary encoder-axis swap unless it changes the training objective, coupling mechanism, or validation question. |
+| `L5` archive coupling | Preserve hill-climbing pressure without collapsing to scalar weighted-sum fitness. | Auxiliary archive, delayed activation, stagnation activation, and FG-QDM all ran; the closest replicated and smoke results remain negative versus classic. | Stop small front-slot/fill/schedule tweaks. The next coupling method must be materially different and must prove memory-lane contribution per LLM call. |
 | `L6` lineage and emitters | Use parent-child repair, invalid-to-valid transitions, and fixed emitter mixtures. | Direct code individuals fixed T50's budget/yield issue, but T59 shows short fail-pool feedback is insufficient. | Escalate only with measured source-level direct-code repair or a cleaner role-separated emitter. |
-| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | T72 lands near classic on mean HV; T73 improves valid-PPA yield and archive occupancy but loses HV/Pareto breadth; T74 regresses; T75 improves over T73/T74 but still trails classic; T76 verifies model loading; T77 blocks direct Area-head leaves; T81 finds noncollapsed RF timing model states; T82 exposes them through the live descriptor registry and passes one live smoke. | Run the frozen `8x5` RF timing-state screen before any full RTLLM spend. |
-| `L8` budget and benchmark shape | Test whether wide/shallow budgets and saturated tasks hide QD value. | T78 shows existing T75 `12 x 3` archives still mature late, but completed T79 is diagnostic-negative for exact T75. | Do not use depth as an explanatory escape for exact T75; only reopen with a changed descriptor/coupling mechanism or a registered new shape. |
+| `L7` RTL-native descriptors | Use pre-synthesis RTL structure and timing-risk morphology as behavior axes. | Source-aligned RTL cells, MasterRTL RF timing-state, RF leaf IDs, and RF/DeepGate hybrid descriptors are all screened; T83 is closest single-seed but fails replication, and T96 remains below classic. | Keep RTL-native descriptors as the best methodology story, but require a new mechanism or model-state transformation before more live spend. |
+| `L8` budget and benchmark shape | Test whether wide/shallow budgets and saturated tasks hide QD value. | T79, the auxiliary archive `6x7` depth probe, and RF seed robustness all show that simple depth/seed explanations do not rescue current QD arms. | Reopen only with a changed descriptor/coupling mechanism and a pre-registered equal-budget shape question. |
 
 ## Lane Scorecard
 
@@ -70,11 +70,11 @@ and the next artifact or branch. Use these tags consistently:
 | `L1` | T03 ST-NOD near-miss | Hybrid source. | Direct transparent descriptors lose audit-QD or best quality. | Continue only as selected features inside T17/T24-style archives. |
 | `L2` | T04 SR-RFF PCA, T19 SR ReLU PCA, and T20 SR raw PCA | Live diagnostic lane. | Descriptor signal survives execution but not multi-pipe best quality. | Revise descriptor/archive coupling with quality/yield guarding. |
 | `L3` | T05 VQ codebook side archive | Parked. | Direct VQ pressure is too costly. | Reopen only as a side archive after local-Pareto live evidence. |
-| `L4` | T11 contrastive feature selection, T35 replay coupling, T36 bounded front lane, T37 slot ablation, T38/T39/T40/T41/T42/T43 live hooks, T44 top-8 runtime bridge, T45 top-4 runtime bridge, T46 PCA4 projection, and T58 T51/T11-PCA4 cross-lane test | T58 is measured `T0 diagnostic_no_promotion`: it preserves coverage and improves yield/best score, but loses classic/T51 on HV, HV-AUC, and front breadth. | Retire frozen T11 PCA4 as a primary archive geometry. | Reopen only as a secondary/reporting lane or with a trained encoder objective that targets front creation without PPA leakage. |
-| `L5` | T17/T23/T24/T25/T26/T27/T28/T29/T30/T31/T32/T35/T36/T37/T38/T39/T40/T41/T42/T43/T47-T59 local-Pareto lineage | T59 improves best score but loses classic on HV, HV-AUC, front breadth, unique PPA, and reference-beating count. | Retire exact T59; change front-slot creation or use secondary archive features. | A candidate must improve front material without hidden duplicate loss or default-reference headline dependence. |
+| `L4` | T11 contrastive selection, T33/T34 Qwen, T35-T46 graph coupling, T58 T11-PCA4, and T89-T96 DeepGate/RF hybrid bridge | T96 is the best hybrid pretrained RTL/netlist representative but remains `T0`: mean HV `0.1199` versus classic `0.1406`, and it regresses versus T83. | Retire direct primary encoder-axis substitutions. | Reopen only with a trained objective, secondary/reporting lane, or coupling change that explicitly improves front creation without PPA leakage. |
+| `L5` | T17/T23-T59 local-Pareto lineage, auxiliary archive probes, delayed/stagnation activation, and T85-T87 FG-QDM | T85-T87 show that guarded memory runs but does not beat classic or random-memory control; auxiliary archive replication is also negative. | Retire small schedule/front-slot/fill tweaks. | A candidate must improve front material or memory-lane front-add rate per LLM call without hidden duplicate loss or default-reference headline dependence. |
 | `L6` | T12/T18 scaffolded emitter ideas, T26 parent-source policy, T31 failure-feedback emitter, T32 front-preserving emitter, T49-T59 hard/tuning emitters | T51 remains the yield-recovery base; T59's short fail-pool feedback does not recover front breadth. | Escalate to source-level direct-code repair only with explicit yield/front counters. | Better front material than T51 without losing T51's yield and best-score recovery. |
-| `L7` | T15 Yosys-SOG, T60/T61 RTLTimer timing-risk, T62 fused descriptors, T63 live screen, T64 operator/timing ablation, T65 secondary-cell audit, T66 coupled parent method, T67 seeded thought-code method, T68 upstream verification, T69 open-Yosys preprocessing, T70 generated RTL smoke, T71 source-aligned feature map, T72 source-aligned cell QD, T73 shape-density QD, T74 shape-density front-slot hybrid, T75 shape-density front-pressure QD, T76 MasterRTL pretrained model gate, T77 Area leaf variation gate, T80 raw structural gate, T81 RF timing state gate, and T82 RF timing runtime hook | T72 is `T1 near_classic_not_promoted`; T73 is `T0 positive_diagnostic_not_promoted`; T74 is `T0 diagnostic_regression_not_promoted`; T75 is `T0 positive_diagnostic_not_promoted`; T76 is `T0 verification_gate_partial`; T77 is `T0_variation_gate_negative`; T81 is `T0_model_state_gate_positive_not_live`; T82 is `T0_live_smoke_positive_not_screened`. | T75 improves over T73/T74 but does not close the classic mean-HV/Pareto gap; T77 shows direct pretrained Area leaves collapse; T81 shows RF timing leaves do not collapse but only cover timing-path candidates; T82 clears the runtime-hook and live-smoke blockers. | Run the frozen `8x5` RF timing-state screen before any full RTLLM spend. |
-| `L8` | T78 budget-depth audit and T79 ablation | T79 diagnostic-negative. | Exact T75 does not benefit more from depth than classic on the frozen eight-design subset. | Reopen only with a changed descriptor/coupling mechanism or a separately registered `4 x 11`/`16 x 2` follow-up. |
+| `L7` | T15, T60-T82, T83/T88 RF leaf-ID, T84 front-slot RF, and T96 RF/DeepGate hybrid | T83 is the closest single-seed RTL-native model-state result, but T88 replication is negative; T96 is the current hybrid representative but also negative. | Keep RTL-native/model-state descriptors as category representatives, not final candidates. | Reopen only with a materially different model-state transformation, memory mechanism, or source-level selection rule. |
+| `L8` | T78/T79 budget-shape audit, auxiliary archive `6x7`, and RF seed robustness | Diagnostic-negative. | Exact depth changes and seed averaging strengthen classic rather than rescue current QD arms. | Reopen only with a changed descriptor/coupling mechanism and a registered equal-budget hypothesis. |
 
 ## Current Lineage
 
@@ -390,6 +390,10 @@ flowchart TD
 | 2026-06-22 | `L5/L6` archive coupling and emitters | T32 front-preserving emitter method card | `advance` | T32 keeps the T26/T30 SR raw archive substrate, lowers champion pressure only to 0.72, adds a small 0.08 two-parent success-parent lane, and removes T31's direct fail-feedback text. The primary visual gate is a straightforward raw area-power Pareto figure plus candidate-level data to regenerate it. | Run `T32_sr_raw_front_preserving_emitter_qd/commands/live_holdout_v0.md`, then package it against T30 classic/T26 and T31 failed-repair controls. |
 | 2026-06-22 | `L5/L6` archive coupling and emitters | T32 live holdout result | `retire` | T32 improves P098 valid PPA to 19 and unique PPA points to 9, but mean final-best score stays at T31's 0.201770, HV/HV-AUC stay zero, and the direct raw PPA plot shows no recovery of T26's P135 low-area/low-power point. | Stop simple champion/two-parent tuning; use T32 as a P098-yield hint for a role-separated repair/local-rank-1 emitter or switch to another lane. |
 | 2026-06-21 | `L6` lineage and emitters | T12/T18 scaffolds plus T17/T24/T25 evidence | `hybridize` | Lineage/emitter methods should improve search dynamics around SR-family descriptors, not become generic descriptor resets. | Specify exploit/explore/repair scheduling from the observed T24/T25 failures. |
+| 2026-06-26 | `L5` archive coupling | T85-T87 front-guarded QD memory | `retire` exact FG-QDM variants | FG-QDM runs and keeps the archive as passive memory, but SR-memory trails classic, random-memory slightly beats SR-memory, and source-aligned shape-density memory produces zero valid-PPA memory-lane children. | Do not run an eight-design FG-QDM continuation unless the memory-credit mechanism or descriptor changes materially. |
+| 2026-06-26 | `L7/L8` RTL-native descriptors and robustness | T83 plus T88 seed robustness | `retire` single-seed RF leaf-ID promotion | T83 is close on seed `1001`, but the three-seed gate averages `0.1260` mean HV versus classic `0.1442` and has zero seed-level wins. | Keep T83 as the RF model-state representative, not a full-RTLLM spend arm. |
+| 2026-06-26 | `L4` learned encoders | T89-T95 official DeepGate bridge | `park` as screened category representative | The official DeepGate path now has residual-signal, cone-coverage, pooled-descriptor, runtime-hook, live-smoke, and matched-screen evidence; best pure DeepGate mean HV is `0.1153` versus classic `0.1406`. | Keep T95 as the pure synthesized-netlist pretrained representative; do not promote exact DeepGate to full RTLLM spend. |
+| 2026-06-26 | `L4/L7` learned and RTL-native encoders | T96 RF/DeepGate hybrid | `park` hybrid representative | T96 improves over pure T95 DeepGate but regresses versus same-seed T83 and trails classic on mean HV, Pareto breadth, and reference-beating candidates. | Keep T96 as the hybrid representative; the next pretrained-encoder attempt needs a new transformation or mechanism, not another axis swap. |
 
 ## Lane Notes
 
@@ -462,14 +466,17 @@ Yosys-normalized netlist text, structural summaries, pooled chunks, and
 non-PPA contrastive or structural-bucket heads.
 
 Current follow-up: T34 closed the bounded label-free Qwen projection ablation
-as `T0`; T07 showed graph WL/combo can produce a tiny HV lead; T13 shows the
-uncompressed implementation-feature vector is stronger than compressed AURORA
-bottlenecks; T14 shows hypergraph incidence features can add unique PPA
-breadth only when combined with that implementation vector; T11 shows
-contrastive feature selection is the strongest L4 HV replay lead so far. The
-next L4 method should preserve the T11 signal while adding local-Pareto
-coupling or collapse-penalized contrastive training. Direct raw PPA-front
-figures and viewers remain the first visual gate.
+as `T0`; T07, T11, T13, and T14 remain useful replay/diagnostic sources, but
+the live encoder record is now broader and still negative. Qwen3 canonical RTL
+screened at mean HV `0.1108` versus classic `0.1406`. The official DeepGate
+lane now has residual-signal, bounded-cone, pooled-descriptor, runtime-hook,
+live-smoke, and matched-screen evidence; its best pure arm is T95 at mean HV
+`0.1153`. T96 hybridizes DeepGate with MasterRTL RF timing state and improves
+to `0.1199`, but it still trails classic and regresses versus same-seed T83.
+The next L4 method should not be another direct primary encoder-axis swap.
+Reopen this lane only with a changed training objective, a secondary/reporting
+role, or an archive-coupling mechanism that explicitly improves front material
+without PPA leakage.
 
 ### `L5` Archive Coupling
 
@@ -517,11 +524,15 @@ and P135 supplies positive normalized HV. It also keeps the central blocker
 alive: P098 valid PPA samples fall from 31 to 15, candidate-level front points
 tie classic at 3, and front netlists fall from 9 to 6.
 
-Current follow-up: direct T31 fail-feedback repair and T32 small near-front
-success-parent tuning are both retired. Use classic as the holdout comparator,
-T26 as the quality-pressure control, T29 as the failed front-recovery control,
-and T30/T31/T32 direct raw PPA Pareto figures as required visual comparisons
-for any stronger role-separated emitter/archive ensemble.
+Current follow-up: direct T31 fail-feedback repair, T32 small near-front
+success-parent tuning, T59 short fail-pool feedback, fixed auxiliary archives,
+delayed/stagnation archive activation, and T85-T87 FG-QDM are all measured
+negative for promotion. Use classic as the comparator, T26/T51 as
+quality-pressure controls, and the recent auxiliary archive plus FG-QDM
+packages as evidence that small schedule/front-slot/fill tweaks are exhausted.
+Any next L5 method must make a materially different claim, such as showing
+that a memory lane contributes front additions per LLM call rather than merely
+consuming budget.
 
 ### `L6` Lineage And Emitters
 
@@ -624,6 +635,24 @@ The full evaluator smoke on one generated `Prob015_multi_pipe_8bit` candidate
 emits `51` timing paths, `14` unique RF leaf rows, `161` unique RF leaf IDs,
 and no no-path fallback. It is a runtime-hook result, not a QD/PPA result.
 
+T83 through T88 finish the RF timing-state escalation. T83 replaces the
+collapsed path-count coordinate with RF timing leaf-ID breadth, pairs it with
+MasterRTL branching and RTLTimer wire density, and delays archive activation.
+The seed-1001 screen is close on all-design mean HV (`0.1369` versus classic
+`0.1406`), but the three-seed robustness gate blocks promotion: T83 averages
+`0.1260` versus classic `0.1442` and loses every seed-level mean-HV
+comparison. T84's bounded front-slot follow-up regresses further.
+
+T96 is the current hybrid RTL-native/pretrained-netlist representative. It
+combines RF timing leaf-ID breadth, MasterRTL branching, and DeepGate pooled
+PC0 under the delayed high-exploit schedule. It improves over pure DeepGate
+T95 but trails classic on mean HV (`0.1199` versus `0.1406`), Pareto breadth,
+and reference-beating candidates. Keep it as a category representative only.
+The next L7 candidate needs a new model-state transformation or source-level
+selection rule, not another small axis swap on the same delayed schedule.
+
+### `L8` Budget And Benchmark Shape
+
 T78 moves the budget-shape concern into a reproducible audit. In the existing
 T75 `12 x 3` logs, `9/13` archives still add or replace cells in generation
 `2` or later, mean occupied cells rise through generation `3`, and front-slot
@@ -664,11 +693,11 @@ unblocks it.
 | `L1` transparent CAD descriptors | T03, T21 | Stays on current branch for hybrids. | Select a small ST-NOD/motif subset for a guarded archive variant. | Hybrid beats direct T21 on best quality without losing archive coverage. |
 | `L2` synthesis-response automatic BDs | T04, T19, T20, T24, T25, T26, T27, T28, T29, T30, T31, T32 | Stays on current branch; T29/T31/T32 are measured negative, while T30 is mixed holdout support for T26. | Pause simple SR raw schedule tuning. | New method improves front/yield without losing T26 quality pressure. |
 | `L3` codebook/discrete archives | T05 | Parked. | Reopen only as side archive or local-Pareto cell partition. | A non-codebook lane shows local front material worth discretizing. |
-| `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T43, T58 | T58 completed the bounded T51/T11-PCA4 cross-lane test and failed promotion on HV/front breadth. | Stop exact frozen graph-coordinate primary archive tests. | Reopen only with secondary/reporting graph lanes or a trained encoder objective that improves front creation without PPA leakage. |
-| `L5` archive coupling | T17, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T35-T43, T47-T59 | Active on current branch; T59 did not improve front material enough and lost aggregate HV/HV-AUC. | Retire exact T59 and choose a different front-creation mechanism. | A candidate improves T51 front material without hidden duplicate loss or default-reference headline dependence. |
+| `L4` learned encoders | T06-T16, T33, T34, T07, T11, T13, T14, T35-T46, T58, T89-T96 | Current branch has screened Qwen, T11-derived graph axes, official DeepGate, and RF/DeepGate hybrid descriptors; no arm is promoted. | Stop direct primary encoder-axis swaps. | Reopen only with secondary/reporting graph lanes, a trained encoder objective, or coupling that improves front creation without PPA leakage. |
+| `L5` archive coupling | T17, T23-T59, auxiliary archive probes, delayed/stagnation activation, T85-T87 | Active but negative: auxiliary archive replication, delayed/stagnation activation, and FG-QDM all trail classic. | Do not run another small fill/front-slot/schedule tweak. | A candidate improves front material or memory-lane front-add rate per LLM call without hidden duplicate loss or default-reference headline dependence. |
 | `L6` lineage and emitters | T12, T18, T26, T27, T28, T29, T30, T31, T32, T49-T59 | T51 shows code-individual single-thought recovery is useful but incomplete; T59 shows short fail-pool feedback is insufficient. | Source-level direct-code repair needs explicit yield/front counters before another live spend. | Better front material than T51 without losing T51 valid-yield or best-score recovery. |
-| `L7` RTL-native descriptors | T15, T60, T61, T62, T63, T64, T65, T66, T67, T68, T69, T70, T71, T72, T73, T74, T75, T76, T77, T80, T81, T82 | T82 exposes noncollapsed MasterRTL RF timing model-state leaves through a live descriptor profile and passes one live smoke. | Run the frozen `8x5` screen with reference-complete accounting before any full RTLLM spend. | A successor improves live front metrics without default-reference, PPA-leakage, or unverified-pretrained claims. |
-| `L8` budget and benchmark shape | T78, T79 | T79 is complete and diagnostic-negative for exact T75. | Reopen only with a changed descriptor/coupling mechanism or a registered `4 x 11`/`16 x 2` follow-up. | A successor shows QD benefits more than classic without hidden validity, reference-PPA, or subset-selection loopholes. |
+| `L7` RTL-native descriptors | T15, T60-T88, T96 | T83 is closest single-seed but fails three-seed robustness; T96 is the hybrid representative and remains below classic. | Keep category representatives; require a new model-state transformation or source-level selection mechanism before more live spend. | A successor improves live front metrics without default-reference, PPA-leakage, or unverified-pretrained claims. |
+| `L8` budget and benchmark shape | T78, T79, auxiliary `6x7`, T88 | T79 and later depth/seed checks are diagnostic-negative for current QD arms. | Reopen only with a changed descriptor/coupling mechanism and registered equal-budget question. | A successor shows QD benefits more than classic without hidden validity, reference-PPA, or subset-selection loopholes. |
 
 ## Branch Split Checklist
 

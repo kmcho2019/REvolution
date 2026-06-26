@@ -123,6 +123,29 @@ Real result packages:
   source-aligned structural delayed-activation follow-up.
 - `T84_rf_leafid_front_slot_delayed_qd` completed the RF leaf-ID front-slot
   delayed follow-up.
+- `T85_front_guarded_qd_memory` completed the first FG-QDM SR-memory smoke.
+- `T86_front_guarded_memory_controls` completed the random-memory FG-QDM
+  control.
+- `T87_front_guarded_rtl_native_memory` completed the RTL-native FG-QDM
+  descriptor swap smoke.
+- `T88_rf_leafid_seed_robustness_gate` completed the three-seed T83
+  robustness gate.
+- `T89_deepgate_signal_vs_aig_stats_gate` completed the official DeepGate
+  residual-signal check.
+- `T90_deepgate_cone_bridge_probe` completed the bounded-cone DeepGate
+  coverage bridge.
+- `T91_deepgate_pooled_descriptor_replay` completed pooled DeepGate
+  candidate-level descriptor replay.
+- `T92_deepgate_runtime_descriptor_gate` completed the runtime hook and
+  isolated official-model smoke for DeepGate pooled descriptors.
+- `T93_deepgate_runtime_live_smoke` completed the first live archive-insertion
+  smoke for the DeepGate descriptor.
+- `T94_deepgate_runtime_screen` completed the first matched eight-design
+  DeepGate `8x5` screen.
+- `T95_deepgate_delayed_high_exploit_probe` completed the delayed high-exploit
+  DeepGate follow-up.
+- `T96_rf_deepgate_hybrid_delayed_probe` completed the RF/DeepGate hybrid
+  delayed follow-up.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -200,6 +223,27 @@ with a bounded `0.20` local front-slot lane. The result is negative: mean HV
 falls to `0.1162`, Pareto points fall to `1.875`, reference-beating candidates
 fall to `3.75`, and T84 has `0/8` HV wins against classic. Keep T83, not T84,
 as the current pretrained MasterRTL RF model-state representative.
+
+T85 through T87 test front-guarded QD memory as a materially different archive
+coupling mechanism. The archive is passive memory, the primary success pool is
+kept classic-like, and empty-cell fill receives no direct budget. The result is
+negative so far: SR-memory loses classic on the three-problem smoke, the
+random-memory control slightly beats SR-memory, and the source-aligned
+shape-density swap produces zero valid-PPA children from memory lanes.
+
+T88 blocks promoting the closest T83 RF leaf-ID result. Across seeds `1001`,
+`1002`, and `1003`, classic averages `0.1442` mean HV while T83 averages
+`0.1260`; T83 has zero seed-level mean-HV wins.
+
+T89 through T96 make the DeepGate lane legitimate but not promoted. The
+official model path now has residual signal beyond AIG statistics, bounded
+cone coverage for all eight screen problems, pooled candidate-level
+descriptors, a runtime hook, a live archive-insertion smoke, and two matched
+`8x5` screens. The best pure DeepGate arm is T95 at mean HV `0.1153` versus
+classic `0.1406`. T96 improves over T95 with a compact RF/DeepGate hybrid
+(`0.1199` mean HV), but regresses versus the closer same-seed T83 RF leaf-ID
+arm (`0.1369`) and loses front breadth. Keep T96 as the hybrid
+pretrained-encoder representative, not a final RTLLM candidate.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

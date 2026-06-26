@@ -5772,3 +5772,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `best_current_techniques.md`, latest technique packages, and the latest
   periodic review notes. If a portable bundle is needed, regenerate a new dated
   `20260626_*` bundle instead of refreshing the old one in place.
+
+## 2026-06-26T14:20:00Z - Central Lane Docs Synced Through T96
+
+- Updated `current_results_matrix.md` so the real-package list and summary
+  include T85 through T96.
+- Updated `technique_lanes.md` so L4 learned encoders, L5 archive coupling,
+  L7 RTL-native descriptors, and L8 budget/robustness guidance reflect the
+  completed FG-QDM, RF seed-robustness, DeepGate, and RF/DeepGate hybrid
+  results.
+- Decision: T96 remains the hybrid pretrained RTL/netlist representative, but
+  it is not promoted. The next live spend should be a materially new mechanism
+  or model-state transformation, not another small encoder-axis or archive
+  schedule substitution.
