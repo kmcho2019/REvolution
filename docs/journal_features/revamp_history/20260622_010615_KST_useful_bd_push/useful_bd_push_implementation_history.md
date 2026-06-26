@@ -26,6 +26,20 @@ evidence.
   `deepgate_pooled_pc3_8x5` as the synthesized-netlist pretrained encoder
   category representative, but do not spend full RTLLM budget on exact T94.
 
+## 2026-06-26T12:16:29Z - T95 DeepGate Delayed High-Exploit Pre-Registered
+
+- Added
+  `preliminary_planning/20260626_deepgate_delayed_high_exploit_probe/` as the
+  next DeepGate coupling after T94.
+- T95 keeps the official `deepgate_pooled_pc3` descriptor and the same frozen
+  eight-design `8x5` screen, but changes archive coupling:
+  `qd_archive_activation_generation=3`, fill/backfill `0.10/0.05`, and
+  champion lane `0.90`.
+- Rationale: T94 is operational and reference-complete but loses front breadth,
+  so the next test should reduce early archive tax and preserve classic-like
+  exploitation before retiring the DeepGate lane more broadly.
+- Live run pending.
+
 ## 2026-06-26T11:25:00Z - T93 DeepGate Runtime Live Smoke Completed
 
 - Added `preliminary_planning/20260626_deepgate_runtime_live_smoke/` to record

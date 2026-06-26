@@ -141,6 +141,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Outcome: T94 covers all eight preliminary problems with valid references
       and valid-PPA candidates, but mean HV `0.1040` trails classic `0.1406`;
       keep DeepGate as a category representative only.
+- [ ] Run T95 DeepGate delayed high-exploit coupling to test whether T94's
+      negative result is due to premature archive pressure rather than the
+      pretrained descriptor itself.
 - [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.
