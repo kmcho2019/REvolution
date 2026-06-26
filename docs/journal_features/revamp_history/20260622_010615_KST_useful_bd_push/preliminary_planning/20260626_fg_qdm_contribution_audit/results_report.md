@@ -41,7 +41,7 @@ Do not spend the frozen eight-design screen or final RTLLM budget on exact
 T85/T86/T87 FG-QDM. A continuation must change the memory-credit policy enough
 to answer a different question.
 
-The next justified continuation is T97 front-credit FG-QDM:
+The justified continuation was T97 front-credit FG-QDM:
 
 - lower memory pressure;
 - raise `qd_memory_min_cell_credit`;
@@ -49,3 +49,9 @@ The next justified continuation is T97 front-credit FG-QDM:
   repeatedly credited cells;
 - require memory-lane valid-PPA and front-add rates to beat the random-memory
   control before any wider run.
+
+T97 has now completed. It improves FG-QDM smoke mean HV to `0.153384`, above
+T85/T86/T87, but classic remains ahead at `0.190331`. Its memory-refine lane
+produces `3/7` valid-PPA children and `3` local-front additions, but no
+memory-lane global-front additions. Keep T97 as the FG-QDM category
+representative, not an eight-design or full-RTLLM candidate.

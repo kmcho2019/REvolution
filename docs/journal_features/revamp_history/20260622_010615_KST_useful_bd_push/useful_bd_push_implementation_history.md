@@ -5810,3 +5810,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   justified continuation is a stricter T97 front-credit smoke that raises
   `qd_memory_min_cell_credit` using existing scheduler knobs before adding new
   runtime states.
+
+## 2026-06-26T15:35:00Z - T97 Front-Credit FG-QDM Smoke Packaged
+
+- Ran `fg_qdm_sr_front_credit_12x3` on the same three-problem FG-QDM smoke
+  subset using stricter credited-cell recall and lower memory pressure.
+- Run root:
+  `exp/useful_bd_push/front_credit_fg_qdm_20260626/fg_qdm_sr_front_credit_12x3/seed_1001/openai_gpt-oss-120b/`.
+- Validation passed with `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Headline result: T97 mean HV `0.153384`, above prior FG-QDM smokes but below
+  classic `0.190331`; mean Pareto points `1.67` versus classic `3.00`.
+- Mechanism result: memory-refine produced `3/7` valid-PPA children and `3`
+  local-front additions, while memory lanes produced `0` global-front
+  additions.
+- Decision: keep T97 as the current FG-QDM category representative, but do not
+  promote it to the frozen eight-design screen or final RTLLM spend.

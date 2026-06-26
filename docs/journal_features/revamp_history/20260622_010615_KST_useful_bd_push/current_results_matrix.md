@@ -146,6 +146,8 @@ Real result packages:
   DeepGate follow-up.
 - `T96_rf_deepgate_hybrid_delayed_probe` completed the RF/DeepGate hybrid
   delayed follow-up.
+- `T97_front_credit_fg_qdm_memory` completed the stricter front-credit FG-QDM
+  smoke.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -230,6 +232,14 @@ kept classic-like, and empty-cell fill receives no direct budget. The result is
 negative so far: SR-memory loses classic on the three-problem smoke, the
 random-memory control slightly beats SR-memory, and the source-aligned
 shape-density swap produces zero valid-PPA children from memory lanes.
+
+T97 is the stricter front-credit continuation authorized by the FG-QDM
+contribution audit. It raises the best FG-QDM smoke mean HV to `0.1534`,
+above SR memory `0.1375`, random memory `0.1382`, and shape-density memory
+`0.1264`, but classic remains ahead at `0.1903`. Memory-refine produces
+`3/7` valid-PPA children and `3` local-front additions, but memory lanes still
+produce `0` global-front additions. Keep T97 as the FG-QDM category
+representative, not a full-RTLLM candidate.
 
 T88 blocks promoting the closest T83 RF leaf-ID result. Across seeds `1001`,
 `1002`, and `1003`, classic averages `0.1442` mean HV while T83 averages

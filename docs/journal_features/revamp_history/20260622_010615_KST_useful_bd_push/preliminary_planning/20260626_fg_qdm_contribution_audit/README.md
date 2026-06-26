@@ -1,7 +1,8 @@
 # FG-QDM Contribution Audit
 
 This package summarizes what the completed T85/T86/T87 front-guarded QD
-memory smokes actually showed before any further live spend.
+memory smokes showed before any further live spend, and records the T97
+front-credit follow-up outcome.
 
 ## Question
 
@@ -10,16 +11,17 @@ front-adding children?
 
 ## Short Answer
 
-Not yet. FG-QDM itself is implemented and runs, but exact SR memory and
-source-aligned shape-density memory are not promoted. Random-memory FG-QDM
-slightly beats SR-memory FG-QDM on the smoke, and shape-density memory produces
-zero valid-PPA memory-lane children.
+Not yet. FG-QDM itself is implemented and runs, but no completed variant is
+promoted. T97 is the best FG-QDM smoke by mean HV, but it still trails classic
+and memory lanes still do not add global-front material.
 
 ## Files
 
 - [results_report.md](results_report.md): concise conclusion and next action.
 - [preregistration_t97_front_credit_memory.md](preregistration_t97_front_credit_memory.md):
   stricter follow-up spec that uses existing FG-QDM knobs before adding code.
+- [../../techniques/T97_front_credit_fg_qdm_memory/](../../techniques/T97_front_credit_fg_qdm_memory/):
+  completed T97 follow-up package.
 - [tables/fg_qdm_lane_contribution.csv](tables/fg_qdm_lane_contribution.csv):
   lane-level generated, valid-PPA, and front-add rates from T85/T86/T87.
 - [tables/fg_qdm_headline_metrics.csv](tables/fg_qdm_headline_metrics.csv):

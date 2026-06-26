@@ -15,7 +15,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 5 | Qwen3 canonical RTL | Pretrained text/code representative | Real pretrained embedding path with live-screened QD archive coordinates. | Mean HV `0.1108` trails classic `0.1406`; keep as category representative, not spend-ready. |
 | 6 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
 | 7 | RF/DeepGate hybrid delayed QD | Hybrid pretrained representative | Combines MasterRTL RF timing model-state, RTL structural branching, and official DeepGate pooled netlist signal under the delayed high-exploit schedule. | Mean HV `0.1199` improves over pure T95 DeepGate but regresses versus same-seed T83 `0.1369` and still trails classic `0.1406`, with lower Pareto breadth. |
-| 8 | FG-QDM memory controls | Completed smoke negative | Tests QD as guarded auxiliary memory rather than a replacement optimizer. | Random-memory FG-QDM slightly beats SR-memory but trails classic, so exact `sr_pca_3d` memory is not descriptor-positive. |
+| 8 | T97 front-credit FG-QDM memory | Best FG-QDM smoke, not promoted | Tests QD as guarded auxiliary memory with stricter credited-cell recall instead of broad archive sampling. | Mean HV improves to `0.1534` but still trails classic `0.1903`; memory lanes add local-front material but no global-front material. |
 | 9 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 10 | DeepGate delayed high-exploit bridge | Screened pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats, T90 reaches `8/8` offline coverage, T91 builds pooled descriptors, T92 wires runtime axes, T93 inserts one live archive member, T94 completes the first matched screen, and T95 tests delayed high-exploit coupling. | Best DeepGate mean HV is `0.1153`, improved over T94 but still below classic `0.1406`, with lower Pareto breadth. |
 
@@ -93,12 +93,13 @@ lanes produce zero valid-PPA children across the three-problem smoke. Treat
 exact shape-density FG-QDM as negative coupling evidence, not as a candidate
 for the frozen eight-design screen.
 
-The FG-QDM contribution audit makes the next step narrower. Exact SR memory
+The FG-QDM contribution audit made the next step narrower. Exact SR memory
 generated `8` memory-lane children with `3` valid-PPA and `0` global-front
 adds; random memory generated `8` with `5` valid-PPA and `2` global-front adds;
-shape-density memory generated `6` with `0` valid-PPA. A T97 continuation
-should therefore test stricter front-credit recall using existing scheduler
-knobs before any source-code expansion.
+shape-density memory generated `6` with `0` valid-PPA. T97 then tested
+stricter front-credit recall using existing scheduler knobs. It improves
+FG-QDM smoke mean HV to `0.1534`, but classic remains ahead at `0.1903`, and
+memory lanes still have `0` global-front additions.
 
 T85 implements that correction directly as FG-QDM, or front-guarded QD memory.
 It keeps a separate classic-style primary success pool, inserts valid-PPA
