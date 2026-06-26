@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 
-QDBudgetPhase = Literal["warmup", "fill", "improve"]
+QDBudgetPhase = Literal["warmup", "fill", "improve", "delayed"]
 
 
 @dataclass(frozen=True)

@@ -152,6 +152,54 @@ def test_qd_engine_rejects_unknown_rebinning_kind(tmp_path, monkeypatch):
         _engine(tmp_path, monkeypatch, qd_rebinning_kind="manual")
 
 
+def test_qd_engine_delays_archive_pressure_until_activation(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_archive_activation_generation=3,
+    )
+    engine.num_offspring_lambda = 8
+    engine.current_generation = 1
+    engine.fail_pool = [
+        Heuristic("fail", "module f; endmodule", "", status="failed_syntax")
+    ]
+
+    empty_budget = engine._split_generation_budget()
+
+    assert empty_budget.phase == "delayed"
+    assert empty_budget.seed_budget == 8
+    assert empty_budget.refine_budget == 0
+    assert empty_budget.fail_budget == 0
+    assert empty_budget.backfill_budget == 0
+    empty_snapshot = engine._build_qd_snapshot(
+        inserted=0,
+        replaced=0,
+        budget=empty_budget,
+    )
+    assert empty_snapshot["qd_archive_pressure_active"] is False
+
+    engine.success_archive.insert(
+        _archive_member(
+            "parent",
+            generation=0,
+            descriptors=(0.1, 0.2),
+            insertion_index=1,
+        )
+    )
+    parent_budget = engine._split_generation_budget()
+
+    assert parent_budget.phase == "delayed"
+    assert parent_budget.seed_budget == 0
+    assert parent_budget.refine_budget == 8
+    assert parent_budget.fail_budget == 0
+    assert parent_budget.backfill_budget == 0
+
+    engine.current_generation = 3
+    active_budget = engine._split_generation_budget()
+
+    assert active_budget.phase != "delayed"
+
+
 def test_qd_engine_rebin_recent_window_uses_generation(tmp_path, monkeypatch):
     engine = _engine(
         tmp_path,

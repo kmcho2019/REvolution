@@ -57,6 +57,7 @@ class RevolutionBackendConfig:
     qd_grid_quantile_adaptive_warmup_successes: int = 0
     qd_grid_quantile_adaptive_warmup_generation: int = 1
     qd_adaptive_warmup_champion_lane_fraction: float | None = None
+    qd_archive_activation_generation: int = 0
     qd_quality_mode: str = "auto"
     qd_alpha: float | None = None
     qd_beta: float | None = None
@@ -183,6 +184,9 @@ class RevolutionBackend(EvolutionBackend):
                 qd_adaptive_warmup_champion_lane_fraction=(
                     self.config.qd_adaptive_warmup_champion_lane_fraction
                 ),
+                qd_archive_activation_generation=(
+                    self.config.qd_archive_activation_generation
+                ),
                 qd_descriptor_profile=self.config.qd_descriptor_profile,
                 qd_descriptor_axes=self.config.qd_descriptor_axes,
                 qd_descriptor_file=self.config.qd_descriptor_file,
@@ -272,6 +276,9 @@ class RevolutionBackend(EvolutionBackend):
                     ),
                     "adaptive_warmup_champion_lane_fraction": (
                         self.config.qd_adaptive_warmup_champion_lane_fraction
+                    ),
+                    "archive_activation_generation": (
+                        self.config.qd_archive_activation_generation
                     ),
                     "descriptor_profile": self.config.qd_descriptor_profile,
                     "descriptor_axes": list(self.config.qd_descriptor_axes),

@@ -146,6 +146,7 @@ class QDEngine(EoHEngine):
         qd_grid_quantile_adaptive_warmup_successes: int = 0,
         qd_grid_quantile_adaptive_warmup_generation: int = 1,
         qd_adaptive_warmup_champion_lane_fraction: float | None = None,
+        qd_archive_activation_generation: int = 0,
         qd_descriptor_profile: str | None = None,
         qd_descriptor_axes: tuple[str, ...] = (),
         qd_descriptor_file: str | None = None,
@@ -290,6 +291,9 @@ class QDEngine(EoHEngine):
             if qd_adaptive_warmup_champion_lane_fraction is None
             else float(qd_adaptive_warmup_champion_lane_fraction)
         )
+        if qd_archive_activation_generation < 0:
+            raise ValueError("qd_archive_activation_generation must be >= 0.")
+        self.qd_archive_activation_generation = int(qd_archive_activation_generation)
         self.qd_descriptor_profile = qd_descriptor_profile
         self.qd_descriptor_axes = tuple(qd_descriptor_axes)
         self.qd_descriptor_file = qd_descriptor_file
@@ -1368,6 +1372,8 @@ class QDEngine(EoHEngine):
             "qd_adaptive_warmup_champion_lane_fraction": (
                 self.qd_adaptive_warmup_champion_lane_fraction
             ),
+            "qd_archive_activation_generation": self.qd_archive_activation_generation,
+            "qd_archive_pressure_active": not self._archive_pressure_delayed(),
             "representation_kind": self.representation_kind,
             "code_samples_per_thought": self.code_samples_per_thought,
             "thought_population_size": self.thought_population_size,
@@ -1616,6 +1622,9 @@ class QDEngine(EoHEngine):
         return counts
 
     def _split_generation_budget(self) -> QDBudgetSplit:
+        if self._archive_pressure_delayed():
+            return self._delayed_archive_budget()
+
         if isinstance(self.success_archive, GridQuantileArchive) and not self.success_archive.is_initialized:
             total_pool = len(self.fail_pool) + len(self.success_pool)
             if total_pool == 0:
@@ -1663,6 +1672,33 @@ class QDEngine(EoHEngine):
             empty_cells_remaining=self.success_archive.occupied_count() < self.success_archive.num_cells,
             fail_share_cap=self._fail_pool_archive_member_ratio(),
             improve_backfill_fraction=self.qd_improve_backfill_fraction,
+        )
+
+    def _archive_pressure_delayed(self) -> bool:
+        return (
+            self.qd_archive_activation_generation > 0
+            and self.current_generation < self.qd_archive_activation_generation
+        )
+
+    def _delayed_archive_budget(self) -> QDBudgetSplit:
+        target_cells = qd_target_cells(
+            self.success_archive.num_cells,
+            self.qd_fill_target_fraction,
+        )
+        has_parent = bool(self._success_view())
+        return QDBudgetSplit(
+            total_budget=self.num_offspring_lambda,
+            target_cells=target_cells,
+            occupied_cells=self.success_archive.occupied_count(),
+            fail_share=0.0,
+            coverage_fail_share=0.0,
+            fail_share_cap=0.0,
+            fail_budget=0,
+            success_budget=self.num_offspring_lambda,
+            phase="delayed",
+            seed_budget=0 if has_parent else self.num_offspring_lambda,
+            backfill_budget=0,
+            refine_budget=self.num_offspring_lambda if has_parent else 0,
         )
 
     def _split_thought_generation_budget(self) -> QDBudgetSplit:
