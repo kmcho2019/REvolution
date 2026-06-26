@@ -189,9 +189,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Replicate T83 RF leaf-ID structural delayed QD on seeds `1002` and
       `1003` against existing matched classic baselines before considering it
       for any larger RTLLM spend.
-- [ ] Refresh or supersede the 20260625 review bundle so it includes the
+- [x] Refresh or supersede the 20260625 review bundle so it includes the
       auxiliary archive high-exploit, front-breadth, and depth negatives before
       using it for colleague-facing review.
+      Outcome: superseded by `reviews/20260625_review_bundle_SUPERSEDED.md`.
+      Use current selection/status docs and the latest periodic review notes
+      instead of the stale untracked bundle.
 - [x] Freeze a reference-complete, medium-validity budget-ablation subset with
       visible PPA-front variance before reading any budget-shape outcome.
 - [x] Add direct PPA-front visualization audit for completed T24/T25/T26 live

@@ -5760,3 +5760,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `headline`, but `Prob015_multi_pipe_8bit` and `Prob045_alu` now explicitly
   flag `yield_warning`.
 - Added focused tests in `tests/scripts/test_report_ppa_completeness.py`.
+
+## 2026-06-26T14:05:00Z - Stale Review Bundle Superseded
+
+- Added `reviews/20260625_review_bundle_SUPERSEDED.md`.
+- Decision: the existing `20260625_review_bundle` artifacts are stale because
+  they predate the T83 through T96 screening sequence and omit later negative
+  evidence from the auxiliary archive, front-breadth, depth, DeepGate, and
+  RF/DeepGate hybrid probes.
+- Colleague-facing review should use `preliminary_planning/current_selection_status.md`,
+  `best_current_techniques.md`, latest technique packages, and the latest
+  periodic review notes. If a portable bundle is needed, regenerate a new dated
+  `20260626_*` bundle instead of refreshing the old one in place.
