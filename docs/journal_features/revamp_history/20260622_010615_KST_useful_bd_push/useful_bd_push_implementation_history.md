@@ -5842,3 +5842,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: T97 beats the same-threshold random control, but FG-QDM remains
   unpromoted because classic still wins and memory-lane front material is not
   quality-productive enough.
+
+## 2026-06-26T16:20:00Z - T99 AURORA Raw Implementation Probe Pre-Registered
+
+- Added `preliminary_planning/20260626_aurora_raw_impl_delayed_probe/`.
+- The planned live arm is `aurora_raw_impl_compact_delayed_8x5`, which uses
+  the PPA-free `implemented_structural_compact_3d` profile on the delayed
+  high-exploit QD substrate from the recent DeepGate/RF screens.
+- This is not a pretrained or compressed-autoencoder claim. It is the live
+  representative for the useful T13 clue: raw implementation-side structural
+  features had positive replay HV while AURORA-style bottlenecks did not.
+- Decision rule: compare against the existing matched
+  `classic_revolution_8x5` baseline on the frozen eight-design preliminary
+  screen, then update the category representatives and top-10 shortlist.
