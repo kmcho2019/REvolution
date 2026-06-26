@@ -200,6 +200,37 @@ def test_qd_engine_delays_archive_pressure_until_activation(tmp_path, monkeypatc
     assert active_budget.phase != "delayed"
 
 
+def test_qd_engine_activates_archive_pressure_after_stagnation(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_archive_activation_stagnation_generations=2,
+    )
+    engine.num_offspring_lambda = 8
+    engine.current_generation = 3
+    engine.qd_generation_history = [
+        {"generation": 0, "occupied_cells": 1, "archive_member_count": 2},
+        {"generation": 1, "occupied_cells": 2, "archive_member_count": 3},
+        {"generation": 2, "occupied_cells": 2, "archive_member_count": 3},
+    ]
+
+    growing_budget = engine._split_generation_budget()
+
+    assert growing_budget.phase == "delayed"
+
+    engine.current_generation = 4
+    engine.qd_generation_history.append(
+        {"generation": 3, "occupied_cells": 2, "archive_member_count": 3}
+    )
+
+    active_budget = engine._split_generation_budget()
+    snapshot = engine._build_qd_snapshot(inserted=0, replaced=0, budget=active_budget)
+
+    assert active_budget.phase != "delayed"
+    assert snapshot["qd_archive_stagnation_triggered"] is True
+    assert snapshot["qd_archive_pressure_active"] is True
+
+
 def test_qd_engine_rebin_recent_window_uses_generation(tmp_path, monkeypatch):
     engine = _engine(
         tmp_path,

@@ -445,6 +445,9 @@ def _build_backend(
                 args.qd_adaptive_warmup_champion_lane_fraction
             ),
             qd_archive_activation_generation=args.qd_archive_activation_generation,
+            qd_archive_activation_stagnation_generations=(
+                args.qd_archive_activation_stagnation_generations
+            ),
             qd_quality_mode=args.qd_quality_mode,
             qd_alpha=args.qd_alpha,
             qd_beta=args.qd_beta,
@@ -982,6 +985,11 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         default=None,
     )
     parser.add_argument("--qd_archive_activation_generation", type=int, default=0)
+    parser.add_argument(
+        "--qd_archive_activation_stagnation_generations",
+        type=int,
+        default=0,
+    )
     parser.add_argument(
         "--qd_quality_mode",
         type=str,

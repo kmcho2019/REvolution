@@ -147,6 +147,7 @@ class QDEngine(EoHEngine):
         qd_grid_quantile_adaptive_warmup_generation: int = 1,
         qd_adaptive_warmup_champion_lane_fraction: float | None = None,
         qd_archive_activation_generation: int = 0,
+        qd_archive_activation_stagnation_generations: int = 0,
         qd_descriptor_profile: str | None = None,
         qd_descriptor_axes: tuple[str, ...] = (),
         qd_descriptor_file: str | None = None,
@@ -294,6 +295,13 @@ class QDEngine(EoHEngine):
         if qd_archive_activation_generation < 0:
             raise ValueError("qd_archive_activation_generation must be >= 0.")
         self.qd_archive_activation_generation = int(qd_archive_activation_generation)
+        if qd_archive_activation_stagnation_generations < 0:
+            raise ValueError(
+                "qd_archive_activation_stagnation_generations must be >= 0."
+            )
+        self.qd_archive_activation_stagnation_generations = int(
+            qd_archive_activation_stagnation_generations
+        )
         self.qd_descriptor_profile = qd_descriptor_profile
         self.qd_descriptor_axes = tuple(qd_descriptor_axes)
         self.qd_descriptor_file = qd_descriptor_file
@@ -1373,6 +1381,10 @@ class QDEngine(EoHEngine):
                 self.qd_adaptive_warmup_champion_lane_fraction
             ),
             "qd_archive_activation_generation": self.qd_archive_activation_generation,
+            "qd_archive_activation_stagnation_generations": (
+                self.qd_archive_activation_stagnation_generations
+            ),
+            "qd_archive_stagnation_triggered": self._archive_stagnation_triggered(),
             "qd_archive_pressure_active": not self._archive_pressure_delayed(),
             "representation_kind": self.representation_kind,
             "code_samples_per_thought": self.code_samples_per_thought,
@@ -1675,10 +1687,37 @@ class QDEngine(EoHEngine):
         )
 
     def _archive_pressure_delayed(self) -> bool:
-        return (
+        if (
             self.qd_archive_activation_generation > 0
             and self.current_generation < self.qd_archive_activation_generation
-        )
+        ):
+            return True
+        if self.qd_archive_activation_stagnation_generations > 0:
+            return not self._archive_stagnation_triggered()
+        return False
+
+    def _archive_stagnation_triggered(self) -> bool:
+        patience = self.qd_archive_activation_stagnation_generations
+        if patience <= 0:
+            return False
+        history = [
+            row
+            for row in self.qd_generation_history
+            if int(row["generation"]) < self.current_generation
+        ]
+        if len(history) <= patience:
+            return False
+        recent = history[-(patience + 1) :]
+        for index in range(1, len(recent)):
+            previous = recent[index - 1]
+            current = recent[index]
+            if int(current["occupied_cells"]) > int(previous["occupied_cells"]):
+                return False
+            if int(current["archive_member_count"]) > int(
+                previous["archive_member_count"]
+            ):
+                return False
+        return True
 
     def _delayed_archive_budget(self) -> QDBudgetSplit:
         target_cells = qd_target_cells(
