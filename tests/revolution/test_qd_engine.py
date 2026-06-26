@@ -4,6 +4,7 @@ import random
 import time
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any, cast
 
 import pytest
 
@@ -1041,6 +1042,50 @@ def test_front_guarded_memory_updates_parent_cell_credit(
     assert stats.valid_ppa_from_cell == 1
     assert stats.local_front_adds_from_cell >= 1
     assert stats.credit > QD_MEMORY_DEFAULT_CREDIT
+
+
+def test_front_guarded_memory_writes_summary_fields(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _front_guarded_engine(tmp_path, monkeypatch)
+    artifact_root = tmp_path / "artifacts"
+    engine.logger = cast(Any, SimpleNamespace(log_dir=str(artifact_root)))
+    child = _successful_candidate("child", score=2.0, power=0.8, area=80.0, clock=0.7)
+    child.code_file_path = str(tmp_path / "child" / "code.sv")
+    child.qd_memory_lane = "memory_refine"
+    child.qd_memory_parent_cell_id = "0,0"
+    child.qd_memory_parent_role = "cell_champion"
+    child.qd_memory_parent_cell_credit = 0.5
+
+    engine._insert_successes([child])
+    snapshot = engine._build_qd_snapshot(inserted=1, replaced=0, budget=None)
+    snapshot["planned_qd_memory_lane_counts"] = {
+        "classic": 3,
+        "memory_refine": 1,
+        "front_rescue": 0,
+        "probe": 0,
+    }
+    engine._write_qd_artifacts(snapshot)
+
+    event_payload = json.loads(
+        (tmp_path / "child" / "qd_archive_event.json").read_text(encoding="utf-8")
+    )
+    metrics_payload = json.loads(
+        (artifact_root / "qd_metrics.json").read_text(encoding="utf-8")
+    )
+
+    assert event_payload["qd_memory_lane"] == "memory_refine"
+    assert event_payload["qd_memory_parent_cell_id"] == "0,0"
+    assert event_payload["qd_memory_parent_role"] == "cell_champion"
+    assert event_payload["qd_memory_parent_cell_credit"] == pytest.approx(0.5)
+    assert metrics_payload["qd_scheduler_mode"] == "front_guarded_memory"
+    assert metrics_payload["planned_qd_memory_lane_counts"] == {
+        "classic": 3,
+        "memory_refine": 1,
+        "front_rescue": 0,
+        "probe": 0,
+    }
 
 
 def test_qd_engine_builds_cvt_archive_runtime(monkeypatch, tmp_path):

@@ -109,17 +109,24 @@ pressure.
 
 ## Front-Guarded QD-Memory Candidate
 
-`T85_front_guarded_qd_memory` is implemented and pre-registered but not ranked
-in the top-10 table yet because it has no live HV result. It is materially
-different from the fixed auxiliary archive family: the archive is passive
-memory, the primary success pool remains separate, empty-cell fill gets no
-budget, and only credited retained cells can receive the small memory-refine or
-front-rescue lanes.
+`T85_front_guarded_qd_memory` is implemented, pre-registered, and has completed
+its first three-problem live smoke. It is materially different from the fixed
+auxiliary archive family: the archive is passive memory, the primary success
+pool remains separate, empty-cell fill gets no budget, and only credited
+retained cells can receive the small memory-refine or front-rescue lanes.
 
-Decision rule: T85 can enter the top-10 table only after the three-problem
-smoke and frozen eight-design screen produce reference-complete mean HV. Until
-then, it is an active search-policy candidate, not a spend-ready full-RTLLM
-arm.
+Smoke result: the run completed on `Prob045_alu`, `Prob041_traffic_light`, and
+`Prob015_multi_pipe_8bit` at `12x3`. `Prob045_alu` produced a useful mechanism
+signal: four memory-refine calls, two front-rescue calls, two valid-PPA memory
+children, and one front-rescue global-front add. `Prob041_traffic_light`
+produced one valid memory-refine child. `Prob015_multi_pipe_8bit` never
+initialized the grid because it ended with `7` warmup successes against the
+`8`-success threshold.
+
+Decision: keep T85 active, but do not rank it in the top-10 HV table or promote
+it to final RTLLM spend yet. The next T85 check should lower grid-quantile
+warmup to `4`, rerun the three-problem smoke, and add a matched classic
+comparison before the frozen eight-design screen.
 
 Measured archive-stagnation activation is now complete and negative. It kept
 passive archive logging from the start and activated archive pressure only

@@ -649,8 +649,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Run Stage 0 local checks for T85: parser coverage, primary-pool
       preservation, memory-credit update, ruff, focused pytest, and source
       pyright.
-- [ ] Run T85 three-problem smoke against the matched classic comparator before
-      any frozen eight-design or full-RTLLM spend.
+- [x] Run the first T85 three-problem mechanism smoke and package the result in
+      `preliminary_planning/20260626_front_guarded_qd_memory_probe/smoke_result.md`.
+- [ ] Rerun T85 with lower grid-quantile warmup and a matched classic
+      comparator before any frozen eight-design or full-RTLLM spend.
 - [ ] If the smoke passes, run the frozen eight-design `8x5` T85 screen and
       decide whether it enters the mean-HV ranked top-10 table.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.

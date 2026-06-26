@@ -5398,3 +5398,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   runtime modules.
 - Decision: run the three-problem smoke next before any frozen eight-design
   screen or full RTLLM spend.
+
+## 2026-06-26T07:34:00Z - T85 Mechanism Smoke Completed
+
+- Ran the preregistered T85 `fg_qdm_sr_memory_12x3` smoke on
+  `Prob045_alu`, `Prob041_traffic_light`, and `Prob015_multi_pipe_8bit`.
+- Run path:
+  `exp/useful_bd_push/front_guarded_qd_memory_20260626/fg_qdm_sr_memory_12x3/seed_1001/openai_gpt-oss-120b`.
+- The run completed in `687.24s` after vLLM preflight confirmed
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Mechanism read: `Prob045_alu` exercised the memory lanes and produced one
+  front-rescue global-front add; `Prob041_traffic_light` produced one valid
+  memory-refine child; `Prob015_multi_pipe_8bit` never initialized the grid
+  because it ended with `7` warmup successes against the `8`-success threshold.
+- Added a focused telemetry patch so `qd_metrics.json`,
+  `archive_summary.json`, and per-candidate `qd_archive_event.json` expose
+  FG-QDM memory-lane fields directly.
+- Decision: keep T85 active, but do not promote it. The next check must lower
+  grid-quantile warmup and include a matched classic comparator.

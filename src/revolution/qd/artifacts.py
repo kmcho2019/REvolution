@@ -423,6 +423,29 @@ def write_qd_summary_files(
                 else [],
             }
         )
+    for key in (
+        "phase",
+        "qd_scheduler_mode",
+        "qd_parent_selection",
+        "qd_memory_classic_fraction",
+        "qd_memory_refine_fraction",
+        "qd_memory_rescue_fraction",
+        "qd_memory_min_cell_credit",
+        "qd_memory_front_gap_epsilon",
+        "primary_success_pool_size",
+        "active_memory_cells",
+        "sampleable_memory_cells",
+        "cooldown_memory_cells",
+        "mean_cell_credit",
+        "planned_qd_memory_lane_counts",
+        "qd_memory_lane_generated",
+        "qd_memory_lane_valid_ppa",
+        "qd_memory_lane_global_front_adds",
+        "qd_memory_lane_local_front_adds",
+    ):
+        if key in latest:
+            summary_payload[key] = latest[key]
+            metrics_payload[key] = latest[key]
     Path(summary_path).write_text(json.dumps(summary_payload, indent=2), encoding="utf-8")
     Path(metrics_path).write_text(json.dumps(metrics_payload, indent=2), encoding="utf-8")
     return visualization_artifacts
@@ -553,6 +576,23 @@ def write_candidate_archive_event(
         "descriptor_tuple": list(descriptor_tuple),
         "generation_candidate_index": getattr(candidate, "generation_candidate_index", None),
         "archive_insertion_index": getattr(candidate, "archive_insertion_index", None),
+        "qd_memory_lane": getattr(candidate, "qd_memory_lane", None),
+        "qd_memory_parent_cell_id": getattr(
+            candidate,
+            "qd_memory_parent_cell_id",
+            None,
+        ),
+        "qd_memory_parent_role": getattr(
+            candidate,
+            "qd_memory_parent_role",
+            None,
+        ),
+        "qd_memory_parent_cell_credit": getattr(
+            candidate,
+            "qd_memory_parent_cell_credit",
+            None,
+        ),
+        "qd_memory_front_gap": getattr(candidate, "qd_memory_front_gap", None),
         "candidate_directory_basename": output_path.parent.name,
         "cell_id": insert_result.cell_id,
         "member_index": insert_result.member_index,
