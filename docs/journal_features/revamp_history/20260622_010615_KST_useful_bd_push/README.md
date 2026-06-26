@@ -182,7 +182,7 @@ Start here when resuming the active goal.
 | `T09` | `T09_nettag_text_graph_bd` | Scaffolded. |
 | `T10` | `T10_circuitfusion_multimodal_bd` | Scaffolded. |
 | `T11` | `T11_mgvga_contrastive_bd` | Completed replay diagnostic, `T1 near_classic_replay_lead`; top-64/weighted structural contrastive descriptors improve HV by +1.82% but still trail lexical direct front hits. |
-| `T12` | `T12_lineage_repair_bd` | Scaffolded. |
+| `T12` | `T12_lineage_repair_bd` | Retrospective synthesis, `T0 retrospective_direct_repair_retired`; T31/T49/T51/T59 evidence retires direct repair and short feedback while keeping T51 as recovery context. |
 | `T13` | `T13_aurora_incremental_autoencoder_bd` | Completed replay diagnostic; raw implementation features are `T1 near_classic_replay_lead`, but PCA/RFF/incremental bottlenecks are `T0 diagnostic`. |
 | `T14` | `T14_dehnn_hypergraph_bd` | Completed replay diagnostic; hypergraph plus implementation features are `T1 near_classic_replay_lead`, but hypergraph-only descriptors are `T0 diagnostic`. |
 | `T15` | `T15_masterrtl_sog_bd` | Completed `T0 structural_proxy_not_promoted` Yosys-SOG proxy audit; zero lowering failures, slightly negative front-cell delta, weaker occupied-cell breadth. |

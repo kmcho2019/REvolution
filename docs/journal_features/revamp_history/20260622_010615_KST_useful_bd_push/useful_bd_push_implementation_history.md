@@ -6072,3 +6072,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: do not spend on exact adaptive-emitter/CVT boundary or schedule
   tweaks. Continue only with a materially different source-level repair or
   front-rescue emitter that logs per-lane valid-PPA and front-add contribution.
+
+## 2026-06-26T20:45:00Z - T12 Lineage Repair Retrospective Closed
+
+- Converted `T12_lineage_repair_bd` from a scaffold into a
+  `T0 retrospective_direct_repair_retired` evidence package.
+- Used measured T31, T49, T51, and T59 artifacts instead of launching a fresh
+  live run. T31 direct fail-feedback loses the T26 holdout HV signal, T49
+  role-separated repair is mixed but front-negative, T51 remains the
+  code-individual recovery base, and T59 short fail-pool feedback loses the
+  T51 front-breadth balance.
+- Added T12-local evidence and gate tables, copied four source figures, recorded
+  source hashes, and updated the technique indexes, lineage notes, and TODO.
+- Decision: do not spend on exact direct fail-feedback or same-budget short
+  feedback. Continue only with a materially different source-level repair or
+  front-rescue lane that logs per-lane valid-PPA and front-add contribution.

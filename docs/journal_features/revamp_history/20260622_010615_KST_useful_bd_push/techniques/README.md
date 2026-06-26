@@ -25,7 +25,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T09` | `T09_nettag_text_graph_bd` | Text-attributed graph descriptor | Scaffolded |
 | `T10` | `T10_circuitfusion_multimodal_bd` | Multimodal descriptor | Scaffolded |
 | `T11` | `T11_mgvga_contrastive_bd` | Contrastive graph descriptor | `T1 near_classic_replay_lead`; +1.82% HV over lexical with front-hit blocker |
-| `T12` | `T12_lineage_repair_bd` | Lineage/yield descriptor | Scaffolded |
+| `T12` | `T12_lineage_repair_bd` | Lineage/yield descriptor | `T0 retrospective_direct_repair_retired` |
 | `T13` | `T13_aurora_incremental_autoencoder_bd` | Learned AURORA descriptor | mixed: raw implementation features `T1 near_classic_replay_lead`, compressed bottlenecks `T0 diagnostic` |
 | `T14` | `T14_dehnn_hypergraph_bd` | Hypergraph descriptor | Completed replay diagnostic |
 | `T15` | `T15_masterrtl_sog_bd` | RTL operator-graph descriptor | `T0 structural_proxy_not_promoted`; zero-failure Yosys-SOG lowering, but front-cell and occupied-cell evidence do not beat classic |

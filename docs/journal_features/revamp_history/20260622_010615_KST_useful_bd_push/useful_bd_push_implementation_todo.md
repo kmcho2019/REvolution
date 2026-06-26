@@ -263,7 +263,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       and tier decision.
 - [x] `T11_mgvga_contrastive_bd` has methodology, results, figures, tables, and
       tier decision.
-- [ ] `T12_lineage_repair_bd` has methodology, results, figures, tables, and tier
+- [x] `T12_lineage_repair_bd` has methodology, results, figures, tables, and tier
       decision.
 - [x] `T13_aurora_incremental_autoencoder_bd` has methodology, results, figures,
       tables, and tier decision.

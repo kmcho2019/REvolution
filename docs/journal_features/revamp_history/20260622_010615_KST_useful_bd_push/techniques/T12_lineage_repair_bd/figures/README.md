@@ -1,4 +1,11 @@
-# Figures
+# T12 Figures
 
-Store lineage archive plots, operator delta diagnostics, validity ablations,
-archive coverage, and PPA comparison figures here.
+Local figures are copied from measured repair-lineage packages:
+
+- `t12_t31_holdout_live_aggregate.png`
+- `t12_t49_metric_delta_summary.png`
+- `t12_t51_metric_delta_summary.png`
+- `t12_t59_metric_delta_summary.png`
+- `visual_inspection_notes.md`
+
+Use `visual_inspection_notes.md` for manual readability and conclusion notes.
