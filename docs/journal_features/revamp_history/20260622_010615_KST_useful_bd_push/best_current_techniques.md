@@ -76,6 +76,14 @@ random-hash memory control on the three-problem smoke. Any next FG-QDM attempt
 needs a materially stronger descriptor or a simpler, justified memory-credit
 mechanism.
 
+The 20260626 front-memory replay gate makes that next mechanism more precise.
+Classic scalar top-8 would discard `14/54` final-front candidates in the T96
+candidate table, so memory has real front material to rescue. T96's hybrid QD
+archive discards `55/81` final-front candidates from scalar top-8 while still
+losing HV, so broad archive recall is not enough. The next memory method must
+gate recall on evidence that a retained family can create quality-improving or
+front-adding children.
+
 T87 tested that descriptor swap after simplifying the FG-QDM credit rule and
 metadata handling. The source-aligned shape-density descriptor is registered
 and RTL-native, but the smoke is negative: mean HV `0.1264` trails SR memory

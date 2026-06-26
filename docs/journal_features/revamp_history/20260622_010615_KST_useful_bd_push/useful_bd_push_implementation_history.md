@@ -5785,3 +5785,15 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   it is not promoted. The next live spend should be a materially new mechanism
   or model-state transformation, not another small encoder-axis or archive
   schedule substitution.
+
+## 2026-06-26T14:35:00Z - Front-Memory Replay Gate Completed
+
+- Added `preliminary_planning/20260626_front_memory_replay_gate/`.
+- The deterministic replay uses the T96 candidate-level PPA table and scalar
+  top-8 retention to test whether final Pareto-front candidates would be
+  discarded by classic-style scalar selection.
+- Result: classic leaves `14/54` final-front candidates outside final scalar
+  top-8 (`25.9%`), while T96 leaves `55/81` outside scalar top-8 (`67.9%`).
+- Decision: memory has front material to retain, but broad recall is not
+  enough. The next live method should spend memory budget only when a retained
+  family has evidence of producing quality-improving or front-adding children.

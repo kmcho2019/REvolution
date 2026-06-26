@@ -141,6 +141,23 @@ valid-PPA yield drops on `Prob015_multi_pipe_8bit` (`24` to `10`) and
 `Prob045_alu` (`36` to `11`). Keep T96 as the hybrid pretrained RTL/netlist
 representative; do not promote it to full RTLLM spend.
 
+## Front-Memory Replay Gate
+
+`20260626_front_memory_replay_gate/` tests the premise behind another QD-memory
+mechanism before spending more live vLLM budget. It replays the T96
+candidate-level PPA table and asks whether scalar top-8 retention would discard
+final Pareto-front candidates.
+
+Result: classic leaves `14/54` final-front candidates outside final scalar
+top-8 (`25.9%`), so there is real front material that a memory mechanism could
+retain. T96 leaves `55/81` outside scalar top-8 (`67.9%`) while still losing HV
+and Pareto breadth, so broad archive recall by itself is not sufficient.
+
+Decision: the next archive-coupling method should not merely remember more
+families. It should spend memory budget only when a retained family has
+evidence of producing quality-improving or front-adding children, and it must
+report front-add rate per memory-lane call.
+
 ## Pre-RF Archive-Pressure Context
 
 Do not run another fixed MasterRTL geometry tweak. The adaptive sparse-front
