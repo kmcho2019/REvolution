@@ -57,13 +57,14 @@ frozen-screen table remains the promotion-oriented view.
 
 ## Top 10 Overall QD Configs By Mean HV
 
-Primary sort key is observed QD mean HV. The scope column is mandatory because
-smoke-only and single-seed rows are not interchangeable with replicated
-eight-design rows.
+Primary sort key is observed absolute QD mean HV, but this is an operational
+visibility table rather than a promotion ranking. The scope column is
+mandatory because smoke-only, single-seed, replicated, and different-budget
+rows are not interchangeable.
 
 | Rank | Config | Mean HV | Scope | Read |
 | ---: | --- | ---: | --- | --- |
-| 1 | `T100_fg_qdm_rf_leafid_front_credit_12x3` | `0.1566` | Three-problem smoke; classic `0.1903` | Best FG-QDM smoke and best overall observed QD mean HV, but still negative versus classic. |
+| 1 | `T100_fg_qdm_rf_leafid_front_credit_12x3` | `0.1566` | Three-problem smoke; classic `0.1903` | Best FG-QDM smoke by absolute mean HV, but a large relative loss versus its matched classic. |
 | 2 | `T97_fg_qdm_sr_front_credit_12x3` | `0.1534` | Three-problem smoke; classic `0.1903` | Strongest SR-memory FG-QDM variant; superseded by T100 for the FG-QDM category. |
 | 3 | `T86_fg_qdm_random_memory_12x3` | `0.1382` | Three-problem smoke control; classic `0.1903` | Control evidence only; random memory should not be promoted as a BD. |
 | 4 | `T85_fg_qdm_sr_memory_warmup4_12x3` | `0.1375` | Three-problem smoke; classic `0.1903` | Original FG-QDM SR-memory smoke; superseded by stricter T97/T100. |
@@ -74,9 +75,10 @@ eight-design rows.
 | 9 | `masterrtl_aux_archive_high_exploit_6x7` | `0.1229` | Eight-design `6x7`; classic `0.1701` | Deeper budget helps classic more than QD. |
 | 10 | `masterrtl_structural_front_slot_8x5` | `0.1227` | Eight-design seed `1001`; classic `0.1406` | Best raw MasterRTL structural-cell front-slot variant. |
 
-This table keeps T100 visible as the current best observed QD mean-HV result
+This table keeps T100 visible as the current highest absolute QD mean-HV row
 while preserving the promotion decision: it is smoke-only and still loses the
-matched classic smoke. The final RTLLM shortlist remains empty until a category
+matched classic smoke by a larger relative margin than the best frozen-screen
+near misses. The final RTLLM shortlist remains empty until a category
 representative survives a reference-complete frozen screen or a documented
 promotion exception.
 
@@ -297,11 +299,10 @@ HV is `0.1375`; classic wins `2/3` HV comparisons and ties
 Pareto points `3.00` versus `2.00` and mean reference-beating candidates
 `17.33` versus `9.00`.
 
-Decision: T97 replaces T85 as the current front-guarded memory category
-representative because stricter cell credit improves smoke mean HV. Do not
-rank it in the frozen eight-design top-10 table or promote it to final RTLLM
-spend because it is still a three-problem smoke and memory lanes do not add
-global-front material.
+Decision: T97 superseded T85, and T100 now supersedes T97 as the current
+front-guarded memory category representative. Do not rank T97 in the frozen
+eight-design top-10 table or promote it to final RTLLM spend because it is
+still a three-problem smoke and memory lanes do not add global-front material.
 
 T86 random-memory control: the matched smoke completed on the same three
 problems. Classic mean HV is `0.1903`, random-memory FG-QDM is `0.1382`, and

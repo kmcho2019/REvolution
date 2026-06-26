@@ -6165,3 +6165,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: do not spend on exact deterministic multiview proxy axes. Reopen
   only with paired post-mapping/AIG extraction, masked multiview training, or
   secondary memory/reporting role.
+
+## 2026-06-26T18:25:18Z - Current-State Plan Sync
+
+- Updated `useful_bd_push_plan.md` so the current research state no longer
+  points at the obsolete T37/T43 validation target.
+- Added `completion_gap_audit.md` to separate proven progress from remaining
+  proof gaps before either a useful-QD claim or a rigorous negative-map claim.
+- Updated the local README to point at `current_selection_status.md`, T100,
+  T95/T96/T99 encoder representatives, and the current no-full-RTLLM-promotion
+  decision.
+- Decision: do not launch another small descriptor-axis run from this audit
+  alone. Close common metric/figure completeness and adversarial validation
+  gaps first, unless a materially different mechanism is specified.
+
+## 2026-06-26T18:31:00Z - Periodic Completion-Gap Review
+
+- Ran a long read-only `claude -p` review using
+  `reviews/claude_periodic_review_20260626_completion_gap_prompt.md`.
+- Output:
+  `reviews/claude_periodic_review_20260626_completion_gap.md`.
+- Verdict: `PASS_WITH_ACTIONS`.
+- Accepted findings: T100 was missing from the canonical technique registry,
+  `technique_lineage_ledger.md` lagged the T87-T100 sequence, and
+  `current_selection_status.md` still had one stale T97-as-current-FG-QDM
+  sentence.
+- Integrated fixes: added the T100 registry row, marked T97/T98 as
+  superseded/control smoke rows, extended the lineage ledger through T100, and
+  clarified the mixed-scope top-10 mean-HV table.

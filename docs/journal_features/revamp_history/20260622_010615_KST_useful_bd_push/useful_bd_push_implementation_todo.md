@@ -730,6 +730,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       promoted to eight-design or full-RTLLM spend.
 - [x] Run the required periodic `claude -p` review after the T83/T84/T85
       commits and record the `PASS_WITH_ACTIONS` output under `reviews/`.
+- [x] Run the periodic `claude -p` completion-gap review after T100 and the
+      T08/T09/T10/T12/T16/T18 closure commits. Outcome:
+      `PASS_WITH_ACTIONS`; registry, lineage, and T97/T100 status drift were
+      fixed.
 - [x] Correct T85 tracking drift: registry status, technique package,
       lineage ledger, and the over-precise all-three-HV-win wording.
 - [x] Add a legal deterministic random descriptor profile for T86

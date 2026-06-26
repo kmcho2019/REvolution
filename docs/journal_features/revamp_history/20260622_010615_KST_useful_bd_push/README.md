@@ -18,19 +18,14 @@ Start here when resuming the active goal.
   `presentations/20260623_report/` (presentation, report, and broad RTLLM
   classic-vs-T26-family comparison plan).
 - Current preliminary planning package:
-  `preliminary_planning/20260625_encoder_config_screening/` (pretrained
-  encoder, encoder-like, RTL-native, and custom-BD candidate ranking plus the
-  completed eight-design screening matrix and result package).
-- Current pretrained-encoder bridge package:
-  `preliminary_planning/20260625_pretrained_encoder_bridge_validation/`
-  (Qwen3 model smoke passes and is the next live-hook candidate; DeepGate and
-  MasterRTL pretrained generated-candidate bridges remain blocked).
-- Current generated-candidate Qwen probe:
-  `preliminary_planning/20260625_qwen_live_screen_probe/` (Qwen3 canonical
-  RTL embeddings are nonconstant on `540` valid-PPA candidates, but nearest
-  neighbors are `99.26%` same-problem; the live descriptor hook now passes a
-  bounded archive-insertion smoke and needs a matched screen before any full
-  RTLLM spend).
+  `preliminary_planning/current_selection_status.md` (no QD arm is promoted
+  for full RTLLM spend; keeps category representatives and top-10 observed
+  mean-HV tables).
+- Current pretrained/encoder evidence:
+  Qwen, official DeepGate, RF/DeepGate hybrid, and AURORA-style raw
+  implementation-feature lanes all have bounded live evidence. T95 is the
+  pure DeepGate representative, T96 is the hybrid representative, T99 is the
+  AURORA/raw representative, and all remain below classic.
 - Most recent presentation supplement:
   `presentations/20260623_report/full_rtllm/final_analysis/`
   (`report_final_analysis_bundle.py` output on the 46-problem
@@ -41,23 +36,22 @@ Start here when resuming the active goal.
 - Holdout subset: `tables/holdout_screening_subset.csv`.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
-- Most recent completed package:
-  `techniques/T82_masterrtl_rf_timing_runtime_hook/`
-  (`T0_live_smoke_positive_not_screened`; MasterRTL RF timing model-state
-  metrics resolve through the live descriptor registry and one live smoke, but
-  this is not a screened QD/PPA result).
+- Most recent technique-package closure:
+  `techniques/T16_deepcell_multiview_bd/`
+  (`T0 retrospective_multiview_proxy_not_promoted`; measured T14/T95/T96/T99
+  proxy evidence, no true DeepCell reproduction claim).
 - Most recent preliminary planning package:
-  `preliminary_planning/20260626_masterrtl_rf_timing_live_smoke/`
-  (records the first live smoke for the RF timing descriptor and the next
-  frozen `8x5` screen requirement).
-- Most recent live ablation:
-  `techniques/T64_fused_operator_timing_live_screen/` (direct T63
-  `operator_timing` ablation; completed seed `1001`).
+  `preliminary_planning/20260626_front_credit_rf_leafid_fg_qdm_probe/`
+  (T100 front-credit RF-leaf FG-QDM smoke).
+- Most recent live mechanism result:
+  T100 is the best FG-QDM smoke by mean HV (`0.1566`) and has `2`
+  front-rescue global-front additions, but classic still leads the matched
+  smoke at `0.1903`.
 - Next direction:
-  no QD configuration is promoted for full RTLLM spend yet.
-  `source_aligned_rf_timing_state_3d` passed a one-problem live smoke, so the
-  next gate is the frozen eight-design `8x5` screen with reference-complete
-  accounting.
+  no QD configuration is promoted for full RTLLM spend yet. The next runtime
+  spend must change the mechanism enough to plausibly improve memory-lane
+  front contribution per LLM call, or else the branch should move toward a
+  rigorous negative-map audit and adversarial validation.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front
@@ -65,25 +59,19 @@ Start here when resuming the active goal.
 - Prior per-technique direct PPA visualization:
   `techniques/T40_sparse_warmup_control_matrix/figures/t40_raw_area_power_fronts.png`
   (raw area-power front panels for the T40 control matrix).
-- Most recent per-technique direct PPA visualization:
-  `techniques/T75_shape_density_front_pressure_qd/matched_classic_comparison/figures/t75_hv_delta_by_problem.png`
-  (13-problem matched classic-vs-T75 HV-delta summary).
-- Most recent direct PPA HTML viewer:
-  `techniques/T72_source_aligned_rtl_cell_qd/visualizations/direct_ppa_pareto/index.html`
-  (filesystem-openable raw area-power Pareto supplement with summary cards and
-  screenshot; not the full Phase 03.1 viewer).
-- Most recent full Phase 03.1 viewer:
-  `techniques/T75_shape_density_front_pressure_qd/matched_classic_comparison/visualizations/qd_ppa_viewer/index.html`
-  (linked archive/PPA timeline viewer with compare mode, archive projection,
-  raw/improvement/normalized PPA modes, raw A-P front mode, and screenshot).
+- Most recent per-technique direct PPA visualization examples:
+  `techniques/T16_deepcell_multiview_bd/figures/` includes inspected T14,
+  T95, and T99 proxy figures used to close the DeepCell-style scaffold.
+- Most recent direct PPA HTML viewer family:
+  T94/T95/T96/T99 preliminary packages include direct PPA supplements for the
+  encoder-lane screens.
+- Most recent full Phase 03.1 viewer family:
+  T94/T95/T96/T99 preliminary packages include Phase 03.1-compatible
+  `qd_ppa_viewer/` bundles when archive artifacts are available.
 - Current Phase 03.1 visualization contract:
   `phase_03_1_visualization_contract.md` (every completed live QD technique
   with archive artifacts needs the full `qd_ppa_viewer/` bundle plus the
   `direct_ppa_pareto/` supplement).
-- Most recent live technique:
-  `techniques/T75_shape_density_front_pressure_qd/` (seed-1001 hard/tuning
-  source-aligned shape-density front-pressure screen with direct PPA panels,
-  Phase 03.1 viewer, and matched comparison package).
 - Active RTL-native descriptor packages:
   `techniques/T15_masterrtl_sog_bd/` (`T0 structural_proxy_not_promoted`
   Yosys-SOG proxy with zero lowering failures) and
@@ -91,20 +79,15 @@ Start here when resuming the active goal.
   positive_proxy_not_promoted` problem-local timing-risk proxy) and
   `techniques/T62_fused_rtl_native_bd/` (`T0
   positive_proxy_not_promoted` fused structural/timing proxy). T63, T64, T66,
-  T67, and T72 are reference-complete live archive tests, and T65 is a
+  T67, and T72-T75 are reference-complete live archive tests, and T65 is a
   secondary-cell audit over T51/T63/T64. Use them as mechanism evidence only:
-  none beats classic headline PPA-front metrics. T68/T69/T70/T71 are the
-  source-verification and descriptor-design bridge; T72 is the first live
-  source-aligned comparison, but exact T72 remains not promoted. T73 improves
-  valid-PPA yield but not front breadth, T74 regresses, T75 is a positive
-  diagnostic that improves over T73/T74 without beating classic, and T76
-  verifies MasterRTL pretrained model artifacts. T77 then blocks the direct
-  pretrained Area-head leaf BD because generated candidates collapse to one
-  prediction and one leaf row. T80 and T81 reopen the lane through
-  noncollapsed raw structural and RF timing model-state signals, and T82
-  exposes the RF timing state as a live descriptor hook. T78 moves the
-  budget-shape concern from discussion into a reproducible diagnostic audit,
-  but leaves the live equal-candidate ablation open.
+  none beats classic headline PPA-front metrics. T76/T77 verify that direct
+  pretrained MasterRTL Area-head leaves are blocked by generated-candidate
+  collapse. T80-T84 and T96 then screen raw structural, RF timing
+  model-state, RF leaf-ID, and RF/DeepGate hybrid descriptors. T83 remains the
+  closest RF model-state single-seed clue, but its replication and follow-up
+  evidence are negative. T100 is the current best FG-QDM smoke, not a
+  promoted live-screen result.
 - Ignored local run outputs: `exp/useful_bd_push/`.
 
 ## Top-Level Docs
@@ -118,6 +101,7 @@ Start here when resuming the active goal.
 | `useful_bd_push_plan.md` | Main contract: outcome, constraints, method families, gates, and completion criteria. |
 | `technique_lineage_ledger.md` | Skim-first lane/category map with result lineage, branch policy, and Mermaid process graph. |
 | `technique_lanes.md` | Lane-based process map with method families, lineage graph, decision ledger, branch guidance, and next actions. |
+| `completion_gap_audit.md` | Current proof gaps before a positive or negative final sign-off can be claimed. |
 | `useful_bd_push_implementation_todo.md` | Short checklist to keep the goal moving. |
 | `useful_bd_push_implementation_history.md` | Chronological evidence log for decisions, commands, runs, failures, and commits. |
 | `current_results_matrix.md` | Interim cross-method matrix after ten real packages; compares current leads, controls, and next actions. |

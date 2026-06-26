@@ -59,114 +59,45 @@ This does not invalidate QD/MAP-Elites literature; it means the RTL setting
 requires a constrained, validity-aware variant whose archive cost is earned by
 front material.
 
-This interpretation changes the roadmap in three ways:
+The current preliminary-planning status is more advanced than the early
+T37/T43-era text this section replaced. The branch has now screened or closed
+the main candidate families:
 
-1. Treat T75 as a packaged positive diagnostic, not as a promoted useful-BD
-   result.
-2. Treat the completed T79 fixed-total-budget ablation as diagnostic-negative
-   for exact T75. T78 showed that existing T75 archives still fill or replace
-   cells late in `9/13` problems, but T79 shows that this maturation did not
-   convert into a PPA-front win: QD loses matched classic HV at `12x3`, `8x5`,
-   and `6x7`. Future budget-shape claims need a changed descriptor/coupling
-   mechanism or a separately registered follow-up shape.
-3. Continue the verification-gated MasterRTL/RTLTimer pretrained lane. T76
-   confirms MasterRTL tree artifacts can be loaded and hashed in the isolated
-   env. T77 shows the direct pretrained Area head collapses on generated
-   candidates, so live pretrained-model BD claims now require retraining,
-   replacement, or reproduced timing/power feature flows. If MasterRTL becomes
-   a submodule or pinned external source, first produce an inference
-   reproduction package before spending live QD budget.
+- T26/T30/T47-T59: synthesis-response/code-thought archive and emitter
+  variants preserve useful mechanism evidence but do not beat classic on
+  reference-complete PPA-front metrics.
+- T72-T75 and T79: source-aligned RTL-native QD and budget-shape ablations
+  show that exact shape-density front pressure is diagnostic-positive but
+  negative against matched classic at `12x3`, `8x5`, and `6x7`.
+- T83/T84 and auxiliary-archive probes: MasterRTL RF model-state and
+  high-exploit auxiliary archives produce the closest single-seed clues, but
+  replication and follow-up screens remain negative.
+- T94/T95/T96/T99: Qwen/DeepGate/RF-DeepGate/AURORA-style encoder or
+  encoder-like lanes now have bounded live evidence; none is spend-ready.
+- T85/T86/T87/T97/T98/T100: front-guarded QD memory exists and is tested as an
+  auxiliary-memory scheduler. T100 is the best FG-QDM smoke (`0.1566` mean HV)
+  but still trails matched classic (`0.1903`) and is not promoted.
+- T08/T09/T10/T12/T16/T18: early learned/proxy scaffolds are closed with
+  measured retrospective evidence and explicit non-reproduction caveats.
 
-The current priority milestone is `presentations/20260623_report/`. It must
-prepare a report and Markdown deck answering whether diversity matters for
-RTL/Verilog PPA evolution and which diversity matters. It must also
-pre-register and execute a broad RTLLM classic versus T26-family QD comparison
-after a small screening ladder. The full RTLLM launch is not allowed until the
-selected QD arm is chosen from screening evidence and passes adversarial
-pre-launch review. Exact T26 is the fallback; T26.1 low-fusion and gated T26.1
-are candidates only if they pass smoke/screening without adding messy code.
+`preliminary_planning/current_selection_status.md` is now the operational
+shortlist. It records no full-RTLLM-spend-ready QD arm, keeps one best current
+representative for each encoder/config category, and ranks the top ten QD
+configurations by observed mean HV while labeling smoke-only and replicated
+rows separately.
 
-T37 is the most recent completed package and confirms the T36 replay lead. It
-keeps the T11 structural-contrastive selector and tests zero, one, two, and
-three bounded descriptor-cell local-front slots. One slot reaches HV
-`3.851344`, `+4.04%` versus lexical, and recovers direct front hits to `126`,
-above lexical's `122` and T11's `120`. Two or more slots collapse toward the
-weaker T35 cell-Pareto HV regime. It is a `T2 replay_candidate`, not a final
-useful-BD promotion, because no same-budget live run has tested
-generation-time validity and coverage.
+The current research answer is therefore negative but useful: generic
+descriptor spread and direct encoder-axis swaps have not produced a robust
+PPA-front win. The most defensible remaining story is QD as guarded auxiliary
+memory for PPA-competitive RTL implementation families, but the completed
+FG-QDM smokes show that even this framing needs a stronger memory-lane
+front-add mechanism before larger RTLLM spend.
 
-T38 is the completed first live follow-up. It adds `elite_pareto_slot`, which
-keeps the scalar quality champion and one local PPA Pareto slot per descriptor
-cell when `--qd_max_elites_per_cell 2` is used. T38 runs end to end and retains
-front/archive material on ALU and traffic-light, but it is `T0 diagnostic`
-because multi-pipe has valid/global front PPA and zero active archive members
-under grid-quantile warmup `8`.
-
-T39 is the completed T38 ablation. It keeps the same one-slot archive rule,
-descriptor, seed, subset, model, budget, and operators, but lowers
-grid-quantile warmup from `8` to `4` so sparse-yield designs can form an
-archive during the run. It fixes the T38 multi-pipe empty-archive gap and is
-recorded as `T0 positive_ablation`, not a promoted useful-BD claim. The next
-step is same-budget classic/manual/random/full-Pareto controls.
-
-T44 is the completed follow-up after T43. It stops champion-lane-only tuning
-and wires a live-safe top-8 subset of T11's structural graph features into the
-runtime descriptor registry as `t11_runtime_top8_graph`. The full
-three-problem live screen preserves all classic-covered designs and produces
-real traffic-light/multi-pipe HV and pooled-front signal, but it is `T0
-mixed_diagnostic` because ALU and traffic-light valid-PPA yield drop by more
-than 50% with classic denominators above 10.
-
-T45 is the completed compact follow-up. It reduces the graph profile to the
-first four T44 axes as `t11_runtime_top4_graph`. It preserves all
-classic-covered designs and avoids the 50% yield-warning threshold, but it is
-still `T0 mixed_diagnostic`: classic wins mean HV, HV wins, mean Pareto
-points, reference-beating count, valid-PPA samples, and every best-score
-comparison. The next graph method should not be direct top-16/top-64 ranked
-axis escalation; use a frozen non-PPA projection or a secondary graph archive
-lane.
-
-T35 remains important negative/upper-bound evidence. Full cell-local Pareto
-retention improves direct front hits but loses too much HV, while the
-front-seeded arm proves the fixed candidate pool contains recoverable front
-material but uses global raw PPA-front membership and is not deployable.
-
-T11 remains the strongest pure descriptor-only L4 replay selector so far. Its
-top-64/weighted structural contrastive descriptors beat lexical HV by
-`+1.82%` and keep `186` unique PPA points, but direct front hits still miss
-lexical (`120` versus `122`). T36 is the measured bounded-front follow-up. The
-T37 is the measured slot-count ablation. T38 is the first live validation
-package for exactly one bounded local-front slot. T39 is the sparse-yield
-archive warmup/fallback ablation that keeps descriptor novelty intact.
-
-T30 remains the most recent positive holdout support for exact T26
-conservative-exploit SR raw: it preserves all three classic-covered
-VerilogEval holdout designs and improves mean final-best score by 9.91%. It is
-not a QD-front promotion because valid-PPA yield drops, P098 has a per-problem
-yield warning, and front/netlist breadth does not improve.
-
-T31 is completed and retired as `T0 diagnostic`. Same-budget failure feedback
-kept final-best coverage alive, but it did not repair P098 yield, did not
-preserve T26's P135 HV/quality signal, and did not widen the raw PPA Pareto
-front. The next method should split champion, near-front, and bounded-repair
-emitter roles instead of replacing archive-parent requests with direct
-fail-feedback repair. Any T32-style follow-up must
-include straightforward raw PPA Pareto figures with conventional
-lower-left-better axes.
-
-T32 is completed and retired as `T0 diagnostic`. It improves P098 valid PPA
-versus T26/T31 and improves unique PPA points versus T31, but it does not
-preserve T26's P135 quality/HV signal and mean HV/HV-AUC remain zero. The next
-same-family method should not keep nudging champion fraction or two-parent
-probability alone; it needs a stronger role-separated emitter or a branch to a
-different descriptor family.
-
-The learned-encoder lane should preserve the T11/T13/T14 structural
-implementation signal while targeting front-hit retention with a gentler
-archive mixture or a collapse-penalized contrastive graph objective. Do not
-spend the next attempt on plain unsupervised compression, more blind feature
-concatenation, or full local-Pareto replacement. Any follow-up must include
-straightforward raw PPA Pareto figures before BD-space projections are used.
+Completion is not yet proven. The remaining completion work is concentrated in
+three areas: common passive-archive/metric coverage across all headline
+packages, a concise central comparison report that states the negative map
+without overclaiming, and independent adversarial validation of that exact
+claim.
 
 ## Prior Evidence To Reuse
 
@@ -429,20 +360,23 @@ After each `T0`, add at least one follow-up idea, ablation, or hybrid to
 
 ## Current Validation Target
 
-T40 is complete. It kept the frozen T39 sparse-warmup one-slot candidate and
-ran matched classic, manual-BD, random-descriptor, and full local-Pareto
-controls under the same subset, seed, model, budget, and warmup. The accepted
-primary figure is a direct raw area-power PPA Pareto front with conventional
-non-inverted axes and lower-left marked as better.
+The current target is no longer a single T40-T43 follow-up. It is to turn the
+completed wide-net run evidence into a rigorous final claim:
 
-Current next target: move past T43. T43 is complete as
-`T0 mixed_diagnostic`: it preserved all classic-covered designs and passed
-validation, but all three QD archives completed strict eight-success warmup,
-so the staged `0.60` champion-lane branch never activated. Its direct raw
-PPA-front figure has zero pooled-front hits. The next method should either
-force a genuine sparse-trigger condition with a bounded warmup buffer/patience
-rule, or branch exact T11 runtime projection so the descriptor changes instead
-of only parent pressure.
+1. no QD configuration is promoted for full RTLLM spend yet;
+2. T100 is kept as the best FG-QDM category representative, not a positive
+   result;
+3. T83 and the high-exploit auxiliary archive remain the closest MasterRTL
+   model-state/archive clues, but their replicated evidence is negative;
+4. T95/T96/T99 keep the best DeepGate, RF/DeepGate, and AURORA-style encoder
+   representatives visible without overstating them; and
+5. final sign-off requires passive-archive/metric completeness and an
+   adversarial validation report, not another small descriptor-axis swap.
+
+The next live run should not launch until it changes the mechanism in a way
+that could plausibly improve memory-lane front contribution per LLM call, or
+until the final negative-map audit identifies a specific missing comparison
+that cannot be answered from existing artifacts.
 
 ## Completion Gates
 
@@ -507,7 +441,6 @@ of only parent pressure.
 - MGVGA: https://openreview.net/forum?id=US9k5TXVLZ
 - DeepCell: https://arxiv.org/html/2502.06816v1
 - DE-HNN: https://arxiv.org/abs/2404.00477
-- DeepCell: https://arxiv.org/html/2502.06816v1
 - MasterRTL: https://github.com/hkust-zhiyao/MasterRTL
 - RTL-Timer: https://github.com/hkust-zhiyao/RTL-Timer
 - RTL-Timer paper: https://arxiv.org/abs/2403.18453
