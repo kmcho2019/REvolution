@@ -46,6 +46,22 @@ yield warning: classic has `36` valid-PPA rows and T99 has `9`.
 The completeness table is
 [`analysis/ppa_completeness.csv`](analysis/ppa_completeness.csv).
 
+## Common Evaluation Tables
+
+The normalized common-evaluation rows are in
+[`tables/method_problem_seed_metrics.csv`](tables/method_problem_seed_metrics.csv).
+They add per-problem HV-AUC and passive-archive availability columns beside
+the headline PPA metrics.
+
+The T99 QD rows have descriptor-cell coverage, QD score, Pareto-cell count,
+coverage AUC, and QD-score AUC from the Phase 03.1 viewer. These rows are
+marked `candidate_level_no_canonical_dedup` because the viewer datasets do not
+include canonical netlist hashes.
+
+The classic rows are marked `descriptor_projection_missing`. This is expected
+for this package: classic candidates were not projected into the T99 archive
+space, so the table must not claim passive archive coverage for classic.
+
 ## Interpretation
 
 T99 is useful as a category representative, not as a promoted method. It shows

@@ -28,6 +28,7 @@ spend candidate.
 | `results_report.md` | Final result, comparison, and decision. |
 | `artifacts_manifest.md` | Local artifact map for raw runs, reports, figures, and viewer bundles. |
 | `analysis/` | Generated Pareto, PPA-distribution, and completeness reports. |
+| `tables/` | Common-evaluation rows, passive archive metrics, and copied completeness gate. |
 | `visualizations/qd_ppa_viewer/` | Full Phase 03.1-compatible archive/PPA viewer. |
 | `visualizations/direct_ppa_pareto/` | Static reader-facing PPA front supplement. |
 | `logs/` | Validation and visual inspection notes. |

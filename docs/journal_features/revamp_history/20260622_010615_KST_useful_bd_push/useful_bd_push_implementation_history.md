@@ -5886,3 +5886,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Left passive archive scoring and AUC reporting unchecked because the
   implementation/report integration still needs to produce
   `tables/passive_archive_metrics.csv` and AUC rows for future packages.
+
+## 2026-06-26T17:35:00Z - Common Evaluation Tables Added For T99
+
+- Added `scripts/report_common_evaluation_contract.py` to export normalized
+  method/problem/seed rows and passive archive rows from Phase 03.1 viewer
+  datasets plus `ppa_completeness.csv`.
+- Added focused tests for HV-AUC, descriptor-projected QD passive metrics, and
+  explicit `descriptor_projection_missing` classic rows.
+- Generated T99 `tables/method_problem_seed_metrics.csv`,
+  `tables/passive_archive_metrics.csv`,
+  `tables/passive_archive_config.json`, and `tables/ppa_completeness.csv`.
+- The T99 table export is intentionally partial for passive archive claims:
+  QD rows have viewer-projected cell metrics, classic rows are marked
+  `descriptor_projection_missing`, and all QD rows are marked
+  `candidate_level_no_canonical_dedup` because the viewer lacks canonical
+  netlist hashes.

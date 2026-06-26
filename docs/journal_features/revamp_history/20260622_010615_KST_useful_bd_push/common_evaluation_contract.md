@@ -114,9 +114,20 @@ Every completed live screen should include these files or a documented
 | `visualizations/qd_ppa_viewer/` | Full Phase 03.1 viewer when archive artifacts exist. |
 | `logs/visual_inspection_notes.md` | Manual visual inspection notes. |
 
-The current T99 package satisfies the PPA, completeness, and visualization
-parts. It does not yet satisfy the passive-archive rows; those remain an
-implementation/reporting task.
+Use `scripts/report_common_evaluation_contract.py` to generate the normalized
+`tables/` rows from a Phase 03.1 viewer bundle and the run's
+`ppa_completeness.csv`.
+
+The exporter is intentionally conservative. If a method has no honest
+descriptor projection in the viewer, its passive-archive columns are
+`not_available` with `descriptor_projection_missing`. If canonical netlist
+hashes are absent, QD score is reported at candidate level and the row is
+marked `candidate_level_no_canonical_dedup`.
+
+The current T99 package now includes the normalized tables. Its classic rows
+still have `descriptor_projection_missing`, so they are useful for reporting
+HV/HV-AUC and availability gaps, not for a completed common passive-archive
+claim.
 
 ## Promotion Use
 

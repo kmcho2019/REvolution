@@ -99,3 +99,14 @@ uv run python scripts/report_ppa_completeness.py \
   --qd-method aurora_raw_impl_compact_delayed_8x5 \
   --output docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/analysis/ppa_completeness.csv
 ```
+
+```bash
+uv run python scripts/report_common_evaluation_contract.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/visualizations/qd_ppa_viewer \
+  --ppa-completeness docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/analysis/ppa_completeness.csv \
+  --seed 1001 \
+  --budget-shape 8x5 \
+  --method-family classic_revolution_8x5=classic \
+  --method-family aurora_raw_impl_compact_delayed_8x5=aurora_raw \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/tables
+```
