@@ -88,3 +88,18 @@ eight-design `8x5` screen has now also completed.
 Decision: valid implementation, negative screen. The final RTLLM plan remains
 unfinished because no QD configuration is promoted. Do not spend the full
 RTLLM budget on the exact `source_aligned_rf_timing_state_3d` profile.
+
+## Next Registered Run
+
+`T83_rf_leafid_structural_delayed_qd` is pre-registered as the next materially
+different candidate. It uses explicit descriptor axes:
+
+```text
+source_aligned_rf_timing_leaf_ids
+source_aligned_masterrtl_branching
+source_aligned_rtltimer_wire_density
+```
+
+This keeps the validated RF timing model-state path but avoids the collapsed
+RF `path_count` axis, and combines it with the delayed archive activation
+schedule that was the best recent archive-pressure timing clue.

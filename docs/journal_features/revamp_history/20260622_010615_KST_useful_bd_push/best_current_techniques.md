@@ -12,7 +12,8 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 2 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
 | 3 | Stagnation-triggered archive pressure | Diagnostic negative | Uses only archive growth state to activate QD pressure after passive archive growth stalls. | Trigger fired lightly, but mean HV regressed to `0.1089`; not promoted. |
 | 4 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
-| 5 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, DeepGate transition embeddings are partially unblocked, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
+| 5 | RF leaf-ID structural delayed QD | Pre-registered | Tests RF timing model state as a secondary tag beside source-aligned structure and delayed archive pressure. | Run pending; must beat or closely match classic without descriptor collapse. |
+| 6 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, DeepGate transition embeddings are partially unblocked, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
 
@@ -157,6 +158,12 @@ profile: mean HV is `0.1140` versus classic `0.1406`, mean Pareto points are
 comparisons. Several screened problems collapse the RF path-count axis, so the
 next RF timing attempt must change the descriptor coupling rather than rerun
 the same profile.
+
+T83 is that follow-up. It is pre-registered as an explicit-axis run rather
+than a new runtime profile: RF timing leaf-ID breadth, MasterRTL branching,
+and RTLTimer wire density, combined with delayed archive activation. It is a
+test of RF timing as a secondary model-state coordinate, not another exact RF
+timing geometry rerun.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

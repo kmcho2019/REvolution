@@ -119,6 +119,8 @@ Real result packages:
 - `T82_masterrtl_rf_timing_runtime_hook` completed the live descriptor-registry
   runtime hook for MasterRTL RF timing model-state metrics and its first frozen
   eight-design screen.
+- `T83_rf_leafid_structural_delayed_qd` pre-registered the RF leaf-ID plus
+  source-aligned structural delayed-activation follow-up.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -179,6 +181,10 @@ eight selected designs. It is negative as-is: classic wins mean HV
 reference-beating candidates (`8.00` versus `4.88`), and HV wins (`6` versus
 `2`). Treat T82 as a credible descriptor-integration result, not a promoted
 full-RTLLM arm.
+T83 is pre-registered as the direct T82 follow-up. It keeps RF timing
+model-state extraction but replaces the collapsed `path_count` coordinate with
+`source_aligned_rf_timing_leaf_ids`, pairs that with MasterRTL branching and
+RTLTimer wire density, and uses delayed archive activation.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

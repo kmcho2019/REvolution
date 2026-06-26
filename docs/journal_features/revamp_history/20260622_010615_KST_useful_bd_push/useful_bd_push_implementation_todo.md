@@ -628,6 +628,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Decide the RF timing-state screen before full RTLLM spend: the exact
       `source_aligned_rf_timing_state_3d` profile is valid but negative, with
       mean HV `0.1140` versus classic `0.1406`.
+- [x] Pre-register T83 RF leaf-ID structural delayed QD as the next
+      materially different RF timing follow-up.
+- [ ] Run T83 on the frozen eight-design `8x5` screen and decide before any
+      full RTLLM spend.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

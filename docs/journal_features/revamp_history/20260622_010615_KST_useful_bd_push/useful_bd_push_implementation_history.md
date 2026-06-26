@@ -5287,3 +5287,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: exact `source_aligned_rf_timing_state_3d` is
   `T0_screened_negative_not_promoted`. Do not spend full RTLLM budget on this
   exact profile.
+
+## 2026-06-26T05:24:00Z - T83 RF Leaf-ID Structural Delayed QD Pre-Registered
+
+- Added `T83_rf_leafid_structural_delayed_qd` as the direct follow-up to the
+  T82 negative screen.
+- Rationale: keep the validated RF timing model-state path, but stop using the
+  collapsed RF `path_count` axis as an archive coordinate.
+- Frozen explicit descriptor axes:
+  `source_aligned_rf_timing_leaf_ids`,
+  `source_aligned_masterrtl_branching`, and
+  `source_aligned_rtltimer_wire_density`.
+- Search surface: delayed archive activation with generation `3`, global
+  NSGA-II parent rank, `0.90` champion lane, `0.10` fill, `0.05` backfill,
+  one-parent single-thought operator, and no repair.
+- vLLM preflight passed for `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+- Decision: run the frozen eight-design `8x5` screen next; do not change axes,
+  subset, seed, budget, or token settings after seeing outcomes.
