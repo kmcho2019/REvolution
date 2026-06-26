@@ -158,6 +158,26 @@ families. It should spend memory budget only when a retained family has
 evidence of producing quality-improving or front-adding children, and it must
 report front-add rate per memory-lane call.
 
+## FG-QDM Contribution Audit
+
+`20260626_fg_qdm_contribution_audit/` answers whether the completed
+front-guarded QD-memory smokes justify another live run. Exact FG-QDM has
+already been implemented as an auxiliary memory scheduler with a separate
+classic-style primary pool, passive valid-PPA insertion, no empty-cell fill
+budget, and small memory-refine/front-rescue lanes.
+
+The mechanism evidence is not strong enough for promotion. SR-memory generated
+`8` memory-lane children, but only `3` passed PPA and `0` added global-front
+material. Random-memory generated the same `8` memory-lane children, with `5`
+valid-PPA and `2` global-front additions, so SR memory does not beat its
+control. RTL-native shape-density memory generated `6` memory-lane children
+and `0` valid-PPA children.
+
+Decision: exact T85/T86/T87 FG-QDM is negative. T97 may be tried only as a
+stricter front-credit configuration using existing knobs
+(`qd_memory_min_cell_credit=0.50`, lower memory-refine fraction), and it must
+beat the random-control mechanism gate before any eight-design screen.
+
 ## Pre-RF Archive-Pressure Context
 
 Do not run another fixed MasterRTL geometry tweak. The adaptive sparse-front

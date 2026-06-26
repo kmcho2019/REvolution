@@ -5797,3 +5797,16 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: memory has front material to retain, but broad recall is not
   enough. The next live method should spend memory budget only when a retained
   family has evidence of producing quality-improving or front-adding children.
+
+## 2026-06-26T15:05:00Z - FG-QDM Contribution Audit Added
+
+- Added `preliminary_planning/20260626_fg_qdm_contribution_audit/`.
+- The audit summarizes completed T85/T86/T87 memory-lane evidence before any
+  further live spend: SR memory generated `8` memory-lane children with `3`
+  valid-PPA and `0` global-front additions; random memory generated `8` with
+  `5` valid-PPA and `2` global-front additions; RTL-native shape-density
+  memory generated `6` with `0` valid-PPA.
+- Decision: exact T85/T86/T87 FG-QDM variants remain negative. The only
+  justified continuation is a stricter T97 front-credit smoke that raises
+  `qd_memory_min_cell_credit` using existing scheduler knobs before adding new
+  runtime states.

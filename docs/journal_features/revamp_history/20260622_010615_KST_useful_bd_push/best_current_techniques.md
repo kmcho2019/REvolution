@@ -93,6 +93,13 @@ lanes produce zero valid-PPA children across the three-problem smoke. Treat
 exact shape-density FG-QDM as negative coupling evidence, not as a candidate
 for the frozen eight-design screen.
 
+The FG-QDM contribution audit makes the next step narrower. Exact SR memory
+generated `8` memory-lane children with `3` valid-PPA and `0` global-front
+adds; random memory generated `8` with `5` valid-PPA and `2` global-front adds;
+shape-density memory generated `6` with `0` valid-PPA. A T97 continuation
+should therefore test stricter front-credit recall using existing scheduler
+knobs before any source-code expansion.
+
 T85 implements that correction directly as FG-QDM, or front-guarded QD memory.
 It keeps a separate classic-style primary success pool, inserts valid-PPA
 candidates into the archive passively, gives no budget to empty-cell fill, and
