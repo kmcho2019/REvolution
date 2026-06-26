@@ -149,6 +149,19 @@ not beat the random-memory control. Keep T86 as control evidence, but do not
 promote either T85 or T86 to the frozen eight-design screen or full RTLLM
 spend.
 
+T87 source-aligned shape-density memory: after simplifying the FG-QDM credit
+logic and metadata handling, the RTL-native descriptor swap completed the same
+three-problem smoke. It reaches mean HV `0.1264`, below SR memory `0.1375`,
+random memory `0.1382`, and classic `0.1903`. It is the strongest FG-QDM arm
+on `Prob045_alu` (`0.2099` HV versus random `0.1929` and SR `0.1853`), but it
+loses badly on `Prob041_traffic_light` and produces zero valid-PPA children
+from the memory-refine and front-rescue lanes across the smoke.
+
+Decision: exact `source_aligned_shape_density_3d` FG-QDM is not promoted. Keep
+T87 as negative RTL-native FG-QDM coupling evidence; do not spend on a frozen
+eight-design FG-QDM continuation unless the coupling mechanism changes
+materially.
+
 Measured archive-stagnation activation is now complete and negative. It kept
 passive archive logging from the start and activated archive pressure only
 after two consecutive archive-history intervals showed no growth in occupied

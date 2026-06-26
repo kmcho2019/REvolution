@@ -667,7 +667,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Before any T85/T86 continuation, simplify or justify the FG-QDM credit
       constants and remove defensive metadata defaults called out by the
       periodic review.
-- [ ] Run T87 source-aligned shape-density FG-QDM smoke before promoting any
+- [x] Run T87 source-aligned shape-density FG-QDM smoke before promoting any
       FG-QDM continuation.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 

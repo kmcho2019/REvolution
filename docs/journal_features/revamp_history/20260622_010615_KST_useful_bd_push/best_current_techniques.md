@@ -75,6 +75,15 @@ random-hash memory control on the three-problem smoke. Any next FG-QDM attempt
 needs a materially stronger descriptor or a simpler, justified memory-credit
 mechanism.
 
+T87 tested that descriptor swap after simplifying the FG-QDM credit rule and
+metadata handling. The source-aligned shape-density descriptor is registered
+and RTL-native, but the smoke is negative: mean HV `0.1264` trails SR memory
+`0.1375`, random memory `0.1382`, and classic `0.1903`. The key mechanism
+failure is sharper than the aggregate metric: memory-refine and front-rescue
+lanes produce zero valid-PPA children across the three-problem smoke. Treat
+exact shape-density FG-QDM as negative coupling evidence, not as a candidate
+for the frozen eight-design screen.
+
 T85 implements that correction directly as FG-QDM, or front-guarded QD memory.
 It keeps a separate classic-style primary success pool, inserts valid-PPA
 candidates into the archive passively, gives no budget to empty-cell fill, and

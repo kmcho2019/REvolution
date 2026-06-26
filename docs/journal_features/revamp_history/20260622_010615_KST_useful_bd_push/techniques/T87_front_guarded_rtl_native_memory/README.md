@@ -3,7 +3,7 @@
 T87 keeps the FG-QDM scheduler from T85/T86 and swaps the descriptor to the
 registered source-aligned RTL shape-density profile.
 
-Status: pre-registered; live smoke pending.
+Status: completed smoke; negative; not promoted.
 
 ## Purpose
 
@@ -19,6 +19,10 @@ leakage-free.
 - [methodology.md](methodology.md)
 - [commands/run_t87_front_guarded_rtl_native_memory.md](commands/run_t87_front_guarded_rtl_native_memory.md)
 - [artifacts_manifest.md](artifacts_manifest.md)
+- [results_report.md](results_report.md)
+- [tables/](tables/)
+- [figures/](figures/)
+- [analysis/](analysis/)
 
 ## Descriptor Profile
 
@@ -42,3 +46,10 @@ random-memory FG-QDM on the matched three-problem smoke, while preserving every
 classic-covered design. If it does not, keep it as a negative RTL-native
 FG-QDM descriptor coupling result and move the shortlist toward a different
 encoder/config family.
+
+## Result
+
+T87 completed the matched three-problem smoke. It trails classic, SR-memory,
+and random-memory FG-QDM on mean HV. It is the strongest FG-QDM arm on
+`Prob045_alu`, but the memory-refine and front-rescue lanes produce zero
+valid-PPA children across the smoke, so the mechanism claim does not hold.

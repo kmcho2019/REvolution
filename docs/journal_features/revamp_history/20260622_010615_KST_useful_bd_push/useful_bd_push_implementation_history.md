@@ -16,6 +16,25 @@ evidence.
   `techniques/T87_front_guarded_rtl_native_memory/commands/`.
 - Promotion rule: T87 must beat both SR-memory and random-memory FG-QDM on the
   matched three-problem smoke before any larger FG-QDM screen.
+- vLLM preflight passed for `openai/gpt-oss-120b` with
+  `max_model_len=131072`; `/workspace` had `2.8T` available on a `27T` mount
+  before the run.
+- Ran the matched three-problem smoke on `Prob045_alu`,
+  `Prob041_traffic_light`, and `Prob015_multi_pipe_8bit`.
+- Run root:
+  `exp/useful_bd_push/front_guarded_rtl_native_memory_20260626/fg_qdm_shape_density_memory_12x3/seed_1001/openai_gpt-oss-120b`.
+- The run completed `3/3` problems in `690.97s`.
+- Analysis roots:
+  `techniques/T87_front_guarded_rtl_native_memory/analysis/shape_density_pareto_analysis/`
+  and
+  `techniques/T87_front_guarded_rtl_native_memory/analysis/shape_density_ppa_distribution/`.
+- Result: classic mean HV is `0.190331`, random-memory FG-QDM is `0.138162`,
+  SR-memory FG-QDM is `0.137536`, and T87 shape-density FG-QDM is `0.126367`.
+- Mechanism read: T87 initializes all three grids and has no collapse on
+  `Prob015` or `Prob041`, but memory-refine and front-rescue lanes produce
+  zero valid-PPA children across the smoke.
+- Decision: `T87` is `T0_smoke_negative_not_promoted`. Do not promote exact
+  `source_aligned_shape_density_3d` FG-QDM to the frozen eight-design screen.
 
 ## T86 Random-Memory FG-QDM Control - 2026-06-26 UTC
 
