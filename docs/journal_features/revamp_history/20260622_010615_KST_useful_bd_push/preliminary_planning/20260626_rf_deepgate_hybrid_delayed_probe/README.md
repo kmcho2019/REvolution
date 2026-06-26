@@ -40,13 +40,27 @@ T96 is not promoted unless it:
 
 - Pre-registration:
   [preregistration.md](preregistration.md)
+- Results report:
+  [results_report.md](results_report.md)
 - Descriptor config:
   [tables/rf_deepgate_hybrid_descriptor_profiles.yaml](tables/rf_deepgate_hybrid_descriptor_profiles.yaml)
 - Run command:
   [commands/run_rf_deepgate_hybrid_delayed_probe.md](commands/run_rf_deepgate_hybrid_delayed_probe.md)
 - Validation log:
   [logs/validation_log.md](logs/validation_log.md)
+- Problem deltas:
+  [tables/rf_deepgate_hybrid_problem_deltas.csv](tables/rf_deepgate_hybrid_problem_deltas.csv)
+- Full Phase 03.1 viewer:
+  [visualizations/qd_ppa_viewer/index.html](visualizations/qd_ppa_viewer/index.html)
+- Direct PPA supplement:
+  [visualizations/direct_ppa_pareto/index.html](visualizations/direct_ppa_pareto/index.html)
 
 ## Status
 
-Pre-registered. Live run not started in this package yet.
+Completed. T96 is reference-complete and operational, but it is not promoted
+for final full-RTLLM spend.
+
+The hybrid reaches mean HV `0.1199` versus classic `0.1406`, mean Pareto
+points `1.625` versus classic `3.25`, and mean reference-beating candidates
+`5.375` versus classic `8.00`. Keep it only as the current RF/DeepGate hybrid
+category representative.

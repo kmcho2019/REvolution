@@ -147,10 +147,13 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Outcome: T95 improves mean HV over T94 (`0.1153` versus `0.1040`) but
       still trails classic (`0.1406`) with lower Pareto breadth, so it is kept
       only as the DeepGate category representative.
-- [ ] Run T96 RF/DeepGate hybrid delayed coupling to test whether validated
+- [x] Run T96 RF/DeepGate hybrid delayed coupling to test whether validated
       MasterRTL RF timing model-state and official DeepGate pooled netlist
       embeddings provide complementary descriptor signal under the strongest
       recent delayed schedule.
+      Outcome: T96 improves mean HV over pure T95 DeepGate (`0.1199` versus
+      `0.1153`) but still trails classic (`0.1406`) and loses front breadth,
+      so it is kept only as a hybrid category representative.
 - [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.

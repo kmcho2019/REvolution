@@ -6,11 +6,11 @@ comparison.
 ## Answer
 
 The preliminary plan is not finished. It has produced hard screening data,
-including a three-seed replication of the best diagnostic arm and the T84
-front-slot follow-up, but it has not identified a QD/MAP-Elites configuration
-that is strong enough to spend the full RTLLM budget on as a positive
-candidate. T95 adds the delayed high-exploit DeepGate follow-up. It improves
-over T94 on mean HV, but it is still negative versus classic on aggregate HV
+including a three-seed replication of the best diagnostic arm, the T84
+front-slot follow-up, and the T96 RF/DeepGate hybrid screen, but it has not
+identified a QD/MAP-Elites configuration that is strong enough to spend the
+full RTLLM budget on as a positive candidate. T96 improves over pure T95
+DeepGate on mean HV, but it is still negative versus classic on aggregate HV
 and front breadth.
 
 Selection should not discard whole encoder/config categories just because the
@@ -36,7 +36,8 @@ different budget or replication caveat are marked explicitly.
 | Code-thought/SR front-slot | `code_thought_sr_front_slot_8x5` | `0.1141` | Best current SR/code-thought representative in this preliminary pool. |
 | Qwen3 pretrained text/code | `qwen_canonical_rtl_pca3_8x5` | `0.1108` | Best actual pretrained text/code embedding live arm; keep as the Qwen representative despite weak HV. |
 | Front-guarded QD memory control | `T86_fg_qdm_random_memory_12x3` | `0.1382` smoke-only | Control representative only; random-memory FG-QDM trails classic and slightly beats SR-memory, so exact `sr_pca_3d` memory is not descriptor-positive. |
-| DeepGate / synthesized-netlist encoder | `T95_deepgate_delayed_high_exploit_8x5` | `0.1153` | Best screened DeepGate representative; delayed high-exploit coupling improves over T94 but trails classic. |
+| DeepGate / synthesized-netlist encoder | `T95_deepgate_delayed_high_exploit_8x5` | `0.1153` | Best pure DeepGate representative; delayed high-exploit coupling improves over T94 but trails classic. |
+| Hybrid pretrained RTL/netlist encoder | `T96_rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Best RF/DeepGate hybrid representative; improves over pure T95 DeepGate but still trails classic and loses front breadth. |
 | AURORA / AutoQD learned descriptor | `AURORA-style raw implementation-feature lane` | n/a | Keep as category placeholder; current evidence is replay/diagnostic, not frozen live HV. |
 
 ## Top 10 Current Configs By Mean HV
@@ -53,11 +54,12 @@ replicated, and category-useful.
 | 5 | `masterrtl_structural_front_slot_8x5` | `0.1227` | Classic `8x5` `0.1406` | Best raw MasterRTL structural-cell variant. |
 | 6 | `masterrtl_structural_mix_8x5` | `0.1218` | Classic `8x5` `0.1406` | Plain structural mix; category baseline. |
 | 7 | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Classic `8x5` `0.1406` | Best live graph-like bridge arm. |
-| 8 | `T84_rf_leafid_front_slot_delayed_qd` | `0.1162` | Classic `8x5` `0.1406` | Completed negative; keep only as failed coupling evidence. |
-| 9 | `deepgate_delayed_high_exploit_8x5` | `0.1153` | Classic `8x5` `0.1406` | Best screened synthesized-netlist pretrained encoder representative; improves over T94 but remains negative. |
-| 10 | `code_thought_sr_front_slot_8x5` | `0.1141` | Classic `8x5` `0.1406` | SR/code-thought representative. |
+| 8 | `rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Classic `8x5` `0.1406` | Best hybrid pretrained RTL/netlist representative; improves over T95 but remains negative. |
+| 9 | `T84_rf_leafid_front_slot_delayed_qd` | `0.1162` | Classic `8x5` `0.1406` | Completed negative; keep only as failed coupling evidence. |
+| 10 | `deepgate_delayed_high_exploit_8x5` | `0.1153` | Classic `8x5` `0.1406` | Best screened pure synthesized-netlist pretrained encoder representative; improves over T94 but remains negative. |
 
-Dropped just below the top 10: `masterrtl_rf_timing_state_8x5` (`0.1140`),
+Dropped just below the top 10: `code_thought_sr_front_slot_8x5` (`0.1141`),
+`masterrtl_rf_timing_state_8x5` (`0.1140`),
 `masterrtl_aux_archive_front_breadth_8x5` (`0.1134`),
 `qwen_canonical_rtl_pca3_8x5` (`0.1108`),
 `masterrtl_archive_stagnation_activation_8x5` (`0.1089`),
@@ -125,6 +127,15 @@ reference-beating count (`5.25` versus `4.50`), but classic still leads mean
 HV (`0.1406`), Pareto points (`3.25` versus `1.88`), and HV wins (`7` versus
 `1`). Treat T95 as the best DeepGate category representative, not a promoted
 full-RTLLM arm.
+
+T96 tests whether pure DeepGate is missing a complementary RTL-native
+pretrained model-state axis. It combines `source_aligned_rf_timing_leaf_ids`,
+`source_aligned_masterrtl_branching`, and `deepgate_pool_pc0` under the
+delayed high-exploit schedule. It improves over pure T95 DeepGate on mean HV
+(`0.1199` versus `0.1153`) and HV wins (`2` versus `1`), but classic remains
+ahead on mean HV (`0.1406`), Pareto points (`3.25` versus `1.625`), and
+reference-beating candidates (`8.00` versus `5.375`). Keep T96 as the hybrid
+pretrained RTL/netlist representative; do not promote it to full RTLLM spend.
 
 ## Pre-RF Archive-Pressure Context
 

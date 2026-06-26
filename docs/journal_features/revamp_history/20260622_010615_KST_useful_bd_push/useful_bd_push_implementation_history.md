@@ -5719,3 +5719,28 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   FG-QDM memory-lane fields directly.
 - Decision: keep T85 active, but do not promote it. The next check must lower
   grid-quantile warmup and include a matched classic comparator.
+
+## 2026-06-26T13:35:00Z - T96 RF/DeepGate Hybrid Screen Completed
+
+- Ran `rf_deepgate_hybrid_delayed_8x5` on the frozen eight-design preliminary
+  screen.
+- Run root:
+  `exp/useful_bd_push/prelim_rf_deepgate_hybrid_delayed_20260626_125819_UTC/live/rf_deepgate_hybrid_delayed_8x5/seed_1001/openai_gpt-oss-120b`.
+- The run completed all `8/8` problems in `1484.98s` after vLLM preflight
+  confirmed `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py`,
+  `scripts/validate_single_thought_operator_run.py`, and
+  `scripts/validate_qd_ppa_visualization.py --strict`.
+- Completeness table marks all eight designs as `headline`: both classic and
+  T96 have valid-PPA candidates, and every design has valid reference PPA.
+- Headline result: classic mean HV `0.1406`, T96 mean HV `0.1199`; classic
+  mean Pareto points `3.25`, T96 `1.625`; classic mean reference-beating
+  candidates `8.00`, T96 `5.375`; HV wins `6` for classic and `2` for T96.
+- T96 beats classic by HV on `Prob024_fsm` and `Prob153_gshare`, ties flat
+  zero/equal-HV cases on `Prob015_multi_pipe_8bit`, `Prob116_m2014_q3`, and
+  `Prob135_m2014_q6b`, and loses the larger RTLLM front-material cases.
+- Comparison package:
+  `preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/`.
+- Decision: keep T96 as the hybrid pretrained RTL/netlist encoder category
+  representative. Do not promote exact T96 to final full-RTLLM spend.
