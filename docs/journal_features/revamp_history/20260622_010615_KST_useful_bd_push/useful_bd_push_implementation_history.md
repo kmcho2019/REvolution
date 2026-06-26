@@ -5531,6 +5531,23 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   DeepGate to live RTLLM spend. The next step is candidate-level pooling and
   replay before any LLM-backed live smoke.
 
+## 2026-06-26T11:40:00Z - T91 DeepGate Pooled Descriptor Replay Completed
+
+- Added
+  `preliminary_planning/20260626_deepgate_pooled_descriptor_replay/` to pool
+  full-transition and cone-level official DeepGate embeddings into
+  candidate-level descriptors.
+- Reused the existing transition rows, transition embeddings, T90 cone rows,
+  T90 cone embeddings, and each candidate's `code_synthesis_report.ppa`.
+- Result: all `96` sampled candidates across all `8/8` preliminary screen
+  problems have descriptors. The table includes `60` full-transition
+  candidates and `36` cone-pooled candidates.
+- Replay read: mean occupied cells `10.875`, mean area-power Pareto cells
+  `4.625`, and nonzero Pareto cells for every problem.
+- Decision: DeepGate advances from bridge-only to bounded-live-smoke candidate
+  design. It still is not a final RTLLM candidate because no matched live HV
+  screen has run.
+
 ## 2026-06-26T06:52:00Z - T84 RF Leaf-ID Front-Slot Delayed Screen Completed
 
 - Ran `masterrtl_rf_leafid_front_slot_delayed_8x5` on the frozen eight-design

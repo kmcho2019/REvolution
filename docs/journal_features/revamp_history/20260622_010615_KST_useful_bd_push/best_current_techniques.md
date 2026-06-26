@@ -17,7 +17,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 7 | RF leaf-ID front-slot delayed QD | Completed negative | Tests whether T83's RF model-state axes need explicit local front-slot parent sampling to recover Pareto breadth. | Mean HV drops to `0.1162`, with `0/8` HV wins; keep only as failed coupling evidence. |
 | 8 | FG-QDM memory controls | Completed smoke negative | Tests QD as guarded auxiliary memory rather than a replacement optimizer. | Random-memory FG-QDM slightly beats SR-memory but trails classic, so exact `sr_pca_3d` memory is not descriptor-positive. |
 | 9 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
-| 10 | DeepGate transition/cone bridge | Pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats and T90 extends offline bridge coverage to `8/8` screen problems. | Candidate-level pooling and live HV evidence are still missing, so it is not spend-ready. |
+| 10 | DeepGate transition/cone bridge | Pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats, T90 reaches `8/8` offline coverage, and T91 builds candidate-level pooled descriptors. | Live HV evidence is still missing, so it is not spend-ready. |
 
 ## Most Promising Direction
 
@@ -218,11 +218,19 @@ because only `5/8` screen problems currently embed.
 T90 removes that offline coverage blocker by extracting bounded output cones
 from the three large skipped transition AIG problems. It embeds `108` cones,
 `36` for each skipped problem, with max selected cone size `245` ANDs and max
-embedding time `0.0717s`. Combined with the existing full-transition rows,
+embedding time `0.0710s`. Combined with the existing full-transition rows,
 DeepGate now covers all `8/8` preliminary screen problems offline. This is a
 bridge success, not a QD result: the next step must aggregate full-transition
 and cone embeddings into candidate-level descriptors and test them by replay
 before any live HV spend.
+
+T91 completes that replay. It pools full-transition embeddings for `60`
+candidates and cone embeddings for `36` candidates, covering all `96` sampled
+candidates across all `8/8` preliminary screen problems. Mean occupied cells
+are `10.875` per problem, mean area-power Pareto cells are `4.625`, and every
+problem has at least one Pareto cell. This makes DeepGate a credible bounded
+live-smoke candidate, but not a final RTLLM arm until it has matched live HV
+data.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

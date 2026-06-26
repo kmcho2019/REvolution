@@ -126,6 +126,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       Outcome: output-cone extraction embeds `108` cones and extends offline
       bridge coverage to all `8/8` preliminary screen problems; live spend
       still requires candidate-level pooling and replay.
+- [x] Pool full-transition and cone DeepGate embeddings into candidate-level
+      descriptors. Outcome: `96/96` sampled candidates across `8/8` problems
+      have descriptors and nonzero area-power Pareto cells; bounded live smoke
+      is now justifiable, but final RTLLM spend still needs matched HV data.
 - [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.

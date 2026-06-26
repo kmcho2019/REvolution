@@ -17,6 +17,7 @@ category representatives, and top-10 mean-HV shortlist.
 | `20260625_deepgate_transition_bridge_probe/` | Test state-as-input transition AIG abstraction for sequential DeepGate coverage. | Corrected bridge embeds 60 rows across 5/8 problems; not promoted |
 | `20260626_deepgate_signal_vs_aig_stats_gate/` | Test whether official DeepGate transition embeddings add signal beyond simple AIG size/count statistics. | Completed; residual signal exists, but coverage and problem clustering still block live spend |
 | `20260626_deepgate_cone_bridge_probe/` | Test bounded output-cone extraction for the large transition AIGs skipped by the full DeepGate bridge. | Completed; offline bridge coverage reaches 8/8 screen problems, but no live HV yet |
+| `20260626_deepgate_pooled_descriptor_replay/` | Pool full-transition and cone DeepGate embeddings into candidate-level descriptors and replay area-power cell structure. | Completed; 96/96 candidates cover with nonzero Pareto cells, but live HV still missing |
 | `20260625_masterrtl_front_slot_probe/` | Test whether the closest MasterRTL structural-mix live arm improves when explicit front-slot parent sampling is enabled. | Completed; small diagnostic gain over MasterRTL mix, still trails classic and not promoted |
 | `20260625_t11_top4_front_slot_probe/` | Test raw T11 top-4 runtime graph axes with the conservative front-slot parent lane as a T36/T58 successor. | Completed; trails classic and MasterRTL front-slot, not promoted |
 | `20260625_aux_archive_high_exploit_probe/` | Test whether QD archive memory works better as an auxiliary side channel with classic-like exploitation pressure. | Completed; best screened QD by mean HV, still not promoted |
@@ -96,6 +97,13 @@ all `8/8` preliminary screen problems. This still is not live QD evidence: the
 next DeepGate step must pool full-transition and cone embeddings into a
 candidate-level descriptor table and replay archive behavior before spending
 LLM budget.
+
+That pooled descriptor replay is now complete. It assigns candidate-level
+DeepGate descriptors to all `96` sampled candidates across the eight-problem
+screen, with `60` full-transition candidates and `36` cone-pooled candidates.
+Mean occupied cells are `10.875` per problem and every problem has at least one
+area-power Pareto cell. This authorizes a bounded live-smoke design, not final
+RTLLM spend.
 
 The MasterRTL front-slot follow-up completed the frozen eight-design `8x5`
 screen as `masterrtl_structural_front_slot_8x5`. It improved mean HV slightly
