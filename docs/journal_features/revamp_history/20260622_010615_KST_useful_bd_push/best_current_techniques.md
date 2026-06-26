@@ -8,11 +8,11 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | Delayed archive activation | Best recent timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
-| 2 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
-| 3 | Stagnation-triggered archive pressure | Diagnostic negative | Uses only archive growth state to activate QD pressure after passive archive growth stalls. | Trigger fired lightly, but mean HV regressed to `0.1089`; not promoted. |
-| 4 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
-| 5 | RF leaf-ID structural delayed QD | Pre-registered | Tests RF timing model state as a secondary tag beside source-aligned structure and delayed archive pressure. | Run pending; must beat or closely match classic without descriptor collapse. |
+| 1 | RF leaf-ID structural delayed QD | Near-classic diagnostic | Uses validated MasterRTL RF timing model-state as a secondary coordinate beside source-aligned structure and delayed archive pressure. | Mean HV is close to classic (`0.1369` versus `0.1406`), but the result is `Prob135`-dependent and RTLLM-only negative. |
+| 2 | Delayed archive activation | Timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
+| 3 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
+| 4 | Stagnation-triggered archive pressure | Diagnostic negative | Uses only archive growth state to activate QD pressure after passive archive growth stalls. | Trigger fired lightly, but mean HV regressed to `0.1089`; not promoted. |
+| 5 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 6 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, DeepGate transition embeddings are partially unblocked, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
@@ -159,11 +159,13 @@ comparisons. Several screened problems collapse the RF path-count axis, so the
 next RF timing attempt must change the descriptor coupling rather than rerun
 the same profile.
 
-T83 is that follow-up. It is pre-registered as an explicit-axis run rather
-than a new runtime profile: RF timing leaf-ID breadth, MasterRTL branching,
-and RTLTimer wire density, combined with delayed archive activation. It is a
-test of RF timing as a secondary model-state coordinate, not another exact RF
-timing geometry rerun.
+T83 is that follow-up and is now complete. It runs RF timing leaf-ID breadth,
+MasterRTL branching, and RTLTimer wire density as explicit axes, combined with
+delayed archive activation. It is the closest recent pretrained-model-state
+screen by all-design mean HV (`0.1369` versus classic `0.1406`), but it is not
+promoted. Pareto points fall from classic `3.25` to `2.00`,
+reference-beating candidates fall from `8.00` to `4.50`, and removing
+`Prob135_m2014_q6b` widens the mean-HV gap to `-20.29%`.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

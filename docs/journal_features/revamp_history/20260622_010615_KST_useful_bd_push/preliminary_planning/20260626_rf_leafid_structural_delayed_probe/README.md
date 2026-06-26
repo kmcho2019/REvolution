@@ -1,6 +1,6 @@
 # RF Leaf-ID Structural Delayed Probe
 
-Status: pre-registered, not run.
+Status: completed diagnostic; not promoted for full RTLLM spend.
 
 This package freezes the next preliminary candidate after the exact RF timing
 state screen failed. It corresponds to technique
@@ -47,13 +47,36 @@ Preflight is recorded in `tables/preflight_models_20260626_rf_leafid.txt`.
 Descriptor-axis requirements are recorded in
 `tables/descriptor_probe_20260626_rf_leafid.json`.
 
-## Expected Outcome
+## Result
 
-The run should either:
+The frozen screen completed on all eight selected designs. It is a valid
+headline-paired comparison: both classic and T83 have valid candidate PPA on
+every screened problem, and the references are valid for the headline subset.
 
-- recover some of delayed activation's near-classic HV while improving RF
-  descriptor health, or
-- retire this exact RF leaf-ID structural delayed geometry with clear evidence.
+| Metric | Classic | T83 QD | Read |
+| --- | ---: | ---: | --- |
+| Mean HV | `0.1406` | `0.1369` | near-classic but negative |
+| Mean Pareto points | `3.25` | `2.00` | weaker front breadth |
+| Mean reference-beating candidates | `8.00` | `4.50` | weaker reference improvement |
+| HV wins | `5/8` | `3/8` | classic wins more problems |
 
-No full RTLLM spend is allowed before the frozen screen result is packaged and
-compared to classic.
+The all-design mean HV gap is `-2.63%`, but the result is not robust. Removing
+`Prob135_m2014_q6b` changes the mean-HV gap to `-20.29%`, and the RTLLM-only
+slice is clearly negative.
+
+Decision: do not promote exact T83 to the full RTLLM comparison.
+
+## Files
+
+- `results_report.md`: conclusion and terminology.
+- `analysis/pareto_analysis/`: generated Pareto/HV report and per-problem
+  diagnostic plots.
+- `tables/screen_decision_metrics.csv`: aggregate promotion metrics.
+- `tables/problem_hv_deltas.csv`: per-problem HV deltas.
+- `tables/comparison_completeness.csv`: reference/candidate completeness.
+- `tables/descriptor_health_summary.csv`: descriptor health summary.
+- `tables/sensitivity_no_prob135.csv`: robustness check excluding
+  `Prob135_m2014_q6b`.
+- `figures/rf_leafid_structural_delayed_summary.png`: inspected
+  reader-facing summary figure.
+- `logs/validation_log.md`: validators, analysis command, and visual checks.

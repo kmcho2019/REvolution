@@ -28,7 +28,7 @@ the next gate.
 | `20260626_masterrtl_rf_timing_runtime_hook/` | Record the T82 runtime hook that exposes RF timing model-state metrics as a live descriptor profile. | Completed implementation gate; superseded by live smoke and screen |
 | `20260626_masterrtl_rf_timing_live_smoke/` | Run the first one-problem live smoke for `source_aligned_rf_timing_state_3d`. | Completed; one valid PPA/archive member, superseded by completed screen |
 | `20260626_masterrtl_rf_timing_state_screen/` | Run the frozen eight-design `8x5` screen for the validated MasterRTL RF timing-state descriptor profile. | Completed; all eight headline-paired comparisons valid, but classic wins mean HV and front metrics |
-| `20260626_rf_leafid_structural_delayed_probe/` | Test RF timing leaf-ID model-state as a secondary coordinate beside source-aligned structural axes and delayed archive activation. | Pre-registered; endpoint preflight passed, run pending |
+| `20260626_rf_leafid_structural_delayed_probe/` | Test RF timing leaf-ID model-state as a secondary coordinate beside source-aligned structural axes and delayed archive activation. | Completed; near-classic all-design mean HV, but RTLLM-only and robustness checks block promotion |
 
 ## Current Rule
 
@@ -149,9 +149,11 @@ classic, mean Pareto points are `2.00` versus `3.25`, and RF timing QD wins
 only `2/8` HV comparisons. Do not promote `source_aligned_rf_timing_state_3d`
 as-is to full RTLLM spend.
 
-The next candidate is pre-registered in
-`20260626_rf_leafid_structural_delayed_probe/`. It keeps the validated RF
-timing model path but replaces the collapsed `path_count` axis with
-`source_aligned_rf_timing_leaf_ids`, pairs it with MasterRTL branching and
-RTLTimer wire density, and uses delayed archive activation. This is the next
-frozen run before any full RTLLM spend.
+`masterrtl_rf_leafid_structural_delayed_8x5` completed the frozen screen. It
+keeps the validated RF timing model path but replaces the collapsed
+`path_count` axis with `source_aligned_rf_timing_leaf_ids`, pairs it with
+MasterRTL branching and RTLTimer wire density, and uses delayed archive
+activation. This is the closest recent pretrained-model-state screen by
+all-design mean HV (`0.1369` versus classic `0.1406`), but it is not promoted.
+The result depends heavily on `Prob135_m2014_q6b`: excluding that problem gives
+a `-20.29%` mean-HV gap, and the RTLLM-only slice remains clearly negative.

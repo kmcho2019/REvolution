@@ -630,8 +630,13 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       mean HV `0.1140` versus classic `0.1406`.
 - [x] Pre-register T83 RF leaf-ID structural delayed QD as the next
       materially different RF timing follow-up.
-- [ ] Run T83 on the frozen eight-design `8x5` screen and decide before any
-      full RTLLM spend.
+- [x] Run T83 on the frozen eight-design `8x5` screen and decide before any
+      full RTLLM spend: exact T83 is near-classic on all-design mean HV but
+      not promoted because the signal is `Prob135`-dependent, RTLLM-only HV is
+      negative, and front metrics lose.
+- [ ] Choose the next materially different full-RTLLM candidate lane after the
+      T83 diagnostic, or explicitly record that no current screened QD arm is
+      spend-ready.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

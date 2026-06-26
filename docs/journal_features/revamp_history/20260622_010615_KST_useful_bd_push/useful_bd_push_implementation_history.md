@@ -5305,3 +5305,29 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `max_model_len=131072`.
 - Decision: run the frozen eight-design `8x5` screen next; do not change axes,
   subset, seed, budget, or token settings after seeing outcomes.
+
+## 2026-06-26T06:01:00Z - T83 RF Leaf-ID Structural Delayed Screen Completed
+
+- Ran `masterrtl_rf_leafid_structural_delayed_8x5` on the frozen eight-design
+  `8x5` preliminary screen.
+- Run root:
+  `exp/useful_bd_push/prelim_rf_leafid_structural_delayed_20260626_052350_UTC/live/`.
+- The run completed `8/8` problems in `1491.19s`.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Comparison package:
+  `preliminary_planning/20260626_rf_leafid_structural_delayed_probe/`.
+- Headline result: classic mean HV `0.1406`, T83 mean HV `0.1369`, classic
+  mean Pareto points `3.25`, T83 mean Pareto points `2.00`, classic mean
+  reference-beating candidates `8.00`, T83 `4.50`, and HV wins `5` versus
+  `3`.
+- Robustness check: removing `Prob135_m2014_q6b` widens the mean-HV gap to
+  `-20.29%`, and RTLLM-only mean HV is negative (`0.0995` versus classic
+  `0.1453`).
+- Descriptor health: the RF leaf-ID axis remains noncollapsed on `5/8`
+  screened problems but collapses in archive entries on
+  `Prob045_alu`, `Prob116_m2014_q3`, and `Prob135_m2014_q6b`.
+- Decision: exact T83 is `T0_near_classic_diagnostic_not_promoted`. It is
+  evidence that validated MasterRTL RF model-state descriptors can run live
+  and sometimes approach classic, but not enough evidence for full RTLLM spend.
