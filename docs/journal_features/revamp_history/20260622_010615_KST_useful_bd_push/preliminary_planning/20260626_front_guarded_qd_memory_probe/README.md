@@ -12,7 +12,8 @@ coverage failure, but the matched Pareto/HV comparison is negative and does
 not promote T85 to the full-RTLLM shortlist.
 
 Key read: memory lanes now fire on every smoke problem, but classic wins mean
-HV `0.1903` to `0.1375` and wins all three per-problem HV comparisons.
+HV `0.1903` to `0.1375`, wins two nonzero-HV problems, and ties `Prob015` at
+zero HV.
 
 ## Decision Rule
 

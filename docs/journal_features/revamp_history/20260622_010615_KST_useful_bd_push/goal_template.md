@@ -25,14 +25,12 @@ memory that preserves PPA-competitive RTL implementation families under
 validity constraints. Do not overclaim generic MAP-Elites success from archive
 occupancy, yield-only gains, or defaulted-reference aggregates.
 
-Current priority: finish the active useful-BD packages and
-presentations/20260623_report/. T75 is packaged as a positive diagnostic, not
-a promotion. T76 partially verifies MasterRTL tree artifacts, and T77 retires
-direct pretrained Area-head leaves after generated-candidate collapse. T78
-shows existing T75 archives still mature late under `12 x 3`, supporting but
-not completing the budget-shape question. T79 pre-registers the frozen subset
-and command matrix. Next, run the fixed-total-budget shape ablation or
-reproduce timing/power feature flows before any live pretrained-BD spend.
+Current priority: keep the preliminary selection honest after the T83/T84/T85
+negatives. T83 is the closest recent QD result but is `Prob135`-dependent and
+RTLLM-negative. T84 regresses with front-slot sampling. T85 proves the
+front-guarded memory scheduler can run, but exact `sr_pca_3d` FG-QDM loses the
+three-problem smoke on mean HV. Next, run the T86 random-memory FG-QDM control
+before spending on a verified-descriptor swap or any full RTLLM arm.
 
 Metrics: never use average fitness or average best PPA as primary evidence.
 Use reference-complete paired subsets for headline classic-vs-QD claims.

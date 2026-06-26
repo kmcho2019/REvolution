@@ -4,6 +4,26 @@ Unbounded journal for `useful_bd_push`. Record notable decisions, commands,
 outputs, experiments, failed attempts, blockers, commits, and validation
 evidence.
 
+## Periodic Claude Review Gate - 2026-06-26 UTC
+
+- Ran the required long read-only `claude -p` review after the T83/T84/T85
+  commits.
+- Prompt:
+  `reviews/claude_periodic_review_20260626_t85_prompt.md`.
+- Output:
+  `reviews/claude_periodic_review_20260626_t85.md`.
+- Verdict: `PASS_WITH_ACTIONS`.
+- Accepted findings: T85 was stale in `technique_registry.csv`, the
+  "classic wins all three HV comparisons" wording was over-precise because
+  `Prob015_multi_pipe_8bit` is an HV tie at zero, T85 needed a technique-level
+  `results_report.md`, and the roadmap lacked a concrete next lane after T85.
+- Accepted next lane: `T86_front_guarded_memory_controls`, starting with a
+  deterministic random-memory FG-QDM control before any verified-descriptor
+  swap.
+- Deferred code finding: before any T85/T86 continuation, simplify or justify
+  the FG-QDM credit constants and remove defensive metadata defaults in the
+  engine. No source rewrite was done in this docs-only review integration.
+
 ## Front-Guarded QD Memory Warmup-4 Smoke - 2026-06-26 UTC
 
 - Completed the T85 warmup-4 three-problem smoke after the first smoke showed
@@ -19,8 +39,8 @@ evidence.
   valid winners. It also produced memory-lane valid-PPA children on all three
   problems.
 - Result: negative on the pre-registered promotion gate. Classic wins mean HV
-  `0.190331` to `0.137536`, wins all three per-problem HV comparisons, and
-  has higher mean Pareto points (`3.00` versus `2.00`).
+  `0.190331` to `0.137536`, wins two nonzero-HV problems, ties `Prob015` at
+  zero HV, and has higher mean Pareto points (`3.00` versus `2.00`).
 - Decision: keep T85 as a front-guarded memory mechanism representative, but
   do not promote exact `sr_pca_3d` warmup-4 FG-QDM to the frozen eight-design
   screen or full RTLLM spend.

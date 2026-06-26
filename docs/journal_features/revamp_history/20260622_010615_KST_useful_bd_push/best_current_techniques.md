@@ -71,8 +71,12 @@ constrained diversity pressure that earns its evaluation cost.
 T85 implements that correction directly as FG-QDM, or front-guarded QD memory.
 It keeps a separate classic-style primary success pool, inserts valid-PPA
 candidates into the archive passively, gives no budget to empty-cell fill, and
-samples memory parents only from credited retained cells. It is not ranked in
-the current-best table until the smoke and frozen-screen HV data exist.
+samples memory parents only from credited retained cells. The warmup-4 smoke
+fixes the initial `Prob015_multi_pipe_8bit` coverage failure, but it is
+negative on the headline PPA-front read: classic mean HV is `0.1903` and T85
+mean HV is `0.1375`. Classic wins `2/3` nonzero-HV comparisons and ties
+`Prob015` at zero HV for both arms. The next step is not another descriptor
+swap; it is the T86 random-memory FG-QDM control.
 
 T78 adds evidence for that ablation but does not replace it. In the existing
 T75 `12 x 3` logs, `9/13` problem archives still add or replace cells in

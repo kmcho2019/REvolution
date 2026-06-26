@@ -656,6 +656,17 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Decide the T85 warmup-4 smoke before the frozen eight-design screen:
       exact `sr_pca_3d` FG-QDM is negative on three-problem mean HV and is not
       promoted to eight-design or full-RTLLM spend.
+- [x] Run the required periodic `claude -p` review after the T83/T84/T85
+      commits and record the `PASS_WITH_ACTIONS` output under `reviews/`.
+- [x] Correct T85 tracking drift: registry status, technique package,
+      lineage ledger, and the over-precise all-three-HV-win wording.
+- [ ] Add a legal deterministic random descriptor profile for T86
+      `front_guarded_memory_controls`.
+- [ ] Run the T86 random-memory FG-QDM smoke on the same three-problem subset
+      before any verified-descriptor FG-QDM continuation.
+- [ ] Before any T85/T86 continuation, simplify or justify the FG-QDM credit
+      constants and remove defensive metadata defaults called out by the
+      periodic review.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

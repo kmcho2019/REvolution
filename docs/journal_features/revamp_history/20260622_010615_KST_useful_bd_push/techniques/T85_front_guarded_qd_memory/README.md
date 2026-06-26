@@ -15,8 +15,9 @@ three-problem live smokes completed.
 
 The warmup-4 rerun fixes the first smoke's `Prob015_multi_pipe_8bit` coverage
 failure, but it is a negative promotion result: classic wins three-problem
-mean HV `0.1903` to `0.1375` and wins all three per-problem HV comparisons.
-Do not promote exact `sr_pca_3d` FG-QDM to the frozen eight-design screen.
+mean HV `0.1903` to `0.1375`. Classic wins `2/3` per-problem HV comparisons
+and ties `Prob015_multi_pipe_8bit` at zero HV for both arms. Do not promote
+exact `sr_pca_3d` FG-QDM to the frozen eight-design screen.
 
 ## Key Contract
 
@@ -34,4 +35,7 @@ Do not promote exact `sr_pca_3d` FG-QDM to the frozen eight-design screen.
 - [methodology.md](methodology.md)
 - [commands/run_t85_front_guarded_qd_memory.md](commands/run_t85_front_guarded_qd_memory.md)
 - [artifacts_manifest.md](artifacts_manifest.md)
+- [results_report.md](results_report.md)
+- [figures/](figures/)
+- [tables/](tables/)
 - Preliminary planning: `../../preliminary_planning/20260626_front_guarded_qd_memory_probe/`

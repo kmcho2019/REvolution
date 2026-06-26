@@ -40,3 +40,14 @@ Expected per-problem artifacts include `archive_cells.csv`,
 `archive_history.jsonl`, `archive_summary.json`, `qd_metrics.json`,
 `global_pareto_archive.csv`, candidate prompt snapshots with `qd_memory_*`
 fields, and final backend summaries.
+
+## Technique-Level Package
+
+- `results_report.md`: completed smoke report and promotion decision.
+- `tables/warmup4_aggregate_backend_metrics.csv`: warmup-4 aggregate metrics.
+- `tables/warmup4_backend_problem_metrics.csv`: warmup-4 per-problem metrics.
+- `figures/warmup4_prob045_gain_power_vs_area.png`: representative raw PPA
+  front figure.
+- `figures/warmup4_prob015_gain_power_vs_effective_clock_period.png`:
+  representative sequential front figure.
+- `figures/visual_inspection_notes.md`: manual read of the copied figures.

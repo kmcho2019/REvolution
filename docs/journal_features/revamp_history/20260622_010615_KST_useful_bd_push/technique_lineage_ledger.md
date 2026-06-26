@@ -23,10 +23,10 @@ lane notes, decision ledger, and Mermaid graphs.
 | `L2` | Synthesis-response automatic BDs | Derive BDs from non-PPA synthesis response vectors and AutoQD-style projections. | Continue as the strongest automatic-BD source, but add quality/yield guards. |
 | `L3` | Codebook and discrete archives | Stabilize descriptor cells with VQ/codebook structure. | Park direct pressure; reopen as side archive or local-Pareto partition. |
 | `L4` | Learned encoders | Test Qwen3, DeepGate, graph, sequence, AURORA, and multimodal circuit embeddings. | T58 completed the final bounded frozen T11 PCA4 primary-archive check and failed promotion on HV/front breadth. |
-| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T59 failed promotion; the next method must change front-slot creation or use a secondary archive lane. |
+| `L5` | Archive coupling and parent pressure | Preserve diversity while restoring hill-climbing pressure. | T85 proves front-guarded memory can run but loses the smoke; T86 should test random memory before another descriptor swap. |
 | `L6` | Lineage and emitter schedules | Bias exploration with repair dynamics, parent history, and adaptive emitters. | Short fail-pool feedback was insufficient; escalate only with measured source-level repair or role-separated emitters. |
-| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T82 exposes noncollapsed MasterRTL RF timing model-state metrics through a live descriptor hook and passes one live smoke; next run the frozen screen before full spend. |
-| `L8` | Budget and benchmark shape | Test whether the evaluation structure is too wide/shallow or too saturated for QD to show value. | T79 freezes the equal-candidate ablation; next run and package the live arms. |
+| `L7` | RTL-native descriptors | Use RTL operator graphs and timing-risk/path morphology as behavior axes. | T83 remains the current RF model-state representative, but T84 regressed and exact RF leaf-ID coupling is not promoted. |
+| `L8` | Budget and benchmark shape | Test whether the evaluation structure is too wide/shallow or too saturated for QD to show value. | T79 completed the tested `12x3`/`8x5`/`6x7` matrix; exact T75 loses classic at all three shapes. |
 
 ## Lineage Graph
 
@@ -99,6 +99,8 @@ flowchart LR
     T54[T54 front-slot lane]
     T58[T58 T51 + T11 PCA4]
     T59[T59 T51 feedback front slot]
+    T85[T85 front-guarded memory]
+    T86[T86 random-memory control]
   end
 
   subgraph emitters[L6 lineage/emitter]
@@ -129,6 +131,8 @@ flowchart LR
     T80[T80 structural mix gate]
     T81[T81 RF timing state gate]
     T82[T82 RF timing runtime hook]
+    T83[T83 RF leaf-ID delayed]
+    T84[T84 RF leaf-ID front slot]
   end
 
   subgraph budgetshape[L8 budget and benchmark shape]
@@ -221,6 +225,10 @@ flowchart LR
   T77 --> T80
   T76 --> T81
   T81 --> T82
+  T82 --> T83
+  T83 --> T84
+  T84 --> T85
+  T85 --> T86
   T75 --> T78
   T77 --> T78
   T78 --> T79
@@ -290,9 +298,11 @@ flowchart LR
 | T81 | `L7` | MasterRTL RF timing model-state gate using upstream timing-DAG/path features and the saved RF model. | `T0_model_state_gate_positive_not_live`: `13/19` candidates evaluate, `166` timing paths are captured, and RF leaves are noncollapsed (`53` leaf rows, `414` leaf IDs). | `advance` runtime-hook design | Define fixed BD coordinates from RF timing state plus a structural axis, with explicit no-clock handling before any live spend. |
 | T82 | `L7` | Runtime descriptor hook for MasterRTL RF timing model-state metrics. | `T0_screened_negative_not_promoted`: evaluator and live smoke pass, but the frozen `8x5` screen loses classic on mean HV (`0.1140` versus `0.1406`) and Pareto points (`2.00` versus `3.25`). | `retire` exact RF timing-state profile | Only revisit RF timing through a materially different coupling, such as RF timing as a secondary tag or a noncollapsed replacement for path-count. |
 | T83 | `L7/L8` | RF leaf-ID structural delayed QD: use RF timing leaf-ID breadth as a secondary coordinate beside MasterRTL branching and RTLTimer wire density, with delayed archive activation. | `T0_near_classic_diagnostic_not_promoted`: all-design mean HV is close (`0.1369` versus classic `0.1406`), but Pareto points and reference-beating counts lose, RTLLM-only HV is negative, and the near-tie depends on `Prob135_m2014_q6b`. | `hybridize` only as a model-state clue | Do not promote exact T83. Use RF leaf-ID breadth only inside a stronger front-preserving mechanism or switch lanes. |
-| T84 | `L7/L8` | RF leaf-ID front-slot delayed QD: keep T83 axes and delayed archive activation, but sample bounded local front-slot parents through `front_slot_lane_nsga2`. | `pre_registered_not_run`: endpoint preflight and descriptor probe passed. | `advance` frozen screen | Run the frozen `8x5` screen and decide whether front-slot coupling repairs T83's front-breadth loss. |
+| T84 | `L7/L8` | RF leaf-ID front-slot delayed QD: keep T83 axes and delayed archive activation, but sample bounded local front-slot parents through `front_slot_lane_nsga2`. | `T0_diagnostic_regression_not_promoted`: front-slot sampling loses T83's near-classic mean HV and does not recover front material. | `retire` exact front-slot coupling | Keep T83 as the RF model-state representative; do not continue exact T84. |
+| T85 | `L5` | FG-QDM: front-guarded QD memory with a separate classic-style primary pool and passive archive memory over `sr_pca_3d`. | `T0_smoke_negative_not_promoted`: warmup-4 fixes coverage, but classic wins smoke mean HV `0.1903` to `0.1375`; `Prob015` ties at zero HV. | `ablate` descriptor control | Run T86 random-memory control before any verified-descriptor swap. |
+| T86 | `L0/L5` | Random-memory FG-QDM control, then possible verified-descriptor swap only if memory earns budget. | `pre_registered_not_run`: method card and command notes exist; no live run yet. | `advance` control smoke | Add a legal deterministic random descriptor profile, then run the T85 smoke subset against classic and SR-memory FG-QDM. |
 | T78 | `L8` | Retrospective budget-depth maturation audit over existing T75 `12 x 3` archive histories. | `T0_budget_hypothesis_support_not_live_ablation`: `9/13` archives keep filling or replacing cells in generation `2` or later, but no equal-budget shape comparison has run. | `advance` live budget ablation | Freeze a reference-complete medium-validity subset, then compare classic and the selected QD arm under `12 x 3`, `8 x 5`, and `6 x 7`. |
-| T79 | `L8` | Pre-registered equal-budget shape ablation protocol over the T75 QD arm and classic comparator. | `pre_registered_not_run`: eight-design subset, endpoint preflight, and six-arm `12x3`/`8x5`/`6x7` command matrix are frozen. | `advance` live budget ablation | Run and package the six planned arms without changing subset, model, seed, method, or metrics after reading outcomes. |
+| T79 | `L8` | Pre-registered equal-budget shape ablation protocol over the T75 QD arm and classic comparator. | `T0_budget_shape_negative`: exact T75 loses matched classic mean HV at `12x3`, `8x5`, and `6x7`. | `retire` exact T75 budget-shape explanation | Only revisit budget shape with a materially different method or the still-unrun `4x11`/`16x2` shapes. |
 | T17/T23 | `L5` | Passive local-Pareto retention and SR validation matrix. | Shows front-material value but not a decisive live win. | `advance` | Use as the archive mechanism lineage for T24/T25. |
 | T24 | `L0/L2/L5` | Six-arm live matrix: classic, manual BD, random, SR-RFF, SR ReLU, SR raw. | All QD arms preserve covered designs, but every QD arm loses too much multi-pipe best quality. | `ablate` | Treat as failure evidence for guarded parent-pressure variants. |
 | T25 | `L2/L5` | Guarded SR raw: lower fill target, lower improve backfill, lower two-parent fusion. | Completed `T0 diagnostic`; preserves covered designs but worsens multi-pipe best quality versus SR raw and fails traffic-light valid-PPA gate. | `ablate` | Use as negative evidence for T26 emitter/parent-source design. |

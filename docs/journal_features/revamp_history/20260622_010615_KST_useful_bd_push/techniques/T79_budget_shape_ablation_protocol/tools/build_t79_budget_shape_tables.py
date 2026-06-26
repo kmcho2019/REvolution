@@ -142,7 +142,7 @@ def write_contract() -> None:
     contract = {
         "technique_id": "T79",
         "slug": "T79_budget_shape_ablation_protocol",
-        "status": "pre_registered_not_run",
+        "status": "T0_budget_shape_negative",
         "lane": "L8_budget_and_benchmark_shape",
         "methods": ["classic_revolution", "shape_density_front_pressure_qd"],
         "shapes": ["12x3", "8x5", "6x7"],

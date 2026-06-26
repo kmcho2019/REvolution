@@ -98,7 +98,8 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T82` | `T82_masterrtl_rf_timing_runtime_hook` | RTL-native pretrained model runtime hook | Completed `T0_screened_negative_not_promoted`; RF timing model-state metrics resolve through the live descriptor registry, but the frozen `8x5` screen trails classic |
 | `T83` | `T83_rf_leafid_structural_delayed_qd` | RTL-native pretrained model archive coupling | `T0 near_classic_diagnostic_not_promoted`; close all-design mean HV but `Prob135`-dependent and RTLLM-negative |
 | `T84` | `T84_rf_leafid_front_slot_delayed_qd` | RTL-native pretrained model archive coupling | `T0 diagnostic_regression_not_promoted`; front-slot sampling loses T83's near-classic HV and does not recover front material |
-| `T85` | `T85_front_guarded_qd_memory` | Archive-coupling search policy | Implemented and pre-registered; tests QD as guarded auxiliary memory rather than a MAP-Elites budget owner |
+| `T85` | `T85_front_guarded_qd_memory` | Archive-coupling search policy | `T0 smoke_negative_not_promoted`; warmup-4 fixes coverage but classic wins mean HV and the only tied design has zero HV for both arms |
+| `T86` | `T86_front_guarded_memory_controls` | Archive-coupling search policy | Pre-registered control lane; first test random-memory FG-QDM, then only swap in a verified descriptor if the mechanism earns budget |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

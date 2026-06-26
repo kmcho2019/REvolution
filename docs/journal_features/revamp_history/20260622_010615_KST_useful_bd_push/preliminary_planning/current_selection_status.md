@@ -128,14 +128,20 @@ score read was mixed: T85 beat classic on `Prob015_multi_pipe_8bit` but lost on
 
 The formal HV/Pareto read blocks promotion. On the same three
 reference-complete problems, classic mean HV is `0.1903` and T85 warmup-4 mean
-HV is `0.1375`; classic wins all three HV comparisons, with mean Pareto points
-`3.00` versus `2.00` and mean reference-beating candidates `17.33` versus
-`9.00`.
+HV is `0.1375`; classic wins `2/3` HV comparisons and ties
+`Prob015_multi_pipe_8bit` at zero HV for both arms. Classic also leads mean
+Pareto points `3.00` versus `2.00` and mean reference-beating candidates
+`17.33` versus `9.00`.
 
 Decision: keep T85 as the current front-guarded memory category representative,
 but do not rank it in the frozen eight-design top-10 table or promote it to
 final RTLLM spend. A future T85 continuation must change the mechanism or
 descriptor materially; exact `sr_pca_3d` warmup-4 FG-QDM is a negative smoke.
+
+Next lane: `T86_front_guarded_memory_controls` should test random-memory FG-QDM
+before any verified-descriptor swap. If SR memory cannot beat random memory in
+the same scheduler, the next result strengthens the negative map rather than
+spending on another descriptor-first live arm.
 
 Measured archive-stagnation activation is now complete and negative. It kept
 passive archive logging from the start and activated archive pressure only
