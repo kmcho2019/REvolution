@@ -1,4 +1,7 @@
 # Tables
 
-Store state graph funnels, sequential features, stimulus sketches, archive
-metrics, PPA comparisons, validity funnels, and runtime CSV files here.
+| File | Purpose |
+| --- | --- |
+| `t08_sequential_proxy_evidence.csv` | Compact summary of measured sequential proxy evidence. |
+| `t08_gate_decision.csv` | Final T08 tier decision and follow-up rule. |
+| `t08_source_hashes.sha256` | Hashes for source reports and copied figures. |

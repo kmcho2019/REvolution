@@ -178,7 +178,7 @@ Start here when resuming the active goal.
 | `T05` | `T05_vq_elites_codebook_bd` | Replay result, `T0 diagnostic`; fixed codebook descriptor loses quality and passive-QD score. |
 | `T06` | `T06_qwen_projection_bd` | Diagnostic result, `T0 diagnostic`; raw/identifier Qwen has HV signal but nuisance-axis clustering. |
 | `T07` | `T07_deepgate_family_bd` | Completed replay diagnostic, `T1 near_classic_replay_lead`; graph WL/combo barely beat lexical HV but do not beat lexical direct front hits. |
-| `T08` | `T08_sequential_deepseq_bd` | Scaffolded. |
+| `T08` | `T08_sequential_deepseq_bd` | Retrospective sequential proxy, `T0 retrospective_sequential_proxy_not_promoted`; state/pipeline evidence is yield/near-classic useful but not a true DeepSeq pretrained reproduction or PPA-front win. |
 | `T09` | `T09_nettag_text_graph_bd` | Scaffolded. |
 | `T10` | `T10_circuitfusion_multimodal_bd` | Scaffolded. |
 | `T11` | `T11_mgvga_contrastive_bd` | Completed replay diagnostic, `T1 near_classic_replay_lead`; top-64/weighted structural contrastive descriptors improve HV by +1.82% but still trail lexical direct front hits. |

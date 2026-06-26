@@ -6102,3 +6102,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   evidence.
 - Updated the preliminary-planning index to mark the T100 RF-leaf FG-QDM smoke
   as completed rather than pending.
+
+## 2026-06-26T22:10:00Z - T08 Sequential Proxy Retrospective Closed
+
+- Converted `T08_sequential_deepseq_bd` from a scaffold into a
+  `T0 retrospective_sequential_proxy_not_promoted` evidence package.
+- Used measured T63, T67, T72, T73, and T75 state/pipeline or source-aligned
+  RTL-native evidence instead of launching another live run.
+- Recorded the key distinction: this closes the DeepSeq-style sequential proxy
+  question, but it does not claim a true pretrained DeepSeq or DeepSeq2 model.
+- Added T08-local methodology, results, manifest, commands, evidence/gate
+  tables, copied figures, source hashes, and visual inspection notes.
+- Decision: do not spend on exact primary state/pipeline proxy axes. Reopen
+  only with validated DeepSeq weights, a trained state-aware encoder objective,
+  or a front-rescue/source-selection mechanism that proves sequential memory
+  contributes quality-productive children.

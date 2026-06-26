@@ -6,55 +6,57 @@ Test whether sequential/state-aware representations explain diversity that
 combinational AIG or text descriptors miss. Use DeepSeq/DeepSeq2 principles
 where runnable and deterministic sequential controls otherwise.
 
+This completed T08 package is a retrospective proxy, not a true pretrained
+DeepSeq reproduction. It synthesizes measured evidence from source-aligned
+state/pipeline, MasterRTL, and RTLTimer descriptor runs that exercised the
+same sequential-structure hypothesis under the current REvolution/QD runtime.
+
 ## Inputs
 
 - Candidate RTL and fixed benchmark metadata.
-- Yosys netlist with FF/latch boundaries and state elements.
-- Optional bounded simulation traces from fixed non-reward stimuli.
-- DeepSeq-family implementation or a lightweight state-aware surrogate.
+- Yosys or source-aligned RTL extraction with FF/DFF, wire, branching, state,
+  and pipeline features.
+- Existing live-run PPA/front reports from T63, T67, T72, T73, and T75.
 
 Descriptor inputs exclude final PPA, reference PPA, fitness, hypervolume,
 Pareto labels, and functional pass labels.
 
-## Preprocessing
+## Completed Proxy Scope
 
-1. Extract the sequential graph: PI, PO, FF/latch nodes, combinational cones,
-   reset/set paths, enable paths, and feedback edges.
-2. Canonicalize state element names and order.
-3. Generate bounded random or deterministic stimuli only for descriptor
-   summaries; use the same stimuli for all methods and record seeds.
-4. For combinational benchmarks, emit explicit zero-state features so they are
-   not silently dropped.
+The proxy evidence covers:
 
-## Descriptor
+- T63 `fused_rtl_state_pipeline_2d`, which uses RTL-native state/pipeline
+  descriptors in a live QD screen.
+- T67, which keeps the T63 state/pipeline descriptor but changes realization
+  to source-preserving seeded thought-code generation.
+- T72, which uses source-aligned MasterRTL/RTLTimer cell descriptors.
+- T73 and T75, which use source-aligned shape-density axes including DFF and
+  wire density.
 
-Compute and compare:
+These runs cover the core DeepSeq-style concern that sequential state,
+pipeline, and feedback structure may define useful implementation families.
+They do not validate any external DeepSeq pretrained checkpoint.
 
-- state graph counts: FF count, SCC count, feedback edge count, reset density,
-  enable density, and FF-to-FF cone depth;
-- transition summaries from fixed stimuli: toggle histograms, state-bit entropy,
-  and output-response sketch;
-- DeepSeq-style or surrogate sequence embeddings over state transition traces;
-- cone embeddings pooled by sequential boundary type.
+## Descriptor Inputs
 
-Normalize within benchmark and freeze any fitted projection before live runs.
+The measured proxy descriptors include:
 
-## Archive Mapping
+- state and pipeline structure from fused RTL-native profiles;
+- MasterRTL source-aligned branching and graph features;
+- RTLTimer wire density and DFF density;
+- source-preserving parent RTL used by seeded thought-code generation.
 
-Use a grid over sequential entropy and feedback/reconvergence density for
-interpretability. Use CVT over the full state-aware vector for higher
-dimensional archive pressure.
+## Archive And Coupling Surfaces
 
-## Parent Selection Coupling
+The evidence spans several archive/coupling surfaces:
 
-Only synthesis-valid candidates with extracted sequential graphs can occupy
-normal cells. Candidates with extraction failure remain in the validity funnel.
-Descriptor stimuli are not testbench pass/fail checks.
+- T63: RTL-native archive cells under the T51-style live screen.
+- T67: the same state/pipeline cells with source-preserving seeded
+  realization.
+- T72: source-aligned fixed cells derived from generated RTL extractor output.
+- T73/T75: source-aligned shape-density cells with stronger occupancy and
+  front-pressure variants.
 
-## Expected Outputs
-
-- `tables/sequential_features.csv`
-- `tables/stimulus_sketches.csv`
-- `tables/state_graph_funnel.csv`
-- `figures/sequential_projection.png`
-- `figures/state_entropy_vs_ppa.png`
+This is enough to decide whether the current branch already has evidence for
+the sequential proxy lane. It is not enough to claim that DeepSeq pretrained
+embeddings themselves were tested.

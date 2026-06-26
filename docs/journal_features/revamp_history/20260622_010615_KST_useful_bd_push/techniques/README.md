@@ -21,7 +21,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T05` | `T05_vq_elites_codebook_bd` | Codebook/archive descriptor | `T0 diagnostic` |
 | `T06` | `T06_qwen_projection_bd` | Learned/projection descriptor | `T0 diagnostic` |
 | `T07` | `T07_deepgate_family_bd` | Circuit encoder descriptor | `T1 near_classic_replay_lead`; graph WL/combo tiny HV lead, front-hit blocker |
-| `T08` | `T08_sequential_deepseq_bd` | Sequential encoder descriptor | Scaffolded |
+| `T08` | `T08_sequential_deepseq_bd` | Sequential encoder descriptor | `T0 retrospective_sequential_proxy_not_promoted`; source-aligned state/pipeline proxy evidence is useful but not a true DeepSeq pretrained result |
 | `T09` | `T09_nettag_text_graph_bd` | Text-attributed graph descriptor | Scaffolded |
 | `T10` | `T10_circuitfusion_multimodal_bd` | Multimodal descriptor | Scaffolded |
 | `T11` | `T11_mgvga_contrastive_bd` | Contrastive graph descriptor | `T1 near_classic_replay_lead`; +1.82% HV over lexical with front-hit blocker |

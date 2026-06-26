@@ -153,8 +153,12 @@ Real result packages:
 - `T99_aurora_raw_impl_delayed_qd` completed the live AURORA-style raw
   implementation-feature screen.
 
-Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
-`T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
+Scaffolded but not yet real-result packages remain `T09`, `T10`, and `T16`.
+`T08_sequential_deepseq_bd` is closed as a conservative
+`T0 retrospective_sequential_proxy_not_promoted` package: T63/T67/T72/T73/T75
+provide measured state/pipeline and source-aligned sequential proxy evidence,
+but not a true pretrained DeepSeq reproduction or PPA-front win.
+`T72_source_aligned_rtl_cell_qd` is now a measured
 near-classic result package: it passes the source-aligned runtime descriptor
 gate, completes the bounded live screen, preserves all `13/13`
 classic-covered designs, and trails classic mean HV by about `0.65%`.

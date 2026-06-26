@@ -255,8 +255,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       decision.
 - [x] `T07_deepgate_family_bd` has methodology, results, figures, tables, and tier
       decision.
-- [ ] `T08_sequential_deepseq_bd` has methodology, results, figures, tables, and
+- [x] `T08_sequential_deepseq_bd` has methodology, results, figures, tables, and
       tier decision.
+      Outcome: closed as `T0 retrospective_sequential_proxy_not_promoted` using
+      measured T63/T67/T72/T73/T75 sequential/state proxy evidence. Do not claim
+      true DeepSeq pretrained reproduction.
 - [ ] `T09_nettag_text_graph_bd` has methodology, results, figures, tables, and
       tier decision.
 - [ ] `T10_circuitfusion_multimodal_bd` has methodology, results, figures, tables,
