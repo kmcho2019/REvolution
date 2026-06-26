@@ -8,7 +8,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | Stagnation-triggered archive pressure | Proposed next mechanism | Delayed activation was better than adaptive sparse-front pressure, but a fixed generation is still too blunt. Measured stagnation could activate QD only when classic-like improvement slows. | Not implemented or validated; must avoid using final PPA/HV as an in-loop BD. |
+| 1 | Stagnation-triggered archive pressure | Preregistered next gate | Delayed activation was better than adaptive sparse-front pressure, but a fixed generation is still too blunt. Measured archive stagnation can activate QD only when passive archive growth slows. | Code hook is validated; live screen is pending and must avoid using final PPA/HV as an in-loop BD. |
 | 2 | Delayed archive activation | Diagnostic negative | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
 | 3 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 4 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | Source-aligned descriptors are credible, but live runs still need stronger front creation. |
@@ -128,6 +128,13 @@ credible gate is not another fixed front-slot, sparse-front, depth-only, or
 fixed-MasterRTL geometry variant; it must be a materially different mechanism
 such as measured stagnation-triggered archive pressure or validated
 pretrained MasterRTL model-state descriptors.
+
+The stagnation-triggered archive-pressure gate is now preregistered. It uses
+only scheduler-visible archive growth signals, `occupied_cells` and
+`archive_member_count`, to decide when archive pressure turns on. This keeps
+the anti-gaming boundary intact: no final PPA, reference PPA, fitness,
+hypervolume, Pareto rank, functional pass rate, or synthesis pass rate can
+enter the descriptor or activation trigger.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

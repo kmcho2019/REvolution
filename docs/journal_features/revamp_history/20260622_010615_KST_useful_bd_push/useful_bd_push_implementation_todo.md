@@ -134,13 +134,17 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Run the periodic `claude -p` adversarial review after the 20260625
       auxiliary archive commits. Outcome: `PASS_WITH_ACTIONS`; the plan is
       honest but not finished enough for final RTLLM config selection.
-- [ ] Replicate the best diagnostic auxiliary archive comparison with at least
+- [x] Replicate the best diagnostic auxiliary archive comparison with at least
       seeds `1002` and `1003`, using one canonical matched-classic run per
       shape and explicit per-problem robustness checks.
-- [ ] Pre-register an adaptive archive-pressure arm that increases diversity
+- [x] Pre-register an adaptive archive-pressure arm that increases diversity
       pressure only after stagnation or near-front archive evidence. Do not
       spend another run on a minor MasterRTL geometry tweak without a new
       coupling mechanism.
+- [x] Run adaptive sparse-front and fixed delayed-activation archive-pressure
+      gates after the seed-replication negative.
+- [ ] Run and package the archive-stagnation activation gate, using only
+      scheduler-visible archive growth state for activation.
 - [ ] Refresh or supersede the 20260625 review bundle so it includes the
       auxiliary archive high-exploit, front-breadth, and depth negatives before
       using it for colleague-facing review.

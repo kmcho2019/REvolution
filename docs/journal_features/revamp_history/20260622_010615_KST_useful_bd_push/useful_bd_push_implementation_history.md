@@ -5160,3 +5160,24 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: delayed activation is diagnostic negative and not promoted. It is
   a useful timing-mechanism clue, but the next gate should be materially
   different from fixed MasterRTL auxiliary archive pressure.
+
+## 2026-06-26T03:13:37Z - Archive Stagnation Activation Preregistered
+
+- Added a narrow `qd_archive_activation_stagnation_generations` hook so QD can
+  passively log archive state and activate archive pressure only after passive
+  archive growth stalls.
+- The trigger uses only scheduler-visible archive state:
+  `occupied_cells`, `archive_member_count`, and current generation.
+- Explicit anti-gaming rule: the trigger must not use final PPA, reference
+  PPA, fitness, hypervolume, Pareto rank, functional pass rate, or synthesis
+  pass rate as descriptor or activation inputs.
+- Created preliminary planning package:
+  `preliminary_planning/20260626_archive_stagnation_activation_probe/`.
+- Frozen run name:
+  `masterrtl_archive_stagnation_activation_8x5`.
+- Frozen run root:
+  `exp/useful_bd_push/prelim_archive_stagnation_activation_20260626_031337_UTC/live`.
+- Focused validation before run launch passed:
+  `pytest` for the archive-pressure tests, `ruff check` on touched files,
+  `ty check` on touched source modules, source-module `pyright`, and
+  `git diff --check`.
