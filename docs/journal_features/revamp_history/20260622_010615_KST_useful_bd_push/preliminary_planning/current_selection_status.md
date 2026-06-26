@@ -170,9 +170,9 @@ the same official `deepgate_pooled_pc3` descriptor and frozen eight-design
 fill/backfill to `0.10/0.05`, and raises champion-lane exploitation to
 `0.90`. It improves mean HV over T94 (`0.1153` versus `0.1040`) and mean
 reference-beating count (`5.25` versus `4.50`), but classic still leads mean
-HV (`0.1406`), Pareto points (`3.25` versus `1.88`), and HV wins (`7` versus
-`1`). Treat T95 as the best DeepGate category representative, not a promoted
-full-RTLLM arm.
+HV (`0.1406`), Pareto points (`3.25` versus `1.88`), and strict paired HV
+record (classic `4`, T95 `1`, ties `3`). Treat T95 as the best DeepGate
+category representative, not a promoted full-RTLLM arm.
 
 T96 tests whether pure DeepGate is missing a complementary RTL-native
 pretrained model-state axis. It combines `source_aligned_rf_timing_leaf_ids`,
@@ -247,9 +247,10 @@ RF leaf-ID structural descriptor axes. It becomes the new FG-QDM category
 representative: mean HV `0.1566` beats T97 `0.1534` and T98 random
 front-credit `0.1048`, and `front_rescue` contributes `2` global-front
 additions across `4` generated calls. The result is still not promoted because
-classic wins the same smoke at mean HV `0.1903`, wins all three per-problem
-HV comparisons, and the `memory_refine` lane still has `0` global-front
-additions. The common table also marks all three T100 smoke problems as
+classic wins the same smoke at mean HV `0.1903`, wins two of three strict
+per-problem HV comparisons, ties the zero-HV `Prob015` case, and the
+`memory_refine` lane still has `0` global-front additions. The common table
+also marks all three T100 smoke problems as
 `headline` with `pass` valid-PPA yield status, so the negative decision is not
 caused by missing coverage.
 

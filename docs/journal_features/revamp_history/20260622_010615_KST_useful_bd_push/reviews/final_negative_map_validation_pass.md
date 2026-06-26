@@ -1,4 +1,4 @@
-# Useful BD Push Subagent Validation Report
+# Final Negative-Map Validation Pass
 
 Recording note: this read-only PASS output has been copied into the canonical
 validation report and logged in `useful_bd_push_implementation_history.md`.

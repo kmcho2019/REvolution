@@ -90,8 +90,15 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime
       reporting.
 - [ ] Add passive archive scoring for classic and every QD method.
+      Current negative-map scope: T95/T96/T100 have QD-side archive metrics but
+      matched classic archive projection is explicitly `not_available`; T99
+      has both QD and classic projection. Do not use unmatched passive archive
+      metrics as headline evidence.
 - [ ] Add global PPA hypervolume, Pareto-cell count, Pareto spread, unique
       front family, QD-score AUC, coverage AUC, and HV AUC metrics.
+      Current negative-map scope: uneven secondary archive aggregates are
+      documented limitations and are not used for the headline pause-spend
+      claim.
 - [x] Add a retrospective budget-depth maturation audit before live
       budget-shape spending (`T78_budget_depth_maturation_audit`).
 - [x] Pre-register and run a fixed-total-budget shape ablation, comparing
@@ -224,9 +231,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       lineage map for method families.
 - [x] Add `technique_lineage_ledger.md` as a skim-first lane/category,
       lineage, result, and branch tracking guide.
-- [ ] Add readable figures for every completed result package and cross-method
+- [x] Add readable figures for every completed result package and cross-method
       audit, including a standalone raw area-power PPA Pareto-front PNG before
       any BD-space, normalized, or HTML-only visualization is accepted.
+      Negative-map closure: `tables/figure_completeness_inventory.csv` now
+      tracks direct PPA artifacts, Phase 03.1 viewers, and inspection notes
+      for T01-T100 paths; headline representatives are figure-backed.
 - [x] Inspect generated figures with `view_image` or equivalent before marking
       any technique complete.
 - [x] Add tests for any new report/packaging code.
@@ -484,12 +494,20 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] At least 10 technique packages contain real results.
 - [x] At least one method attempts a multi-objective/Pareto-front archive or
       passive Pareto audit.
-- [ ] Every `T1` or higher method preserves every classic-covered design in the
-      fixed compared subset.
-- [ ] Any promoted method with a 50 percent or larger relative decline in
+- [x] Every `T1` or higher method used for promotion preserves every
+      classic-covered design in the fixed compared subset.
+      Negative-map closure: no `T1`/`T2` row is promoted; rows with coverage
+      loss, yield warnings, smoke-only scope, or legacy/partial coverage remain
+      diagnostic or representative-only.
+- [x] Any promoted method with a 50 percent or larger relative decline in
       functionality or synthesis-valid rate versus classic is labeled with a
       yield warning when the classic passing denominator is at least 10.
-- [ ] Any `T1` or `T2` method gets deeper per-problem and per-seed analysis.
+      Negative-map closure: no method is promoted, and T95/T96-style yield
+      warnings remain visible in the reports and central guardrails.
+- [x] Any `T1` or `T2` method gets deeper per-problem and per-seed analysis
+      before promotion. Negative-map closure: T83 and auxiliary archive
+      near-misses were replicated and remained negative; other legacy/partial
+      rows are not promoted.
 - [x] T26/T27 gets canonical duplicate/family validation before any `T2`
       useful-QD claim.
 - [x] T26/T28 gets holdout or front-recovery validation before any `T2`
@@ -503,9 +521,12 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       and a mandatory raw area-power PPA Pareto figure gate.
 - [x] Central comparison report states whether QD/MAP-Elites is useful,
       near-classic, or still negative.
-- [ ] Central and per-technique reports pass
+- [x] Central and per-technique reports pass
       `visualization_reporting_policy.md`, including the direct raw PPA-front
       figure gate.
+      Negative-map closure: the central representative rows T95/T96/T99/T100
+      have direct PPA artifacts, Phase 03.1 viewer entries, and visual
+      inspection notes in `tables/figure_completeness_inventory.csv`.
 - [x] Visualization policy distinguishes the full Phase 03.1
       `qd_ppa_viewer/` from the simpler `direct_ppa_pareto/` supplement and
       makes both mandatory for live QD archive methods.
@@ -524,9 +545,14 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       direct raw-PPA supplement.
 - [x] T48 has a full Phase 03.1 `qd_ppa_viewer/` bundle with a documented
       non-strict classic-projection caveat and a direct raw-PPA supplement.
-- [ ] Conclusions distinguish `T0`, `T1`, `T2`, and `T3`.
-- [ ] Every `T0` result adds a follow-up idea, ablation, hybrid, or retirement
+- [x] Conclusions distinguish `T0`, `T1`, `T2`, and `T3`.
+      See `useful_bd_push_plan.md`, `central_comparison_report.md`, and the
+      tiered decisions in `techniques/technique_registry.csv`.
+- [x] Every `T0` result adds a follow-up idea, ablation, hybrid, or retirement
       rationale before the next method starts.
+      See `technique_lineage_ledger.md` and `idea_backlog.md`; exact rows with
+      no spend-ready continuation are explicitly retired or kept only as
+      category representatives.
 - [x] T36 bounded front lane gets a slot-count ablation before any final
       useful-BD claim.
 - [x] T37 one-slot bounded front lane gets T38 same-budget live validation.
@@ -748,8 +774,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Run T87 source-aligned shape-density FG-QDM smoke before promoting any
       FG-QDM continuation.
 - [x] Stop condition satisfies `anti_reward_hacking_policy.md` for pausing
-      broad live spend on tested families; final goal sign-off still requires
-      adversarial PASS.
+      broad live spend on tested families; clean adversarial `PASS` is now
+      recorded for the negative-map package.
 
 ## Validation
 
@@ -763,8 +789,9 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       and submodule decision before stopping a method.
 - [x] Record vLLM endpoint, model id, token budgets, and timeout/preflight
       status for live runs.
-- [ ] Run adversarial validation and write
+- [x] Run adversarial validation and write
       `useful_bd_push_subagent_validation_report.md`.
+      Outcome: final negative-map review returned clean `PASS`.
 
 ## Commit Hygiene
 

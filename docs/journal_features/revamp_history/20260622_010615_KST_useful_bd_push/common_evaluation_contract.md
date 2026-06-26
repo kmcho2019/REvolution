@@ -110,6 +110,8 @@ This table has one row per method and seed. It aggregates headline rows from
 reference-beating count, valid-PPA count, passive archive coverage/QD score,
 passive archive AUC metrics, Pareto-cell count, Pareto spread, and paired HV
 wins/losses/ties against the matched classic row when one is present.
+The `classic_hv_win_count`, `classic_hv_loss_count`, and
+`classic_hv_tie_count` fields are from the classic row's perspective.
 
 Use this table for operational shortlist updates. Do not use it to hide
 per-problem coverage losses, yield warnings, diagnostic-only rows, missing

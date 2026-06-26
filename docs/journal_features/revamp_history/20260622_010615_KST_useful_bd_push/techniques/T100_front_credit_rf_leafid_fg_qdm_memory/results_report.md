@@ -16,7 +16,7 @@ descriptor conclusion, not a promotion decision:
   front-credit FG-QDM policy on this smoke.
 - RF leaf-ID structural memory is much better than the same-threshold random
   memory control.
-- Classic REvolution remains stronger on mean HV, per-problem HV wins,
+- Classic REvolution remains stronger on mean HV, strict per-problem HV record,
   Pareto-front breadth, and reference-beating candidate count.
 
 ## Metrics
@@ -24,7 +24,7 @@ descriptor conclusion, not a promotion decision:
 Source:
 `analysis/pareto_analysis/aggregate_backend_metrics.csv`.
 
-| Arm | Mean HV | Mean Pareto points | Mean reference-beating count | HV wins |
+| Arm | Mean HV | Mean Pareto points | Mean reference-beating count | Backend-best HV count |
 | --- | ---: | ---: | ---: | ---: |
 | `classic_revolution_12x3` | `0.190331` | `3.00` | `17.33` | `3` |
 | `fg_qdm_rf_leafid_front_credit_12x3` | `0.156553` | `2.00` | `12.00` | `0` |
@@ -67,7 +67,8 @@ The completeness gate marks all three smoke problems as `headline` with
 `pass` valid-PPA yield status. That means T100 preserves coverage on this
 smoke subset. The common-table result still reinforces the negative promotion
 decision because T100 loses mean HV, HV-AUC, Pareto points, and
-reference-beating count.
+reference-beating count. The strict paired HV record is classic `2`,
+T100 `0`, and ties `1`.
 
 Classic passive archive fields are `not_available`. This is intentional: the
 RF leaf-ID descriptor cannot be honestly recovered for classic candidates by

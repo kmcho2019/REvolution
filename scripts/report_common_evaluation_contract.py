@@ -428,7 +428,7 @@ def summary_rows(method_rows: list[dict[str, str]]) -> list[dict[str, str]]:
         rows = [row for row in method_rows if row["method_key"] == method]
         headline = [row for row in rows if row["comparison_status"] == "headline"]
         rows_for_mean = headline if headline else rows
-        wins = losses = ties = 0
+        classic_wins = classic_losses = ties = 0
         for row in headline:
             key = (row["benchmark"], row["problem"])
             if key not in classic_by_problem:
@@ -440,9 +440,9 @@ def summary_rows(method_rows: list[dict[str, str]]) -> list[dict[str, str]]:
             if abs(diff) <= 1e-12:
                 ties += 1
             elif diff > 0:
-                wins += 1
+                classic_losses += 1
             else:
-                losses += 1
+                classic_wins += 1
 
         notes = []
         if not headline:
@@ -474,8 +474,8 @@ def summary_rows(method_rows: list[dict[str, str]]) -> list[dict[str, str]]:
                 "mean_pareto_cell_count": mean_metric(rows_for_mean, "pareto_cell_count"),
                 "mean_pareto_spread": mean_metric(rows_for_mean, "pareto_spread"),
                 "classic_delta_mean_hv": NOT_AVAILABLE,
-                "classic_hv_win_count": fmt(wins),
-                "classic_hv_loss_count": fmt(losses),
+                "classic_hv_win_count": fmt(classic_wins),
+                "classic_hv_loss_count": fmt(classic_losses),
                 "classic_hv_tie_count": fmt(ties),
                 "notes": ";".join(notes),
             }

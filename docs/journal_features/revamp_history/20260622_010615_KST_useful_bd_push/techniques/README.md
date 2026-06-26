@@ -10,7 +10,10 @@ and `tables/` contain measured evidence.
 At least 10 current packages must be attempted with real results before the
 push can sign off a broad negative map.
 
-The canonical machine-readable index is `technique_registry.csv`.
+The canonical machine-readable index is `technique_registry.csv`. Directory
+values without `/` are under this `techniques/` directory; values with `/` are
+relative to the revamp root and may point to `preliminary_planning/` when a
+screening result is not a full technique package.
 
 | ID | Directory | Family | State |
 | --- | --- | --- | --- |
@@ -101,6 +104,19 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T85` | `T85_front_guarded_qd_memory` | Archive-coupling search policy | `T0 smoke_negative_not_promoted`; warmup-4 fixes coverage but classic wins mean HV and the only tied design has zero HV for both arms |
 | `T86` | `T86_front_guarded_memory_controls` | Archive-coupling search policy | `T0 control_negative_not_promoted`; random-memory FG-QDM slightly beats SR-memory but loses classic, blocking exact `sr_pca_3d` FG-QDM continuation |
 | `T87` | `T87_front_guarded_rtl_native_memory` | RTL-native archive coupling | `T0 smoke_negative_not_promoted`; trails SR/random/classic on mean HV and memory lanes produce zero valid-PPA children |
+| `T88` | `preliminary_planning/20260626_rf_leafid_seed_robustness_gate` | RTL-native pretrained model archive coupling | `T0 replication_negative_not_promoted`; T83 three-seed mean HV trails classic and has zero seed wins |
+| `T89` | `preliminary_planning/20260626_deepgate_signal_vs_aig_stats_gate` | Synthesized-netlist pretrained encoder | `T0 bridge_signal_positive_not_live`; official DeepGate residual signal remains but covers only 5/8 screen problems |
+| `T90` | `preliminary_planning/20260626_deepgate_cone_bridge_probe` | Synthesized-netlist pretrained encoder | `T0 bridge_coverage_positive_not_live`; cone bridge extends offline DeepGate coverage to all 8 screen problems |
+| `T91` | `preliminary_planning/20260626_deepgate_pooled_descriptor_replay` | Synthesized-netlist pretrained encoder | `T0 descriptor_replay_positive_not_live`; pooled descriptors cover 96 candidates without live HV |
+| `T92` | `preliminary_planning/20260626_deepgate_runtime_descriptor_gate` | Synthesized-netlist pretrained encoder | `T0 runtime_gate_positive_not_live`; runtime profile resolves and isolated official-model smoke passes |
+| `T93` | `preliminary_planning/20260626_deepgate_runtime_live_smoke` | Synthesized-netlist pretrained encoder | `T0 runtime_smoke_positive_not_screened`; one live archive member has finite DeepGate descriptors but no matched HV |
+| `T94` | `preliminary_planning/20260626_deepgate_runtime_screen` | Synthesized-netlist pretrained encoder | `T0 screened_negative_not_promoted`; reference-complete 8x5 screen mean HV trails classic |
+| `T95` | `preliminary_planning/20260626_deepgate_delayed_high_exploit_probe` | Synthesized-netlist pretrained encoder | `T0 screened_negative_improves_prior_deepgate`; best pure DeepGate representative but still below classic |
+| `T96` | `preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe` | Hybrid pretrained RTL/netlist encoder | `T0 screened_negative_hybrid_representative`; improves pure DeepGate but loses front breadth and classic HV |
+| `T97` | `T97_front_credit_fg_qdm_memory` | Front-guarded memory | `T0 diagnostic`; front-credit FG-QDM improves earlier FG-QDM but is superseded by T100 |
+| `T98` | `T98_front_credit_random_memory_control` | Front-guarded memory control | `T0 control`; T97 beats the random-memory control but still loses classic |
+| `T99` | `T99_aurora_raw_impl_delayed_qd` | Learned/raw implementation descriptor | `T0 screened_negative_category_representative`; AURORA/raw implementation representative trails classic |
+| `T100` | `T100_front_credit_rf_leafid_fg_qdm_memory` | Front-guarded memory | `T0 best_fgqdm_smoke_not_promoted`; current FG-QDM representative, with front-rescue contributions but lower mean HV than classic |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the

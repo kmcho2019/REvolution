@@ -98,7 +98,8 @@ def test_common_evaluation_contract_reports_passive_archive_gaps(tmp_path: Path)
     assert summary_by_method["qd_method"]["headline_problem_count"] == "1"
     assert summary_by_method["qd_method"]["mean_global_ppa_hv"] == "0.35"
     assert summary_by_method["qd_method"]["classic_delta_mean_hv"] == "-0.2"
-    assert summary_by_method["qd_method"]["classic_hv_loss_count"] == "1"
+    assert summary_by_method["qd_method"]["classic_hv_win_count"] == "1"
+    assert summary_by_method["qd_method"]["classic_hv_loss_count"] == "0"
     assert summary_by_method["qd_method"]["mean_passive_archive_qd_auc"] == "0.65"
     assert summary_by_method["qd_method"]["notes"] == "candidate_level_no_canonical_dedup"
 

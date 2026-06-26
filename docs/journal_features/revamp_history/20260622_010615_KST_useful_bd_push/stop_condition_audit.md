@@ -1,7 +1,7 @@
 # Useful BD Push Stop-Condition Audit
 
 Status: live-spend stop condition satisfied for the tested families; final
-goal sign-off still requires adversarial PASS.
+negative-map adversarial PASS recorded.
 
 ## Policy
 
@@ -72,8 +72,9 @@ validated encoder objective. Otherwise the next work should be:
 3. run adversarial validation on the negative-map claim; and
 4. write the final validation report.
 
-## Remaining Goal Gap
+## Final Validation Status
 
-This stop audit is not the final goal completion proof. The active goal still
-requires a PASS from the adversarial prompt written to
-`useful_bd_push_subagent_validation_report.md`.
+This stop audit is paired with the clean PASS recorded in
+`useful_bd_push_subagent_validation_report.md`. The remaining limitations are
+documented scope caveats, not blockers for stopping broad live spend on the
+tested families.
