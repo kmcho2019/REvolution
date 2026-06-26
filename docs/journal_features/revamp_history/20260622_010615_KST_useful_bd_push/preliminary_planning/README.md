@@ -44,6 +44,7 @@ category representatives, and top-10 mean-HV shortlist.
 | `../techniques/T86_front_guarded_memory_controls/` | Test whether FG-QDM SR memory beats a deterministic random-memory control before any verified-descriptor swap. | Completed; random memory slightly beats SR memory but both trail classic |
 | `../techniques/T87_front_guarded_rtl_native_memory/` | Swap FG-QDM to the registered source-aligned RTL shape-density descriptor after SR memory fails the random-memory control. | Completed smoke; negative, with zero valid-PPA memory-lane children |
 | `../techniques/T97_front_credit_fg_qdm_memory/` | Test stricter front-credit FG-QDM using existing scheduler knobs after the contribution audit. | Completed smoke; best FG-QDM mean HV so far, but still below classic and no memory-lane global-front adds |
+| `../techniques/T98_front_credit_random_memory_control/` | Run the same-threshold random-memory control for T97. | Completed smoke; T97 beats this direct control, but FG-QDM still trails classic |
 | `20260626_rf_leafid_seed_robustness_gate/` | Replicate T83's closest single-seed RF leaf-ID structural delayed QD arm on seeds `1002` and `1003` using existing matched classic baselines. | Completed; three-seed mean HV `0.1260` versus classic `0.1442`, not promoted |
 
 ## Current Rule

@@ -55,3 +55,9 @@ T85/T86/T87, but classic remains ahead at `0.190331`. Its memory-refine lane
 produces `3/7` valid-PPA children and `3` local-front additions, but no
 memory-lane global-front additions. Keep T97 as the FG-QDM category
 representative, not an eight-design or full-RTLLM candidate.
+
+T98 has also completed as the same-threshold random-memory control. It reaches
+mean HV `0.104805`, below T97, and therefore supports T97 as the current
+FG-QDM representative. It still does not promote FG-QDM: classic wins mean HV,
+T98's one memory-refine global-front add is not quality-productive, and T97 has
+no memory-lane global-front additions.

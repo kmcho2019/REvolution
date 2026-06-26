@@ -7,14 +7,15 @@ comparison.
 
 The preliminary plan is not finished. It has produced hard screening data,
 including a three-seed replication of the best diagnostic arm, the T84
-front-slot follow-up, the T96 RF/DeepGate hybrid screen, and the T97
-front-credit FG-QDM smoke, but it has not
+front-slot follow-up, the T96 RF/DeepGate hybrid screen, and the T97/T98
+front-credit FG-QDM smoke/control pair, but it has not
 identified a QD/MAP-Elites configuration that is strong enough to spend the
 full RTLLM budget on as a positive candidate. T96 improves over pure T95
 DeepGate on mean HV, but it regresses against its closer T83 RF sibling and is
 still negative versus classic on aggregate HV and front breadth. T97 improves
-the FG-QDM smoke mean HV, but it still trails classic and does not add global
-front material from memory lanes.
+the FG-QDM smoke mean HV and beats the same-threshold T98 random-memory
+control, but it still trails classic and does not add global front material
+from memory lanes.
 
 Selection should not discard whole encoder/config categories just because the
 current best member is below classic. Maintain:
@@ -38,7 +39,7 @@ different budget or replication caveat are marked explicitly.
 | T11/T36 graph-like bridge | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Best live graph-like representative; replay signals remain stronger than live results. |
 | Code-thought/SR front-slot | `code_thought_sr_front_slot_8x5` | `0.1141` | Best current SR/code-thought representative in this preliminary pool. |
 | Qwen3 pretrained text/code | `qwen_canonical_rtl_pca3_8x5` | `0.1108` | Best actual pretrained text/code embedding live arm; keep as the Qwen representative despite weak HV. |
-| Front-guarded QD memory | `T97_fg_qdm_sr_front_credit_12x3` | `0.1534` smoke-only | Best FG-QDM smoke by mean HV; still trails classic `0.1903`, has no memory-lane global-front adds, and needs a same-threshold random control before any wider run. |
+| Front-guarded QD memory | `T97_fg_qdm_sr_front_credit_12x3` | `0.1534` smoke-only | Best FG-QDM smoke by mean HV; beats same-threshold T98 random control `0.1048`, but still trails classic `0.1903` and has no memory-lane global-front adds. |
 | DeepGate / synthesized-netlist encoder | `T95_deepgate_delayed_high_exploit_8x5` | `0.1153` | Best pure DeepGate representative; delayed high-exploit coupling improves over T94 but trails classic. |
 | Hybrid pretrained RTL/netlist encoder | `T96_rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Best RF/DeepGate hybrid representative; improves over pure T95 DeepGate but regresses versus same-seed T83 `0.1369`, trails classic, and loses front breadth. |
 | AURORA / AutoQD learned descriptor | `AURORA-style raw implementation-feature lane` | n/a | Keep as category placeholder; current evidence is replay/diagnostic, not frozen live HV. |
@@ -189,10 +190,15 @@ mean HV to `0.1534`, above T86 random memory `0.1382`, T85 SR memory
 `3/7` valid-PPA children and `3` local-front additions, but `0` global-front
 additions; `front_rescue` produced `0/4` valid-PPA children.
 
+T98 has now run the same-threshold random-memory control. T97 beats T98 on
+mean HV (`0.1534` versus `0.1048`), so the T97 smoke improvement is not just a
+scheduler-threshold artifact. T98 does produce one memory-refine global-front
+add, but its final HV and reference-beating counts are worse than T97.
+
 Decision: keep T97 as the current FG-QDM category representative, but do not
-promote it to the frozen eight-design screen. A follow-up must either run a
-same-threshold random-memory control or prove memory-refine can add global
-front material before any full-RTLLM spend.
+promote it to the frozen eight-design screen. A follow-up must prove
+memory-refine can add quality-productive global-front material before any
+full-RTLLM spend.
 
 ## Pre-RF Archive-Pressure Context
 

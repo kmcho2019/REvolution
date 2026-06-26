@@ -5826,3 +5826,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   additions.
 - Decision: keep T97 as the current FG-QDM category representative, but do not
   promote it to the frozen eight-design screen or final RTLLM spend.
+
+## 2026-06-26T15:55:00Z - T98 Random Front-Credit Control Packaged
+
+- Ran `fg_qdm_random_front_credit_12x3` as T97's same-threshold random-memory
+  control.
+- Run root:
+  `exp/useful_bd_push/front_credit_fg_qdm_controls_20260626/fg_qdm_random_front_credit_12x3/seed_1001/openai_gpt-oss-120b/`.
+- Validation passed with `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Headline result: T98 mean HV `0.104805`, below T97 `0.153384` and classic
+  `0.190331`.
+- Mechanism result: memory-refine produced `1/7` valid-PPA child and `1`
+  global-front addition, but the final PPA-front metrics still regressed.
+- Decision: T97 beats the same-threshold random control, but FG-QDM remains
+  unpromoted because classic still wins and memory-lane front material is not
+  quality-productive enough.

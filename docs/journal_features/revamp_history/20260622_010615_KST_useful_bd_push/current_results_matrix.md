@@ -148,6 +148,8 @@ Real result packages:
   delayed follow-up.
 - `T97_front_credit_fg_qdm_memory` completed the stricter front-credit FG-QDM
   smoke.
+- `T98_front_credit_random_memory_control` completed the same-threshold random
+  memory control for T97.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -240,6 +242,12 @@ above SR memory `0.1375`, random memory `0.1382`, and shape-density memory
 `3/7` valid-PPA children and `3` local-front additions, but memory lanes still
 produce `0` global-front additions. Keep T97 as the FG-QDM category
 representative, not a full-RTLLM candidate.
+
+T98 is the same-threshold random-memory control for T97. It reaches mean HV
+`0.1048`, below T97 `0.1534`, so T97's improvement is not explained by the
+stricter scheduler alone. T98 has one memory-refine global-front add, but its
+final PPA-front metrics are weaker than T97 and classic remains dominant.
+Keep T98 as control evidence only.
 
 T88 blocks promoting the closest T83 RF leaf-ID result. Across seeds `1001`,
 `1002`, and `1003`, classic averages `0.1442` mean HV while T83 averages
