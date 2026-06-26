@@ -1,6 +1,6 @@
 # RF Leaf-ID Seed Robustness Gate
 
-Status: preregistered; QD seeds pending.
+Status: completed diagnostic negative; do not promote exact T83.
 
 ## Purpose
 
@@ -23,15 +23,17 @@ larger RTLLM spend.
 
 ## Decision
 
-Do not promote T83 unless the replicated read is at least near-classic on mean
-HV and does not depend on `Prob135_m2014_q6b`. Keep the result as the best
-MasterRTL RF model-state category representative even if it remains below
-classic.
+The gate failed. Three-seed classic mean HV is `0.144182`, while T83 mean HV
+is `0.125986` (`-12.62%`). T83 loses all three seed-level mean-HV comparisons,
+and the RTLLM-only slice remains negative (`0.108504` versus classic
+`0.150861`). Keep T83 as the MasterRTL RF model-state category representative,
+but do not spend larger RTLLM budget on this exact configuration.
 
 ## Files
 
 - `preregistration.md`: fixed method and decision rule.
 - `commands/run_rf_leafid_seed_robustness.md`: exact run commands.
 - `logs/`: preflight and run checkpoints.
-- `tables/`: packaged metrics after the QD seeds finish.
+- `tables/`: packaged seed, problem, robustness, and descriptor-health metrics.
 - `figures/`: inspected summary figures after packaging.
+- `seed_robustness_report.md`: concise conclusion report.

@@ -33,7 +33,7 @@ category representatives, and top-10 mean-HV shortlist.
 | `20260626_front_guarded_qd_memory_probe/` | Test FG-QDM, a front-guarded auxiliary QD memory scheduler using the T26 SR descriptor as a search-policy probe. | Warmup-4 smoke complete; memory lanes fire, but classic wins mean HV and T85 is not promoted |
 | `../techniques/T86_front_guarded_memory_controls/` | Test whether FG-QDM SR memory beats a deterministic random-memory control before any verified-descriptor swap. | Completed; random memory slightly beats SR memory but both trail classic |
 | `../techniques/T87_front_guarded_rtl_native_memory/` | Swap FG-QDM to the registered source-aligned RTL shape-density descriptor after SR memory fails the random-memory control. | Completed smoke; negative, with zero valid-PPA memory-lane children |
-| `20260626_rf_leafid_seed_robustness_gate/` | Replicate T83's closest single-seed RF leaf-ID structural delayed QD arm on seeds `1002` and `1003` using existing matched classic baselines. | Preregistered; QD seeds pending |
+| `20260626_rf_leafid_seed_robustness_gate/` | Replicate T83's closest single-seed RF leaf-ID structural delayed QD arm on seeds `1002` and `1003` using existing matched classic baselines. | Completed; three-seed mean HV `0.1260` versus classic `0.1442`, not promoted |
 
 ## Current Rule
 
@@ -154,14 +154,15 @@ classic, mean Pareto points are `2.00` versus `3.25`, and RF timing QD wins
 only `2/8` HV comparisons. Do not promote `source_aligned_rf_timing_state_3d`
 as-is to full RTLLM spend.
 
-`masterrtl_rf_leafid_structural_delayed_8x5` completed the frozen screen. It
-keeps the validated RF timing model path but replaces the collapsed
-`path_count` axis with `source_aligned_rf_timing_leaf_ids`, pairs it with
-MasterRTL branching and RTLTimer wire density, and uses delayed archive
-activation. This is the closest recent pretrained-model-state screen by
-all-design mean HV (`0.1369` versus classic `0.1406`), but it is not promoted.
-The result depends heavily on `Prob135_m2014_q6b`: excluding that problem gives
-a `-20.29%` mean-HV gap, and the RTLLM-only slice remains clearly negative.
+`masterrtl_rf_leafid_structural_delayed_8x5` completed the frozen screen and
+then the seed-robustness gate. It keeps the validated RF timing model path but
+replaces the collapsed `path_count` axis with
+`source_aligned_rf_timing_leaf_ids`, pairs it with MasterRTL branching and
+RTLTimer wire density, and uses delayed archive activation. The single-seed
+screen was close (`0.1369` versus classic `0.1406`), but replication blocks
+promotion: across seeds `1001`, `1002`, and `1003`, T83 averages `0.1260`
+mean HV versus classic `0.1442`, loses every seed-level mean-HV comparison,
+and remains RTLLM-only negative (`0.1085` versus classic `0.1509`).
 
 `masterrtl_rf_leafid_front_slot_delayed_8x5` completed the frozen screen. It
 keeps T83's descriptor axes and delayed archive activation, but changes parent

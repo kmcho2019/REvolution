@@ -8,8 +8,8 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | RF leaf-ID structural delayed QD | Near-classic diagnostic | Uses validated MasterRTL RF timing model-state as a secondary coordinate beside source-aligned structure and delayed archive pressure. | Mean HV is close to classic (`0.1369` versus `0.1406`), but the result is `Prob135`-dependent and RTLLM-only negative. |
-| 2 | MasterRTL auxiliary archive high-exploit | Best auxiliary-archive single seed | Treats QD as side-channel archive memory while keeping classic-like exploitation pressure. | Seed replication is negative: three-seed mean HV `0.1261` versus classic `0.1442`. |
+| 1 | MasterRTL auxiliary archive high-exploit | Best replicated QD by mean HV | Treats QD as side-channel archive memory while keeping classic-like exploitation pressure. | Seed replication is negative: three-seed mean HV `0.1261` versus classic `0.1442`. |
+| 2 | RF leaf-ID structural delayed QD | Best RF model-state representative | Uses validated MasterRTL RF timing model-state as a secondary coordinate beside source-aligned structure and delayed archive pressure. | Seed replication is negative: three-seed mean HV `0.1260` versus classic `0.1442`, with `0/3` seed wins. |
 | 3 | Delayed archive activation | Timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
 | 4 | T11/T36 graph-like bridge | Category representative | Keeps the best live graph/encoder-like bridge arm in the shortlist. | Live `8x5` mean HV `0.1208` still trails classic `0.1406`. |
 | 5 | Qwen3 canonical RTL | Pretrained text/code representative | Real pretrained embedding path with live-screened QD archive coordinates. | Mean HV `0.1108` trails classic `0.1406`; keep as category representative, not spend-ready. |
@@ -188,13 +188,13 @@ comparisons. Several screened problems collapse the RF path-count axis, so the
 next RF timing attempt must change the descriptor coupling rather than rerun
 the same profile.
 
-T83 is that follow-up and is now complete. It runs RF timing leaf-ID breadth,
-MasterRTL branching, and RTLTimer wire density as explicit axes, combined with
-delayed archive activation. It is the closest recent pretrained-model-state
-screen by all-design mean HV (`0.1369` versus classic `0.1406`), but it is not
-promoted. Pareto points fall from classic `3.25` to `2.00`,
-reference-beating candidates fall from `8.00` to `4.50`, and removing
-`Prob135_m2014_q6b` widens the mean-HV gap to `-20.29%`.
+T83 is that follow-up and is now seed-replicated. It runs RF timing leaf-ID
+breadth, MasterRTL branching, and RTLTimer wire density as explicit axes,
+combined with delayed archive activation. The single-seed screen was close
+(`0.1369` versus classic `0.1406`), but the three-seed gate blocks promotion:
+classic averages `0.1442`, T83 averages `0.1260`, T83 has `0/3` seed-level HV
+wins, and the RTLLM-only slice remains negative (`0.1085` versus classic
+`0.1509`).
 
 T84 tested that obvious failure mode without changing the descriptor after
 seeing T83's result. It keeps the same axes and delayed archive activation but
@@ -265,7 +265,7 @@ loader equivalence, schema assertions, and generated-candidate variation.
 
 | Lane | Examples | Status | Assessment |
 | --- | --- | --- | --- |
-| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77/T80/T81/T82 and the 20260625 auxiliary archive probes | Best methodology lane | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, T77 retires direct Area-head leaves, T80 advances raw MasterRTL structural mix as a live-candidate gate, T81 finds noncollapsed RF timing model-state descriptors, T82 exposes them through the live descriptor registry, high-exploit auxiliary archive narrows the live-screen HV gap only at seed `1001`, and seed replication retires that fixed geometry as a full-spend candidate. |
+| RTL-native descriptors | Yosys-SOG/MasterRTL, RTLTimer timing-risk vectors, T15/T60/T61/T62/T63/T64/T65/T66/T67/T68/T69/T70/T71/T72/T73/T74/T75/T76/T77/T80/T81/T82/T83 and the 20260625 auxiliary archive probes | Best methodology lane | Strongest methodology story if it preserves meaningful RTL families while optimizing PPA; exact T72 is near-classic, T73 improves yield/occupancy, T74 regresses, T75 is positive diagnostic, T76 opens the pretrained tree-model lane, T77 retires direct Area-head leaves, T80 advances raw MasterRTL structural mix as a live-candidate gate, T81 finds noncollapsed RF timing model-state descriptors, T82 exposes them through the live descriptor registry, high-exploit auxiliary archive and T83 both narrow the live-screen gap at seed `1001`, but seed replication retires both exact configurations as full-spend candidates. |
 | Archive machinery | T26, T30, T48, T51, one-slot local-front variants | Continue selectively | Useful mechanism pieces, but no broad RTLLM win yet. |
 | Budget-shape evaluation | T78 audit and T79 `12 x 3`/`8 x 5`/`6 x 7` equal-budget ablation | T79 diagnostic-negative | T78 shows archive maturation can continue late, but T79 shows exact T75 still loses classic at every tested equal-candidate shape. |
 | Learned embeddings | Qwen3, DeepGate, T11/T36, AURORA-style features | Exploratory | Useful for replay and analysis, not yet decisive live evidence. |

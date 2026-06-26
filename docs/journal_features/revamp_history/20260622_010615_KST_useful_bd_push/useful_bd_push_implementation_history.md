@@ -5473,6 +5473,27 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   near-classic, coverage is preserved, and the no-`Prob135_m2014_q6b`
   aggregate is not materially worse than classic.
 
+## 2026-06-26T10:20:00Z - T88 RF Leaf-ID Seed Robustness Gate Completed
+
+- Ran T83 QD seeds `1002` and `1003` on the frozen eight-design `8x5`
+  preliminary screen, reusing existing matched classic seeds.
+- Seed `1002` completed `8/8` problems in `1471.93` seconds; seed `1003`
+  completed `8/8` problems in `1531.95` seconds.
+- Validators passed for both new QD seeds:
+  `scripts/validate_pareto_front_run.py` in QD-only mode and
+  `scripts/validate_single_thought_operator_run.py` with full-subset
+  requirement.
+- Packaged results under
+  `preliminary_planning/20260626_rf_leafid_seed_robustness_gate/`.
+- Headline replicated result: classic three-seed mean HV `0.144182`, T83
+  three-seed mean HV `0.125986`, relative delta `-12.62%`, and T83 seed-level
+  HV wins `0/3`.
+- Robustness result: without `Prob135_m2014_q6b`, classic mean HV is
+  `0.164779` and T83 mean HV is `0.134527`; RTLLM-only mean HV is `0.150861`
+  for classic versus `0.108504` for T83.
+- Decision: exact T83 remains the MasterRTL RF model-state category
+  representative, but it is not promoted for larger RTLLM spend.
+
 ## 2026-06-26T06:52:00Z - T84 RF Leaf-ID Front-Slot Delayed Screen Completed
 
 - Ran `masterrtl_rf_leafid_front_slot_delayed_8x5` on the frozen eight-design

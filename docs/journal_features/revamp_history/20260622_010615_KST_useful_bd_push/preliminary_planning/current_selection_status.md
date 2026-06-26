@@ -26,8 +26,8 @@ different budget or replication caveat are marked explicitly.
 | Category | Keep Representative | Mean HV | Status |
 | --- | --- | ---: | --- |
 | Baseline | `classic_revolution_8x5` | `0.1406` | Comparator, not QD. |
-| Pretrained MasterRTL RF model-state | `T83_rf_leafid_structural_delayed_qd` | `0.1369` | Best current QD by single-seed mean HV; not promoted because front breadth and no-`Prob135` robustness fail. |
-| MasterRTL auxiliary archive | `masterrtl_aux_archive_high_exploit_8x5` | `0.1339` | Best auxiliary-archive single seed; three-seed mean HV falls to `0.1261`, so keep only as a category representative. |
+| Pretrained MasterRTL RF model-state | `T83_rf_leafid_structural_delayed_qd` | `0.1260` replicated | Best RF model-state representative; three-seed mean HV is `0.125986` versus classic `0.144182`, so not promoted. |
+| MasterRTL auxiliary archive | `masterrtl_aux_archive_high_exploit_8x5` | `0.1261` replicated | Best auxiliary-archive representative by replicated mean HV; keep only as a category representative. |
 | Delayed archive timing | `masterrtl_delayed_archive_activation_8x5` | `0.1324` | Best timing/schedule clue; still below classic. |
 | Raw MasterRTL structural cells | `masterrtl_structural_front_slot_8x5` | `0.1227` | Best raw structural-cell variant on the frozen screen. |
 | T11/T36 graph-like bridge | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Best live graph-like representative; replay signals remain stronger than live results. |
@@ -44,9 +44,9 @@ replicated, and category-useful.
 
 | Rank | Config | Mean HV | Comparator | Read |
 | ---: | --- | ---: | --- | --- |
-| 1 | `T83_rf_leafid_structural_delayed_qd` | `0.1369` | Classic `8x5` `0.1406` | Best current QD by single-seed mean HV; diagnostic, not promoted. |
-| 2 | `masterrtl_aux_archive_high_exploit_8x5` | `0.1339` | Classic `8x5` `0.1406` | Best auxiliary archive single seed; replication negative. |
-| 3 | `masterrtl_delayed_archive_activation_8x5` | `0.1324` | Classic `8x5` `0.1406` | Best archive-timing clue; still below classic. |
+| 1 | `masterrtl_delayed_archive_activation_8x5` | `0.1324` | Classic `8x5` `0.1406` | Best single-seed archive-timing clue; still below classic. |
+| 2 | `masterrtl_aux_archive_high_exploit_8x5` | `0.1261` replicated | Classic `8x5` `0.1442` replicated | Best replicated auxiliary-archive representative; negative. |
+| 3 | `T83_rf_leafid_structural_delayed_qd` | `0.1260` replicated | Classic `8x5` `0.1442` replicated | Best RF model-state representative; replication negative. |
 | 4 | `masterrtl_aux_archive_high_exploit_6x7` | `0.1229` | Classic `6x7` `0.1701` | Different budget shape; depth-only continuation failed. |
 | 5 | `masterrtl_structural_front_slot_8x5` | `0.1227` | Classic `8x5` `0.1406` | Best raw MasterRTL structural-cell variant. |
 | 6 | `masterrtl_structural_mix_8x5` | `0.1218` | Classic `8x5` `0.1406` | Plain structural mix; category baseline. |
@@ -217,12 +217,13 @@ schedule that was the best recent archive-pressure timing clue.
 | Mean reference-beating candidates | `8.00` | `4.50` |
 | HV wins | `5/8` | `3/8` |
 
-Decision: exact T83 is a useful diagnostic but not a full-RTLLM candidate.
-The all-design mean-HV gap is only `-2.63%`, but removing
-`Prob135_m2014_q6b` widens the gap to `-20.29%`, and RTLLM-only mean HV is
-negative (`0.0995` versus classic `0.1453`). The preliminary plan therefore
-remains unfinished: no QD configuration is currently promoted for final
-full-RTLLM spend.
+Seed robustness is now complete and blocks promotion. Across seeds `1001`,
+`1002`, and `1003`, classic mean HV is `0.144182` and T83 mean HV is
+`0.125986`, a `-12.62%` relative gap. T83 loses all three seed-level mean-HV
+comparisons. Removing `Prob135_m2014_q6b` leaves classic at `0.164779` and
+T83 at `0.134527`; the RTLLM-only slice is also negative (`0.108504` versus
+classic `0.150861`). The preliminary plan therefore remains unfinished: no QD
+configuration is currently promoted for final full-RTLLM spend.
 
 ## RF Leaf-ID Front-Slot Gate
 
