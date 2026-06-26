@@ -623,8 +623,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Run a tiny live vLLM smoke for
       `source_aligned_rf_timing_state_3d`, including archive insertion,
       descriptor-value logging, and artifact checks.
-- [ ] If the tiny smoke passes, run the frozen eight-design `8x5` screen before
+- [x] If the tiny smoke passes, run the frozen eight-design `8x5` screen before
       considering any full RTLLM spend.
+- [x] Decide the RF timing-state screen before full RTLLM spend: the exact
+      `source_aligned_rf_timing_state_3d` profile is valid but negative, with
+      mean HV `0.1140` versus classic `0.1406`.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation
@@ -634,7 +637,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] Run `python -m pyright` on touched source/report scripts.
 - [x] Run `git diff --check`.
 - [x] Record blocked dependency or live-run smoke results explicitly through
-      the latest T82 runtime-hook package; live QD smoke remains pending.
+      the latest T82 runtime-hook, live-smoke, and frozen-screen packages.
 - [x] For dependency blockers, try `uv add`, isolated uv env, source checkout,
       and submodule decision before stopping a method.
 - [x] Record vLLM endpoint, model id, token budgets, and timeout/preflight

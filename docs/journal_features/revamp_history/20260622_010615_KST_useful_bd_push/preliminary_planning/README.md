@@ -25,8 +25,9 @@ the next gate.
 | `20260626_delayed_archive_activation_probe/` | Test whether passive early archive logging plus delayed archive pressure preserves classic-like hill climbing before QD activation. | Completed; close to high-exploit, still below classic and not promoted |
 | `20260626_archive_stagnation_activation_probe/` | Test whether archive pressure should activate only after passive archive cells and members stop growing. | Completed; trigger fired lightly, but HV regressed and not promoted |
 | `20260626_masterrtl_rf_timing_state_gate/` | Record the T81 MasterRTL pretrained RF timing model-state gate and decide whether it is ready for a live hook. | Completed offline; positive non-collapse gate, not a live QD result |
-| `20260626_masterrtl_rf_timing_runtime_hook/` | Record the T82 runtime hook that exposes RF timing model-state metrics as a live descriptor profile. | Completed implementation gate; superseded by live smoke |
-| `20260626_masterrtl_rf_timing_live_smoke/` | Run the first one-problem live smoke for `source_aligned_rf_timing_state_3d`. | Completed; one valid PPA/archive member, frozen `8x5` screen pending |
+| `20260626_masterrtl_rf_timing_runtime_hook/` | Record the T82 runtime hook that exposes RF timing model-state metrics as a live descriptor profile. | Completed implementation gate; superseded by live smoke and screen |
+| `20260626_masterrtl_rf_timing_live_smoke/` | Run the first one-problem live smoke for `source_aligned_rf_timing_state_3d`. | Completed; one valid PPA/archive member, superseded by completed screen |
+| `20260626_masterrtl_rf_timing_state_screen/` | Run the frozen eight-design `8x5` screen for the validated MasterRTL RF timing-state descriptor profile. | Completed; all eight headline-paired comparisons valid, but classic wins mean HV and front metrics |
 
 ## Current Rule
 
@@ -137,3 +138,12 @@ timing paths, `17` unique RF leaf rows, and `319` unique RF leaf IDs. This is
 not a PPA comparison and cannot establish non-collapse by itself because it
 has one archive observation. It authorizes the frozen `8x5` screen, not final
 RTLLM spend.
+
+That frozen `8x5` screen is now complete in
+`20260626_masterrtl_rf_timing_state_screen/`. It is a valid headline-paired
+comparison, not a missing-reference artifact: both methods have valid PPA
+candidates on all eight designs. The result is negative for this exact
+descriptor profile. Mean HV is `0.1140` for RF timing QD versus `0.1406` for
+classic, mean Pareto points are `2.00` versus `3.25`, and RF timing QD wins
+only `2/8` HV comparisons. Do not promote `source_aligned_rf_timing_state_3d`
+as-is to full RTLLM spend.

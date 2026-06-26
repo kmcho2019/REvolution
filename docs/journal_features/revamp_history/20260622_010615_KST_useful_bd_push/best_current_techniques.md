@@ -8,8 +8,8 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | MasterRTL RF timing model-state descriptors | Live smoke positive | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and passes one one-problem live smoke. | Needs frozen `8x5` screen before any PPA claim. |
-| 2 | Delayed archive activation | Best recent timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
+| 1 | Delayed archive activation | Best recent timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
+| 2 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
 | 3 | Stagnation-triggered archive pressure | Diagnostic negative | Uses only archive growth state to activate QD pressure after passive archive growth stalls. | Trigger fired lightly, but mean HV regressed to `0.1089`; not promoted. |
 | 4 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 5 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, DeepGate transition embeddings are partially unblocked, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
@@ -150,9 +150,13 @@ T82 then turns that signal into a live descriptor profile:
 emits `51` RF timing paths, `14` unique RF leaf rows, `161` unique RF leaf
 IDs, and no no-path fallback. The follow-up one-problem live smoke on
 `Prob015_multi_pipe_8bit` emits one valid PPA/archive member with `51` RF
-timing paths, `17` unique RF leaf rows, and `319` unique RF leaf IDs. This is
-still not a screened PPA comparison. The next step is the frozen eight-design
-`8x5` screen.
+timing paths, `17` unique RF leaf rows, and `319` unique RF leaf IDs. The
+frozen eight-design `8x5` screen is now complete and negative for this exact
+profile: mean HV is `0.1140` versus classic `0.1406`, mean Pareto points are
+`2.00` versus classic `3.25`, and RF timing QD wins only `2/8` HV
+comparisons. Several screened problems collapse the RF path-count axis, so the
+next RF timing attempt must change the descriptor coupling rather than rerun
+the same profile.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

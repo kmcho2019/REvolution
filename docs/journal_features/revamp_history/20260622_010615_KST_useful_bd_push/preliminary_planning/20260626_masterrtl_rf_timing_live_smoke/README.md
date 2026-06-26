@@ -1,9 +1,13 @@
 # MasterRTL RF Timing Live Smoke
 
-Status: live smoke passed; frozen `8x5` screen still pending.
+Status: live smoke passed; superseded by completed frozen `8x5` screen.
 
 This package records the first live run that uses the
 `source_aligned_rf_timing_state_3d` descriptor profile from T82.
+
+Update: the follow-up screen is complete in
+`../20260626_masterrtl_rf_timing_state_screen/`, and the exact profile is not
+promoted as-is.
 
 ## Run
 

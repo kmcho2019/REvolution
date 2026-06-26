@@ -1,9 +1,13 @@
 # MasterRTL RF Timing Runtime Hook
 
-Status: implementation gate passed; live QD smoke still pending.
+Status: implementation gate passed; superseded by live smoke and screen.
 
 This package records T82, the runtime hook that turns T81's offline
 MasterRTL RF timing-state evidence into a selectable live descriptor profile.
+
+Update: the follow-up live smoke and frozen `8x5` screen have completed. See
+`../20260626_masterrtl_rf_timing_live_smoke/` and
+`../20260626_masterrtl_rf_timing_state_screen/`.
 
 ## Decision
 

@@ -117,7 +117,8 @@ Real result packages:
 - `T81_masterrtl_rf_timing_state_gate` completed generated-candidate
   MasterRTL RF timing model-state gate.
 - `T82_masterrtl_rf_timing_runtime_hook` completed the live descriptor-registry
-  runtime hook for MasterRTL RF timing model-state metrics.
+  runtime hook for MasterRTL RF timing model-state metrics and its first frozen
+  eight-design screen.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -171,8 +172,13 @@ T82 completes the next implementation gate by exposing the T81 signal as the
 smoke on one generated RTLLM candidate emits `51` RF timing paths, `14` unique
 RF leaf rows, `161` unique RF leaf IDs, and no no-path fallback. The follow-up
 one-problem live smoke emits one valid PPA/archive member with `51` RF timing
-paths, `17` unique RF leaf rows, and `319` unique RF leaf IDs. This is still
-not comparative PPA evidence; it authorizes the frozen `8x5` screen.
+paths, `17` unique RF leaf rows, and `319` unique RF leaf IDs. The frozen
+`8x5` screen has now run and is a valid headline-paired comparison across all
+eight selected designs. It is negative as-is: classic wins mean HV
+(`0.1406` versus `0.1140`), mean Pareto points (`3.25` versus `2.00`), mean
+reference-beating candidates (`8.00` versus `4.88`), and HV wins (`6` versus
+`2`). Treat T82 as a credible descriptor-integration result, not a promoted
+full-RTLLM arm.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

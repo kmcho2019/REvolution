@@ -2,11 +2,13 @@
 
 ## Tier Decision
 
-`T0_live_smoke_positive_not_screened`.
+`T0_screened_negative_not_promoted`.
 
 The runtime hook works on a real generated RTL candidate and a one-problem
-live smoke produced one valid PPA/archive member. No frozen live screen has
-run yet. Do not use T82 as PPA evidence.
+live smoke produced one valid PPA/archive member. The follow-up frozen
+eight-design `8x5` screen also ran, but the exact RF timing-state descriptor
+profile trails classic on mean HV and front metrics. Do not promote this exact
+profile to the full RTLLM comparison.
 
 ## Smoke Result
 
@@ -29,8 +31,14 @@ through a pinned isolated environment.
 The one-problem live smoke confirms archive insertion, descriptor logging, and
 artifact emission. It has only one archive observation, so descriptor-health
 collapse flags are expected and should not be used as non-collapse evidence.
-Use T81 for generated-candidate non-collapse evidence. The next gate is the
-frozen eight-design `8x5` screen.
+Use T81 for generated-candidate non-collapse evidence.
+
+The frozen eight-design screen in
+`preliminary_planning/20260626_masterrtl_rf_timing_state_screen/` is valid and
+negative. All eight comparisons are headline-paired, but RF timing QD reaches
+mean HV `0.1140` versus classic `0.1406`, mean Pareto points `2.00` versus
+`3.25`, and `2/8` HV wins. Several problems collapse the RF path-count axis,
+so the next RF timing attempt should change the descriptor coupling.
 
 ## Live Smoke Result
 

@@ -5262,3 +5262,28 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: the live-smoke blocker is cleared. This remains non-comparative
   smoke evidence, so the next gate is the frozen eight-design `8x5` screen,
   not full RTLLM spend.
+
+## 2026-06-26T05:07:00Z - RF Timing State Screen Completed
+
+- Ran `masterrtl_rf_timing_state_8x5` on the frozen eight-design `8x5`
+  preliminary screen.
+- Run root:
+  `exp/useful_bd_push/prelim_rf_timing_state_screen_20260626_0442_UTC/live/`.
+- The run completed `8/8` problems in `1441.49s`.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Comparison package:
+  `preliminary_planning/20260626_masterrtl_rf_timing_state_screen/`.
+- Result: this is a valid headline-paired comparison, not a
+  missing-reference artifact. Both classic and RF timing QD have valid PPA
+  candidates on all eight problems.
+- Classic remains ahead on mean HV (`0.1406` versus `0.1140`), mean Pareto
+  points (`3.25` versus `2.00`), mean reference-beating candidates (`8.00`
+  versus `4.88`), and HV wins (`6` versus `2`).
+- Descriptor health is mixed: several problems collapse
+  `source_aligned_rf_timing_path_count`, and some also collapse
+  `source_aligned_rf_timing_leaf_rows`.
+- Decision: exact `source_aligned_rf_timing_state_3d` is
+  `T0_screened_negative_not_promoted`. Do not spend full RTLLM budget on this
+  exact profile.
