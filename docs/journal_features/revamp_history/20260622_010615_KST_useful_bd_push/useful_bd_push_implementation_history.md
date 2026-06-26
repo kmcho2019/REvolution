@@ -6002,3 +6002,21 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `384/368/176/176/172`.
 - Marked the common-surface validity/PPA/HV/duplicate/archive/runtime reporting
   TODO complete for the current T94 through T99 preliminary packages.
+
+## 2026-06-26T20:05:00Z - T100 RF-Leaf FG-QDM Pre-Registered
+
+- Added `techniques/T100_front_credit_rf_leafid_fg_qdm_memory/` and
+  `preliminary_planning/20260626_front_credit_rf_leafid_fg_qdm_probe/`.
+- T100 reuses the existing `front_guarded_memory` scheduler and T97's stricter
+  front-credit settings, but swaps the descriptor axes to T83's validated RF
+  leaf-ID structural set:
+  `source_aligned_rf_timing_leaf_ids`,
+  `source_aligned_masterrtl_branching`, and
+  `source_aligned_rtltimer_wire_density`.
+- Ran `scripts/qd_descriptor_probe.py` for the exact axes. The probe reports
+  `requires_ppa=false`, `requires_synthesis=false`, and
+  `requires_source_aligned_rf_timing=true`, which matches the intended
+  pretrained MasterRTL RF timing model-state lane.
+- Stop/go gate: do not spend beyond the three-problem smoke unless memory
+  lanes produce useful front material and the result is near T97's mean HV
+  without losing classic-covered designs.
