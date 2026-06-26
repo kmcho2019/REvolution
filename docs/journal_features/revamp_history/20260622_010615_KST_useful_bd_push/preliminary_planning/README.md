@@ -21,7 +21,7 @@ the next gate.
 | `20260625_aux_archive_front_breadth_probe/` | Test whether the best-HV auxiliary archive arm can recover Pareto breadth with bounded front-slot sampling. | Completed; front-breadth tax erased the high-exploit HV gain, not promoted |
 | `20260625_aux_archive_high_exploit_depth_probe/` | Test whether the high-exploit auxiliary archive mechanism benefits from `6x7` depth against the existing T79 classic `6x7` baseline. | Completed; depth helps classic more than QD, not promoted |
 | `20260625_aux_archive_seed_replication_gate/` | Replicate classic and high-exploit auxiliary archive at seeds `1002` and `1003` to measure noise and the `Prob135_m2014_q6b` robustness caveat. | Completed; negative, not promoted |
-| `20260626_aux_archive_adaptive_sparse_front_probe/` | Test adaptive sparse-front parent pressure after fixed high-exploit auxiliary archive failed seed replication. | Preregistered; next live gate |
+| `20260626_aux_archive_adaptive_sparse_front_probe/` | Test adaptive sparse-front parent pressure after fixed high-exploit auxiliary archive failed seed replication. | Completed; trigger fired, but HV regressed and not promoted |
 
 ## Current Rule
 
@@ -38,9 +38,10 @@ all three seed-level mean-HV comparisons against
 `masterrtl_aux_archive_high_exploit_8x5`; the three-seed mean HV is `0.1442`
 for classic versus `0.1261` for auxiliary archive, a `-12.51%` relative gap.
 Removing `Prob135_m2014_q6b` leaves a `-18.25%` relative gap. The next
-decision gate is `20260626_aux_archive_adaptive_sparse_front_probe/`, which
-uses the existing `sparse_front_triggered_nsga2` parent selector to lower
-champion pressure only when local archive fronts are thin.
+adaptive sparse-front decision gate is now complete and negative. It used the
+existing `sparse_front_triggered_nsga2` parent selector to lower champion
+pressure only when local archive fronts were thin. The trigger fired on three
+RTLLM problems, but mean HV regressed to `0.0946` versus classic `0.1406`.
 
 The current pretrained-encoder rule is stricter: an external model must load
 from pinned checkpoints, pass an upstream or fixture smoke, and show
@@ -99,3 +100,10 @@ screen against T79's matched `classic_revolution_6x7` baseline. Depth does not
 rescue the high-exploit auxiliary archive mechanism: QD mean HV is `0.1229`
 versus matched classic `0.1701`, and it also trails the earlier high-exploit
 `8x5` QD arm (`0.1339`).
+
+`masterrtl_aux_archive_adaptive_sparse_front_8x5` completed the frozen screen
+after seed replication retired fixed high-exploit geometry. The sparse-front
+trigger fired on `Prob015_multi_pipe_8bit`, `Prob041_traffic_light`, and
+`Prob045_alu`, so the mechanism was exercised. It still fails promotion:
+mean HV is `0.0946` versus classic `0.1406`, though mean Pareto points improve
+over fixed high-exploit (`2.38` versus `1.75`).

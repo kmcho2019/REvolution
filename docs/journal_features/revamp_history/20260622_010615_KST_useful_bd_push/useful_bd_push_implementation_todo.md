@@ -597,10 +597,13 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       high-exploit auxiliary archive is diagnostic negative and not promoted.
 - [x] Pre-register an adaptive archive-pressure mechanism before any further
       QD live spend on this lane.
-- [ ] Run `masterrtl_aux_archive_adaptive_sparse_front_8x5` on the frozen
+- [x] Run `masterrtl_aux_archive_adaptive_sparse_front_8x5` on the frozen
       eight-design `8x5` screen.
-- [ ] Validate, package, and decide the adaptive sparse-front probe before any
+- [x] Validate, package, and decide the adaptive sparse-front probe before any
       full RTLLM spend.
+- [ ] Decide whether to implement a meaningfully different delayed archive
+      activation mechanism or write the current family as a rigorous negative
+      screen.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

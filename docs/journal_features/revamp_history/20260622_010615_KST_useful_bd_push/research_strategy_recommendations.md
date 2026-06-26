@@ -202,12 +202,15 @@ front under the registered comparison.
 The 2026-06-25 periodic Claude review gave the plan `PASS_WITH_ACTIONS`, not
 sign-off. Its main technical warning was that the high-exploit auxiliary
 archive signal was single-seed and one-problem-dominated. The seed-replication
-gate confirms that warning: classic wins all three seed-level mean-HV
+gate confirmed that warning: classic wins all three seed-level mean-HV
 comparisons, with three-seed mean HV `0.1442` versus auxiliary archive
 `0.1261`. Removing `Prob135_m2014_q6b` leaves a `-18.25%` relative HV gap.
-This means the preliminary plan is still not finished enough to select final
-full-RTLLM QD configs. The next decision should test a truly adaptive pressure
-schedule or accept a rigorous negative map for the current method family.
+The adaptive sparse-front follow-up also loses: it fires on front-thin
+problems, but mean HV falls to `0.0946` versus classic `0.1406`. This means
+the preliminary plan is still not finished enough to select final full-RTLLM
+QD configs. The next decision should either use a meaningfully different
+mechanism, such as delayed archive activation after measured stagnation, or
+accept a rigorous negative map for the current method family.
 
 The current evaluation of the goal remains positive but narrower: the goal is
 not to prove that any diversity measure helps. It is to identify which
@@ -229,10 +232,11 @@ classic hill-climbing baseline under fair, reference-complete comparisons.
   loses all three seed-level comparisons. The front-breadth follow-up shows
   that adding explicit front-slot sampling to the same descriptor geometry is
   too costly under the current budget. The `6x7` follow-up shows depth-only
-  continuation does not rescue the mechanism.
-- Run the next gate as a preregistered adaptive archive-pressure method. Do not
-  keep spending on minor MasterRTL geometry retunes without a new coupling
-  mechanism.
+  continuation does not rescue the mechanism. The adaptive sparse-front
+  follow-up fires its trigger but still loses too much HV.
+- Do not keep spending on fixed MasterRTL auxiliary archive pressure. Any next
+  QD run should change the timing of archive pressure, not just the parent
+  lane geometry.
 - Add a MasterRTL-pretrained verification and tree-leaf embedding lane before
   spending live budget on "pretrained MasterRTL" QD claims.
 - Add a generated-candidate MasterRTL leaf/margin variation gate after T76 and

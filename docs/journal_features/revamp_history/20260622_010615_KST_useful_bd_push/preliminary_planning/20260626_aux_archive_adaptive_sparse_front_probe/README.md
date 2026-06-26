@@ -1,6 +1,6 @@
 # Auxiliary Archive Adaptive Sparse-Front Probe
 
-Status: preregistered.
+Status: completed; diagnostic negative, not promoted.
 
 This package tests the next QD candidate after fixed high-exploit auxiliary
 archive failed seed replication. It keeps the same MasterRTL structural archive
@@ -12,12 +12,17 @@ descriptor, but uses the existing adaptive sparse-front parent selector:
 
 ## Decision
 
-This is the next live QD gate before any full RTLLM spend. It should only be
-promoted if it clearly improves the frozen eight-design screen versus the
-matched seed `1001` classic baseline and does not rely on
-`Prob135_m2014_q6b`.
+This live QD gate is complete and should not be promoted. It improved mean
+Pareto points relative to fixed high-exploit auxiliary archive, but mean HV
+fell to `0.0946` versus classic `0.1406` and fixed high-exploit `0.1339`.
 
 ## Files
 
 - `preregistration.md`: frozen setup, metrics, and decision rule.
 - `commands/run_adaptive_sparse_front_probe.md`: exact launch command.
+- `logs/run_checkpoint.md`: preflight, completion, validation, and analysis
+  caveat.
+- `adaptive_sparse_front_probe_report.md`: result and decision.
+- `tables/adaptive_sparse_front_aggregate.csv`: primary aggregate metrics.
+- `tables/adaptive_sparse_front_trigger_counters.csv`: sparse-front trigger
+  activity by problem.

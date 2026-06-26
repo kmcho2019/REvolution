@@ -8,11 +8,11 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | Adaptive auxiliary archive pressure | Next candidate | The fixed high-exploit auxiliary archive narrowed the single-seed HV gap more than other live QD arms, suggesting archive memory plus classic-like exploitation is the right mechanism family. | Not implemented yet. It must change pressure scheduling, not just retune the same MasterRTL geometry. |
+| 1 | Delayed archive activation | Proposed next mechanism | The fixed and sparse-front auxiliary archive variants suggest QD pressure is still too expensive when applied throughout the run. A delayed or stagnation-triggered archive could preserve classic hill climbing first. | Not implemented or validated. It must be a real mechanism change, not another fixed MasterRTL geometry tweak. |
 | 2 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | Source-aligned descriptors are credible, but live runs still need stronger front creation. |
 | 4 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, DeepGate transition embeddings are partially unblocked, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
-| 5 | Fixed MasterRTL auxiliary archive | Retired as-is | The best single-seed QD screen reached `0.1339` mean HV versus classic `0.1406`, so it remains a useful mechanism clue. | Three-seed replication loses all seed-level HV comparisons: `0.1261` versus classic `0.1442`, with `-18.25%` relative HV delta after removing `Prob135_m2014_q6b`. |
+| 5 | Fixed/sparse-front MasterRTL auxiliary archive | Retired as-is | The best single-seed QD screen reached `0.1339` mean HV versus classic `0.1406`, so it remains a useful mechanism clue. Adaptive sparse-front pressure also fired on front-thin problems. | Three-seed replication loses all seed-level HV comparisons, and adaptive sparse-front HV regresses to `0.0946` versus classic `0.1406`. |
 
 ## Most Promising Direction
 
@@ -105,12 +105,20 @@ equal-candidate shape. Mean HV is `0.1229` versus matched classic `6x7`
 `0.1701`, and below the same QD mechanism at `8x5` (`0.1339`). This closes the
 simple depth-only continuation for the current auxiliary-archive mechanism.
 
-As of the 2026-06-25 periodic review plus the completed seed-replication gate,
-no current screened QD or pretrained encoder configuration is ready for full
-RTLLM spend. The next credible gate is not another fixed front-slot,
-depth-only, or fixed-MasterRTL geometry variant; it is an adaptive
-archive-pressure method that pays diversity cost only after stagnation or
-near-front evidence.
+The adaptive sparse-front follow-up also failed. It used the existing
+`sparse_front_triggered_nsga2` selector to cap champion pressure only when
+local archive fronts were thin. The trigger fired on three RTLLM problems, and
+mean Pareto points improved over fixed high-exploit auxiliary archive
+(`2.38` versus `1.75`), but mean HV fell to `0.0946` versus classic `0.1406`.
+This retires fixed and sparse-front MasterRTL auxiliary archive pressure as a
+full-RTLLM candidate family.
+
+As of the 2026-06-25 periodic review, seed-replication gate, and adaptive
+sparse-front probe, no current screened QD or pretrained encoder configuration
+is ready for full RTLLM spend. The next credible gate is not another fixed
+front-slot, sparse-front, depth-only, or fixed-MasterRTL geometry variant; it
+must be a meaningfully different mechanism such as delayed archive activation
+after measured stagnation.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

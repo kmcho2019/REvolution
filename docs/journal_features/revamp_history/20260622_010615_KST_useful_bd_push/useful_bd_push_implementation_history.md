@@ -5105,3 +5105,30 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   mean-HV tolerance versus classic or better, preserves classic-covered
   designs, improves front material, and does not depend on
   `Prob135_m2014_q6b`.
+
+## 2026-06-26T02:10:00Z - Adaptive Sparse-Front Probe Completed
+
+- Ran `masterrtl_aux_archive_adaptive_sparse_front_8x5` on the frozen
+  eight-design `8x5` preliminary screen.
+- Run root:
+  `exp/useful_bd_push/prelim_adaptive_sparse_front_20260626_013437_UTC/live/masterrtl_aux_archive_adaptive_sparse_front_8x5/seed_1001`.
+- The run completed `8/8` problems in `1569.92s`.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Final-analysis decision sections completed under
+  `exp/useful_bd_push/prelim_adaptive_sparse_front_20260626_013437_UTC/live/final_analysis_with_adaptive_sparse_front`.
+  The command was interrupted only during source-aligned design-space feature
+  recovery after backend comparison, Pareto analysis, evolutionary reports,
+  and PPA distribution were written.
+- Result: classic remains ahead on mean HV (`0.1406`) and mean Pareto points
+  (`3.25`). Fixed high-exploit auxiliary archive has mean HV `0.1339` and mean
+  Pareto points `1.75`. Adaptive sparse-front has mean HV `0.0946` and mean
+  Pareto points `2.38`.
+- Sparse-front trigger batches occurred on `Prob015_multi_pipe_8bit` (`8`),
+  `Prob041_traffic_light` (`21`), and `Prob045_alu` (`24`), so the mechanism
+  was exercised.
+- Decision: adaptive sparse-front pressure is diagnostic negative and not
+  promoted. Stop fixed/sparse-front MasterRTL auxiliary archive pressure as a
+  full-RTLLM candidate family unless the next run changes the timing of archive
+  pressure, such as delayed activation after measured stagnation.
