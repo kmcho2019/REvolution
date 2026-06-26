@@ -24,6 +24,7 @@ the next gate.
 | `20260626_aux_archive_adaptive_sparse_front_probe/` | Test adaptive sparse-front parent pressure after fixed high-exploit auxiliary archive failed seed replication. | Completed; trigger fired, but HV regressed and not promoted |
 | `20260626_delayed_archive_activation_probe/` | Test whether passive early archive logging plus delayed archive pressure preserves classic-like hill climbing before QD activation. | Completed; close to high-exploit, still below classic and not promoted |
 | `20260626_archive_stagnation_activation_probe/` | Test whether archive pressure should activate only after passive archive cells and members stop growing. | Completed; trigger fired lightly, but HV regressed and not promoted |
+| `20260626_masterrtl_rf_timing_state_gate/` | Record the T81 MasterRTL pretrained RF timing model-state gate and decide whether it is ready for a live hook. | Completed offline; positive non-collapse gate, not a live QD result |
 
 ## Current Rule
 
@@ -125,3 +126,11 @@ intervals show no occupied-cell or archive-member growth. The trigger fired on
 HV `0.1089` versus classic `0.1406`. It is diagnostic negative and not
 promoted. Do not spend another run on this simple MasterRTL auxiliary archive
 timing family without a materially different mechanism.
+
+The current materially different lane is
+`20260626_masterrtl_rf_timing_state_gate/`, backed by
+`techniques/T81_masterrtl_rf_timing_state_gate/`. T81 reproduces MasterRTL's
+RF timing-path feature flow and shows noncollapsed model states on generated
+timing-path candidates: `13/19` candidates evaluate, `166` timing paths are
+captured, and the RF leaves produce `53` unique leaf rows. This is not a live
+QD run. It authorizes a narrow runtime-hook design, not final RTLLM spend.

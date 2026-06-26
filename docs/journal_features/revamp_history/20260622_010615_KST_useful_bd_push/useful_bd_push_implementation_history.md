@@ -5203,3 +5203,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   promoted. Stop this simple MasterRTL auxiliary archive timing family for
   full-RTLLM spending unless the next method changes the descriptor or
   coupling mechanism materially.
+
+## 2026-06-26T04:03:00Z - T81 MasterRTL RF Timing State Gate
+
+- Created `T81_masterrtl_rf_timing_state_gate` after T77 showed direct
+  pretrained Area-head leaves collapse on generated candidates.
+- Reproduced the MasterRTL RF timing flow in an isolated uv command with
+  pinned `scikit-learn==1.3.0` and `numpy==1.26.4`: timing-DAG split, delay
+  initialization, `ProcessGraph.Graph_STA`, saved `rfr_model.pkl`, and saved
+  RF training-feature range checks.
+- Result: `13/19` T70 generated RTL candidates evaluate, `166` timing paths
+  are captured, and the RF model states are noncollapsed with `53` unique leaf
+  rows and `414` unique leaf IDs.
+- Coverage caveat: `6/19` candidates are skipped as `no_clock_split`, so this
+  is a timing-path descriptor candidate, not a universal RTL descriptor.
+- Decision: treat T81 as `T0_model_state_gate_positive_not_live`. It supports
+  a narrow runtime-hook design, not a PPA or full-RTLLM promotion claim.

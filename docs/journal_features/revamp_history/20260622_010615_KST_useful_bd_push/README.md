@@ -42,22 +42,21 @@ Start here when resuming the active goal.
 - First completed method package: `techniques/T01_simple_yosys_stat_bd/`
   (`T0 diagnostic`).
 - Most recent completed package:
-  `techniques/T80_masterrtl_structural_mix_gate/`
-  (`T0_descriptor_gate_positive_not_live`; raw MasterRTL structural-mix axes
-  are non-collapsed on generated candidates and support a narrow live screen).
-- Most recent pre-registered package:
-  `preliminary_planning/20260625_encoder_config_screening/`
-  (freezes the candidate ranking, eight-design `8x5` screen, vLLM preflight,
-  descriptor probes, and launch commands for the next config-selection step).
+  `techniques/T81_masterrtl_rf_timing_state_gate/`
+  (`T0_model_state_gate_positive_not_live`; MasterRTL RF timing model states
+  are non-collapsed on generated timing-path candidates, but this is not a
+  live QD result).
+- Most recent preliminary planning package:
+  `preliminary_planning/20260626_masterrtl_rf_timing_state_gate/`
+  (records the T81 offline pretrained-model-state gate and the next runtime
+  hook requirement).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  do not launch full RTLLM with the two spend-ready QD arms from the
-  preliminary screen. Run a matched Qwen3 canonical-RTL `8x5` screen next,
-  with same-problem and duplicate-collapse diagnostics; keep DeepGate3,
-  MasterRTL pretrained heads, T11/T36, and AURORA lanes behind bridge
-  validation until their generated-candidate descriptor paths pass.
+  no QD configuration is promoted for full RTLLM spend yet. Design a narrow
+  MasterRTL RF timing-state runtime hook, then run a bounded screen only after
+  it passes extraction, non-collapse, no-clock, and anti-leakage checks.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front

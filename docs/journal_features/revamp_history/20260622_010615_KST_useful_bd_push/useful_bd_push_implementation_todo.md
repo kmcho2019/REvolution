@@ -145,9 +145,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       gates after the seed-replication negative.
 - [x] Run and package the archive-stagnation activation gate, using only
       scheduler-visible archive growth state for activation.
-- [ ] Pre-register a validated MasterRTL pretrained model-state descriptor
+- [x] Pre-register a validated MasterRTL pretrained model-state descriptor
       probe with upstream-weight loading, schema assertions, and generated-
       candidate non-collapse checks before any live run.
+- [ ] Design and test a narrow runtime MasterRTL RF timing-state descriptor
+      hook before any live QD spend.
 - [ ] Refresh or supersede the 20260625 review bundle so it includes the
       auxiliary archive high-exploit, front-breadth, and depth negatives before
       using it for colleague-facing review.

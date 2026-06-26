@@ -114,6 +114,8 @@ Real result packages:
   budget-shape ablation.
 - `T80_masterrtl_structural_mix_gate` completed raw MasterRTL structural-mix
   descriptor gate.
+- `T81_masterrtl_rf_timing_state_gate` completed generated-candidate
+  MasterRTL RF timing model-state gate.
 
 Scaffolded but not yet real-result packages remain `T08` to `T10`, `T12`,
 `T16`, and `T18`. `T72_source_aligned_rtl_cell_qd` is now a measured
@@ -156,6 +158,12 @@ mix instead of pretrained leaves. It gets `17/19` unique descriptor rows and
 `15` occupied quantile cells, while T77's pretrained Area leaf path has one
 unique leaf row. Treat T80 as a positive descriptor gate only, not a QD
 performance result.
+T81 returns to the verified pretrained lane through MasterRTL's saved RF
+timing model. It evaluates `13/19` generated candidates, captures `166`
+timing paths, and finds `53` unique RF leaf rows with `414` unique leaf IDs.
+This is the first noncollapsed pretrained MasterRTL model-state signal on
+generated RTL, but it remains an offline gate because `6/19` candidates lack
+clock-split timing paths and no live QD comparison has run.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

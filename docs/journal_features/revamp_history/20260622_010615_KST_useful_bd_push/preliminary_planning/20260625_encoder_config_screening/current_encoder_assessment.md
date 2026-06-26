@@ -19,7 +19,8 @@ probe, and it also does not clear the full-RTLLM promotion gate.
 | 5 | MasterRTL structural front-slot | RTL-native custom BD/archive coupling | Improves plain MasterRTL structural mix only slightly: `0.1227` versus classic `0.1406`. It loses front breadth. |
 | 6 | DeepGate2 transition-AIG bridge | Pretrained netlist encoder candidate | Official pretrained model embeds transition AIGs with nonconstant signal on `60` rows across `5/8` screen problems, but large designs and same-problem clustering still block promotion. |
 | 7 | AURORA-style raw implementation features | Learned auto-BD lane | Raw features had replay signal, but compressed bottlenecks lost and no live profile is frozen. |
-| 8 | MasterRTL pretrained prediction/leaf heads | Pretrained model candidate | Artifacts exist, but the direct Area-head leaf lane collapsed on generated candidates. Keep as future bridge work, not a live arm today. |
+| 8 | MasterRTL RF timing model-state | Pretrained model candidate | T81 uses the saved RF timing model and upstream path features; generated timing-path candidates produce noncollapsed leaves. It still lacks a live runtime hook. |
+| 9 | MasterRTL pretrained Area leaves | Pretrained model candidate | Artifacts exist, but the direct Area-head leaf lane collapsed on generated candidates. Retire unless retrained or replaced. |
 
 ## Colleague-Facing Interpretation
 
@@ -80,8 +81,11 @@ policy. The corrected transition bridge improves coverage to five problems:
 `Prob116_m2014_q3`, and `Prob135_m2014_q6b`. It still misses
 `Prob015_multi_pipe_8bit`, `Prob045_alu`, and `Prob153_gshare` under the
 practical cap, and nearest neighbors are `83.33%` same-problem. MasterRTL
-pretrained artifacts also load, but T77 blocks the generated-candidate
-Area-head leaf BD.
+pretrained artifacts also load. T77 blocks the generated-candidate Area-head
+leaf BD, while T81 opens a narrower RF timing model-state lane: `13/19`
+generated candidates evaluate, producing `166` timing paths, `53` unique RF
+leaf rows, and `414` unique leaf IDs. This is only an offline gate until a
+runtime descriptor hook exists.
 
 ## Qwen Generated-Candidate Probe
 

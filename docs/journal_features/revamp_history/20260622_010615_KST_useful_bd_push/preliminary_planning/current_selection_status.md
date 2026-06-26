@@ -65,3 +65,22 @@ archive-history rows, but mean HV fell to `0.1089` versus classic `0.1406`.
 The next candidate should move to validated MasterRTL pretrained model-state
 descriptors or another materially different front-preserving archive coupling,
 rather than another fixed MasterRTL timing or geometry tweak.
+
+## Latest Gate
+
+`T81_masterrtl_rf_timing_state_gate` completed the validated MasterRTL
+pretrained model-state offline gate. It uses the saved MasterRTL RF timing
+model and upstream timing-path feature flow, not raw Area-head leaves.
+
+| Metric | Value |
+| --- | ---: |
+| Generated candidates | `19` |
+| Evaluated timing-path candidates | `13` |
+| Timing paths | `166` |
+| Unique RF leaf rows | `53` |
+| Unique RF leaf IDs | `414` |
+
+Decision: positive offline non-collapse gate, but still no live QD/PPA result.
+The final RTLLM plan remains unfinished. The next required step is a narrow
+runtime descriptor hook with fixed pooling, explicit no-clock behavior, and
+the same reference-complete comparison discipline used for earlier screens.

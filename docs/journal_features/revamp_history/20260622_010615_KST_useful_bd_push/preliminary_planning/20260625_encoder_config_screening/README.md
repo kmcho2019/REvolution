@@ -111,4 +111,6 @@ DeepGate is no longer blocked only by descriptor collapse: the latch-free
 bridge embeds `24` generated rows, and the corrected transition bridge embeds
 `60` rows across `5/8` screening problems. It remains blocked by large-design
 coverage and same-problem clustering. MasterRTL pretrained-head lanes remain
-blocked by generated-candidate collapse.
+blocked for direct Area-head leaves, but T81 unblocks a narrower RF timing
+model-state lane as an offline gate. It still needs a live runtime hook before
+any full-RTLLM spend.

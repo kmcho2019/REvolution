@@ -93,6 +93,8 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T77` | `T77_masterrtl_area_leaf_variation_gate` | RTL-native pretrained model verification | Completed `T0_variation_gate_negative`; source-faithful Area features vary, but pretrained Area predictions/leaves collapse |
 | `T78` | `T78_budget_depth_maturation_audit` | Budget and benchmark shape | Completed `T0_budget_hypothesis_support_not_live_ablation`; T75 archives still mature late under `12 x 3`, but the equal-budget ablation remains required |
 | `T79` | `T79_budget_shape_ablation_protocol` | Budget and benchmark shape | Pre-registered; freezes the eight-design subset and six-arm `12x3`/`8x5`/`6x7` classic-vs-T75-QD command matrix |
+| `T80` | `T80_masterrtl_structural_mix_gate` | RTL-native pretrained model verification | Completed `T0_descriptor_gate_positive_not_live`; raw MasterRTL structural axes do not collapse on generated candidates |
+| `T81` | `T81_masterrtl_rf_timing_state_gate` | RTL-native pretrained model verification | Completed `T0_model_state_gate_positive_not_live`; RF timing model states do not collapse on generated timing-path candidates |
 
 All methods must be scored with the same `T0` to `T3` tier definitions from
 `../useful_bd_push_plan.md`. Near-classic behavior is a useful signal; the
