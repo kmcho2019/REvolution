@@ -304,6 +304,18 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "qwen_pc1": DescriptorDefinition("qwen_pc1", "qwen_rtl_embedding"),
     "qwen_pc2": DescriptorDefinition("qwen_pc2", "qwen_rtl_embedding"),
     "qwen_pc3": DescriptorDefinition("qwen_pc3", "qwen_rtl_embedding"),
+    "deepgate_pool_pc0": DescriptorDefinition(
+        "deepgate_pool_pc0",
+        "deepgate_pooled_embedding",
+    ),
+    "deepgate_pool_pc1": DescriptorDefinition(
+        "deepgate_pool_pc1",
+        "deepgate_pooled_embedding",
+    ),
+    "deepgate_pool_pc2": DescriptorDefinition(
+        "deepgate_pool_pc2",
+        "deepgate_pooled_embedding",
+    ),
 }
 
 
@@ -413,6 +425,20 @@ def load_qwen_projection_artifact_path(path: str | Path | None) -> Path:
     profile_path = Path(path)
     payload = _load_descriptor_config(profile_path)
     artifact_path = payload["qwen_projection_artifact"]
+    assert isinstance(artifact_path, str)
+    resolved = Path(artifact_path)
+    if resolved.is_absolute():
+        return resolved
+    return profile_path.parent / resolved
+
+
+def load_deepgate_projection_artifact_path(path: str | Path | None) -> Path:
+    """Load the frozen DeepGate projection artifact path from a profile file."""
+
+    assert path is not None
+    profile_path = Path(path)
+    payload = _load_descriptor_config(profile_path)
+    artifact_path = payload["deepgate_projection_artifact"]
     assert isinstance(artifact_path, str)
     resolved = Path(artifact_path)
     if resolved.is_absolute():
@@ -648,6 +674,8 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (-3.0, 3.0)
     if axis.startswith("qwen_pc"):
         return (-1.0, 1.0)
+    if axis.startswith("deepgate_pool_pc"):
+        return (-1.0, 1.0)
     if axis in {"wire_cell_ratio_est", "resource_sharing_ratio_est"}:
         return (0.0, 4.0)
     if axis == "ltp_noff":
@@ -755,6 +783,10 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         "requires_qwen_rtl_embedding": any(
             registry[axis].source_tool == "qwen_rtl_embedding" for axis in axes
         ),
+        "requires_deepgate_pooled_embedding": any(
+            registry[axis].source_tool == "deepgate_pooled_embedding"
+            for axis in axes
+        ),
     }
 
 
@@ -785,6 +817,9 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             "requires_auto_bd_sr_vq": registry[axis].source_tool == "auto_bd_sr_vq",
             "requires_qwen_rtl_embedding": (
                 registry[axis].source_tool == "qwen_rtl_embedding"
+            ),
+            "requires_deepgate_pooled_embedding": (
+                registry[axis].source_tool == "deepgate_pooled_embedding"
             ),
         }
         for axis in axes

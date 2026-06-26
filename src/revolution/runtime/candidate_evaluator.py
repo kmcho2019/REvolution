@@ -15,6 +15,7 @@ from revolution.auto_bd.random_descriptor import random_hash_descriptor_values
 from revolution.auto_bd.trajectory_descriptor import (
     synthesis_trajectory_descriptor_values,
 )
+from revolution.deepgate_descriptor_evaluator import DeepGatePooledDescriptorEvaluator
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.graph_descriptor_evaluator import GraphDescriptorEvaluator
 from revolution.runtime.problem_context import (
@@ -26,6 +27,7 @@ from revolution.runtime.problem_spec import ProblemSpec
 from revolution.qd.descriptors import (
     descriptor_requirements,
     extract_descriptor_values,
+    load_deepgate_projection_artifact_path,
     load_qwen_projection_artifact_path,
     resolve_descriptor_axes,
 )
@@ -228,6 +230,7 @@ class CandidateEvaluator:
         self.graph_descriptor_evaluator = GraphDescriptorEvaluator()
         self.source_aligned_descriptor_evaluator: SourceAlignedRTLDescriptorEvaluator | None = None
         self.qwen_rtl_embedding_evaluator: QwenCanonicalRTLEmbeddingEvaluator | None = None
+        self.deepgate_pooled_evaluator: DeepGatePooledDescriptorEvaluator | None = None
         if evaluation_mode not in {
             EvaluationMode.STRICT_ABLATION.value,
             EvaluationMode.SEARCH_ACCELERATED.value,
@@ -384,6 +387,7 @@ class CandidateEvaluator:
         descriptor_metrics.update(self._extract_auto_bd_netlist_metrics(result))
         descriptor_metrics.update(self._extract_auto_bd_stage_metrics(result))
         descriptor_metrics.update(self._extract_qwen_rtl_metrics(item.code))
+        descriptor_metrics.update(self._extract_deepgate_pooled_metrics(item))
         descriptor_metrics.update(
             {
                 axis: float(result.score_components[axis])
@@ -402,6 +406,25 @@ class CandidateEvaluator:
                 artifact_path
             )
         return self.qwen_rtl_embedding_evaluator.extract_metrics(code)
+
+    def _extract_deepgate_pooled_metrics(
+        self,
+        item: CandidateWorkItem,
+    ) -> dict[str, float]:
+        if not self.descriptor_requirements.get(
+            "requires_deepgate_pooled_embedding",
+            False,
+        ):
+            return {}
+        if self.deepgate_pooled_evaluator is None:
+            artifact_path = load_deepgate_projection_artifact_path(self.descriptor_file)
+            self.deepgate_pooled_evaluator = DeepGatePooledDescriptorEvaluator(
+                artifact_path
+            )
+        return self.deepgate_pooled_evaluator.extract_metrics(
+            code_file_path=item.code_file_path,
+            top_module_name=self.synthesis_top_module_name,
+        )
 
     def _extract_auto_bd_netlist_metrics(
         self,

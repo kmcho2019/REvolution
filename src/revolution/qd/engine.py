@@ -69,12 +69,14 @@ from revolution.qd.artifacts import (
 from revolution.qd.descriptors import (
     descriptor_requirements,
     extract_descriptor_values,
+    load_deepgate_projection_artifact_path,
     load_qwen_projection_artifact_path,
     load_sr_pca_artifact_path,
     load_sr_vq_artifact_path,
     resolve_descriptor_axes,
     resolve_grid_axis_specs,
 )
+from revolution.deepgate_descriptor_evaluator import DeepGatePooledDescriptorEvaluator
 from revolution.qwen_descriptor_evaluator import QwenCanonicalRTLEmbeddingEvaluator
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import (
@@ -493,6 +495,7 @@ class QDEngine(EoHEngine):
         self._sr_pca_artifact: SrPcaArtifact | None = None
         self._sr_vq_artifact: SrVqArtifact | None = None
         self._qwen_rtl_embedding_evaluator: QwenCanonicalRTLEmbeddingEvaluator | None = None
+        self._deepgate_pooled_evaluator: DeepGatePooledDescriptorEvaluator | None = None
 
     def _uses_descriptor_guided_generation(self) -> bool:
         return self.qd_descriptor_profile not in _ARCHIVE_ONLY_DESCRIPTOR_PROFILES
@@ -676,6 +679,13 @@ class QDEngine(EoHEngine):
             )
         )
 
+    def _requires_deepgate_pooled_embedding_metrics(self) -> bool:
+        return bool(
+            descriptor_requirements(self._archive_axes()).get(
+                "requires_deepgate_pooled_embedding"
+            )
+        )
+
     def _extract_candidate_qwen_rtl_metrics(self, cand: Heuristic) -> dict[str, float]:
         if not self._requires_qwen_rtl_embedding_metrics():
             return {}
@@ -685,6 +695,21 @@ class QDEngine(EoHEngine):
                 artifact_path
             )
         return self._qwen_rtl_embedding_evaluator.extract_metrics(cand.code)
+
+    def _extract_candidate_deepgate_metrics(self, cand: Heuristic) -> dict[str, float]:
+        if not self._requires_deepgate_pooled_embedding_metrics():
+            return {}
+        if self._deepgate_pooled_evaluator is None:
+            artifact_path = load_deepgate_projection_artifact_path(
+                self.qd_descriptor_file
+            )
+            self._deepgate_pooled_evaluator = DeepGatePooledDescriptorEvaluator(
+                artifact_path
+            )
+        return self._deepgate_pooled_evaluator.extract_metrics(
+            code_file_path=self._refresh_candidate_code_path(cand),
+            top_module_name=self._resolve_synthesis_top_module_name(),
+        )
 
     def _load_sr_pca_artifact(self) -> SrPcaArtifact:
         if self._sr_pca_artifact is None:
@@ -713,6 +738,7 @@ class QDEngine(EoHEngine):
         needs_sr_pca = self._requires_auto_bd_sr_pca_metrics()
         needs_sr_vq = self._requires_auto_bd_sr_vq_metrics()
         needs_qwen = self._requires_qwen_rtl_embedding_metrics()
+        needs_deepgate = self._requires_deepgate_pooled_embedding_metrics()
         if not (
             needs_hash
             or needs_motif
@@ -720,6 +746,7 @@ class QDEngine(EoHEngine):
             or needs_sr_pca
             or needs_sr_vq
             or needs_qwen
+            or needs_deepgate
         ):
             return {}
         if not (
@@ -732,6 +759,8 @@ class QDEngine(EoHEngine):
         raw_values: dict[str, float] | None = None
         if needs_qwen:
             values.update(self._extract_candidate_qwen_rtl_metrics(cand))
+        if needs_deepgate:
+            values.update(self._extract_candidate_deepgate_metrics(cand))
         if needs_hash or needs_motif or needs_sr_pca or needs_sr_vq:
             path = Path(str(synthesis_result["synthesized_netlist_path"]))
             assert path.is_file(), f"missing synthesized netlist: {path}"
