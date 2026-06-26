@@ -53,6 +53,20 @@ evidence.
 - Decision: keep T95 as the current DeepGate / synthesized-netlist pretrained
   encoder representative, but do not promote it for full RTLLM spend.
 
+## 2026-06-26T12:58:19Z - T96 RF/DeepGate Hybrid Delayed Pre-Registered
+
+- Added
+  `preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/`.
+- T96 keeps T83's delayed high-exploit archive coupling and changes the
+  descriptor to a compact cross-domain hybrid:
+  `source_aligned_rf_timing_leaf_ids`,
+  `source_aligned_masterrtl_branching`, and `deepgate_pool_pc0`.
+- Rationale: T83 is the closest single-seed pretrained/model-state arm but
+  fails replication; T95 shows DeepGate improves when archive pressure is less
+  disruptive but remains weak alone. T96 tests whether the two validated
+  encoder families have complementary signal before retiring this hybrid lane.
+- Live run pending.
+
 ## 2026-06-26T11:25:00Z - T93 DeepGate Runtime Live Smoke Completed
 
 - Added `preliminary_planning/20260626_deepgate_runtime_live_smoke/` to record
