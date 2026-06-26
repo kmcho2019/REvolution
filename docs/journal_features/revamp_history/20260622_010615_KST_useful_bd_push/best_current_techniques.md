@@ -8,7 +8,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | MasterRTL RF timing model-state descriptors | Runtime hook positive | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and passes one full evaluator smoke. | Needs tiny live vLLM smoke and frozen `8x5` screen before any PPA claim. |
+| 1 | MasterRTL RF timing model-state descriptors | Live smoke positive | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and passes one one-problem live smoke. | Needs frozen `8x5` screen before any PPA claim. |
 | 2 | Delayed archive activation | Best recent timing clue | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
 | 3 | Stagnation-triggered archive pressure | Diagnostic negative | Uses only archive growth state to activate QD pressure after passive archive growth stalls. | Trigger fired lightly, but mean HV regressed to `0.1089`; not promoted. |
 | 4 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
@@ -146,12 +146,13 @@ than direct scalar Area leaves. On the T70 generated RTL corpus, it evaluates
 rows with `414` unique leaf IDs.
 
 T82 then turns that signal into a live descriptor profile:
-`source_aligned_rf_timing_state_3d`. A full evaluator smoke on
-`Prob015_multi_pipe_8bit` emits `51` RF timing paths, `14` unique RF leaf
-rows, `161` unique RF leaf IDs, and no no-path fallback. This is still not a
-live QD result and cannot support a PPA claim. The next step is a tiny live
-vLLM smoke that proves archive insertion, descriptor logging, and artifact
-emission.
+`source_aligned_rf_timing_state_3d`. A generated-candidate evaluator smoke
+emits `51` RF timing paths, `14` unique RF leaf rows, `161` unique RF leaf
+IDs, and no no-path fallback. The follow-up one-problem live smoke on
+`Prob015_multi_pipe_8bit` emits one valid PPA/archive member with `51` RF
+timing paths, `17` unique RF leaf rows, and `319` unique RF leaf IDs. This is
+still not a screened PPA comparison. The next step is the frozen eight-design
+`8x5` screen.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

@@ -25,7 +25,8 @@ the next gate.
 | `20260626_delayed_archive_activation_probe/` | Test whether passive early archive logging plus delayed archive pressure preserves classic-like hill climbing before QD activation. | Completed; close to high-exploit, still below classic and not promoted |
 | `20260626_archive_stagnation_activation_probe/` | Test whether archive pressure should activate only after passive archive cells and members stop growing. | Completed; trigger fired lightly, but HV regressed and not promoted |
 | `20260626_masterrtl_rf_timing_state_gate/` | Record the T81 MasterRTL pretrained RF timing model-state gate and decide whether it is ready for a live hook. | Completed offline; positive non-collapse gate, not a live QD result |
-| `20260626_masterrtl_rf_timing_runtime_hook/` | Record the T82 runtime hook that exposes RF timing model-state metrics as a live descriptor profile. | Completed implementation gate; live QD smoke still pending |
+| `20260626_masterrtl_rf_timing_runtime_hook/` | Record the T82 runtime hook that exposes RF timing model-state metrics as a live descriptor profile. | Completed implementation gate; superseded by live smoke |
+| `20260626_masterrtl_rf_timing_live_smoke/` | Run the first one-problem live smoke for `source_aligned_rf_timing_state_3d`. | Completed; one valid PPA/archive member, frozen `8x5` screen pending |
 
 ## Current Rule
 
@@ -128,10 +129,11 @@ HV `0.1089` versus classic `0.1406`. It is diagnostic negative and not
 promoted. Do not spend another run on this simple MasterRTL auxiliary archive
 timing family without a materially different mechanism.
 
-The current materially different lane is
-`20260626_masterrtl_rf_timing_runtime_hook/`, backed by
-`techniques/T82_masterrtl_rf_timing_runtime_hook/`. T82 exposes the
-noncollapsed T81 RF timing model-state signal as a live descriptor profile and
-passes a full evaluator smoke on one generated RTLLM candidate: `51` timing
-paths, `14` unique RF leaf rows, and `161` unique RF leaf IDs. This is not a
-live QD run. It authorizes a tiny live vLLM smoke, not final RTLLM spend.
+The current materially different lane is now live-smoke unblocked:
+`20260626_masterrtl_rf_timing_live_smoke/` ran
+`source_aligned_rf_timing_state_3d` on `Prob015_multi_pipe_8bit` with a `2x0`
+budget. It produced one valid PPA candidate, one archive member, `51` RF
+timing paths, `17` unique RF leaf rows, and `319` unique RF leaf IDs. This is
+not a PPA comparison and cannot establish non-collapse by itself because it
+has one archive observation. It authorizes the frozen `8x5` screen, not final
+RTLLM spend.

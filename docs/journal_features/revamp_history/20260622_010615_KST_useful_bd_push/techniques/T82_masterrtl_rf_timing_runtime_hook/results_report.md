@@ -2,10 +2,11 @@
 
 ## Tier Decision
 
-`T0_runtime_hook_positive_not_live_screened`.
+`T0_live_smoke_positive_not_screened`.
 
-The runtime hook works on a real generated RTL candidate, but no live QD
-screen has run yet. Do not use T82 as PPA evidence.
+The runtime hook works on a real generated RTL candidate and a one-problem
+live smoke produced one valid PPA/archive member. No frozen live screen has
+run yet. Do not use T82 as PPA evidence.
 
 ## Smoke Result
 
@@ -25,9 +26,24 @@ registry can now resolve `source_aligned_rf_timing_state_3d`, require the RF
 timing path only when that profile is selected, and extract RF timing metrics
 through a pinned isolated environment.
 
-This does not prove useful QD behavior. The next gate is a tiny live vLLM
-smoke that confirms archive insertion, descriptor logging, and no missing
-artifacts. Only then should the frozen eight-design `8x5` screen be launched.
+The one-problem live smoke confirms archive insertion, descriptor logging, and
+artifact emission. It has only one archive observation, so descriptor-health
+collapse flags are expected and should not be used as non-collapse evidence.
+Use T81 for generated-candidate non-collapse evidence. The next gate is the
+frozen eight-design `8x5` screen.
+
+## Live Smoke Result
+
+| Metric | Value |
+| --- | ---: |
+| Problem | `Prob015_multi_pipe_8bit` |
+| Valid PPA candidates | `1` |
+| Archive members | `1` |
+| Global Pareto members | `1` |
+| RF timing paths | `51` |
+| Unique RF leaf rows | `17` |
+| Unique RF leaf IDs | `319` |
+| RF no-path flag | `0` |
 
 ## Checks
 

@@ -43,21 +43,21 @@ Start here when resuming the active goal.
   (`T0 diagnostic`).
 - Most recent completed package:
   `techniques/T82_masterrtl_rf_timing_runtime_hook/`
-  (`T0_runtime_hook_positive_not_live_screened`; MasterRTL RF timing
-  model-state metrics now resolve through the live descriptor registry, but
-  this is not a live QD result).
+  (`T0_live_smoke_positive_not_screened`; MasterRTL RF timing model-state
+  metrics resolve through the live descriptor registry and one live smoke, but
+  this is not a screened QD/PPA result).
 - Most recent preliminary planning package:
-  `preliminary_planning/20260626_masterrtl_rf_timing_runtime_hook/`
-  (records the T82 runtime-hook gate and the next tiny live-smoke
-  requirement).
+  `preliminary_planning/20260626_masterrtl_rf_timing_live_smoke/`
+  (records the first live smoke for the RF timing descriptor and the next
+  frozen `8x5` screen requirement).
 - Most recent live ablation:
   `techniques/T64_fused_operator_timing_live_screen/` (direct T63
   `operator_timing` ablation; completed seed `1001`).
 - Next direction:
-  no QD configuration is promoted for full RTLLM spend yet. Run a tiny live
-  vLLM smoke for `source_aligned_rf_timing_state_3d`, then run a bounded
-  screen only after it passes archive-artifact, descriptor-value,
-  no-clock, and anti-leakage checks.
+  no QD configuration is promoted for full RTLLM spend yet.
+  `source_aligned_rf_timing_state_3d` passed a one-problem live smoke, so the
+  next gate is the frozen eight-design `8x5` screen with reference-complete
+  accounting.
 - Most recent cross-cutting visualization:
   `visualization_audits/20260621_direct_ppa_fronts/` (corrected conventional
   lower-left-better raw area-power Pareto fronts plus active-objective front

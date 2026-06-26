@@ -620,7 +620,7 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       metrics.
 - [x] Add the T82 runtime descriptor hook for
       `source_aligned_rf_timing_state_3d` and verify one full evaluator smoke.
-- [ ] Run a tiny live vLLM smoke for
+- [x] Run a tiny live vLLM smoke for
       `source_aligned_rf_timing_state_3d`, including archive insertion,
       descriptor-value logging, and artifact checks.
 - [ ] If the tiny smoke passes, run the frozen eight-design `8x5` screen before

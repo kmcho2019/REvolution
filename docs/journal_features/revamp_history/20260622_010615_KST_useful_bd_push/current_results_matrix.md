@@ -169,9 +169,10 @@ clock-split timing paths and no live QD comparison has run.
 T82 completes the next implementation gate by exposing the T81 signal as the
 `source_aligned_rf_timing_state_3d` live descriptor profile. A full evaluator
 smoke on one generated RTLLM candidate emits `51` RF timing paths, `14` unique
-RF leaf rows, `161` unique RF leaf IDs, and no no-path fallback. This is still
-not PPA evidence; it authorizes a tiny live vLLM smoke before any frozen
-`8x5` screen.
+RF leaf rows, `161` unique RF leaf IDs, and no no-path fallback. The follow-up
+one-problem live smoke emits one valid PPA/archive member with `51` RF timing
+paths, `17` unique RF leaf rows, and `319` unique RF leaf IDs. This is still
+not comparative PPA evidence; it authorizes the frozen `8x5` screen.
 T68 is not a QD result. It verifies that earlier MasterRTL/RTLTimer-inspired
 features are proxies, not source-equivalent upstream extractors. Upstream
 MasterRTL and RTL-Timer shipped examples can be read and partly checked, but

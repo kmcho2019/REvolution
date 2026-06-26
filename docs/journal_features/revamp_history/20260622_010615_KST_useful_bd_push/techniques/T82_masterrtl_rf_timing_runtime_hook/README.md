@@ -1,6 +1,6 @@
 # T82 MasterRTL RF Timing Runtime Hook
 
-Status: `T0_runtime_hook_positive_not_live_screened`.
+Status: `T0_live_smoke_positive_not_screened`.
 
 T82 wires the T81 MasterRTL RF timing-state gate into the live descriptor
 registry. It adds the `source_aligned_rf_timing_state_3d` profile and keeps RF
@@ -17,9 +17,9 @@ The runtime hook smoke passes on one generated RTLLM candidate:
 - unique RF leaf IDs: `161`;
 - no-path flag: `0`.
 
-This is an implementation gate, not a live QD result. It supports a tiny live
-vLLM smoke next, followed by the frozen `8x5` screen only if archive artifacts
-and descriptor non-collapse checks pass.
+The follow-up live smoke also passed on one RTLLM problem with one valid
+PPA/archive member. This is still not a screened QD result. It supports the
+frozen `8x5` screen, not full RTLLM spend.
 
 ## Files
 

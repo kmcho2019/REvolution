@@ -32,7 +32,7 @@ promoted.
 | Qwen3 canonical RTL | Real pretrained live hook; matched screen completed at `8x5`. | Not promoted: mean HV `0.1108` versus classic `0.1406`. |
 | DeepGate transition AIG | Official pretrained bridge embeds nonconstant generated candidates across `5/8` screen problems. | Not spend-ready: large designs still exceed the practical bridge cap. |
 | MasterRTL pretrained Area leaf | Pretrained model artifact loads, but generated candidates collapse to one Area prediction and one leaf row. | Retire direct Area-head leaves unless retrained or replaced. |
-| MasterRTL RF timing model-state | Pretrained RF timing flow has a runtime descriptor hook and one generated-candidate evaluator smoke. | Needs live vLLM smoke and frozen `8x5` screen before any PPA claim. |
+| MasterRTL RF timing model-state | Pretrained RF timing flow has a runtime descriptor hook and one one-problem live smoke. | Needs frozen `8x5` screen before any PPA claim. |
 | MasterRTL raw structural mix | Credible RTL-native descriptor lane. | Needs stronger coupling; fixed auxiliary archive failed replication. |
 | T11/T36 graph-like lane | Replay signal exists; live top-4/front-slot successor ran. | Not promoted: live `8x5` mean HV `0.1208` versus classic `0.1406`. |
 
@@ -71,18 +71,19 @@ rather than another fixed MasterRTL timing or geometry tweak.
 
 `T82_masterrtl_rf_timing_runtime_hook` completed the implementation gate that
 turns the validated T81 MasterRTL pretrained RF timing-state signal into a
-live descriptor profile. It uses the saved MasterRTL RF timing model and
-upstream timing-path feature flow, not raw Area-head leaves or PPA labels.
+live descriptor profile. The follow-up one-problem live smoke then verified
+archive artifacts and descriptor logging on `Prob015_multi_pipe_8bit`.
 
 | Metric | Value |
 | --- | ---: |
-| Runtime-smoke candidate | `t70_04_Prob015_multi_pipe_8bit_first_raw` |
+| Live-smoke problem | `Prob015_multi_pipe_8bit` |
+| Valid PPA candidates | `1` |
+| Archive members | `1` |
 | RF timing paths | `51` |
-| Unique RF leaf rows | `14` |
-| Unique RF leaf IDs | `161` |
+| Unique RF leaf rows | `17` |
+| Unique RF leaf IDs | `319` |
 | RF no-path flag | `0` |
 
-Decision: positive runtime-hook gate, but still no live QD/PPA result. The
-final RTLLM plan remains unfinished. The next required step is a tiny live
-vLLM smoke that proves archive insertion, descriptor logging, and artifact
-emission before any frozen `8x5` screen.
+Decision: positive runtime-hook and live-smoke gate, but still no screened
+QD/PPA result. The final RTLLM plan remains unfinished. The next required
+step is the frozen eight-design `8x5` screen before any full RTLLM spend.

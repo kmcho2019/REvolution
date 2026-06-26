@@ -5240,3 +5240,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: T82 is `T0_runtime_hook_positive_not_live_screened`. It clears the
   implementation blocker but is not PPA evidence. The next gate is a tiny live
   vLLM smoke before any frozen eight-design `8x5` screen.
+
+## 2026-06-26T04:35:00Z - RF Timing Live Smoke Passed
+
+- Ran `source_aligned_rf_timing_state_3d` on
+  `RTLLM/Prob015_multi_pipe_8bit` with `population_size=2` and
+  `num_generations=0`.
+- Run root:
+  `exp/useful_bd_push/rf_timing_live_smoke_20260626_0435_UTC/`.
+- vLLM preflight passed for `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+- The smoke produced one valid PPA candidate, one archive member, one global
+  Pareto member, and candidate-level `qd_archive_event.json`.
+- The archive event includes RF timing graph metrics:
+  `source_aligned_rf_timing_path_count=51`,
+  `source_aligned_rf_timing_leaf_rows=17`,
+  `source_aligned_rf_timing_leaf_ids=319`, and
+  `source_aligned_rf_timing_no_path_flag=0`.
+- `scripts/validate_pareto_front_run.py` passed on the one-problem smoke
+  subset.
+- Decision: the live-smoke blocker is cleared. This remains non-comparative
+  smoke evidence, so the next gate is the frozen eight-design `8x5` screen,
+  not full RTLLM spend.
