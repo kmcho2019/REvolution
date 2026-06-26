@@ -37,8 +37,8 @@ REvolution on reference-complete PPA-front evidence.
 
 | Requirement | Missing Or Weak Evidence | Required Closure |
 | --- | --- | --- |
-| Passive archive scoring for classic and every QD method | Backfilled common passive archive exists for recent T94/T95/T96/T99/T100-style surfaces, but older packages are uneven. | Inventory which packages lack passive archive/QD-score tables; either backfill or label as legacy/non-headline. |
-| Full metric set across headline methods | Hypervolume and Pareto metrics exist for recent screens, but QD-score AUC, coverage AUC, unique front-family, and Pareto-spread coverage are uneven. | Add a compact metric-completeness table for all headline/candidate packages. |
+| Passive archive scoring for classic and every QD method | `tables/completion_gap_inventory.csv` shows recent T95/T96/T99/T100-style surfaces are covered, while Qwen, T83/T88, and auxiliary-archive replication are legacy/partial. | Either backfill legacy rows or label them as non-headline/representative-only in the final report. |
+| Full metric set across headline methods | `tables/completion_gap_inventory.csv` records which representatives have HV-AUC, passive archive, completeness, direct PPA, and viewer coverage. QD-score AUC, coverage AUC, unique front-family, and Pareto-spread coverage are still uneven. | Add final-report caveats or backfill only for rows used as headline evidence. |
 | Central comparison report | Current selection docs are operational; no single final report states the accepted claim. | Write a concise central report comparing category reps against classic and landing/manual QD where available. |
 | Visualization policy for every completed result | Many packages have inspected figures, but a branch-wide figure-completeness inventory is missing. | Add a figure inventory that marks direct raw PPA PNG, Phase 03.1 viewer, and visual-inspection status by package. |
 | Final adversarial validation | `useful_bd_push_subagent_validation_report.md` still says not run. | Run read-only adversarial review on the exact final claim and record PASS or action items. |

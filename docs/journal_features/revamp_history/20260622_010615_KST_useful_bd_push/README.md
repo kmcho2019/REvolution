@@ -126,6 +126,7 @@ Start here when resuming the active goal.
 | Directory | Contents |
 | --- | --- |
 | `tables/` | Small committed setup tables: replay source inventory, scored screening candidates, frozen screening subset, and holdout subset. |
+| `tables/completion_gap_inventory.csv` | Metric and figure completeness inventory for current headline/category representative packages. |
 | `techniques/` | One numbered subdirectory per attempted or planned BD/QD technique. The visible `T##_` prefix is chronological. |
 | `visualization_audits/` | Cross-method figure bundles when a visualization compares several technique packages rather than one method. |
 | `presentations/` | Milestone presentation/report packages and broad experiment summaries. |

@@ -6193,3 +6193,13 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Integrated fixes: added the T100 registry row, marked T97/T98 as
   superseded/control smoke rows, extended the lineage ledger through T100, and
   clarified the mixed-scope top-10 mean-HV table.
+
+## 2026-06-26T18:38:00Z - Completion Inventory Added
+
+- Added `tables/completion_gap_inventory.csv` for the current
+  headline/category-representative packages.
+- The inventory records which packages already have HV, HV-AUC, passive
+  archive, PPA completeness, direct PPA visualization, Phase 03.1 viewer, and
+  visual-inspection coverage.
+- Decision: use the inventory to decide whether to backfill legacy rows or
+  label them representative-only in the final central comparison report.

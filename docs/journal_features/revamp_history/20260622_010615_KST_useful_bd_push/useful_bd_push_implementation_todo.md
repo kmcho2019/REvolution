@@ -81,6 +81,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       posthoc classic archive projection.
 - [x] Add aggregate method/seed summary rows for shortlist and category
       representative decisions.
+- [x] Add `tables/completion_gap_inventory.csv` to inventory metric and figure
+      coverage for current headline/category representative packages.
 - [x] Backfill common-evaluation tables for T94, T95, and T96 using existing
       Phase 03.1 viewers and deduplicated Pareto-analysis metrics.
 - [x] Add canonical netlist hash duplicate suppression to Phase 03.1 common
