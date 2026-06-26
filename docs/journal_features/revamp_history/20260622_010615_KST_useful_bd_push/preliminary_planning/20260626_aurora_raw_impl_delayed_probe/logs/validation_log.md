@@ -66,7 +66,7 @@ uv run python scripts/validate_qd_ppa_visualization.py \
 
 The common table exporter was rerun after adding
 `tables/method_seed_summary.csv`. The aggregate row reports T99 mean HV
-`0.120094`, classic mean HV `0.140740`, and T99 mean HV delta `-0.020646`.
+`0.120094`, classic mean HV `0.140645`, and T99 mean HV delta `-0.020551`.
 
 ## Completeness Gate
 

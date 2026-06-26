@@ -12,6 +12,7 @@ def test_common_evaluation_contract_reports_passive_archive_gaps(tmp_path: Path)
     dataset_dir = viewer_root / "datasets"
     dataset_dir.mkdir(parents=True)
     completeness = tmp_path / "ppa_completeness.csv"
+    pareto_metrics = tmp_path / "backend_problem_metrics.csv"
     output_dir = tmp_path / "tables"
 
     (dataset_dir / "RTLLM__Prob001.json").write_text(
@@ -35,6 +36,13 @@ def test_common_evaluation_contract_reports_passive_archive_gaps(tmp_path: Path)
             }
         ],
     )
+    _write_csv(
+        pareto_metrics,
+        [
+            _pareto_row("classic_revolution_8x5", 0.55, 1, 1),
+            _pareto_row("qd_method", 0.35, 1, 2),
+        ],
+    )
 
     assert (
         main(
@@ -47,6 +55,8 @@ def test_common_evaluation_contract_reports_passive_archive_gaps(tmp_path: Path)
                 "1001",
                 "--budget-shape",
                 "8x5",
+                "--pareto-problem-metrics",
+                str(pareto_metrics),
                 "--method-family",
                 "classic_revolution_8x5=classic",
                 "--method-family",
@@ -60,10 +70,11 @@ def test_common_evaluation_contract_reports_passive_archive_gaps(tmp_path: Path)
 
     rows = _read_csv(output_dir / "method_problem_seed_metrics.csv")
     by_method = {row["method_key"]: row for row in rows}
-    assert by_method["qd_method"]["global_ppa_hv"] == "0.4"
+    assert by_method["qd_method"]["global_ppa_hv"] == "0.35"
     assert by_method["qd_method"]["hv_auc"] == "0.3"
     assert by_method["qd_method"]["valid_ppa_count"] == "3"
-    assert by_method["qd_method"]["reference_beating_count"] == "3"
+    assert by_method["qd_method"]["pareto_point_count"] == "1"
+    assert by_method["qd_method"]["reference_beating_count"] == "2"
     assert by_method["qd_method"]["passive_archive_coverage"] == "0.5"
     assert by_method["classic_revolution_8x5"]["passive_archive_coverage"] == "not_available"
     assert by_method["classic_revolution_8x5"]["notes"] == "descriptor_projection_missing"
@@ -80,11 +91,11 @@ def test_common_evaluation_contract_reports_passive_archive_gaps(tmp_path: Path)
 
     summary_rows = _read_csv(output_dir / "method_seed_summary.csv")
     summary_by_method = {row["method_key"]: row for row in summary_rows}
-    assert summary_by_method["classic_revolution_8x5"]["mean_global_ppa_hv"] == "0.5"
+    assert summary_by_method["classic_revolution_8x5"]["mean_global_ppa_hv"] == "0.55"
     assert summary_by_method["classic_revolution_8x5"]["classic_delta_mean_hv"] == "0"
     assert summary_by_method["qd_method"]["headline_problem_count"] == "1"
-    assert summary_by_method["qd_method"]["mean_global_ppa_hv"] == "0.4"
-    assert summary_by_method["qd_method"]["classic_delta_mean_hv"] == "-0.1"
+    assert summary_by_method["qd_method"]["mean_global_ppa_hv"] == "0.35"
+    assert summary_by_method["qd_method"]["classic_delta_mean_hv"] == "-0.2"
     assert summary_by_method["qd_method"]["classic_hv_loss_count"] == "1"
     assert summary_by_method["qd_method"]["mean_passive_archive_qd_auc"] == "0.65"
     assert summary_by_method["qd_method"]["notes"] == "candidate_level_no_canonical_dedup"
@@ -141,6 +152,23 @@ def _stats(hv: float, rank1_count: int, sample_count: int) -> dict[str, object]:
         "hypervolume": {"value": hv},
         "rank1_count": rank1_count,
         "sample_count": sample_count,
+    }
+
+
+def _pareto_row(
+    method: str,
+    hv: float,
+    pareto_count: int,
+    ref_beating: int,
+) -> dict[str, str]:
+    return {
+        "backend": method,
+        "benchmark": "RTLLM",
+        "problem": "Prob001",
+        "candidate_count": "3",
+        "pareto_point_count": str(pareto_count),
+        "hypervolume": str(hv),
+        "reference_beating_count": str(ref_beating),
     }
 
 

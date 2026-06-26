@@ -81,6 +81,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       posthoc classic archive projection.
 - [x] Add aggregate method/seed summary rows for shortlist and category
       representative decisions.
+- [x] Backfill common-evaluation tables for T94, T95, and T96 using existing
+      Phase 03.1 viewers and deduplicated Pareto-analysis metrics.
 - [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime
       reporting.
 - [ ] Add passive archive scoring for classic and every QD method.

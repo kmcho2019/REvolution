@@ -135,7 +135,11 @@ Every completed live screen should include these files or a documented
 
 Use `scripts/report_common_evaluation_contract.py` to generate the normalized
 `tables/` rows from a Phase 03.1 viewer bundle and the run's
-`ppa_completeness.csv`.
+`ppa_completeness.csv`. Pass
+`--pareto-problem-metrics analysis/pareto_analysis/backend_problem_metrics.csv`
+when that file exists so paper-facing HV, Pareto point count, and
+reference-beating count stay aligned with the deduplicated Pareto analysis
+report.
 
 The exporter is intentionally conservative. If a method has no honest
 descriptor projection in the viewer, its passive-archive columns are

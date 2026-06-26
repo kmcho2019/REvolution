@@ -125,3 +125,17 @@ uv run python scripts/validate_qd_ppa_visualization.py \
   --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260625_encoder_config_screening/tables/prelim_screen_subset.yaml \
   --strict
 ```
+
+## Common Evaluation Tables
+
+```bash
+uv run python scripts/report_common_evaluation_contract.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_deepgate_runtime_screen/visualizations/qd_ppa_viewer \
+  --ppa-completeness docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_deepgate_runtime_screen/analysis/ppa_completeness.csv \
+  --pareto-problem-metrics docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_deepgate_runtime_screen/analysis/pareto_analysis/backend_problem_metrics.csv \
+  --seed 1001 \
+  --budget-shape 8x5 \
+  --method-family classic_revolution_8x5=classic \
+  --method-family deepgate_pooled_pc3_8x5=deepgate \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_deepgate_runtime_screen/tables
+```

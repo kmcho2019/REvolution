@@ -55,7 +55,7 @@ the headline PPA metrics.
 
 The aggregate shortlist row is in
 [`tables/method_seed_summary.csv`](tables/method_seed_summary.csv). It reports
-T99 mean HV `0.120094` versus classic `0.140740`, mean HV delta `-0.020646`,
+T99 mean HV `0.120094` versus classic `0.140645`, mean HV delta `-0.020551`,
 and a paired HV record of `2` T99 wins, `3` classic wins, and `3` ties across
 the eight headline problems.
 

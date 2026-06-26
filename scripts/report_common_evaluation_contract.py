@@ -157,6 +157,15 @@ def parse_method_families(values: list[str]) -> dict[str, str]:
     return families
 
 
+def read_pareto_metrics(path: Path | None) -> dict[tuple[str, str, str], dict[str, str]]:
+    if path is None:
+        return {}
+    return {
+        (row["backend"], row["benchmark"], row["problem"]): row
+        for row in read_csv(path)
+    }
+
+
 def cell_count(archive: dict[str, Any]) -> int:
     value = archive.get("num_cells")
     if isinstance(value, int):
@@ -404,6 +413,7 @@ def summary_rows(method_rows: list[dict[str, str]]) -> list[dict[str, str]]:
 def metric_rows(
     dataset: dict[str, Any],
     completeness: dict[tuple[str, str], dict[str, str]],
+    pareto_metrics: dict[tuple[str, str, str], dict[str, str]],
     seed: str,
     budget_shape: str,
     method_families: dict[str, str],
@@ -425,6 +435,14 @@ def metric_rows(
         method_samples = [sample for sample in samples if sample["technique"] == method]
         final_stats = stats_by_step["final"][method]
         hv_auc_value = hv_auc(stats_by_step, method)
+        pareto = pareto_metrics.get((method, benchmark, problem))
+        ppa_hv = final_stats["hypervolume"]["value"]
+        pareto_point_count = final_stats["rank1_count"]
+        reference_count = reference_beating_count(method_samples, objective_keys)
+        if pareto is not None:
+            ppa_hv = float(pareto["hypervolume"])
+            pareto_point_count = int(pareto["pareto_point_count"])
+            reference_count = int(pareto["reference_beating_count"])
         passive = passive_metrics(
             method_samples,
             archive,
@@ -454,8 +472,8 @@ def metric_rows(
                 "synthesis_valid_count": NOT_AVAILABLE,
                 "valid_ppa_count": fmt(len(method_samples)),
                 "unique_valid_netlist_count": NOT_AVAILABLE,
-                "pareto_point_count": fmt(final_stats["rank1_count"]),
-                "global_ppa_hv": fmt(final_stats["hypervolume"]["value"]),
+                "pareto_point_count": fmt(pareto_point_count),
+                "global_ppa_hv": fmt(ppa_hv),
                 "hv_auc": hv_auc_value,
                 "passive_archive_coverage": passive["passive_archive_coverage"],
                 "passive_archive_qd_score": passive["passive_archive_qd_score"],
@@ -464,7 +482,7 @@ def metric_rows(
                 "pareto_cell_count": passive["pareto_cell_count"],
                 "pareto_spread": passive["pareto_spread"],
                 "unique_front_family_count": NOT_AVAILABLE,
-                "reference_beating_count": fmt(reference_beating_count(method_samples, objective_keys)),
+                "reference_beating_count": fmt(reference_count),
                 "classic_covered": gate["classic_valid_ppa"],
                 "method_covered": method_covered,
                 "reference_ppa_valid": gate["reference_ppa_valid"],
@@ -493,6 +511,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--seed", required=True)
     parser.add_argument("--budget-shape", required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--pareto-problem-metrics", type=Path)
     parser.add_argument("--method-family", action="append", default=[])
     return parser.parse_args(argv)
 
@@ -505,6 +524,7 @@ def main(argv: list[str] | None = None) -> int:
         (row["benchmark"], row["problem"]): row
         for row in read_csv(args.ppa_completeness)
     }
+    pareto_metrics = read_pareto_metrics(args.pareto_problem_metrics)
     method_families = parse_method_families(args.method_family)
 
     method_rows = []
@@ -514,6 +534,7 @@ def main(argv: list[str] | None = None) -> int:
         rows, archive_rows, config = metric_rows(
             read_json(path),
             completeness,
+            pareto_metrics,
             args.seed,
             args.budget_shape,
             method_families,

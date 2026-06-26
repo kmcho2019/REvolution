@@ -81,6 +81,20 @@ pretrained synthesized-netlist encoder lane attempted so far. Present it
 honestly as evidence that pretrained netlist embeddings can be made
 operational, not as evidence that the current QD use of those embeddings wins.
 
+## Common Evaluation Tables
+
+Normalized common-evaluation rows are now available under `tables/`:
+
+```text
+tables/method_problem_seed_metrics.csv
+tables/method_seed_summary.csv
+tables/passive_archive_metrics.csv
+```
+
+The summary row records DeepGate mean HV `0.104042` versus classic
+`0.140645`. Classic passive archive fields are `not_available` because this
+viewer was intentionally exported with `--no-classic-descriptor-recovery`.
+
 ## Visualizations
 
 The full Phase 03.1-compatible viewer exists at:

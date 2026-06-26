@@ -48,6 +48,20 @@ on `Prob015_multi_pipe_8bit` and from `36` to `11` on `Prob045_alu`. The run
 is not promoted, so this is not a promotion-gate violation, but it is part of
 why the hybrid is not a final RTLLM candidate.
 
+## Common Evaluation Tables
+
+Normalized common-evaluation rows are now available under `tables/`:
+
+```text
+tables/method_problem_seed_metrics.csv
+tables/method_seed_summary.csv
+tables/passive_archive_metrics.csv
+```
+
+The summary row records T96 mean HV `0.119921` versus classic `0.140645`.
+Classic passive archive fields are `not_available` because this viewer was
+intentionally exported with `--no-classic-descriptor-recovery`.
+
 ## Visualizations
 
 Full Phase 03.1 viewer:

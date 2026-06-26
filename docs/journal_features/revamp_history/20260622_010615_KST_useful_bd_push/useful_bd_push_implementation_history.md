@@ -5943,6 +5943,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   archive coverage/QD score, passive archive AUC metrics, Pareto-cell count,
   Pareto spread, and paired HV wins/losses/ties versus the matched classic row.
 - Regenerated T99 common tables. The aggregate row records T99 mean HV
-  `0.120094`, classic mean HV `0.140740`, and T99 mean HV delta `-0.020646`.
+  `0.120094`, classic mean HV `0.140645`, and T99 mean HV delta `-0.020551`.
 - Decision: use this table for future operational shortlist updates, while
   preserving per-problem yield warnings and duplicate-accounting caveats.
+
+## 2026-06-26T18:55:00Z - Common Tables Backfilled Through T96
+
+- Corrected the common exporter to accept
+  `analysis/pareto_analysis/backend_problem_metrics.csv` and use its
+  deduplicated HV, Pareto point count, and reference-beating count instead of
+  viewer sample-level rank counts.
+- Regenerated T94, T95, T96, and T99 common tables. T94/T95 completeness
+  tables were also regenerated to include `valid_ppa_yield_status`.
+- New summary rows match package conclusions: T94 mean HV `0.104042`, T95
+  mean HV `0.115277`, T96 mean HV `0.119921`, and T99 mean HV `0.120094`,
+  all below the matched classic mean HV `0.140645`.
+- T94/T95/T96 classic passive archive fields remain `not_available` because
+  those viewers were intentionally exported with `--no-classic-descriptor-recovery`
+  for DeepGate/RF-DeepGate descriptor spaces. QD-side passive archive and AUC
+  rows are now available.

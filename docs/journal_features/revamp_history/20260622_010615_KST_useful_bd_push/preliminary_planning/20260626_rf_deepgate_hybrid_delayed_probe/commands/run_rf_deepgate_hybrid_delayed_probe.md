@@ -70,3 +70,17 @@ uv run python scripts/validate_single_thought_operator_run.py \
   --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260625_encoder_config_screening/tables/prelim_screen_subset.yaml \
   --require-full-subset
 ```
+
+## Common Evaluation Tables
+
+```bash
+uv run python scripts/report_common_evaluation_contract.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/visualizations/qd_ppa_viewer \
+  --ppa-completeness docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/analysis/ppa_completeness.csv \
+  --pareto-problem-metrics docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/analysis/pareto_analysis/backend_problem_metrics.csv \
+  --seed 1001 \
+  --budget-shape 8x5 \
+  --method-family classic_revolution_8x5=classic \
+  --method-family rf_deepgate_hybrid_delayed_8x5=hybrid_encoder \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/tables
+```
