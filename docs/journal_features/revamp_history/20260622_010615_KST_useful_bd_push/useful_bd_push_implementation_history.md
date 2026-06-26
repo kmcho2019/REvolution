@@ -6043,3 +6043,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `Prob041_traffic_light` area-power gain plot.
 - Decision: keep T100 as the FG-QDM category representative, but do not
   promote exact T100 to the eight-design screen or full RTLLM spend.
+
+## 2026-06-26T17:35:00Z - T100 Common Metrics Backfilled
+
+- Generated `tables/ppa_completeness.csv`,
+  `tables/method_problem_seed_metrics.csv`, `tables/method_seed_summary.csv`,
+  `tables/passive_archive_metrics.csv`, and
+  `tables/passive_archive_config.json` for the T100 package.
+- The common summary records `3/3` headline problems and no valid-PPA yield
+  warnings. T100 mean HV is `0.156553`, classic mean HV is `0.190331`, and
+  the classic-delta mean HV is `-0.033777`.
+- T100 passive archive coverage averages `0.312500` with canonical netlist
+  deduplication. Classic passive archive metrics remain `not_available`
+  because RF leaf-ID descriptor projection is intentionally disabled for
+  classic candidates.

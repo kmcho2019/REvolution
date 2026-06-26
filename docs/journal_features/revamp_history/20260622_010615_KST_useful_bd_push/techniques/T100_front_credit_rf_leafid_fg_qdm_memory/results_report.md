@@ -54,6 +54,25 @@ The important difference from T97 is the `front_rescue` lane: it produced
 valid-PPA children on every sampled call and added global-front material. The
 `memory_refine` lane remains weak, with no global-front additions.
 
+## Common Evaluation Contract
+
+Source: `tables/method_seed_summary.csv`.
+
+| Method | Headline problems | Mean HV | Mean HV-AUC | Mean valid-PPA | Passive coverage | Classic HV delta |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `classic_revolution_12x3` | `3` | `0.190331` | `0.165380` | `23.67` | `not_available` | `0.000000` |
+| `fg_qdm_rf_leafid_front_credit_12x3` | `3` | `0.156553` | `0.126839` | `16.33` | `0.312500` | `-0.033777` |
+
+The completeness gate marks all three smoke problems as `headline` with
+`pass` valid-PPA yield status. That means T100 preserves coverage on this
+smoke subset. The common-table result still reinforces the negative promotion
+decision because T100 loses mean HV, HV-AUC, Pareto points, and
+reference-beating count.
+
+Classic passive archive fields are `not_available`. This is intentional: the
+RF leaf-ID descriptor cannot be honestly recovered for classic candidates by
+the generic graph-metric path.
+
 ## Visualization
 
 - Full Phase 03.1 viewer:

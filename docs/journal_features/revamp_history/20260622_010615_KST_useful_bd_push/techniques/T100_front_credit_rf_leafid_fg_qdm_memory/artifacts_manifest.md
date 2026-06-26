@@ -8,6 +8,11 @@
 | `methodology.md` | Method definition and promotion gates. |
 | `tables/descriptor_probe_rf_leafid_fg_qdm.json` | Descriptor contract probe output. |
 | `tables/t100_memory_lane_summary.csv` | Memory-lane contribution summary. |
+| `tables/ppa_completeness.csv` | Reference-complete coverage gate. |
+| `tables/method_problem_seed_metrics.csv` | Common per-problem method metrics. |
+| `tables/method_seed_summary.csv` | Common method summary metrics. |
+| `tables/passive_archive_metrics.csv` | Common passive archive metrics. |
+| `tables/passive_archive_config.json` | Common archive-axis configuration. |
 
 ## Run Output
 
@@ -29,6 +34,8 @@
 | `validate_single_thought_operator_run.py` | Passed. |
 | `report_ppa_distribution.py` | Completed with `207` valid-PPA candidate rows. |
 | `report_pareto_analysis.py` | Completed. |
+| `report_ppa_completeness.py` | Completed with `3/3` headline problems. |
+| `report_common_evaluation_contract.py` | Completed. |
 | `export_qd_ppa_visualization.py --strict --no-classic-descriptor-recovery` | Passed. |
 | `validate_qd_ppa_visualization.py --strict` | Passed. |
 | Playwright validator | Failed because classic RF-leaf archive projection is unavailable and the strict browser suite expects canonical validation problems outside this smoke subset. |

@@ -217,7 +217,9 @@ front-credit `0.1048`, and `front_rescue` contributes `2` global-front
 additions across `4` generated calls. The result is still not promoted because
 classic wins the same smoke at mean HV `0.1903`, wins all three per-problem
 HV comparisons, and the `memory_refine` lane still has `0` global-front
-additions.
+additions. The common table also marks all three T100 smoke problems as
+`headline` with `pass` valid-PPA yield status, so the negative decision is not
+caused by missing coverage.
 
 ## Pre-RF Archive-Pressure Context
 

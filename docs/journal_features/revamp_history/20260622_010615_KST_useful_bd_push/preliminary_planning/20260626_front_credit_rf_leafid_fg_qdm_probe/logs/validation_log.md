@@ -42,6 +42,16 @@ Result: completed. The PPA distribution report contains `207` valid-PPA
 candidate rows and no warnings.
 
 ```bash
+uv run python scripts/report_ppa_completeness.py ...
+uv run python scripts/report_common_evaluation_contract.py ...
+```
+
+Result: completed. The common summary records T100 mean HV `0.156553`,
+classic mean HV `0.190331`, and T100 classic-delta mean HV `-0.033777`.
+All three smoke problems are `headline` and have `pass` valid-PPA yield
+status.
+
+```bash
 uv run python scripts/export_qd_ppa_visualization.py \
   --strict \
   --no-classic-descriptor-recovery ...

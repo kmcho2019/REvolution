@@ -117,6 +117,32 @@ uv run python scripts/report_pareto_analysis.py \
   --output-dir "$OUT/analysis/pareto_analysis"
 ```
 
+## Common Evaluation Tables
+
+```bash
+TMP_COMPLETENESS=$(mktemp)
+uv run python scripts/report_ppa_completeness.py \
+  --ppa-candidates "$OUT/analysis/ppa_distribution/data/ppa_candidates.csv" \
+  --reference-ppa-metrics "$OUT/analysis/ppa_distribution/data/reference_ppa_metrics.csv" \
+  --classic-method classic_revolution_12x3 \
+  --qd-method fg_qdm_rf_leafid_front_credit_12x3 \
+  --output "$TMP_COMPLETENESS"
+
+uv run python scripts/report_common_evaluation_contract.py \
+  --viewer-root "$OUT/visualizations/qd_ppa_viewer" \
+  --ppa-completeness "$TMP_COMPLETENESS" \
+  --seed 1001 \
+  --budget-shape 12x3 \
+  --pareto-problem-metrics "$OUT/analysis/pareto_analysis/backend_problem_metrics.csv" \
+  --backend-run classic_revolution_12x3="$CLASSIC" \
+  --backend-run fg_qdm_rf_leafid_front_credit_12x3="$T100" \
+  --method-family classic_revolution_12x3=classic \
+  --method-family fg_qdm_rf_leafid_front_credit_12x3=front_guarded_qd_memory \
+  --output-dir "$OUT/tables"
+
+rm -f "$TMP_COMPLETENESS"
+```
+
 ## Phase 03.1 Viewer
 
 ```bash
