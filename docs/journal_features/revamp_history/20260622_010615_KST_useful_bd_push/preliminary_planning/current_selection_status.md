@@ -26,12 +26,17 @@ but it still trails classic `0.1406` and loses front breadth.
 Selection should not discard whole encoder/config categories just because the
 current best member is below classic. Maintain:
 
-1. one best current representative per encoder/config category; and
-2. a top-10 current configuration table ranked primarily by mean HV.
+1. one best current representative per encoder/config category;
+2. a mixed-scope top-10 QD configuration table ranked primarily by mean HV;
+   and
+3. a separate frozen-screen top-10 table for more comparable eight-design
+   decisions.
 
-The top-10 table below is operational, not a final paper claim. Mean HV is most
-comparable inside the frozen eight-design preliminary screen; rows with a
-different budget or replication caveat are marked explicitly.
+The overall top-10 table is operational, not a final paper claim. It is useful
+for tracking promising configurations across smokes, screens, and replication
+gates, but it must not be used to promote a smoke-only method. Mean HV is most
+comparable inside the frozen eight-design preliminary screen, so the
+frozen-screen table remains the promotion-oriented view.
 
 ## Current Category Representatives
 
@@ -50,7 +55,32 @@ different budget or replication caveat are marked explicitly.
 | Hybrid pretrained RTL/netlist encoder | `T96_rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Best RF/DeepGate hybrid representative; improves over pure T95 DeepGate but regresses versus same-seed T83 `0.1369`, trails classic, and loses front breadth. |
 | AURORA / AutoQD learned descriptor | `T99_aurora_raw_impl_delayed_qd` | `0.1201` | Best live AURORA-style raw implementation-feature representative; screened negative versus classic `0.1406`, but stronger than Qwen and pure DeepGate by mean HV. |
 
-## Top 10 Current Configs By Mean HV
+## Top 10 Overall QD Configs By Mean HV
+
+Primary sort key is observed QD mean HV. The scope column is mandatory because
+smoke-only and single-seed rows are not interchangeable with replicated
+eight-design rows.
+
+| Rank | Config | Mean HV | Scope | Read |
+| ---: | --- | ---: | --- | --- |
+| 1 | `T100_fg_qdm_rf_leafid_front_credit_12x3` | `0.1566` | Three-problem smoke; classic `0.1903` | Best FG-QDM smoke and best overall observed QD mean HV, but still negative versus classic. |
+| 2 | `T97_fg_qdm_sr_front_credit_12x3` | `0.1534` | Three-problem smoke; classic `0.1903` | Strongest SR-memory FG-QDM variant; superseded by T100 for the FG-QDM category. |
+| 3 | `T86_fg_qdm_random_memory_12x3` | `0.1382` | Three-problem smoke control; classic `0.1903` | Control evidence only; random memory should not be promoted as a BD. |
+| 4 | `T85_fg_qdm_sr_memory_warmup4_12x3` | `0.1375` | Three-problem smoke; classic `0.1903` | Original FG-QDM SR-memory smoke; superseded by stricter T97/T100. |
+| 5 | `T83_rf_leafid_structural_delayed_qd` | `0.1369` | Eight-design seed `1001`; classic `0.1406` | Closest single-seed pretrained model-state screen, but three-seed mean drops to `0.1260`. |
+| 6 | `masterrtl_aux_archive_high_exploit_8x5` | `0.1339` | Eight-design seed `1001`; classic `0.1406` | Best auxiliary-archive single-seed clue, but three-seed mean drops to `0.1261`. |
+| 7 | `masterrtl_delayed_archive_activation_8x5` | `0.1324` | Eight-design seed `1001`; classic `0.1406` | Best archive-timing clue; still below classic. |
+| 8 | `T87_fg_qdm_shape_density_memory_12x3` | `0.1264` | Three-problem smoke; classic `0.1903` | RTL-native FG-QDM descriptor smoke; blocked by zero valid-PPA memory-lane children. |
+| 9 | `masterrtl_aux_archive_high_exploit_6x7` | `0.1229` | Eight-design `6x7`; classic `0.1701` | Deeper budget helps classic more than QD. |
+| 10 | `masterrtl_structural_front_slot_8x5` | `0.1227` | Eight-design seed `1001`; classic `0.1406` | Best raw MasterRTL structural-cell front-slot variant. |
+
+This table keeps T100 visible as the current best observed QD mean-HV result
+while preserving the promotion decision: it is smoke-only and still loses the
+matched classic smoke. The final RTLLM shortlist remains empty until a category
+representative survives a reference-complete frozen screen or a documented
+promotion exception.
+
+## Top 10 Frozen-Screen Configs By Mean HV
 
 Primary sort key is mean HV. Secondary read is whether the row is comparable,
 replicated, and category-useful.

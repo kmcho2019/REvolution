@@ -6087,3 +6087,18 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: do not spend on exact direct fail-feedback or same-budget short
   feedback. Continue only with a materially different source-level repair or
   front-rescue lane that logs per-lane valid-PPA and front-add contribution.
+
+## 2026-06-26T21:25:00Z - Preliminary Selection Status Clarified
+
+- Re-audited the preliminary planning package after the T100 FG-QDM result.
+  The plan is still not finished: no QD/MAP-Elites arm is currently promoted
+  for final full-RTLLM spend.
+- Updated `preliminary_planning/current_selection_status.md` to maintain both
+  required views: one representative per encoder/config category and a
+  mixed-scope top-10 QD configuration table ranked primarily by observed mean
+  HV.
+- Kept a separate frozen-screen top-10 table so smoke-only results such as
+  T100 stay visible without being treated as promotion-ready full-screen
+  evidence.
+- Updated the preliminary-planning index to mark the T100 RF-leaf FG-QDM smoke
+  as completed rather than pending.
