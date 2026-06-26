@@ -17,7 +17,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 7 | RF leaf-ID front-slot delayed QD | Completed negative | Tests whether T83's RF model-state axes need explicit local front-slot parent sampling to recover Pareto breadth. | Mean HV drops to `0.1162`, with `0/8` HV wins; keep only as failed coupling evidence. |
 | 8 | FG-QDM memory controls | Completed smoke negative | Tests QD as guarded auxiliary memory rather than a replacement optimizer. | Random-memory FG-QDM slightly beats SR-memory but trails classic, so exact `sr_pca_3d` memory is not descriptor-positive. |
 | 9 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
-| 10 | DeepGate transition/cone bridge | Pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats, T90 reaches `8/8` offline coverage, and T91 builds candidate-level pooled descriptors. | Live HV evidence is still missing, so it is not spend-ready. |
+| 10 | DeepGate runtime pooled bridge | Pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats, T90 reaches `8/8` offline coverage, T91 builds pooled descriptors, and T92 wires runtime axes. | Live HV evidence is still missing, so it is not spend-ready. |
 
 ## Most Promising Direction
 
@@ -231,6 +231,13 @@ are `10.875` per problem, mean area-power Pareto cells are `4.625`, and every
 problem has at least one Pareto cell. This makes DeepGate a credible bounded
 live-smoke candidate, but not a final RTLLM arm until it has matched live HV
 data.
+
+T92 completes the runtime descriptor gate. The pooled DeepGate PCA is now
+frozen as `deepgate_pool_pc0..2`, with descriptor profile
+`deepgate_pooled_pc3`. The hook uses the isolated official DeepGate
+environment rather than importing `deepgate` into the main uv env, and the real
+smoke emits finite projected values on a generated `Prob024_fsm` candidate.
+DeepGate is bounded-live-smoke-ready, not final-RTLLM-promoted.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

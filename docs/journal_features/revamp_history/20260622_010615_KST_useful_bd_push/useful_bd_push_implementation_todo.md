@@ -130,6 +130,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       descriptors. Outcome: `96/96` sampled candidates across `8/8` problems
       have descriptors and nonzero area-power Pareto cells; bounded live smoke
       is now justifiable, but final RTLLM spend still needs matched HV data.
+- [x] Freeze pooled DeepGate descriptors into a runtime profile. Outcome: T92
+      registers `deepgate_pool_pc0..2`, wires both runtime descriptor paths,
+      builds `deepgate_pooled_pc3`, and passes an isolated official-model
+      smoke; next step is bounded matched live HV, not full RTLLM spend.
 - [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.

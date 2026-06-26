@@ -4,6 +4,29 @@ Unbounded journal for `useful_bd_push`. Record notable decisions, commands,
 outputs, experiments, failed attempts, blockers, commits, and validation
 evidence.
 
+## 2026-06-26T11:10:00Z - T92 DeepGate Runtime Descriptor Gate Completed
+
+- Added `preliminary_planning/20260626_deepgate_runtime_descriptor_gate/` to
+  freeze T91's pooled DeepGate embedding PCA as a runtime descriptor contract.
+- Added `deepgate_pool_pc0`, `deepgate_pool_pc1`, and `deepgate_pool_pc2` to
+  the descriptor registry and connected the extraction path through both
+  `QDEngine` and worker `CandidateEvaluator`.
+- Added `src/revolution/deepgate_descriptor_evaluator.py` and
+  `scripts/extract_deepgate_pooled_metrics.py`. The main uv environment does
+  not import `deepgate`; it calls the isolated official-model environment and
+  asserts the emitted metrics JSON.
+- Built `tables/deepgate_pooled_projection.json` from the T91 `96` candidate
+  vectors and `tables/deepgate_descriptor_profiles.yaml` with profile
+  `deepgate_pooled_pc3`.
+- Real isolated smoke on generated `Prob024_fsm` emitted
+  `deepgate_pool_pc0=0.1690518098`,
+  `deepgate_pool_pc1=0.0919195418`, and
+  `deepgate_pool_pc2=-0.0000848739`.
+- Validation passed: focused pytest, ruff, pyright, ty with the isolated
+  DeepGate site-packages on `PYTHONPATH`, and `git diff --check`.
+- Decision: DeepGate is now bounded-live-smoke-ready, but still not promoted
+  for final RTLLM spend because matched live HV data is missing.
+
 ## T87 RTL-Native FG-QDM Pre-Registration - 2026-06-26 UTC
 
 - Addressed the T85 review blocker first by simplifying the FG-QDM memory
