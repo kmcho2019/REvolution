@@ -325,6 +325,54 @@ def test_missing_descriptors_stay_in_ppa_and_out_of_cells(tmp_path: Path) -> Non
     assert "classic" not in dataset["cell_summaries_by_step"]["final"]
 
 
+def test_export_recovers_descriptors_for_named_classic_backend(tmp_path: Path) -> None:
+    run_root, classic_root, qd_root = _write_run(tmp_path)
+    _rename_backend(run_root / "final_analysis" / "ppa_distribution" / "data" / "ppa_candidates.csv", "classic_revolution_8x5")
+    _rename_backend(run_root / "final_analysis" / "design_space_analysis" / "successful_candidates.csv", "classic_revolution_8x5")
+    _clear_descriptor_columns(run_root / "final_analysis" / "design_space_analysis" / "successful_candidates.csv")
+    classic_candidate = classic_root / "model" / "RTLLM" / "Prob001" / "Gen0" / "classic_a_initial"
+    classic_candidate.mkdir(parents=True)
+    (classic_candidate / "code.sv").write_text("module top; endmodule\n", encoding="utf-8")
+    _write_json(
+        classic_candidate / "code_synthesis_report.metrics.json",
+        {
+            "ppa_metrics": {"area": 90.0, "power": 0.8, "eff_clk_period": 0.0},
+            "structural_metrics": {
+                "logic_depth": 3.0,
+                "ff_depth": 0.0,
+                "comb_width_log": 1.0,
+            },
+            "physical_metrics": {},
+        },
+    )
+
+    result = export_qd_ppa_visualization(
+        run_root=run_root,
+        backend_runs=(
+            BackendRun("classic_revolution_8x5", classic_root),
+            BackendRun("grid_quantile_pareto_journal_bd", qd_root),
+        ),
+        archive_source_backend="grid_quantile_pareto_journal_bd",
+        output_dir=run_root / "visualization" / "named_classic",
+        subset_config=None,
+        selected_problem="RTLLM/Prob001",
+        asset_mode="inline",
+        strict=True,
+        recover_classic_descriptors=True,
+    )
+
+    dataset = json.loads(result.dataset_paths[0].read_text(encoding="utf-8"))
+    classic = next(
+        sample
+        for sample in dataset["samples"]
+        if sample["technique"] == "classic_revolution_8x5"
+    )
+
+    assert classic["archive_projection_status"] == "projected"
+    assert classic["projection_type"] == "posthoc"
+    assert classic["archive_cell_id"] == "1,0,0"
+
+
 def test_strict_export_keeps_uninitialized_quantile_samples_out_of_cells(
     tmp_path: Path,
 ) -> None:
@@ -529,3 +577,21 @@ def test_export_supports_grid_and_cvt_archive_sources(tmp_path: Path) -> None:
     assert cvt_dataset["archive_definition"]["archive_type"] == "cvt"
     assert cvt_dataset["archive_projection"]["rendering"] == "true_centroid"
     assert any(sample["archive_projection_status"] == "native" for sample in cvt_dataset["samples"])
+
+
+def _rename_backend(path: Path, backend_name: str) -> None:
+    rows = list(csv.DictReader(path.open(encoding="utf-8", newline="")))
+    for row in rows:
+        if row["backend"] == "classic":
+            row["backend"] = backend_name
+    _write_csv(path, rows)
+
+
+def _clear_descriptor_columns(path: Path) -> None:
+    rows = list(csv.DictReader(path.open(encoding="utf-8", newline="")))
+    for row in rows:
+        if row["backend"].startswith("classic_"):
+            row["logic_depth"] = ""
+            row["ff_depth"] = ""
+            row["comb_width_log"] = ""
+    _write_csv(path, rows)

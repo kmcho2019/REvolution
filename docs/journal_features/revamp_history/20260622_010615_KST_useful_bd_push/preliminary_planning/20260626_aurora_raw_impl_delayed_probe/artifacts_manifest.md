@@ -29,6 +29,7 @@ exp/useful_bd_push/prelim_aurora_raw_impl_delayed_20260626/live/aurora_raw_impl_
 | `tables/passive_archive_metrics.csv` | Passive archive metrics from the Phase 03.1 viewer projection. |
 | `tables/passive_archive_config.json` | Per-problem archive definitions used for the table export. |
 | `tables/ppa_completeness.csv` | Copy of the completeness gate used by the common table export. |
+| `visualizations/qd_ppa_viewer_source/final_analysis/ppa_distribution/data/*.csv` | Staged PPA inputs used to regenerate the Phase 03.1 viewer. |
 
 ## Visualizations
 
@@ -37,6 +38,7 @@ exp/useful_bd_push/prelim_aurora_raw_impl_delayed_20260626/live/aurora_raw_impl_
 | `visualizations/qd_ppa_viewer/index.html` | Full Phase 03.1 archive/PPA viewer. |
 | `visualizations/qd_ppa_viewer/manifest.json` | Viewer manifest. |
 | `visualizations/qd_ppa_viewer/datasets/*.json` | Per-problem viewer datasets. |
+| `visualizations/qd_ppa_viewer/descriptor_cache.json` | Recovered posthoc descriptor values for projected classic candidates. |
 | `visualizations/qd_ppa_viewer/validation.json` | Strict viewer validation result. |
 | `visualizations/qd_ppa_viewer/screenshot.png` | Visual inspection screenshot. |
 | `visualizations/direct_ppa_pareto/index.html` | Static PPA-front supplement. |

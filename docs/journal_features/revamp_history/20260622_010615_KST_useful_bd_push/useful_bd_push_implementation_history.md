@@ -5897,10 +5897,10 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Generated T99 `tables/method_problem_seed_metrics.csv`,
   `tables/passive_archive_metrics.csv`,
   `tables/passive_archive_config.json`, and `tables/ppa_completeness.csv`.
-- The T99 table export is intentionally partial for passive archive claims:
-  QD rows have viewer-projected cell metrics, classic rows are marked
-  `descriptor_projection_missing`, and all QD rows are marked
-  `candidate_level_no_canonical_dedup` because the viewer lacks canonical
+- The initial T99 table export was intentionally partial for passive archive
+  claims: QD rows had viewer-projected cell metrics, classic rows were marked
+  `descriptor_projection_missing`, and all QD rows were marked
+  `candidate_level_no_canonical_dedup` because the viewer lacked canonical
   netlist hashes.
 
 ## 2026-06-26T18:00:00Z - FG-QDM Requested Variant Status Clarified
@@ -5916,3 +5916,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: do not duplicate the scheduler. Any next FG-QDM attempt should
   reuse the existing mode and change only one motivated descriptor or credit
   setting at a time.
+
+## 2026-06-26T18:20:00Z - T99 Classic Passive Projection Fixed
+
+- Fixed `scripts/export_qd_ppa_visualization.py`'s underlying exporter so
+  classic-like backend names such as `classic_revolution_8x5` are treated as
+  posthoc classic projections rather than unprojected non-classic methods.
+- Added synthesis-report structural metric recovery for descriptor axes such
+  as `comb_ratio`, `adder_ratio`, and `cell_count_log`, using existing
+  `code_synthesis_report.metrics.json` files instead of rerunning graph
+  extraction when those metrics already exist.
+- Regenerated the T99 Phase 03.1 viewer and common tables. All `191/191`
+  classic valid-PPA samples now project into the T99 archive space, and
+  `tables/passive_archive_metrics.csv` has no `not_available` passive archive
+  rows.
+- Remaining caveat: rows are still candidate-level because the viewer datasets
+  do not contain canonical netlist hashes for duplicate suppression.

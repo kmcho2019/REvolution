@@ -101,6 +101,24 @@ uv run python scripts/report_ppa_completeness.py \
 ```
 
 ```bash
+SRC=docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/visualizations/qd_ppa_viewer_source
+mkdir -p "$SRC/final_analysis/ppa_distribution/data"
+cp docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/analysis/ppa_distribution/data/ppa_candidates.csv \
+  "$SRC/final_analysis/ppa_distribution/data/ppa_candidates.csv"
+cp docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/analysis/ppa_distribution/data/reference_ppa_metrics.csv \
+  "$SRC/final_analysis/ppa_distribution/data/reference_ppa_metrics.csv"
+
+uv run python scripts/export_qd_ppa_visualization.py \
+  --run-root "$SRC" \
+  --backend_run classic_revolution_8x5=exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/classic_revolution_8x5/seed_1001 \
+  --backend_run aurora_raw_impl_compact_delayed_8x5=exp/useful_bd_push/prelim_aurora_raw_impl_delayed_20260626/live/aurora_raw_impl_compact_delayed_8x5/seed_1001 \
+  --archive_source_backend aurora_raw_impl_compact_delayed_8x5 \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260625_encoder_config_screening/tables/prelim_screen_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/visualizations/qd_ppa_viewer \
+  --strict
+```
+
+```bash
 uv run python scripts/report_common_evaluation_contract.py \
   --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/visualizations/qd_ppa_viewer \
   --ppa-completeness docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/analysis/ppa_completeness.csv \

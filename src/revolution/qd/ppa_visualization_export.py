@@ -436,7 +436,7 @@ def _sample_from_row(
         qd_event=qd_event,
         code_file_path=code_file_path,
         descriptor_cache=descriptor_cache,
-        recover=backend == "classic" and recover_classic_descriptors,
+        recover=_is_classic_backend_name(backend) and recover_classic_descriptors,
     )
     projection = _project_sample(
         archive_context["space"],
@@ -608,6 +608,23 @@ def _graph_metrics_for_code(task: tuple[str, tuple[str, ...]]) -> tuple[str, dic
     from revolution.source_aligned_descriptor_evaluator import SourceAlignedRTLDescriptorEvaluator
 
     code_file_path, axis_names = task
+    code_path = Path(code_file_path)
+    metrics: dict[str, float] = {}
+    report_path = code_path.parent / "code_synthesis_report.metrics.json"
+    if report_path.is_file():
+        report = _load_json_dict(report_path)
+        for section in ("structural_metrics", "physical_metrics"):
+            payload = report.get(section, {})
+            assert isinstance(payload, dict)
+            for axis in axis_names:
+                if axis not in payload:
+                    continue
+                parsed = finite_float(payload[axis])
+                assert parsed is not None
+                metrics[axis] = parsed
+        if all(axis in metrics for axis in axis_names):
+            return code_file_path, extract_descriptor_values(metrics, axis_names)
+
     graph_evaluator = GraphDescriptorEvaluator(yosys_timeout_seconds=30)
     registry = descriptor_registry()
     needs_source_aligned = any(
@@ -620,12 +637,11 @@ def _graph_metrics_for_code(task: tuple[str, tuple[str, ...]]) -> tuple[str, dic
         graph = graph_evaluator._build_graph_model(payload, top_module_name=None)
         metrics = graph_evaluator._extract_journal_bd_metrics(graph)
         return code_file_path, extract_descriptor_values(metrics, axis_names)
-    code_path = Path(code_file_path)
     code_text = code_path.read_text(encoding="utf-8", errors="ignore")
-    metrics = RTLDescriptorEvaluator().extract_metrics(
+    metrics.update(RTLDescriptorEvaluator().extract_metrics(
         code_text=code_text,
         code_file_path=code_path,
-    )
+    ))
     metrics.update(graph_evaluator.extract_metrics(code_file_path=code_path, top_module_name=None))
     if needs_source_aligned:
         metrics.update(
@@ -707,11 +723,13 @@ def _project_sample(
         indices = [_nearest_cvt_centroid(space, descriptors)]
     else:
         raise AssertionError(f"unknown archive type: {archive_type}")
+    projection_status = "projected" if _is_classic_backend_name(technique) else "native"
+    projection_type = "posthoc" if _is_classic_backend_name(technique) else "native"
     return {
         "archive_cell_id": ",".join(str(index) for index in indices),
         "archive_indices": indices,
-        "archive_projection_status": "projected" if technique == "classic" else "native",
-        "projection_type": "posthoc" if technique == "classic" else "native",
+        "archive_projection_status": projection_status,
+        "projection_type": projection_type,
     }
 
 
@@ -1107,10 +1125,11 @@ def _classic_dir_matches(
     benchmark: str,
     problem: str,
 ) -> dict[tuple[str, str, str, str], dict[str, str]]:
-    if "classic" not in backend_paths:
+    classic_backend = _classic_backend_name(backend_paths)
+    if classic_backend is None:
         return {}
     problem_dir = _find_problem_dir(
-        backend_paths["classic"],
+        backend_paths[classic_backend],
         benchmark=benchmark,
         problem=problem,
         require_archive=False,
@@ -1137,7 +1156,7 @@ def _classic_dir_matches(
     matches: dict[tuple[str, str, str, str], dict[str, str]] = {}
     used: dict[tuple[int, str, str], int] = {}
     for row in rows:
-        if row["backend"] != "classic":
+        if row["backend"] != classic_backend:
             continue
         key = (int(finite_float(row["generation"]) or 0), row["strategy"], _ppa_key(row))
         choices = candidates.get(key, [])
@@ -1147,6 +1166,20 @@ def _classic_dir_matches(
         used[key] = offset + 1
         matches[(row["backend"], row["benchmark"], row["problem"], row["candidate_id"])] = choices[offset]
     return matches
+
+
+def _classic_backend_name(backend_paths: dict[str, Path]) -> str | None:
+    if "classic" in backend_paths:
+        return "classic"
+    names = sorted(name for name in backend_paths if name.startswith("classic_"))
+    if not names:
+        return None
+    assert len(names) == 1
+    return names[0]
+
+
+def _is_classic_backend_name(name: str) -> bool:
+    return name == "classic" or name.startswith("classic_")
 
 
 def _ppa_key(values: dict[str, Any]) -> str:

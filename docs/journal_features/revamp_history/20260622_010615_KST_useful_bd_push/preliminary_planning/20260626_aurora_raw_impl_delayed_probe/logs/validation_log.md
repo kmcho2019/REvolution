@@ -47,6 +47,23 @@ generated candidate and reference PPA CSVs staged for the exporter, and strict
 validation then passed. The retained regeneration inputs are the CSVs in
 `analysis/ppa_distribution/data/`.
 
+The viewer was regenerated again after fixing classic-like backend descriptor
+recovery for names such as `classic_revolution_8x5`. The regenerated datasets
+project all classic valid-PPA samples into the T99 archive space:
+
+```text
+classic projected samples: 191 / 191
+descriptor cache entries: 191
+```
+
+Strict validation passed after regeneration:
+
+```text
+uv run python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_aurora_raw_impl_delayed_probe/visualizations/qd_ppa_viewer \
+  --strict
+```
+
 ## Completeness Gate
 
 All eight problems are headline-comparable because both backends have valid

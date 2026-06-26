@@ -53,14 +53,15 @@ The normalized common-evaluation rows are in
 They add per-problem HV-AUC and passive-archive availability columns beside
 the headline PPA metrics.
 
-The T99 QD rows have descriptor-cell coverage, QD score, Pareto-cell count,
-coverage AUC, and QD-score AUC from the Phase 03.1 viewer. These rows are
-marked `candidate_level_no_canonical_dedup` because the viewer datasets do not
-include canonical netlist hashes.
+Both T99 and classic rows now have descriptor-cell coverage, QD score,
+Pareto-cell count, coverage AUC, and QD-score AUC from the Phase 03.1 viewer.
+Classic candidates are projected posthoc into the T99 archive space using the
+same implemented-structural descriptor axes. The viewer records `191` recovered
+classic descriptor entries in `visualizations/qd_ppa_viewer/descriptor_cache.json`.
 
-The classic rows are marked `descriptor_projection_missing`. This is expected
-for this package: classic candidates were not projected into the T99 archive
-space, so the table must not claim passive archive coverage for classic.
+Rows are still marked `candidate_level_no_canonical_dedup` because the viewer
+datasets do not include canonical netlist hashes. Treat QD score as
+candidate-level passive archive score, not duplicate-suppressed archive score.
 
 ## Interpretation
 

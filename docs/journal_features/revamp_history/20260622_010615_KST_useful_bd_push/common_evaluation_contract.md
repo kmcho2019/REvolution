@@ -124,10 +124,10 @@ descriptor projection in the viewer, its passive-archive columns are
 hashes are absent, QD score is reported at candidate level and the row is
 marked `candidate_level_no_canonical_dedup`.
 
-The current T99 package now includes the normalized tables. Its classic rows
-still have `descriptor_projection_missing`, so they are useful for reporting
-HV/HV-AUC and availability gaps, not for a completed common passive-archive
-claim.
+The current T99 package now includes normalized tables with posthoc classic
+projection into the QD archive space. Its rows are still marked
+`candidate_level_no_canonical_dedup`, so canonical-netlist duplicate
+suppression remains a broader reporting task.
 
 ## Promotion Use
 

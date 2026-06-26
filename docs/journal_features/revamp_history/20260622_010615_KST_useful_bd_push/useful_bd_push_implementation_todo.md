@@ -77,8 +77,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       `common_evaluation_contract.md`.
 - [x] Define central method result schema in
       `common_evaluation_contract.md`.
-- [x] Add first common-evaluation table exporter and apply it to T99 while
-      explicitly marking unavailable classic archive projection.
+- [x] Add first common-evaluation table exporter and apply it to T99 with
+      posthoc classic archive projection.
 - [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime
       reporting.
 - [ ] Add passive archive scoring for classic and every QD method.
