@@ -27,6 +27,9 @@ evidence.
   `preliminary_planning/20260625_aux_archive_seed_replication_gate/` to run
   classic and high-exploit auxiliary archive seeds `1002` and `1003` before any
   final full-RTLLM spend decision.
+- Completed seed `1002` for both preregistered arms. Classic finished `8/8`
+  in `1294.24s`; high-exploit auxiliary archive finished `8/8` in `1485.76s`.
+  Both focused validators passed. Seed `1003` remains pending.
 
 ## Auxiliary Archive High-Exploit Probe - 2026-06-25 UTC
 

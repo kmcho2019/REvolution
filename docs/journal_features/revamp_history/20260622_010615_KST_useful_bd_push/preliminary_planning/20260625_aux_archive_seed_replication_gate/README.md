@@ -1,6 +1,6 @@
 # Auxiliary Archive Seed Replication Gate
 
-Status: preregistered, not run.
+Status: seed `1002` checkpoint complete; seed `1003` pending.
 
 This package tests whether the best diagnostic QD arm,
 `masterrtl_aux_archive_high_exploit_8x5`, is robust enough to keep as a
@@ -29,3 +29,5 @@ this package launches only the missing seed `1002` and `1003` runs.
 
 - `preregistration.md`: frozen metrics, gates, and interpretation.
 - `commands/run_seed_replication_gate.md`: preflight and launch commands.
+- `logs/seed_1002_checkpoint.md`: completed seed `1002` run and validation
+  record.
