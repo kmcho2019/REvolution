@@ -22,6 +22,22 @@ claim. It should not be used as evidence that T85 beats classic.
 | `Prob041_traffic_light` | success | 0.341137 | 12 | 11 | 9 | 2 | 2 | 0 | 1 | 0 |
 | `Prob015_multi_pipe_8bit` | failed | n/a | 7 | 0 | 0 | 2 | 0 | 0 | 0 | 0 |
 
+## Existing Classic Comparator Read
+
+An existing same-seed `12x3` classic run from T79 covers the same three
+problems:
+`exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/classic_revolution_12x3/seed_1001/openai_gpt-oss-120b`.
+
+| Problem | Classic Summary Score | T85 Summary Score | Read |
+| --- | ---: | ---: | --- |
+| `Prob045_alu` | 0.416550 | 0.401605 | Classic higher. |
+| `Prob041_traffic_light` | 0.420875 | 0.341137 | Classic higher. |
+| `Prob015_multi_pipe_8bit` | 0.061050 | failed | Classic covered the design; T85 did not. |
+
+This comparator is enough to block T85 promotion after the first smoke. It is
+not enough to retire T85 because the run also showed that the `8`-success
+grid-quantile warmup can prevent memory activation on lower-yield designs.
+
 ## Interpretation
 
 The implementation ran end to end and produced archive/PPA artifacts for all
@@ -39,12 +55,13 @@ low-validity problems.
 
 Keep T85 as an active candidate, but do not promote it to a final RTLLM arm yet.
 The next T85 screen should use a lower grid-quantile warmup threshold, such as
-`4`, and must include a matched classic run before any performance claim.
+`4`, and should compare against the existing or freshly rerun classic arm before
+any performance claim.
 
 Required next checks:
 
 - rerun the three-problem smoke with `qd_grid_quantile_warmup_successes=4`;
-- run matched classic on the same problems, seed, and budget;
+- reuse or rerun matched classic on the same problems, seed, and budget;
 - preserve archive-history lane counts and per-candidate memory metadata;
 - compare against classic using reference-complete HV/Pareto metrics before
   adding T85 to the full RTLLM candidate shortlist.

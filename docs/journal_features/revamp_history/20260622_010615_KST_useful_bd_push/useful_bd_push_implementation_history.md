@@ -5411,6 +5411,9 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   front-rescue global-front add; `Prob041_traffic_light` produced one valid
   memory-refine child; `Prob015_multi_pipe_8bit` never initialized the grid
   because it ended with `7` warmup successes against the `8`-success threshold.
+- Existing same-seed `12x3` classic results from T79 are stronger on the smoke
+  trio: classic summary scores are `0.416550`, `0.420875`, and `0.061050`,
+  while T85 reports `0.401605`, `0.341137`, and `failed`.
 - Added a focused telemetry patch so `qd_metrics.json`,
   `archive_summary.json`, and per-candidate `qd_archive_event.json` expose
   FG-QDM memory-lane fields directly.

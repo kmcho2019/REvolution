@@ -123,6 +123,12 @@ produced one valid memory-refine child. `Prob015_multi_pipe_8bit` never
 initialized the grid because it ended with `7` warmup successes against the
 `8`-success threshold.
 
+Existing same-seed `12x3` classic results from T79 are stronger on the same
+three problems: classic summary scores are `0.416550`, `0.420875`, and
+`0.061050` for `Prob045_alu`, `Prob041_traffic_light`, and
+`Prob015_multi_pipe_8bit`, while T85 reports `0.401605`, `0.341137`, and
+`failed`.
+
 Decision: keep T85 active, but do not rank it in the top-10 HV table or promote
 it to final RTLLM spend yet. The next T85 check should lower grid-quantile
 warmup to `4`, rerun the three-problem smoke, and add a matched classic
