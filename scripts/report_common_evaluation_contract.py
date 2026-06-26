@@ -94,13 +94,6 @@ SUMMARY_FIELDS = [
     "notes",
 ]
 
-CELL_FIELDS = (
-    "final_fixed_archive_cell_id",
-    "archive_cell_id",
-    "native_archive_cell_id",
-)
-
-
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
@@ -178,11 +171,8 @@ def cell_count(archive: dict[str, Any]) -> int:
 
 
 def sample_cell_id(sample: dict[str, Any]) -> str:
-    for field in CELL_FIELDS:
-        value = sample.get(field)
-        if value not in ("", None):
-            return str(value)
-    return ""
+    value = sample.get("final_fixed_archive_cell_id")
+    return str(value) if value not in ("", None) else ""
 
 
 def sample_quality(sample: dict[str, Any]) -> float:
@@ -191,6 +181,21 @@ def sample_quality(sample: dict[str, Any]) -> float:
     parsed = float(value)
     assert math.isfinite(parsed)
     return max(0.0, parsed)
+
+
+def sample_hash(sample: dict[str, Any]) -> str:
+    value = sample.get("canonical_netlist_hash")
+    return str(value) if value not in ("", None) else ""
+
+
+def dedupe_by_hash(samples: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    best: dict[str, dict[str, Any]] = {}
+    for sample in samples:
+        key = sample_hash(sample)
+        assert key
+        if key not in best or sample_quality(sample) > sample_quality(best[key]):
+            best[key] = sample
+    return list(best.values())
 
 
 def is_front_sample(sample: dict[str, Any]) -> bool:
@@ -251,6 +256,7 @@ def passive_metrics(
     hv_auc_value: str,
 ) -> dict[str, str]:
     projected = [sample for sample in samples if sample_cell_id(sample)]
+    raw_projected = projected
     descriptor_profile = archive["descriptor_profile"]
     total_cells = cell_count(archive)
     if not projected:
@@ -273,17 +279,26 @@ def passive_metrics(
             "notes": "descriptor_projection_missing",
         }
 
+    notes = []
+    if projected and all(sample_hash(sample) for sample in projected):
+        projected = dedupe_by_hash(projected)
+        notes.append("canonical_netlist_dedup")
+    elif projected:
+        notes.append("candidate_level_no_canonical_dedup")
+
     cells = sorted({sample_cell_id(sample) for sample in projected})
     best_by_cell: dict[str, float] = {}
     for sample in projected:
         cell = sample_cell_id(sample)
         best_by_cell[cell] = max(best_by_cell.get(cell, 0.0), sample_quality(sample))
 
-    generations = sorted({int(sample["generation"]) for sample in projected})
+    generations = sorted({int(sample["generation"]) for sample in raw_projected})
     qd_points = []
     coverage_points = []
     for generation in generations:
-        seen = [sample for sample in projected if int(sample["generation"]) <= generation]
+        seen = [sample for sample in raw_projected if int(sample["generation"]) <= generation]
+        if all(sample_hash(sample) for sample in seen):
+            seen = dedupe_by_hash(seen)
         seen_cells = {sample_cell_id(sample) for sample in seen}
         seen_best = {}
         for sample in seen:
@@ -291,10 +306,6 @@ def passive_metrics(
             seen_best[cell] = max(seen_best.get(cell, 0.0), sample_quality(sample))
         qd_points.append((generation, sum(seen_best.values())))
         coverage_points.append((generation, len(seen_cells) / total_cells))
-
-    notes = []
-    if "canonical_netlist_hash" not in projected[0]:
-        notes.append("candidate_level_no_canonical_dedup")
 
     axis_names = [str(axis["name"]) for axis in archive["axes"]]
     return {
@@ -323,6 +334,15 @@ def reference_beating_count(samples: list[dict[str, Any]], objective_keys: list[
         if all(float(sample[key]) >= 0.0 for key in objective_keys):
             count += 1
     return count
+
+
+def unique_hash_count(samples: list[dict[str, Any]]) -> str:
+    if not samples:
+        return "0"
+    hashes = [sample_hash(sample) for sample in samples]
+    if any(not item for item in hashes):
+        return NOT_AVAILABLE
+    return fmt(len(set(hashes)))
 
 
 def summary_rows(method_rows: list[dict[str, str]]) -> list[dict[str, str]]:
@@ -369,6 +389,8 @@ def summary_rows(method_rows: list[dict[str, str]]) -> list[dict[str, str]]:
             notes.append("no_headline_rows")
         if any("candidate_level_no_canonical_dedup" in row["notes"] for row in rows):
             notes.append("candidate_level_no_canonical_dedup")
+        if any("canonical_netlist_dedup" in row["notes"] for row in rows):
+            notes.append("canonical_netlist_dedup")
         summaries.append(
             {
                 "method_key": method,
@@ -455,6 +477,10 @@ def metric_rows(
         passive_rows.append(passive)
 
         method_covered = "yes" if method_samples else "no"
+        notes = [passive["notes"]] if passive["notes"] else []
+        unique_count = unique_hash_count(method_samples)
+        if unique_count == NOT_AVAILABLE and method_samples:
+            notes.append("valid_netlist_hash_missing")
         comparison_status = gate["comparison_status"]
         if gate["reference_ppa_valid"] == "yes" and method_covered == "no":
             comparison_status = "missing_method_coverage"
@@ -471,7 +497,7 @@ def metric_rows(
                 "functional_count": NOT_AVAILABLE,
                 "synthesis_valid_count": NOT_AVAILABLE,
                 "valid_ppa_count": fmt(len(method_samples)),
-                "unique_valid_netlist_count": NOT_AVAILABLE,
+                "unique_valid_netlist_count": unique_count,
                 "pareto_point_count": fmt(pareto_point_count),
                 "global_ppa_hv": fmt(ppa_hv),
                 "hv_auc": hv_auc_value,
@@ -489,7 +515,7 @@ def metric_rows(
                 "comparison_status": comparison_status,
                 "valid_ppa_yield_status": gate["valid_ppa_yield_status"],
                 "runtime_seconds": NOT_AVAILABLE,
-                "notes": passive["notes"],
+                "notes": ";".join(notes),
             }
         )
 

@@ -429,6 +429,10 @@ def _sample_from_row(
         classic_match.get("candidate_dir"),
         str(Path(code_file_path).parent) if code_file_path else "",
     )
+    netlist_identity = _candidate_netlist_identity(
+        candidate_dir=candidate_dir,
+        code_file_path=code_file_path,
+    )
     descriptors = _descriptor_values(
         axis_names=axis_names,
         design_row=design_row,
@@ -484,6 +488,8 @@ def _sample_from_row(
         "viewer_pooled_pareto_member": False,
         "candidate_dir": _relative_path(run_root, candidate_dir),
         "code_file_path": _relative_path(run_root, code_file_path),
+        "synthesized_netlist_path": _relative_path(run_root, netlist_identity["path"]),
+        "canonical_netlist_hash": netlist_identity["hash"],
         "area": metrics["area"],
         "power": metrics["power"],
         "eff_clk_period": metrics["eff_clk_period"] if circuit_type == "sequential" else None,
@@ -570,6 +576,27 @@ def _descriptor_values(
         if finite_float(metrics.get(axis)) is not None
     }
     return values if len(values) == len(axis_names) else {}
+
+
+def _candidate_netlist_identity(
+    *,
+    candidate_dir: str,
+    code_file_path: str,
+) -> dict[str, str]:
+    from revolution.auto_bd.netlist_hash import canonical_netlist_hash
+
+    candidates = []
+    if candidate_dir:
+        candidates.append(Path(candidate_dir) / "code.syn.v")
+    if code_file_path:
+        candidates.append(Path(code_file_path).with_name("code.syn.v"))
+    for path in candidates:
+        if path.is_file():
+            return {
+                "path": str(path),
+                "hash": canonical_netlist_hash(path.read_text(encoding="utf-8", errors="ignore")),
+            }
+    return {"path": "", "hash": ""}
 
 
 def _recover_classic_descriptors_for_problem(

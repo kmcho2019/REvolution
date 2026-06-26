@@ -147,10 +147,18 @@ descriptor projection in the viewer, its passive-archive columns are
 hashes are absent, QD score is reported at candidate level and the row is
 marked `candidate_level_no_canonical_dedup`.
 
-The current T99 package now includes normalized tables with posthoc classic
-projection into the QD archive space. Its rows are still marked
-`candidate_level_no_canonical_dedup`, so canonical-netlist duplicate
-suppression remains a broader reporting task.
+When Phase 03.1 samples include `canonical_netlist_hash`, the common exporter
+deduplicates passive archive coverage and QD score by canonical netlist before
+crediting final fixed archive cells. Rows are marked `canonical_netlist_dedup`
+in that case. Native warmup-only cell ids remain viewer provenance and are not
+counted as final passive archive occupancy.
+
+The current T94, T95, T96, and T99 packages include hash-backed QD passive
+archive rows. T99 also includes posthoc classic projection into the QD archive
+space, so both T99 and classic passive archive rows are
+canonical-netlist-deduplicated. T94/T95/T96 classic passive archive fields
+remain `not_available` because those DeepGate/RF-DeepGate viewers intentionally
+avoid recomputing official descriptor cells for classic candidates.
 
 ## Promotion Use
 

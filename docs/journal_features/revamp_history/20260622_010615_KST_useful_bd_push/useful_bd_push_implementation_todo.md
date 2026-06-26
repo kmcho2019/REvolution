@@ -83,6 +83,8 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       representative decisions.
 - [x] Backfill common-evaluation tables for T94, T95, and T96 using existing
       Phase 03.1 viewers and deduplicated Pareto-analysis metrics.
+- [x] Add canonical netlist hash duplicate suppression to Phase 03.1 common
+      passive archive tables for T94, T95, T96, and T99.
 - [ ] Add or reuse validity funnel, PPA/HV, duplicate, archive, and runtime
       reporting.
 - [ ] Add passive archive scoring for classic and every QD method.

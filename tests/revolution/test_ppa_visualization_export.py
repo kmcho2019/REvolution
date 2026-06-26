@@ -333,6 +333,26 @@ def test_export_recovers_descriptors_for_named_classic_backend(tmp_path: Path) -
     classic_candidate = classic_root / "model" / "RTLLM" / "Prob001" / "Gen0" / "classic_a_initial"
     classic_candidate.mkdir(parents=True)
     (classic_candidate / "code.sv").write_text("module top; endmodule\n", encoding="utf-8")
+    (classic_candidate / "code.syn.v").write_text(
+        "module top;\n  NAND2_X1 u0 (.A(a), .B(b), .ZN(y));\nendmodule\n",
+        encoding="utf-8",
+    )
+    qd_candidate = qd_root / "model" / "RTLLM" / "Prob001" / "Gen0" / "qd_a_initial"
+    qd_candidate.mkdir(parents=True)
+    (qd_candidate / "code.sv").write_text("module top; endmodule\n", encoding="utf-8")
+    (qd_candidate / "code.syn.v").write_text(
+        "module top;\n  INV_X1 u0 (.A(a), .ZN(y));\nendmodule\n",
+        encoding="utf-8",
+    )
+    _set_candidate_dir(
+        run_root / "final_analysis" / "ppa_distribution" / "data" / "ppa_candidates.csv",
+        "qd_a",
+        qd_candidate,
+    )
+    _set_archive_code_path(
+        qd_root / "model" / "RTLLM" / "Prob001" / "archive_cells.csv",
+        qd_candidate / "code.sv",
+    )
     _write_json(
         classic_candidate / "code_synthesis_report.metrics.json",
         {
@@ -371,6 +391,15 @@ def test_export_recovers_descriptors_for_named_classic_backend(tmp_path: Path) -
     assert classic["archive_projection_status"] == "projected"
     assert classic["projection_type"] == "posthoc"
     assert classic["archive_cell_id"] == "1,0,0"
+    assert classic["canonical_netlist_hash"]
+    assert classic["synthesized_netlist_path"].endswith("code.syn.v")
+    qd = next(
+        sample
+        for sample in dataset["samples"]
+        if sample["technique"] == "grid_quantile_pareto_journal_bd"
+    )
+    assert qd["canonical_netlist_hash"]
+    assert qd["canonical_netlist_hash"] != classic["canonical_netlist_hash"]
 
 
 def test_strict_export_keeps_uninitialized_quantile_samples_out_of_cells(
@@ -594,4 +623,19 @@ def _clear_descriptor_columns(path: Path) -> None:
             row["logic_depth"] = ""
             row["ff_depth"] = ""
             row["comb_width_log"] = ""
+    _write_csv(path, rows)
+
+
+def _set_candidate_dir(path: Path, candidate_id: str, candidate_dir: Path) -> None:
+    rows = list(csv.DictReader(path.open(encoding="utf-8", newline="")))
+    for row in rows:
+        if row["candidate_id"] == candidate_id:
+            row["candidate_dir"] = str(candidate_dir)
+    _write_csv(path, rows)
+
+
+def _set_archive_code_path(path: Path, code_path: Path) -> None:
+    rows = list(csv.DictReader(path.open(encoding="utf-8", newline="")))
+    for row in rows:
+        row["code_file_path"] = str(code_path)
     _write_csv(path, rows)

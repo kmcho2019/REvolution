@@ -65,9 +65,12 @@ Classic candidates are projected posthoc into the T99 archive space using the
 same implemented-structural descriptor axes. The viewer records `191` recovered
 classic descriptor entries in `visualizations/qd_ppa_viewer/descriptor_cache.json`.
 
-Rows are still marked `candidate_level_no_canonical_dedup` because the viewer
-datasets do not include canonical netlist hashes. Treat QD score as
-candidate-level passive archive score, not duplicate-suppressed archive score.
+Rows are now marked `canonical_netlist_dedup`: the Phase 03.1 datasets include
+canonical hashes for all `363/363` valid-PPA samples, and the common exporter
+deduplicates passive archive coverage and QD score by canonical synthesized
+netlist before crediting final fixed archive cells. T99 mean passive archive
+coverage is `0.4860` versus classic `0.5082`; T99 mean passive QD score is
+`0.8775` versus classic `0.9938`.
 
 ## Interpretation
 

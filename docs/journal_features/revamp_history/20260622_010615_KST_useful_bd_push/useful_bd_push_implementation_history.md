@@ -5962,3 +5962,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   those viewers were intentionally exported with `--no-classic-descriptor-recovery`
   for DeepGate/RF-DeepGate descriptor spaces. QD-side passive archive and AUC
   rows are now available.
+
+## 2026-06-26T19:20:00Z - Canonical Netlist Dedup Added To Common Tables
+
+- Extended the Phase 03.1 exporter to emit `synthesized_netlist_path` and
+  `canonical_netlist_hash` for valid-PPA samples whenever a synthesized
+  `code.syn.v` artifact exists.
+- Updated `scripts/report_common_evaluation_contract.py` so complete hashes
+  deduplicate passive archive coverage and QD score before final fixed archive
+  cells receive credit.
+- Fixed the passive archive scorer to ignore native warmup-only cell ids for
+  final common coverage. This removed impossible T99 coverage values above
+  `1.0` on one-cell archive geometries.
+- Regenerated T94, T95, T96, and T99 Phase 03.1 viewer/table packages. Hash
+  coverage is complete: T94 `371/371`, T95 `391/391`, T96 `393/393`, and T99
+  `363/363` valid-PPA samples.
+- Current common-table summary after duplicate suppression: T94 mean HV
+  `0.104042`, T95 `0.115277`, T96 `0.119921`, and T99 `0.120094`, all below
+  the matched classic mean HV `0.140645`.
+- T94/T95/T96 classic passive archive fields remain `not_available` because
+  those viewers intentionally avoid recomputing official DeepGate/RF-DeepGate
+  descriptor cells for classic candidates. T99 has canonical-deduplicated
+  passive archive rows for both T99 and classic.

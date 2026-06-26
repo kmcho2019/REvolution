@@ -77,7 +77,9 @@ def test_common_evaluation_contract_reports_passive_archive_gaps(tmp_path: Path)
     assert by_method["qd_method"]["reference_beating_count"] == "2"
     assert by_method["qd_method"]["passive_archive_coverage"] == "0.5"
     assert by_method["classic_revolution_8x5"]["passive_archive_coverage"] == "not_available"
-    assert by_method["classic_revolution_8x5"]["notes"] == "descriptor_projection_missing"
+    assert by_method["classic_revolution_8x5"]["notes"] == (
+        "descriptor_projection_missing;valid_netlist_hash_missing"
+    )
 
     passive_rows = _read_csv(output_dir / "passive_archive_metrics.csv")
     passive_by_method = {row["method_key"]: row for row in passive_rows}
@@ -104,6 +106,91 @@ def test_common_evaluation_contract_reports_passive_archive_gaps(tmp_path: Path)
     assert config["scope"] == "per_problem_phase_03_1_viewer_archive"
     assert config["problem_archives"][0]["cell_count"] == 4
     assert (output_dir / "ppa_completeness.csv").read_text() == completeness.read_text()
+
+
+def test_common_evaluation_contract_dedupes_canonical_netlists(tmp_path: Path) -> None:
+    viewer_root = tmp_path / "viewer"
+    dataset_dir = viewer_root / "datasets"
+    dataset_dir.mkdir(parents=True)
+    completeness = tmp_path / "ppa_completeness.csv"
+    output_dir = tmp_path / "tables"
+
+    dataset = _dataset()
+    samples = dataset["samples"]  # type: ignore[index]
+    assert isinstance(samples, list)
+    samples[1]["canonical_netlist_hash"] = "hash-a"
+    samples[2]["canonical_netlist_hash"] = "hash-b"
+    samples[3]["canonical_netlist_hash"] = "hash-b"
+    samples[3]["final_fixed_archive_cell_id"] = "1,1"
+    samples[3]["archive_cell_id"] = "1,1"
+    samples[3]["quality_score"] = 0.9
+    later_hash_a = _sample("qd_method", "q3", 1, "0,0", 1.0, 1, 0.4, 0.4)
+    later_hash_a["canonical_netlist_hash"] = "hash-a"
+    samples.append(later_hash_a)
+    warmup = _sample("qd_method", "warmup", 1, "", 0.8, 1, 0.3, 0.3)
+    warmup["canonical_netlist_hash"] = "hash-a"
+    warmup["native_archive_cell_id"] = "warmup:3"
+    samples.append(warmup)
+
+    (dataset_dir / "RTLLM__Prob001.json").write_text(
+        json.dumps(dataset, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    _write_csv(
+        completeness,
+        [
+            {
+                "benchmark": "RTLLM",
+                "problem": "Prob001",
+                "classic_valid_ppa": "yes",
+                "qd_valid_ppa": "yes",
+                "reference_ppa_valid": "yes",
+                "comparison_status": "headline",
+                "classic_valid_ppa_count": "1",
+                "qd_valid_ppa_count": "3",
+                "valid_ppa_yield_status": "small_n",
+                "reference_missing_reason": "",
+            }
+        ],
+    )
+
+    assert (
+        main(
+            [
+                "--viewer-root",
+                str(viewer_root),
+                "--ppa-completeness",
+                str(completeness),
+                "--seed",
+                "1001",
+                "--budget-shape",
+                "8x5",
+                "--method-family",
+                "classic_revolution_8x5=classic",
+                "--method-family",
+                "qd_method=encoder",
+                "--output-dir",
+                str(output_dir),
+            ]
+        )
+        == 0
+    )
+
+    rows = _read_csv(output_dir / "method_problem_seed_metrics.csv")
+    by_method = {row["method_key"]: row for row in rows}
+    assert by_method["qd_method"]["unique_valid_netlist_count"] == "2"
+    assert by_method["qd_method"]["passive_archive_qd_score"] == "1.9"
+    assert by_method["qd_method"]["passive_archive_coverage"] == "0.5"
+    assert by_method["qd_method"]["passive_archive_qd_auc"] == "1.1"
+    assert by_method["qd_method"]["passive_archive_coverage_auc"] == "0.375"
+    assert by_method["qd_method"]["notes"] == "canonical_netlist_dedup"
+
+    passive_rows = _read_csv(output_dir / "passive_archive_metrics.csv")
+    passive_by_method = {row["method_key"]: row for row in passive_rows}
+    assert passive_by_method["qd_method"]["occupied_cell_count"] == "2"
+    assert passive_by_method["qd_method"]["passive_archive_qd_score"] == "1.9"
+    assert passive_by_method["qd_method"]["passive_archive_qd_auc"] == "1.1"
+    assert passive_by_method["qd_method"]["notes"] == "canonical_netlist_dedup"
 
 
 def _dataset() -> dict[str, object]:
