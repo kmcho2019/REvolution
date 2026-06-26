@@ -577,6 +577,26 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
 - [x] T11 top-4 front-slot successor gets a decision before any full RTLLM
       spend: diagnostic, not promoted because classic and MasterRTL front-slot
       remain ahead on mean HV and front evidence.
+- [x] High-exploit MasterRTL auxiliary archive is run on the frozen eight-design
+      `8x5` screen as the strongest classic-like QD pressure test.
+- [x] High-exploit MasterRTL auxiliary archive is validated, packaged, and
+      compared against the frozen-screen classic baseline.
+- [x] High-exploit MasterRTL auxiliary archive gets a decision before any full
+      RTLLM spend: diagnostic seed `1001` clue, but not promoted before
+      replication because it trails classic and depends on
+      `Prob135_m2014_q6b`.
+- [x] Front-breadth auxiliary archive follow-up is run and retired because
+      explicit front-slot pressure recovers some Pareto count but loses too
+      much HV.
+- [x] Depth-only `6x7` auxiliary archive follow-up is run and retired because
+      matched classic benefits more from depth.
+- [x] Seed-replication gate for high-exploit auxiliary archive is run at seeds
+      `1002` and `1003`, packaged with seed `1001`, and validated with focused
+      Pareto and single-thought-operator checks.
+- [x] Seed-replication gate gets a decision before full RTLLM spend: fixed
+      high-exploit auxiliary archive is diagnostic negative and not promoted.
+- [ ] Pre-register an adaptive archive-pressure mechanism before any further
+      QD live spend on this lane.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

@@ -180,7 +180,7 @@ accepted, but not overclaimed:
 | Classic strength does not falsify QD/MAP-Elites. | Accepted. It means RTL PPA evolution needs constrained, PPA-competitive diversity rather than generic archive coverage. |
 | `12 x 3` may be biased against QD. | Plausible and now roadmap-worthy, but not proven. Test equal-candidate budget shapes before changing headline protocol. |
 | Existing `12 x 3` archives still mature late. | Accepted as T78 diagnostic evidence. Use it to justify the ablation, not to claim that deeper QD wins. |
-| Auxiliary archive memory helps more than descriptor-only pressure. | Partially accepted after the 20260625 preliminary probes. The high-exploit auxiliary archive is the best screened QD arm by mean HV, but still fails the full-spend gate, and the aggregate depends heavily on `Prob135_m2014_q6b`. Front-breadth and depth-only follow-ups both lose too much HV. |
+| Auxiliary archive memory helps more than descriptor-only pressure. | Narrowed after seed replication. The high-exploit auxiliary archive is a mechanism clue from seed `1001`, but it fails the full-spend gate across seeds `1001`-`1003` and should be retired as a fixed geometry. |
 | Choose medium-validity, front-variable designs for screens. | Accepted. This is screening discipline, not cherry-picking, if frozen before outcomes. |
 | Use MasterRTL pretrained tree artifacts as an encoder. | Narrowed after T77. Direct Area-head leaves collapse; continue only through retraining, replacement, or reproduced timing/power feature flows. |
 | Treat T75/T76/T77 as positive enough to launch broad claims. | Rejected. They are useful diagnostics and gates, not classic-beating evidence. |
@@ -199,13 +199,15 @@ front evidence. A method becomes a promotion candidate only when it preserves
 classic-covered designs and improves, matches, or credibly explains the PPA
 front under the registered comparison.
 
-The 2026-06-25 periodic Claude review gives the current plan
-`PASS_WITH_ACTIONS`, not sign-off. Its main technical warning is that the
-latest high-exploit auxiliary archive signal is single-seed and
-one-problem-dominated. This means the preliminary plan is not finished enough
-to select final full-RTLLM QD configs. The next decision should either
-replicate the best diagnostic arm across seeds or test a truly adaptive
-pressure schedule.
+The 2026-06-25 periodic Claude review gave the plan `PASS_WITH_ACTIONS`, not
+sign-off. Its main technical warning was that the high-exploit auxiliary
+archive signal was single-seed and one-problem-dominated. The seed-replication
+gate confirms that warning: classic wins all three seed-level mean-HV
+comparisons, with three-seed mean HV `0.1442` versus auxiliary archive
+`0.1261`. Removing `Prob135_m2014_q6b` leaves a `-18.25%` relative HV gap.
+This means the preliminary plan is still not finished enough to select final
+full-RTLLM QD configs. The next decision should test a truly adaptive pressure
+schedule or accept a rigorous negative map for the current method family.
 
 The current evaluation of the goal remains positive but narrower: the goal is
 not to prove that any diversity measure helps. It is to identify which
@@ -221,15 +223,16 @@ classic hill-climbing baseline under fair, reference-complete comparisons.
   still change late, but no equal-budget shape has been tested yet.
 - Use T79 as the pre-registered live protocol: eight frozen primary designs,
   `12x3`, `8x5`, and `6x7`, and matched classic versus T75 QD arms.
-- Treat the 20260625 high-exploit auxiliary archive screen as the current best
-  preliminary QD mechanism signal, but not as a near-win: it narrows the
-  mean-HV gap only with a large positive contribution from `Prob135_m2014_q6b`.
-  The front-breadth follow-up shows that adding explicit front-slot sampling
-  to the same descriptor geometry is too costly under the current budget. The
-  `6x7` follow-up shows depth-only continuation does not rescue the mechanism.
-- Run the next gate as either seed replication of the best diagnostic arm or a
-  preregistered adaptive archive-pressure method. Do not keep spending on
-  minor MasterRTL geometry retunes without a new coupling mechanism.
+- Treat the 20260625 high-exploit auxiliary archive screen as a mechanism clue,
+  not a current candidate: it narrows the seed `1001` mean-HV gap only with a
+  large positive contribution from `Prob135_m2014_q6b`, and seed replication
+  loses all three seed-level comparisons. The front-breadth follow-up shows
+  that adding explicit front-slot sampling to the same descriptor geometry is
+  too costly under the current budget. The `6x7` follow-up shows depth-only
+  continuation does not rescue the mechanism.
+- Run the next gate as a preregistered adaptive archive-pressure method. Do not
+  keep spending on minor MasterRTL geometry retunes without a new coupling
+  mechanism.
 - Add a MasterRTL-pretrained verification and tree-leaf embedding lane before
   spending live budget on "pretrained MasterRTL" QD claims.
 - Add a generated-candidate MasterRTL leaf/margin variation gate after T76 and

@@ -5055,3 +5055,36 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   design-space feature recovery after Pareto, PPA distribution, hard-iteration,
   backend comparison, and evolutionary report sections were written.
 - Decision: diagnostic, not promoted to final full-RTLLM spending.
+
+## 2026-06-25T23:55:00Z - Auxiliary Archive Seed Replication Gate
+
+- Created preliminary planning package:
+  `preliminary_planning/20260625_aux_archive_seed_replication_gate/`.
+- Reused seed `1001` runs from the frozen eight-design screen and launched the
+  missing `1002` and `1003` matched pairs for `classic_revolution_8x5` and
+  `masterrtl_aux_archive_high_exploit_8x5`.
+- The local vLLM preflight reported `openai/gpt-oss-120b` with
+  `max_model_len=131072`; all launched runs used `max_tokens=128000` and
+  `diff_max_tokens=128000`.
+- Seed `1002` completed both arms with `8/8` problem summaries:
+  classic in `1294.24s`, auxiliary archive in `1485.76s`.
+- Seed `1003` completed both arms with `8/8` problem summaries:
+  classic in `1250.73s`, auxiliary archive in `1556.29s`.
+- Focused validators passed on the completed seed-replication run root:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Final analysis completed under
+  `exp/useful_bd_push/prelim_aux_archive_seed_replication_20260625_232854_UTC/live/final_analysis_seed_replication`
+  with no skipped sections.
+- Packaged the three-seed rollup into
+  `preliminary_planning/20260625_aux_archive_seed_replication_gate/`, including
+  seed-pair tables, robustness slices, rollup JSON, and visually inspected
+  figures.
+- Result: classic wins all three seed-level mean-HV comparisons. Three-seed
+  mean HV is `0.1442` for classic versus `0.1261` for auxiliary archive, a
+  `-12.51%` relative gap. Removing `Prob135_m2014_q6b` leaves a `-18.25%`
+  relative gap.
+- Decision: the fixed high-exploit auxiliary archive geometry is diagnostic
+  negative and should not be promoted to full RTLLM spending. The next QD gate
+  should change the coupling mechanism, for example adaptive archive pressure,
+  rather than retuning the same MasterRTL geometry.

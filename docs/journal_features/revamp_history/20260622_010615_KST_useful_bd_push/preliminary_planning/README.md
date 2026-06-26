@@ -5,6 +5,9 @@ configurations before spending full RTLLM budget.
 
 ## Packages
 
+Start with `current_selection_status.md` for the current promotion decision and
+the next gate.
+
 | Package | Purpose | Status |
 | --- | --- | --- |
 | `20260625_encoder_config_screening/` | Shortlist pretrained-encoder, encoder-like, RTL-native, and custom-BD candidates for the next RTLLM comparison. | Completed Qwen-inclusive live screen; no screened QD arm promoted |
@@ -17,7 +20,7 @@ configurations before spending full RTLLM budget.
 | `20260625_aux_archive_high_exploit_probe/` | Test whether QD archive memory works better as an auxiliary side channel with classic-like exploitation pressure. | Completed; best screened QD by mean HV, still not promoted |
 | `20260625_aux_archive_front_breadth_probe/` | Test whether the best-HV auxiliary archive arm can recover Pareto breadth with bounded front-slot sampling. | Completed; front-breadth tax erased the high-exploit HV gain, not promoted |
 | `20260625_aux_archive_high_exploit_depth_probe/` | Test whether the high-exploit auxiliary archive mechanism benefits from `6x7` depth against the existing T79 classic `6x7` baseline. | Completed; depth helps classic more than QD, not promoted |
-| `20260625_aux_archive_seed_replication_gate/` | Replicate classic and high-exploit auxiliary archive at seeds `1002` and `1003` to measure noise and the `Prob135_m2014_q6b` robustness caveat. | Preregistered |
+| `20260625_aux_archive_seed_replication_gate/` | Replicate classic and high-exploit auxiliary archive at seeds `1002` and `1003` to measure noise and the `Prob135_m2014_q6b` robustness caveat. | Completed; negative, not promoted |
 
 ## Current Rule
 
@@ -25,14 +28,17 @@ Only configurations with a working live descriptor path enter an expensive
 screening run. Replay-positive encoder lanes stay in the package as bridge
 work until they have a verified runtime hook and non-collapse checks.
 
-The preliminary plan is not finished enough to choose final full-RTLLM QD
-configs. The periodic 2026-06-25 Claude review recorded
+The preliminary plan now has a completed three-seed gate for the best
+diagnostic arm, but it is still not finished enough to choose final
+full-RTLLM QD configs. The periodic 2026-06-25 Claude review recorded
 `PASS_WITH_ACTIONS`: the package is honest, but every screened QD arm still
-loses classic, all current screens are single-seed, and the best auxiliary
-archive aggregate is dominated by `Prob135_m2014_q6b`. The next decision gate
-is seed replication of classic plus the auxiliary high-exploit arm and a
-genuinely adaptive archive-pressure mechanism, not another minor MasterRTL
-geometry tweak.
+loses classic. The seed-replication gate confirmed that warning. Classic wins
+all three seed-level mean-HV comparisons against
+`masterrtl_aux_archive_high_exploit_8x5`; the three-seed mean HV is `0.1442`
+for classic versus `0.1261` for auxiliary archive, a `-12.51%` relative gap.
+Removing `Prob135_m2014_q6b` leaves a `-18.25%` relative gap. The next
+decision gate should be a genuinely adaptive archive-pressure mechanism, not
+another minor fixed MasterRTL geometry tweak.
 
 The current pretrained-encoder rule is stricter: an external model must load
 from pinned checkpoints, pass an upstream or fixture smoke, and show
@@ -69,13 +75,14 @@ still trails classic on mean HV (`0.1208` versus `0.1406`), Pareto breadth
 (`1.88` versus `3.25`), and HV wins (`0` versus `6`). It is diagnostic, not a
 full-RTLLM candidate.
 
-`masterrtl_aux_archive_high_exploit_8x5` completed the frozen screen. It keeps
-MasterRTL structural archive cells active, but lowers forced fill pressure and
-samples parents by global NSGA-II rank with a high champion lane. This is the
-best screened QD arm by mean HV (`0.1339` versus classic `0.1406`), but it
-still fails promotion because it is about `4.78%` behind classic and loses
-Pareto breadth (`1.75` versus `3.25`) plus reference-beating candidates (`4.00`
-versus `8.00`).
+`masterrtl_aux_archive_high_exploit_8x5` completed the frozen screen and then
+the seed-replication gate. It keeps MasterRTL structural archive cells active,
+but lowers forced fill pressure and samples parents by global NSGA-II rank with
+a high champion lane. The single-seed screen made it the closest QD arm by
+mean HV (`0.1339` versus classic `0.1406`), but replication does not support
+promotion: across seeds `1001`, `1002`, and `1003`, auxiliary archive loses
+all three seed-level mean-HV comparisons and averages `0.1261` versus classic
+`0.1442`.
 
 `masterrtl_aux_archive_front_breadth_8x5` completed the same frozen screen.
 It keeps the same descriptor and low forced-fill setup, but lowers champion
