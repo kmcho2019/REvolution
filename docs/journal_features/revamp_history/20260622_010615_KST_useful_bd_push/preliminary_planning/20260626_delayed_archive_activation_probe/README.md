@@ -1,6 +1,6 @@
 # Delayed Archive Activation Probe
 
-Status: preregistered; not yet run.
+Status: completed; diagnostic negative, not promoted.
 
 This package tests whether the auxiliary archive mechanism failed because QD
 pressure was paid too early. The run keeps the same MasterRTL structural
@@ -20,7 +20,17 @@ improve PPA-front metrics?
   validation commands.
 - `logs/run_checkpoint.md`: preflight, launch, completion, and validation log.
 
-## Current Decision
+## Decision
 
-No decision yet. This arm must beat or near-tie the matched classic `8x5`
-reference-complete screen before it can be considered for full RTLLM spend.
+Do not promote this arm to full RTLLM spend. It improves over the adaptive
+sparse-front follow-up and preserves much of the high-exploit signal, but mean
+HV remains below classic (`0.1324` versus `0.1406`).
+
+## Result Files
+
+- `delayed_archive_activation_report.md`: result and interpretation.
+- `tables/delayed_archive_aggregate.csv`: aggregate comparison table.
+- `tables/delayed_archive_problem_metrics.csv`: per-problem metrics.
+- `tables/delayed_vs_classic_problem_deltas.csv`: direct paired deltas.
+- `tables/ppa_candidates.csv`: raw PPA candidate table from completed
+  analysis.

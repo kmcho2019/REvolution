@@ -22,7 +22,7 @@ the next gate.
 | `20260625_aux_archive_high_exploit_depth_probe/` | Test whether the high-exploit auxiliary archive mechanism benefits from `6x7` depth against the existing T79 classic `6x7` baseline. | Completed; depth helps classic more than QD, not promoted |
 | `20260625_aux_archive_seed_replication_gate/` | Replicate classic and high-exploit auxiliary archive at seeds `1002` and `1003` to measure noise and the `Prob135_m2014_q6b` robustness caveat. | Completed; negative, not promoted |
 | `20260626_aux_archive_adaptive_sparse_front_probe/` | Test adaptive sparse-front parent pressure after fixed high-exploit auxiliary archive failed seed replication. | Completed; trigger fired, but HV regressed and not promoted |
-| `20260626_delayed_archive_activation_probe/` | Test whether passive early archive logging plus delayed archive pressure preserves classic-like hill climbing before QD activation. | Preregistered; pending launch |
+| `20260626_delayed_archive_activation_probe/` | Test whether passive early archive logging plus delayed archive pressure preserves classic-like hill climbing before QD activation. | Completed; close to high-exploit, still below classic and not promoted |
 
 ## Current Rule
 
@@ -109,7 +109,9 @@ trigger fired on `Prob015_multi_pipe_8bit`, `Prob041_traffic_light`, and
 mean HV is `0.0946` versus classic `0.1406`, though mean Pareto points improve
 over fixed high-exploit (`2.38` versus `1.75`).
 
-`masterrtl_delayed_archive_activation_8x5` is preregistered as the next
-materially different probe. It delays archive-driven fill, backfill, and
-failure pressure until generation `3`, while still passively logging
-descriptor/archive state from the start.
+`masterrtl_delayed_archive_activation_8x5` completed the frozen screen. It
+delays archive-driven fill, backfill, and failure pressure until generation
+`3`, while still passively logging descriptor/archive state from the start.
+Mean HV is `0.1324` versus classic `0.1406`, with mean Pareto points `2.00`
+and mean reference-beating candidates `6.00`. It is close to fixed
+high-exploit but still outside the registered promotion tolerance.

@@ -41,10 +41,19 @@ Do not run another fixed MasterRTL geometry tweak. The adaptive sparse-front
 gate in `20260626_aux_archive_adaptive_sparse_front_probe/` fired its trigger,
 but it also lost badly on mean HV (`0.0946` versus classic `0.1406`).
 
-The next registered gate is
-`20260626_delayed_archive_activation_probe/`. It tests a materially different
-timing mechanism: keep passive archive logging from the start, but delay QD
-archive pressure until generation `3` so early generations can behave more
-like classic hill climbing. If this also loses clearly, the current milestone
-should move to a materially different mechanism or report a rigorous negative
-result for the tested QD families rather than escalating to full RTLLM spend.
+The delayed archive activation gate in
+`20260626_delayed_archive_activation_probe/` is now complete. It tests a
+materially different timing mechanism: keep passive archive logging from the
+start, but delay QD archive pressure until generation `3` so early generations
+can behave more like classic hill climbing.
+
+The timing change is useful but not enough. Delayed activation reaches mean HV
+`0.1324`, mean Pareto points `2.00`, and mean reference-beating candidates
+`6.00`; classic remains ahead at mean HV `0.1406`, mean Pareto points `3.25`,
+and mean reference-beating candidates `8.00`.
+
+No QD configuration is promoted for final full-RTLLM spend yet. The next
+candidate should be materially different from fixed MasterRTL auxiliary archive
+pressure: measured stagnation-triggered activation, validated MasterRTL
+pretrained model-state descriptors, or a different front-preserving archive
+coupling.

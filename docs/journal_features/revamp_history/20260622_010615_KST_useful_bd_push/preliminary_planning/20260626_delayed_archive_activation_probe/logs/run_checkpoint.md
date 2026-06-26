@@ -1,6 +1,6 @@
 # Run Checkpoint
 
-Status: preregistered; not launched.
+Status: completed.
 
 ## Preflight
 
@@ -14,4 +14,41 @@ Status: preregistered; not launched.
 
 ## Launch
 
-Pending vLLM model preflight and git commit.
+The vLLM endpoint returned `openai/gpt-oss-120b` with
+`max_model_len=131072`, satisfying the `128000` token requirement.
+
+The live run completed `8/8` problems:
+
+- run root:
+  `exp/useful_bd_push/prelim_delayed_archive_activation_20260626_022126_UTC/live`;
+- run name: `masterrtl_delayed_archive_activation_8x5`;
+- total runtime: `1620.73s`;
+- summary:
+  `exp/useful_bd_push/prelim_delayed_archive_activation_20260626_022126_UTC/live/masterrtl_delayed_archive_activation_8x5/seed_1001/openai_gpt-oss-120b/20260626_022434_revolution_summary_results.txt`;
+- telemetry:
+  `exp/useful_bd_push/prelim_delayed_archive_activation_20260626_022126_UTC/live/masterrtl_delayed_archive_activation_8x5/seed_1001/openai_gpt-oss-120b/20260626_022434_revolution_scheduler_telemetry.json`.
+
+## Validators
+
+Both validators passed with no output:
+
+- `uv run python scripts/validate_pareto_front_run.py ...`;
+- `uv run python scripts/validate_single_thought_operator_run.py ...`.
+
+## Final Analysis
+
+Completed sections:
+
+- backend comparison;
+- Pareto analysis;
+- PPA distribution;
+- hard-iteration analysis;
+- evolutionary reports.
+
+Interrupted section:
+
+- source-aligned design-space feature recovery after more than `10` minutes.
+
+The traceback shows the interrupted call was inside MasterRTL-backed source
+aligned feature recovery. The promotion decision uses the completed Pareto and
+PPA tables.

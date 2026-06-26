@@ -8,11 +8,11 @@ or claim correction; keep detailed evidence in the per-technique package,
 
 | Rank | Technique | Status | Why It Matters | Current Limitation |
 | ---: | --- | --- | --- | --- |
-| 1 | Delayed archive activation | Proposed next mechanism | The fixed and sparse-front auxiliary archive variants suggest QD pressure is still too expensive when applied throughout the run. A delayed or stagnation-triggered archive could preserve classic hill climbing first. | Not implemented or validated. It must be a real mechanism change, not another fixed MasterRTL geometry tweak. |
-| 2 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
-| 3 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | Source-aligned descriptors are credible, but live runs still need stronger front creation. |
-| 4 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, DeepGate transition embeddings are partially unblocked, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
-| 5 | Fixed/sparse-front MasterRTL auxiliary archive | Retired as-is | The best single-seed QD screen reached `0.1339` mean HV versus classic `0.1406`, so it remains a useful mechanism clue. Adaptive sparse-front pressure also fired on front-thin problems. | Three-seed replication loses all seed-level HV comparisons, and adaptive sparse-front HV regresses to `0.0946` versus classic `0.1406`. |
+| 1 | Stagnation-triggered archive pressure | Proposed next mechanism | Delayed activation was better than adaptive sparse-front pressure, but a fixed generation is still too blunt. Measured stagnation could activate QD only when classic-like improvement slows. | Not implemented or validated; must avoid using final PPA/HV as an in-loop BD. |
+| 2 | Delayed archive activation | Diagnostic negative | Tests whether QD pressure was paid too early. It keeps passive archive logging and activates archive pressure at generation `3`. | Mean HV `0.1324` still trails classic `0.1406`; not promoted. |
+| 3 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
+| 4 | RTL-native BD lane | High priority | MasterRTL/Yosys-SOG and RTLTimer-style features give a reviewer-readable definition of RTL diversity: operator/control/dataflow shape, pipeline/register topology, and timing-risk morphology. | Source-aligned descriptors are credible, but live runs still need stronger front creation. |
+| 5 | Learned/graph encoder lane | Exploratory | Qwen3 is a real pretrained live arm, DeepGate transition embeddings are partially unblocked, and T11/T36 show replay signal from graph/structural features. | Live encoder-coordinate archives have not beaten classic, and opaque embeddings need stronger collapse controls. |
 
 ## Most Promising Direction
 
@@ -113,12 +113,21 @@ mean Pareto points improved over fixed high-exploit auxiliary archive
 This retires fixed and sparse-front MasterRTL auxiliary archive pressure as a
 full-RTLLM candidate family.
 
-As of the 2026-06-25 periodic review, seed-replication gate, and adaptive
-sparse-front probe, no current screened QD or pretrained encoder configuration
-is ready for full RTLLM spend. The next credible gate is not another fixed
-front-slot, sparse-front, depth-only, or fixed-MasterRTL geometry variant; it
-must be a meaningfully different mechanism such as delayed archive activation
-after measured stagnation.
+The delayed archive activation follow-up is now complete. It changes timing
+rather than descriptor geometry: archive-driven fill, backfill, and failure
+pressure are delayed until generation `3`, while passive archive logging runs
+from the start. This is better than adaptive sparse-front pressure and close
+to fixed high-exploit (`0.1324` mean HV versus `0.1339`), but classic remains
+ahead at `0.1406` mean HV and `3.25` mean Pareto points. Treat fixed delayed
+activation as a timing clue, not a promoted arm.
+
+As of the 2026-06-25 periodic review, seed-replication gate, adaptive
+sparse-front probe, and delayed activation probe, no current screened QD or
+pretrained encoder configuration is ready for full RTLLM spend. The next
+credible gate is not another fixed front-slot, sparse-front, depth-only, or
+fixed-MasterRTL geometry variant; it must be a materially different mechanism
+such as measured stagnation-triggered archive pressure or validated
+pretrained MasterRTL model-state descriptors.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

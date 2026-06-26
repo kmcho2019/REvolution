@@ -5132,3 +5132,31 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   promoted. Stop fixed/sparse-front MasterRTL auxiliary archive pressure as a
   full-RTLLM candidate family unless the next run changes the timing of archive
   pressure, such as delayed activation after measured stagnation.
+
+## 2026-06-26T02:57:00Z - Delayed Archive Activation Probe Completed
+
+- Added and committed a narrow `qd_archive_activation_generation` hook so QD
+  can passively log early archive state while delaying archive-driven fill,
+  backfill, and failure pressure until a configured generation.
+- Created package:
+  `preliminary_planning/20260626_delayed_archive_activation_probe/`.
+- Ran `masterrtl_delayed_archive_activation_8x5` on the frozen eight-design
+  `8x5` preliminary screen with activation generation `3`.
+- Run root:
+  `exp/useful_bd_push/prelim_delayed_archive_activation_20260626_022126_UTC/live/masterrtl_delayed_archive_activation_8x5/seed_1001`.
+- The run completed `8/8` problems in `1620.73s`.
+- Focused validators passed:
+  `scripts/validate_pareto_front_run.py` and
+  `scripts/validate_single_thought_operator_run.py`.
+- Final-analysis decision sections completed under
+  `exp/useful_bd_push/prelim_delayed_archive_activation_20260626_022126_UTC/live/final_analysis_with_delayed_archive_activation`.
+  The command was interrupted only during source-aligned design-space feature
+  recovery after backend comparison, Pareto analysis, evolutionary reports,
+  hard-iteration analysis, and PPA distribution were written.
+- Result: delayed activation is close to fixed high-exploit but still below
+  classic. Mean HV is `0.1324` versus classic `0.1406`; mean Pareto points are
+  `2.00` versus classic `3.25`; mean reference-beating candidates are `6.00`
+  versus classic `8.00`.
+- Decision: delayed activation is diagnostic negative and not promoted. It is
+  a useful timing-mechanism clue, but the next gate should be materially
+  different from fixed MasterRTL auxiliary archive pressure.
