@@ -10,8 +10,8 @@ including a three-seed replication of the best diagnostic arm, the T84
 front-slot follow-up, and the T96 RF/DeepGate hybrid screen, but it has not
 identified a QD/MAP-Elites configuration that is strong enough to spend the
 full RTLLM budget on as a positive candidate. T96 improves over pure T95
-DeepGate on mean HV, but it is still negative versus classic on aggregate HV
-and front breadth.
+DeepGate on mean HV, but it regresses against its closer T83 RF sibling and is
+still negative versus classic on aggregate HV and front breadth.
 
 Selection should not discard whole encoder/config categories just because the
 current best member is below classic. Maintain:
@@ -37,7 +37,7 @@ different budget or replication caveat are marked explicitly.
 | Qwen3 pretrained text/code | `qwen_canonical_rtl_pca3_8x5` | `0.1108` | Best actual pretrained text/code embedding live arm; keep as the Qwen representative despite weak HV. |
 | Front-guarded QD memory control | `T86_fg_qdm_random_memory_12x3` | `0.1382` smoke-only | Control representative only; random-memory FG-QDM trails classic and slightly beats SR-memory, so exact `sr_pca_3d` memory is not descriptor-positive. |
 | DeepGate / synthesized-netlist encoder | `T95_deepgate_delayed_high_exploit_8x5` | `0.1153` | Best pure DeepGate representative; delayed high-exploit coupling improves over T94 but trails classic. |
-| Hybrid pretrained RTL/netlist encoder | `T96_rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Best RF/DeepGate hybrid representative; improves over pure T95 DeepGate but still trails classic and loses front breadth. |
+| Hybrid pretrained RTL/netlist encoder | `T96_rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Best RF/DeepGate hybrid representative; improves over pure T95 DeepGate but regresses versus same-seed T83 `0.1369`, trails classic, and loses front breadth. |
 | AURORA / AutoQD learned descriptor | `AURORA-style raw implementation-feature lane` | n/a | Keep as category placeholder; current evidence is replay/diagnostic, not frozen live HV. |
 
 ## Top 10 Current Configs By Mean HV
@@ -54,7 +54,7 @@ replicated, and category-useful.
 | 5 | `masterrtl_structural_front_slot_8x5` | `0.1227` | Classic `8x5` `0.1406` | Best raw MasterRTL structural-cell variant. |
 | 6 | `masterrtl_structural_mix_8x5` | `0.1218` | Classic `8x5` `0.1406` | Plain structural mix; category baseline. |
 | 7 | `t11_runtime_top4_front_slot_8x5` | `0.1208` | Classic `8x5` `0.1406` | Best live graph-like bridge arm. |
-| 8 | `rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Classic `8x5` `0.1406` | Best hybrid pretrained RTL/netlist representative; improves over T95 but remains negative. |
+| 8 | `rf_deepgate_hybrid_delayed_8x5` | `0.1199` | Classic `8x5` `0.1406` | Best hybrid pretrained RTL/netlist representative; improves over T95 but regresses versus T83 and remains negative. |
 | 9 | `T84_rf_leafid_front_slot_delayed_qd` | `0.1162` | Classic `8x5` `0.1406` | Completed negative; keep only as failed coupling evidence. |
 | 10 | `deepgate_delayed_high_exploit_8x5` | `0.1153` | Classic `8x5` `0.1406` | Best screened pure synthesized-netlist pretrained encoder representative; improves over T94 but remains negative. |
 
@@ -132,10 +132,14 @@ T96 tests whether pure DeepGate is missing a complementary RTL-native
 pretrained model-state axis. It combines `source_aligned_rf_timing_leaf_ids`,
 `source_aligned_masterrtl_branching`, and `deepgate_pool_pc0` under the
 delayed high-exploit schedule. It improves over pure T95 DeepGate on mean HV
-(`0.1199` versus `0.1153`) and HV wins (`2` versus `1`), but classic remains
-ahead on mean HV (`0.1406`), Pareto points (`3.25` versus `1.625`), and
-reference-beating candidates (`8.00` versus `5.375`). Keep T96 as the hybrid
-pretrained RTL/netlist representative; do not promote it to full RTLLM spend.
+(`0.1199` versus `0.1153`), but it regresses versus the closer same-seed T83
+RF leaf-ID structural delayed arm (`0.1369`). Classic remains ahead on mean HV
+(`0.1406`), Pareto points (`3.25` versus `1.625`), and reference-beating
+candidates (`8.00` versus `5.375`). The paired HV record is classic `3`
+strict wins, `3` ties, and T96 `2` strict wins. T96 also has visible
+valid-PPA yield drops on `Prob015_multi_pipe_8bit` (`24` to `10`) and
+`Prob045_alu` (`36` to `11`). Keep T96 as the hybrid pretrained RTL/netlist
+representative; do not promote it to full RTLLM spend.
 
 ## Pre-RF Archive-Pressure Context
 

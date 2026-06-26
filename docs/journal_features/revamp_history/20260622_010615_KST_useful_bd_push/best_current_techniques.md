@@ -14,7 +14,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 4 | T11/T36 graph-like bridge | Category representative | Keeps the best live graph/encoder-like bridge arm in the shortlist. | Live `8x5` mean HV `0.1208` still trails classic `0.1406`. |
 | 5 | Qwen3 canonical RTL | Pretrained text/code representative | Real pretrained embedding path with live-screened QD archive coordinates. | Mean HV `0.1108` trails classic `0.1406`; keep as category representative, not spend-ready. |
 | 6 | MasterRTL RF timing model-state descriptors | Valid screened negative | T82 exposes T81's upstream timing-DAG/path RF model-state signal as a live descriptor profile and the frozen `8x5` screen is headline-paired. | Mean HV `0.1140` trails classic `0.1406`; several RF timing axes collapse. |
-| 7 | RF/DeepGate hybrid delayed QD | Hybrid pretrained representative | Combines MasterRTL RF timing model-state, RTL structural branching, and official DeepGate pooled netlist signal under the delayed high-exploit schedule. | Mean HV `0.1199` improves over pure T95 DeepGate but still trails classic `0.1406`, with lower Pareto breadth. |
+| 7 | RF/DeepGate hybrid delayed QD | Hybrid pretrained representative | Combines MasterRTL RF timing model-state, RTL structural branching, and official DeepGate pooled netlist signal under the delayed high-exploit schedule. | Mean HV `0.1199` improves over pure T95 DeepGate but regresses versus same-seed T83 `0.1369` and still trails classic `0.1406`, with lower Pareto breadth. |
 | 8 | FG-QDM memory controls | Completed smoke negative | Tests QD as guarded auxiliary memory rather than a replacement optimizer. | Random-memory FG-QDM slightly beats SR-memory but trails classic, so exact `sr_pca_3d` memory is not descriptor-positive. |
 | 9 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
 | 10 | DeepGate delayed high-exploit bridge | Screened pretrained netlist representative | Uses official DeepGate vectors; T89 shows residual signal beyond AIG stats, T90 reaches `8/8` offline coverage, T91 builds pooled descriptors, T92 wires runtime axes, T93 inserts one live archive member, T94 completes the first matched screen, and T95 tests delayed high-exploit coupling. | Best DeepGate mean HV is `0.1153`, improved over T94 but still below classic `0.1406`, with lower Pareto breadth. |
@@ -252,11 +252,12 @@ the DeepGate category representative; do not promote it to full RTLLM spend.
 T96 then adds a complementary pretrained RTL-native axis by combining
 MasterRTL RF timing leaf-ID breadth, MasterRTL branching, and
 `deepgate_pool_pc0` under the same delayed high-exploit schedule. It improves
-over pure T95 DeepGate on mean HV (`0.1199` versus `0.1153`) and HV wins (`2`
-versus `1`), but still loses classic mean HV (`0.1406`), Pareto breadth
-(`1.625` versus `3.25`), and reference-beating candidates (`5.375` versus
-`8.00`). Keep it as the hybrid pretrained RTL/netlist representative, not a
-full-RTLLM spend arm.
+over pure T95 DeepGate on mean HV (`0.1199` versus `0.1153`), but regresses
+versus the closer same-seed T83 descriptor (`0.1369`) that used RF leaf-ID,
+branching, and wire-density axes. It also still loses classic mean HV
+(`0.1406`), Pareto breadth (`1.625` versus `3.25`), and reference-beating
+candidates (`5.375` versus `8.00`). Keep it as the hybrid pretrained
+RTL/netlist representative, not a full-RTLLM spend arm.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

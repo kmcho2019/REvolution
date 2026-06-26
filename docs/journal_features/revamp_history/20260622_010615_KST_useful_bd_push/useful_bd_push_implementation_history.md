@@ -5737,6 +5737,10 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Headline result: classic mean HV `0.1406`, T96 mean HV `0.1199`; classic
   mean Pareto points `3.25`, T96 `1.625`; classic mean reference-beating
   candidates `8.00`, T96 `5.375`; HV wins `6` for classic and `2` for T96.
+- Review correction: the symmetric HV record is classic `3` strict wins,
+  `3` ties, and T96 `2` strict wins. T96 also regresses versus the closer
+  same-seed T83 RF leaf-ID structural delayed arm (`0.1369` mean HV), so the
+  pre-registered "improve over both T83 and T95" rule fails on the T83 leg.
 - T96 beats classic by HV on `Prob024_fsm` and `Prob153_gshare`, ties flat
   zero/equal-HV cases on `Prob015_multi_pipe_8bit`, `Prob116_m2014_q3`, and
   `Prob135_m2014_q6b`, and loses the larger RTLLM front-material cases.

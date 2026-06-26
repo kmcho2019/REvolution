@@ -12,12 +12,15 @@ It tests a compact hybrid descriptor:
 
 This improves over exact T95 DeepGate-only mean HV, but it remains below the
 classic REvolution `8x5` baseline and does not recover front breadth.
+It also regresses versus its closest sibling T83: T96 replaces T83's
+`rtltimer_wire_density` axis with `deepgate_pool_pc0`, and the same-seed
+mean HV drops from T83 `0.1369` to T96 `0.1199`.
 
-| Method | Mean HV | Mean Pareto Points | Mean Ref-Beating | HV Wins |
+| Method | Mean HV | Mean Pareto Points | Mean Ref-Beating | HV Outcome |
 | --- | ---: | ---: | ---: | ---: |
-| `classic_revolution_8x5` | `0.1406` | `3.25` | `8.00` | `6` |
-| `deepgate_delayed_high_exploit_8x5` | `0.1153` | `1.88` | `5.25` | `1` |
-| `rf_deepgate_hybrid_delayed_8x5` | `0.1199` | `1.625` | `5.375` | `2` |
+| `classic_revolution_8x5` | `0.1406` | `3.25` | `8.00` | `3` strict wins, `3` ties |
+| `deepgate_delayed_high_exploit_8x5` | `0.1153` | `1.88` | `5.25` | `1` strict win |
+| `rf_deepgate_hybrid_delayed_8x5` | `0.1199` | `1.625` | `5.375` | `2` strict wins, `3` ties |
 
 ## Problem-Level Read
 
@@ -29,12 +32,21 @@ zero or equal-HV cases on `Prob015_multi_pipe_8bit`, `Prob116_m2014_q3`, and
 The detailed table is:
 `tables/rf_deepgate_hybrid_problem_deltas.csv`.
 
+The aggregate report's `hypervolume_win_count` uses the existing script
+convention. Interpreted symmetrically for the paired T96 comparison, the HV
+record is classic `3` wins, `3` ties, and T96 `2` wins.
+
 ## Completeness
 
 `analysis/ppa_completeness.csv` marks all eight problems as `headline`.
 Both classic and T96 have valid-PPA candidates for every problem, and every
 problem has valid reference PPA. There is no missing-reference loophole in the
 headline comparison.
+
+There are still yield warnings: T96 valid-PPA counts drop from `24` to `10`
+on `Prob015_multi_pipe_8bit` and from `36` to `11` on `Prob045_alu`. The run
+is not promoted, so this is not a promotion-gate violation, but it is part of
+why the hybrid is not a final RTLLM candidate.
 
 ## Visualizations
 
@@ -58,7 +70,9 @@ while classic remains the PPA comparator.
 ## Decision
 
 Keep T96 as a category representative for the RF/DeepGate hybrid lane. Do not
-spend final full-RTLLM budget on exact T96. The result suggests that combining
-pretrained model-state and netlist embeddings is not enough by itself; the next
-candidate needs a stronger archive/search-policy change or a materially better
-descriptor, not another minor axis substitution.
+spend final full-RTLLM budget on exact T96. The pre-registered rule required
+clear improvement over both T83 and T95; T96 improves over T95 but fails the
+T83 leg. The result suggests that combining pretrained model-state and netlist
+embeddings is not enough by itself; the next candidate needs a stronger
+archive/search-policy change or a materially better descriptor, not another
+minor axis substitution.
