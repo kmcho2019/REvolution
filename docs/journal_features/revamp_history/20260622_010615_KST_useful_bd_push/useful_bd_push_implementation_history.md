@@ -5379,3 +5379,22 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Updated `preliminary_planning/current_selection_status.md` to maintain one
   representative per encoder/config category and a top-10 current
   configuration table ranked primarily by mean HV.
+
+## 2026-06-26T07:30:00Z - T85 Front-Guarded QD-Memory Implemented
+
+- Added `T85_front_guarded_qd_memory` as a materially different archive
+  coupling test after T84 failed to recover front material.
+- Implemented `qd_scheduler_mode=front_guarded_memory` with a separate
+  classic-style primary success pool, passive valid-PPA archive insertion,
+  credited memory-cell sampling, memory-refine and front-rescue lanes, and
+  per-generation memory-lane summary metrics.
+- Constrained the first implementation to `code_individual`,
+  `single_thought_operator`, one-parent requests, `elite_pareto_slot`, disabled
+  two-parent fusion, disabled probe lane, and disabled rebinning.
+- The first preregistered descriptor is T26's `sr_pca_3d` profile so T85 tests
+  search policy rather than a new descriptor.
+- Stage 0 validation passed: `ruff` on touched files, focused `pytest` for
+  parser/primary-pool/memory-credit checks, and source `pyright` on touched
+  runtime modules.
+- Decision: run the three-problem smoke next before any frozen eight-design
+  screen or full RTLLM spend.

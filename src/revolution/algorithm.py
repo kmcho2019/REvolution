@@ -277,6 +277,16 @@ class Heuristic:
         self.thought_success_rate: float | None = None
         self.thought_sample_ids: list[str] = []
         self.thought_representative_sample_id: str | None = None
+        self.qd_memory_lane: str | None = None
+        self.qd_memory_parent_cell_id: str | None = None
+        self.qd_memory_parent_role: str | None = None
+        self.qd_memory_parent_cell_credit: float | None = None
+        self.qd_memory_front_gap: float | None = None
+        self.qd_archive_inserted: bool = False
+        self.qd_archive_decision: str | None = None
+        self.qd_archive_cell_id: str | None = None
+        self.qd_global_pareto_inserted: bool = False
+        self.qd_cell_champion_improved: bool = False
 
     def __repr__(self) -> str:
         """String representation for debugging and logging."""
@@ -1477,6 +1487,14 @@ class EoHEngine:
             "origin_pool": self._resolve_offspring_origin_pool(meta_rec),
             "resolved_mode": meta_rec.get("resolved_mode", self.generation_mode),
         }
+        for key in (
+            "qd_memory_lane",
+            "qd_memory_parent_cell_id",
+            "qd_memory_parent_role",
+            "qd_memory_parent_cell_credit",
+        ):
+            if key in meta_rec:
+                payload[key] = meta_rec[key]
         with open(os.path.join(candidate_dir, "prompt_snapshot.json"), "w") as f:
             json.dump(payload, f, indent=2)
 

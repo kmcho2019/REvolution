@@ -107,6 +107,20 @@ No QD configuration is promoted for final full-RTLLM spend yet. The next
 candidate should be materially different from fixed MasterRTL auxiliary archive
 pressure.
 
+## Front-Guarded QD-Memory Candidate
+
+`T85_front_guarded_qd_memory` is implemented and pre-registered but not ranked
+in the top-10 table yet because it has no live HV result. It is materially
+different from the fixed auxiliary archive family: the archive is passive
+memory, the primary success pool remains separate, empty-cell fill gets no
+budget, and only credited retained cells can receive the small memory-refine or
+front-rescue lanes.
+
+Decision rule: T85 can enter the top-10 table only after the three-problem
+smoke and frozen eight-design screen produce reference-complete mean HV. Until
+then, it is an active search-policy candidate, not a spend-ready full-RTLLM
+arm.
+
 Measured archive-stagnation activation is now complete and negative. It kept
 passive archive logging from the start and activated archive pressure only
 after two consecutive archive-history intervals showed no growth in occupied

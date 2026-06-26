@@ -68,6 +68,12 @@ PPA-competitive RTL implementation families while keeping classic-like
 exploitation pressure. This does not reject QD/MAP-Elites; it says RTL needs
 constrained diversity pressure that earns its evaluation cost.
 
+T85 implements that correction directly as FG-QDM, or front-guarded QD memory.
+It keeps a separate classic-style primary success pool, inserts valid-PPA
+candidates into the archive passively, gives no budget to empty-cell fill, and
+samples memory parents only from credited retained cells. It is not ranked in
+the current-best table until the smoke and frozen-screen HV data exist.
+
 T78 adds evidence for that ablation but does not replace it. In the existing
 T75 `12 x 3` logs, `9/13` problem archives still add or replace cells in
 generation `2` or later, occupied cells rise through generation `3`, and

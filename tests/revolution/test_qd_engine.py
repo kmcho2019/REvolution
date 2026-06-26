@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import pytest
 
 from revolution.algorithm import Heuristic
-from revolution.qd.engine import QDEngine
+from revolution.qd.engine import QDEngine, QD_MEMORY_DEFAULT_CREDIT
 from revolution.qd.archive import GridQuantileArchive
 from revolution.qd.types import ArchiveMember
 from revolution.runtime.problem_spec import ProblemSpec
@@ -927,6 +927,120 @@ def test_qd_engine_rejects_front_slot_lane_without_elite_slot(
             monkeypatch,
             qd_parent_selection="front_slot_lane_nsga2",
         )
+
+
+def _front_guarded_engine(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> QDEngine:
+    return _engine(
+        tmp_path,
+        monkeypatch,
+        population_size=4,
+        qd_cell_mode="elite_pareto_slot",
+        qd_max_elites_per_cell=2,
+        qd_scheduler_mode="front_guarded_memory",
+        qd_parent_selection="front_guarded_memory",
+        qd_operator_kind="single_thought_operator",
+        qd_operator_one_parent_fraction=1.0,
+        qd_two_parent_probability=0.0,
+        qd_grid_axes=("g_A", "g_T"),
+    )
+
+
+def _successful_candidate(
+    candidate_id: str,
+    *,
+    score: float,
+    power: float,
+    area: float,
+    clock: float,
+) -> Heuristic:
+    cand = Heuristic(
+        candidate_id,
+        "module m; endmodule",
+        "",
+        score=score,
+        generation=0,
+        status="success",
+    )
+    cand.id = candidate_id
+    cand.ppa_success = True
+    cand.ppa_metrics = {
+        "power": power,
+        "area": area,
+        "eff_clk_period": clock,
+    }
+    return cand
+
+
+def test_front_guarded_memory_requires_matching_parent_selection(
+    tmp_path,
+    monkeypatch,
+):
+    with pytest.raises(ValueError, match="matching parent selection"):
+        _engine(
+            tmp_path,
+            monkeypatch,
+            qd_cell_mode="elite_pareto_slot",
+            qd_max_elites_per_cell=2,
+            qd_scheduler_mode="front_guarded_memory",
+            qd_operator_kind="single_thought_operator",
+            qd_operator_one_parent_fraction=1.0,
+            qd_two_parent_probability=0.0,
+            qd_parent_selection="nsga2_global_rank",
+        )
+
+
+def test_front_guarded_memory_preserves_primary_pool(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _front_guarded_engine(tmp_path, monkeypatch)
+    elite = _successful_candidate(
+        "elite",
+        score=3.0,
+        power=0.9,
+        area=90.0,
+        clock=0.8,
+    )
+    archive_only = _successful_candidate(
+        "archive-only",
+        score=1.0,
+        power=0.7,
+        area=95.0,
+        clock=0.9,
+    )
+
+    engine.success_pool = [elite, archive_only]
+    engine._rebuild_archive_from_success_pool()
+
+    assert [cand.id for cand in engine.success_pool] == ["elite", "archive-only"]
+    assert [cand.id for cand in engine.qd_primary_success_pool] == [
+        "elite",
+        "archive-only",
+    ]
+    assert engine.success_archive.occupied_count() > 0
+    assert engine._memory_sampleable_cells()
+
+
+def test_front_guarded_memory_updates_parent_cell_credit(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _front_guarded_engine(tmp_path, monkeypatch)
+    parent = _successful_candidate("parent", score=1.0, power=0.9, area=90.0, clock=0.8)
+    engine.success_pool = [parent]
+    engine._rebuild_archive_from_success_pool()
+    cell_id = next(iter(engine.qd_memory_cell_stats))
+    child = _successful_candidate("child", score=2.0, power=0.8, area=80.0, clock=0.7)
+    child.qd_memory_parent_cell_id = cell_id
+    child.qd_archive_inserted = True
+
+    engine._update_qd_memory_parent_credit([child])
+
+    stats = engine.qd_memory_cell_stats[cell_id]
+    assert stats.attempts_from_cell == 1
+    assert stats.valid_ppa_from_cell == 1
+    assert stats.local_front_adds_from_cell >= 1
+    assert stats.credit > QD_MEMORY_DEFAULT_CREDIT
 
 
 def test_qd_engine_builds_cvt_archive_runtime(monkeypatch, tmp_path):

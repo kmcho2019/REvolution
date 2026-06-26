@@ -302,7 +302,7 @@ def _build_backend(
         candidate_evaluator = CandidateEvaluator(
             context=problem_context,
             problem_description=problem_context.problem_description,
-            verilog_evaluator=functional_evaluator,
+            verilog_evaluator=cast(VerilogEvaluator, functional_evaluator),
             synthesis_evaluator=synthesis_evaluator,
             ref_ppa_metrics=ref_ppa_metrics,
             problem_spec=problem_spec,
@@ -336,7 +336,7 @@ def _build_backend(
         candidate_evaluator = CandidateEvaluator(
             context=problem_context,
             problem_description=problem_context.problem_description,
-            verilog_evaluator=functional_evaluator,
+            verilog_evaluator=cast(VerilogEvaluator, functional_evaluator),
             synthesis_evaluator=synthesis_evaluator,
             ref_ppa_metrics=ref_ppa_metrics,
             problem_spec=problem_spec,
@@ -448,6 +448,7 @@ def _build_backend(
             qd_archive_activation_stagnation_generations=(
                 args.qd_archive_activation_stagnation_generations
             ),
+            qd_scheduler_mode=args.qd_scheduler_mode,
             qd_quality_mode=args.qd_quality_mode,
             qd_alpha=args.qd_alpha,
             qd_beta=args.qd_beta,
@@ -482,6 +483,14 @@ def _build_backend(
             qd_champion_lane_fraction=args.qd_champion_lane_fraction,
             qd_front_slot_lane_fraction=args.qd_front_slot_lane_fraction,
             qd_parent_selection=args.qd_parent_selection,
+            qd_memory_classic_fraction=args.qd_memory_classic_fraction,
+            qd_memory_refine_fraction=args.qd_memory_refine_fraction,
+            qd_memory_rescue_fraction=args.qd_memory_rescue_fraction,
+            qd_memory_probe_fraction=args.qd_memory_probe_fraction,
+            qd_memory_min_cell_credit=args.qd_memory_min_cell_credit,
+            qd_memory_front_gap_epsilon=args.qd_memory_front_gap_epsilon,
+            qd_memory_cooldown_attempts=args.qd_memory_cooldown_attempts,
+            qd_memory_cooldown_generations=args.qd_memory_cooldown_generations,
             representative_sample=args.representative_sample,
             repair_kind=args.repair_kind,
             repair_max_attempts_per_sample=args.repair_max_attempts_per_sample,
@@ -991,6 +1000,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         default=0,
     )
     parser.add_argument(
+        "--qd_scheduler_mode",
+        type=str,
+        default="map_elites",
+        choices=["map_elites", "front_guarded_memory"],
+    )
+    parser.add_argument(
         "--qd_quality_mode",
         type=str,
         default="auto",
@@ -1096,6 +1111,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--qd_parent_selection", type=str, default="cell_crowded_tournament",
         choices=[
             "cell_crowded_tournament",
+            "front_guarded_memory",
             "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",
@@ -1105,6 +1121,14 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
              "requests for elite_pareto_slot local-front members. "
              "sparse_front_triggered_nsga2 lowers the champion lane to 0.65 "
              "only when elite_pareto_slot local fronts are thin.")
+    parser.add_argument("--qd_memory_classic_fraction", type=float, default=0.80)
+    parser.add_argument("--qd_memory_refine_fraction", type=float, default=0.15)
+    parser.add_argument("--qd_memory_rescue_fraction", type=float, default=0.05)
+    parser.add_argument("--qd_memory_probe_fraction", type=float, default=0.0)
+    parser.add_argument("--qd_memory_min_cell_credit", type=float, default=0.20)
+    parser.add_argument("--qd_memory_front_gap_epsilon", type=float, default=0.03)
+    parser.add_argument("--qd_memory_cooldown_attempts", type=int, default=3)
+    parser.add_argument("--qd_memory_cooldown_generations", type=int, default=2)
     parser.add_argument(
         "--representative_sample",
         type=str,

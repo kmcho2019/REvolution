@@ -190,6 +190,16 @@ def test_backend_parser_accepts_qd_options():
             "diff",
             "--qd_front_slot_lane_fraction",
             "0.25",
+            "--qd_scheduler_mode",
+            "front_guarded_memory",
+            "--qd_parent_selection",
+            "front_guarded_memory",
+            "--qd_memory_classic_fraction",
+            "0.8",
+            "--qd_memory_refine_fraction",
+            "0.15",
+            "--qd_memory_rescue_fraction",
+            "0.05",
         ]
     )
     assert args.search_mode == "revolution_qd"
@@ -201,6 +211,11 @@ def test_backend_parser_accepts_qd_options():
     assert args.qd_descriptor_axes == ["seq_ratio", "g_A", "g_T"]
     assert args.qd_refine_generation_mode == "diff"
     assert args.qd_front_slot_lane_fraction == pytest.approx(0.25)
+    assert args.qd_scheduler_mode == "front_guarded_memory"
+    assert args.qd_parent_selection == "front_guarded_memory"
+    assert args.qd_memory_classic_fraction == pytest.approx(0.8)
+    assert args.qd_memory_refine_fraction == pytest.approx(0.15)
+    assert args.qd_memory_rescue_fraction == pytest.approx(0.05)
 
 
 def test_backend_parser_includes_diff_controls_and_vllm_threshold():

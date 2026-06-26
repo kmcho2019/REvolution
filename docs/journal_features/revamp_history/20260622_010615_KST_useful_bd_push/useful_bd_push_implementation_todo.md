@@ -643,6 +643,16 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       follow-up to T83's front-breadth failure.
 - [x] Run T84 on the frozen eight-design `8x5` screen and decide before any
       full RTLLM spend: exact T84 is completed negative and not promoted.
+- [x] Implement and pre-register T85 front-guarded QD memory as a materially
+      different search-policy test that keeps a separate classic-style primary
+      pool and uses the archive only as guarded memory.
+- [x] Run Stage 0 local checks for T85: parser coverage, primary-pool
+      preservation, memory-credit update, ruff, focused pytest, and source
+      pyright.
+- [ ] Run T85 three-problem smoke against the matched classic comparator before
+      any frozen eight-design or full-RTLLM spend.
+- [ ] If the smoke passes, run the frozen eight-design `8x5` T85 screen and
+      decide whether it enters the mean-HV ranked top-10 table.
 - [ ] Stop condition satisfies `anti_reward_hacking_policy.md`.
 
 ## Validation

@@ -12,6 +12,7 @@ import time
 import traceback
 from collections import defaultdict
 from collections import deque
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -109,8 +110,10 @@ _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
 JournalParentSource = Literal["archive", "fail_pool", "seed"]
 QDOperatorKind = Literal["eoh_strategies", "single_thought_operator"]
 QDTwoParentGate = Literal["none", "near_front_descriptor"]
+QDSchedulerMode = Literal["map_elites", "front_guarded_memory"]
 QDParentSelection = Literal[
     "cell_crowded_tournament",
+    "front_guarded_memory",
     "front_slot_lane_nsga2",
     "nsga2_global_rank",
     "sparse_front_triggered_nsga2",
@@ -122,6 +125,21 @@ SPARSE_FRONT_TRIGGER_MIN_OCCUPIED_CELLS = 4
 SPARSE_FRONT_TRIGGER_MIN_EXTRA_FRONT_SLOTS = 2
 SINGLE_THOUGHT_OPERATOR_STRATEGY = "single_thought_operator"
 THOUGHT_ONLY_CODE_STRATEGY = "thought_only_code"
+QD_MEMORY_DEFAULT_CREDIT = 0.25
+QD_MEMORY_CREDIT_ALPHA = 0.25
+
+
+@dataclass
+class QDMemoryCellStats:
+    credit: float = QD_MEMORY_DEFAULT_CREDIT
+    attempts_from_cell: int = 0
+    valid_ppa_from_cell: int = 0
+    global_front_adds_from_cell: int = 0
+    local_front_adds_from_cell: int = 0
+    champion_improvements_from_cell: int = 0
+    failed_from_cell: int = 0
+    cooldown_until_gen: int = 0
+    last_credit_gen: int = 0
 
 
 class QDEngine(EoHEngine):
@@ -148,6 +166,7 @@ class QDEngine(EoHEngine):
         qd_adaptive_warmup_champion_lane_fraction: float | None = None,
         qd_archive_activation_generation: int = 0,
         qd_archive_activation_stagnation_generations: int = 0,
+        qd_scheduler_mode: str = "map_elites",
         qd_descriptor_profile: str | None = None,
         qd_descriptor_axes: tuple[str, ...] = (),
         qd_descriptor_file: str | None = None,
@@ -175,6 +194,14 @@ class QDEngine(EoHEngine):
         qd_champion_lane_fraction: float = 0.0,
         qd_front_slot_lane_fraction: float = FRONT_SLOT_LANE_FRACTION,
         qd_parent_selection: str = "cell_crowded_tournament",
+        qd_memory_classic_fraction: float = 0.80,
+        qd_memory_refine_fraction: float = 0.15,
+        qd_memory_rescue_fraction: float = 0.05,
+        qd_memory_probe_fraction: float = 0.0,
+        qd_memory_min_cell_credit: float = 0.20,
+        qd_memory_front_gap_epsilon: float = 0.03,
+        qd_memory_cooldown_attempts: int = 3,
+        qd_memory_cooldown_generations: int = 2,
         representative_sample: str = "best_successful_quality",
         repair_kind: str = "none",
         repair_max_attempts_per_sample: int = 0,
@@ -302,6 +329,12 @@ class QDEngine(EoHEngine):
         self.qd_archive_activation_stagnation_generations = int(
             qd_archive_activation_stagnation_generations
         )
+        if qd_scheduler_mode not in {"map_elites", "front_guarded_memory"}:
+            raise ValueError(f"Unsupported qd_scheduler_mode '{qd_scheduler_mode}'.")
+        self.qd_scheduler_mode: QDSchedulerMode = cast(
+            QDSchedulerMode,
+            qd_scheduler_mode,
+        )
         self.qd_descriptor_profile = qd_descriptor_profile
         self.qd_descriptor_axes = tuple(qd_descriptor_axes)
         self.qd_descriptor_file = qd_descriptor_file
@@ -339,6 +372,7 @@ class QDEngine(EoHEngine):
         self.qd_front_slot_lane_fraction = float(qd_front_slot_lane_fraction)
         if qd_parent_selection not in {
             "cell_crowded_tournament",
+            "front_guarded_memory",
             "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",
@@ -348,6 +382,7 @@ class QDEngine(EoHEngine):
             )
         if (
             qd_parent_selection in {
+                "front_guarded_memory",
                 "front_slot_lane_nsga2",
                 "sparse_front_triggered_nsga2",
             }
@@ -360,6 +395,58 @@ class QDEngine(EoHEngine):
             QDParentSelection,
             qd_parent_selection,
         )
+        if (
+            self.qd_parent_selection == "front_guarded_memory"
+            and self.qd_scheduler_mode != "front_guarded_memory"
+        ):
+            raise ValueError(
+                "front_guarded_memory parent selection requires matching scheduler."
+            )
+        if self.qd_scheduler_mode == "front_guarded_memory":
+            if self.representation_kind != "code_individual":
+                raise ValueError("front_guarded_memory requires code_individual.")
+            if self.qd_operator_kind != "single_thought_operator":
+                raise ValueError(
+                    "front_guarded_memory requires single_thought_operator."
+                )
+            if self.qd_parent_selection != "front_guarded_memory":
+                raise ValueError(
+                    "front_guarded_memory requires matching parent selection."
+                )
+            if self.qd_two_parent_probability != 0.0:
+                raise ValueError("front_guarded_memory disables two-parent fusion.")
+            if self.qd_operator_one_parent_fraction != 1.0:
+                raise ValueError("front_guarded_memory requires one-parent requests.")
+            if self.qd_rebinning_kind != "disabled":
+                raise ValueError("front_guarded_memory requires disabled rebinning.")
+        memory_fractions = (
+            qd_memory_classic_fraction,
+            qd_memory_refine_fraction,
+            qd_memory_rescue_fraction,
+            qd_memory_probe_fraction,
+        )
+        if any(not 0.0 <= float(value) <= 1.0 for value in memory_fractions):
+            raise ValueError("qd_memory fractions must be in [0, 1].")
+        if sum(float(value) for value in memory_fractions) > 1.0:
+            raise ValueError("qd_memory fractions must sum to <= 1.")
+        if qd_memory_probe_fraction != 0.0:
+            raise ValueError("front_guarded_memory probe lane is not implemented.")
+        if qd_memory_min_cell_credit < 0.0:
+            raise ValueError("qd_memory_min_cell_credit must be >= 0.")
+        if qd_memory_front_gap_epsilon < 0.0:
+            raise ValueError("qd_memory_front_gap_epsilon must be >= 0.")
+        if qd_memory_cooldown_attempts <= 0:
+            raise ValueError("qd_memory_cooldown_attempts must be > 0.")
+        if qd_memory_cooldown_generations < 0:
+            raise ValueError("qd_memory_cooldown_generations must be >= 0.")
+        self.qd_memory_classic_fraction = float(qd_memory_classic_fraction)
+        self.qd_memory_refine_fraction = float(qd_memory_refine_fraction)
+        self.qd_memory_rescue_fraction = float(qd_memory_rescue_fraction)
+        self.qd_memory_probe_fraction = float(qd_memory_probe_fraction)
+        self.qd_memory_min_cell_credit = float(qd_memory_min_cell_credit)
+        self.qd_memory_front_gap_epsilon = float(qd_memory_front_gap_epsilon)
+        self.qd_memory_cooldown_attempts = int(qd_memory_cooldown_attempts)
+        self.qd_memory_cooldown_generations = int(qd_memory_cooldown_generations)
         self.representative_sample = representative_sample
         self.thought_population_size = (
             self.population_size // self.code_samples_per_thought
@@ -379,7 +466,9 @@ class QDEngine(EoHEngine):
         }
         self.success_archive = self._build_archive()
         self.global_pareto_archive = self._build_global_archive()
+        self.qd_primary_success_pool: list[Heuristic] = []
         self.success_reservoir: dict[str, deque[Heuristic]] = {}
+        self.qd_memory_cell_stats: dict[str, QDMemoryCellStats] = {}
         self.qd_generation_history: list[dict[str, Any]] = []
         self.qd_descriptor_observations: list[dict[str, Any]] = []
         self.qd_success_parent_requests = 0
@@ -764,9 +853,12 @@ class QDEngine(EoHEngine):
         )
 
     def _rebuild_archive_from_success_pool(self) -> None:
+        if self.qd_scheduler_mode == "front_guarded_memory" and not self.qd_primary_success_pool:
+            self.qd_primary_success_pool = list(self.success_pool)
         self.success_archive = self._build_archive()
         self.global_pareto_archive = self._build_global_archive()
         self.success_reservoir = {}
+        self.qd_memory_cell_stats = {}
         self.qd_descriptor_observations = []
         self._archive_insertion_index = 0
         self._qd_rebin_recent_members = []
@@ -784,8 +876,10 @@ class QDEngine(EoHEngine):
             member = self._archive_member(cand, descriptors)
             before_occupied = self.success_archive.occupied_count()
             before_qd_score = self._archive_qd_score()
+            front_gap = self._front_gap(member)
             result = self.success_archive.insert(member)
             global_update = self._insert_global_pareto(member)
+            self._update_qd_memory_insert_stats(result, global_update, front_gap)
             self._record_rebin_sample(member, result)
             if isinstance(self.success_archive, GridQuantileArchive) and result.decision == "warmup_buffered":
                 self.success_reservoir.setdefault(result.cell_id, deque(maxlen=1)).appendleft(cand)
@@ -801,7 +895,7 @@ class QDEngine(EoHEngine):
             )
         if isinstance(self.success_archive, GridQuantileArchive) and self.success_archive.is_initialized:
             self._drop_warmup_reservoir()
-        self.success_pool = self._success_view()
+        self._set_success_pool_from_archive_or_primary()
 
     def _archive_elites(self) -> list[Heuristic]:
         elites = [member.payload for _, member in self.success_archive.members()]
@@ -1028,7 +1122,7 @@ class QDEngine(EoHEngine):
         self._qd_last_rebin_axes = trigger_axes
         self._qd_last_rebin_generation = self.current_generation
         self._qd_rebin_cooldown_remaining = self.qd_rebinning_cooldown_generations
-        self.success_pool = self._success_view()
+        self._set_success_pool_from_archive_or_primary()
 
         new_geometry = self.success_archive.describe_space()
         new_active_ids = {member.candidate_id for _, member in self._archive_members()}
@@ -1093,6 +1187,177 @@ class QDEngine(EoHEngine):
                 view.append(cand)
         return view
 
+    def _set_success_pool_from_archive_or_primary(self) -> None:
+        if self.qd_scheduler_mode == "front_guarded_memory":
+            self.success_pool = list(self.qd_primary_success_pool)
+            return
+        self.success_pool = self._success_view()
+
+    def _update_primary_success_pool(self, candidates: list[Heuristic]) -> None:
+        if self.qd_scheduler_mode != "front_guarded_memory":
+            return
+        combined = [
+            cand
+            for cand in [*self.qd_primary_success_pool, *candidates]
+            if cand.status == "success" and cand.ppa_success
+        ]
+        by_id = {cand.id: cand for cand in combined}
+        successful = list(by_id.values())
+        if not successful:
+            self.qd_primary_success_pool = []
+            self.success_pool = []
+            return
+
+        next_pool: list[Heuristic] = []
+        added_ids: set[str] = set()
+        champions = [max(successful, key=lambda cand: cand.score)]
+        for metric_config in self.champion_metrics_config:
+            condition = metric_config.get("condition", lambda engine, rows: True)
+            if not condition(self, successful):
+                continue
+            metric_name = metric_config["name"]
+            candidates_with_metric = [
+                cand for cand in successful if metric_name in cand.ppa_metrics
+            ]
+            if not candidates_with_metric:
+                continue
+            if metric_config["goal"] == "minimize":
+                champions.append(
+                    min(
+                        candidates_with_metric,
+                        key=lambda cand: cand.ppa_metrics[metric_name],
+                    )
+                )
+            elif metric_config["goal"] == "maximize":
+                champions.append(
+                    max(
+                        candidates_with_metric,
+                        key=lambda cand: cand.ppa_metrics[metric_name],
+                    )
+                )
+            else:
+                raise ValueError(f"Unsupported champion goal '{metric_config['goal']}'.")
+
+        for cand in champions:
+            if cand.id in added_ids:
+                continue
+            next_pool.append(cand)
+            added_ids.add(cand.id)
+
+        for cand in sorted(successful, key=lambda row: row.score, reverse=True):
+            if len(next_pool) >= self.population_size:
+                break
+            if cand.id in added_ids:
+                continue
+            next_pool.append(cand)
+            added_ids.add(cand.id)
+
+        self.qd_primary_success_pool = next_pool[: self.population_size]
+        self.success_pool = list(self.qd_primary_success_pool)
+
+    def _front_gap(self, member: ArchiveMember) -> float:
+        if self.global_pareto_archive is None:
+            return 0.0
+        front = self.global_pareto_archive.members()
+        if not front:
+            return 0.0
+        best_gap = float("inf")
+        for front_member in front:
+            gap = max(
+                max(0.0, front_member.objectives[name] - member.objectives[name])
+                for name in self._objective_names()
+            )
+            best_gap = min(best_gap, gap)
+        return best_gap
+
+    def _memory_stats(self, cell_id: str) -> QDMemoryCellStats:
+        return self.qd_memory_cell_stats.setdefault(cell_id, QDMemoryCellStats())
+
+    def _update_memory_credit(
+        self,
+        stats: QDMemoryCellStats,
+        observed_credit: float,
+    ) -> None:
+        stats.credit = (
+            (1.0 - QD_MEMORY_CREDIT_ALPHA) * stats.credit
+            + QD_MEMORY_CREDIT_ALPHA * observed_credit
+        )
+        if observed_credit >= self.qd_memory_min_cell_credit:
+            stats.last_credit_gen = self.current_generation
+
+    def _update_qd_memory_insert_stats(
+        self,
+        result: QDArchiveInsertResult,
+        global_update: GlobalParetoInsertResult | None,
+        front_gap: float,
+    ) -> None:
+        if self.qd_scheduler_mode != "front_guarded_memory":
+            return
+        stats = self._memory_stats(result.cell_id)
+        global_inserted = bool(global_update is not None and global_update.inserted)
+        champion_improved = result.decision == "replaced_elite"
+        near_front = (
+            global_inserted
+            or front_gap <= self.qd_memory_front_gap_epsilon
+            or result.pareto_rank == 1
+        )
+        if global_inserted:
+            stats.global_front_adds_from_cell += 1
+            credit = 1.0
+        elif champion_improved and near_front:
+            stats.champion_improvements_from_cell += 1
+            credit = 0.75
+        elif near_front:
+            credit = 0.60
+        elif champion_improved:
+            stats.champion_improvements_from_cell += 1
+            credit = 0.45
+        else:
+            credit = 0.20
+        if result.inserted and result.decision != "replaced_elite":
+            stats.local_front_adds_from_cell += 1
+        self._update_memory_credit(stats, credit)
+
+    def _update_qd_memory_parent_credit(self, candidates: list[Heuristic]) -> None:
+        if self.qd_scheduler_mode != "front_guarded_memory":
+            return
+        for cand in candidates:
+            cell_id = getattr(cand, "qd_memory_parent_cell_id", None)
+            if not isinstance(cell_id, str) or not cell_id:
+                continue
+            stats = self._memory_stats(cell_id)
+            stats.attempts_from_cell += 1
+            valid_ppa = cand.status == "success" and cand.ppa_success
+            if valid_ppa:
+                stats.valid_ppa_from_cell += 1
+            else:
+                stats.failed_from_cell += 1
+            if bool(getattr(cand, "qd_global_pareto_inserted", False)):
+                stats.global_front_adds_from_cell += 1
+                credit = 1.0
+            elif bool(getattr(cand, "qd_archive_inserted", False)):
+                stats.local_front_adds_from_cell += 1
+                credit = 0.70
+            elif bool(getattr(cand, "qd_cell_champion_improved", False)):
+                stats.champion_improvements_from_cell += 1
+                credit = 0.55
+            elif valid_ppa:
+                credit = 0.25
+            elif cand.status == "failed_synthesis":
+                credit = 0.10
+            else:
+                credit = 0.0
+            self._update_memory_credit(stats, credit)
+            valid_rate = stats.valid_ppa_from_cell / stats.attempts_from_cell
+            if (
+                stats.attempts_from_cell >= self.qd_memory_cooldown_attempts
+                and valid_rate < 0.25
+                and stats.credit < 0.15
+            ):
+                stats.cooldown_until_gen = (
+                    self.current_generation + self.qd_memory_cooldown_generations
+                )
+
     def _write_candidate_qd_event(
         self,
         candidate: Heuristic,
@@ -1136,6 +1401,23 @@ class QDEngine(EoHEngine):
                 "quality_score": float(getattr(candidate, "quality_score", candidate.score)),
                 "generation_candidate_index": getattr(candidate, "generation_candidate_index", None),
                 "archive_insertion_index": getattr(candidate, "archive_insertion_index", None),
+                "qd_memory_lane": getattr(candidate, "qd_memory_lane", None),
+                "qd_memory_parent_cell_id": getattr(
+                    candidate,
+                    "qd_memory_parent_cell_id",
+                    None,
+                ),
+                "qd_memory_parent_role": getattr(
+                    candidate,
+                    "qd_memory_parent_role",
+                    None,
+                ),
+                "qd_memory_parent_cell_credit": getattr(
+                    candidate,
+                    "qd_memory_parent_cell_credit",
+                    None,
+                ),
+                "qd_memory_front_gap": getattr(candidate, "qd_memory_front_gap", None),
             }
         )
         if not candidate.code_file_path:
@@ -1334,6 +1616,7 @@ class QDEngine(EoHEngine):
             "max_front_size": max(front_sizes.values()) if front_sizes else 0,
             "global_pareto_size": self._global_pareto_size(),
             "success_parent_requests": self.qd_success_parent_requests,
+            "qd_scheduler_mode": self.qd_scheduler_mode,
             "qd_parent_selection": self.qd_parent_selection,
             "front_slot_lane_fraction": self.qd_front_slot_lane_fraction,
             "front_slot_lane_parent_requests": (
@@ -1410,6 +1693,8 @@ class QDEngine(EoHEngine):
                 self.success_archive.describe_history_geometry()
             )
         snapshot.update(self._gain_stats())
+        if self.qd_scheduler_mode == "front_guarded_memory":
+            snapshot.update(self._front_guarded_memory_summary())
         if budget is not None:
             snapshot.update(
                 {
@@ -1578,7 +1863,7 @@ class QDEngine(EoHEngine):
         replaced = sum(1 for result in finalize_results.values() if result.replaced)
         if isinstance(self.success_archive, GridQuantileArchive):
             self._drop_warmup_reservoir()
-        self.success_pool = self._success_view()
+        self._set_success_pool_from_archive_or_primary()
         return inserted, replaced
 
     def _write_finalization_fallback_artifacts(
@@ -1901,6 +2186,146 @@ class QDEngine(EoHEngine):
         base = min(c.score for c in success_view)
         weights = [max(c.score - base + 0.1, 1e-6) for c in success_view]
         return random.choices(success_view, weights=weights, k=count)
+
+    def _sample_primary_success_parent(self) -> Heuristic:
+        assert self.qd_primary_success_pool
+        base = min(cand.score for cand in self.qd_primary_success_pool)
+        weights = [
+            max(cand.score - base + 0.1, 1e-6)
+            for cand in self.qd_primary_success_pool
+        ]
+        return random.choices(self.qd_primary_success_pool, weights=weights, k=1)[0]
+
+    def _global_front_ids(self) -> set[str]:
+        if self.global_pareto_archive is None:
+            return set()
+        return {member.candidate_id for member in self.global_pareto_archive.members()}
+
+    def _members_by_cell(self) -> dict[str, list[ArchiveMember]]:
+        by_cell: dict[str, list[ArchiveMember]] = defaultdict(list)
+        for cell_id, member in self._archive_members():
+            by_cell[cell_id].append(member)
+        return by_cell
+
+    def _cell_contains_global_front(self, cell_id: str) -> bool:
+        global_ids = self._global_front_ids()
+        return any(
+            member.candidate_id in global_ids
+            for member in self._members_by_cell().get(cell_id, [])
+        )
+
+    def _memory_sampleable_cells(self) -> list[str]:
+        by_cell = self._members_by_cell()
+        sampleable: list[str] = []
+        for cell_id in sorted(by_cell):
+            stats = self._memory_stats(cell_id)
+            if self.current_generation < stats.cooldown_until_gen:
+                continue
+            if self._cell_contains_global_front(cell_id):
+                sampleable.append(cell_id)
+                continue
+            if stats.credit >= self.qd_memory_min_cell_credit:
+                sampleable.append(cell_id)
+                continue
+            if stats.last_credit_gen >= self.current_generation - 1:
+                sampleable.append(cell_id)
+        return sampleable
+
+    def _memory_cell_weight(self, cell_id: str) -> float:
+        stats = self._memory_stats(cell_id)
+        front_bonus = 1.0
+        members = self._members_by_cell()[cell_id]
+        if self._cell_contains_global_front(cell_id):
+            front_bonus += 0.75
+        if len(members) > 1:
+            front_bonus += 0.35
+        age_bonus = min(0.30, 0.05 * max(0, self.current_generation - stats.last_credit_gen))
+        validity_bonus = 0.0
+        if stats.attempts_from_cell > 0:
+            validity_bonus = 0.25 * (
+                stats.valid_ppa_from_cell / stats.attempts_from_cell
+            )
+        return (0.05 + stats.credit) ** 2 * (
+            front_bonus + age_bonus + validity_bonus
+        )
+
+    def _memory_cell_champion(self, cell_id: str) -> ArchiveMember:
+        members = self._members_by_cell()[cell_id]
+        return max(members, key=lambda member: (member.quality_score, -member.insertion_index))
+
+    def _memory_front_slots(self, cell_id: str) -> list[ArchiveMember]:
+        members = self._members_by_cell()[cell_id]
+        if len(members) < 2:
+            return []
+        champion = self._memory_cell_champion(cell_id)
+        slots = [
+            item
+            for item in ranked_front(members, self._objective_names())
+            if item.member is not champion
+        ]
+        slots.sort(
+            key=lambda item: (
+                item.pareto_rank,
+                -item.crowding_distance,
+                item.member.insertion_index,
+                item.member.candidate_id,
+            )
+        )
+        return [item.member for item in slots]
+
+    def _sample_memory_parent(
+        self,
+        lane: Literal["memory_refine", "front_rescue"],
+    ) -> tuple[Heuristic, str, str, float] | None:
+        cell_ids = self._memory_sampleable_cells()
+        if lane == "front_rescue":
+            cell_ids = [cell_id for cell_id in cell_ids if self._memory_front_slots(cell_id)]
+        if not cell_ids:
+            return None
+        weights = [self._memory_cell_weight(cell_id) for cell_id in cell_ids]
+        cell_id = random.choices(cell_ids, weights=weights, k=1)[0]
+        stats = self._memory_stats(cell_id)
+        front_slots = self._memory_front_slots(cell_id)
+        if lane == "front_rescue" or (front_slots and random.random() < 0.25):
+            member = front_slots[0]
+            role = "front_slot"
+        else:
+            member = self._memory_cell_champion(cell_id)
+            role = "cell_champion"
+        return cast(Heuristic, member.payload), cell_id, role, stats.credit
+
+    def _front_guarded_memory_counts(self) -> dict[str, int]:
+        total = self.num_offspring_lambda
+        if not self._memory_sampleable_cells():
+            return {"classic": total, "memory_refine": 0, "front_rescue": 0, "probe": 0}
+        memory_refine = round(total * self.qd_memory_refine_fraction)
+        front_rescue = round(total * self.qd_memory_rescue_fraction)
+        if not any(self._memory_front_slots(cell_id) for cell_id in self._memory_sampleable_cells()):
+            front_rescue = 0
+        probe = round(total * self.qd_memory_probe_fraction)
+        classic = total - memory_refine - front_rescue - probe
+        return {
+            "classic": max(0, classic),
+            "memory_refine": max(0, memory_refine),
+            "front_rescue": max(0, front_rescue),
+            "probe": max(0, probe),
+        }
+
+    def _memory_instruction(self, lane: str) -> str | None:
+        if lane == "memory_refine":
+            return (
+                "This parent is retained as a valid alternative implementation "
+                "family from search memory. Improve PPA while preserving "
+                "functionality and interface. Prefer local RTL refinements and "
+                "do not restructure solely for diversity."
+            )
+        if lane == "front_rescue":
+            return (
+                "This parent is locally Pareto-relevant in search memory. "
+                "Improve its weaker PPA objective without destroying its "
+                "existing strengths. Preserve functionality and interface."
+            )
+        return None
 
     def _active_champion_lane_fraction(self) -> float:
         fraction = self._champion_lane_fraction()
@@ -2397,6 +2822,7 @@ class QDEngine(EoHEngine):
         parents: list[Heuristic],
         *,
         archive_context: list[Heuristic] | None = None,
+        qd_memory_instruction: str | None = None,
     ) -> str:
         """Create the unified journal thought-generation prompt."""
         if len(parents) not in {1, 2}:
@@ -2421,6 +2847,8 @@ class QDEngine(EoHEngine):
                 self._format_archive_context_entry(candidate)
                 for candidate in archive_context
             ]
+        if qd_memory_instruction is not None:
+            context_obj["qd_memory_instruction"] = qd_memory_instruction
         tpl = self.prompts.read("evolve/single_thought_operator/whole")
         if not tpl:
             raise FileNotFoundError(
@@ -3530,6 +3958,252 @@ class QDEngine(EoHEngine):
         )
         return None
 
+    def _append_front_guarded_prompt(
+        self,
+        llm_requests: list[Any],
+        request_meta: list[dict[str, Any]],
+        *,
+        parent: Heuristic,
+        lane: str,
+        origin_pool: str,
+        parent_cell_id: str | None = None,
+        parent_role: str | None = None,
+        parent_cell_credit: float | None = None,
+    ) -> None:
+        mode = "whole"
+        prompt_text = self._create_prompt_single_thought_operator(
+            [parent],
+            archive_context=self._archive_context_sample({parent.id}),
+            qd_memory_instruction=self._memory_instruction(lane),
+        )
+        llm_requests.append(
+            self._build_prompt_request(
+                prompt=prompt_text,
+                mode=mode,
+                system_prompt=self._get_generation_system_prompt(mode),
+            )
+        )
+        request_meta.append(
+            {
+                "strategy": SINGLE_THOUGHT_OPERATOR_STRATEGY,
+                "parents": [parent],
+                "parent_count": 1,
+                "requested_parent_count": 1,
+                "origin_pool": origin_pool,
+                "resolved_mode": mode,
+                "prompt_text": prompt_text,
+                "qd_memory_lane": lane,
+                "qd_memory_parent_cell_id": parent_cell_id,
+                "qd_memory_parent_role": parent_role,
+                "qd_memory_parent_cell_credit": parent_cell_credit,
+            }
+        )
+
+    def _build_front_guarded_memory_requests(
+        self,
+    ) -> tuple[list[Any], list[dict[str, Any]], dict[str, int]]:
+        counts = self._front_guarded_memory_counts()
+        llm_requests: list[Any] = []
+        request_meta: list[dict[str, Any]] = []
+
+        classic_budget = counts["classic"]
+        if classic_budget > 0:
+            total_pool = len(self.fail_pool) + len(self.qd_primary_success_pool)
+            fail_budget = 0
+            if total_pool > 0:
+                fail_budget = round(classic_budget * len(self.fail_pool) / total_pool)
+            success_budget = classic_budget - fail_budget
+            for _ in range(fail_budget):
+                parent = random.choice(self.fail_pool)
+                self._append_front_guarded_prompt(
+                    llm_requests,
+                    request_meta,
+                    parent=parent,
+                    lane="classic",
+                    origin_pool="fail_pool",
+                )
+            for _ in range(success_budget):
+                parent = self._sample_primary_success_parent()
+                self._append_front_guarded_prompt(
+                    llm_requests,
+                    request_meta,
+                    parent=parent,
+                    lane="classic",
+                    origin_pool="success_pool",
+                )
+
+        for lane in ("memory_refine", "front_rescue"):
+            for _ in range(counts[lane]):
+                sampled = self._sample_memory_parent(cast(Any, lane))
+                if sampled is None:
+                    parent = self._sample_primary_success_parent()
+                    self._append_front_guarded_prompt(
+                        llm_requests,
+                        request_meta,
+                        parent=parent,
+                        lane="classic",
+                        origin_pool="success_pool",
+                    )
+                    counts["classic"] += 1
+                    counts[lane] -= 1
+                    continue
+                parent, cell_id, role, credit = sampled
+                self._append_front_guarded_prompt(
+                    llm_requests,
+                    request_meta,
+                    parent=parent,
+                    lane=lane,
+                    origin_pool="success_pool",
+                    parent_cell_id=cell_id,
+                    parent_role=role,
+                    parent_cell_credit=credit,
+                )
+
+        return llm_requests, request_meta, counts
+
+    def _attach_front_guarded_metadata(
+        self,
+        offspring: list[Heuristic],
+        metadata: list[dict[str, Any]],
+    ) -> None:
+        for cand, meta_rec in zip(offspring, metadata, strict=True):
+            cand.qd_memory_lane = meta_rec["qd_memory_lane"]
+            cand.qd_memory_parent_cell_id = meta_rec.get("qd_memory_parent_cell_id")
+            cand.qd_memory_parent_role = meta_rec.get("qd_memory_parent_role")
+            cand.qd_memory_parent_cell_credit = meta_rec.get(
+                "qd_memory_parent_cell_credit"
+            )
+
+    def _front_guarded_lane_counts(
+        self,
+        candidates: list[Heuristic],
+        field: str,
+    ) -> dict[str, int]:
+        lanes = {"classic": 0, "memory_refine": 0, "front_rescue": 0, "probe": 0}
+        for cand in candidates:
+            lane = getattr(cand, "qd_memory_lane", "classic")
+            assert lane in lanes
+            if field == "generated":
+                lanes[lane] += 1
+            elif field == "valid_ppa":
+                lanes[lane] += int(cand.status == "success" and cand.ppa_success)
+            elif field == "global_front_adds":
+                lanes[lane] += int(bool(getattr(cand, "qd_global_pareto_inserted", False)))
+            elif field == "local_front_adds":
+                lanes[lane] += int(bool(getattr(cand, "qd_archive_inserted", False)))
+            else:
+                raise ValueError(f"Unsupported lane count field '{field}'.")
+        return lanes
+
+    def _front_guarded_memory_summary(self) -> dict[str, Any]:
+        stats = list(self.qd_memory_cell_stats.values())
+        sampleable = self._memory_sampleable_cells()
+        cooldown = [
+            item
+            for item in stats
+            if self.current_generation < item.cooldown_until_gen
+        ]
+        mean_credit = sum(item.credit for item in stats) / len(stats) if stats else 0.0
+        return {
+            "qd_scheduler_mode": self.qd_scheduler_mode,
+            "qd_memory_classic_fraction": self.qd_memory_classic_fraction,
+            "qd_memory_refine_fraction": self.qd_memory_refine_fraction,
+            "qd_memory_rescue_fraction": self.qd_memory_rescue_fraction,
+            "qd_memory_min_cell_credit": self.qd_memory_min_cell_credit,
+            "qd_memory_front_gap_epsilon": self.qd_memory_front_gap_epsilon,
+            "primary_success_pool_size": len(self.qd_primary_success_pool),
+            "active_memory_cells": len(self.qd_memory_cell_stats),
+            "sampleable_memory_cells": len(sampleable),
+            "cooldown_memory_cells": len(cooldown),
+            "mean_cell_credit": mean_credit,
+        }
+
+    def _evolve_one_front_guarded_memory_generation(self):
+        self.current_generation += 1
+        print(f"\n--- Starting Front-Guarded QD-Memory Generation {self.current_generation} ---")
+        self.gen_start_time = time.time()
+
+        llm_requests, request_meta, planned_counts = (
+            self._build_front_guarded_memory_requests()
+        )
+        if not llm_requests:
+            return "STOP"
+
+        llm_results = asyncio.run(
+            self.llm.generate_batch_responses(
+                llm_requests,
+                self.default_llm_temp,
+                self.default_llm_top_p,
+                self.default_llm_max_tokens,
+            )
+        )
+        new_offspring = self._materialize_offspring(llm_results, request_meta)
+        self._attach_front_guarded_metadata(new_offspring, request_meta)
+        self._evaluate_candidates(new_offspring)
+
+        successes = [cand for cand in new_offspring if cand.status == "success"]
+        inserted, replaced = self._insert_successes(successes)
+        self._update_fail_pool([cand for cand in new_offspring if cand.status != "success"])
+        self._update_qd_memory_parent_credit(new_offspring)
+        fallback_inserted, fallback_replaced = self._maybe_adaptive_warmup_fallback()
+        inserted += fallback_inserted
+        replaced += fallback_replaced
+        self._maybe_adaptive_rebin()
+
+        fail_rewards_this_gen = defaultdict(float)
+        success_rewards_this_gen = defaultdict(float)
+        for cand in new_offspring:
+            if cand.origin_pool == "fail_pool" and cand.status == "success":
+                fail_rewards_this_gen[cand.strategy] += 1.0
+            elif cand.origin_pool == "success_pool" and cand.status == "success":
+                success_rewards_this_gen[cand.strategy] += 1.0
+
+        gen_runtime = time.time() - self.gen_start_time
+        qd_snapshot = self._build_qd_snapshot(
+            inserted=inserted,
+            replaced=replaced,
+            budget=None,
+            runtime_sec=gen_runtime,
+        )
+        qd_snapshot.update(self._front_guarded_memory_summary())
+        qd_snapshot["phase"] = "front_guarded_memory"
+        qd_snapshot["planned_qd_memory_lane_counts"] = planned_counts
+        qd_snapshot["qd_memory_lane_generated"] = self._front_guarded_lane_counts(
+            new_offspring,
+            "generated",
+        )
+        qd_snapshot["qd_memory_lane_valid_ppa"] = self._front_guarded_lane_counts(
+            new_offspring,
+            "valid_ppa",
+        )
+        qd_snapshot["qd_memory_lane_global_front_adds"] = (
+            self._front_guarded_lane_counts(new_offspring, "global_front_adds")
+        )
+        qd_snapshot["qd_memory_lane_local_front_adds"] = (
+            self._front_guarded_lane_counts(new_offspring, "local_front_adds")
+        )
+        qd_snapshot["generated_parent_source_counts"] = (
+            self._journal_parent_source_counts(new_offspring)
+        )
+        qd_snapshot["generated_candidate_count"] = len(new_offspring)
+        if self.logger:
+            self._log_generation_stats(
+                new_offspring,
+                gen_runtime,
+                fail_rewards_this_gen,
+                success_rewards_this_gen,
+                {"front_guarded_memory": {}},
+            )
+            self._write_qd_artifacts(qd_snapshot)
+
+        print(
+            f"--- FG-QDM Gen {self.current_generation} Complete. "
+            f"Archive({self.success_archive.occupied_count()}), "
+            f"Primary({len(self.qd_primary_success_pool)}), "
+            f"Inserted({inserted}), Replaced({replaced}), Fail({len(self.fail_pool)}) ---"
+        )
+        return None
+
     def _materialize_offspring(
         self,
         llm_results_with_meta: list[tuple[str | None, str | None, dict[str, Any]]],
@@ -3567,8 +4241,18 @@ class QDEngine(EoHEngine):
             member = self._archive_member(cand, descriptors)
             before_occupied = self.success_archive.occupied_count()
             before_qd_score = self._archive_qd_score()
+            front_gap = self._front_gap(member)
             result = self.success_archive.insert(member)
             global_update = self._insert_global_pareto(member)
+            cand.qd_archive_inserted = bool(result.inserted)
+            cand.qd_archive_decision = result.decision
+            cand.qd_archive_cell_id = result.cell_id
+            cand.qd_global_pareto_inserted = bool(
+                global_update is not None and global_update.inserted
+            )
+            cand.qd_cell_champion_improved = result.decision == "replaced_elite"
+            cand.qd_memory_front_gap = front_gap
+            self._update_qd_memory_insert_stats(result, global_update, front_gap)
             self._record_rebin_sample(member, result)
             if result.inserted:
                 inserted += 1
@@ -3596,7 +4280,8 @@ class QDEngine(EoHEngine):
             )
         if isinstance(self.success_archive, GridQuantileArchive) and self.success_archive.is_initialized:
             self._drop_warmup_reservoir()
-        self.success_pool = self._success_view()
+        self._update_primary_success_pool(candidates)
+        self._set_success_pool_from_archive_or_primary()
         return inserted, replaced
 
     def _maybe_adaptive_warmup_fallback(self) -> tuple[int, int]:
@@ -3615,12 +4300,14 @@ class QDEngine(EoHEngine):
         inserted = sum(1 for result in results.values() if result.inserted)
         replaced = sum(1 for result in results.values() if result.replaced)
         self._drop_warmup_reservoir()
-        self.success_pool = self._success_view()
+        self._set_success_pool_from_archive_or_primary()
         return inserted, replaced
 
     def evolve_one_generation(self):
         if self.representation_kind == "thought_only":
             return self._evolve_one_thought_generation()
+        if self.qd_scheduler_mode == "front_guarded_memory":
+            return self._evolve_one_front_guarded_memory_generation()
 
         self.current_generation += 1
         print(f"\n--- Starting QD Generation {self.current_generation} ---")

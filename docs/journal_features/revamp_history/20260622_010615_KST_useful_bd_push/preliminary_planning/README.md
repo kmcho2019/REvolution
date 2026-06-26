@@ -30,6 +30,7 @@ category representatives, and top-10 mean-HV shortlist.
 | `20260626_masterrtl_rf_timing_state_screen/` | Run the frozen eight-design `8x5` screen for the validated MasterRTL RF timing-state descriptor profile. | Completed; all eight headline-paired comparisons valid, but classic wins mean HV and front metrics |
 | `20260626_rf_leafid_structural_delayed_probe/` | Test RF timing leaf-ID model-state as a secondary coordinate beside source-aligned structural axes and delayed archive activation. | Completed; near-classic all-design mean HV, but RTLLM-only and robustness checks block promotion |
 | `20260626_rf_leafid_front_slot_delayed_probe/` | Test whether T83's RF leaf-ID axes recover front material with bounded local front-slot parent sampling. | Completed; T84 loses mean HV and front metrics, not promoted |
+| `20260626_front_guarded_qd_memory_probe/` | Test FG-QDM, a front-guarded auxiliary QD memory scheduler using the T26 SR descriptor as a search-policy probe. | Implemented and Stage 0 checks pass; live smoke pending |
 
 ## Current Rule
 

@@ -59,6 +59,7 @@ class RevolutionBackendConfig:
     qd_adaptive_warmup_champion_lane_fraction: float | None = None
     qd_archive_activation_generation: int = 0
     qd_archive_activation_stagnation_generations: int = 0
+    qd_scheduler_mode: str = "map_elites"
     qd_quality_mode: str = "auto"
     qd_alpha: float | None = None
     qd_beta: float | None = None
@@ -93,6 +94,14 @@ class RevolutionBackendConfig:
     qd_champion_lane_fraction: float = 0.0
     qd_front_slot_lane_fraction: float = 0.10
     qd_parent_selection: str = "cell_crowded_tournament"
+    qd_memory_classic_fraction: float = 0.80
+    qd_memory_refine_fraction: float = 0.15
+    qd_memory_rescue_fraction: float = 0.05
+    qd_memory_probe_fraction: float = 0.0
+    qd_memory_min_cell_credit: float = 0.20
+    qd_memory_front_gap_epsilon: float = 0.03
+    qd_memory_cooldown_attempts: int = 3
+    qd_memory_cooldown_generations: int = 2
     representative_sample: str = "best_successful_quality"
     repair_kind: str = "none"
     repair_max_attempts_per_sample: int = 0
@@ -191,6 +200,7 @@ class RevolutionBackend(EvolutionBackend):
                 qd_archive_activation_stagnation_generations=(
                     self.config.qd_archive_activation_stagnation_generations
                 ),
+                qd_scheduler_mode=self.config.qd_scheduler_mode,
                 qd_descriptor_profile=self.config.qd_descriptor_profile,
                 qd_descriptor_axes=self.config.qd_descriptor_axes,
                 qd_descriptor_file=self.config.qd_descriptor_file,
@@ -218,6 +228,20 @@ class RevolutionBackend(EvolutionBackend):
                 qd_champion_lane_fraction=self.config.qd_champion_lane_fraction,
                 qd_front_slot_lane_fraction=self.config.qd_front_slot_lane_fraction,
                 qd_parent_selection=self.config.qd_parent_selection,
+                qd_memory_classic_fraction=self.config.qd_memory_classic_fraction,
+                qd_memory_refine_fraction=self.config.qd_memory_refine_fraction,
+                qd_memory_rescue_fraction=self.config.qd_memory_rescue_fraction,
+                qd_memory_probe_fraction=self.config.qd_memory_probe_fraction,
+                qd_memory_min_cell_credit=self.config.qd_memory_min_cell_credit,
+                qd_memory_front_gap_epsilon=(
+                    self.config.qd_memory_front_gap_epsilon
+                ),
+                qd_memory_cooldown_attempts=(
+                    self.config.qd_memory_cooldown_attempts
+                ),
+                qd_memory_cooldown_generations=(
+                    self.config.qd_memory_cooldown_generations
+                ),
                 representative_sample=self.config.representative_sample,
                 repair_kind=self.config.repair_kind,
                 repair_max_attempts_per_sample=self.config.repair_max_attempts_per_sample,
@@ -265,6 +289,7 @@ class RevolutionBackend(EvolutionBackend):
                     "two_parent_probability": self.config.qd_two_parent_probability,
                     "two_parent_gate": self.config.qd_two_parent_gate,
                     "champion_lane_fraction": self.config.qd_champion_lane_fraction,
+                    "scheduler_mode": self.config.qd_scheduler_mode,
                     "parent_selection": self.config.qd_parent_selection,
                     "num_cells": self.config.qd_num_cells,
                     "fill_target_fraction": self.config.qd_fill_target_fraction,
@@ -304,6 +329,22 @@ class RevolutionBackend(EvolutionBackend):
                         "archive_context_size": self.config.qd_operator_archive_context_size,
                         "fail_feedback_chars": self.config.qd_operator_fail_feedback_chars,
                         "two_parent_allow_intra_bin": self.config.qd_operator_two_parent_allow_intra_bin,
+                    },
+                    "front_guarded_memory": {
+                        "classic_fraction": self.config.qd_memory_classic_fraction,
+                        "refine_fraction": self.config.qd_memory_refine_fraction,
+                        "rescue_fraction": self.config.qd_memory_rescue_fraction,
+                        "probe_fraction": self.config.qd_memory_probe_fraction,
+                        "min_cell_credit": self.config.qd_memory_min_cell_credit,
+                        "front_gap_epsilon": (
+                            self.config.qd_memory_front_gap_epsilon
+                        ),
+                        "cooldown_attempts": (
+                            self.config.qd_memory_cooldown_attempts
+                        ),
+                        "cooldown_generations": (
+                            self.config.qd_memory_cooldown_generations
+                        ),
                     },
                     "rebinning": {
                         "kind": self.config.qd_rebinning_kind,
