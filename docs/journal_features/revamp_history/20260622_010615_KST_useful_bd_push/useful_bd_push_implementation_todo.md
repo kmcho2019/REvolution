@@ -118,6 +118,10 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       canonical renumbering and constant repair produce `60` embeddings across
       `5/8` screening problems, but large-design coverage and same-problem
       clustering still block promotion.
+- [x] Compare official DeepGate transition embeddings against simple AIG
+      statistics before live spend. Outcome: residual signal remains after
+      removing AIG stats, but only `5/8` screen problems cover, so DeepGate
+      stays a category representative rather than a final RTLLM candidate.
 - [x] Run `masterrtl_aux_archive_high_exploit_8x5` as the next preliminary
       mechanism probe before spending full RTLLM budget. This tests QD archive
       memory as an auxiliary side channel with classic-like exploitation.

@@ -17,6 +17,7 @@ or claim correction; keep detailed evidence in the per-technique package,
 | 7 | RF leaf-ID front-slot delayed QD | Completed negative | Tests whether T83's RF model-state axes need explicit local front-slot parent sampling to recover Pareto breadth. | Mean HV drops to `0.1162`, with `0/8` HV wins; keep only as failed coupling evidence. |
 | 8 | FG-QDM memory controls | Completed smoke negative | Tests QD as guarded auxiliary memory rather than a replacement optimizer. | Random-memory FG-QDM slightly beats SR-memory but trails classic, so exact `sr_pca_3d` memory is not descriptor-positive. |
 | 9 | T51/T26-family conservative QD | Mechanism base | Gives the cleanest archive machinery so far: local-front pressure, champion bias, and no broad covered-design loss. | Reference-complete RTLLM is negative versus classic; not a headline win. |
+| 10 | DeepGate transition encoder bridge | Pretrained netlist representative | Uses official DeepGate vectors and T89 shows residual signal beyond simple AIG statistics. | Only `5/8` screen problems cover and no live HV screen exists, so it is not spend-ready. |
 
 ## Most Promising Direction
 
@@ -203,6 +204,16 @@ front-slot traffic and `0.80` champion pressure. The result is negative:
 mean HV falls to `0.1162`, HV wins fall to `0/8`, and front material does not
 recover. Retire exact T84 and keep T83 as the current RF model-state
 representative.
+
+The DeepGate transition lane is now a legitimate pretrained-netlist category
+representative but not a live candidate. T89 compares official DeepGate
+transition embeddings with simple AIG size/count statistics on the same `60`
+embedded generated candidates. AIG stats are more problem-dominated than
+DeepGate (`0.9333` same-problem nearest ratio versus `0.8333`), and DeepGate
+residual vectors remain nonconstant after removing AIG statistics (`0.4667`
+same-problem nearest ratio). This supports keeping the lane active, but full
+RTLLM spend still requires better bridge coverage or a bounded live smoke
+because only `5/8` screen problems currently embed.
 
 T67 tested the next version of this direction by keeping the RTL-native
 state/pipeline archive cells and using seeded thought-code realization so the

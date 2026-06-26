@@ -34,7 +34,7 @@ different budget or replication caveat are marked explicitly.
 | Code-thought/SR front-slot | `code_thought_sr_front_slot_8x5` | `0.1141` | Best current SR/code-thought representative in this preliminary pool. |
 | Qwen3 pretrained text/code | `qwen_canonical_rtl_pca3_8x5` | `0.1108` | Best actual pretrained text/code embedding live arm; keep as the Qwen representative despite weak HV. |
 | Front-guarded QD memory control | `T86_fg_qdm_random_memory_12x3` | `0.1382` smoke-only | Control representative only; random-memory FG-QDM trails classic and slightly beats SR-memory, so exact `sr_pca_3d` memory is not descriptor-positive. |
-| DeepGate / synthesized-netlist encoder | `DeepGate transition-AIG bridge` | n/a | Keep as category placeholder; not top-10 until a verified pretrained live screen has comparable HV. |
+| DeepGate / synthesized-netlist encoder | `T89_deepgate_signal_vs_aig_stats_gate` | n/a | Keep as category representative; official embeddings retain residual signal beyond AIG stats, but only `5/8` screen problems cover and no live HV exists. |
 | AURORA / AutoQD learned descriptor | `AURORA-style raw implementation-feature lane` | n/a | Keep as category placeholder; current evidence is replay/diagnostic, not frozen live HV. |
 
 ## Top 10 Current Configs By Mean HV
@@ -81,7 +81,7 @@ promoted.
 | Lane | Current Status | Decision |
 | --- | --- | --- |
 | Qwen3 canonical RTL | Real pretrained live hook; matched screen completed at `8x5`. | Not promoted: mean HV `0.1108` versus classic `0.1406`. |
-| DeepGate transition AIG | Official pretrained bridge embeds nonconstant generated candidates across `5/8` screen problems. | Not spend-ready: large designs still exceed the practical bridge cap. |
+| DeepGate transition AIG | Official pretrained bridge embeds nonconstant generated candidates across `5/8` screen problems; T89 shows residual signal beyond simple AIG statistics. | Not spend-ready: large designs still exceed the practical bridge cap and there is no comparable live HV screen. |
 | MasterRTL pretrained Area leaf | Pretrained model artifact loads, but generated candidates collapse to one Area prediction and one leaf row. | Retire direct Area-head leaves unless retrained or replaced. |
 | MasterRTL RF timing model-state | Pretrained RF timing flow has a runtime descriptor hook and two frozen `8x5` screens. | T82 is negative; T83 is nearer on all-design HV but still not promoted. |
 | MasterRTL raw structural mix | Credible RTL-native descriptor lane. | Needs stronger coupling; fixed auxiliary archive failed replication. |

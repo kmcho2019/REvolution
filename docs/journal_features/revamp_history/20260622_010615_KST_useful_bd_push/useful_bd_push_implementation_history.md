@@ -5494,6 +5494,25 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: exact T83 remains the MasterRTL RF model-state category
   representative, but it is not promoted for larger RTLLM spend.
 
+## 2026-06-26T11:05:00Z - T89 DeepGate Signal Vs AIG Stats Gate Completed
+
+- Added
+  `preliminary_planning/20260626_deepgate_signal_vs_aig_stats_gate/` to test
+  whether the official DeepGate transition embeddings add signal beyond simple
+  AIG size/count statistics.
+- Reused the verified transition-bridge rows and official pretrained vectors:
+  `60` embedded candidates across `5/8` preliminary screen problems.
+- Compared pooled `deepgate`, standardized `aig_stats`, and
+  `deepgate_residual` vectors after linear residualization against AIG stats.
+- Result: AIG stats are more problem-dominated than raw DeepGate vectors
+  (`0.9333` versus `0.8333` same-problem nearest ratio). DeepGate residuals
+  remain nonconstant, with `0.4667` same-problem nearest ratio and visible PCA
+  spread after removing AIG statistics.
+- Decision: keep DeepGate as the synthesized-netlist pretrained encoder
+  category representative, but do not promote it to live full-RTLLM spend
+  until coverage improves beyond the current `5/8` screen problems or a
+  bounded covered-subset smoke produces comparable HV evidence.
+
 ## 2026-06-26T06:52:00Z - T84 RF Leaf-ID Front-Slot Delayed Screen Completed
 
 - Ran `masterrtl_rf_leafid_front_slot_delayed_8x5` on the frozen eight-design
