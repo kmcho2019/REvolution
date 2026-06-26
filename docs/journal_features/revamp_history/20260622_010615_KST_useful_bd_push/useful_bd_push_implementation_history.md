@@ -6149,3 +6149,19 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
 - Decision: do not spend on exact primary multimodal proxy axes. Reopen only
   with a real functional-sketch modality, trained cross-modal objective, or
   secondary memory/reporting role.
+
+## 2026-06-26T23:35:00Z - T16 Multiview Proxy Retrospective Closed
+
+- Converted `T16_deepcell_multiview_bd` from a scaffold into a
+  `T0 retrospective_multiview_proxy_not_promoted` evidence package.
+- Used measured T14 hypergraph, T95 official DeepGate, T96 RF/DeepGate hybrid,
+  and T99 AURORA/raw implementation-view evidence instead of launching a fresh
+  live run.
+- Recorded the key distinction: this closes the cheap multiview proxy path,
+  but it does not claim a true DeepCell reproduction or paired masked
+  multiview model.
+- Added T16-local methodology, results, manifest, commands, evidence/gate
+  tables, copied figures, source hashes, and visual inspection notes.
+- Decision: do not spend on exact deterministic multiview proxy axes. Reopen
+  only with paired post-mapping/AIG extraction, masked multiview training, or
+  secondary memory/reporting role.

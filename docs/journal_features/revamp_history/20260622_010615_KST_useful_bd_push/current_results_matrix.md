@@ -153,7 +153,7 @@ Real result packages:
 - `T99_aurora_raw_impl_delayed_qd` completed the live AURORA-style raw
   implementation-feature screen.
 
-Scaffolded but not yet real-result packages remain `T16`.
+No T01-T22 technique package remains scaffold-only.
 `T08_sequential_deepseq_bd` is closed as a conservative
 `T0 retrospective_sequential_proxy_not_promoted` package: T63/T67/T72/T73/T75
 provide measured state/pipeline and source-aligned sequential proxy evidence,
@@ -167,6 +167,11 @@ method.
 cover the cheap text, graph, hybrid, and raw implementation proxy path, but
 the branch has no true functional-sketch modality or CircuitFusion training
 objective and the live proxy screens remain below classic.
+`T16_deepcell_multiview_bd` is closed as
+`T0 retrospective_multiview_proxy_not_promoted`: T14, T95, T96, and T99 cover
+the cheap hypergraph, AIG/cone, hybrid, and implementation-view proxy path, but
+the branch has no paired post-mapping/AIG masked multiview objective and the
+live proxy screens remain below classic.
 `T72_source_aligned_rtl_cell_qd` is now a measured
 near-classic result package: it passes the source-aligned runtime descriptor
 gate, completes the bounded live screen, preserves all `13/13`

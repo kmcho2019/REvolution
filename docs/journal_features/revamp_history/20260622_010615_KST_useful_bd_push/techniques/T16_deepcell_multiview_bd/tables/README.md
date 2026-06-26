@@ -1,4 +1,10 @@
-# Tables
+# DeepCell Multiview BD Tables
 
-Store pairability funnels, multiview features, view ablations, archive metrics,
-PPA comparisons, validity funnels, and runtime CSV files here.
+This directory contains compact retrospective tables for the multiview proxy
+audit.
+
+| Table | Role |
+| --- | --- |
+| `t16_multiview_proxy_evidence.csv` | Source-by-source evidence table. |
+| `t16_gate_decision.csv` | Promotion and reopen gates. |
+| `t16_source_hashes.sha256` | Hash-backed source manifest. |

@@ -7,52 +7,52 @@ behavior descriptors. The method should connect standard-cell/post-mapping
 features with AIG summaries without requiring a full large-scale pretraining
 run before useful diagnostics.
 
+This package is a retrospective proxy audit. It does not reproduce DeepCell
+and does not train a paired masked-circuit multiview model.
+
 ## Inputs
 
-- Candidate RTL and fixed benchmark metadata.
-- Post-mapping netlist view from the fixed synthesis flow.
-- AIG view from ABC or Yosys.
-- Optional random-simulation logic probability sketches generated without
-  comparing to expected test outputs.
+- T14 directed hypergraph and implementation-feature replay evidence.
+- T95 official DeepGate pooled AIG/cone evidence.
+- T96 RF/DeepGate hybrid evidence.
+- T99 raw implementation-view live evidence.
 
 Descriptor fitting excludes final PPA, reference PPA, fitness, hypervolume,
 Pareto labels, and functional pass/fail labels.
 
-## Preprocessing
+## Proxy Views
 
-1. Generate paired post-mapping and AIG views for each candidate.
-2. Extract cell-view features: standard-cell/gate type, level, fanin/fanout,
-   local cone type, and structural embedding fallback.
-3. Extract AIG-view features: node type, inversion, level, reconvergence, and
-   cone membership.
-4. Record pairability failures in a missing-view funnel.
+| View | Measured Proxy | Source |
+| --- | --- | --- |
+| Cell or hypergraph view | Directed source-to-sink hypergraph features | T14 |
+| AIG view | Official DeepGate pooled transition/cone embeddings | T95 |
+| Paired hybrid | RF timing leaf IDs, branching, and DeepGate axis | T96 |
+| Implementation view | Comb/adder/cell-count descriptor | T99 |
+| Masked multiview training | Not implemented | none |
 
 ## Descriptor
 
-Evaluate:
+The measured proxies are:
 
-- deterministic multiview concatenation of cell and AIG summaries;
-- masked-circuit surrogate that reconstructs masked cell-view summaries from
-  AIG context;
-- small fused embedding trained on reconstruction only.
+- T14 hypergraph plus implementation-feature replay;
+- T96 compact live RF/DeepGate hybrid;
+- T99 implementation-view live archive coordinates.
 
-Compare against AIG-only, post-mapping-only, and fused views. Report whether
-the fused view improves descriptor/PPA alignment or only adds runtime.
+These are enough to decide against another simple concatenation, but not
+enough to reject a true DeepCell-style learned multiview model.
 
 ## Archive Mapping
 
-Use CVT over fused embeddings as primary. Use 2D PCA only for visualization and
-grid diagnostics.
+The live proxy screens use existing delayed high-exploit QD archive settings.
+Figures are copied from source packages and source hashes are recorded.
 
-## Parent Selection Coupling
+## Leakage Exclusions
 
-Only pairable candidates can occupy the multiview archive. Missing-view rates
-must be reported so dependency/runtime cost is visible.
+The source packages exclude final PPA, reference PPA, hypervolume, Pareto
+rank, pass/fail labels, problem identity, and model identity from descriptor
+inputs. T16 uses PPA only for retrospective scoring.
 
-## Expected Outputs
+## Reopen Rule
 
-- `tables/multiview_pairing_funnel.csv`
-- `tables/multiview_features.csv`
-- `tables/view_ablation.csv`
-- `figures/multiview_projection.png`
-- `figures/view_ablation.png`
+Reopen only after paired cell-view and AIG-view extraction exists, or after a
+trained masked multiview objective is available in an isolated environment.

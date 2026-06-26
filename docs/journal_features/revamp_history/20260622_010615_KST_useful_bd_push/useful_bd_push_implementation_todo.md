@@ -337,8 +337,11 @@ Adversarial rubric: `useful_bd_push_adversarial_prompt.md`.
       pretrained Area-head leaf path collapsed (`T80_masterrtl_structural_mix_gate`).
 - [ ] If continuing pretrained MasterRTL/RTLTimer, reproduce the timing/power
       feature flows or retrain a model; do not use direct Area-head leaves.
-- [ ] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
+- [x] `T16_deepcell_multiview_bd` has methodology, results, figures, tables, and
       tier decision.
+      Outcome: closed as `T0 retrospective_multiview_proxy_not_promoted`
+      using measured T14/T95/T96/T99 hypergraph, AIG/cone, hybrid, and
+      implementation-view evidence. Do not claim true DeepCell reproduction.
 - [x] `T17_mome_pareto_archive_bd` has methodology, results, figures, tables, and
       tier decision.
 - [x] `T18_adaptive_emitter_cvt_bd` has methodology, results, figures, tables, and

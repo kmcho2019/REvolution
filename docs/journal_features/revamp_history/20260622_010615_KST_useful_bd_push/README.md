@@ -186,7 +186,7 @@ Start here when resuming the active goal.
 | `T13` | `T13_aurora_incremental_autoencoder_bd` | Completed replay diagnostic; raw implementation features are `T1 near_classic_replay_lead`, but PCA/RFF/incremental bottlenecks are `T0 diagnostic`. |
 | `T14` | `T14_dehnn_hypergraph_bd` | Completed replay diagnostic; hypergraph plus implementation features are `T1 near_classic_replay_lead`, but hypergraph-only descriptors are `T0 diagnostic`. |
 | `T15` | `T15_masterrtl_sog_bd` | Completed `T0 structural_proxy_not_promoted` Yosys-SOG proxy audit; zero lowering failures, slightly negative front-cell delta, weaker occupied-cell breadth. |
-| `T16` | `T16_deepcell_multiview_bd` | Scaffolded. |
+| `T16` | `T16_deepcell_multiview_bd` | Retrospective multiview proxy, `T0 retrospective_multiview_proxy_not_promoted`; hypergraph, DeepGate, RF/DeepGate, and implementation-view evidence does not justify a primary multiview archive spend. |
 | `T17` | `T17_mome_pareto_archive_bd` | Passive local-Pareto audit, `T0 diagnostic`; strong front-diversity signal but no decisive HV gain. |
 | `T18` | `T18_adaptive_emitter_cvt_bd` | Retrospective synthesis, `T0 retrospective_retired`; T57 archive adaptation and T32 front-emitter evidence block a fresh exact T18 spend. |
 | `T19` | `T19_sr_relu_pca_bd` | Replay result, `T0 diagnostic`; strong SR ReLU HV/AUC lead but quality and coverage tradeoffs. |

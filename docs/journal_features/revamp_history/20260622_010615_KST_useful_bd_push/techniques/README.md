@@ -29,7 +29,7 @@ The canonical machine-readable index is `technique_registry.csv`.
 | `T13` | `T13_aurora_incremental_autoencoder_bd` | Learned AURORA descriptor | mixed: raw implementation features `T1 near_classic_replay_lead`, compressed bottlenecks `T0 diagnostic` |
 | `T14` | `T14_dehnn_hypergraph_bd` | Hypergraph descriptor | Completed replay diagnostic |
 | `T15` | `T15_masterrtl_sog_bd` | RTL operator-graph descriptor | `T0 structural_proxy_not_promoted`; zero-failure Yosys-SOG lowering, but front-cell and occupied-cell evidence do not beat classic |
-| `T16` | `T16_deepcell_multiview_bd` | Multiview circuit descriptor | Scaffolded |
+| `T16` | `T16_deepcell_multiview_bd` | Multiview circuit descriptor | `T0 retrospective_multiview_proxy_not_promoted`; proxy evidence is screened negative and not a true DeepCell reproduction |
 | `T17` | `T17_mome_pareto_archive_bd` | Archive-coupling/Pareto variant | `T0 diagnostic`, passive live-candidate |
 | `T18` | `T18_adaptive_emitter_cvt_bd` | Archive-coupling/emitter variant | `T0 retrospective_retired`; T57/T32 synthesis blocks exact spend |
 | `T19` | `T19_sr_relu_pca_bd` | Automatic QD descriptor | `T0 diagnostic`, high-priority HV lead |
