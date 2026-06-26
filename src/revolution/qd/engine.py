@@ -1285,6 +1285,21 @@ class QDEngine(EoHEngine):
         if observed_credit >= self.qd_memory_min_cell_credit:
             stats.last_credit_gen = self.current_generation
 
+    def _front_guarded_credit(
+        self,
+        *,
+        global_front: bool,
+        local_archive: bool,
+        valid_ppa: bool,
+    ) -> float:
+        if global_front:
+            return 1.0
+        if local_archive:
+            return 0.5
+        if valid_ppa:
+            return self.qd_memory_min_cell_credit
+        return 0.0
+
     def _update_qd_memory_insert_stats(
         self,
         result: QDArchiveInsertResult,
@@ -1303,26 +1318,22 @@ class QDEngine(EoHEngine):
         )
         if global_inserted:
             stats.global_front_adds_from_cell += 1
-            credit = 1.0
-        elif champion_improved and near_front:
+        if champion_improved:
             stats.champion_improvements_from_cell += 1
-            credit = 0.75
-        elif near_front:
-            credit = 0.60
-        elif champion_improved:
-            stats.champion_improvements_from_cell += 1
-            credit = 0.45
-        else:
-            credit = 0.20
         if result.inserted and result.decision != "replaced_elite":
             stats.local_front_adds_from_cell += 1
+        credit = self._front_guarded_credit(
+            global_front=global_inserted,
+            local_archive=result.inserted or champion_improved or near_front,
+            valid_ppa=True,
+        )
         self._update_memory_credit(stats, credit)
 
     def _update_qd_memory_parent_credit(self, candidates: list[Heuristic]) -> None:
         if self.qd_scheduler_mode != "front_guarded_memory":
             return
         for cand in candidates:
-            cell_id = getattr(cand, "qd_memory_parent_cell_id", None)
+            cell_id = cand.qd_memory_parent_cell_id
             if not isinstance(cell_id, str) or not cell_id:
                 continue
             stats = self._memory_stats(cell_id)
@@ -1332,27 +1343,23 @@ class QDEngine(EoHEngine):
                 stats.valid_ppa_from_cell += 1
             else:
                 stats.failed_from_cell += 1
-            if bool(getattr(cand, "qd_global_pareto_inserted", False)):
+            if cand.qd_global_pareto_inserted:
                 stats.global_front_adds_from_cell += 1
-                credit = 1.0
-            elif bool(getattr(cand, "qd_archive_inserted", False)):
+            if cand.qd_archive_inserted:
                 stats.local_front_adds_from_cell += 1
-                credit = 0.70
-            elif bool(getattr(cand, "qd_cell_champion_improved", False)):
+            if cand.qd_cell_champion_improved:
                 stats.champion_improvements_from_cell += 1
-                credit = 0.55
-            elif valid_ppa:
-                credit = 0.25
-            elif cand.status == "failed_synthesis":
-                credit = 0.10
-            else:
-                credit = 0.0
+            credit = self._front_guarded_credit(
+                global_front=cand.qd_global_pareto_inserted,
+                local_archive=cand.qd_archive_inserted or cand.qd_cell_champion_improved,
+                valid_ppa=valid_ppa,
+            )
             self._update_memory_credit(stats, credit)
             valid_rate = stats.valid_ppa_from_cell / stats.attempts_from_cell
             if (
                 stats.attempts_from_cell >= self.qd_memory_cooldown_attempts
-                and valid_rate < 0.25
-                and stats.credit < 0.15
+                and valid_rate < self.qd_memory_min_cell_credit
+                and stats.credit < self.qd_memory_min_cell_credit
             ):
                 stats.cooldown_until_gen = (
                     self.current_generation + self.qd_memory_cooldown_generations
@@ -1401,23 +1408,11 @@ class QDEngine(EoHEngine):
                 "quality_score": float(getattr(candidate, "quality_score", candidate.score)),
                 "generation_candidate_index": getattr(candidate, "generation_candidate_index", None),
                 "archive_insertion_index": getattr(candidate, "archive_insertion_index", None),
-                "qd_memory_lane": getattr(candidate, "qd_memory_lane", None),
-                "qd_memory_parent_cell_id": getattr(
-                    candidate,
-                    "qd_memory_parent_cell_id",
-                    None,
-                ),
-                "qd_memory_parent_role": getattr(
-                    candidate,
-                    "qd_memory_parent_role",
-                    None,
-                ),
-                "qd_memory_parent_cell_credit": getattr(
-                    candidate,
-                    "qd_memory_parent_cell_credit",
-                    None,
-                ),
-                "qd_memory_front_gap": getattr(candidate, "qd_memory_front_gap", None),
+                "qd_memory_lane": candidate.qd_memory_lane,
+                "qd_memory_parent_cell_id": candidate.qd_memory_parent_cell_id,
+                "qd_memory_parent_role": candidate.qd_memory_parent_role,
+                "qd_memory_parent_cell_credit": candidate.qd_memory_parent_cell_credit,
+                "qd_memory_front_gap": candidate.qd_memory_front_gap,
             }
         )
         if not candidate.code_file_path:
@@ -2233,21 +2228,10 @@ class QDEngine(EoHEngine):
 
     def _memory_cell_weight(self, cell_id: str) -> float:
         stats = self._memory_stats(cell_id)
-        front_bonus = 1.0
-        members = self._members_by_cell()[cell_id]
+        weight = stats.credit
         if self._cell_contains_global_front(cell_id):
-            front_bonus += 0.75
-        if len(members) > 1:
-            front_bonus += 0.35
-        age_bonus = min(0.30, 0.05 * max(0, self.current_generation - stats.last_credit_gen))
-        validity_bonus = 0.0
-        if stats.attempts_from_cell > 0:
-            validity_bonus = 0.25 * (
-                stats.valid_ppa_from_cell / stats.attempts_from_cell
-            )
-        return (0.05 + stats.credit) ** 2 * (
-            front_bonus + age_bonus + validity_bonus
-        )
+            weight += 1.0
+        return max(weight, self.qd_memory_min_cell_credit)
 
     def _memory_cell_champion(self, cell_id: str) -> ArchiveMember:
         members = self._members_by_cell()[cell_id]
@@ -4068,11 +4052,9 @@ class QDEngine(EoHEngine):
     ) -> None:
         for cand, meta_rec in zip(offspring, metadata, strict=True):
             cand.qd_memory_lane = meta_rec["qd_memory_lane"]
-            cand.qd_memory_parent_cell_id = meta_rec.get("qd_memory_parent_cell_id")
-            cand.qd_memory_parent_role = meta_rec.get("qd_memory_parent_role")
-            cand.qd_memory_parent_cell_credit = meta_rec.get(
-                "qd_memory_parent_cell_credit"
-            )
+            cand.qd_memory_parent_cell_id = meta_rec["qd_memory_parent_cell_id"]
+            cand.qd_memory_parent_role = meta_rec["qd_memory_parent_role"]
+            cand.qd_memory_parent_cell_credit = meta_rec["qd_memory_parent_cell_credit"]
 
     def _front_guarded_lane_counts(
         self,
@@ -4081,16 +4063,17 @@ class QDEngine(EoHEngine):
     ) -> dict[str, int]:
         lanes = {"classic": 0, "memory_refine": 0, "front_rescue": 0, "probe": 0}
         for cand in candidates:
-            lane = getattr(cand, "qd_memory_lane", "classic")
+            lane = cand.qd_memory_lane
+            assert lane is not None
             assert lane in lanes
             if field == "generated":
                 lanes[lane] += 1
             elif field == "valid_ppa":
                 lanes[lane] += int(cand.status == "success" and cand.ppa_success)
             elif field == "global_front_adds":
-                lanes[lane] += int(bool(getattr(cand, "qd_global_pareto_inserted", False)))
+                lanes[lane] += int(cand.qd_global_pareto_inserted)
             elif field == "local_front_adds":
-                lanes[lane] += int(bool(getattr(cand, "qd_archive_inserted", False)))
+                lanes[lane] += int(cand.qd_archive_inserted)
             else:
                 raise ValueError(f"Unsupported lane count field '{field}'.")
         return lanes
