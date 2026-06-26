@@ -7,6 +7,9 @@ configurations before spending full RTLLM budget.
 
 Start with `current_selection_status.md` for the current promotion decision,
 category representatives, and top-10 mean-HV shortlist.
+Use `fg_qdm_requested_variant_status.md` for the direct mapping between the
+requested FG-QDM algorithm and the completed T85/T97/T98 implementation and
+smoke results.
 
 | Package | Purpose | Status |
 | --- | --- | --- |

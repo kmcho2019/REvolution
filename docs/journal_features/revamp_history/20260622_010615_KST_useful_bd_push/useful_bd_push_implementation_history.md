@@ -5902,3 +5902,17 @@ Placeholders are acceptable in the scaffold commit, but not at goal completion.
   `descriptor_projection_missing`, and all QD rows are marked
   `candidate_level_no_canonical_dedup` because the viewer lacks canonical
   netlist hashes.
+
+## 2026-06-26T18:00:00Z - FG-QDM Requested Variant Status Clarified
+
+- Added `preliminary_planning/fg_qdm_requested_variant_status.md`.
+- Mapped the requested front-guarded QD memory proposal to the existing
+  `front_guarded_memory` scheduler, `qd_primary_success_pool` separation,
+  lane metadata, PPA-first prompts, no two-parent fusion, and memory credit
+  telemetry.
+- Recorded the current empirical status: T97 is the best FG-QDM smoke and
+  beats the same-threshold T98 random-memory control, but it still trails
+  classic mean HV and has zero memory-lane global-front additions.
+- Decision: do not duplicate the scheduler. Any next FG-QDM attempt should
+  reuse the existing mode and change only one motivated descriptor or credit
+  setting at a time.
