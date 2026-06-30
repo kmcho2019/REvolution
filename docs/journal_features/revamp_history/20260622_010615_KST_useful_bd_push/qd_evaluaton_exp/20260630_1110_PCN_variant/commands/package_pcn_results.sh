@@ -17,6 +17,18 @@ case "$PCN_STAGE" in
     ;;
 esac
 
+while true; do
+  pending=0
+  for method in "${stage_methods[@]}"; do
+    if [ ! -f "$LOG_ROOT/$PCN_STAGE.$method.done" ] && [ ! -f "$LOG_ROOT/$PCN_STAGE.$method.failed" ]; then
+      pending=$((pending + 1))
+    fi
+  done
+  [ "$pending" -eq 0 ] && break
+  echo "[$(date -Is)] waiting for $pending $PCN_STAGE method(s)"
+  sleep 120
+done
+
 completed_methods=()
 for method in "${stage_methods[@]}"; do
   if [ -f "$LOG_ROOT/$PCN_STAGE.$method.done" ] && [ -d "$(method_run_dir "$method")" ]; then
