@@ -112,11 +112,17 @@ _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
 JournalParentSource = Literal["archive", "fail_pool", "seed"]
 QDOperatorKind = Literal["eoh_strategies", "single_thought_operator"]
 QDTwoParentGate = Literal["none", "near_front_descriptor"]
-QDSchedulerMode = Literal["map_elites", "front_guarded_memory", "pcn_quality_memory"]
+QDSchedulerMode = Literal[
+    "map_elites",
+    "front_guarded_memory",
+    "pcn_quality_memory",
+    "pcn_classic_preserving_memory",
+]
 QDParentSelection = Literal[
     "cell_crowded_tournament",
     "front_guarded_memory",
     "pcn_quality_memory",
+    "pcn_classic_preserving_memory",
     "front_slot_lane_nsga2",
     "nsga2_global_rank",
     "sparse_front_triggered_nsga2",
@@ -337,6 +343,7 @@ class QDEngine(EoHEngine):
             "map_elites",
             "front_guarded_memory",
             "pcn_quality_memory",
+            "pcn_classic_preserving_memory",
         }:
             raise ValueError(f"Unsupported qd_scheduler_mode '{qd_scheduler_mode}'.")
         self.qd_scheduler_mode: QDSchedulerMode = cast(
@@ -382,6 +389,7 @@ class QDEngine(EoHEngine):
             "cell_crowded_tournament",
             "front_guarded_memory",
             "pcn_quality_memory",
+            "pcn_classic_preserving_memory",
             "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",
@@ -393,6 +401,7 @@ class QDEngine(EoHEngine):
             qd_parent_selection in {
                 "front_guarded_memory",
                 "pcn_quality_memory",
+                "pcn_classic_preserving_memory",
                 "front_slot_lane_nsga2",
                 "sparse_front_triggered_nsga2",
             }
@@ -408,6 +417,7 @@ class QDEngine(EoHEngine):
         if self.qd_parent_selection in {
             "front_guarded_memory",
             "pcn_quality_memory",
+            "pcn_classic_preserving_memory",
         } and self.qd_parent_selection != self.qd_scheduler_mode:
             raise ValueError(
                 f"{self.qd_parent_selection} parent selection requires matching scheduler."
@@ -415,7 +425,12 @@ class QDEngine(EoHEngine):
         if self._is_qd_memory_mode_name(self.qd_scheduler_mode):
             if self.representation_kind != "code_individual":
                 raise ValueError(f"{self.qd_scheduler_mode} requires code_individual.")
-            if self.qd_operator_kind != "single_thought_operator":
+            if self.qd_scheduler_mode == "pcn_classic_preserving_memory":
+                if self.qd_operator_kind != "eoh_strategies":
+                    raise ValueError(
+                        "pcn_classic_preserving_memory requires eoh_strategies."
+                    )
+            elif self.qd_operator_kind != "single_thought_operator":
                 raise ValueError(
                     f"{self.qd_scheduler_mode} requires single_thought_operator."
                 )
@@ -425,7 +440,10 @@ class QDEngine(EoHEngine):
                 )
             if self.qd_two_parent_probability != 0.0:
                 raise ValueError(f"{self.qd_scheduler_mode} disables two-parent fusion.")
-            if self.qd_operator_one_parent_fraction != 1.0:
+            if (
+                self.qd_scheduler_mode != "pcn_classic_preserving_memory"
+                and self.qd_operator_one_parent_fraction != 1.0
+            ):
                 raise ValueError(f"{self.qd_scheduler_mode} requires one-parent requests.")
             if self.qd_rebinning_kind != "disabled":
                 raise ValueError(f"{self.qd_scheduler_mode} requires disabled rebinning.")
@@ -451,6 +469,18 @@ class QDEngine(EoHEngine):
             > 0.10
         ):
             raise ValueError("pcn_quality_memory memory lanes must be <= 10%.")
+        if (
+            self.qd_scheduler_mode == "pcn_classic_preserving_memory"
+            and (
+                qd_memory_refine_fraction
+                + qd_memory_rescue_fraction
+                + qd_memory_probe_fraction
+            )
+            > 0.15
+        ):
+            raise ValueError(
+                "pcn_classic_preserving_memory memory lanes must be <= 15%."
+            )
         if qd_memory_min_cell_credit < 0.0:
             raise ValueError("qd_memory_min_cell_credit must be >= 0.")
         if qd_memory_front_gap_epsilon < 0.0:
@@ -522,7 +552,11 @@ class QDEngine(EoHEngine):
 
     @staticmethod
     def _is_qd_memory_mode_name(mode: str) -> bool:
-        return mode in {"front_guarded_memory", "pcn_quality_memory"}
+        return mode in {
+            "front_guarded_memory",
+            "pcn_quality_memory",
+            "pcn_classic_preserving_memory",
+        }
 
     def _is_qd_memory_mode(self) -> bool:
         return self._is_qd_memory_mode_name(self.qd_scheduler_mode)
@@ -530,10 +564,23 @@ class QDEngine(EoHEngine):
     def _is_pcn_quality_memory(self) -> bool:
         return self.qd_scheduler_mode == "pcn_quality_memory"
 
+    def _is_pcn_gated_memory(self) -> bool:
+        return self.qd_scheduler_mode in {
+            "pcn_quality_memory",
+            "pcn_classic_preserving_memory",
+        }
+
+    def _is_pcn_classic_preserving_memory(self) -> bool:
+        return self.qd_scheduler_mode == "pcn_classic_preserving_memory"
+
     def _uses_descriptor_guided_generation(self) -> bool:
+        if self._is_pcn_classic_preserving_memory():
+            return False
         return self.qd_descriptor_profile not in _ARCHIVE_ONLY_DESCRIPTOR_PROFILES
 
     def _qd_success_strategies(self) -> tuple[EvolStrategyMethodSuccess, ...]:
+        if self.qd_scheduler_mode == "pcn_classic_preserving_memory":
+            return CLASSIC_SUCCESS_STRATEGIES
         if self._uses_descriptor_guided_generation():
             return QD_SUCCESS_STRATEGIES
         return CLASSIC_SUCCESS_STRATEGIES
@@ -1379,7 +1426,7 @@ class QDEngine(EoHEngine):
         champion_improved: bool,
         valid_ppa: bool,
     ) -> float:
-        if self._is_pcn_quality_memory():
+        if self._is_pcn_gated_memory():
             if global_front:
                 return 1.0
             if local_front:
@@ -1423,7 +1470,7 @@ class QDEngine(EoHEngine):
             stats.global_front_adds_from_cell += 1
         if champion_improved:
             stats.champion_improvements_from_cell += 1
-        if self._is_pcn_quality_memory():
+        if self._is_pcn_gated_memory():
             local_credit = local_front_inserted
             count_local_add = local_front_inserted
         else:
@@ -2229,6 +2276,13 @@ class QDEngine(EoHEngine):
         return slots
 
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
+        if self._is_pcn_classic_preserving_memory():
+            success_view = self._get_success_view()
+            if not success_view:
+                return []
+            base = min(cand.score for cand in success_view)
+            weights = [cand.score - base + 0.1 for cand in success_view]
+            return random.choices(success_view, weights=weights, k=count)
         sparse_front_triggered = self._sparse_front_triggered()
         champion_lane_fraction = self._active_champion_lane_fraction()
         if self.qd_parent_selection in {
@@ -2325,7 +2379,7 @@ class QDEngine(EoHEngine):
         )
 
     def _qd_memory_active(self) -> bool:
-        if not self._is_pcn_quality_memory():
+        if not self._is_pcn_gated_memory():
             return True
         activation_generation = max(2, self.qd_archive_activation_generation)
         return (
@@ -2342,7 +2396,7 @@ class QDEngine(EoHEngine):
             stats = self._memory_stats(cell_id)
             if self.current_generation < stats.cooldown_until_gen:
                 continue
-            if self._is_pcn_quality_memory():
+            if self._is_pcn_gated_memory():
                 if stats.credit >= self.qd_memory_min_cell_credit:
                     sampleable.append(cell_id)
                 continue
@@ -2358,7 +2412,7 @@ class QDEngine(EoHEngine):
 
     def _memory_cell_weight(self, cell_id: str) -> float:
         stats = self._memory_stats(cell_id)
-        if self._is_pcn_quality_memory():
+        if self._is_pcn_gated_memory():
             return max(stats.credit, 0.01)
         weight = stats.credit
         if self._cell_contains_global_front(cell_id):
@@ -2415,6 +2469,8 @@ class QDEngine(EoHEngine):
         if not self._memory_sampleable_cells():
             return {"classic": total, "memory_refine": 0, "front_rescue": 0, "probe": 0}
         memory_refine = round(total * self.qd_memory_refine_fraction)
+        if self._is_pcn_classic_preserving_memory() and self.qd_memory_refine_fraction > 0:
+            memory_refine = max(1, memory_refine)
         front_rescue = round(total * self.qd_memory_rescue_fraction)
         if not any(self._memory_front_slots(cell_id) for cell_id in self._memory_sampleable_cells()):
             front_rescue = 0
@@ -4205,7 +4261,7 @@ class QDEngine(EoHEngine):
             elif field == "global_front_adds":
                 lanes[lane] += int(cand.qd_global_pareto_inserted)
             elif field == "local_front_adds":
-                if self._is_pcn_quality_memory():
+                if self._is_pcn_gated_memory():
                     lanes[lane] += int(
                         bool(getattr(cand, "qd_memory_credit_local_front", False))
                     )
@@ -4442,7 +4498,7 @@ class QDEngine(EoHEngine):
     def evolve_one_generation(self):
         if self.representation_kind == "thought_only":
             return self._evolve_one_thought_generation()
-        if self._is_qd_memory_mode():
+        if self._is_qd_memory_mode() and not self._is_pcn_classic_preserving_memory():
             return self._evolve_one_front_guarded_memory_generation()
 
         self.current_generation += 1
@@ -4450,6 +4506,9 @@ class QDEngine(EoHEngine):
         self.gen_start_time = time.time()
 
         budget = self._split_generation_budget()
+        pcn_memory_counts = {"classic": self.num_offspring_lambda, "memory_refine": 0, "front_rescue": 0, "probe": 0}
+        if self._is_pcn_classic_preserving_memory():
+            pcn_memory_counts = self._front_guarded_memory_counts()
 
         new_offspring: list[Heuristic] = []
         fail_rewards_this_gen = defaultdict(float)
@@ -4613,6 +4672,17 @@ class QDEngine(EoHEngine):
 
             success_selected: set[EvolStrategyMethodSuccess] = set()
             success_total_requests = budget.backfill_budget + budget.refine_budget
+            pcn_memory_refine = 0
+            if self._is_pcn_classic_preserving_memory():
+                pcn_memory_refine = min(
+                    pcn_memory_counts["memory_refine"],
+                    success_total_requests,
+                )
+                success_total_requests -= pcn_memory_refine
+                pcn_memory_counts["memory_refine"] = pcn_memory_refine
+                pcn_memory_counts["classic"] = (
+                    self.num_offspring_lambda - pcn_memory_refine
+                )
             for idx in range(success_total_requests):
                 if not self._uses_descriptor_guided_generation():
                     arity = self._success_parent_arity()
@@ -4778,7 +4848,68 @@ class QDEngine(EoHEngine):
                     }
                 )
 
+            for _ in range(pcn_memory_refine):
+                sampled = self._sample_memory_parent("memory_refine")
+                if sampled is None:
+                    pcn_memory_counts["classic"] += 1
+                    pcn_memory_counts["memory_refine"] -= 1
+                    continue
+                parent, cell_id, role, credit = sampled
+                memory_strategies = cast(
+                    list[EvolStrategyMethodSuccess],
+                    ["M-S", "M-E", "M-R", "M-I"],
+                )
+                selected_name, prob_dist = self._select_strategy(
+                    "success",
+                    memory_strategies,
+                    success_selected,
+                )
+                if selected_name is None or prob_dist is None:
+                    pcn_memory_counts["classic"] += 1
+                    pcn_memory_counts["memory_refine"] -= 1
+                    continue
+                success_selected.add(selected_name)
+                mode = self._phase_mode("refine")
+                prompt_text = self._with_mode(
+                    mode,
+                    getattr(self, f"_create_prompt_{selected_name.replace('-', '_')}"),
+                    [parent],
+                )
+                llm_requests.append(
+                    self._build_prompt_request(
+                        prompt=prompt_text,
+                        mode=mode,
+                        system_prompt=self._get_generation_system_prompt(mode),
+                    )
+                )
+                request_meta.append(
+                    {
+                        "strategy": selected_name,
+                        "parents": [parent],
+                        "origin_pool": "success_pool",
+                        "resolved_mode": mode,
+                        "qd_memory_lane": "memory_refine",
+                        "qd_memory_parent_cell_id": cell_id,
+                        "qd_memory_parent_role": role,
+                        "qd_memory_parent_cell_credit": credit,
+                    }
+                )
+                for key, value in prob_dist.items():
+                    strategy_avg_selection_probabilities["success_pool"][key] = (
+                        strategy_avg_selection_probabilities["success_pool"].get(
+                            key,
+                            0.0,
+                        )
+                        + value
+                    )
+
         if llm_requests:
+            if self._is_pcn_classic_preserving_memory():
+                for meta_rec in request_meta:
+                    meta_rec.setdefault("qd_memory_lane", "classic")
+                    meta_rec.setdefault("qd_memory_parent_cell_id", None)
+                    meta_rec.setdefault("qd_memory_parent_role", None)
+                    meta_rec.setdefault("qd_memory_parent_cell_credit", None)
             llm_results = asyncio.run(
                 self.llm.generate_batch_responses(
                     llm_requests,
@@ -4788,23 +4919,72 @@ class QDEngine(EoHEngine):
                 )
             )
             new_offspring.extend(self._materialize_offspring(llm_results, request_meta))
+            if self._is_pcn_classic_preserving_memory():
+                self._attach_front_guarded_metadata(
+                    new_offspring[-len(request_meta):],
+                    request_meta,
+                )
 
         if not new_offspring:
             return "STOP"
 
+        if self._is_pcn_classic_preserving_memory():
+            for cand in new_offspring:
+                if cand.qd_memory_lane is None:
+                    cand.qd_memory_lane = "classic"
+
         self._evaluate_candidates(new_offspring)
         inserted, replaced = self._insert_successes([cand for cand in new_offspring if cand.status == "success"])
         self._update_fail_pool([cand for cand in new_offspring if cand.status != "success"])
+        if self._is_pcn_classic_preserving_memory():
+            self._update_qd_memory_parent_credit(new_offspring)
         fallback_inserted, fallback_replaced = self._maybe_adaptive_warmup_fallback()
         inserted += fallback_inserted
         replaced += fallback_replaced
         self._maybe_adaptive_rebin()
 
-        for cand in new_offspring:
-            if cand.origin_pool == "fail_pool" and cand.status == "success":
-                fail_rewards_this_gen[cand.strategy] += 1.0
-            elif cand.origin_pool == "success_pool" and cand.status == "success":
-                success_rewards_this_gen[cand.strategy] += 1.0
+        if self._is_pcn_classic_preserving_memory():
+            request_offspring = new_offspring[-len(request_meta):] if request_meta else []
+            for cand, meta_rec in zip(request_offspring, request_meta, strict=True):
+                strategy_name = meta_rec["strategy"]
+                parent_pool_type = meta_rec["origin_pool"]
+                parents = meta_rec["parents"]
+                parent = parents[0]
+                reward = 0.0
+
+                if parent_pool_type == "fail_pool":
+                    if parent.status != "success" and cand.status == "success":
+                        reward = 1.0
+                    fail_rewards_this_gen[strategy_name] += reward
+                    stats = self.fail_strategy_stats[
+                        cast(EvolStrategyMethodFail, strategy_name)
+                    ]
+                elif parent_pool_type == "success_pool":
+                    if len(parents) == 1:
+                        if parent.status == "success" and cand.status == "success":
+                            reward = float(cand.score > parent.score)
+                    elif len(parents) == 2:
+                        parent_score = max(parents[0].score, parents[1].score)
+                        if cand.status == "success":
+                            reward = float(cand.score > parent_score)
+                    else:
+                        raise ValueError("PCN memory only supports one or two parents.")
+                    success_rewards_this_gen[strategy_name] += reward
+                    stats = self.success_strategy_stats[
+                        cast(EvolStrategyMethodSuccess, strategy_name)
+                    ]
+                else:
+                    raise ValueError(f"Unknown PCN parent pool '{parent_pool_type}'.")
+
+                cand.reward_from_parent = reward
+                stats["count"] += 1
+                stats["value"] += (reward - stats["value"]) / stats["count"]
+        else:
+            for cand in new_offspring:
+                if cand.origin_pool == "fail_pool" and cand.status == "success":
+                    fail_rewards_this_gen[cand.strategy] += 1.0
+                elif cand.origin_pool == "success_pool" and cand.status == "success":
+                    success_rewards_this_gen[cand.strategy] += 1.0
 
         gen_runtime = time.time() - self.gen_start_time
         qd_snapshot = self._build_qd_snapshot(
@@ -4817,6 +4997,23 @@ class QDEngine(EoHEngine):
             self._journal_parent_source_counts(new_offspring)
         )
         qd_snapshot["generated_candidate_count"] = len(new_offspring)
+        if self._is_pcn_classic_preserving_memory():
+            qd_snapshot["phase"] = self.qd_scheduler_mode
+            qd_snapshot["planned_qd_memory_lane_counts"] = pcn_memory_counts
+            qd_snapshot["qd_memory_lane_generated"] = self._front_guarded_lane_counts(
+                new_offspring,
+                "generated",
+            )
+            qd_snapshot["qd_memory_lane_valid_ppa"] = self._front_guarded_lane_counts(
+                new_offspring,
+                "valid_ppa",
+            )
+            qd_snapshot["qd_memory_lane_global_front_adds"] = (
+                self._front_guarded_lane_counts(new_offspring, "global_front_adds")
+            )
+            qd_snapshot["qd_memory_lane_local_front_adds"] = (
+                self._front_guarded_lane_counts(new_offspring, "local_front_adds")
+            )
         if self.logger:
             self._log_generation_stats(
                 new_offspring,

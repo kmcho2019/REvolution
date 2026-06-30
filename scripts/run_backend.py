@@ -1004,7 +1004,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--qd_scheduler_mode",
         type=str,
         default="map_elites",
-        choices=["map_elites", "front_guarded_memory", "pcn_quality_memory"],
+        choices=[
+            "map_elites",
+            "front_guarded_memory",
+            "pcn_quality_memory",
+            "pcn_classic_preserving_memory",
+        ],
     )
     parser.add_argument(
         "--qd_quality_mode",
@@ -1114,6 +1119,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
             "cell_crowded_tournament",
             "front_guarded_memory",
             "pcn_quality_memory",
+            "pcn_classic_preserving_memory",
             "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",

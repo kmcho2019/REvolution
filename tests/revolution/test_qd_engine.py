@@ -8,7 +8,7 @@ from typing import Any, cast
 
 import pytest
 
-from revolution.algorithm import Heuristic
+from revolution.algorithm import CLASSIC_SUCCESS_STRATEGIES, Heuristic
 from revolution.qd.engine import QDEngine, QD_MEMORY_DEFAULT_CREDIT
 from revolution.qd.archive import GridQuantileArchive
 from revolution.qd.types import ArchiveMember
@@ -1110,6 +1110,27 @@ def _pcn_engine(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> QDEngine:
     )
 
 
+def _pcn_classic_engine(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> QDEngine:
+    return _engine(
+        tmp_path,
+        monkeypatch,
+        population_size=8,
+        qd_cell_mode="elite_pareto_slot",
+        qd_max_elites_per_cell=2,
+        qd_scheduler_mode="pcn_classic_preserving_memory",
+        qd_parent_selection="pcn_classic_preserving_memory",
+        qd_operator_kind="eoh_strategies",
+        qd_two_parent_probability=0.0,
+        qd_memory_classic_fraction=0.90,
+        qd_memory_refine_fraction=0.10,
+        qd_memory_rescue_fraction=0.0,
+        qd_memory_min_cell_credit=0.25,
+        qd_memory_min_valid_ppa=2,
+        qd_archive_activation_generation=2,
+        qd_grid_axes=("g_A", "g_T"),
+    )
+
+
 def test_pcn_quality_memory_requires_matching_parent_selection(
     tmp_path,
     monkeypatch,
@@ -1162,6 +1183,115 @@ def test_pcn_quality_memory_schedules_after_evidence_gate(
     assert engine._front_guarded_memory_summary()["qd_memory_active"] is True
     assert counts["memory_refine"] == 1
     assert counts["classic"] == 9
+
+
+def test_pcn_classic_memory_requires_eoh_operator(
+    tmp_path,
+    monkeypatch,
+):
+    with pytest.raises(ValueError, match="requires eoh_strategies"):
+        _engine(
+            tmp_path,
+            monkeypatch,
+            qd_cell_mode="elite_pareto_slot",
+            qd_max_elites_per_cell=2,
+            qd_scheduler_mode="pcn_classic_preserving_memory",
+            qd_parent_selection="pcn_classic_preserving_memory",
+            qd_operator_kind="single_thought_operator",
+            qd_operator_one_parent_fraction=1.0,
+            qd_two_parent_probability=0.0,
+        )
+
+
+def test_pcn_classic_memory_keeps_classic_success_strategies(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _pcn_classic_engine(tmp_path, monkeypatch)
+
+    assert engine.success_strats == list(CLASSIC_SUCCESS_STRATEGIES)
+
+
+def test_pcn_classic_memory_forces_one_memory_slot_after_gate(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _pcn_classic_engine(tmp_path, monkeypatch)
+    first = _successful_candidate("first", score=1.0, power=0.9, area=90.0, clock=0.8)
+    second = _successful_candidate("second", score=2.0, power=0.8, area=80.0, clock=0.7)
+    engine._insert_successes([first, second])
+    engine.current_generation = 2
+    for stats in engine.qd_memory_cell_stats.values():
+        stats.credit = 0.30
+
+    counts = engine._front_guarded_memory_counts()
+
+    assert engine._front_guarded_memory_summary()["qd_memory_active"] is True
+    assert counts["memory_refine"] == 1
+    assert counts["classic"] == 7
+
+
+def test_pcn_classic_memory_builds_eoh_memory_request(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _pcn_classic_engine(tmp_path, monkeypatch)
+    first = _successful_candidate("first", score=1.0, power=0.9, area=90.0, clock=0.8)
+    second = _successful_candidate("second", score=2.0, power=0.8, area=80.0, clock=0.7)
+    engine._insert_successes([first, second])
+    engine.current_generation = 2
+    for stats in engine.qd_memory_cell_stats.values():
+        stats.credit = 0.30
+
+    seen_success_strategies: list[tuple[str, ...]] = []
+    captured_requests: list[dict[str, Any]] = []
+    captured_metadata: list[dict[str, Any]] = []
+
+    def _select_strategy(pool_type, available_strategies, selected_this_gen=None):
+        if pool_type == "success":
+            seen_success_strategies.append(tuple(available_strategies))
+        return available_strategies[0], {
+            strategy: (1.0 if strategy == available_strategies[0] else 0.0)
+            for strategy in available_strategies
+        }
+
+    monkeypatch.setattr(engine, "_select_strategy", _select_strategy)
+    monkeypatch.setattr(
+        engine,
+        "_with_mode",
+        lambda mode, func, parents: f"{mode}:{func.__name__}:{parents[0].id}",
+    )
+
+    async def _generate_batch_responses(llm_requests, *args, **kwargs):
+        captured_requests.extend(llm_requests)
+        return []
+
+    def _materialize_offspring(llm_results, metadata):
+        captured_metadata.extend(metadata)
+        return [
+            Heuristic(
+                "stub",
+                "module m; endmodule",
+                "",
+                generation=engine.current_generation,
+                status="failed_format",
+            )
+            for _ in metadata
+        ]
+
+    monkeypatch.setattr(engine.llm, "generate_batch_responses", _generate_batch_responses)
+    monkeypatch.setattr(engine, "_materialize_offspring", _materialize_offspring)
+    monkeypatch.setattr(engine, "_evaluate_candidates", lambda candidates: None)
+
+    result = engine.evolve_one_generation()
+
+    assert result is None
+    assert captured_requests
+    assert sum(1 for meta in captured_metadata if meta["qd_memory_lane"] == "memory_refine") == 1
+    assert all(meta["strategy"] != "single_thought_operator" for meta in captured_metadata)
+    assert all("M-T" not in item and "C-D" not in item for item in seen_success_strategies)
+    assert ("M-S", "M-E", "M-R", "M-I") in seen_success_strategies
+    assert engine.success_strategy_stats["M-S"]["count"] > 0
 
 
 def test_qd_engine_builds_cvt_archive_runtime(monkeypatch, tmp_path):
