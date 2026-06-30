@@ -6,6 +6,9 @@ export PCN_STAGE="$stage"
 source "$(dirname "$0")/env.sh"
 
 case "$PCN_STAGE" in
+  smoke_credit025)
+    stage_methods=("${SMOKE_CREDIT025_METHODS[@]}")
+    ;;
   long_20x10)
     stage_methods=("${LONG_20X10_METHODS[@]}")
     ;;

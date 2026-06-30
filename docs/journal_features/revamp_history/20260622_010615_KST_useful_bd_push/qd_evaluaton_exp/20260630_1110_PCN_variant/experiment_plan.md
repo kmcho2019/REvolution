@@ -32,8 +32,24 @@ Arms:
 - `pcn_random_quality_memory_8x5`
 - `pcn_sr_quality_memory_8x5`
 
-Smoke passes only if the PCN RF arm preserves all classic-covered designs and
-does not show an obvious HV/HV-AUC collapse.
+Smoke passes only if the PCN RF arm preserves all classic-covered designs,
+does not show an obvious HV/HV-AUC collapse, and emits nonzero memory-refine
+calls. The initial smoke failed this mechanism check because the 0.50
+cell-credit gate prevented memory recall.
+
+### Stage 1b: Corrective Credit-Gate Smoke
+
+Problems and budget are identical to Stage 1.
+
+Arms:
+
+- `classic_revolution_credit025_8x5`
+- `pcn_rf_leafid_quality_memory_credit025_8x5`
+- `pcn_random_quality_memory_credit025_8x5`
+
+Only `qd_memory_min_cell_credit` changes, from 0.50 to 0.25, for the two PCN
+arms. This stage exists to verify whether PCN memory helps once cells with the
+observed 0.24-0.34 credit range are actually sampleable.
 
 ### Stage 2: Frozen Screen
 
@@ -57,7 +73,9 @@ seed = 1001
 ```
 
 The screen determines whether PCN RF should proceed to long-budget tests.
-Random PCN must remain as the control for "memory without meaningful BD".
+Random PCN must remain as the control for "memory without meaningful BD". Do
+not run this stage until Stage 1b shows nonzero memory-refine calls and no
+obvious HV/HV-AUC collapse.
 
 ### Stage 3: Long-Budget Diagnostic
 

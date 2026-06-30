@@ -11,7 +11,8 @@ population_size = 8
 num_generations = 5
 ```
 
-The long-budget diagnostic overrides this with `20x10` and `10x20`.
+The corrective smoke keeps `8x5` but lowers the memory-credit gate. The
+long-budget diagnostic overrides this with `20x10` and `10x20`.
 
 ## Common Evaluation Rules
 
@@ -119,6 +120,18 @@ Command:
 bash commands/methods/pcn_rf_leafid_quality_memory_8x5.sh
 ```
 
+Corrective smoke variant:
+
+```text
+method = pcn_rf_leafid_quality_memory_credit025_8x5
+stage = smoke_credit025
+qd_memory_min_cell_credit = 0.25
+```
+
+This variant exists because the initial smoke produced zero memory-refine
+calls at the 0.50 credit gate. It reuses the exact RF/MasterRTL/RTLTimer
+descriptor and changes only the sampling eligibility threshold.
+
 ## Method 4: `pcn_random_quality_memory_8x5`
 
 Purpose: negative control for "any memory archive helps".
@@ -144,6 +157,18 @@ Command:
 ```bash
 bash commands/methods/pcn_random_quality_memory_8x5.sh
 ```
+
+Corrective smoke variant:
+
+```text
+method = pcn_random_quality_memory_credit025_8x5
+stage = smoke_credit025
+qd_memory_min_cell_credit = 0.25
+```
+
+This is the paired control for the RF-leaf corrective smoke. If random memory
+matches or beats RF memory when both are allowed to sample, the descriptor is
+not carrying the result.
 
 ## Method 5: `pcn_sr_quality_memory_8x5`
 
@@ -231,3 +256,5 @@ The executable PCN arms use:
 These flags are intentionally strict. Any run that changes memory fractions,
 enables two-parent fusion, enables repair, or lets the archive replace the
 classic primary pool is a different algorithm and must get a new method name.
+For `smoke_credit025`, only `--qd_memory_min_cell_credit` changes, from `0.50`
+to `0.25`, for the RF and random PCN arms.

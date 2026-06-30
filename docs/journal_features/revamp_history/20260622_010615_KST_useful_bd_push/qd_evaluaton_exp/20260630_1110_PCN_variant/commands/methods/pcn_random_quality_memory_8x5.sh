@@ -40,7 +40,7 @@ uv run python scripts/run_backend.py \
   --qd_memory_refine_fraction 0.10 \
   --qd_memory_rescue_fraction 0.00 \
   --qd_memory_probe_fraction 0.00 \
-  --qd_memory_min_cell_credit 0.50 \
+  --qd_memory_min_cell_credit "$PCN_MEMORY_MIN_CELL_CREDIT" \
   --qd_memory_front_gap_epsilon 0.03 \
   --qd_memory_min_valid_ppa 8 \
   --qd_memory_cooldown_attempts 3 \

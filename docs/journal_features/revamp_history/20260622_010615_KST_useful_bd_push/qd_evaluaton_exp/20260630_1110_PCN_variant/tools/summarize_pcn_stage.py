@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import math
 from pathlib import Path
 import sys
@@ -42,6 +43,8 @@ def fmt(value: float) -> str:
 def budget_for_stage(stage: str) -> str:
     if stage in {"smoke", "screen"}:
         return "8x5"
+    if stage == "smoke_credit025":
+        return "8x5_credit025"
     if stage == "long_20x10":
         return "20x10"
     if stage == "long_10x20":
@@ -52,6 +55,8 @@ def budget_for_stage(stage: str) -> str:
 def generation_count(stage: str) -> int:
     if stage in {"smoke", "screen"}:
         return 5
+    if stage == "smoke_credit025":
+        return 5
     if stage == "long_20x10":
         return 10
     if stage == "long_10x20":
@@ -60,6 +65,8 @@ def generation_count(stage: str) -> int:
 
 
 def subset_name(stage: str) -> str:
+    if stage == "smoke_credit025":
+        return "smoke"
     if stage.startswith("long_"):
         return "long_budget"
     return stage
@@ -97,9 +104,12 @@ def method_label(method: str) -> str:
         label = label.removesuffix(suffix)
     replacements = {
         "classic_revolution": "classic",
+        "classic_revolution_credit025": "classic",
         "pcn_passive_archive": "PCN passive",
         "pcn_rf_leafid_quality_memory": "PCN RF",
+        "pcn_rf_leafid_quality_memory_credit025": "PCN RF",
         "pcn_random_quality_memory": "PCN random",
+        "pcn_random_quality_memory_credit025": "PCN random",
         "pcn_sr_quality_memory": "PCN SR",
     }
     return replacements.get(label, label)
@@ -118,6 +128,74 @@ def bar(path: Path, rows: list[dict[str, str]], field: str, title: str, ylabel: 
     fig.tight_layout()
     fig.savefig(path, dpi=180)
     plt.close(fig)
+
+
+def grouped_problem_bar(
+    path: Path,
+    problem_rows: list[dict[str, str]],
+    methods: list[str],
+    problems: list[str],
+    field: str,
+    title: str,
+    ylabel: str,
+) -> None:
+    values = {(row["method"], row["problem"]): float(row[field]) for row in problem_rows}
+    width = 0.78 / len(methods)
+    xs = list(range(len(problems)))
+    colors = ["#4c78a8", "#f58518", "#54a24b", "#e45756", "#72b7b2"]
+    fig, ax = plt.subplots(figsize=(10.5, 5.2))
+    for index, method in enumerate(methods):
+        offset = (index - (len(methods) - 1) / 2.0) * width
+        ax.bar(
+            [x + offset for x in xs],
+            [values[(method, problem)] for problem in problems],
+            width=width,
+            label=method_label(method),
+            color=colors[index % len(colors)],
+            edgecolor="#222222",
+            linewidth=0.55,
+        )
+    ax.set_title(title)
+    ax.set_ylabel(ylabel)
+    ax.set_xticks(xs, problems, rotation=18, ha="right")
+    ax.grid(axis="y", alpha=0.25)
+    ax.legend(ncols=3, fontsize=8)
+    fig.tight_layout()
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+
+
+def heatmap(
+    path: Path,
+    problem_rows: list[dict[str, str]],
+    methods: list[str],
+    problems: list[str],
+    field: str,
+    title: str,
+) -> None:
+    values = {(row["method"], row["problem"]): float(row[field]) for row in problem_rows}
+    matrix = [[values[(method, problem)] for problem in problems] for method in methods]
+    limit = max(abs(value) for row in matrix for value in row) or 1.0
+    fig, ax = plt.subplots(figsize=(9.5, 4.8))
+    image = ax.imshow(matrix, cmap="RdBu", vmin=-limit, vmax=limit, aspect="auto")
+    ax.set_title(title)
+    ax.set_xticks(range(len(problems)), problems, rotation=18, ha="right")
+    ax.set_yticks(range(len(methods)), [method_label(method) for method in methods])
+    for y, row in enumerate(matrix):
+        for x, value in enumerate(row):
+            ax.text(x, y, f"{value:+.3f}", ha="center", va="center", fontsize=8)
+    fig.colorbar(image, ax=ax, shrink=0.82, label=field)
+    fig.tight_layout()
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+
+
+def lane_value(metrics: dict[str, object], field: str, lane: str) -> int:
+    lanes = metrics.get(field) or {}
+    assert isinstance(lanes, dict)
+    value = lanes.get(lane, 0)
+    assert isinstance(value, int)
+    return value
 
 
 def main() -> int:
@@ -169,7 +247,7 @@ def main() -> int:
             row = pareto.get((method, problem))
             hv = float(row["hypervolume"]) if row else 0.0
             auc_value = hv_auc[(method, problem)]
-            valid = int(row["valid_ppa_count"]) if row else 0
+            valid = int(row["candidate_count"]) if row else 0
             pareto_count = int(row["pareto_point_count"]) if row else 0
             problem_summary.append(
                 {
@@ -218,10 +296,74 @@ def main() -> int:
     write_csv(analysis_root / "pcn_method_summary.csv", list(method_summary[0]), method_summary)
     write_csv(analysis_root / "pcn_problem_summary.csv", list(problem_summary[0]), problem_summary)
 
+    memory_summary: list[dict[str, str]] = []
+    for row in pareto_rows:
+        method = row["backend"]
+        if method == classic or method not in methods:
+            continue
+        metrics_path = Path(row["problem_dir"]) / "qd_metrics.json"
+        assert metrics_path.exists()
+        metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+        memory_summary.append(
+            {
+                "method": method,
+                "problem": row["problem"],
+                "qd_memory_active": str(bool(metrics.get("qd_memory_active", False))).lower(),
+                "qd_memory_valid_ppa_seen": str(metrics.get("qd_memory_valid_ppa_seen", 0)),
+                "sampleable_memory_cells": str(metrics.get("sampleable_memory_cells", 0)),
+                "mean_cell_credit": fmt(float(metrics.get("mean_cell_credit", 0.0))),
+                "classic_generated": str(lane_value(metrics, "qd_memory_lane_generated", "classic")),
+                "memory_refine_generated": str(lane_value(metrics, "qd_memory_lane_generated", "memory_refine")),
+                "memory_refine_valid_ppa": str(lane_value(metrics, "qd_memory_lane_valid_ppa", "memory_refine")),
+                "memory_refine_global_front_adds": str(lane_value(metrics, "qd_memory_lane_global_front_adds", "memory_refine")),
+                "memory_refine_local_front_adds": str(lane_value(metrics, "qd_memory_lane_local_front_adds", "memory_refine")),
+            }
+        )
+    if memory_summary:
+        write_csv(analysis_root / "pcn_memory_summary.csv", list(memory_summary[0]), memory_summary)
+
     bar(figures_root / "mean_hv_by_method.png", method_summary, "mean_hv", f"{args.stage}: mean HV", "Mean HV")
     bar(figures_root / "mean_hv_auc_by_method.png", method_summary, "mean_hv_auc", f"{args.stage}: mean HV-AUC", "Mean HV-AUC")
     bar(figures_root / "coverage_by_method.png", method_summary, "covered_problem_count", f"{args.stage}: valid-PPA coverage", "Covered designs")
     bar(figures_root / "hv_retention_by_method.png", method_summary, "mean_hv_retention_pct", f"{args.stage}: HV retention", "Retention vs classic (%)")
+    ordered_methods = [row["method"] for row in method_summary]
+    grouped_problem_bar(
+        figures_root / "problem_hv_by_method.png",
+        problem_summary,
+        ordered_methods,
+        problems,
+        "hypervolume",
+        f"{args.stage}: per-problem HV",
+        "HV",
+    )
+    grouped_problem_bar(
+        figures_root / "problem_valid_ppa_by_method.png",
+        problem_summary,
+        ordered_methods,
+        problems,
+        "valid_ppa_count",
+        f"{args.stage}: valid-PPA count by problem",
+        "Valid-PPA candidates",
+    )
+    heatmap(
+        figures_root / "hv_delta_vs_classic_heatmap.png",
+        problem_summary,
+        ordered_methods,
+        problems,
+        "hv_delta_vs_classic",
+        f"{args.stage}: HV delta vs classic",
+    )
+    if memory_summary:
+        memory_methods = [method for method in ordered_methods if method != classic]
+        grouped_problem_bar(
+            figures_root / "memory_refine_generated_by_problem.png",
+            memory_summary,
+            memory_methods,
+            problems,
+            "memory_refine_generated",
+            f"{args.stage}: memory-refine generated calls",
+            "Generated calls",
+        )
 
     lines = [
         f"# PCN Stage Summary: {args.stage}",
