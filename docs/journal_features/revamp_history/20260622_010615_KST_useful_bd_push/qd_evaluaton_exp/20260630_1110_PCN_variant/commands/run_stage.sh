@@ -9,8 +9,8 @@ curl -sS --max-time 20 "http://$VLLM_HOST:$VLLM_PORT/v1/models" \
   > "$LOG_ROOT/vllm_models_$PCN_STAGE.json"
 
 case "$PCN_STAGE" in
-  smoke_credit025)
-    stage_methods=("${SMOKE_CREDIT025_METHODS[@]}")
+  smoke_v2)
+    stage_methods=("${SMOKE_V2_METHODS[@]}")
     ;;
   long_20x10)
     stage_methods=("${LONG_20X10_METHODS[@]}")
@@ -28,11 +28,7 @@ for method in "${stage_methods[@]}"; do
   script="$(method_script "$method")"
   echo "[$(date -Is)] starting $PCN_STAGE $method"
   set +e
-  method_credit="$PCN_MEMORY_MIN_CELL_CREDIT"
-  if [[ "$method" == *credit025* ]]; then
-    method_credit=0.25
-  fi
-  METHOD_NAME="$method" PCN_MEMORY_MIN_CELL_CREDIT="$method_credit" bash "$script" > "$LOG_ROOT/$PCN_STAGE.$method.log" 2>&1
+  METHOD_NAME="$method" bash "$script" > "$LOG_ROOT/$PCN_STAGE.$method.log" 2>&1
   status=$?
   set -e
   if [ "$status" -eq 0 ]; then

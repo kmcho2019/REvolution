@@ -1,10 +1,11 @@
 # PCN Variant Experiment Package
 
-This directory defines the staged experiment for `pcn_quality_memory`, a
-Pareto-competitive novelty memory variant of REvolution. The package is
-intended to answer whether a very conservative QD memory can improve classic
-REvolution without paying the archive-fill and descriptor-overtrust costs seen
-in the 20260629 RTLLM full suite.
+This directory defines the staged experiment for
+`pcn_classic_preserving_memory`, the corrected Pareto-competitive novelty
+memory variant of REvolution. The package is intended to answer whether a very
+conservative QD memory can improve classic REvolution without paying the
+archive-fill, descriptor-overtrust, and operator-mismatch costs seen in earlier
+QD runs.
 
 ## Navigation
 
@@ -22,10 +23,10 @@ in the 20260629 RTLLM full suite.
 
 ## Current Status
 
-The implementation adds `pcn_quality_memory` as a narrow QD scheduler mode.
-The initial package is ready for staged runs, but no result claim should be
-made until the commands under `commands/` complete and `report.md` is updated
-from run artifacts.
+The old `smoke` result is diagnostic only: it used the single-thought QD
+operator and generated zero memory-refine calls. The active next step is
+`smoke_v2`, which uses `pcn_classic_preserving_memory` with classic EoH
+operators and one forced memory-refine slot after the evidence gate opens.
 
 ## Core Rule
 

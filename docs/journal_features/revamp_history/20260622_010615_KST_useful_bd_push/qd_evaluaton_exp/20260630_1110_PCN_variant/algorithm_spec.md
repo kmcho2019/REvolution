@@ -2,21 +2,24 @@
 
 ## Name
 
-`pcn_quality_memory` means Pareto-Competitive Novelty memory.
+`pcn_classic_preserving_memory` is the corrected Pareto-Competitive Novelty
+memory algorithm. The older `pcn_quality_memory` mode is retained only as a
+diagnostic single-thought implementation.
 
 ## Research Hypothesis
 
 Classic REvolution is strong because it spends nearly all budget on direct PPA
-hill climbing. PCN keeps that pressure and adds only a small descriptor-indexed
-memory. The memory may recall a candidate only after that descriptor cell has
-shown evidence of useful valid-PPA material.
+hill climbing with the EoH strategy stack. PCN-v2 preserves that machinery and
+adds only a small descriptor-indexed memory. The memory may recall a candidate
+only after that descriptor cell has shown evidence of useful valid-PPA
+material.
 
 ## State
 
 Each problem maintains three structures:
 
-- `PrimaryPool`: the classic valid-PPA success pool. This remains the parent
-  source for about 90 percent of calls.
+- `PrimaryPool`: the classic success pool. This remains the parent source for
+  most calls and uses the same EoH strategy selection pressure as classic.
 - `QDMemoryArchive`: descriptor-indexed cells populated passively from
   evaluated valid-PPA candidates.
 - `GlobalParetoFront`: nondominated PPA candidates, used only for retention and
@@ -45,7 +48,7 @@ PCN memory recall is inactive until both conditions hold:
 - current generation is at least `max(2, qd_archive_activation_generation)`;
 - the problem has at least `qd_memory_min_valid_ppa` valid-PPA candidates seen.
 
-The first staged setting uses:
+The corrected staged setting uses:
 
 ```text
 qd_archive_activation_generation = 2
@@ -79,10 +82,10 @@ A cell is sampleable only if:
 cell_credit >= qd_memory_min_cell_credit
 ```
 
-The first staged setting uses:
+The corrected staged setting uses:
 
 ```text
-qd_memory_min_cell_credit = 0.50
+qd_memory_min_cell_credit = 0.25
 ```
 
 ## Local Credit Definition
@@ -103,26 +106,30 @@ qd_memory_front_gap_epsilon = 0.03
 
 ## Parent Schedule
 
-At 8x5, PCN recalls at most one memory parent per generation:
+At 8x5, corrected PCN recalls at most one memory parent per generation after
+activation:
 
 ```text
-classic lane = 90 percent
-memory_refine lane = 10 percent
+classic lane = 7 calls when memory fires
+memory_refine lane = 1 forced call when sampleable memory exists
 front_rescue lane = 0 percent
 probe lane = 0 percent
 two-parent fusion = 0 percent
 ```
 
-Memory parents use the same PPA-first one-parent operator as classic. The
-prompt may mention that the parent is retained as an implementation family, but
-it must not ask the LLM to move along descriptor axes.
+Classic-lane parents use the same EoH strategy operators, prompt formulation,
+parent pool, and strategy reward update as classic REvolution. Memory-refine
+parents come from the descriptor archive, but they use one-parent classic EoH
+operators (`M-S`, `M-E`, `M-R`, `M-I`). The prompt must not ask the LLM to move
+along descriptor axes.
 
 ## Hard Invariants
 
 - No empty-cell fill budget.
 - No novelty reward.
 - No descriptor-targeting prompt.
-- No two-parent fusion in v1.
+- No memory-lane two-parent fusion in v1.
 - No repair path in v1.
 - No replacement of `PrimaryPool` by archive view.
+- No replacement of classic EoH with `single_thought_operator`.
 - Same model, seed, benchmark, and budget as the matched classic arm.

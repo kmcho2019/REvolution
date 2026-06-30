@@ -43,8 +43,8 @@ def fmt(value: float) -> str:
 def budget_for_stage(stage: str) -> str:
     if stage in {"smoke", "screen"}:
         return "8x5"
-    if stage == "smoke_credit025":
-        return "8x5_credit025"
+    if stage == "smoke_v2":
+        return "8x5_v2"
     if stage == "long_20x10":
         return "20x10"
     if stage == "long_10x20":
@@ -55,7 +55,7 @@ def budget_for_stage(stage: str) -> str:
 def generation_count(stage: str) -> int:
     if stage in {"smoke", "screen"}:
         return 5
-    if stage == "smoke_credit025":
+    if stage == "smoke_v2":
         return 5
     if stage == "long_20x10":
         return 10
@@ -65,7 +65,7 @@ def generation_count(stage: str) -> int:
 
 
 def subset_name(stage: str) -> str:
-    if stage == "smoke_credit025":
+    if stage == "smoke_v2":
         return "smoke"
     if stage.startswith("long_"):
         return "long_budget"
@@ -104,13 +104,13 @@ def method_label(method: str) -> str:
         label = label.removesuffix(suffix)
     replacements = {
         "classic_revolution": "classic",
-        "classic_revolution_credit025": "classic",
         "pcn_passive_archive": "PCN passive",
         "pcn_rf_leafid_quality_memory": "PCN RF",
-        "pcn_rf_leafid_quality_memory_credit025": "PCN RF",
         "pcn_random_quality_memory": "PCN random",
-        "pcn_random_quality_memory_credit025": "PCN random",
         "pcn_sr_quality_memory": "PCN SR",
+        "pcn_v2_passive_eoh_archive": "PCN-v2 passive",
+        "pcn_v2_rf_eoh_memory": "PCN-v2 RF",
+        "pcn_v2_random_eoh_memory": "PCN-v2 random",
     }
     return replacements.get(label, label)
 

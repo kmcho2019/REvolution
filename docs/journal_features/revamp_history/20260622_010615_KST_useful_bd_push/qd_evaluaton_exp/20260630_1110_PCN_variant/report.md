@@ -1,8 +1,9 @@
 # PCN Variant Results Report
 
 This report tracks the staged PCN experiments. The first smoke run completed on
-2026-06-30 and is treated as a diagnostic, not a positive PCN result, because
-the memory-recall lane never fired under the initial credit gate.
+2026-06-30 and is treated as a diagnostic, not a clean PCN result, because it
+did not preserve classic REvolution's EoH operator stack and its memory-recall
+lane never fired.
 
 ## Executive Conclusion
 
@@ -12,18 +13,19 @@ mean HV is 0.3508 for classic versus 0.1758 for the best PCN arm
 (`pcn_rf_leafid_quality_memory_8x5`). The best PCN arm retains only 50.1
 percent of classic mean HV and loses mean HV-AUC by 0.1946.
 
-The mechanism table explains why this is not yet a fair test of PCN memory.
-`qd_memory_active` became true for the PCN arms, but `memory_refine_generated`
-is zero for every method/problem. The initial `qd_memory_min_cell_credit=0.50`
-gate was stricter than the observed cell credits, which were mostly around
-0.24 to 0.34. The first smoke therefore tested a guarded QD shell with passive
-archive accounting, not actual QD-memory recall.
+The result is diagnostic rather than decisive because the tested algorithm was
+not the intended PCN algorithm. It used QD mode with
+`single_thought_operator`, while classic used `eoh_strategies`. It also logged
+`memory_refine_generated=0` for every method/problem. The first smoke therefore
+tested a passive QD shell with a different operator stack, not
+classic-preserving memory recall.
 
-Next action: run `smoke_credit025`, a corrective smoke stage with the same
-three problems and budget, but with `qd_memory_min_cell_credit=0.25`. It keeps
-only three arms: matched classic, RF-leaf PCN, and random-memory PCN. If RF
-still loses badly or cannot beat random when memory recall actually fires, PCN
-should be revised before any broader screen.
+Next action: run `smoke_v2`, the corrected PCN-v2 smoke. It keeps the same
+three problems, budget, model, seed, evaluator, and worker settings. The PCN-v2
+arms use `pcn_classic_preserving_memory`, `qd_operator_kind=eoh_strategies`,
+`qd_memory_min_cell_credit=0.25`, and one forced memory-refine slot after the
+evidence gate if a sampleable cell exists. The matrix is matched classic,
+PCN-v2 RF memory, PCN-v2 random memory, and PCN-v2 passive EoH archive.
 
 ## Why This Variant Exists
 
@@ -76,10 +78,9 @@ The packaged smoke tables live under `analysis/smoke/`.
 calls across all smoke PCN arms. This invalidates any strong claim about PCN
 memory, because the memory mechanism did not spend live LLM budget.
 
-The only fair conclusion from `smoke` is that the initial memory gate was too
-strict and that RF-leaf descriptors look more promising than SR or random under
-the same guarded shell. The corrected `smoke_credit025` stage is required
-before deciding whether PCN deserves screen-scale compute.
+The only fair conclusion from `smoke` is that the old implementation violated
+the main PCN premise. The corrected `smoke_v2` stage is required before
+deciding whether PCN deserves screen-scale compute or long-budget tests.
 
 ## Interpretation Rule
 

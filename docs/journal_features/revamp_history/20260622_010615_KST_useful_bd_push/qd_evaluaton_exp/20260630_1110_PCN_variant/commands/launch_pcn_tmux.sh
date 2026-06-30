@@ -9,11 +9,11 @@ if tmux has-session -t "$SESSION" 2>/dev/null; then
   exit 0
 fi
 
-tmux new-session -d -s "$SESSION" -n smoke \
-  "cd /workspace && bash '$DOC_ROOT/commands/run_stage.sh' smoke 2>&1 | tee '$LOG_ROOT/smoke.run_stage.log'"
+tmux new-session -d -s "$SESSION" -n smoke_v2 \
+  "cd /workspace && bash '$DOC_ROOT/commands/run_stage.sh' smoke_v2 2>&1 | tee '$LOG_ROOT/smoke_v2.run_stage.log'"
 
 tmux new-window -t "$SESSION" -n package \
-  "cd /workspace && bash '$DOC_ROOT/commands/package_pcn_results.sh' smoke 2>&1 | tee '$LOG_ROOT/smoke.package.log'"
+  "cd /workspace && bash '$DOC_ROOT/commands/package_pcn_results.sh' smoke_v2 2>&1 | tee '$LOG_ROOT/smoke_v2.package.log'"
 
 tmux new-window -t "$SESSION" -n monitor \
   "cd /workspace && watch -n 60 'date; df -h /workspace; ls -1 \"$LOG_ROOT\" | tail -60'"

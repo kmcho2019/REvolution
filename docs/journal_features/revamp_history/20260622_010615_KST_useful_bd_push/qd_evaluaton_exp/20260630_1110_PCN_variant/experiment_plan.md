@@ -37,19 +37,29 @@ does not show an obvious HV/HV-AUC collapse, and emits nonzero memory-refine
 calls. The initial smoke failed this mechanism check because the 0.50
 cell-credit gate prevented memory recall.
 
-### Stage 1b: Corrective Credit-Gate Smoke
+### Stage 1b: Corrected PCN-v2 Smoke
 
 Problems and budget are identical to Stage 1.
 
 Arms:
 
-- `classic_revolution_credit025_8x5`
-- `pcn_rf_leafid_quality_memory_credit025_8x5`
-- `pcn_random_quality_memory_credit025_8x5`
+- `classic_revolution_8x5`
+- `pcn_v2_rf_eoh_memory_8x5`
+- `pcn_v2_random_eoh_memory_8x5`
+- `pcn_v2_passive_eoh_archive_8x5`
 
-Only `qd_memory_min_cell_credit` changes, from 0.50 to 0.25, for the two PCN
-arms. This stage exists to verify whether PCN memory helps once cells with the
-observed 0.24-0.34 credit range are actually sampleable.
+This stage corrects the algorithm mismatch from Stage 1:
+
+- `qd_scheduler_mode=pcn_classic_preserving_memory`;
+- `qd_operator_kind=eoh_strategies`;
+- classic-lane requests use the classic EoH strategy stack;
+- memory-refine requests use one-parent classic EoH operators;
+- `qd_memory_min_cell_credit=0.25`;
+- memory-refine is forced to one call after activation if a sampleable memory
+  cell exists.
+
+This stage exists to verify whether PCN memory helps after preserving classic's
+hill-climbing machinery and actually spending live LLM budget on memory recall.
 
 ### Stage 2: Frozen Screen
 
@@ -96,7 +106,7 @@ Budgets:
 Arms:
 
 - matched classic
-- `pcn_rf_leafid_quality_memory`
+- `pcn_v2_rf_eoh_memory`
 
 The question is whether additional depth lets memory recall mature into useful
 front material.
@@ -126,7 +136,8 @@ Hard gates:
 - no hidden missing-reference PPA in headline metrics;
 - same model, seed, budget, and problem set as classic;
 - descriptor leakage check passes;
-- memory lane is at most 10 percent at 8x5.
+- memory lane is configured at 10 percent and materializes as one forced slot
+  at 8x5 only after the evidence gate opens.
 
 Mechanism gates:
 
@@ -138,7 +149,7 @@ Mechanism gates:
 
 ## Stop Rule
 
-If Stage 1 fails coverage or shows a severe HV collapse, do not run Stage 2.
-If Stage 2 is negative and PCN random is comparable to PCN RF, do not launch a
-full RTLLM suite. Record the result as negative evidence for this search-policy
-variant.
+If Stage 1b fails coverage, does not fire memory, or shows a severe HV
+collapse, do not run Stage 2. If Stage 2 is negative and PCN random is
+comparable to PCN RF, do not launch a full RTLLM suite. Record the result as
+negative evidence for this search-policy variant.

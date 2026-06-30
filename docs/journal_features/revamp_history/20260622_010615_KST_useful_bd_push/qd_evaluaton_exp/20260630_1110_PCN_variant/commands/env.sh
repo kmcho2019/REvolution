@@ -24,7 +24,7 @@ case "$PCN_STAGE" in
     MANIFEST_CSV="$DOC_ROOT/tables/smoke_subset.csv"
     PCN_PROBLEMS=(Prob019_sub_64bit Prob036_edge_detect Prob045_alu)
     ;;
-  smoke_credit025)
+  smoke_v2)
     BUDGET_POPULATION="${BUDGET_POPULATION:-8}"
     BUDGET_GENERATIONS="${BUDGET_GENERATIONS:-5}"
     SUBSET_CONFIG="$DOC_ROOT/tables/smoke_subset.yaml"
@@ -70,32 +70,32 @@ esac
 COMMON_TOTAL_WORKER_SLOTS="${COMMON_TOTAL_WORKER_SLOTS:-48}"
 COMMON_MAX_ACTIVE_PROBLEMS="${COMMON_MAX_ACTIVE_PROBLEMS:-12}"
 COMMON_MAX_WORKERS_PER_PROBLEM="${COMMON_MAX_WORKERS_PER_PROBLEM:-4}"
-PCN_MEMORY_MIN_CELL_CREDIT="${PCN_MEMORY_MIN_CELL_CREDIT:-0.50}"
+PCN_MEMORY_MIN_CELL_CREDIT="${PCN_MEMORY_MIN_CELL_CREDIT:-0.25}"
 
 SR_RAW_PCA_DESCRIPTOR_FILE="$DOC_ROOT/tables/sr_raw_pca_descriptor.yaml"
 
 METHODS=(
   classic_revolution_8x5
-  pcn_passive_archive_8x5
-  pcn_rf_leafid_quality_memory_8x5
-  pcn_random_quality_memory_8x5
-  pcn_sr_quality_memory_8x5
+  pcn_v2_passive_eoh_archive_8x5
+  pcn_v2_rf_eoh_memory_8x5
+  pcn_v2_random_eoh_memory_8x5
 )
 
 LONG_20X10_METHODS=(
   classic_revolution_20x10
-  pcn_rf_leafid_quality_memory_20x10
+  pcn_v2_rf_eoh_memory_20x10
 )
 
 LONG_10X20_METHODS=(
   classic_revolution_10x20
-  pcn_rf_leafid_quality_memory_10x20
+  pcn_v2_rf_eoh_memory_10x20
 )
 
-SMOKE_CREDIT025_METHODS=(
-  classic_revolution_credit025_8x5
-  pcn_rf_leafid_quality_memory_credit025_8x5
-  pcn_random_quality_memory_credit025_8x5
+SMOKE_V2_METHODS=(
+  classic_revolution_8x5
+  pcn_v2_rf_eoh_memory_8x5
+  pcn_v2_random_eoh_memory_8x5
+  pcn_v2_passive_eoh_archive_8x5
 )
 
 method_run_dir() {
@@ -114,17 +114,8 @@ method_script() {
     classic_revolution_20x10|classic_revolution_10x20)
       printf '%s/commands/methods/classic_revolution_8x5.sh\n' "$DOC_ROOT"
       ;;
-    classic_revolution_credit025_8x5)
-      printf '%s/commands/methods/classic_revolution_8x5.sh\n' "$DOC_ROOT"
-      ;;
-    pcn_rf_leafid_quality_memory_20x10|pcn_rf_leafid_quality_memory_10x20)
-      printf '%s/commands/methods/pcn_rf_leafid_quality_memory_8x5.sh\n' "$DOC_ROOT"
-      ;;
-    pcn_rf_leafid_quality_memory_credit025_8x5)
-      printf '%s/commands/methods/pcn_rf_leafid_quality_memory_8x5.sh\n' "$DOC_ROOT"
-      ;;
-    pcn_random_quality_memory_credit025_8x5)
-      printf '%s/commands/methods/pcn_random_quality_memory_8x5.sh\n' "$DOC_ROOT"
+    pcn_v2_rf_eoh_memory_20x10|pcn_v2_rf_eoh_memory_10x20)
+      printf '%s/commands/methods/pcn_v2_rf_eoh_memory_8x5.sh\n' "$DOC_ROOT"
       ;;
     *)
       printf '%s/commands/methods/%s.sh\n' "$DOC_ROOT" "$method"
