@@ -61,6 +61,13 @@ This stage corrects the algorithm mismatch from Stage 1:
 This stage exists to verify whether PCN memory helps after preserving classic's
 hill-climbing machinery and actually spending live LLM budget on memory recall.
 
+Stage 1b completed. RF memory fired on all three problems, produced valid-PPA
+children, and beat the random-memory control. It did not beat classic mean HV,
+and the passive EoH archive control was slightly stronger than the active RF
+memory arm. Do not launch Stage 2 or 20x10 from this exact configuration.
+Define a narrower next variant first, likely passive-first or
+stagnation-triggered memory.
+
 ### Stage 2: Frozen Screen
 
 Problems:
@@ -153,3 +160,8 @@ If Stage 1b fails coverage, does not fire memory, or shows a severe HV
 collapse, do not run Stage 2. If Stage 2 is negative and PCN random is
 comparable to PCN RF, do not launch a full RTLLM suite. Record the result as
 negative evidence for this search-policy variant.
+
+After `smoke_v2`, the stop rule is active for the current RF-memory
+configuration. It should not be scaled until a revised PCN-v3 smoke shows that
+active memory improves on the passive control or only fires under a clearer
+stagnation/front-gap trigger.

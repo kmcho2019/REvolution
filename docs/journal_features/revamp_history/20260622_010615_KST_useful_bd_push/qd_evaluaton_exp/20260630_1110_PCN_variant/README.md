@@ -23,10 +23,16 @@ QD runs.
 
 ## Current Status
 
-The old `smoke` result is diagnostic only: it used the single-thought QD
-operator and generated zero memory-refine calls. The active next step is
-`smoke_v2`, which uses `pcn_classic_preserving_memory` with classic EoH
-operators and one forced memory-refine slot after the evidence gate opens.
+The corrected `smoke_v2` stage finished and is packaged under
+`analysis/smoke_v2/`. PCN-v2 now passes the mechanism sanity checks that the
+old `smoke` failed: the EoH operator stack is preserved and the memory-refine
+lane fires with valid-PPA children.
+
+The performance result is not yet a scale-up signal. RF memory retains 97.3
+percent of classic mean HV and beats the random-memory control, but it still
+trails classic on mean HV. The passive EoH archive control is slightly ahead
+of both classic and RF memory on this three-problem smoke, so the active memory
+lane has not earned a 20x10 escalation as-is.
 
 ## Core Rule
 

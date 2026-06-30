@@ -7,6 +7,127 @@ lane never fired.
 
 ## Executive Conclusion
 
+The corrected `smoke_v2` result fixes the implementation problem from the
+first smoke: PCN-v2 uses the EoH operator stack and the memory-refine lane does
+fire. On the three reference-complete smoke problems, RF memory retains 97.3
+percent of classic mean HV and beats the random-memory control on both mean HV
+and mean HV-AUC.
+
+That is useful mechanism evidence, but it is not enough to scale the exact
+RF-memory configuration. RF memory still trails classic mean HV
+0.3422 to 0.3518, while the passive EoH archive control is slightly ahead at
+0.3530. The safest conclusion is that PCN-v2 now tests the intended mechanism,
+and the RF descriptor is better than random memory, but active memory recall is
+not yet proven better than conservative EoH search plus passive archive
+accounting.
+
+Next action: do not launch 20x10 or a broader screen from this exact RF-memory
+arm. Define a PCN-v3 smoke that uses the same fixed implementation but makes
+memory recall more selective: passive-first, stagnation-triggered, or
+front-gap-triggered. The next variant should focus on avoiding the `Prob045`
+HV loss while keeping the `Prob036` HV-AUC improvement.
+
+## Corrected Smoke V2
+
+`smoke_v2` used the same three reference-complete problems as the original
+smoke:
+
+- `Prob019_sub_64bit`
+- `Prob036_edge_detect`
+- `Prob045_alu`
+
+The matched budget was `population_size=8`, `num_generations=5`, and
+`seed=1001`. All arms used `openai/gpt-oss-120b` through the local vLLM
+endpoint with 128k token limits.
+
+Packaged artifacts:
+
+- `analysis/smoke_v2/summary.md`
+- `analysis/smoke_v2/pcn_method_summary.csv`
+- `analysis/smoke_v2/pcn_problem_summary.csv`
+- `analysis/smoke_v2/pcn_memory_summary.csv`
+- `figures/smoke_v2/`
+- `analysis/smoke_v2/ppa_distribution/`
+
+### Smoke V2 Method Summary
+
+| Method | Covered | Mean HV | Mean HV-AUC | HV retention | Delta HV |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `pcn_v2_passive_eoh_archive_8x5` | 3/3 | 0.3530 | 0.3167 | 100.3% | +0.0012 |
+| `classic_revolution_8x5` | 3/3 | 0.3518 | 0.2956 | 100.0% | +0.0000 |
+| `pcn_v2_rf_eoh_memory_8x5` | 3/3 | 0.3422 | 0.3116 | 97.3% | -0.0097 |
+| `pcn_v2_random_eoh_memory_8x5` | 3/3 | 0.3100 | 0.1896 | 88.1% | -0.0418 |
+
+The table should be read as a smoke signal, not a final performance claim.
+With only three problems and one seed, the stable finding is the ordering and
+mechanism behavior, not the small passive-vs-classic margin.
+
+The passive arm is a control, not a new QD success claim. It runs the
+corrected PCN EoH path with archive logging but no memory recall, so a small
+gap between passive and classic may reflect EoH scheduling and stochastic
+generation order as much as archive accounting.
+
+### Smoke V2 Per-Problem Read
+
+- `Prob019_sub_64bit`: classic, RF memory, and passive archive tie final HV.
+  Random memory loses substantial HV, so generic memory pressure is harmful.
+- `Prob036_edge_detect`: RF memory and passive archive tie classic final HV
+  while improving HV-AUC by 0.0712. This is the encouraging PCN signal: the
+  corrected EoH/QD path reaches useful material earlier without losing final
+  HV.
+- `Prob045_alu`: RF memory loses 0.0290 HV to classic even though it has more
+  valid-PPA and Pareto points. This is the main failure mode. Extra front
+  material did not translate into better hypervolume.
+
+### Smoke V2 Mechanism Check
+
+The corrected implementation passes the gates that the first smoke failed:
+
+- RF memory generated one memory-refine call on each smoke problem.
+- Random memory also generated one memory-refine call on each problem.
+- RF and random memory each produced valid-PPA memory children on all three
+  problems.
+- RF memory produced one local-front insertion on `Prob045_alu`.
+- No memory arm produced a global-front insertion.
+- RF memory beat random memory on mean HV and mean HV-AUC.
+
+The missing gate is performance against the passive control. The active RF
+memory lane is better than random memory, but it is not better than passive
+archive accounting in this smoke. That points to a scheduling issue more than
+a descriptor-collapse issue.
+
+### Figure Review
+
+The generated figures were visually inspected. `mean_hv_by_method.png`,
+`mean_hv_auc_by_method.png`, and `hv_delta_vs_classic_heatmap.png` make the
+method ordering and per-problem failure clear. The
+`memory_refine_generated_by_problem.png` plot confirms that the corrected
+memory lane actually fired. The direct PPA panel for `Prob045_alu` shows why
+the result is not a clean win: RF memory has more points, but the useful area
+gain range is weaker than classic.
+
+### Decision
+
+Do not run the full screen or 20x10 experiment from
+`pcn_v2_rf_eoh_memory_8x5` as configured. The corrected algorithm is no longer
+invalid, but the active memory schedule is too eager for a scale-up.
+
+The next PCN variant should keep the implementation and descriptor fixed while
+changing only the trigger policy:
+
+- passive archive for most generations;
+- memory recall only after scalar best score or global front stagnates;
+- memory recall only from cells with a demonstrable front gap or local-front
+  candidate;
+- at most one memory call in an 8-candidate generation;
+- no two-parent fusion and no descriptor-targeted prompt.
+
+That variant would test the sharper claim: QD memory helps when classic is
+stalled or has discarded a near-front implementation family, not merely because
+a credited cell exists.
+
+## Initial Smoke
+
 The initial `smoke` stage does not justify scaling to the original full screen.
 Classic REvolution remains the clear winner on the three-problem smoke subset:
 mean HV is 0.3508 for classic versus 0.1758 for the best PCN arm
@@ -20,12 +141,8 @@ not the intended PCN algorithm. It used QD mode with
 tested a passive QD shell with a different operator stack, not
 classic-preserving memory recall.
 
-Next action: run `smoke_v2`, the corrected PCN-v2 smoke. It keeps the same
-three problems, budget, model, seed, evaluator, and worker settings. The PCN-v2
-arms use `pcn_classic_preserving_memory`, `qd_operator_kind=eoh_strategies`,
-`qd_memory_min_cell_credit=0.25`, and one forced memory-refine slot after the
-evidence gate if a sampleable cell exists. The matrix is matched classic,
-PCN-v2 RF memory, PCN-v2 random memory, and PCN-v2 passive EoH archive.
+The corrected `smoke_v2` stage above replaces this initial smoke for PCN
+mechanism assessment.
 
 ## Why This Variant Exists
 
