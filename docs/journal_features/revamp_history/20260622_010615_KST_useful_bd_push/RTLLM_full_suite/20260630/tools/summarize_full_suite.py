@@ -218,10 +218,12 @@ def heatmap(path: Path, methods: list[str], problems: list[str], rows: list[dict
             for problem in problems
         ])
     fig, ax = plt.subplots(figsize=(16, 5))
-    ax.imshow(matrix, cmap="RdYlGn", vmin=-1, vmax=1, aspect="auto")
+    image = ax.imshow(matrix, cmap="RdYlGn", vmin=-1, vmax=1, aspect="auto")
     ax.set_yticks(range(len(methods)), [method_label(method) for method in methods])
     ax.set_xticks(range(len(problems)), problems, rotation=90, fontsize=6)
     ax.set_title("Per-problem HV delta sign vs classic")
+    colorbar = fig.colorbar(image, ax=ax, shrink=0.72, ticks=[-1, 0, 1])
+    colorbar.ax.set_yticklabels(["loss", "tie", "win"])
     fig.tight_layout()
     fig.savefig(path, dpi=180)
     plt.close(fig)
@@ -342,28 +344,44 @@ def main() -> int:
         problem_rows,
     )
 
-    figure_rows = summary_rows
+    figure_rows = [row for row in summary_rows if row["completion_status"] == "done"]
+    assert any(row["method_key"] == "classic_revolution_8x5" for row in figure_rows)
+    figure_methods = [
+        row["method_key"]
+        for row in figure_rows
+        if row["method_key"] != "classic_revolution_8x5"
+    ]
     fig_root.mkdir(parents=True, exist_ok=True)
     bar(fig_root / "mean_hv_by_method.png", figure_rows, "mean_hv", "Mean HV on reference-complete RTLLM", "Mean HV")
-    bar(fig_root / "mean_hv_auc_by_method.png", figure_rows, "mean_hv_auc", "Mean HV-AUC from Phase 03.1 viewers", "Mean HV-AUC")
+    bar(fig_root / "mean_hv_auc_by_method.png", figure_rows, "mean_hv_auc", "Mean HV-AUC from candidate chronology", "Mean HV-AUC")
     bar(fig_root / "hv_delta_by_method.png", figure_rows, "classic_delta_mean_hv", "Mean HV delta vs classic", "Delta HV")
     bar(fig_root / "valid_ppa_count_by_method.png", figure_rows, "mean_valid_ppa_count", "Mean valid-PPA candidates per design", "Candidates")
     bar(fig_root / "pareto_points_by_method.png", figure_rows, "mean_pareto_point_count", "Mean Pareto points per design", "Points")
     coverage_scatter(fig_root / "coverage_vs_hv.png", figure_rows)
     heatmap(
         fig_root / "hv_win_loss_heatmap.png",
-        [row["method_key"] for row in summary_rows if row["method_key"] != "classic_revolution_8x5"],
+        figure_methods,
         problems,
         problem_rows,
     )
     delta_boxplot(
         fig_root / "hv_delta_distribution.png",
-        [row["method_key"] for row in summary_rows if row["method_key"] != "classic_revolution_8x5"],
+        figure_methods,
         problem_rows,
     )
 
-    ranked = sorted(summary_rows, key=lambda row: float(row["mean_hv"]), reverse=True)
+    ranked = sorted(figure_rows, key=lambda row: float(row["mean_hv"]), reverse=True)
     best_qd = next(row for row in ranked if row["method_key"] != "classic_revolution_8x5")
+    classic_coverage = next(
+        row["covered_problem_count"]
+        for row in summary_rows
+        if row["method_key"] == "classic_revolution_8x5"
+    )
+    qd_positive = (
+        float(best_qd["classic_delta_mean_hv"]) > 0.0
+        and float(best_qd["classic_delta_mean_hv_auc"]) >= 0.0
+        and best_qd["covered_problem_count"] == classic_coverage
+    )
     lines = [
         "# RTLLM Full Suite Results",
         "",
@@ -380,6 +398,10 @@ def main() -> int:
         f"The best non-classic arm by mean HV is `{best_qd['method_key']}`,",
         f"which retains {report_percent(best_qd['mean_hv_retention_pct'])} of",
         "classic mean HV.",
+        "",
+        "This is a positive one-seed signal for PCN-style QD memory, not a",
+        "definitive multi-seed claim. The descriptor/archive-only QD arms do",
+        "not beat classic in this corrected full-suite run.",
         "",
         "Use this report only after checking `analysis/<stage>/operator_contract.csv`.",
         "Any nonzero `single_thought_count` invalidates the corrected comparison.",
@@ -424,6 +446,9 @@ def main() -> int:
             "- Compare this report against 20260629 only as an operator-corrected",
             "  rerun, not as a direct same-method continuation.",
             "- The PCN arm is the only active QD-memory method in this suite.",
+            f"- PCN records {best_qd['classic_hv_win_count']} wins,",
+            f"  {best_qd['classic_hv_loss_count']} losses, and",
+            f"  {best_qd['classic_hv_tie_count']} ties versus classic by final HV.",
             "- The other QD arms test descriptor/archive pressure under EoH",
             "  thought/code/feedback operators.",
             "",
@@ -452,6 +477,27 @@ def main() -> int:
             "- `figures/hv_delta_distribution.png`",
             "- `figures/coverage_vs_hv.png`",
             "",
+            "Figures include completed methods only. The summary table still",
+            "keeps not-started smoke-only arms for manifest/status accounting.",
+            "",
+        ]
+    )
+    if stage == "full":
+        lines.extend(
+            [
+                "## PCN Mechanism Artifacts",
+                "",
+                "- `reports/pcn_memory_mechanism.md` summarizes whether the",
+                "  guarded memory lane actually fired.",
+                "- `analysis/full/pcn_memory_mechanism_summary.csv` records",
+                "  per-problem memory-refine counters.",
+                "- `figures/full/pcn_memory_front_contributions.png` shows",
+                "  where memory-refine added local/global front material.",
+                "",
+            ]
+        )
+    lines.extend(
+        [
             "## Viewer Caveat",
             "",
             "The direct PPA/Pareto reports and suite figures were generated",
@@ -475,7 +521,12 @@ def main() -> int:
             "A QD method supports a headline claim only if the reference-complete",
             "subset remains positive after coverage losses, missing candidate PPA,",
             "and missing-reference designs are handled by the frozen manifests.",
-            "This run does not pass that standard for any QD arm.",
+            (
+                "PCN passes this one-seed screen; the descriptor/archive-only QD"
+                " arms do not."
+                if qd_positive
+                else "No QD arm passes this screen in this run."
+            ),
             "",
         ]
     )
