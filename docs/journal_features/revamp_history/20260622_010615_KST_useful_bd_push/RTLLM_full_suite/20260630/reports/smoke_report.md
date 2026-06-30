@@ -36,15 +36,15 @@ Any nonzero `single_thought_count` invalidates the corrected comparison.
 | 3 | `masterrtl_archive_activation_eoh_8x5` | custom_qd | 3/3 | 0.3335 | 95.0% | -0.0174 | 0.2458 | 0.0215 |
 | 4 | `deepgate_high_exploit_eoh_8x5` | encoder | 3/3 | 0.2326 | 66.3% | -0.1183 | 0.1399 | -0.0843 |
 | 5 | `aurora_raw_impl_compact_eoh_8x5` | learned_descriptor | 3/3 | 0.2102 | 59.9% | -0.1408 | 0.1351 | -0.0891 |
-| 6 | `qwen_canonical_rtl_pca3_eoh_8x5` | encoder | 3/3 | 0.1974 | 56.3% | -0.1535 | 0.1459 | -0.0783 |
-| 7 | `rf_deepgate_hybrid_eoh_8x5` | encoder | 3/3 | 0.1862 | 53.1% | -0.1647 | 0.1704 | -0.0539 |
+| 6 | `rf_deepgate_hybrid_eoh_8x5` | encoder | 3/3 | 0.1862 | 53.1% | -0.1647 | 0.1704 | -0.0539 |
+| 7 | `qwen_canonical_rtl_pca3_eoh_8x5` | encoder | 3/3 | 0.1859 | 53.0% | -0.1651 | 0.0966 | -0.1276 |
 | 8 | `masterrtl_rf_leafid_structural_eoh_8x5` | encoder | 3/3 | 0.1716 | 48.9% | -0.1794 | 0.1600 | -0.0642 |
 
 ## Metric Definitions
 
 - `Covered`: number of reference-complete designs with at least one
   valid-PPA candidate for the method.
-- `Mean HV`: mean final PPA hypervolume over all 46 headline designs;
+- `Mean HV`: mean final PPA hypervolume over all 3 smoke designs;
   missing method/problem PPA rows contribute zero.
 - `Mean HV-AUC`: mean generation-wise hypervolume area under curve,
   recomputed from `ppa_candidates.csv` over generations 0 through 5.
@@ -78,14 +78,14 @@ Any nonzero `single_thought_count` invalidates the corrected comparison.
 
 ## Generated Figures
 
-- `figures/mean_hv_by_method.png`
-- `figures/mean_hv_auc_by_method.png`
-- `figures/hv_delta_by_method.png`
-- `figures/valid_ppa_count_by_method.png`
-- `figures/pareto_points_by_method.png`
-- `figures/hv_win_loss_heatmap.png`
-- `figures/hv_delta_distribution.png`
-- `figures/coverage_vs_hv.png`
+- `figures/smoke/mean_hv_by_method.png`
+- `figures/smoke/mean_hv_auc_by_method.png`
+- `figures/smoke/hv_delta_by_method.png`
+- `figures/smoke/valid_ppa_count_by_method.png`
+- `figures/smoke/pareto_points_by_method.png`
+- `figures/smoke/hv_win_loss_heatmap.png`
+- `figures/smoke/hv_delta_distribution.png`
+- `figures/smoke/coverage_vs_hv.png`
 
 Figures include completed methods only. The summary table still
 keeps not-started smoke-only arms for manifest/status accounting.
@@ -113,4 +113,6 @@ mean HV/HV-AUC comparison to improve over the 20260629 QD arms.
 A QD method supports a headline claim only if the reference-complete
 subset remains positive after coverage losses, missing candidate PPA,
 and missing-reference designs are handled by the frozen manifests.
-No QD arm passes this screen in this run.
+PCN passes this smoke screen as the only near-classic QD-memory arm.
+Qwen3 EoH is now present in the smoke tables and figures, but it does
+not pass the performance screen.

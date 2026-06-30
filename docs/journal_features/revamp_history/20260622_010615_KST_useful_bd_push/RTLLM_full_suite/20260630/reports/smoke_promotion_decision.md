@@ -47,9 +47,11 @@ full launch because its original smoke failed from CUDA out-of-memory
 while descriptor extraction loaded `SentenceTransformer` inside workers.
 The GPU-0 add-on rerun fixed that infrastructure issue by binding Qwen
 to physical GPU 0 and lowering Qwen worker fanout. The corrected smoke
-now covers 3/3 designs with the EoH operator contract passing, but its
-mean HV is still below classic. It is therefore eligible as an add-on
-pretrained-encoder full run, not promoted as a top-performing arm.
+now covers 3/3 designs with the EoH operator contract passing. The
+fresh rerun records mean HV 0.1859, HV-AUC 0.0966, and 53.0% HV
+retention, so its mean HV is still far below classic. It is therefore
+eligible as an add-on pretrained-encoder full run, not promoted as a
+top-performing arm.
 
 `masterrtl_rf_leafid_structural_eoh_8x5`,
 `rf_deepgate_hybrid_eoh_8x5`, and `aurora_raw_impl_compact_eoh_8x5` are
