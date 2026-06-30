@@ -38,7 +38,7 @@ QWEN_DESCRIPTOR_FILE=/workspace/docs/journal_features/revamp_history/20260622_01
 DEEPGATE_DESCRIPTOR_FILE=/workspace/docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_deepgate_runtime_descriptor_gate/tables/deepgate_descriptor_profiles.yaml
 RF_DEEPGATE_DESCRIPTOR_FILE=/workspace/docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/tables/rf_deepgate_hybrid_descriptor_profiles.yaml
 
-METHODS=(
+SMOKE_METHODS=(
   classic_revolution_8x5
   qwen_canonical_rtl_pca3_eoh_8x5
   masterrtl_rf_leafid_structural_eoh_8x5
@@ -49,14 +49,11 @@ METHODS=(
   pcn_v3_rf_stagnation_memory_8x5
 )
 
-QD_METHODS=(
-  qwen_canonical_rtl_pca3_eoh_8x5
-  masterrtl_rf_leafid_structural_eoh_8x5
-  deepgate_high_exploit_eoh_8x5
-  rf_deepgate_hybrid_eoh_8x5
-  aurora_raw_impl_compact_eoh_8x5
-  masterrtl_archive_activation_eoh_8x5
+FULL_METHODS=(
+  classic_revolution_8x5
   pcn_v3_rf_stagnation_memory_8x5
+  masterrtl_archive_activation_eoh_8x5
+  deepgate_high_exploit_eoh_8x5
 )
 
 RTLLM_PROBLEMS=(
@@ -127,6 +124,7 @@ REFERENCE_MISSING_ARGS=(
 
 case "$RUN_STAGE" in
   smoke)
+    METHODS=("${SMOKE_METHODS[@]}")
     ACTIVE_PROBLEMS=("${SMOKE_PROBLEMS[@]}")
     ACTIVE_FULL_SUBSET="$SMOKE_SUBSET"
     ACTIVE_REFERENCE_SUBSET="$SMOKE_SUBSET"
@@ -135,6 +133,7 @@ case "$RUN_STAGE" in
     ACTIVE_REFERENCE_MISSING_ARGS=()
     ;;
   full)
+    METHODS=("${FULL_METHODS[@]}")
     ACTIVE_PROBLEMS=("${RTLLM_PROBLEMS[@]}")
     ACTIVE_FULL_SUBSET="$FULL_SUBSET"
     ACTIVE_REFERENCE_SUBSET="$REFERENCE_SUBSET"
@@ -147,6 +146,12 @@ case "$RUN_STAGE" in
     exit 1
     ;;
 esac
+
+QD_METHODS=()
+for method in "${METHODS[@]}"; do
+  [ "$method" = "classic_revolution_8x5" ] && continue
+  QD_METHODS+=("$method")
+done
 
 log_file() {
   local name="$1"
