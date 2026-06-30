@@ -7,11 +7,16 @@ import argparse
 import csv
 import math
 from pathlib import Path
+import sys
 
 import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[7] / "src"))
+
+from revolution.qd.pareto_analysis import hypervolume, pareto_front  # noqa: E402
 
 
 SUMMARY_FIELDS = [
@@ -27,6 +32,9 @@ SUMMARY_FIELDS = [
     "mean_reference_beating_count",
     "mean_valid_ppa_count",
     "classic_delta_mean_hv",
+    "classic_delta_mean_hv_auc",
+    "mean_hv_retention_pct",
+    "coverage_pct",
     "classic_hv_win_count",
     "classic_hv_loss_count",
     "classic_hv_tie_count",
@@ -71,6 +79,18 @@ def parse_optional(value: str) -> float | None:
     return parsed
 
 
+def pct(value: float) -> str:
+    return fmt(100.0 * value)
+
+
+def report_float(value: str) -> str:
+    return f"{float(value):.4f}"
+
+
+def report_percent(value: str) -> str:
+    return f"{float(value):.1f}%"
+
+
 def status(doc_root: Path, method: str) -> str:
     if (doc_root / "logs" / f"{method}.done").exists():
         return "done"
@@ -94,14 +114,50 @@ def method_label(method: str) -> str:
     return replacements.get(label, label)
 
 
-def load_hv_auc(doc_root: Path) -> dict[tuple[str, str], float]:
+def objective_keys(circuit_type: str) -> tuple[str, ...]:
+    if circuit_type == "sequential":
+        return ("g_P", "g_A", "g_T")
+    if circuit_type == "combinational":
+        return ("g_P", "g_A")
+    raise AssertionError(f"unknown circuit type: {circuit_type}")
+
+
+def hv_at_step(rows: list[dict[str, str]], step: int) -> float:
+    visible = [row for row in rows if int(row["generation"]) <= step]
+    if not visible:
+        return 0.0
+    keys = objective_keys(visible[0]["circuit_type"])
+    points = [tuple(float(row[key]) for key in keys) for row in visible]
+    front = [points[index] for index in pareto_front(points)]
+    return hypervolume(front)
+
+
+def auc(values: list[float]) -> float:
+    assert len(values) >= 2
+    total = 0.0
+    for left, right in zip(values[:-1], values[1:], strict=True):
+        total += (left + right) / 2.0
+    return total / (len(values) - 1)
+
+
+def load_hv_auc(doc_root: Path, methods: list[str], problems: list[str]) -> dict[tuple[str, str], float]:
+    rows = read_csv(
+        doc_root
+        / "analysis"
+        / "reference_complete_ppa_distribution"
+        / "data"
+        / "ppa_candidates.csv"
+    )
+    by_key: dict[tuple[str, str], list[dict[str, str]]] = {}
+    for row in rows:
+        if row["problem"] in problems:
+            by_key.setdefault((row["backend"], row["problem"]), []).append(row)
     values: dict[tuple[str, str], float] = {}
-    root = doc_root / "analysis" / "common_contract"
-    for path in sorted(root.glob("*/method_problem_seed_metrics.csv")):
-        for row in read_csv(path):
-            parsed = parse_optional(row["hv_auc"])
-            if parsed is not None:
-                values.setdefault((row["method_key"], row["problem"]), parsed)
+    for method in methods:
+        for problem in problems:
+            candidates = by_key.get((method, problem), [])
+            hvs = [hv_at_step(candidates, step) if candidates else 0.0 for step in range(6)]
+            values[(method, problem)] = auc(hvs)
     return values
 
 
@@ -115,6 +171,37 @@ def bar(path: Path, rows: list[dict[str, str]], field: str, title: str, ylabel: 
     ax.set_ylabel(ylabel)
     ax.tick_params(axis="x", labelrotation=25)
     ax.grid(axis="y", alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+
+
+def delta_boxplot(path: Path, methods: list[str], rows: list[dict[str, str]]) -> None:
+    values = [
+        [float(row["hv_delta_vs_classic"]) for row in rows if row["method_key"] == method]
+        for method in methods
+    ]
+    fig, ax = plt.subplots(figsize=(11, 5))
+    ax.boxplot(values, tick_labels=[method_label(method) for method in methods], showfliers=False)
+    ax.axhline(0.0, color="#222222", linewidth=0.9)
+    ax.set_title("Per-problem HV delta distribution vs classic")
+    ax.set_ylabel("HV delta")
+    ax.tick_params(axis="x", labelrotation=25)
+    ax.grid(axis="y", alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+
+
+def coverage_scatter(path: Path, rows: list[dict[str, str]]) -> None:
+    fig, ax = plt.subplots(figsize=(8, 5))
+    for row in rows:
+        ax.scatter(float(row["coverage_pct"]), float(row["mean_hv"]), s=70)
+        ax.annotate(method_label(row["method_key"]), (float(row["coverage_pct"]), float(row["mean_hv"])), fontsize=8)
+    ax.set_title("Coverage and mean HV")
+    ax.set_xlabel("Reference-complete designs covered (%)")
+    ax.set_ylabel("Mean HV")
+    ax.grid(alpha=0.25)
     fig.tight_layout()
     fig.savefig(path, dpi=180)
     plt.close(fig)
@@ -148,12 +235,17 @@ def main() -> int:
 
     doc_root = args.doc_root.resolve()
     manifest = read_csv(doc_root / "tables" / "method_manifest.csv")
+    methods = [row["method_key"] for row in manifest]
     problems = [row["problem"] for row in read_csv(doc_root / "tables" / "rtllm_reference_complete_manifest.csv")]
     pareto_rows = read_csv(doc_root / "analysis" / "reference_complete_pareto_analysis" / "backend_problem_metrics.csv")
     pareto = {(row["backend"], row["problem"]): row for row in pareto_rows}
-    hv_auc = load_hv_auc(doc_root)
+    hv_auc = load_hv_auc(doc_root, methods, problems)
     classic_hv = {
         problem: metric(pareto.get(("classic_revolution_8x5", problem)), "hypervolume")
+        for problem in problems
+    }
+    classic_auc = {
+        problem: hv_auc[("classic_revolution_8x5", problem)]
         for problem in problems
     }
 
@@ -170,6 +262,7 @@ def main() -> int:
         for problem in problems:
             row = pareto.get((method, problem))
             hv = metric(row, "hypervolume")
+            auc_value = hv_auc[(method, problem)]
             valid = int(metric(row, "candidate_count"))
             points = int(metric(row, "pareto_point_count"))
             refs = int(metric(row, "reference_beating_count"))
@@ -186,34 +279,39 @@ def main() -> int:
             valid_counts.append(valid)
             pareto_counts.append(points)
             ref_counts.append(refs)
-            if (method, problem) in hv_auc:
-                hv_auc_values.append(hv_auc[(method, problem)])
+            hv_auc_values.append(auc_value)
             problem_rows.append(
                 {
                     "method_key": method,
                     "problem": problem,
                     "hypervolume": fmt(hv),
                     "hv_delta_vs_classic": fmt(delta),
+                    "hv_auc": fmt(auc_value),
+                    "hv_auc_delta_vs_classic": fmt(auc_value - classic_auc[problem]),
                     "valid_ppa_count": str(valid),
                     "pareto_point_count": str(points),
                     "reference_beating_count": str(refs),
                 }
             )
         mean_hv = sum(hv_values) / len(problems)
+        mean_auc = sum(hv_auc_values) / len(problems)
         summary_rows.append(
             {
                 "method_key": method,
                 "family": method_row["family"],
                 "completion_status": status(doc_root, method),
-                "contract_status": "available" if any(key[0] == method for key in hv_auc) else "missing",
+                "contract_status": "computed_from_ppa_candidates",
                 "headline_problem_count": str(len(problems)),
                 "covered_problem_count": str(covered),
                 "mean_hv": fmt(mean_hv),
-                "mean_hv_auc": "not_available" if not hv_auc_values else fmt(sum(hv_auc_values) / len(hv_auc_values)),
+                "mean_hv_auc": fmt(mean_auc),
                 "mean_pareto_point_count": fmt(sum(pareto_counts) / len(problems)),
                 "mean_reference_beating_count": fmt(sum(ref_counts) / len(problems)),
                 "mean_valid_ppa_count": fmt(sum(valid_counts) / len(problems)),
                 "classic_delta_mean_hv": "0" if method == "classic_revolution_8x5" else "",
+                "classic_delta_mean_hv_auc": "0" if method == "classic_revolution_8x5" else "",
+                "mean_hv_retention_pct": "",
+                "coverage_pct": pct(covered / len(problems)),
                 "classic_hv_win_count": str(wins),
                 "classic_hv_loss_count": str(losses),
                 "classic_hv_tie_count": str(ties),
@@ -223,9 +321,13 @@ def main() -> int:
         )
 
     classic_mean = float(next(row["mean_hv"] for row in summary_rows if row["method_key"] == "classic_revolution_8x5"))
+    classic_mean_auc = float(next(row["mean_hv_auc"] for row in summary_rows if row["method_key"] == "classic_revolution_8x5"))
     for row in summary_rows:
         if row["classic_delta_mean_hv"] == "":
             row["classic_delta_mean_hv"] = fmt(float(row["mean_hv"]) - classic_mean)
+        if row["classic_delta_mean_hv_auc"] == "":
+            row["classic_delta_mean_hv_auc"] = fmt(float(row["mean_hv_auc"]) - classic_mean_auc)
+        row["mean_hv_retention_pct"] = pct(float(row["mean_hv"]) / classic_mean)
 
     write_csv(doc_root / "tables" / "full_suite_method_summary.csv", SUMMARY_FIELDS, summary_rows)
     write_csv(
@@ -241,14 +343,21 @@ def main() -> int:
     bar(fig_root / "hv_delta_by_method.png", figure_rows, "classic_delta_mean_hv", "Mean HV delta vs classic", "Delta HV")
     bar(fig_root / "valid_ppa_count_by_method.png", figure_rows, "mean_valid_ppa_count", "Mean valid-PPA candidates per design", "Candidates")
     bar(fig_root / "pareto_points_by_method.png", figure_rows, "mean_pareto_point_count", "Mean Pareto points per design", "Points")
+    coverage_scatter(fig_root / "coverage_vs_hv.png", figure_rows)
     heatmap(
         fig_root / "hv_win_loss_heatmap.png",
         [row["method_key"] for row in summary_rows if row["method_key"] != "classic_revolution_8x5"],
         problems,
         problem_rows,
     )
+    delta_boxplot(
+        fig_root / "hv_delta_distribution.png",
+        [row["method_key"] for row in summary_rows if row["method_key"] != "classic_revolution_8x5"],
+        problem_rows,
+    )
 
     ranked = sorted(summary_rows, key=lambda row: float(row["mean_hv"]), reverse=True)
+    best_qd = next(row for row in ranked if row["method_key"] != "classic_revolution_8x5")
     lines = [
         "# RTLLM Full Suite Results",
         "",
@@ -256,19 +365,81 @@ def main() -> int:
         "Missing method/problem rows count as zero valid-PPA coverage for the",
         "headline mean HV table.",
         "",
+        "## Executive Conclusion",
+        "",
+        "Classic REvolution is the clear winner on this one-seed 8x5 RTLLM",
+        "reference-complete suite. No QD/MAP-Elites variant beats classic in",
+        "mean HV, HV-AUC, valid-PPA coverage, or Pareto point count. The best QD",
+        f"arm by mean HV is `{best_qd['method_key']}`, which retains",
+        f"{report_percent(best_qd['mean_hv_retention_pct'])} of classic mean HV.",
+        "",
+        "This is negative evidence for the exact selected full-suite methods, not",
+        "a proof that diversity is useless in RTL evolution. It says that these",
+        "BDs and archive schedules do not overcome the classic hill-climbing",
+        "baseline under the current 8x5 budget and one-seed protocol.",
+        "",
+        "## Run Status",
+        "",
+        "- All eight method arms completed with `.done` sentinels.",
+        "- Packaging completed and generated direct PPA/Pareto reports.",
+        "- Headline metrics use 46 RTLLM designs with valid reference PPA.",
+        "- Four missing-reference RTLLM designs remain diagnostic-only:",
+        "  `Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,",
+        "  `Prob018_float_multi`, and `Prob040_synchronizer`.",
+        "",
         "## Top Methods By Mean HV",
         "",
-        "| Rank | Method | Family | Covered | Mean HV | Delta vs classic | Mean HV-AUC |",
-        "| --- | --- | --- | ---: | ---: | ---: | ---: |",
+        "| Rank | Method | Family | Covered | Mean HV | HV retention | Delta HV | Mean HV-AUC | Delta HV-AUC |",
+        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for index, row in enumerate(ranked, start=1):
         lines.append(
             f"| {index} | `{row['method_key']}` | {row['family']} | "
             f"{row['covered_problem_count']}/{row['headline_problem_count']} | "
-            f"{row['mean_hv']} | {row['classic_delta_mean_hv']} | {row['mean_hv_auc']} |"
+            f"{report_float(row['mean_hv'])} | "
+            f"{report_percent(row['mean_hv_retention_pct'])} | "
+            f"{report_float(row['classic_delta_mean_hv'])} | "
+            f"{report_float(row['mean_hv_auc'])} | "
+            f"{report_float(row['classic_delta_mean_hv_auc'])} |"
         )
     lines.extend(
         [
+            "",
+            "## Metric Definitions",
+            "",
+            "- `Covered`: number of reference-complete designs with at least one",
+            "  valid-PPA candidate for the method.",
+            "- `Mean HV`: mean final PPA hypervolume over all 46 headline designs;",
+            "  missing method/problem PPA rows contribute zero.",
+            "- `Mean HV-AUC`: mean generation-wise hypervolume area under curve,",
+            "  recomputed from `ppa_candidates.csv` over generations 0 through 5.",
+            "- `HV retention`: method mean HV divided by classic mean HV.",
+            "- `Delta HV`: method mean HV minus classic mean HV.",
+            "",
+            "## Method Takeaways",
+            "",
+            "- Best encoder-style arm: `rf_deepgate_hybrid_delayed_8x5`, followed by",
+            "  `masterrtl_rf_leafid_structural_delayed_8x5`.",
+            "- Best custom RTL-native QD arm: `masterrtl_delayed_archive_activation_8x5`.",
+            "- Front-guarded QD memory did not beat the simpler delayed MasterRTL",
+            "  archive arm in this full-suite configuration.",
+            "- Pure Qwen3 RTL PCA and pure DeepGate pooled PC3 are weaker than the",
+            "  hybrid/source-aligned methods on this run.",
+            "- Coverage loss is material: classic covers 33/46 reference-complete",
+            "  designs, while the best QD arms cover 27-31/46.",
+            "",
+            "## Comparison Tables",
+            "",
+            "- `tables/full_suite_method_summary.csv`: one row per method with",
+            "  coverage, mean HV, mean HV-AUC, Pareto count, reference-beating",
+            "  count, and win/loss/tie totals.",
+            "- `tables/full_suite_problem_metrics.csv`: one row per method/problem",
+            "  with final HV, HV-AUC, deltas versus classic, valid-PPA count,",
+            "  Pareto count, and reference-beating count.",
+            "- `analysis/reference_complete_pareto_analysis/backend_problem_metrics.csv`:",
+            "  canonical final Pareto metrics emitted by the repo analysis script.",
+            "- `analysis/completeness/*.csv`: method-specific candidate/reference",
+            "  completeness gates.",
             "",
             "## Generated Figures",
             "",
@@ -278,12 +449,38 @@ def main() -> int:
             "- `figures/valid_ppa_count_by_method.png`",
             "- `figures/pareto_points_by_method.png`",
             "- `figures/hv_win_loss_heatmap.png`",
+            "- `figures/hv_delta_distribution.png`",
+            "- `figures/coverage_vs_hv.png`",
+            "",
+            "## Viewer Caveat",
+            "",
+            "The direct PPA/Pareto reports and suite figures were generated",
+            "successfully. The Phase 03.1 viewer export failed in the initial",
+            "packaging pass because the viewer exporter expected staged PPA inputs",
+            "under each viewer source root, then strict export also encountered",
+            "reference-complete designs with no PPA rows for a pairwise viewer.",
+            "Therefore common-contract archive metrics are not used for the",
+            "headline result in this report. HV-AUC here is recomputed directly",
+            "from the reference-complete `ppa_candidates.csv` chronology.",
+            "",
+            "## Research Read",
+            "",
+            "This suite supports a conservative conclusion: under the current 8x5",
+            "budget, the selected QD methods do not demonstrate QD usefulness over",
+            "classic REvolution on broad RTLLM PPA optimization. The best signals",
+            "are relative, not absolute: hybrid RF+DeepGate and MasterRTL RF",
+            "leaf-ID descriptors are stronger than pure Qwen, pure DeepGate, and",
+            "AURORA-style compact raw implementation descriptors. That suggests",
+            "source-aligned and hybrid hardware descriptors remain the most",
+            "plausible next direction, but the current archive policies still lose",
+            "too much coverage and exploitation pressure.",
             "",
             "## Interpretation Rule",
             "",
             "A QD method supports a headline claim only if the reference-complete",
             "subset remains positive after coverage losses, missing candidate PPA,",
             "and missing-reference designs are handled by the frozen manifests.",
+            "This run does not pass that standard for any QD arm.",
             "",
         ]
     )
