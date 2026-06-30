@@ -20,8 +20,8 @@
 | `masterrtl_rf_leafid_structural_eoh_8x5` | RTLLM | 3 | 3 | 0.1716 | 1.33 | 4.00 | 0 |
 | `pcn_v3_rf_stagnation_memory_8x5` | ALL | 3 | 3 | 0.3486 | 1.67 | 13.67 | 0 |
 | `pcn_v3_rf_stagnation_memory_8x5` | RTLLM | 3 | 3 | 0.3486 | 1.67 | 13.67 | 0 |
-| `qwen_canonical_rtl_pca3_eoh_8x5` | ALL | 3 | 0 | 0.0000 | 0.00 | 0.00 | 0 |
-| `qwen_canonical_rtl_pca3_eoh_8x5` | RTLLM | 3 | 0 | 0.0000 | 0.00 | 0.00 | 0 |
+| `qwen_canonical_rtl_pca3_eoh_8x5` | ALL | 3 | 3 | 0.1974 | 1.67 | 7.67 | 0 |
+| `qwen_canonical_rtl_pca3_eoh_8x5` | RTLLM | 3 | 3 | 0.1974 | 1.67 | 7.67 | 0 |
 | `rf_deepgate_hybrid_eoh_8x5` | ALL | 3 | 3 | 0.1862 | 1.33 | 5.67 | 0 |
 | `rf_deepgate_hybrid_eoh_8x5` | RTLLM | 3 | 3 | 0.1862 | 1.33 | 5.67 | 0 |
 
@@ -30,7 +30,7 @@
 | Backend | Benchmark | Problem | Objectives | Candidates | Pareto Points | Hypervolume | Ref-Beating |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | `classic_revolution_8x5` | RTLLM | Prob019_sub_64bit | 2 | 5 | 1 | 0.4499 | 2 |
-| `qwen_canonical_rtl_pca3_eoh_8x5` | RTLLM | Prob019_sub_64bit | 2 | 0 | 0 | 0.0000 | 0 |
+| `qwen_canonical_rtl_pca3_eoh_8x5` | RTLLM | Prob019_sub_64bit | 2 | 4 | 1 | 0.0207 | 1 |
 | `masterrtl_rf_leafid_structural_eoh_8x5` | RTLLM | Prob019_sub_64bit | 2 | 4 | 1 | 0.0207 | 2 |
 | `deepgate_high_exploit_eoh_8x5` | RTLLM | Prob019_sub_64bit | 2 | 6 | 1 | 0.4499 | 3 |
 | `rf_deepgate_hybrid_eoh_8x5` | RTLLM | Prob019_sub_64bit | 2 | 7 | 1 | 0.0080 | 2 |
@@ -38,7 +38,7 @@
 | `masterrtl_archive_activation_eoh_8x5` | RTLLM | Prob019_sub_64bit | 2 | 8 | 1 | 0.4499 | 3 |
 | `pcn_v3_rf_stagnation_memory_8x5` | RTLLM | Prob019_sub_64bit | 2 | 9 | 1 | 0.4499 | 4 |
 | `classic_revolution_8x5` | RTLLM | Prob036_edge_detect | 3 | 8 | 1 | 0.3559 | 2 |
-| `qwen_canonical_rtl_pca3_eoh_8x5` | RTLLM | Prob036_edge_detect | 3 | 0 | 0 | 0.0000 | 0 |
+| `qwen_canonical_rtl_pca3_eoh_8x5` | RTLLM | Prob036_edge_detect | 3 | 6 | 1 | 0.3559 | 2 |
 | `masterrtl_rf_leafid_structural_eoh_8x5` | RTLLM | Prob036_edge_detect | 3 | 3 | 1 | 0.3261 | 1 |
 | `deepgate_high_exploit_eoh_8x5` | RTLLM | Prob036_edge_detect | 3 | 2 | 1 | 0.0000 | 0 |
 | `rf_deepgate_hybrid_eoh_8x5` | RTLLM | Prob036_edge_detect | 3 | 5 | 1 | 0.3559 | 1 |
@@ -46,7 +46,7 @@
 | `masterrtl_archive_activation_eoh_8x5` | RTLLM | Prob036_edge_detect | 3 | 7 | 1 | 0.3559 | 4 |
 | `pcn_v3_rf_stagnation_memory_8x5` | RTLLM | Prob036_edge_detect | 3 | 5 | 1 | 0.3559 | 2 |
 | `classic_revolution_8x5` | RTLLM | Prob045_alu | 2 | 32 | 1 | 0.2470 | 32 |
-| `qwen_canonical_rtl_pca3_eoh_8x5` | RTLLM | Prob045_alu | 2 | 0 | 0 | 0.0000 | 0 |
+| `qwen_canonical_rtl_pca3_eoh_8x5` | RTLLM | Prob045_alu | 2 | 20 | 3 | 0.2157 | 20 |
 | `masterrtl_rf_leafid_structural_eoh_8x5` | RTLLM | Prob045_alu | 2 | 9 | 2 | 0.1679 | 9 |
 | `deepgate_high_exploit_eoh_8x5` | RTLLM | Prob045_alu | 2 | 17 | 2 | 0.2479 | 17 |
 | `rf_deepgate_hybrid_eoh_8x5` | RTLLM | Prob045_alu | 2 | 14 | 2 | 0.1948 | 14 |

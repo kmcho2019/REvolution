@@ -14,6 +14,10 @@ The best non-classic arm by mean HV is `pcn_v3_rf_stagnation_memory_8x5`,
 which retains 99.3% of
 classic mean HV.
 
+This is a positive one-seed signal for PCN-style QD memory, not a
+definitive multi-seed claim. The descriptor/archive-only QD arms do
+not beat classic in this corrected full-suite run.
+
 Use this report only after checking `analysis/<stage>/operator_contract.csv`.
 Any nonzero `single_thought_count` invalidates the corrected comparison.
 
@@ -32,9 +36,9 @@ Any nonzero `single_thought_count` invalidates the corrected comparison.
 | 3 | `masterrtl_archive_activation_eoh_8x5` | custom_qd | 3/3 | 0.3335 | 95.0% | -0.0174 | 0.2458 | 0.0215 |
 | 4 | `deepgate_high_exploit_eoh_8x5` | encoder | 3/3 | 0.2326 | 66.3% | -0.1183 | 0.1399 | -0.0843 |
 | 5 | `aurora_raw_impl_compact_eoh_8x5` | learned_descriptor | 3/3 | 0.2102 | 59.9% | -0.1408 | 0.1351 | -0.0891 |
-| 6 | `rf_deepgate_hybrid_eoh_8x5` | encoder | 3/3 | 0.1862 | 53.1% | -0.1647 | 0.1704 | -0.0539 |
-| 7 | `masterrtl_rf_leafid_structural_eoh_8x5` | encoder | 3/3 | 0.1716 | 48.9% | -0.1794 | 0.1600 | -0.0642 |
-| 8 | `qwen_canonical_rtl_pca3_eoh_8x5` | encoder | 0/3 | 0.0000 | 0.0% | -0.3509 | 0.0000 | -0.2242 |
+| 6 | `qwen_canonical_rtl_pca3_eoh_8x5` | encoder | 3/3 | 0.1974 | 56.3% | -0.1535 | 0.1459 | -0.0783 |
+| 7 | `rf_deepgate_hybrid_eoh_8x5` | encoder | 3/3 | 0.1862 | 53.1% | -0.1647 | 0.1704 | -0.0539 |
+| 8 | `masterrtl_rf_leafid_structural_eoh_8x5` | encoder | 3/3 | 0.1716 | 48.9% | -0.1794 | 0.1600 | -0.0642 |
 
 ## Metric Definitions
 
@@ -52,6 +56,9 @@ Any nonzero `single_thought_count` invalidates the corrected comparison.
 - Compare this report against 20260629 only as an operator-corrected
   rerun, not as a direct same-method continuation.
 - The PCN arm is the only active QD-memory method in this suite.
+- PCN records 0 wins,
+  1 losses, and
+  2 ties versus classic by final HV.
 - The other QD arms test descriptor/archive pressure under EoH
   thought/code/feedback operators.
 
@@ -80,6 +87,9 @@ Any nonzero `single_thought_count` invalidates the corrected comparison.
 - `figures/hv_delta_distribution.png`
 - `figures/coverage_vs_hv.png`
 
+Figures include completed methods only. The summary table still
+keeps not-started smoke-only arms for manifest/status accounting.
+
 ## Viewer Caveat
 
 The direct PPA/Pareto reports and suite figures were generated
@@ -103,4 +113,4 @@ mean HV/HV-AUC comparison to improve over the 20260629 QD arms.
 A QD method supports a headline claim only if the reference-complete
 subset remains positive after coverage losses, missing candidate PPA,
 and missing-reference designs are handled by the frozen manifests.
-This run does not pass that standard for any QD arm.
+No QD arm passes this screen in this run.

@@ -2,6 +2,8 @@
 set -euo pipefail
 source "$(dirname "$0")/../env.sh"
 
+export CUDA_VISIBLE_DEVICES="$QWEN_CUDA_VISIBLE_DEVICES"
+
 "$QWEN_PYTHON" scripts/run_backend.py \
   --backend revolution \
   --benchmarks RTLLM \

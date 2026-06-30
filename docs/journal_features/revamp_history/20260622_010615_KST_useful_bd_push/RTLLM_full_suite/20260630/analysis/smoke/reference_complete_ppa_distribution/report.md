@@ -1,8 +1,8 @@
 # PPA Distribution Analysis
 
-- candidate_count: `578`
+- candidate_count: `681`
 - reference_problem_count: `3`
-- best_backend_problem_count: `21`
+- best_backend_problem_count: `24`
 - figure_count: `10`
 
 ## Outputs
@@ -19,6 +19,6 @@ Figures use filled score contours when enough non-collinear candidates are avail
 
 | Benchmark | Problem | Circuit | Candidates | Figure Root |
 | --- | --- | --- | ---: | --- |
-| `RTLLM` | `Prob019_sub_64bit` | `combinational` | 235 | [figures/all_backends/RTLLM/Prob019_sub_64bit](figures/all_backends/RTLLM/Prob019_sub_64bit) |
-| `RTLLM` | `Prob036_edge_detect` | `sequential` | 148 | [figures/all_backends/RTLLM/Prob036_edge_detect](figures/all_backends/RTLLM/Prob036_edge_detect) |
-| `RTLLM` | `Prob045_alu` | `combinational` | 195 | [figures/all_backends/RTLLM/Prob045_alu](figures/all_backends/RTLLM/Prob045_alu) |
+| `RTLLM` | `Prob019_sub_64bit` | `combinational` | 279 | [figures/all_backends/RTLLM/Prob019_sub_64bit](figures/all_backends/RTLLM/Prob019_sub_64bit) |
+| `RTLLM` | `Prob036_edge_detect` | `sequential` | 175 | [figures/all_backends/RTLLM/Prob036_edge_detect](figures/all_backends/RTLLM/Prob036_edge_detect) |
+| `RTLLM` | `Prob045_alu` | `combinational` | 227 | [figures/all_backends/RTLLM/Prob045_alu](figures/all_backends/RTLLM/Prob045_alu) |
