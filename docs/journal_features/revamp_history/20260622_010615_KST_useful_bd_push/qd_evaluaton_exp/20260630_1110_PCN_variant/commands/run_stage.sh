@@ -12,6 +12,9 @@ case "$PCN_STAGE" in
   smoke_v2)
     stage_methods=("${SMOKE_V2_METHODS[@]}")
     ;;
+  smoke_v3)
+    stage_methods=("${SMOKE_V3_METHODS[@]}")
+    ;;
   long_20x10)
     stage_methods=("${LONG_20X10_METHODS[@]}")
     ;;

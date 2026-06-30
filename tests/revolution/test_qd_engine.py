@@ -1110,7 +1110,11 @@ def _pcn_engine(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> QDEngine:
     )
 
 
-def _pcn_classic_engine(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> QDEngine:
+def _pcn_classic_engine(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    **kwargs,
+) -> QDEngine:
     return _engine(
         tmp_path,
         monkeypatch,
@@ -1128,6 +1132,7 @@ def _pcn_classic_engine(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> QDEn
         qd_memory_min_valid_ppa=2,
         qd_archive_activation_generation=2,
         qd_grid_axes=("g_A", "g_T"),
+        **kwargs,
     )
 
 
@@ -1227,6 +1232,83 @@ def test_pcn_classic_memory_forces_one_memory_slot_after_gate(
     counts = engine._front_guarded_memory_counts()
 
     assert engine._front_guarded_memory_summary()["qd_memory_active"] is True
+    assert counts["memory_refine"] == 1
+    assert counts["classic"] == 7
+
+
+def test_pcn_classic_stagnation_memory_waits_for_history(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _pcn_classic_engine(
+        tmp_path,
+        monkeypatch,
+        qd_memory_trigger="stagnation",
+    )
+    first = _successful_candidate("first", score=1.0, power=0.9, area=90.0, clock=0.8)
+    second = _successful_candidate("second", score=2.0, power=0.8, area=80.0, clock=0.7)
+    engine._insert_successes([first, second])
+    engine.current_generation = 2
+    for stats in engine.qd_memory_cell_stats.values():
+        stats.credit = 0.30
+
+    counts = engine._front_guarded_memory_counts()
+
+    assert engine._front_guarded_memory_summary()["qd_memory_active"] is False
+    assert counts == {"classic": 8, "memory_refine": 0, "front_rescue": 0, "probe": 0}
+
+
+def test_pcn_classic_stagnation_memory_waits_after_improvement(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _pcn_classic_engine(
+        tmp_path,
+        monkeypatch,
+        qd_memory_trigger="stagnation",
+    )
+    first = _successful_candidate("first", score=1.0, power=0.9, area=90.0, clock=0.8)
+    second = _successful_candidate("second", score=2.0, power=0.8, area=80.0, clock=0.7)
+    engine._insert_successes([first, second])
+    engine.current_generation = 3
+    engine.qd_generation_history = [
+        {"generation": 1, "best_quality": 1.0, "global_pareto_size": 1},
+        {"generation": 2, "best_quality": 2.0, "global_pareto_size": 2},
+    ]
+    for stats in engine.qd_memory_cell_stats.values():
+        stats.credit = 0.30
+
+    counts = engine._front_guarded_memory_counts()
+
+    assert engine._front_guarded_memory_summary()["qd_memory_active"] is False
+    assert counts == {"classic": 8, "memory_refine": 0, "front_rescue": 0, "probe": 0}
+
+
+def test_pcn_classic_stagnation_memory_fires_after_stall(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _pcn_classic_engine(
+        tmp_path,
+        monkeypatch,
+        qd_memory_trigger="stagnation",
+    )
+    first = _successful_candidate("first", score=1.0, power=0.9, area=90.0, clock=0.8)
+    second = _successful_candidate("second", score=2.0, power=0.8, area=80.0, clock=0.7)
+    engine._insert_successes([first, second])
+    engine.current_generation = 3
+    engine.qd_generation_history = [
+        {"generation": 1, "best_quality": 2.0, "global_pareto_size": 1},
+        {"generation": 2, "best_quality": 2.0, "global_pareto_size": 1},
+    ]
+    for stats in engine.qd_memory_cell_stats.values():
+        stats.credit = 0.30
+
+    counts = engine._front_guarded_memory_counts()
+
+    summary = engine._front_guarded_memory_summary()
+    assert summary["qd_memory_active"] is True
+    assert summary["qd_memory_stagnation_triggered"] is True
     assert counts["memory_refine"] == 1
     assert counts["classic"] == 7
 

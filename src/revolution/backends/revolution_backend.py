@@ -101,6 +101,8 @@ class RevolutionBackendConfig:
     qd_memory_min_cell_credit: float = 0.20
     qd_memory_front_gap_epsilon: float = 0.03
     qd_memory_min_valid_ppa: int = 0
+    qd_memory_trigger: str = "credit"
+    qd_memory_target_front_size: int = 0
     qd_memory_cooldown_attempts: int = 3
     qd_memory_cooldown_generations: int = 2
     representative_sample: str = "best_successful_quality"
@@ -238,6 +240,10 @@ class RevolutionBackend(EvolutionBackend):
                     self.config.qd_memory_front_gap_epsilon
                 ),
                 qd_memory_min_valid_ppa=self.config.qd_memory_min_valid_ppa,
+                qd_memory_trigger=self.config.qd_memory_trigger,
+                qd_memory_target_front_size=(
+                    self.config.qd_memory_target_front_size
+                ),
                 qd_memory_cooldown_attempts=(
                     self.config.qd_memory_cooldown_attempts
                 ),
@@ -342,6 +348,10 @@ class RevolutionBackend(EvolutionBackend):
                             self.config.qd_memory_front_gap_epsilon
                         ),
                         "min_valid_ppa": self.config.qd_memory_min_valid_ppa,
+                        "trigger": self.config.qd_memory_trigger,
+                        "target_front_size": (
+                            self.config.qd_memory_target_front_size
+                        ),
                         "cooldown_attempts": (
                             self.config.qd_memory_cooldown_attempts
                         ),

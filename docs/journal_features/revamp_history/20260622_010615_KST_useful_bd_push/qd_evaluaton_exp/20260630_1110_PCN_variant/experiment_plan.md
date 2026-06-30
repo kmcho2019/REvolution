@@ -68,6 +68,34 @@ memory arm. Do not launch Stage 2 or 20x10 from this exact configuration.
 Define a narrower next variant first, likely passive-first or
 stagnation-triggered memory.
 
+### Stage 1c: PCN-v3 Stagnation Smoke
+
+Problems and budget are identical to Stage 1b.
+
+Arms:
+
+- `classic_revolution_8x5`
+- `pcn_v3_rf_stagnation_memory_8x5`
+- `pcn_v3_random_stagnation_memory_8x5`
+- `pcn_v2_passive_eoh_archive_8x5`
+
+This stage changes only the memory trigger. It keeps
+`pcn_classic_preserving_memory`, EoH operators, one-parent memory mutation,
+RF descriptor axes, random descriptor control, and passive archive control.
+
+Memory recall is allowed only after the normal evidence gate and a simple
+stagnation trigger:
+
+- `current_generation >= 2`;
+- at least 8 valid-PPA candidates have been observed;
+- at least one sampleable credited memory cell exists;
+- the latest completed generation did not improve scalar best quality, did
+  not expand the global Pareto front, or still has fewer than two global-front
+  points.
+
+PCN-v3 passes only if RF memory beats random memory, does not lose to the
+passive control, and avoids the `Prob045_alu` HV damage seen in Stage 1b.
+
 ### Stage 2: Frozen Screen
 
 Problems:
@@ -161,7 +189,7 @@ collapse, do not run Stage 2. If Stage 2 is negative and PCN random is
 comparable to PCN RF, do not launch a full RTLLM suite. Record the result as
 negative evidence for this search-policy variant.
 
-After `smoke_v2`, the stop rule is active for the current RF-memory
-configuration. It should not be scaled until a revised PCN-v3 smoke shows that
-active memory improves on the passive control or only fires under a clearer
-stagnation/front-gap trigger.
+After `smoke_v2`, the stop rule is active for the eager RF-memory
+configuration. It should not be scaled until `smoke_v3` shows that active
+memory improves on the passive control or fires under a clearer stagnation
+trigger without repeating the `Prob045_alu` HV loss.

@@ -31,8 +31,11 @@ lane fires with valid-PPA children.
 The performance result is not yet a scale-up signal. RF memory retains 97.3
 percent of classic mean HV and beats the random-memory control, but it still
 trails classic on mean HV. The passive EoH archive control is slightly ahead
-of both classic and RF memory on this three-problem smoke, so the active memory
-lane has not earned a 20x10 escalation as-is.
+of both classic and RF memory on this three-problem smoke.
+
+The active next step is `smoke_v3`: the same corrected PCN implementation with
+stagnation-triggered memory recall. It keeps the descriptor and operator stack
+fixed and changes only when memory is allowed to spend one candidate call.
 
 ## Core Rule
 

@@ -127,6 +127,7 @@ QDParentSelection = Literal[
     "nsga2_global_rank",
     "sparse_front_triggered_nsga2",
 ]
+QDMemoryTrigger = Literal["credit", "stagnation"]
 NEAR_FRONT_DESCRIPTOR_DISTANCE_SQ = 6.75
 FRONT_SLOT_LANE_FRACTION = 0.10
 SPARSE_FRONT_TRIGGER_CHAMPION_LANE_FRACTION = 0.65
@@ -210,6 +211,8 @@ class QDEngine(EoHEngine):
         qd_memory_min_cell_credit: float = 0.20,
         qd_memory_front_gap_epsilon: float = 0.03,
         qd_memory_min_valid_ppa: int = 0,
+        qd_memory_trigger: str = "credit",
+        qd_memory_target_front_size: int = 0,
         qd_memory_cooldown_attempts: int = 3,
         qd_memory_cooldown_generations: int = 2,
         representative_sample: str = "best_successful_quality",
@@ -487,6 +490,10 @@ class QDEngine(EoHEngine):
             raise ValueError("qd_memory_front_gap_epsilon must be >= 0.")
         if qd_memory_min_valid_ppa < 0:
             raise ValueError("qd_memory_min_valid_ppa must be >= 0.")
+        if qd_memory_trigger not in {"credit", "stagnation"}:
+            raise ValueError(f"Unsupported qd_memory_trigger '{qd_memory_trigger}'.")
+        if qd_memory_target_front_size < 0:
+            raise ValueError("qd_memory_target_front_size must be >= 0.")
         if qd_memory_cooldown_attempts <= 0:
             raise ValueError("qd_memory_cooldown_attempts must be > 0.")
         if qd_memory_cooldown_generations < 0:
@@ -498,6 +505,11 @@ class QDEngine(EoHEngine):
         self.qd_memory_min_cell_credit = float(qd_memory_min_cell_credit)
         self.qd_memory_front_gap_epsilon = float(qd_memory_front_gap_epsilon)
         self.qd_memory_min_valid_ppa = int(qd_memory_min_valid_ppa)
+        self.qd_memory_trigger: QDMemoryTrigger = cast(
+            QDMemoryTrigger,
+            qd_memory_trigger,
+        )
+        self.qd_memory_target_front_size = int(qd_memory_target_front_size)
         self.qd_memory_cooldown_attempts = int(qd_memory_cooldown_attempts)
         self.qd_memory_cooldown_generations = int(qd_memory_cooldown_generations)
         self.representative_sample = representative_sample
@@ -2382,10 +2394,43 @@ class QDEngine(EoHEngine):
         if not self._is_pcn_gated_memory():
             return True
         activation_generation = max(2, self.qd_archive_activation_generation)
-        return (
+        gate_open = (
             self.current_generation >= activation_generation
             and len(self.qd_valid_ppa_seen_ids) >= self.qd_memory_min_valid_ppa
         )
+        if not gate_open:
+            return False
+        if self.qd_memory_trigger == "credit":
+            return True
+        if self.qd_memory_trigger == "stagnation":
+            return self._qd_memory_stagnation_triggered()
+        raise AssertionError(f"unknown qd_memory_trigger: {self.qd_memory_trigger}")
+
+    def _qd_memory_stagnation_triggered(self) -> bool:
+        history = [
+            row
+            for row in self.qd_generation_history
+            if int(row["generation"]) < self.current_generation
+        ]
+        if len(history) < 2:
+            return False
+
+        previous = history[-2]
+        latest = history[-1]
+        previous_best = previous["best_quality"]
+        latest_best = latest["best_quality"]
+        best_stalled = latest_best is None
+        if latest_best is not None and previous_best is not None:
+            best_stalled = float(latest_best) <= float(previous_best)
+
+        previous_front = int(previous["global_pareto_size"])
+        latest_front = int(latest["global_pareto_size"])
+        front_stalled = latest_front <= previous_front
+        front_small = (
+            self.qd_memory_target_front_size > 0
+            and latest_front < self.qd_memory_target_front_size
+        )
+        return best_stalled or front_stalled or front_small
 
     def _memory_sampleable_cells(self) -> list[str]:
         if not self._qd_memory_active():
@@ -4288,6 +4333,13 @@ class QDEngine(EoHEngine):
             "qd_memory_min_cell_credit": self.qd_memory_min_cell_credit,
             "qd_memory_front_gap_epsilon": self.qd_memory_front_gap_epsilon,
             "qd_memory_min_valid_ppa": self.qd_memory_min_valid_ppa,
+            "qd_memory_trigger": self.qd_memory_trigger,
+            "qd_memory_target_front_size": self.qd_memory_target_front_size,
+            "qd_memory_stagnation_triggered": (
+                self._qd_memory_stagnation_triggered()
+                if self.qd_memory_trigger == "stagnation"
+                else False
+            ),
             "qd_memory_valid_ppa_seen": len(self.qd_valid_ppa_seen_ids),
             "qd_memory_active": self._qd_memory_active(),
             "primary_success_pool_size": len(self.qd_primary_success_pool),

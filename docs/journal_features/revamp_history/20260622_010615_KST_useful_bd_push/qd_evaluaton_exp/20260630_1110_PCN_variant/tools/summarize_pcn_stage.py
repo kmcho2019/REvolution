@@ -45,6 +45,8 @@ def budget_for_stage(stage: str) -> str:
         return "8x5"
     if stage == "smoke_v2":
         return "8x5_v2"
+    if stage == "smoke_v3":
+        return "8x5_v3"
     if stage == "long_20x10":
         return "20x10"
     if stage == "long_10x20":
@@ -55,7 +57,7 @@ def budget_for_stage(stage: str) -> str:
 def generation_count(stage: str) -> int:
     if stage in {"smoke", "screen"}:
         return 5
-    if stage == "smoke_v2":
+    if stage in {"smoke_v2", "smoke_v3"}:
         return 5
     if stage == "long_20x10":
         return 10
@@ -65,7 +67,7 @@ def generation_count(stage: str) -> int:
 
 
 def subset_name(stage: str) -> str:
-    if stage == "smoke_v2":
+    if stage in {"smoke_v2", "smoke_v3"}:
         return "smoke"
     if stage.startswith("long_"):
         return "long_budget"
@@ -111,6 +113,8 @@ def method_label(method: str) -> str:
         "pcn_v2_passive_eoh_archive": "PCN-v2 passive",
         "pcn_v2_rf_eoh_memory": "PCN-v2 RF",
         "pcn_v2_random_eoh_memory": "PCN-v2 random",
+        "pcn_v3_rf_stagnation_memory": "PCN-v3 RF",
+        "pcn_v3_random_stagnation_memory": "PCN-v3 random",
     }
     return replacements.get(label, label)
 

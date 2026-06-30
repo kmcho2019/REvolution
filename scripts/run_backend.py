@@ -490,6 +490,8 @@ def _build_backend(
             qd_memory_min_cell_credit=args.qd_memory_min_cell_credit,
             qd_memory_front_gap_epsilon=args.qd_memory_front_gap_epsilon,
             qd_memory_min_valid_ppa=args.qd_memory_min_valid_ppa,
+            qd_memory_trigger=args.qd_memory_trigger,
+            qd_memory_target_front_size=args.qd_memory_target_front_size,
             qd_memory_cooldown_attempts=args.qd_memory_cooldown_attempts,
             qd_memory_cooldown_generations=args.qd_memory_cooldown_generations,
             representative_sample=args.representative_sample,
@@ -1136,6 +1138,13 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--qd_memory_min_cell_credit", type=float, default=0.20)
     parser.add_argument("--qd_memory_front_gap_epsilon", type=float, default=0.03)
     parser.add_argument("--qd_memory_min_valid_ppa", type=int, default=0)
+    parser.add_argument(
+        "--qd_memory_trigger",
+        type=str,
+        default="credit",
+        choices=["credit", "stagnation"],
+    )
+    parser.add_argument("--qd_memory_target_front_size", type=int, default=0)
     parser.add_argument("--qd_memory_cooldown_attempts", type=int, default=3)
     parser.add_argument("--qd_memory_cooldown_generations", type=int, default=2)
     parser.add_argument(

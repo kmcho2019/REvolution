@@ -207,3 +207,61 @@ These flags are intentionally strict. Any run that enables descriptor-targeted
 operators, two-parent memory fusion, repair, empty-cell fill, or archive-driven
 primary parent selection is a different algorithm and must get a new method
 name.
+
+## Method 5: `pcn_v3_rf_stagnation_memory_8x5`
+
+Purpose: test whether PCN memory should be passive until classic appears
+stalled.
+
+Descriptor:
+
+```text
+source_aligned_rf_timing_leaf_ids
+source_aligned_masterrtl_branching
+source_aligned_rtltimer_wire_density
+```
+
+Algorithm:
+
+1. Run the same corrected PCN-v2 EoH loop.
+2. Insert every valid-PPA candidate into the RF descriptor archive.
+3. Keep memory inactive until generation 2 and at least 8 valid-PPA
+   candidates exist.
+4. Keep memory inactive while the latest completed generation improved scalar
+   best quality and expanded the global Pareto front.
+5. Allow one memory-refine call only if the latest generation stalled on
+   scalar quality, stalled on global-front size, or the global front still has
+   fewer than two points.
+6. Mutate the memory parent with one-parent EoH operators only.
+7. Do not use descriptor-targeted prompting or two-parent fusion.
+
+Additional CLI flags versus PCN-v2 RF:
+
+```text
+--qd_memory_trigger stagnation
+--qd_memory_target_front_size 2
+```
+
+Command:
+
+```bash
+bash commands/methods/pcn_v3_rf_stagnation_memory_8x5.sh
+```
+
+## Method 6: `pcn_v3_random_stagnation_memory_8x5`
+
+Purpose: control for stagnation-triggered memory without meaningful
+descriptor structure.
+
+Algorithm:
+
+The search policy is identical to `pcn_v3_rf_stagnation_memory_8x5`, but the
+archive cells are deterministic random-hash descriptor cells. If this arm
+matches RF memory, the trigger may be useful but the RF descriptor has not
+earned credit.
+
+Command:
+
+```bash
+bash commands/methods/pcn_v3_random_stagnation_memory_8x5.sh
+```

@@ -24,7 +24,7 @@ case "$PCN_STAGE" in
     MANIFEST_CSV="$DOC_ROOT/tables/smoke_subset.csv"
     PCN_PROBLEMS=(Prob019_sub_64bit Prob036_edge_detect Prob045_alu)
     ;;
-  smoke_v2)
+  smoke_v2|smoke_v3)
     BUDGET_POPULATION="${BUDGET_POPULATION:-8}"
     BUDGET_GENERATIONS="${BUDGET_GENERATIONS:-5}"
     SUBSET_CONFIG="$DOC_ROOT/tables/smoke_subset.yaml"
@@ -95,6 +95,13 @@ SMOKE_V2_METHODS=(
   classic_revolution_8x5
   pcn_v2_rf_eoh_memory_8x5
   pcn_v2_random_eoh_memory_8x5
+  pcn_v2_passive_eoh_archive_8x5
+)
+
+SMOKE_V3_METHODS=(
+  classic_revolution_8x5
+  pcn_v3_rf_stagnation_memory_8x5
+  pcn_v3_random_stagnation_memory_8x5
   pcn_v2_passive_eoh_archive_8x5
 )
 
