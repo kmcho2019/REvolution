@@ -18,7 +18,9 @@ thought/code/feedback operators.
 - Tokens: `--max_tokens 128000`, `--diff_max_tokens 128000`.
 - Evaluation mode: `strict_ablation`.
 - Non-Qwen workers: `48` total, `12` active problems, `4` per problem.
-- Qwen workers: `12` total, `6` active problems, `2` per problem.
+- Qwen add-on workers: bind descriptors to physical GPU `0` with
+  `QWEN_CUDA_VISIBLE_DEVICES=0`, `2` total slots, `2` active problems, and
+  `1` worker per problem.
 
 ## Stages
 
@@ -71,3 +73,8 @@ The 20260630 full run can support a real QD claim only if the operator audit
 passes and a QD/PCN arm is competitive with classic on reference-complete mean
 HV or HV-AUC. If all corrected arms still lose, the negative result is much
 stronger than 20260629 because the known operator mismatch has been removed.
+
+Qwen is treated as a completed add-on pretrained-encoder lane. Its first
+smoke failed from multi-worker CUDA memory pressure, not from algorithm
+behavior. The successful rerun used the GPU-0 settings above and is compared
+on the same budget, seed, model, evaluator, and EoH operator contract.

@@ -52,6 +52,17 @@ Full RTLLM after smoke passes:
 RUN_STAGE=full bash docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/commands/launch_full_suite_tmux.sh
 ```
 
+Qwen GPU-0 add-on after the shared run:
+
+```bash
+RUN_STAGE=full \
+QWEN_CUDA_VISIBLE_DEVICES=0 \
+QWEN_TOTAL_WORKER_SLOTS=2 \
+QWEN_MAX_ACTIVE_PROBLEMS=2 \
+QWEN_MAX_WORKERS_PER_PROBLEM=1 \
+bash docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/commands/launch_qwen_gpu0_addon_tmux.sh
+```
+
 ## Output Roots
 
 - Live runs: `/workspace/exp/useful_bd_push/rtllm_full_suite_20260630/live/<stage>`

@@ -103,6 +103,20 @@ Command:
 bash commands/methods/qwen_canonical_rtl_pca3_eoh_8x5.sh
 ```
 
+The completed full add-on used:
+
+```bash
+RUN_STAGE=full \
+QWEN_CUDA_VISIBLE_DEVICES=0 \
+QWEN_TOTAL_WORKER_SLOTS=2 \
+QWEN_MAX_ACTIVE_PROBLEMS=2 \
+QWEN_MAX_WORKERS_PER_PROBLEM=1 \
+bash commands/launch_qwen_gpu0_addon_tmux.sh
+```
+
+This low-fanout GPU-0 launch avoids the earlier multi-worker CUDA OOM while
+preserving the same seed, budget, model, evaluator, and EoH operator contract.
+
 ### `masterrtl_rf_leafid_structural_eoh_8x5`
 
 MasterRTL/RTLTimer-inspired model-state descriptor arm. The descriptor axes

@@ -35,6 +35,7 @@ Any nonzero `single_thought_count` invalidates the corrected comparison.
 | 2 | `classic_revolution_8x5` | classic | 33/46 | 0.0997 | 100.0% | 0.0000 | 0.0899 | 0.0000 |
 | 3 | `deepgate_high_exploit_eoh_8x5` | encoder | 25/46 | 0.0933 | 93.5% | -0.0065 | 0.0783 | -0.0116 |
 | 4 | `masterrtl_archive_activation_eoh_8x5` | custom_qd | 33/46 | 0.0914 | 91.6% | -0.0083 | 0.0763 | -0.0136 |
+| 5 | `qwen_canonical_rtl_pca3_eoh_8x5` | encoder | 31/46 | 0.0892 | 89.5% | -0.0105 | 0.0703 | -0.0196 |
 
 ## Metric Definitions
 
@@ -55,6 +56,9 @@ Any nonzero `single_thought_count` invalidates the corrected comparison.
 - PCN records 9 wins,
   9 losses, and
   28 ties versus classic by final HV.
+- Qwen3 is now a completed pretrained-encoder lane. It passes the EoH
+  operator audit but trails classic: 31/46 coverage, 89.5% mean-HV
+  retention, and 3/12/31 win/loss/tie versus classic.
 - The other QD arms test descriptor/archive pressure under EoH
   thought/code/feedback operators.
 
@@ -112,6 +116,11 @@ This corrected suite tests whether prior QD underperformance was
 caused by the single-thought operator mismatch. A positive result
 requires the operator contract to pass and the reference-complete
 mean HV/HV-AUC comparison to improve over the 20260629 QD arms.
+
+The Qwen3 add-on answers the pretrained text/code embedding lane under the
+corrected operator contract. Its lower coverage and lower HV-AUC suggest that
+canonical RTL embedding cells alone are not yet a competitive BD policy for
+RTLLM at this budget, even though localized per-problem wins exist.
 
 ## Interpretation Rule
 
