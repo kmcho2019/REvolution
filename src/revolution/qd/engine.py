@@ -112,10 +112,11 @@ _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
 JournalParentSource = Literal["archive", "fail_pool", "seed"]
 QDOperatorKind = Literal["eoh_strategies", "single_thought_operator"]
 QDTwoParentGate = Literal["none", "near_front_descriptor"]
-QDSchedulerMode = Literal["map_elites", "front_guarded_memory"]
+QDSchedulerMode = Literal["map_elites", "front_guarded_memory", "pcn_quality_memory"]
 QDParentSelection = Literal[
     "cell_crowded_tournament",
     "front_guarded_memory",
+    "pcn_quality_memory",
     "front_slot_lane_nsga2",
     "nsga2_global_rank",
     "sparse_front_triggered_nsga2",
@@ -202,6 +203,7 @@ class QDEngine(EoHEngine):
         qd_memory_probe_fraction: float = 0.0,
         qd_memory_min_cell_credit: float = 0.20,
         qd_memory_front_gap_epsilon: float = 0.03,
+        qd_memory_min_valid_ppa: int = 0,
         qd_memory_cooldown_attempts: int = 3,
         qd_memory_cooldown_generations: int = 2,
         representative_sample: str = "best_successful_quality",
@@ -331,7 +333,11 @@ class QDEngine(EoHEngine):
         self.qd_archive_activation_stagnation_generations = int(
             qd_archive_activation_stagnation_generations
         )
-        if qd_scheduler_mode not in {"map_elites", "front_guarded_memory"}:
+        if qd_scheduler_mode not in {
+            "map_elites",
+            "front_guarded_memory",
+            "pcn_quality_memory",
+        }:
             raise ValueError(f"Unsupported qd_scheduler_mode '{qd_scheduler_mode}'.")
         self.qd_scheduler_mode: QDSchedulerMode = cast(
             QDSchedulerMode,
@@ -375,6 +381,7 @@ class QDEngine(EoHEngine):
         if qd_parent_selection not in {
             "cell_crowded_tournament",
             "front_guarded_memory",
+            "pcn_quality_memory",
             "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",
@@ -385,6 +392,7 @@ class QDEngine(EoHEngine):
         if (
             qd_parent_selection in {
                 "front_guarded_memory",
+                "pcn_quality_memory",
                 "front_slot_lane_nsga2",
                 "sparse_front_triggered_nsga2",
             }
@@ -397,30 +405,30 @@ class QDEngine(EoHEngine):
             QDParentSelection,
             qd_parent_selection,
         )
-        if (
-            self.qd_parent_selection == "front_guarded_memory"
-            and self.qd_scheduler_mode != "front_guarded_memory"
-        ):
+        if self.qd_parent_selection in {
+            "front_guarded_memory",
+            "pcn_quality_memory",
+        } and self.qd_parent_selection != self.qd_scheduler_mode:
             raise ValueError(
-                "front_guarded_memory parent selection requires matching scheduler."
+                f"{self.qd_parent_selection} parent selection requires matching scheduler."
             )
-        if self.qd_scheduler_mode == "front_guarded_memory":
+        if self._is_qd_memory_mode_name(self.qd_scheduler_mode):
             if self.representation_kind != "code_individual":
-                raise ValueError("front_guarded_memory requires code_individual.")
+                raise ValueError(f"{self.qd_scheduler_mode} requires code_individual.")
             if self.qd_operator_kind != "single_thought_operator":
                 raise ValueError(
-                    "front_guarded_memory requires single_thought_operator."
+                    f"{self.qd_scheduler_mode} requires single_thought_operator."
                 )
-            if self.qd_parent_selection != "front_guarded_memory":
+            if self.qd_parent_selection != self.qd_scheduler_mode:
                 raise ValueError(
-                    "front_guarded_memory requires matching parent selection."
+                    f"{self.qd_scheduler_mode} requires matching parent selection."
                 )
             if self.qd_two_parent_probability != 0.0:
-                raise ValueError("front_guarded_memory disables two-parent fusion.")
+                raise ValueError(f"{self.qd_scheduler_mode} disables two-parent fusion.")
             if self.qd_operator_one_parent_fraction != 1.0:
-                raise ValueError("front_guarded_memory requires one-parent requests.")
+                raise ValueError(f"{self.qd_scheduler_mode} requires one-parent requests.")
             if self.qd_rebinning_kind != "disabled":
-                raise ValueError("front_guarded_memory requires disabled rebinning.")
+                raise ValueError(f"{self.qd_scheduler_mode} requires disabled rebinning.")
         memory_fractions = (
             qd_memory_classic_fraction,
             qd_memory_refine_fraction,
@@ -432,11 +440,23 @@ class QDEngine(EoHEngine):
         if sum(float(value) for value in memory_fractions) > 1.0:
             raise ValueError("qd_memory fractions must sum to <= 1.")
         if qd_memory_probe_fraction != 0.0:
-            raise ValueError("front_guarded_memory probe lane is not implemented.")
+            raise ValueError("qd_memory probe lane is not implemented.")
+        if (
+            self.qd_scheduler_mode == "pcn_quality_memory"
+            and (
+                qd_memory_refine_fraction
+                + qd_memory_rescue_fraction
+                + qd_memory_probe_fraction
+            )
+            > 0.10
+        ):
+            raise ValueError("pcn_quality_memory memory lanes must be <= 10%.")
         if qd_memory_min_cell_credit < 0.0:
             raise ValueError("qd_memory_min_cell_credit must be >= 0.")
         if qd_memory_front_gap_epsilon < 0.0:
             raise ValueError("qd_memory_front_gap_epsilon must be >= 0.")
+        if qd_memory_min_valid_ppa < 0:
+            raise ValueError("qd_memory_min_valid_ppa must be >= 0.")
         if qd_memory_cooldown_attempts <= 0:
             raise ValueError("qd_memory_cooldown_attempts must be > 0.")
         if qd_memory_cooldown_generations < 0:
@@ -447,6 +467,7 @@ class QDEngine(EoHEngine):
         self.qd_memory_probe_fraction = float(qd_memory_probe_fraction)
         self.qd_memory_min_cell_credit = float(qd_memory_min_cell_credit)
         self.qd_memory_front_gap_epsilon = float(qd_memory_front_gap_epsilon)
+        self.qd_memory_min_valid_ppa = int(qd_memory_min_valid_ppa)
         self.qd_memory_cooldown_attempts = int(qd_memory_cooldown_attempts)
         self.qd_memory_cooldown_generations = int(qd_memory_cooldown_generations)
         self.representative_sample = representative_sample
@@ -471,6 +492,8 @@ class QDEngine(EoHEngine):
         self.qd_primary_success_pool: list[Heuristic] = []
         self.success_reservoir: dict[str, deque[Heuristic]] = {}
         self.qd_memory_cell_stats: dict[str, QDMemoryCellStats] = {}
+        self.qd_valid_ppa_seen_ids: set[str] = set()
+        self.qd_valid_ppa_quality_scores: list[float] = []
         self.qd_generation_history: list[dict[str, Any]] = []
         self.qd_descriptor_observations: list[dict[str, Any]] = []
         self.qd_success_parent_requests = 0
@@ -496,6 +519,16 @@ class QDEngine(EoHEngine):
         self._sr_vq_artifact: SrVqArtifact | None = None
         self._qwen_rtl_embedding_evaluator: QwenCanonicalRTLEmbeddingEvaluator | None = None
         self._deepgate_pooled_evaluator: DeepGatePooledDescriptorEvaluator | None = None
+
+    @staticmethod
+    def _is_qd_memory_mode_name(mode: str) -> bool:
+        return mode in {"front_guarded_memory", "pcn_quality_memory"}
+
+    def _is_qd_memory_mode(self) -> bool:
+        return self._is_qd_memory_mode_name(self.qd_scheduler_mode)
+
+    def _is_pcn_quality_memory(self) -> bool:
+        return self.qd_scheduler_mode == "pcn_quality_memory"
 
     def _uses_descriptor_guided_generation(self) -> bool:
         return self.qd_descriptor_profile not in _ARCHIVE_ONLY_DESCRIPTOR_PROFILES
@@ -882,12 +915,14 @@ class QDEngine(EoHEngine):
         )
 
     def _rebuild_archive_from_success_pool(self) -> None:
-        if self.qd_scheduler_mode == "front_guarded_memory" and not self.qd_primary_success_pool:
+        if self._is_qd_memory_mode() and not self.qd_primary_success_pool:
             self.qd_primary_success_pool = list(self.success_pool)
         self.success_archive = self._build_archive()
         self.global_pareto_archive = self._build_global_archive()
         self.success_reservoir = {}
         self.qd_memory_cell_stats = {}
+        self.qd_valid_ppa_seen_ids = set()
+        self.qd_valid_ppa_quality_scores = []
         self.qd_descriptor_observations = []
         self._archive_insertion_index = 0
         self._qd_rebin_recent_members = []
@@ -903,12 +938,22 @@ class QDEngine(EoHEngine):
                 continue
             self._assign_archive_indices(cand)
             member = self._archive_member(cand, descriptors)
+            self._record_valid_ppa_seen(cand, member)
             before_occupied = self.success_archive.occupied_count()
             before_qd_score = self._archive_qd_score()
             front_gap = self._front_gap(member)
             result = self.success_archive.insert(member)
             global_update = self._insert_global_pareto(member)
-            self._update_qd_memory_insert_stats(result, global_update, front_gap)
+            setattr(
+                cand,
+                "qd_memory_credit_local_front",
+                self._update_qd_memory_insert_stats(
+                    result,
+                    global_update,
+                    front_gap,
+                    member,
+                ),
+            )
             self._record_rebin_sample(member, result)
             if isinstance(self.success_archive, GridQuantileArchive) and result.decision == "warmup_buffered":
                 self.success_reservoir.setdefault(result.cell_id, deque(maxlen=1)).appendleft(cand)
@@ -1217,13 +1262,13 @@ class QDEngine(EoHEngine):
         return view
 
     def _set_success_pool_from_archive_or_primary(self) -> None:
-        if self.qd_scheduler_mode == "front_guarded_memory":
+        if self._is_qd_memory_mode():
             self.success_pool = list(self.qd_primary_success_pool)
             return
         self.success_pool = self._success_view()
 
     def _update_primary_success_pool(self, candidates: list[Heuristic]) -> None:
-        if self.qd_scheduler_mode != "front_guarded_memory":
+        if not self._is_qd_memory_mode():
             return
         combined = [
             cand
@@ -1302,6 +1347,18 @@ class QDEngine(EoHEngine):
     def _memory_stats(self, cell_id: str) -> QDMemoryCellStats:
         return self.qd_memory_cell_stats.setdefault(cell_id, QDMemoryCellStats())
 
+    def _record_valid_ppa_seen(self, candidate: Heuristic, member: ArchiveMember) -> None:
+        if candidate.id in self.qd_valid_ppa_seen_ids:
+            return
+        self.qd_valid_ppa_seen_ids.add(candidate.id)
+        self.qd_valid_ppa_quality_scores.append(float(member.quality_score))
+
+    def _valid_ppa_quality_quantile(self, quantile: float) -> float:
+        assert self.qd_valid_ppa_quality_scores
+        values = sorted(self.qd_valid_ppa_quality_scores)
+        index = min(len(values) - 1, int((len(values) - 1) * quantile))
+        return values[index]
+
     def _update_memory_credit(
         self,
         stats: QDMemoryCellStats,
@@ -1314,16 +1371,27 @@ class QDEngine(EoHEngine):
         if observed_credit >= self.qd_memory_min_cell_credit:
             stats.last_credit_gen = self.current_generation
 
-    def _front_guarded_credit(
+    def _memory_credit(
         self,
         *,
         global_front: bool,
-        local_archive: bool,
+        local_front: bool,
+        champion_improved: bool,
         valid_ppa: bool,
     ) -> float:
+        if self._is_pcn_quality_memory():
+            if global_front:
+                return 1.0
+            if local_front:
+                return 0.7
+            if champion_improved:
+                return 0.4
+            if valid_ppa:
+                return 0.2
+            return 0.0
         if global_front:
             return 1.0
-        if local_archive:
+        if local_front or champion_improved:
             return 0.5
         if valid_ppa:
             return self.qd_memory_min_cell_credit
@@ -1334,32 +1402,46 @@ class QDEngine(EoHEngine):
         result: QDArchiveInsertResult,
         global_update: GlobalParetoInsertResult | None,
         front_gap: float,
-    ) -> None:
-        if self.qd_scheduler_mode != "front_guarded_memory":
-            return
+        member: ArchiveMember,
+    ) -> bool:
+        if not self._is_qd_memory_mode():
+            return False
         stats = self._memory_stats(result.cell_id)
         global_inserted = bool(global_update is not None and global_update.inserted)
         champion_improved = result.decision == "replaced_elite"
+        quality_gate = member.quality_score >= self._valid_ppa_quality_quantile(0.75)
         near_front = (
             global_inserted
             or front_gap <= self.qd_memory_front_gap_epsilon
             or result.pareto_rank == 1
+            or quality_gate
+        )
+        local_front_inserted = bool(
+            result.inserted and result.decision != "replaced_elite" and near_front
         )
         if global_inserted:
             stats.global_front_adds_from_cell += 1
         if champion_improved:
             stats.champion_improvements_from_cell += 1
-        if result.inserted and result.decision != "replaced_elite":
+        if self._is_pcn_quality_memory():
+            local_credit = local_front_inserted
+            count_local_add = local_front_inserted
+        else:
+            local_credit = bool(result.inserted or near_front)
+            count_local_add = bool(result.inserted and result.decision != "replaced_elite")
+        if count_local_add:
             stats.local_front_adds_from_cell += 1
-        credit = self._front_guarded_credit(
+        credit = self._memory_credit(
             global_front=global_inserted,
-            local_archive=result.inserted or champion_improved or near_front,
+            local_front=local_credit,
+            champion_improved=champion_improved,
             valid_ppa=True,
         )
         self._update_memory_credit(stats, credit)
+        return local_credit
 
     def _update_qd_memory_parent_credit(self, candidates: list[Heuristic]) -> None:
-        if self.qd_scheduler_mode != "front_guarded_memory":
+        if not self._is_qd_memory_mode():
             return
         for cand in candidates:
             cell_id = cand.qd_memory_parent_cell_id
@@ -1374,13 +1456,17 @@ class QDEngine(EoHEngine):
                 stats.failed_from_cell += 1
             if cand.qd_global_pareto_inserted:
                 stats.global_front_adds_from_cell += 1
-            if cand.qd_archive_inserted:
+            local_front = bool(
+                getattr(cand, "qd_memory_credit_local_front", cand.qd_archive_inserted)
+            )
+            if local_front:
                 stats.local_front_adds_from_cell += 1
             if cand.qd_cell_champion_improved:
                 stats.champion_improvements_from_cell += 1
-            credit = self._front_guarded_credit(
+            credit = self._memory_credit(
                 global_front=cand.qd_global_pareto_inserted,
-                local_archive=cand.qd_archive_inserted or cand.qd_cell_champion_improved,
+                local_front=local_front,
+                champion_improved=cand.qd_cell_champion_improved,
                 valid_ppa=valid_ppa,
             )
             self._update_memory_credit(stats, credit)
@@ -1717,7 +1803,7 @@ class QDEngine(EoHEngine):
                 self.success_archive.describe_history_geometry()
             )
         snapshot.update(self._gain_stats())
-        if self.qd_scheduler_mode == "front_guarded_memory":
+        if self._is_qd_memory_mode():
             snapshot.update(self._front_guarded_memory_summary())
         if budget is not None:
             snapshot.update(
@@ -2238,12 +2324,27 @@ class QDEngine(EoHEngine):
             for member in self._members_by_cell().get(cell_id, [])
         )
 
+    def _qd_memory_active(self) -> bool:
+        if not self._is_pcn_quality_memory():
+            return True
+        activation_generation = max(2, self.qd_archive_activation_generation)
+        return (
+            self.current_generation >= activation_generation
+            and len(self.qd_valid_ppa_seen_ids) >= self.qd_memory_min_valid_ppa
+        )
+
     def _memory_sampleable_cells(self) -> list[str]:
+        if not self._qd_memory_active():
+            return []
         by_cell = self._members_by_cell()
         sampleable: list[str] = []
         for cell_id in sorted(by_cell):
             stats = self._memory_stats(cell_id)
             if self.current_generation < stats.cooldown_until_gen:
+                continue
+            if self._is_pcn_quality_memory():
+                if stats.credit >= self.qd_memory_min_cell_credit:
+                    sampleable.append(cell_id)
                 continue
             if self._cell_contains_global_front(cell_id):
                 sampleable.append(cell_id)
@@ -2257,6 +2358,8 @@ class QDEngine(EoHEngine):
 
     def _memory_cell_weight(self, cell_id: str) -> float:
         stats = self._memory_stats(cell_id)
+        if self._is_pcn_quality_memory():
+            return max(stats.credit, 0.01)
         weight = stats.credit
         if self._cell_contains_global_front(cell_id):
             weight += 1.0
@@ -4102,7 +4205,12 @@ class QDEngine(EoHEngine):
             elif field == "global_front_adds":
                 lanes[lane] += int(cand.qd_global_pareto_inserted)
             elif field == "local_front_adds":
-                lanes[lane] += int(cand.qd_archive_inserted)
+                if self._is_pcn_quality_memory():
+                    lanes[lane] += int(
+                        bool(getattr(cand, "qd_memory_credit_local_front", False))
+                    )
+                else:
+                    lanes[lane] += int(cand.qd_archive_inserted)
             else:
                 raise ValueError(f"Unsupported lane count field '{field}'.")
         return lanes
@@ -4123,6 +4231,9 @@ class QDEngine(EoHEngine):
             "qd_memory_rescue_fraction": self.qd_memory_rescue_fraction,
             "qd_memory_min_cell_credit": self.qd_memory_min_cell_credit,
             "qd_memory_front_gap_epsilon": self.qd_memory_front_gap_epsilon,
+            "qd_memory_min_valid_ppa": self.qd_memory_min_valid_ppa,
+            "qd_memory_valid_ppa_seen": len(self.qd_valid_ppa_seen_ids),
+            "qd_memory_active": self._qd_memory_active(),
             "primary_success_pool_size": len(self.qd_primary_success_pool),
             "active_memory_cells": len(self.qd_memory_cell_stats),
             "sampleable_memory_cells": len(sampleable),
@@ -4132,7 +4243,10 @@ class QDEngine(EoHEngine):
 
     def _evolve_one_front_guarded_memory_generation(self):
         self.current_generation += 1
-        print(f"\n--- Starting Front-Guarded QD-Memory Generation {self.current_generation} ---")
+        print(
+            f"\n--- Starting {self.qd_scheduler_mode} Generation "
+            f"{self.current_generation} ---"
+        )
         self.gen_start_time = time.time()
 
         llm_requests, request_meta, planned_counts = (
@@ -4178,7 +4292,7 @@ class QDEngine(EoHEngine):
             runtime_sec=gen_runtime,
         )
         qd_snapshot.update(self._front_guarded_memory_summary())
-        qd_snapshot["phase"] = "front_guarded_memory"
+        qd_snapshot["phase"] = self.qd_scheduler_mode
         qd_snapshot["planned_qd_memory_lane_counts"] = planned_counts
         qd_snapshot["qd_memory_lane_generated"] = self._front_guarded_lane_counts(
             new_offspring,
@@ -4209,7 +4323,7 @@ class QDEngine(EoHEngine):
             self._write_qd_artifacts(qd_snapshot)
 
         print(
-            f"--- FG-QDM Gen {self.current_generation} Complete. "
+            f"--- {self.qd_scheduler_mode} Gen {self.current_generation} Complete. "
             f"Archive({self.success_archive.occupied_count()}), "
             f"Primary({len(self.qd_primary_success_pool)}), "
             f"Inserted({inserted}), Replaced({replaced}), Fail({len(self.fail_pool)}) ---"
@@ -4251,6 +4365,7 @@ class QDEngine(EoHEngine):
                 continue
             self._assign_archive_indices(cand)
             member = self._archive_member(cand, descriptors)
+            self._record_valid_ppa_seen(cand, member)
             before_occupied = self.success_archive.occupied_count()
             before_qd_score = self._archive_qd_score()
             front_gap = self._front_gap(member)
@@ -4264,7 +4379,16 @@ class QDEngine(EoHEngine):
             )
             cand.qd_cell_champion_improved = result.decision == "replaced_elite"
             cand.qd_memory_front_gap = front_gap
-            self._update_qd_memory_insert_stats(result, global_update, front_gap)
+            setattr(
+                cand,
+                "qd_memory_credit_local_front",
+                self._update_qd_memory_insert_stats(
+                    result,
+                    global_update,
+                    front_gap,
+                    member,
+                ),
+            )
             self._record_rebin_sample(member, result)
             if result.inserted:
                 inserted += 1
@@ -4318,7 +4442,7 @@ class QDEngine(EoHEngine):
     def evolve_one_generation(self):
         if self.representation_kind == "thought_only":
             return self._evolve_one_thought_generation()
-        if self.qd_scheduler_mode == "front_guarded_memory":
+        if self._is_qd_memory_mode():
             return self._evolve_one_front_guarded_memory_generation()
 
         self.current_generation += 1

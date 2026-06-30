@@ -1088,6 +1088,82 @@ def test_front_guarded_memory_writes_summary_fields(
     }
 
 
+def _pcn_engine(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> QDEngine:
+    return _engine(
+        tmp_path,
+        monkeypatch,
+        population_size=10,
+        qd_cell_mode="elite_pareto_slot",
+        qd_max_elites_per_cell=2,
+        qd_scheduler_mode="pcn_quality_memory",
+        qd_parent_selection="pcn_quality_memory",
+        qd_operator_kind="single_thought_operator",
+        qd_operator_one_parent_fraction=1.0,
+        qd_two_parent_probability=0.0,
+        qd_memory_classic_fraction=0.90,
+        qd_memory_refine_fraction=0.10,
+        qd_memory_rescue_fraction=0.0,
+        qd_memory_min_cell_credit=0.50,
+        qd_memory_min_valid_ppa=2,
+        qd_archive_activation_generation=2,
+        qd_grid_axes=("g_A", "g_T"),
+    )
+
+
+def test_pcn_quality_memory_requires_matching_parent_selection(
+    tmp_path,
+    monkeypatch,
+):
+    with pytest.raises(ValueError, match="matching scheduler"):
+        _engine(
+            tmp_path,
+            monkeypatch,
+            qd_cell_mode="elite_pareto_slot",
+            qd_max_elites_per_cell=2,
+            qd_scheduler_mode="pcn_quality_memory",
+            qd_operator_kind="single_thought_operator",
+            qd_operator_one_parent_fraction=1.0,
+            qd_two_parent_probability=0.0,
+            qd_parent_selection="front_guarded_memory",
+        )
+
+
+def test_pcn_quality_memory_waits_for_valid_ppa_threshold(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _pcn_engine(tmp_path, monkeypatch)
+    parent = _successful_candidate("parent", score=1.0, power=0.9, area=90.0, clock=0.8)
+    engine._insert_successes([parent])
+    engine.current_generation = 2
+    for stats in engine.qd_memory_cell_stats.values():
+        stats.credit = 0.75
+
+    counts = engine._front_guarded_memory_counts()
+
+    assert engine._front_guarded_memory_summary()["qd_memory_active"] is False
+    assert counts == {"classic": 10, "memory_refine": 0, "front_rescue": 0, "probe": 0}
+
+
+def test_pcn_quality_memory_schedules_after_evidence_gate(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _pcn_engine(tmp_path, monkeypatch)
+    first = _successful_candidate("first", score=1.0, power=0.9, area=90.0, clock=0.8)
+    second = _successful_candidate("second", score=2.0, power=0.8, area=80.0, clock=0.7)
+    engine._insert_successes([first, second])
+    engine.current_generation = 2
+    for stats in engine.qd_memory_cell_stats.values():
+        stats.credit = 0.75
+
+    counts = engine._front_guarded_memory_counts()
+
+    assert engine._front_guarded_memory_summary()["qd_memory_active"] is True
+    assert counts["memory_refine"] == 1
+    assert counts["classic"] == 9
+
+
 def test_qd_engine_builds_cvt_archive_runtime(monkeypatch, tmp_path):
     monkeypatch.setattr(
         "revolution.algorithm.EoHEngine.load_problem_description",

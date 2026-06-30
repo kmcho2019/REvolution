@@ -218,6 +218,37 @@ def test_backend_parser_accepts_qd_options():
     assert args.qd_memory_rescue_fraction == pytest.approx(0.05)
 
 
+def test_backend_parser_accepts_pcn_memory_options():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(
+        [
+            "--search_mode",
+            "revolution_qd",
+            "--qd_scheduler_mode",
+            "pcn_quality_memory",
+            "--qd_parent_selection",
+            "pcn_quality_memory",
+            "--qd_memory_classic_fraction",
+            "0.9",
+            "--qd_memory_refine_fraction",
+            "0.1",
+            "--qd_memory_rescue_fraction",
+            "0.0",
+            "--qd_memory_min_cell_credit",
+            "0.5",
+            "--qd_memory_min_valid_ppa",
+            "8",
+        ]
+    )
+    assert args.qd_scheduler_mode == "pcn_quality_memory"
+    assert args.qd_parent_selection == "pcn_quality_memory"
+    assert args.qd_memory_classic_fraction == pytest.approx(0.9)
+    assert args.qd_memory_refine_fraction == pytest.approx(0.1)
+    assert args.qd_memory_rescue_fraction == pytest.approx(0.0)
+    assert args.qd_memory_min_cell_credit == pytest.approx(0.5)
+    assert args.qd_memory_min_valid_ppa == 8
+
+
 def test_backend_parser_includes_diff_controls_and_vllm_threshold():
     parser, _ = _build_parser()
     args, _ = parser.parse_known_args([])

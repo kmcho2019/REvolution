@@ -489,6 +489,7 @@ def _build_backend(
             qd_memory_probe_fraction=args.qd_memory_probe_fraction,
             qd_memory_min_cell_credit=args.qd_memory_min_cell_credit,
             qd_memory_front_gap_epsilon=args.qd_memory_front_gap_epsilon,
+            qd_memory_min_valid_ppa=args.qd_memory_min_valid_ppa,
             qd_memory_cooldown_attempts=args.qd_memory_cooldown_attempts,
             qd_memory_cooldown_generations=args.qd_memory_cooldown_generations,
             representative_sample=args.representative_sample,
@@ -1003,7 +1004,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--qd_scheduler_mode",
         type=str,
         default="map_elites",
-        choices=["map_elites", "front_guarded_memory"],
+        choices=["map_elites", "front_guarded_memory", "pcn_quality_memory"],
     )
     parser.add_argument(
         "--qd_quality_mode",
@@ -1112,6 +1113,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         choices=[
             "cell_crowded_tournament",
             "front_guarded_memory",
+            "pcn_quality_memory",
             "front_slot_lane_nsga2",
             "nsga2_global_rank",
             "sparse_front_triggered_nsga2",
@@ -1127,6 +1129,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--qd_memory_probe_fraction", type=float, default=0.0)
     parser.add_argument("--qd_memory_min_cell_credit", type=float, default=0.20)
     parser.add_argument("--qd_memory_front_gap_epsilon", type=float, default=0.03)
+    parser.add_argument("--qd_memory_min_valid_ppa", type=int, default=0)
     parser.add_argument("--qd_memory_cooldown_attempts", type=int, default=3)
     parser.add_argument("--qd_memory_cooldown_generations", type=int, default=2)
     parser.add_argument(
