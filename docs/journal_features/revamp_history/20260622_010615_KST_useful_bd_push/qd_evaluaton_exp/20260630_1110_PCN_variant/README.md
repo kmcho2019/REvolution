@@ -23,19 +23,20 @@ QD runs.
 
 ## Current Status
 
-The corrected `smoke_v2` stage finished and is packaged under
-`analysis/smoke_v2/`. PCN-v2 now passes the mechanism sanity checks that the
-old `smoke` failed: the EoH operator stack is preserved and the memory-refine
-lane fires with valid-PPA children.
+The `smoke_v3` stage finished and is packaged under `analysis/smoke_v3/`.
+It is the cleanest PCN result so far: the EoH operator stack is preserved, the
+memory-refine lane fires, and RF memory beats both the random-memory and
+passive-archive controls on mean HV and mean HV-AUC.
 
-The performance result is not yet a scale-up signal. RF memory retains 97.3
-percent of classic mean HV and beats the random-memory control, but it still
-trails classic on mean HV. The passive EoH archive control is slightly ahead
-of both classic and RF memory on this three-problem smoke.
+The result is still not a full scale-up signal. RF memory retains 98.9 percent
+of classic mean HV, but classic remains first on the three-problem smoke. The
+main remaining weakness is `Prob045_alu`, where memory recall adds front
+breadth but still loses area-power hypervolume.
 
-The active next step is `smoke_v3`: the same corrected PCN implementation with
-stagnation-triggered memory recall. It keeps the descriptor and operator stack
-fixed and changes only when memory is allowed to spend one candidate call.
+Current decision: do not launch 20x10 or full RTLLM from this exact variant.
+Either run one discriminative 8-problem screen as a diagnostic, or define a
+smaller PCN-v4 trigger that fires only after stronger stagnation and expected
+front contribution evidence.
 
 ## Core Rule
 

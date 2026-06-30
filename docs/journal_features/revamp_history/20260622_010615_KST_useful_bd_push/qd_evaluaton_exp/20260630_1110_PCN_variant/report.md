@@ -7,25 +7,127 @@ lane never fired.
 
 ## Executive Conclusion
 
-The corrected `smoke_v2` result fixes the implementation problem from the
-first smoke: PCN-v2 uses the EoH operator stack and the memory-refine lane does
-fire. On the three reference-complete smoke problems, RF memory retains 97.3
-percent of classic mean HV and beats the random-memory control on both mean HV
-and mean HV-AUC.
+The corrected PCN ladder has now run three smoke stages. The initial smoke was
+invalid as a PCN test because it did not preserve classic REvolution's EoH
+operator stack and the memory-refine lane never fired. `smoke_v2` fixed those
+mechanism problems. `smoke_v3` then made memory recall more selective by
+requiring stagnation evidence before spending the auxiliary memory call.
 
-That is useful mechanism evidence, but it is not enough to scale the exact
-RF-memory configuration. RF memory still trails classic mean HV
-0.3422 to 0.3518, while the passive EoH archive control is slightly ahead at
-0.3530. The safest conclusion is that PCN-v2 now tests the intended mechanism,
-and the RF descriptor is better than random memory, but active memory recall is
-not yet proven better than conservative EoH search plus passive archive
-accounting.
+`smoke_v3` is the best PCN signal so far. RF stagnation memory retains 98.9
+percent of classic mean HV, beats the random-memory control, and also beats
+the passive EoH archive control on mean HV and mean HV-AUC. The result is
+still not a headline win: classic remains first on mean HV, 0.3471 versus
+0.3432, and the RF memory lane does not yet add global-front or local-front
+candidates.
 
-Next action: do not launch 20x10 or a broader screen from this exact RF-memory
-arm. Define a PCN-v3 smoke that uses the same fixed implementation but makes
-memory recall more selective: passive-first, stagnation-triggered, or
-front-gap-triggered. The next variant should focus on avoiding the `Prob045`
-HV loss while keeping the `Prob036` HV-AUC improvement.
+The current conclusion is narrow but useful: front-guarded PCN is no longer
+collapsing the classic optimizer, and learned RF memory is now better than
+random memory and passive archive logging in this smoke. It is not yet strong
+enough for a 20x10 or full RTLLM launch. The next step should be either a
+diagnostic frozen 8-problem screen or a PCN-v4 trigger that requires stronger
+stagnation and front-contribution evidence before memory recall fires.
+
+## Stagnation Smoke V3
+
+`smoke_v3` used the same three reference-complete problems and `8x5` budget as
+`smoke_v2`:
+
+- `Prob019_sub_64bit`
+- `Prob036_edge_detect`
+- `Prob045_alu`
+
+The new active arms were:
+
+- `pcn_v3_rf_stagnation_memory_8x5`
+- `pcn_v3_random_stagnation_memory_8x5`
+
+Both preserved the corrected PCN-v2 implementation: EoH operators, one-parent
+memory mutation, no two-parent fusion, no descriptor-targeted prompt, and the
+separate classic primary pool. The only policy change was
+`qd_memory_trigger=stagnation` with `qd_memory_target_front_size=2`.
+
+Packaged artifacts:
+
+- `analysis/smoke_v3/summary.md`
+- `analysis/smoke_v3/pcn_method_summary.csv`
+- `analysis/smoke_v3/pcn_problem_summary.csv`
+- `analysis/smoke_v3/pcn_memory_summary.csv`
+- `figures/smoke_v3/`
+- `analysis/smoke_v3/ppa_distribution/`
+
+### Smoke V3 Method Summary
+
+| Method | Covered | Mean HV | Mean HV-AUC | HV retention | Delta HV |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `classic_revolution_8x5` | 3/3 | 0.3471 | 0.3140 | 100.0% | +0.0000 |
+| `pcn_v3_rf_stagnation_memory_8x5` | 3/3 | 0.3432 | 0.3131 | 98.9% | -0.0039 |
+| `pcn_v2_passive_eoh_archive_8x5` | 3/3 | 0.3416 | 0.3080 | 98.4% | -0.0055 |
+| `pcn_v3_random_stagnation_memory_8x5` | 3/3 | 0.3378 | 0.3057 | 97.3% | -0.0092 |
+
+This is a better ordering than `smoke_v2`: the RF memory arm now beats both
+controls. The margin is small, but the direction is meaningful because the
+random-memory control is matched to the same scheduler and the passive arm
+keeps the same EoH archive accounting without spending memory calls.
+
+### Smoke V3 Per-Problem Read
+
+- `Prob019_sub_64bit`: RF, random, and passive are all within a tiny positive
+  margin of classic on final HV. RF has more valid-PPA candidates than classic
+  and reaches slightly higher HV-AUC.
+- `Prob036_edge_detect`: RF, passive, random, and classic tie final HV. This
+  problem no longer separates the methods on final front quality.
+- `Prob045_alu`: RF remains the failure mode, but the loss is smaller than in
+  `smoke_v2`. RF loses 0.0116 HV to classic, while random loses 0.0277 and
+  passive loses 0.0165. RF also has three Pareto points versus one for
+  classic, but those points do not improve area-power hypervolume enough.
+
+### Smoke V3 Mechanism Check
+
+`pcn_v3_rf_stagnation_memory_8x5` passes the basic mechanism gates:
+
+- memory-refine generated one call on all three smoke problems;
+- memory-refine produced one valid-PPA child on all three smoke problems;
+- RF memory beat random memory on mean HV and mean HV-AUC;
+- RF memory beat passive archive logging on mean HV and mean HV-AUC;
+- all classic-covered designs remained covered.
+
+The missing mechanism gate is front productivity. The RF memory lane produced
+valid children, but no global-front or local-front additions. The result
+therefore supports "guarded memory is no longer harmful" more strongly than
+"guarded memory directly adds new Pareto material."
+
+### Smoke V3 Figure Review
+
+The generated `smoke_v3` figures were visually inspected. The mean-HV bar
+chart clearly shows the ordering `classic > RF > passive > random`. The
+delta heatmap makes the central failure mode readable: all methods are neutral
+or slightly positive on `Prob019`, tied on `Prob036`, and negative on
+`Prob045`, with RF least negative among PCN arms. The memory-refine chart
+confirms that RF memory fired on every smoke problem.
+
+The direct PPA panel for `Prob045_alu` is especially useful. It shows that RF
+memory explores more front breadth than classic, but classic still owns the
+most useful area-gain region. That should guide the next variant: memory
+recall must be tied to expected area-power front contribution, not just
+stagnation.
+
+### Smoke V3 Decision
+
+Do not launch 20x10 or full RTLLM from this exact RF stagnation memory arm.
+It is close enough to justify a small diagnostic screen if time permits, but
+the absence of memory-lane front additions is a hard limit on the claim.
+
+Reasonable next options:
+
+- run the frozen 8-problem screen only as a diagnostic for RF-over-random
+  survival;
+- define PCN-v4 with a stricter trigger that requires both scalar stagnation
+  and front stagnation, rather than either one;
+- add a simple expected-benefit guard: memory recall can fire only from cells
+  whose champion is near the global front or whose prior child improved a
+  local/front metric;
+- keep the implementation one-parent and EoH-only until memory produces front
+  material.
 
 ## Corrected Smoke V2
 
