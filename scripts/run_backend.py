@@ -412,6 +412,7 @@ def _build_backend(
             generation_mode=args.generation_mode,
             population_pool_mode=args.population_pool_mode,
             classic_operator_kind=args.classic_operator_kind,
+            eoh_success_operator_set=args.eoh_success_operator_set,
             diff_apply_policy=args.diff_apply_policy,
             diff_max_tokens=args.diff_max_tokens,
             diff_compact_context=args.diff_compact_context,
@@ -946,6 +947,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         type=str,
         default="eoh_strategies",
         choices=["eoh_strategies", "single_thought_operator"],
+    )
+    parser.add_argument(
+        "--eoh_success_operator_set",
+        type=str,
+        default="classic",
+        choices=["classic", "one_parent"],
     )
     parser.add_argument(
         "--qd_archive_type",

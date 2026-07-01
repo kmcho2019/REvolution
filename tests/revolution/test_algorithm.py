@@ -879,7 +879,7 @@ def test_fusion_prompts_cover_expected_scaffolding(base_engine, tmp_path, mode):
 # initialization and evolution
 
 
-def _mk_engine(mocker, tmp_path, pop_size=4, candidate_workers=0):
+def _mk_engine(mocker, tmp_path, pop_size=4, candidate_workers=0, **kwargs):
     mocker.patch.object(EoHEngine, "load_problem_description", return_value="desc")
     llm = MagicMock()
     llm.model_name = "test-model"
@@ -894,10 +894,18 @@ def _mk_engine(mocker, tmp_path, pop_size=4, candidate_workers=0):
         population_size=pop_size,
         base_save_path=str(tmp_path),
         candidate_workers=candidate_workers,
+        **kwargs,
     )
     # Provide a reasonable reference PPA (sequential)
     eng.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 2.0}
     return eng, llm
+
+
+def test_eoh_success_operator_set_one_parent_excludes_cf(mocker, tmp_path):
+    eng, _ = _mk_engine(mocker, tmp_path, eoh_success_operator_set="one_parent")
+
+    assert eng.success_strats == ["M-S", "M-E", "M-R", "M-I"]
+    assert "C-F" not in eng.success_strategy_stats
 
 
 def test_evaluate_candidate_skips_yosys_descriptors_after_synth_fail(

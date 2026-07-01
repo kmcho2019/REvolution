@@ -1313,11 +1313,24 @@ def test_pcn_classic_stagnation_memory_fires_after_stall(
     assert counts["classic"] == 7
 
 
+@pytest.mark.parametrize(
+    ("operator_set", "expected_success_strategies"),
+    [
+        ("classic", ("M-S", "M-E", "M-R", "M-I", "C-F")),
+        ("one_parent", ("M-S", "M-E", "M-R", "M-I")),
+    ],
+)
 def test_pcn_classic_memory_builds_eoh_memory_request(
     tmp_path,
     monkeypatch,
+    operator_set,
+    expected_success_strategies,
 ):
-    engine = _pcn_classic_engine(tmp_path, monkeypatch)
+    engine = _pcn_classic_engine(
+        tmp_path,
+        monkeypatch,
+        eoh_success_operator_set=operator_set,
+    )
     first = _successful_candidate("first", score=1.0, power=0.9, area=90.0, clock=0.8)
     second = _successful_candidate("second", score=2.0, power=0.8, area=80.0, clock=0.7)
     engine._insert_successes([first, second])
@@ -1372,7 +1385,8 @@ def test_pcn_classic_memory_builds_eoh_memory_request(
     assert sum(1 for meta in captured_metadata if meta["qd_memory_lane"] == "memory_refine") == 1
     assert all(meta["strategy"] != "single_thought_operator" for meta in captured_metadata)
     assert all("M-T" not in item and "C-D" not in item for item in seen_success_strategies)
-    assert ("M-S", "M-E", "M-R", "M-I") in seen_success_strategies
+    assert expected_success_strategies in seen_success_strategies
+    assert engine.qd_two_parent_attempts == 0
     assert engine.success_strategy_stats["M-S"]["count"] > 0
 
 

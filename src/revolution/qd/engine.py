@@ -592,7 +592,7 @@ class QDEngine(EoHEngine):
 
     def _qd_success_strategies(self) -> tuple[EvolStrategyMethodSuccess, ...]:
         if self.qd_scheduler_mode == "pcn_classic_preserving_memory":
-            return CLASSIC_SUCCESS_STRATEGIES
+            return self._eoh_success_strategies()
         if self._uses_descriptor_guided_generation():
             return QD_SUCCESS_STRATEGIES
         return CLASSIC_SUCCESS_STRATEGIES
@@ -4737,18 +4737,23 @@ class QDEngine(EoHEngine):
                 )
             for idx in range(success_total_requests):
                 if not self._uses_descriptor_guided_generation():
-                    arity = self._success_parent_arity()
-                    if arity == 2:
-                        success_available = cast(list[EvolStrategyMethodSuccess], ["C-F"])
-                    elif arity == 1:
-                        success_available = cast(
-                            list[EvolStrategyMethodSuccess],
-                            ["M-S", "M-E", "M-R", "M-I"],
-                        )
-                    else:
-                        success_available = list(CLASSIC_SUCCESS_STRATEGIES)
+                    if self._is_pcn_classic_preserving_memory():
+                        success_available = list(self._eoh_success_strategies())
                         if len(self.success_pool) < 2 and "C-F" in success_available:
                             success_available.remove("C-F")
+                    else:
+                        arity = self._success_parent_arity()
+                        if arity == 2:
+                            success_available = cast(list[EvolStrategyMethodSuccess], ["C-F"])
+                        elif arity == 1:
+                            success_available = cast(
+                                list[EvolStrategyMethodSuccess],
+                                ["M-S", "M-E", "M-R", "M-I"],
+                            )
+                        else:
+                            success_available = list(CLASSIC_SUCCESS_STRATEGIES)
+                            if len(self.success_pool) < 2 and "C-F" in success_available:
+                                success_available.remove("C-F")
                     selected_name, prob_dist = self._select_strategy(
                         "success",
                         success_available,

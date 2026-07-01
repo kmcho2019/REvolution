@@ -99,9 +99,16 @@ CLASSIC_SUCCESS_STRATEGIES: tuple[EvolStrategyMethodSuccess, ...] = (
     "M-I",
     "C-F",
 )
+ONE_PARENT_SUCCESS_STRATEGIES: tuple[EvolStrategyMethodSuccess, ...] = (
+    "M-S",
+    "M-E",
+    "M-R",
+    "M-I",
+)
 QD_SUCCESS_STRATEGIES: tuple[EvolStrategyMethodSuccess, ...] = tuple(
     cast(tuple[EvolStrategyMethodSuccess, ...], get_args(EvolStrategyMethodSuccess))
 )
+EOHSuccessOperatorSet = Literal["classic", "one_parent"]
 
 
 # Literal Typing for status
@@ -428,6 +435,7 @@ class EoHEngine:
         champion_metrics_config: list[dict[str, Any]] | None = None,
         population_pool_mode: PopulationPoolMode = "dual",
         classic_operator_kind: str = "eoh_strategies",
+        eoh_success_operator_set: EOHSuccessOperatorSet = "classic",
         require_strict_format: bool = True,
         prompt_profile: str = "default",
         prompt_root: str | None = None,
@@ -512,7 +520,12 @@ class EoHEngine:
             raise ValueError(f"Unsupported classic_operator_kind '{classic_operator_kind}'.")
         if classic_operator_kind == "single_thought_operator" and generation_mode != "whole":
             raise ValueError("classic single_thought_operator supports whole mode only.")
+        if eoh_success_operator_set not in {"classic", "one_parent"}:
+            raise ValueError(
+                f"Unsupported eoh_success_operator_set '{eoh_success_operator_set}'."
+            )
         self.classic_operator_kind = classic_operator_kind
+        self.eoh_success_operator_set: EOHSuccessOperatorSet = eoh_success_operator_set
 
         # Population pool mode + single-pool storage
         self.population_pool_mode: PopulationPoolMode = population_pool_mode
@@ -536,7 +549,7 @@ class EoHEngine:
 
         self.fail_strats: list[EvolStrategyMethodFail] = list(CLASSIC_FAIL_STRATEGIES)
         self.success_strats: list[EvolStrategyMethodSuccess] = list(
-            CLASSIC_SUCCESS_STRATEGIES
+            self._eoh_success_strategies()
         )
         self.fail_strategy_stats: dict[
             EvolStrategyMethodFail, dict[str, int | float]
@@ -578,6 +591,14 @@ class EoHEngine:
         print(f"[EoHEngine] Initialized PromptStore root_dir:{os.path.abspath(pr_root)}, profile:{prompt_profile}.")
         print(f"[EoHEngine] Using PromptStore at root: {self.prompts.root_dir}, profile: {self.prompts.profile}")
 
+    def _eoh_success_strategies(self) -> tuple[EvolStrategyMethodSuccess, ...]:
+        if self.eoh_success_operator_set == "classic":
+            return CLASSIC_SUCCESS_STRATEGIES
+        if self.eoh_success_operator_set == "one_parent":
+            return ONE_PARENT_SUCCESS_STRATEGIES
+        raise AssertionError(
+            f"unknown EoH success operator set: {self.eoh_success_operator_set}"
+        )
 
     def load_problem_description(self) -> str:
         """

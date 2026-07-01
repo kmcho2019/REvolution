@@ -31,6 +31,7 @@ class RevolutionBackendConfig:
     generation_mode: str = "whole"
     population_pool_mode: str = "dual"
     classic_operator_kind: str = "eoh_strategies"
+    eoh_success_operator_set: str = "classic"
     diff_apply_policy: str = "hybrid"
     diff_max_tokens: int = 1024
     diff_compact_context: bool = True
@@ -161,6 +162,7 @@ class RevolutionBackend(EvolutionBackend):
             generation_mode=self.config.generation_mode,
             population_pool_mode=self.config.population_pool_mode,
             classic_operator_kind=self.config.classic_operator_kind,
+            eoh_success_operator_set=self.config.eoh_success_operator_set,
             diff_apply_policy=self.config.diff_apply_policy,
             diff_max_tokens=self.config.diff_max_tokens,
             diff_compact_context=self.config.diff_compact_context,
@@ -332,6 +334,9 @@ class RevolutionBackend(EvolutionBackend):
                         "crossover": self.config.qd_crossover_generation_mode,
                     },
                     "operator": {
+                        "eoh_success_operator_set": (
+                            self.config.eoh_success_operator_set
+                        ),
                         "kind": self.config.qd_operator_kind,
                         "one_parent_fraction": self.config.qd_operator_one_parent_fraction,
                         "archive_context_size": self.config.qd_operator_archive_context_size,
