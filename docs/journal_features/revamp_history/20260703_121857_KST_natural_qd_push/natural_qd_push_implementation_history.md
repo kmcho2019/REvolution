@@ -509,3 +509,21 @@ Load-bearing findings, with sources (paths relative to
   report, dashboard refresh + lineage closure note, viewer bundle,
   figure legend fix, next periodic dual review, adversarial
   validation PASS.
+
+## 2026-07-04 04:20 KST - P3b: gt3d Killed at the 2-Seed Gate; N03b Pair Up
+
+- P3b registered (user-directed amendment: measured ~18-point
+  screen->suite transfer gap downgrades screen-based elimination for
+  near-band arms; the gap itself is a methodology finding).
+- P3b-A graph_testability_3d, seeds 1001+1002 (7132/7122 s, audits
+  green): 2-seed mean HV 0.09140 vs classic 2-seed 0.10448 -> below
+  the registered 0.90x kill threshold (0.09403) -> KILLED per gate;
+  no seeds 1003-1005.
+- Characterization datum worth keeping: gt3d covered 34 designs on
+  BOTH seeds — more than classic (33/33) and V2 (32/33). The
+  healthier-archive/more-coverage/less-HV pattern from the screen
+  holds at suite scale: descriptor semantics move coverage, not HV,
+  on this platform.
+- P3b-B (N03b front-slot lane 0.30) pair launched (seeds 1001+1002)
+  with per-seed preflights; same gate applies. P3b-C (compact_8d+CVT)
+  remains contingent and currently unjustified.
