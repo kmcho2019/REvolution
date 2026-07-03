@@ -482,3 +482,30 @@ Load-bearing findings, with sources (paths relative to
 - Discipline note (symmetry): no verdict from n=1 in either direction;
   the registered ladder proceeds. Seeds 1002+1003 launched as a
   co-scheduled pair with per-seed preflights.
+
+## 2026-07-04 01:30 KST - P3 COMPLETE: Five-Seed Verdict (two-scale story)
+
+- All five seeds packaged and audited; classic recompute matches the
+  pinned 5-seed baseline exactly (0.103802). Verdict doc:
+  `p3_full_rtllm/five_seed_verdict.md`.
+- Full-suite result: HV 95.2% (per-seed 86.9/102.8/97.8/97.5/92.0 —
+  1W/4L, jackpot-dominated), HV-AUC 100.5% (tie), coverage 166 vs 164
+  (V2 edge; >= classic on 4/5 seeds). Interim contract-form stats:
+  mean log-ratio +0.0298 < gate 0.0488, CI [-0.73, +0.76] — the +5%
+  gate FAILS at full scale; canonical report_journal_statistics run is
+  a P4 item.
+- THE PUSH'S FINDING (two-scale, both directions operator-fair and
+  seed-replicated): the natural QD extension WINS at screening scale
+  (+12.9% HV, 3/3 seeds) and lands at no-cost parity with a coverage
+  edge at full-suite scale, where outcomes are LLM-capability-bound
+  (F18-F32 consistent). The June negative map's contamination is what
+  hid the win; the June validity tax is absent in V2.
+- Consequence: journal posture = characterization with a positive,
+  replicated, scale-scoped win + contamination forensics + no-cost
+  full-scale overlay; Branch-B utility-metric analysis over V2/N03b
+  archives is the remaining full-scale upside. N04/N06-w2/N02b remain
+  open follow-ups, not blockers.
+- P4 remaining: canonical contract statistics, central comparison
+  report, dashboard refresh + lineage closure note, viewer bundle,
+  figure legend fix, next periodic dual review, adversarial
+  validation PASS.
