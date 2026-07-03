@@ -1,0 +1,43 @@
+# T86 Front-Guarded Memory Controls
+
+T86 is the next control lane after T85. It keeps the front-guarded memory
+scheduler but asks whether descriptor-indexed memory is doing more than random
+retention.
+
+Status: completed smoke; control-negative; not promoted.
+
+## Purpose
+
+T85 showed that exact `sr_pca_3d` FG-QDM is not spend-ready. Before swapping in
+another descriptor, T86 tests a stricter control:
+
+1. run random-memory FG-QDM under the same scheduler and smoke subset;
+2. compare SR-memory FG-QDM against random-memory FG-QDM;
+3. only if SR memory beats random memory, spend on a verified descriptor swap.
+
+## Evidence Package
+
+- [methodology.md](methodology.md)
+- [commands/run_t86_front_guarded_memory_controls.md](commands/run_t86_front_guarded_memory_controls.md)
+- [artifacts_manifest.md](artifacts_manifest.md)
+- [results_report.md](results_report.md)
+- [tables/](tables/)
+- [figures/](figures/)
+- [analysis/](analysis/)
+
+## Descriptor Profile
+
+Use the existing deterministic random-hash control profile:
+
+`docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/00_random_descriptor/descriptor_profile.yaml`
+
+It defines `random_hash_3d` from `random_hash_0`, `random_hash_1`, and
+`random_hash_2` over canonical synthesized-netlist hashes.
+
+## Result
+
+The random-memory smoke completed on the same three problems as T85. Classic
+still wins mean HV (`0.1903`), while random-memory FG-QDM reaches `0.1382` and
+SR-memory FG-QDM reaches `0.1375`. Random memory also has more front material
+than SR memory on this smoke, so exact `sr_pca_3d` memory does not beat the
+random control.
