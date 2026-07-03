@@ -36,7 +36,11 @@ def _write_problem(
     problem_dir.mkdir(parents=True)
     lines = [
         json.dumps(
-            {"generation": generation, "strategy_counts_this_generation": counts}
+            {
+                "generation": generation,
+                "strategy_counts_this_generation": counts,
+                "llm_api_calls": sum(counts.values()),
+            }
         )
         for generation, counts in enumerate(strategy_counts)
     ]
@@ -79,6 +83,43 @@ def test_clean_qd_run_passes(tmp_path: Path) -> None:
     report = json.loads(output.read_text(encoding="utf-8"))
     assert report["status"] == "pass"
     assert report["errors"] == []
+    assert report["llm_api_calls"] == {"Prob024_fsm": 14, "TOTAL": 14}
+
+
+def test_expect_config_matches_and_mismatches(tmp_path: Path) -> None:
+    run_root = tmp_path / "run"
+    _write_problem(
+        run_root, "RTLLM", "Prob024_fsm", [{"initial": 8}], qd_artifacts=True
+    )
+    config_dir = run_root / "openai_gpt-oss-120b"
+    (config_dir / "20260703_x_revolution_config.yaml").write_text(
+        "qd_num_cells: 16\nqd_max_elites_per_cell: 5\nseed: 1001\n",
+        encoding="utf-8",
+    )
+    manifest = tmp_path / "manifest.csv"
+    _write_manifest(manifest, [("RTLLM", "Prob024_fsm")])
+    output = tmp_path / "report.json"
+    ok = validate_natural_qd_run.main(
+        [
+            "--run-root", str(run_root), "--manifest", str(manifest),
+            "--arm", "qd", "--output", str(output),
+            "--expect-config", "qd_num_cells=16",
+            "--expect-config", "seed=1001",
+        ]
+    )
+    assert ok == 0
+    bad = validate_natural_qd_run.main(
+        [
+            "--run-root", str(run_root), "--manifest", str(manifest),
+            "--arm", "qd", "--output", str(output),
+            "--expect-config", "qd_num_cells=64",
+            "--expect-config", "qd_missing_key=1",
+        ]
+    )
+    assert bad == 1
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert any("qd_num_cells" in error for error in report["errors"])
+    assert any("qd_missing_key" in error for error in report["errors"])
 
 
 def test_thought_mutation_allowed_for_qd_forbidden_for_classic(

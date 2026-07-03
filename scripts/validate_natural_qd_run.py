@@ -11,7 +11,12 @@ Checks, per the natural_qd_push plan (2026-07-03):
   suite accepted it, and the audit CSV keeps its count visible);
 - QD arms (``--arm qd``) carry ``archive_summary.json`` and
   ``qd_metrics.json`` in every problem dir; classic arms
-  (``--arm classic``) carry neither.
+  (``--arm classic``) carry neither;
+- every ``--expect-config KEY=VALUE`` matches the run's resolved
+  ``*_revolution_config.yaml`` (the registered-card-vs-run guard that
+  the unfaithful first anchor showed is needed);
+- per-problem and total ``llm_api_calls`` are reported (budget-parity
+  visibility; informational, not a gate).
 
 Writes a JSON report and exits nonzero on any violation.
 """
@@ -22,6 +27,8 @@ import argparse
 import csv
 import json
 from pathlib import Path
+
+import yaml
 
 EOH_STRATEGIES = frozenset({"M-S", "M-R", "M-I", "C-F", "M-E", "M-F"})
 ALLOWED_BY_ARM = {
@@ -49,6 +56,37 @@ def problem_dirs(run_root: Path) -> dict[tuple[str, str], Path]:
     return found
 
 
+def config_errors(run_root: Path, expected: list[str]) -> list[str]:
+    """Check KEY=VALUE expectations against the resolved run config."""
+    if not expected:
+        return []
+    config_paths = sorted(run_root.rglob("*_revolution_config.yaml"))
+    if not config_paths:
+        return ["no *_revolution_config.yaml under run root"]
+    config = yaml.safe_load(config_paths[0].read_text(encoding="utf-8"))
+    assert isinstance(config, dict)
+    errors: list[str] = []
+    for item in expected:
+        key, _, want = item.partition("=")
+        assert want, f"--expect-config needs KEY=VALUE, got {item!r}"
+        if key not in config:
+            errors.append(f"config key {key!r} missing")
+        elif str(config[key]) != want:
+            errors.append(f"config {key}={config[key]!r}, expected {want!r}")
+    return errors
+
+
+def llm_call_totals(problem_dirs: dict[tuple[str, str], Path]) -> dict[str, int]:
+    """Sum generation-log llm_api_calls per problem (budget visibility)."""
+    totals: dict[str, int] = {}
+    for (_, problem), problem_dir in sorted(problem_dirs.items()):
+        lines = (problem_dir / "generation_log.jsonl").read_text(encoding="utf-8")
+        rows = [json.loads(line) for line in lines.splitlines() if line.strip()]
+        totals[problem] = sum(int(row["llm_api_calls"]) for row in rows)
+    totals["TOTAL"] = sum(totals.values())
+    return totals
+
+
 def strategy_errors(problem_dir: Path, arm: str) -> list[str]:
     """Aggregate per-generation strategy counts and flag forbidden ones."""
     allowed = ALLOWED_BY_ARM[arm]
@@ -74,6 +112,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--run-root", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--arm", choices=["classic", "qd"], required=True)
+    parser.add_argument(
+        "--expect-config",
+        action="append",
+        default=[],
+        help="KEY=VALUE to assert against the resolved run config YAML.",
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     assert args.run_root.is_dir(), args.run_root
@@ -81,6 +125,7 @@ def main(argv: list[str] | None = None) -> int:
     manifest = load_manifest(args.manifest)
     found = problem_dirs(args.run_root)
     errors: list[str] = []
+    errors.extend(config_errors(args.run_root, args.expect_config))
 
     for key in manifest:
         if key not in found:
@@ -106,6 +151,10 @@ def main(argv: list[str] | None = None) -> int:
         "manifest": str(args.manifest),
         "checked_problems": len(manifest),
         "found_problems": len(found),
+        "expected_config": list(args.expect_config),
+        "llm_api_calls": llm_call_totals(
+            {key: path for key, path in found.items() if key in set(manifest)}
+        ),
         "errors": errors,
         "status": "fail" if errors else "pass",
     }
