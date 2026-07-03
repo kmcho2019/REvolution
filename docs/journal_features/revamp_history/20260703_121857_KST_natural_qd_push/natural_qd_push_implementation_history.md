@@ -387,3 +387,19 @@ Load-bearing findings, with sources (paths relative to
   design — the plan gate defines full-RTLLM eligibility, the
   registered rule picks the single P3 arm. Recorded here to prevent
   the next conflation.
+
+## 2026-07-03 18:40 KST - Concurrency Policy (user question, telemetry-decided)
+
+- User asked whether we exploit the 64-core box (budget ~48) with
+  flexible workers. Telemetry answer: the elastic scheduler is active
+  (32 slots / 8 problems / 4-per-problem with borrowing), but the V2
+  anchor shows 22% mean occupancy, peak 14/32 busy, zero shortfall —
+  local eval is NOT the bottleneck; LLM generation latency is.
+- Versioned policy recorded (`tables/concurrency_policy.md`): per-arm
+  settings stay pinned 32/8/4 (comparability + no benefit); speedup
+  comes from co-running up to TWO arms (observed combined peak ~28
+  busy workers, inside the 48-core budget), with an M12-style
+  validity-funnel guard on the first co-scheduled pair vs solo twins,
+  per-run pairing records, and an endpoint-courtesy fallback to
+  sequential. Applies from the next batch (chain 2 is mid-flight
+  sequential and stays so).
