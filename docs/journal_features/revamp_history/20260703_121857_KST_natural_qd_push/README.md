@@ -51,6 +51,8 @@ Deltas vs those policies are listed in `natural_qd_push_plan.md`
 
 - Lane packages live in `lanes/N##_<slug>/` here (methodology, results,
   figures, tables), numbered `N01..` to avoid colliding with the June-22
-  T-series. Registry: `lanes/lane_registry.csv`.
+  T-series. Registry: `lanes/lane_registry.csv`; approachable per-lane
+  summary with standings tables: `lanes/README.md` (refresh on every
+  lane read).
 - Run outputs: `exp/natural_qd_push/<lane>/<timestamp>/...` (gitignored).
 - Reused classic baselines are pinned in `tables/` before the first live run.
