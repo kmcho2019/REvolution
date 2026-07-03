@@ -26,18 +26,25 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 
 | Lane | Arm | Mean HV | vs classic | vs V2 | Status |
 | --- | --- | --- | --- | --- | --- |
+| **N03** | **front_slot_lane_030** | **0.18486** | **+31.4%** | **+6.4%** | **LEADER — 3-seed promotion test running** |
 | N01 | elite_pareto_slot_2 | 0.15709 | +11.7% | -9.6% | diagnostic keeper |
-| N01 | scalar_elite (control) | 0.14683 | +4.4% | -15.5% | diagnostic keeper |
-| N02 | curiosity gamma 1.0 | running (chain 2) | - | - | in flight |
-| N03 | front-slot lane 0.10 / 0.30 | running (chain 2) | - | - | in flight |
-| N04 | budget shape | not started | - | - | registered draft |
-| N05 | warmup_4 | 0.14927 | +6.1% | -14.1% | closed |
+| N02 | curiosity gamma 1.0 | 0.15449 | +9.8% | -11.1% | KILL (coverage 7/8); gamma 0.5 retry registered |
+| N06 | graph_testability_3d | 0.15195 | +8.0% | -12.6% | diagnostic keeper (best challenger; trio wins) |
 | N05 | warmup_16 | 0.16383 | +16.5% | -5.7% | parked |
-| N06 | 3 wave-1 profiles | running (chain 2) | - | - | in flight, QUARANTINED until real probes |
+| N05 | warmup_4 | 0.14927 | +6.1% | -14.1% | closed |
+| N01 | scalar_elite (control) | 0.14683 | +4.4% | -15.5% | diagnostic keeper |
+| N03 | front_slot_lane_010 | 0.14160 | +0.7% | -18.5% | closed (weak lane hurts) |
+| N06 | size_control_3d | 0.14129 | +0.5% | -18.7% | closed |
+| N06 | random_hash_3d (floor) | 0.13457 | -4.3% | -22.6% | control closed (health-vs-HV finding) |
+| N04 | budget shape | not started | - | - | registered draft |
 | N07 | corrected-suite completion | not started | - | - | conditional |
-| N08 | combination | blocked | - | - | needs a single-factor winner |
+| N08 | combination | blocked | - | - | needs replicated winners |
 
-No lane has displaced V2 yet; V2 remains the registered promotion arm.
+**N03b (front_slot_lane_030) is the first arm to clear the
+promotion-rule bar at seed 1001 (+6.4% HV, +8.0% HV-AUC over V2, more
+Pareto points, coverage 8/8).** Seeds 1002/1003 are running as the
+first co-scheduled pair; if the 3-seed read holds >2% on both metrics,
+N03b displaces V2 as the P3 promotion arm.
 
 ---
 
@@ -76,12 +83,14 @@ engine.
 | Sub-track | Status | Result |
 | --- | --- | --- |
 | Engine + unit tests | done | 11 tests; pool ordering mirrors V2; gamma required-and-only-valid for the natural mode |
-| Bounded live smoke (1 problem, 4x1, seed 42) | done | 107 s, config confirms natural mode + gamma 1.0, archive artifacts written; never evidence |
-| Full screen, gamma 1.0, seed 1001 | running (chain 2) | pending |
-| gamma 0.5 (N02b) | registered | only if gamma 1.0 shows signal |
+| Bounded live smoke (1 problem, 4x1, seed 42) | done | 107 s, clean; never evidence |
+| Full screen, gamma 1.0, seed 1001 | done | HV 0.15449 (+9.8% classic, -11.1% V2) but **coverage 7/8 — HARD-GATE KILL** (gshare lost, 0 valid-PPA) |
+| gamma 0.5 (N02b) | registered retry | the exploration-tax case the card anticipated; reduced priority |
 
-**Takeaway so far:** mechanism is live and contract-clean; verdict
-pending.
+**Takeaways:** curiosity weighting taxes exactly the problem that
+needs concentrated exploitation (the largest design, gshare) into
+zero valid candidates — a mechanism negative, not an implementation
+failure; the engine stays. One gamma-0.5 retry, then retire.
 
 ## N03 — Archive Parent Lane (`N03_archive_parent_lane/`)
 
@@ -91,15 +100,20 @@ front-slot pool only exists under `elite_pareto_slot` cells, so N03
 runs on the N01a cell mode and is attributed against N01a (recorded
 two-factor exception vs V2).
 
-| Arm | Lane fraction | Status |
-| --- | --- | --- |
-| N03a | 0.10 | running (chain 2) |
-| N03b | 0.30 | running (chain 2) |
+| Arm | Lane fraction | Mean HV | vs N01a | vs V2 | HV-AUC | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| N03a | 0.10 | 0.14160 | -9.9% | -18.5% | 0.12570 | closed (weak lane hurts) |
+| **N03b** | **0.30** | **0.18486** | **+17.7%** | **+6.4%** | **0.15511 (+8.0%)** | **promotion test: seeds 1002/1003 running** |
 
-**Takeaway so far:** the pre-launch dependency catch (a bare V2+lane
-arm would have silently drawn nothing) is itself the lane's first
-result — command cards are audited against engine semantics before
-spend.
+**Takeaways:** N03b is the first arm past the promotion bar at seed
+1001 — on both metrics, with MORE Pareto points than V2 (2.875 vs
+2.625; the front-breadth deficit narrows). It is the T36
+one-front-slot mechanism plus a strong fixed archive-front parent
+lane, operator-fair at last (the old T54/T75 negatives were
+contaminated). Fraction response is non-monotone at n=1 (0.10 hurts,
+0.30 leads) — no fraction scanning; replication decides. The earlier
+pre-launch dependency catch (a bare V2+lane arm silently draws
+nothing) remains a process win.
 
 ## N04 — Budget Shape (`N04` — no directory yet)
 
@@ -136,20 +150,27 @@ theoretically grounded behavior space beat the frozen trio
 platform (F12's negative was radical-regime evidence), while the
 trio's collapse on small control logic is substrate-independent.
 
-| Sub-track | Profile | Theory | Status |
-| --- | --- | --- | --- |
-| Wave 1 | journal_graph_testability_3d | cyclomatic + reconvergence + SCOAP testability | running (chain 2), QUARANTINED |
-| Wave 1 | size_control_3d | structural control bar | running (chain 2), QUARANTINED |
-| Wave 1 | random_hash_3d | falsification floor (random is not weak — T22) | running (chain 2), QUARANTINED |
-| Wave 2 | theory_grounded_compact_8d + CVT | SCOAP histograms + Laplacian spectral entropy; zero collapses operator-fair | registered; full probe before launch |
-| Follow-up | SR ReLU PCA (T19 family) | behavior-distribution embedding | registered idea; needs frozen-projection spec |
+| Sub-track | Profile | Mean HV | vs V2 | Collapsed probs | Occupied cells | Verdict |
+| --- | --- | --- | --- | --- | --- | --- |
+| ref | V2 trio | 0.17376 | - | 6/8 | 41 | winner despite worst health |
+| Wave 1 | journal_graph_testability_3d | 0.15195 | -12.6% | 4/8 | 51 | diagnostic keeper (best challenger) |
+| Wave 1 | size_control_3d | 0.14129 | -18.7% | 3/8 | 37 | closed |
+| Wave 1 | random_hash_3d (floor) | 0.13457 | -22.6% | 0/8 | 70 | control closed |
+| Wave 2 | theory_grounded_compact_8d + CVT | registered | - | - | - | reduced priority; full probe first |
+| Follow-up | SR ReLU PCA (T19 family) | registered idea | - | - | - | needs frozen-projection spec |
 
-**Quarantine (codex review):** the pre-launch probes were
-metadata-only, weaker than the card's sampled-extraction gate; wave-1
-live results carry no tier decisions until real probe artifacts
-(per-candidate values, collapse counts, occupied cells) are packaged
-from the runs and pass. A challenger must beat BOTH the V2 trio
-anchor AND the random floor, with archive-health co-reads.
+**Quarantine LIFTED** (real probe artifact:
+`probes/live_probe_summary.csv` from the runs' descriptor_health
+data). **Headline findings:** the frozen trio survives its first
+operator-fair challenge, winning both metrics DESPITE the worst
+collapse health (6/8 degenerate problems) — while the random floor
+keeps the healthiest, widest archive (0 collapses, 70 cells) and
+scores worst. Archive health and HV anti-correlate on this platform:
+occupancy is not the lever. Descriptor semantics still order the
+challengers (testability > size control > random). Also observed:
+challenger spaces trigger the engine's C-D/M-T fill lanes that the
+trio never fires — descriptor choice changes the effective operator
+mix (visible in operator_contract.csv).
 
 ## N07 — Corrected-Suite Completion (`N07` — no directory yet)
 

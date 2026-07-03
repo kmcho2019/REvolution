@@ -403,3 +403,41 @@ Load-bearing findings, with sources (paths relative to
   per-run pairing records, and an endpoint-courtesy fallback to
   sequential. Applies from the next batch (chain 2 is mid-flight
   sequential and stays so).
+
+## 2026-07-03 19:50 KST - Chain 2 Reads: N03b BEATS V2; C-D Ruling; N06 Verdict
+
+- Chain 2 completed exit 0 (6 arms); all packaged with the standard
+  chain; all operator audits pass (zero single-thought everywhere).
+- **C-D ruling (versioned, extends the M-T ruling):** challenger-
+  descriptor arms emitted `C-D` (15-25 candidates) — the QD engine's
+  diverse-parent crossover in fill/backfill phases
+  (engine.py:4787-4808, `_sample_diverse_success_parents`), a
+  tuple-individual operator in the same engine-lane family as M-T.
+  Ruled admissible for QD arms; validator allowlist extended
+  (test updated); audits keep counts visible. Trio-based arms fired
+  zero C-D — descriptor choice changes the effective operator mix.
+- **N03b front_slot_lane_030 = 0.18486 mean HV / 0.15511 HV-AUC —
+  first arm past the promotion bar at seed 1001** (+6.4% / +8.0% over
+  V2, both >2%; coverage 8/8; Pareto points 2.875 > V2's 2.625).
+  N03a (0.10) closed: 0.14160, loses to its own no-lane base.
+  Non-monotone fraction response flagged; no scanning. Seeds
+  1002/1003 launched IMMEDIATELY as the first co-scheduled pair under
+  the concurrency policy (M12 funnel guard applies at read time).
+- **N02a curiosity gamma 1.0: HARD-GATE KILL** — coverage 7/8
+  (gshare 0 valid-PPA; classic covers it); HV 0.15449 / 8-normalized
+  HV-AUC 0.12919. Cause: exploration-tax on the hardest design.
+  Registered gamma-0.5 retry stands at reduced priority; the
+  qd_natural engine stays (mechanism negative, not implementation).
+- **N06 wave-1: quarantine LIFTED** via the real probe artifact
+  (`lanes/N06_descriptor_bakeoff/probes/live_probe_summary.csv`:
+  extraction 8/8 problems per arm, per-axis unique counts, collapse
+  states). Verdict: trio wins both metrics against all challengers
+  (graph_testability 0.15195 > size_control 0.14129 > random 0.13457)
+  DESPITE the worst collapse health (trio 6/8 degenerate; random 0/8
+  with 70 occupied cells and the worst HV). Archive health and HV
+  anti-correlate on this platform at this seed — occupancy is not the
+  lever. Wave 2 (compact_8d+CVT) drops to reduced priority behind the
+  N03b promotion test.
+- Persistence accounting: 8 lanes registered, 6 with live results, 11
+  measured arms across 5 mechanism families; the >=8-packages bar is
+  met at arm level with diagnoses recorded for every kill.
