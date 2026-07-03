@@ -61,8 +61,11 @@ def config_errors(run_root: Path, expected: list[str]) -> list[str]:
     if not expected:
         return []
     config_paths = sorted(run_root.rglob("*_revolution_config.yaml"))
-    if not config_paths:
-        return ["no *_revolution_config.yaml under run root"]
+    if len(config_paths) != 1:
+        return [
+            f"expected exactly one resolved *_revolution_config.yaml under "
+            f"run root, found {len(config_paths)}"
+        ]
     config = yaml.safe_load(config_paths[0].read_text(encoding="utf-8"))
     assert isinstance(config, dict)
     errors: list[str] = []

@@ -120,6 +120,20 @@ def test_expect_config_matches_and_mismatches(tmp_path: Path) -> None:
     report = json.loads(output.read_text(encoding="utf-8"))
     assert any("qd_num_cells" in error for error in report["errors"])
     assert any("qd_missing_key" in error for error in report["errors"])
+    # ambiguous run roots (two resolved configs) must fail, not pick one
+    (config_dir / "20260704_y_revolution_config.yaml").write_text(
+        "qd_num_cells: 16\n", encoding="utf-8"
+    )
+    ambiguous = validate_natural_qd_run.main(
+        [
+            "--run-root", str(run_root), "--manifest", str(manifest),
+            "--arm", "qd", "--output", str(output),
+            "--expect-config", "qd_num_cells=16",
+        ]
+    )
+    assert ambiguous == 1
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert any("exactly one" in error for error in report["errors"])
 
 
 def test_thought_mutation_allowed_for_qd_forbidden_for_classic(
