@@ -1,4 +1,4 @@
-# Smooth-QD V2 Platform Config (pinned 2026-07-03)
+# Smooth-QD V2 Platform Config (pinned 2026-07-03, corrected same day)
 
 The platform every lane extends. Reconstructed from tracked sources
 because the original launchers (`exp/smooth_qd_*_launch.sh`,
@@ -11,12 +11,35 @@ because the original launchers (`exp/smooth_qd_*_launch.sh`,
   from the qd_target arm by exactly `--representation_kind code_individual`
   + `--qd_operator_kind eoh_strategies` + `--qd_champion_lane_fraction 0.5`
   + `--qd_parent_selection {cell_crowded_tournament|nsga2_global_rank}`;
-  all other qd_target flags carry over (`--qd_cell_mode pareto_front`,
-  `--qd_archive_type grid_quantile`,
-  `--qd_descriptor_profile journal_logic_ff_width_3d`,
-  `--qd_rebinning_kind ks_triggered`).
+  every other qd_target flag carries over.
+- The authoritative qd_target flag VALUES:
+  `.../20260618_briefing/exp_artifacts/01_integrated_v2_vs_classic/
+  config_hard_subset_adaptive_rebinning.yaml` (`rebin_on` mode):
+  `qd_num_cells 16`, `qd_grid_quantile_warmup_successes 8`,
+  `qd_cell_mode pareto_front`, `qd_max_elites_per_cell 5`,
+  `qd_objectives ppa`, `qd_rebinning_kind ks_triggered` with recent 3 /
+  min members 20 / cooldown 3 / p 0.05, `qd_fill_target_fraction 0.25`,
+  `qd_cell_reservoir 2`. The single-thought-only knobs
+  (`qd_two_parent_probability`, `qd_operator_one_parent_fraction`,
+  `qd_operator_archive_context_size`,
+  `qd_operator_two_parent_allow_intra_bin`) are inert under
+  `eoh_strategies` and are not passed.
 
-## V2 flag set (delta vs a classic run)
+Correction note (2026-07-03): the first pin omitted three non-default
+values (`qd_num_cells 16` vs current default 64;
+`qd_grid_quantile_warmup_successes 8` vs 20; `qd_max_elites_per_cell 5`
+vs 1). The first anchor launch used that unfaithful pin and was stopped
+~10 minutes in; its root is quarantined at
+`exp/natural_qd_push/p0_v2_anchor_20260703_041010_UTC_INTERRUPTED_UNFAITHFUL/`
+and must not be interpreted.
+
+Evaluation-surface ruling: the June-12 matrix ran
+`evaluation_mode search_accelerated`; the June-25 screen comparator ran
+`strict_ablation`. Evaluation flow must match between compared arms, so
+screen-scale anchor and lane runs use `strict_ablation` (the screen
+surface); the V2 platform is defined by its mechanism flags below.
+
+## V2 flag set (delta vs a classic run on the same surface)
 
 ```
 --search_mode revolution_qd
@@ -24,14 +47,19 @@ because the original launchers (`exp/smooth_qd_*_launch.sh`,
 --qd_operator_kind eoh_strategies
 --qd_champion_lane_fraction 0.5
 --qd_parent_selection nsga2_global_rank
---qd_cell_mode pareto_front
 --qd_archive_type grid_quantile
 --qd_descriptor_profile journal_logic_ff_width_3d
+--qd_num_cells 16
+--qd_grid_quantile_warmup_successes 8
+--qd_cell_mode pareto_front
+--qd_max_elites_per_cell 5
 --qd_rebinning_kind ks_triggered
 ```
 
-All other `qd_*` knobs stay at repo defaults; the anchor run's launch log
-records the fully resolved argument set and is the binding artifact.
+Remaining `qd_*` knobs match the YAML at current repo defaults
+(`qd_objectives ppa`, `qd_fill_target_fraction 0.25`,
+`qd_cell_reservoir 2`, rebinning 3/20/3/0.05); the anchor run's launch
+log records the fully resolved argument set and is the binding artifact.
 
 ## Anchor command (8-design screen, matches the June-25 classic card)
 
@@ -63,9 +91,12 @@ uv run python scripts/run_backend.py \
   --qd_operator_kind eoh_strategies \
   --qd_champion_lane_fraction 0.5 \
   --qd_parent_selection nsga2_global_rank \
-  --qd_cell_mode pareto_front \
   --qd_archive_type grid_quantile \
   --qd_descriptor_profile journal_logic_ff_width_3d \
+  --qd_num_cells 16 \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
   --qd_rebinning_kind ks_triggered \
   --save_path "${RUN_ROOT}/smooth_qd_v2_8x5/seed_1001"
 ```

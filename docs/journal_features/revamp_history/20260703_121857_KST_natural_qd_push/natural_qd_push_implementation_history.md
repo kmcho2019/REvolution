@@ -155,3 +155,41 @@ Load-bearing findings, with sources (paths relative to
 - Comparator: reused classic seed-1001 metrics (mean HV
   0.14064478405974706) from `tables/classic_baselines.csv`; no classic
   relaunch.
+
+## 2026-07-03 13:20 KST - V2 Pin Corrected; Anchor Relaunched
+
+- While pre-registering N01, found the authoritative qd_target flag
+  values in `20260618_briefing/exp_artifacts/01_integrated_v2_vs_classic/
+  config_hard_subset_adaptive_rebinning.yaml`: `qd_num_cells 16`,
+  `qd_grid_quantile_warmup_successes 8`, `qd_max_elites_per_cell 5`
+  (matching the narrative's "bounded per-cell Pareto fronts holding <=5
+  elites"). The first pin had left these at current repo defaults
+  (64 / 20 / 1) — three material infidelities.
+- Stopped the first anchor ~10 minutes in; quarantined its root as
+  `exp/natural_qd_push/p0_v2_anchor_20260703_041010_UTC_INTERRUPTED_
+  UNFAITHFUL/` (not a result; must not be interpreted).
+- Ruling recorded in the pin: screen-scale runs keep the June-25
+  screen's `strict_ablation` evaluation surface (comparability with the
+  pinned classic baselines beats matching the June-12 matrix's
+  `search_accelerated`); the V2 platform is defined by mechanism flags.
+- Relaunched with the corrected flag set (fresh preflight recorded:
+  `openai/gpt-oss-120b`, 131072):
+  `exp/natural_qd_push/p0_v2_anchor_20260703_041511_UTC/live/
+  smooth_qd_v2_8x5/seed_1001`, log `launch_smooth_qd_v2_seed1001.log`.
+- Lane-relevant knob semantics confirmed while checking:
+  `qd_parent_selection=front_slot_lane_nsga2` already implements the N03
+  mechanism (fixed archive-front parent lane on top of the NSGA-II pool,
+  `engine.py:_sample_success_parents`), so N03 is config-only.
+- N01 redefinition forced by the faithful platform: V2 already runs
+  `pareto_front` cells with 5 elites, so "add per-cell Pareto slots" is
+  not a delta. N01 becomes the cell-retention-mode family, single factor
+  = `qd_cell_mode` (+ its paired capacity): N01a `elite_pareto_slot`
+  with `qd_max_elites_per_cell 2` (the T36/T37 one-bounded-front-slot
+  semantic, +4.04% replay HV, never run live operator-fair), N01b
+  `scalar_elite` control (isolates whether V2's Pareto-cell retention
+  contributes anything — F5 left this inconclusive at +0.013). Registry
+  updated.
+- N05 maps to the grid-quantile warmup length
+  (`qd_grid_quantile_warmup_successes`, platform value 8; arms 4 and
+  16). Exact single-factor definitions go in the registration cards
+  before any launch.
