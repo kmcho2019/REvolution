@@ -468,3 +468,17 @@ Load-bearing findings, with sources (paths relative to
   classic 5-seed roots (0.10380/0.08680) and classic_no_cf
   (0.10685/0.09459). Ladder: seed 1001 -> 1002-1005 -> contract stats;
   weak single-seed reads do not stop the ladder.
+
+## 2026-07-03 22:35 KST - P3 Seed-1001: V2 Trails at This Seed; Ladder Continues
+
+- Seed-1001 full-suite read (`p3_full_rtllm/seed_1001/read_note.md`):
+  V2 0.09677 vs classic-root 0.11140 mean HV (-13.1%); AUC -7.7%;
+  coverage 32 vs 33; W/L/T 6/9/31. All audits/validations green.
+- Decomposition: ~80% of the gap is a single classic jackpot
+  (Prob036_edge_detect 0.8947 vs 0.3559); coverage miss =
+  Prob039_serial2parallel. Comparator-variance context: this classic
+  root scores 0.11140 while the 20260630 run of the SAME config scored
+  0.0997 — single-seed spread exceeds the judged deltas.
+- Discipline note (symmetry): no verdict from n=1 in either direction;
+  the registered ladder proceeds. Seeds 1002+1003 launched as a
+  co-scheduled pair with per-seed preflights.
