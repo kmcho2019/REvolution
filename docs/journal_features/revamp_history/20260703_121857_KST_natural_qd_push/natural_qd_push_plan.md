@@ -164,7 +164,11 @@ Controls always available: matched classic (reused), V2 platform (P0 run),
   (preflight verified 2026-07-03, `max_model_len=131072`). Preflight and
   record `/v1/models` before every live batch; `--max_tokens 128000
   --diff_max_tokens 128000 --vllm_min_model_len 128000`; temperature 1.0,
-  top_p 1.0; `search_accelerated` evaluation as in the June-22 screens.
+  top_p 1.0. Correction 2026-07-03 (periodic review F-1): screen runs
+  use `strict_ablation` evaluation — the June-25 screen comparator's
+  surface — not `search_accelerated` (which the June-12 matrix used);
+  ruling recorded in `tables/v2_platform_config.md` before the anchor
+  relaunch. Evaluation mode must always match the compared classic arm.
 - Screening: the June-22 frozen 8-design 8x5 surface (pin the exact
   manifest from `preliminary_planning/20260625_encoder_config_screening/`
   tables into `tables/` here during P0, before any run). Seed ladder:

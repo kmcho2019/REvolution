@@ -245,3 +245,43 @@ Load-bearing findings, with sources (paths relative to
   was hand-typed and had two wrong trailing digit runs; caught and
   replaced by the scripted generator before commit (rubric rule: no
   hand-copied numbers).
+
+## 2026-07-03 15:25 KST - P1 Chain Launched; P3 De-Risked; Review Running
+
+- P1 screen chain launched sequentially in one background job: N01a
+  elite_pareto_slot_2, N01b scalar_elite, N05a warmup_4, N05b warmup_16
+  (all seed 1001, per registered cards), then the N02 bounded
+  one-problem smoke (Prob045_alu, 4x1, debug seed 42, never evidence).
+  Per-arm preflights recorded in the run bases.
+- P3 comparator check: classic full-RTLLM 5-seed roots AND classic_no_cf
+  roots survive on disk under `exp/useful_bd_push/
+  pcn_v3_experiments_20260701/live/rtllm_full_5seed/` (seeds 1001-1005)
+  — the P3 promotion comparison needs zero new classic spend.
+- Periodic `claude -p` adversarial review launched (due at ~12 commits);
+  output will land in `reviews/claude_periodic_review_20260703_p0.md`.
+
+## 2026-07-03 15:50 KST - Periodic Review: PASS_WITH_ACTIONS (8 actions)
+
+- Review recorded at `reviews/claude_periodic_review_20260703_p0.md`.
+  The reviewer independently recomputed all six per-seed means (exact
+  match), verified operator contracts, registration ordering,
+  quarantine, and the engine-untouched diffstat. Verdict:
+  PASS_WITH_ACTIONS; no evidence-integrity violation.
+- Interpretation softening (review F-6, adopted): the V2 screen win is
+  CONSISTENT WITH the operator-contamination thesis but does not
+  isolate it — representation and evaluation surface also differ from
+  the F1 radical arm; the clean operator isolation remains the 20260630
+  same-seed reruns. Narrative-facing text must use the softened form.
+- Reviewer-surfaced strengthener: at seed 1003 V2 loses fsm (0.1459 vs
+  0.2652) yet still wins the seed overall — direct rebuttal to
+  fsm-jackpot dependence; use in the lane report and any deck.
+- Budget-parity observation (F-7): per-arm initial_count varies
+  (30/22/25 vs 20/22/22) with flipping direction — reads as
+  retry/yield variance; per-arm LLM-call totals from scheduler
+  telemetry join the standard package via the validator extension.
+- Actions being executed: plan strict_ablation correction note (F-1);
+  validator extension for config-vs-registration + LLM-call totals
+  (F-2/F-7); tracked seed-summary generator (F-3); N03 card consistency
+  + versioned criterion note (F-4); TODO syncs (F-5); commit-subject
+  length + cards-before-code practice going forward (F-8); N02 test
+  draw fix + required gamma + figure-fix TODO line (F-9).

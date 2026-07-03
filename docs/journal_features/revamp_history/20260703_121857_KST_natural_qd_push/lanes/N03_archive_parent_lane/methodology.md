@@ -21,12 +21,16 @@ if N01a is a kill).
 
 ## Natural-Extension Criterion check
 
-1. "V2, but 10% (or 30%) of parents are drawn from archive front
+1. "N01a, but 10% (or 30%) of parents are drawn from archive front
    slots." 2. Knobs: parent-selection mode + one fixed fraction — no
-   triggers. 3. Single factor vs V2 (selection source mix only).
-   4. Operators/representation/budget/eval identical. 5. Published
-   concept: MAP-Elites archive-parent sampling (uniform-over-elites
-   lane blended with rank-based selection).
+   triggers. 3. Single factor vs N01a (selection source mix only);
+   versioned criterion note: relative to the pinned V2 platform this is
+   two mechanisms (cell mode + lane), which is why N03 is sequenced
+   after N01a and attributed against it — recorded here before any
+   launch as the registered exception to the "vs V2" wording of the
+   criterion. 4. Operators/representation/budget/eval identical.
+   5. Published concept: MAP-Elites archive-parent sampling
+   (uniform-over-elites lane blended with rank-based selection).
 
 ## Prior evidence
 
@@ -42,9 +46,9 @@ Frozen trio unchanged; lane draws use archive membership only.
 ## Surface, comparators, gates
 
 Same as N01: frozen 8-design 8x5, seed ladder 1001 -> 1002/1003;
-comparators = pinned classic + V2 anchor; plan gates verbatim. The
-N03x-vs-V2 delta attributes the lane effect; between-arm read (0.10 vs
-0.30) picks at most one arm for replication.
+comparators = pinned classic + V2 anchor + N01a; plan gates verbatim.
+The N03x-vs-N01a delta attributes the lane effect (see the amendment);
+between-arm read (0.10 vs 0.30) picks at most one arm for replication.
 
 ## Artifacts (per arm)
 

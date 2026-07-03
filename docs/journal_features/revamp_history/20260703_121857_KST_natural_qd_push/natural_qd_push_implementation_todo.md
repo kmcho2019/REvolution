@@ -18,7 +18,9 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       package; classic seed-1001/1002/1003 run roots verified on disk).
 - [x] Pin reusable classic baselines (`tables/classic_baselines.csv`):
       8x5 screen (seeds 1001-1003), 6x7, full RTLLM seed-1001 and 5-seed,
-      classic_no_cf. Recompute verification of pinned rows still pending.
+      classic_no_cf. Screen rows recompute-verified exactly (P0 anchor +
+      replication packages); 6x7 and full-RTLLM rows verify when first
+      used.
 - [x] Pin the exact Smooth-QD V2 platform config into
       `tables/v2_platform_config.md` (reconstructed from doc 16 +
       consolidated record; original launchers gone from exp/). Runtime
@@ -44,15 +46,19 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
 
 ## P1 Single-Factor Screens (each: pre-register -> run -> package -> tier)
 
-- [ ] N01 per-cell Pareto slots (slot count 1; then 2 as registered
-      follow-up) at 8x5 seed 1001; replicate seeds per gate ladder.
+- [ ] N01 cell-retention mode (N01a elite_pareto_slot(2), N01b
+      scalar_elite control) at 8x5 seed 1001; replicate per gate
+      ladder. Seed-1001 arms running in the P1 chain.
 - [ ] N02 curiosity sampling at 8x5 seed 1001; replicate. Code landed
       (commit 3182602524: `src/revolution/qd_natural/`,
       `--search_mode revolution_qd_natural`, `--qd_curiosity_gamma`);
       bounded one-problem live smoke still required before the screen.
 - [ ] N03 archive parent lane fraction 0.10 and 0.30 at 8x5 seed 1001;
       replicate the better arm.
-- [ ] N05 warmup initialization (fixed g0) at 8x5 seed 1001; replicate.
+- [ ] N05 warmup length (quantile-freeze warmup 4 and 16 vs platform 8)
+      at 8x5 seed 1001; replicate. Running in the P1 chain.
+- [ ] Fix the pairwise-front figure title/legend collision in the
+      shared plotting surface before any colleague-facing package.
 - [ ] Every P1 verdict records cause class + follow-up idea or retirement
       rationale in the lane package and history.
 
