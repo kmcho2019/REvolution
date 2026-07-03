@@ -285,3 +285,28 @@ Load-bearing findings, with sources (paths relative to
   + versioned criterion note (F-4); TODO syncs (F-5); commit-subject
   length + cards-before-code practice going forward (F-8); N02 test
   draw fix + required gamma + figure-fix TODO line (F-9).
+
+## 2026-07-03 16:40 KST - N06 Upgraded to Active (descriptor research)
+
+- User request: research empirically-strong, theoretically-grounded
+  descriptors for V2. Evidence deep-dive completed and condensed into
+  `lanes/N06_descriptor_bakeoff/research_memo.md`.
+- Decisive finding: NO descriptor bake-off has ever run on the V2
+  platform. F12's "no profile beats classic" is RADICAL-regime
+  evidence (the June-18 briefing itself attributed the deficit to
+  representation+operator, not the archive). What DOES transfer is the
+  trio's collapse: confirmed in three regimes, incl. operator-fair
+  CODE-EoH (ff_depth collapses 7/13); comb_width_log is a formal size
+  proxy (diversity claim dropped at freeze).
+- Registered wave structure (methodology.md): wave 1 = pure profile
+  swaps journal_graph_testability_3d (semantic challenger: SCOAP/
+  reconvergence/cyclomatic; F12 occupancy 0.50 vs trio 0.12) +
+  size_control_3d (structural bar that beat theory under CODE-EoH) +
+  random floor (T22 lesson: random is not weak); wave 2 =
+  theory_grounded_compact_8d (zero axis collapses operator-fair) on
+  CVT with a paired trio-CVT control (versioned two-factor note, N03
+  pattern). Probe step before any spend. SR ReLU PCA (T19, +16.82% HV
+  replay, beats random) stays a registered follow-up requiring a
+  frozen-projection spec.
+- Sequencing: N06 wave 1 launches after the P1 chain frees the
+  endpoint, alongside whatever N03/N02 steps their dependencies allow.

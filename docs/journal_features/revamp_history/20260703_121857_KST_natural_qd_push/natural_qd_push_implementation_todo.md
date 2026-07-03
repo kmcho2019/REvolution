@@ -68,8 +68,12 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       6x7; register 4x11 (with new classic arm) only if 6x7 is positive.
 - [ ] Registered follow-up variants from P1 diagnoses (stay within the
       Natural-Extension Criterion; single factor per variant).
-- [ ] N06 descriptor bake-off only if N01-N03 stall (predeclared rule,
-      random-descriptor control, collapse diagnostics).
+- [ ] N06 descriptor bake-off — UPGRADED to active at user request
+      (2026-07-03): wave-1 probe step then
+      journal_graph_testability_3d / size_control_3d / random floor at
+      8x5 seed 1001 vs the V2 trio anchor; wave 2 compact_8d on CVT
+      with paired trio-CVT control. Cards + memo in
+      `lanes/N06_descriptor_bakeoff/`.
 - [ ] N07 corrected-suite completion screen (three never-rerun profiles),
       lowest priority.
 
