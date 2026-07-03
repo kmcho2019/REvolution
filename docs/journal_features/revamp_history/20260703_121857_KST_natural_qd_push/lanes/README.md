@@ -52,9 +52,16 @@ V2 on every seed) and the Branch-B utility candidate.
 | Arm | Seeds | Mean HV | vs classic | HV-AUC | Coverage | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
 | classic (reused roots) | 5 | 0.103802 | - | 0.086982 | 164/230 | baseline (HV recompute = pinned; AUC is the canonical recompute, see tables/README correction note) |
-| **V2 platform** | 5 | 0.098801 | **95.2%** | **0.087428 (100.5%)** | **166/230** | +5% gate FAILS; AUC tie; coverage edge |
-| gt3d descriptor swap | 2 | 0.091397 | 87.5% (2-seed) | - | 34+34 designs (best) | KILLED at gate; coverage datum kept |
-| N03b front-slot lane | 2 of 5 | 0.096844 | 92.7% (2-seed) | - | 33+32 | survived gate; seeds 1003-1005 running |
+| **N03b front-slot lane** | 5 | **0.100587** | **96.9%** | **0.089186 (102.5%)** | 163/230 | best QD arm at suite scale; best AUC of ALL arms; seed-1003 outright win |
+| V2 platform | 5 | 0.098801 | 95.2% | 0.087428 (100.5%) | **166/230** | +5% gate FAILS; AUC tie; coverage edge |
+| gt3d descriptor swap | 2 | 0.091397 | 87.5% (2-seed) | - | 34+34 designs (best/seed) | KILLED at gate; coverage datum kept |
+
+Suite-family finding (`../p3_full_rtllm/p3b_closure.md`): the QD
+mechanisms reallocate a few HV points into anytime performance (AUC),
+coverage, or front breadth depending on the knob — a controllable
+trade surface at the scale where LLM capability binds. N03b and V2
+INVERT their screen-scale ordering at suite scale — the transfer gap
+applies between QD variants too.
 
 **The two-scale story** (`../p3_full_rtllm/five_seed_verdict.md`): the
 natural QD extension WINS at screening scale (+12.9%, 3/3 seeds) and

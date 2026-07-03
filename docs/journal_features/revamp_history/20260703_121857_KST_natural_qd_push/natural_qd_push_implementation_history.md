@@ -547,3 +547,28 @@ Load-bearing findings, with sources (paths relative to
   report_journal_statistics.py checkbox added + held-out gate marked
   not-triggered; (3) scaffold README Current State rewritten for the
   completed P0-P3 campaign; (4) subjects <=50 chars henceforth.
+
+## 2026-07-04 10:40 KST - CAMPAIGN MEASURED: N03b 5-Seed Suite Verdict
+
+- Final run landed (seed 1005, audits green). N03b 5-seed suite:
+  HV 0.100587 (96.9% of classic — best QD arm), HV-AUC46 0.089186
+  (102.5% — best of ALL arms including classic), coverage 163;
+  per-seed 88.7/97.2/106.0/95.6/97.7% with an outright seed-1003 win.
+  Closure: `p3_full_rtllm/p3b_closure.md`.
+- Suite family finding: N03b and V2 INVERT their screen ordering at
+  suite scale — the transfer gap applies between QD variants, not
+  just QD-vs-classic. The QD family trades a few HV points for
+  AUC/coverage/front-breadth depending on the mechanism knob; no arm
+  clears +5%.
+- P3b-C ruling recorded: contingency met in letter by N03b (a
+  mechanism arm), but the descriptor evidence (gt3d kill,
+  coverage-only movement) does not justify the two-arm CVT spend;
+  scoped out, revisitable with N04/wave-2.
+- Promotion arm remains V2 by rule sequence; N03b becomes co-headline
+  QD arm and the primary Branch-B utility-metric archive (P4
+  analysis, no new runs).
+- P4 queue (all runs done; analysis/docs only): canonical
+  report_journal_statistics over P3 packages; Branch-B utility metric
+  from V2/N03b archives; central comparison report; dashboard 13
+  refresh + June-22 lineage closure note; viewer bundle; figure
+  legend fix; final adversarial validation.
