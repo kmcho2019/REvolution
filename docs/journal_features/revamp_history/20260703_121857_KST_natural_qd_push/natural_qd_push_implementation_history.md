@@ -441,3 +441,30 @@ Load-bearing findings, with sources (paths relative to
 - Persistence accounting: 8 lanes registered, 6 with live results, 11
   measured arms across 5 mechanism families; the >=8-packages bar is
   met at arm level with diagnoses recorded for every kill.
+
+## 2026-07-03 21:00 KST - N03b Replication FAILS Displacement; P3 Launched (V2)
+
+- First co-scheduled pair (N03b seeds 1002+1003) completed: 1845/1855 s
+  (~34% slower per run than solo, both-at-once ~1.5x faster than
+  sequential). M12 funnel guard PASSED: coverage 8/8 both seeds,
+  validations green, no validity-collapse signature. Pairing adopted
+  as standard.
+- N03b 3-seed vs V2 (tracked generator, three_seed_vs_v2.csv):
+  HV 0.16106 vs 0.16284 (98.9%); HV-AUC 0.13750 vs 0.14141 (-2.8%).
+  Seed-1001's +6.4% was a seed artifact — the same single-seed pattern
+  as T83/PCN-v3, intercepted PRE-SPEND by the registered ladder.
+  N03b keeps: 3/3 seed wins vs classic (+11.7%), better front breadth
+  than V2 every seed; designated Branch-B utility candidate.
+- One packaging correction: the N03 seed-1001 hv_auc table initially
+  lacked V2 rows (ppa run omitted the V2 backend); repackaged with V2
+  included before the summary was generated — the tracked generator's
+  assert caught it (no silent partial table).
+- **P3 launched with V2 as the promotion arm** (registration:
+  `p3_full_rtllm/commands.md`, written before any full-suite result):
+  full RTLLM 50-problem list (headline = 46 ref-complete), seed 1001,
+  command cloned from the 20260701 classic comparator method script
+  (strict_ablation, 48/12/4 workers, --eoh_success_operator_set
+  classic explicit), preflight recorded. Comparators are the reused
+  classic 5-seed roots (0.10380/0.08680) and classic_no_cf
+  (0.10685/0.09459). Ladder: seed 1001 -> 1002-1005 -> contract stats;
+  weak single-seed reads do not stop the ladder.

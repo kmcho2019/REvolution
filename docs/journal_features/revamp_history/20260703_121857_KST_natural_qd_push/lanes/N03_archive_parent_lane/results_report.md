@@ -31,13 +31,31 @@ mode, selection mode all pinned).
    each archive cell keeps its champion plus one bounded front slot,
    and 30% of parents are drawn from those front slots."
 
+## Replication verdict (seeds 1002/1003; first co-scheduled pair)
+
+`package/tables/three_seed_vs_v2.csv` (tracked generator):
+
+| Seed | V2 HV | N03b HV | ratio | V2 AUC | N03b AUC |
+| --- | --- | --- | --- | --- | --- |
+| 1001 | 0.17376 | 0.18486 | 106.4% | 0.14366 | 0.15511 |
+| 1002 | 0.17180 | 0.16127 | 93.9% | 0.15132 | 0.15002 |
+| 1003 | 0.14294 | 0.13704 | 95.9% | 0.12926 | 0.10736 |
+| mean | 0.16284 | 0.16106 | **98.9%** | 0.14141 | 0.13750 (-2.8%) |
+
+**Displacement FAILS** — the seed-1001 +6.4% did not replicate; the
+registered promotion rule keeps V2 as the P3 arm. This is exactly the
+single-seed pattern that fooled T83/PCN-v3, intercepted pre-spend by
+the pre-registered ladder.
+
 ## Status
 
 - N03a (0.10): closed (loses to its own no-lane base on both metrics).
-- **N03b (0.30): promotion-rule replication RUNNING** — seeds
-  1002/1003 launched immediately as the first co-scheduled pair under
-  `tables/concurrency_policy.md` (M12 validity-funnel guard applies:
-  compare both runs' funnels against solo-run twins before accepting).
-  If the 3-seed mean beats V2's 3-seed mean (0.16284 HV / 0.14141
-  AUC) by >2% on both with coverage retained, N03b displaces V2 as
-  the registered P3 promotion arm.
+- N03b (0.30): **diagnostic keeper with a Branch-B role** — beats
+  classic on all three seeds (+11.7% 3-seed HV) and holds MORE Pareto
+  points than V2 on every seed (2.875/3.0/3.125 vs 2.625/2.0/3.125);
+  designated utility-metric candidate if V2's full-suite margin lands
+  between parity and +5%. No further fraction scans (registered rule).
+- M12 funnel guard on the first co-scheduled pair: PASSED — coverage
+  8/8 both seeds, validations green, no validity-collapse signature;
+  runtimes +~34% vs solo (endpoint sharing), results normal. Pairing
+  adopted as standard per `../../tables/concurrency_policy.md`.

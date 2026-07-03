@@ -1,8 +1,8 @@
 # PPA Distribution Analysis
 
-- candidate_count: `800`
+- candidate_count: `996`
 - reference_problem_count: `8`
-- best_backend_problem_count: `32`
+- best_backend_problem_count: `40`
 - figure_count: `28`
 
 ## Outputs
@@ -19,11 +19,11 @@ Figures use filled score contours when enough non-collinear candidates are avail
 
 | Benchmark | Problem | Circuit | Candidates | Figure Root |
 | --- | --- | --- | ---: | --- |
-| `RTLLM` | `Prob015_multi_pipe_8bit` | `sequential` | 78 | [figures/all_backends/RTLLM/Prob015_multi_pipe_8bit](figures/all_backends/RTLLM/Prob015_multi_pipe_8bit) |
-| `RTLLM` | `Prob024_fsm` | `combinational` | 52 | [figures/all_backends/RTLLM/Prob024_fsm](figures/all_backends/RTLLM/Prob024_fsm) |
-| `RTLLM` | `Prob041_traffic_light` | `combinational` | 89 | [figures/all_backends/RTLLM/Prob041_traffic_light](figures/all_backends/RTLLM/Prob041_traffic_light) |
-| `RTLLM` | `Prob045_alu` | `combinational` | 133 | [figures/all_backends/RTLLM/Prob045_alu](figures/all_backends/RTLLM/Prob045_alu) |
-| `RTLLM` | `Prob049_signal_generator` | `sequential` | 76 | [figures/all_backends/RTLLM/Prob049_signal_generator](figures/all_backends/RTLLM/Prob049_signal_generator) |
-| `VerilogEval-Spec-to-RTL` | `Prob116_m2014_q3` | `combinational` | 130 | [figures/all_backends/VerilogEval-Spec-to-RTL/Prob116_m2014_q3](figures/all_backends/VerilogEval-Spec-to-RTL/Prob116_m2014_q3) |
-| `VerilogEval-Spec-to-RTL` | `Prob135_m2014_q6b` | `combinational` | 169 | [figures/all_backends/VerilogEval-Spec-to-RTL/Prob135_m2014_q6b](figures/all_backends/VerilogEval-Spec-to-RTL/Prob135_m2014_q6b) |
-| `VerilogEval-Spec-to-RTL` | `Prob153_gshare` | `sequential` | 73 | [figures/all_backends/VerilogEval-Spec-to-RTL/Prob153_gshare](figures/all_backends/VerilogEval-Spec-to-RTL/Prob153_gshare) |
+| `RTLLM` | `Prob015_multi_pipe_8bit` | `sequential` | 97 | [figures/all_backends/RTLLM/Prob015_multi_pipe_8bit](figures/all_backends/RTLLM/Prob015_multi_pipe_8bit) |
+| `RTLLM` | `Prob024_fsm` | `combinational` | 66 | [figures/all_backends/RTLLM/Prob024_fsm](figures/all_backends/RTLLM/Prob024_fsm) |
+| `RTLLM` | `Prob041_traffic_light` | `combinational` | 110 | [figures/all_backends/RTLLM/Prob041_traffic_light](figures/all_backends/RTLLM/Prob041_traffic_light) |
+| `RTLLM` | `Prob045_alu` | `combinational` | 169 | [figures/all_backends/RTLLM/Prob045_alu](figures/all_backends/RTLLM/Prob045_alu) |
+| `RTLLM` | `Prob049_signal_generator` | `sequential` | 96 | [figures/all_backends/RTLLM/Prob049_signal_generator](figures/all_backends/RTLLM/Prob049_signal_generator) |
+| `VerilogEval-Spec-to-RTL` | `Prob116_m2014_q3` | `combinational` | 160 | [figures/all_backends/VerilogEval-Spec-to-RTL/Prob116_m2014_q3](figures/all_backends/VerilogEval-Spec-to-RTL/Prob116_m2014_q3) |
+| `VerilogEval-Spec-to-RTL` | `Prob135_m2014_q6b` | `combinational` | 212 | [figures/all_backends/VerilogEval-Spec-to-RTL/Prob135_m2014_q6b](figures/all_backends/VerilogEval-Spec-to-RTL/Prob135_m2014_q6b) |
+| `VerilogEval-Spec-to-RTL` | `Prob153_gshare` | `sequential` | 86 | [figures/all_backends/VerilogEval-Spec-to-RTL/Prob153_gshare](figures/all_backends/VerilogEval-Spec-to-RTL/Prob153_gshare) |

@@ -26,7 +26,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 
 | Lane | Arm | Mean HV | vs classic | vs V2 | Status |
 | --- | --- | --- | --- | --- | --- |
-| **N03** | **front_slot_lane_030** | **0.18486** | **+31.4%** | **+6.4%** | **LEADER — 3-seed promotion test running** |
+| N03 | front_slot_lane_030 | 0.16106 (3-seed) | +11.7% (3/3 wins) | -1.1% (3-seed) | keeper; Branch-B utility candidate; displacement failed |
 | N01 | elite_pareto_slot_2 | 0.15709 | +11.7% | -9.6% | diagnostic keeper |
 | N02 | curiosity gamma 1.0 | 0.15449 | +9.8% | -11.1% | KILL (coverage 7/8); gamma 0.5 retry registered |
 | N06 | graph_testability_3d | 0.15195 | +8.0% | -12.6% | diagnostic keeper (best challenger; trio wins) |
@@ -40,11 +40,14 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N07 | corrected-suite completion | not started | - | - | conditional |
 | N08 | combination | blocked | - | - | needs replicated winners |
 
-**N03b (front_slot_lane_030) is the first arm to clear the
-promotion-rule bar at seed 1001 (+6.4% HV, +8.0% HV-AUC over V2, more
-Pareto points, coverage 8/8).** Seeds 1002/1003 are running as the
-first co-scheduled pair; if the 3-seed read holds >2% on both metrics,
-N03b displaces V2 as the P3 promotion arm.
+**Promotion decision (2026-07-03): V2 stays the P3 arm.** N03b cleared
+the bar at seed 1001 (+6.4%/+8.0%) but replication landed at 98.9% HV
+/ -2.8% AUC vs V2 — the pre-registered ladder intercepted a seed
+artifact before any full-suite spend. N03b remains the best
+non-platform arm (beats classic 3/3 seeds, better front breadth than
+V2 on every seed) and the Branch-B utility candidate. **P3 (V2 on
+full RTLLM 46, vs the reused classic 5-seed roots) is running** — see
+`../p3_full_rtllm/commands.md`.
 
 ---
 
