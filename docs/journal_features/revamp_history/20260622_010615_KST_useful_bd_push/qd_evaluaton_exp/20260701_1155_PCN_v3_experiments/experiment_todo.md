@@ -1,6 +1,6 @@
 # PCN-v3 Experiment Todo And Status
 
-Last updated: 2026-07-01 06:02 UTC.
+Last updated: 2026-07-03 02:43 UTC.
 
 This file is the live tracker for the PCN-v3 C-F ablation package. Keep the
 frozen protocol in `experiment_plan.md`; update this file when runs complete,
@@ -8,31 +8,30 @@ reports are regenerated, or a claim gate changes state.
 
 ## Current Status
 
-The implementation correction and RTLLM smoke stage are complete. The smoke
-confirmed that the operator-control interface works and that the corrected
-PCN-CF-restored arm can generate `C-F` requests while QD/archive fusion stays
-disabled.
+The RTLLM full five-seed core ablation is complete and packaged. All twenty
+method/seed runs finished successfully:
 
-The five-seed RTLLM core ablation is running. One of twenty full runs has
-completed:
+- four core methods;
+- five seeds, `1001..1005`;
+- 50 RTLLM problems launched;
+- 46 reference-complete RTLLM problems used for headline normalized metrics;
+- 230 paired rows per comparison.
 
-- completed: `seed_1001.classic_revolution_8x5`;
-- active: `seed_1001.classic_no_cf_8x5`;
-- pending: remaining seeds and PCN arms.
-
-No publication-safe PCN claim is allowed yet. The smoke signal is positive but
-too small to resolve the C-F confound statistically.
+The claim gate is negative. PCN-v3 memory did not beat the matched no-C-F
+classic control, and C-F-restored PCN did not beat original classic.
 
 ## Active Run
+
+There is no active run for this stage.
 
 | Field | Value |
 | --- | --- |
 | Stage | `rtllm_full_5seed` |
-| Tmux session | `pcn_v3_20260701_rtllm_full_5seed` |
+| Tmux session | completed launcher; old session may remain idle |
 | Run root | `/workspace/exp/useful_bd_push/pcn_v3_experiments_20260701/live/rtllm_full_5seed` |
-| Package log | `logs/rtllm_full_5seed.package.log` |
-| Stage log | `logs/rtllm_full_5seed.run_stage.log` |
-| Current watcher state | waiting for 19 remaining runs |
+| Package marker | `logs/rtllm_full_5seed.package.done` |
+| Detailed report | `reports/rtllm_full_5seed_detailed_report.md` |
+| Claim status | negative for PCN-v3 under 8x5 RTLLM |
 
 ## Claim Gates
 
@@ -42,14 +41,14 @@ too small to resolve the C-F confound statistically.
 | G2. Operator-set control implemented | done | commit `bafb47d49b` | Added `--eoh_success_operator_set` so C-F can be controlled independently from QD/archive fusion. |
 | G3. Unit and lint checks pass | done | `pytest`, `ruff`, `git diff --check` | Focused tests cover classic one-parent exclusion and PCN memory request behavior. |
 | G4. Smoke operator audit passes | done | `analysis/rtllm_smoke/seed_1001/operator_contract.csv` | Classic and PCN-CF-restored produced C-F; no-CF arms produced zero C-F; no arm used `single_thought_operator`. |
-| G5. Smoke metric sanity is positive | done | `tables/rtllm_smoke_comparison_summary.csv` | PCN-CF-restored beat classic on the three-problem smoke, but this is not enough for a claim. |
-| G6. Five-seed RTLLM core ablation completes | running | `logs/rtllm_full_5seed.*` | One of twenty method/seed runs is done; package watcher is still waiting. |
-| G7. C-F confound is resolved | pending | full comparison tables | Requires paired five-seed results for classic, no-CF classic, no-CF PCN, and C-F-restored PCN. |
-| G8. PCN memory survives operator control | pending | full comparison tables | Requires PCN to improve over the matched operator-control baseline without coverage collapse. |
-| G9. Final reports and figures complete | pending | `reports/`, `figures/`, `tables/` | Wait for full stage packaging. |
-| G10. Elite-cell variants decision | blocked | core RTLLM result | Run only if the core ablation supports a PCN memory effect. |
-| G11. VerilogEval holdout decision | pending | core RTLLM result | Run after RTLLM decides the best clean PCN candidate. |
-| G12. Dependency hardening | pending | external repo/submodule audit | Consider persistent MasterRTL/RTLTimer dependency tracking after the main claim is known. |
+| G5. Smoke metric sanity is positive | done | `tables/rtllm_smoke_comparison_summary.csv` | PCN-CF-restored beat classic on the three-problem smoke, but smoke was not decisive. |
+| G6. Five-seed RTLLM core ablation completes | done | `logs/rtllm_full_5seed.package.done` | All 20 method/seed runs completed and were packaged. |
+| G7. C-F confound is resolved | done | `tables/rtllm_full_5seed_comparison_summary.csv` | Removing C-F alone was not a significant win; PCN did not survive the matched controls. |
+| G8. PCN memory survives operator control | fail | `tables/rtllm_full_5seed_claim_gate_summary.csv` | PCN no-C-F lost to classic no-C-F; PCN C-F-restored lost to original classic. |
+| G9. Final reports and figures complete | done | `reports/rtllm_full_5seed_detailed_report.md` | Detailed tables, figures, and mechanism summary were generated. |
+| G10. Elite-cell variants decision | blocked | negative core RTLLM claim gate | Do not run elite variants automatically; the core PCN claim did not validate. |
+| G11. VerilogEval holdout decision | blocked | negative core RTLLM claim gate | Holdout is not useful for confirming PCN-v3 unless a revised PCN design is approved. |
+| G12. Dependency hardening | deferred | external repo/submodule audit | Still useful later, but no longer blocks this PCN-v3 result. |
 
 ## Milestone Checklist
 
@@ -61,24 +60,24 @@ too small to resolve the C-F confound statistically.
 | M4 | Define exact method wrappers | done | Four core RTLLM arms and two optional elite arms have fixed CLI flags. | `commands/methods/` |
 | M5 | Run RTLLM smoke | done | Four core arms ran on the three smoke RTLLM designs at seed 1001. | `logs/rtllm_smoke.*` |
 | M6 | Package smoke results | done | Smoke tables, figures, operator audit, and report are archived. | commit `10220d3841` |
-| M7 | Launch five-seed RTLLM core ablation | running | Full run is active in tmux; one of twenty method/seed runs is complete. | `logs/rtllm_full_5seed.*` |
-| M8 | Package five-seed RTLLM results | pending | Generate paired metrics, operator audits, summaries, and plots after all runs finish. | `tables/`, `figures/`, `reports/` |
-| M9 | Decide PCN memory claim | pending | Compare PCN against matched operator controls on reference-complete RTLLM rows. | final report |
-| M10 | Run elite-cell variants | blocked | Only run if core PCN evidence survives the C-F control. | `rtllm_elite` |
-| M11 | Run VerilogEval holdout | pending | Use the best clean PCN candidate after RTLLM core decision. | `verilogeval_holdout` |
-| M12 | Write final report package | pending | Include C-F ablation, statistical analysis, mechanism analysis, and limitations. | `reports/` |
-| M13 | Harden external dependencies | deferred | Decide whether to promote MasterRTL/RTLTimer external repos into tracked submodules or a pinned dependency manifest. | future docs |
+| M7 | Launch five-seed RTLLM core ablation | done | Full run completed across all five seeds and four core methods. | `logs/rtllm_full_5seed.*` |
+| M8 | Package five-seed RTLLM results | done | Generated paired metrics, operator audits, summaries, and plots. | `tables/`, `figures/`, `reports/` |
+| M9 | Decide PCN memory claim | done | Claim is negative under 8x5 RTLLM: PCN-v3 did not beat controls. | `reports/rtllm_full_5seed_detailed_report.md` |
+| M10 | Run elite-cell variants | blocked | Core PCN evidence failed; do not spend more without a redesign plan. | `rtllm_elite` |
+| M11 | Run VerilogEval holdout | blocked | Holdout should wait for a revised PCN variant or a different positive candidate. | `verilogeval_holdout` |
+| M12 | Write final report package | done | Detailed C-F ablation, statistics, mechanism analysis, and limitations are written. | `reports/rtllm_full_5seed_detailed_report.md` |
+| M13 | Harden external dependencies | deferred | Decide later whether MasterRTL/RTLTimer repos should become submodules or pinned manifests. | future docs |
 
 ## Per-Arm Status
 
-| Arm | Smoke Status | Full RTLLM Status | Expected C-F Policy | Smoke Mean HV | Notes |
-| --- | --- | --- | --- | --- | --- |
-| `classic_revolution_8x5` | done | seed 1001 done | observed `C-F` > 0 | 0.333995 | Original conference-style baseline. |
-| `classic_no_cf_8x5` | done | seed 1001 running | `C-F` = 0 | 0.339492 | Tests whether removing C-F alone helps. |
-| `pcn_v3_no_cf_memory_8x5` | done | pending | `C-F` = 0 | 0.346485 | Reproduces current PCN behavior explicitly. |
-| `pcn_v3_cf_restored_memory_8x5` | done | pending | observed `C-F` > 0 | 0.516854 | Cleanest PCN-vs-classic test. |
-| `pcn_v3_cf_restored_elite3_8x5` | not run | blocked | observed `C-F` > 0 | TBD | Optional follow-up after core validation. |
-| `pcn_v3_cf_restored_pareto3_8x5` | not run | blocked | observed `C-F` > 0 | TBD | Optional local Pareto/crowding cell follow-up. |
+| Arm | Full RTLLM Status | Mean HV | Mean HV-AUC | Covered Problems | C-F Count | Result Summary |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| `classic_revolution_8x5` | done | 0.103802 | 0.086797 | 32.8 | 768 | Original conference-style baseline. |
+| `classic_no_cf_8x5` | done | 0.106846 | 0.094592 | 33.2 | 0 | Slightly higher mean HV/AUC, but not statistically significant over classic. |
+| `pcn_v3_no_cf_memory_8x5` | done | 0.100396 | 0.087031 | 33.0 | 0 | Lost to matched no-C-F classic control. |
+| `pcn_v3_cf_restored_memory_8x5` | done | 0.101664 | 0.080466 | 32.0 | 670 | Lost to original classic and had lower valid-PPA yield. |
+| `pcn_v3_cf_restored_elite3_8x5` | blocked | TBD | TBD | TBD | TBD | Do not run automatically after negative core gate. |
+| `pcn_v3_cf_restored_pareto3_8x5` | blocked | TBD | TBD | TBD | TBD | Do not run automatically after negative core gate. |
 
 ## Completed Result Summaries
 
@@ -109,52 +108,46 @@ The smoke stage checked the four core arms on three RTLLM problems with seed
 | `pcn_v3_no_cf_memory_8x5` | 0 | 0 | pass |
 | `pcn_v3_cf_restored_memory_8x5` | 18 | 0 | pass |
 
-This confirms that the experiment is no longer repeating the earlier
-thought-only or single-thought mistake.
+This confirms that the experiment did not repeat the earlier thought-only or
+single-thought mistake.
 
-### RTLLM Smoke Metric Signal
+### RTLLM Full Five-Seed Result
 
-Smoke results are encouraging but not decisive.
+The full run reversed the smoke-level optimism.
 
-| Method | Mean HV | Mean HV-AUC |
-| --- | ---: | ---: |
-| `classic_revolution_8x5` | 0.333995 | 0.243611 |
-| `classic_no_cf_8x5` | 0.339492 | 0.302403 |
-| `pcn_v3_no_cf_memory_8x5` | 0.346485 | 0.316931 |
-| `pcn_v3_cf_restored_memory_8x5` | 0.516854 | 0.312627 |
+| Comparison | Mean HV Delta | Mean HV-AUC Delta | Wins/Losses/Ties | Interpretation |
+| --- | ---: | ---: | --- | --- |
+| `classic_no_cf - classic` | +0.0030 | +0.0078 | 41/41/148 | Small, not significant. |
+| `pcn_no_cf - classic_no_cf` | -0.0065 | -0.0076 | 34/48/148 | PCN memory fails matched no-C-F control. |
+| `pcn_cf_restored - classic` | -0.0021 | -0.0063 | 31/48/151 | Clean PCN test fails. |
+| `pcn_cf_restored - pcn_no_cf` | +0.0013 | -0.0066 | 40/35/155 | C-F restoration helps final HV slightly but not enough. |
 
-Interpretation:
+### Mechanism Result
 
-- removing C-F alone helped slightly on the smoke subset;
-- no-CF PCN also improved slightly over no-CF classic;
-- C-F-restored PCN had the strongest smoke mean HV;
-- the sample is only three problems, so the full five-seed RTLLM run decides
-  the claim.
+PCN memory did fire:
 
-### Full RTLLM Launch
+| Method | Classic-Lane Events | Memory-Refine Events | Memory-Refine Global Inserts |
+| --- | ---: | ---: | ---: |
+| `pcn_v3_no_cf_memory_8x5` | 3934 | 332 | 21 |
+| `pcn_v3_cf_restored_memory_8x5` | 3240 | 285 | 18 |
 
-The full stage is running the four core arms across seeds `1001..1005` and all
-50 RTLLM problems. Headline comparisons will use only reference-complete paired
-design rows. The first method/seed run completed successfully:
-`seed_1001.classic_revolution_8x5`.
+The negative result is therefore not caused by an inactive memory lane. The
+memory lane was active but did not create enough useful front material to
+overcome lower yield and weaker HV-AUC.
 
 ## Next Actions
 
-1. Monitor `rtllm_full_5seed` until all twenty method/seed runs finish or fail.
-2. Package the full stage with `commands/package_stage.sh rtllm_full_5seed`.
-3. Inspect the full-stage operator contract before reading performance metrics.
-4. Generate paired reference-complete HV, HV-AUC, coverage, and C-F ablation
-   tables.
-5. Decide whether PCN memory survives the matched operator controls.
-6. Run elite-cell variants only if the core result supports PCN memory.
-7. Run VerilogEval holdout after the RTLLM core decision.
-8. Write final reports with plots, conclusions, limitations, and allowed
-   claims.
+1. Commit the full RTLLM package artifacts and detailed report.
+2. Do not launch `rtllm_elite` automatically from this PCN-v3 result.
+3. If continuing PCN, write a revised diagnostic plan focused on valid-PPA
+   yield preservation and stricter memory activation.
+4. Consider VerilogEval only after a revised PCN or another candidate has a
+   positive RTLLM core gate.
+5. Keep the negative result in the presentation as evidence that the C-F
+   confound was real and that PCN memory did not validate under 8x5.
 
 ## Update Rules
 
-- Update this file after each full-stage method/seed completion, packaging
-  pass, or claim-gate decision.
 - Do not promote smoke-only results to headline claims.
 - Use reference-complete RTLLM rows for headline normalized metrics.
 - Exclude missing-reference designs from headline direct comparisons.

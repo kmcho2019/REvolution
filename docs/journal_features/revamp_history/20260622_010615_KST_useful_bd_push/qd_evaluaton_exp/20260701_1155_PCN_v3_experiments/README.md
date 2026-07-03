@@ -25,13 +25,14 @@ Core questions:
 
 ## Status
 
-Last updated: 2026-07-01 06:02 UTC.
+Last updated: 2026-07-03 02:43 UTC.
 
 - `rtllm_smoke` is complete and packaged.
-- `rtllm_full_5seed` is running in tmux session
-  `pcn_v3_20260701_rtllm_full_5seed`.
-- One full run has completed so far:
-  `seed_1001.classic_revolution_8x5`.
-- The active full run is `seed_1001.classic_no_cf_8x5`.
-- No publication-safe PCN claim is allowed until the five-seed paired RTLLM
-  comparison is complete and the operator-count audit passes.
+- `rtllm_full_5seed` is complete and packaged.
+- Detailed results are in
+  `reports/rtllm_full_5seed_detailed_report.md`.
+- The claim gate is negative: PCN-v3 memory did not beat the matched no-C-F
+  classic control or the original classic baseline on five-seed
+  reference-complete RTLLM.
+- Elite-cell variants should stay blocked unless a new diagnostic plan is
+  approved.

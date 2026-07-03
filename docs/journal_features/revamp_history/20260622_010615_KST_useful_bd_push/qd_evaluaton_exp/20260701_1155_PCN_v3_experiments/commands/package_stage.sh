@@ -56,5 +56,12 @@ uv run python "$DOC_ROOT/tools/summarize_pcn_v3_experiment.py" \
   --doc-root "$DOC_ROOT" \
   --stage "$EXP_STAGE"
 
+if [ "$EXP_STAGE" = "rtllm_full_5seed" ]; then
+  uv run python "$DOC_ROOT/tools/write_rtllm_full_detail_report.py" \
+    --doc-root "$DOC_ROOT" \
+    --stage "$EXP_STAGE" \
+    --run-root "$RUN_ROOT"
+fi
+
 touch "$(log_file package.done)"
 echo "[$(date -Is)] packaging finished"
