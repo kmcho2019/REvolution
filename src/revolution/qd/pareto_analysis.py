@@ -241,6 +241,49 @@ def _hypervolume_recursive(points: list[tuple[float, ...]], dimensions: int) -> 
     return volume
 
 
+def cumulative_hypervolume_curve(
+    points_by_generation: dict[int, list[tuple[float, ...]]],
+    num_generations: int,
+) -> list[float]:
+    """Hypervolume of the cumulative candidate set at each generation step.
+
+    Canonical HV-AUC input (the 20260630 corrected-suite rule): step ``g``
+    scores every point produced at generation ``<= g``; an empty prefix
+    scores 0.0.
+
+    Args:
+        points_by_generation: Maximize-form objective tuples keyed by the
+            generation that produced them; keys must lie in
+            ``0..num_generations``.
+        num_generations: Final generation index (at least 1).
+
+    Returns:
+        ``num_generations + 1`` hypervolume values for steps ``0..N``.
+    """
+    assert num_generations >= 1
+    assert all(0 <= generation <= num_generations for generation in points_by_generation)
+    curve: list[float] = []
+    cumulative: list[tuple[float, ...]] = []
+    for step in range(num_generations + 1):
+        cumulative.extend(points_by_generation.get(step, []))
+        curve.append(hypervolume(cumulative))
+    return curve
+
+
+def hypervolume_auc(curve: list[float]) -> float:
+    """Trapezoidal mean of a hypervolume-over-steps curve.
+
+    Matches the 20260630 corrected-suite HV-AUC definition:
+    ``sum((curve[i] + curve[i+1]) / 2) / (len(curve) - 1)`` over unit
+    steps, so the value stays on the hypervolume scale.
+    """
+    assert len(curve) >= 2
+    total = 0.0
+    for left, right in zip(curve[:-1], curve[1:], strict=True):
+        total += (left + right) / 2.0
+    return total / (len(curve) - 1)
+
+
 def analyze_problem_pareto(
     problem_root: Path,
     *,
