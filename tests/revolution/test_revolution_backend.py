@@ -136,3 +136,31 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     assert captured["kwargs"]["problem_spec"].problem_name == "Prob001"
     assert captured["kwargs"]["candidate_workers"] == 4
     assert captured["kwargs"]["problem_concurrency"] is services.problem_concurrency
+
+
+def test_revolution_backend_uses_natural_engine_for_qd_natural(monkeypatch, tmp_path):
+    captured = {}
+
+    class _FakeNaturalEngine:
+        def __init__(self, **kwargs):
+            captured["kwargs"] = kwargs
+
+    monkeypatch.setattr(
+        "revolution.backends.revolution_backend.NaturalQDEngine", _FakeNaturalEngine
+    )
+    services = _services(tmp_path)
+    services.problem_concurrency = object()
+    backend = RevolutionBackend(
+        context=_context(tmp_path),
+        services=services,
+        config=RevolutionBackendConfig(
+            search_mode="revolution_qd_natural",
+            qd_parent_selection="nsga2_global_rank",
+            qd_curiosity_gamma=0.5,
+        ),
+        base_save_path=str(tmp_path / "exp"),
+    )
+    backend.initialize()
+    assert isinstance(backend.engine, _FakeNaturalEngine)
+    assert captured["kwargs"]["qd_curiosity_gamma"] == 0.5
+    assert captured["kwargs"]["benchmark_name"] == "Bench"

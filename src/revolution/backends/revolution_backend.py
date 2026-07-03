@@ -12,7 +12,10 @@ from revolution.backends.base import (
     EvolutionBackend,
 )
 from revolution.qd import QDEngine
+from revolution.qd_natural import NaturalQDEngine
 from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
+
+QD_SEARCH_MODES = {"revolution_qd", "revolution_qd_natural"}
 
 
 @dataclass(frozen=True)
@@ -95,6 +98,7 @@ class RevolutionBackendConfig:
     qd_champion_lane_fraction: float = 0.0
     qd_front_slot_lane_fraction: float = 0.10
     qd_parent_selection: str = "cell_crowded_tournament"
+    qd_curiosity_gamma: float = 1.0
     qd_memory_classic_fraction: float = 0.80
     qd_memory_refine_fraction: float = 0.15
     qd_memory_rescue_fraction: float = 0.05
@@ -136,14 +140,19 @@ class RevolutionBackend(EvolutionBackend):
 
     def initialize(self) -> None:
         if (
-            self.config.search_mode == "revolution_qd"
+            self.config.search_mode in QD_SEARCH_MODES
             and self.config.population_pool_mode == "single"
         ):
             raise ValueError(
-                "search_mode=revolution_qd requires archive-backed success state and "
-                "does not support population_pool_mode=single."
+                f"search_mode={self.config.search_mode} requires archive-backed "
+                "success state and does not support population_pool_mode=single."
             )
-        engine_cls = QDEngine if self.config.search_mode == "revolution_qd" else EoHEngine
+        if self.config.search_mode == "revolution_qd_natural":
+            engine_cls: type[EoHEngine] = NaturalQDEngine
+        elif self.config.search_mode == "revolution_qd":
+            engine_cls = QDEngine
+        else:
+            engine_cls = EoHEngine
         engine_kwargs: dict[str, Any] = dict(
             benchmark_name=self.context.benchmark_name,
             problem_name=self.context.problem_name,
@@ -175,7 +184,7 @@ class RevolutionBackend(EvolutionBackend):
             problem_concurrency=getattr(self.services, "problem_concurrency", None),
             problem_spec=self.context.problem_spec,
         )
-        if engine_cls is QDEngine:
+        if issubclass(engine_cls, QDEngine):
             engine_kwargs.update(
                 qd_archive_type=self.config.qd_archive_type,
                 qd_num_cells=self.config.qd_num_cells,
@@ -258,6 +267,8 @@ class RevolutionBackend(EvolutionBackend):
                 repair_max_attempts_per_thought=self.config.repair_max_attempts_per_thought,
                 repair_evidence=self.config.repair_evidence,
             )
+        if engine_cls is NaturalQDEngine:
+            engine_kwargs.update(qd_curiosity_gamma=self.config.qd_curiosity_gamma)
         self.engine = engine_cls(**engine_kwargs)
 
     def _annotate_summary(self) -> str | None:
@@ -288,7 +299,7 @@ class RevolutionBackend(EvolutionBackend):
         counters = getattr(evaluator, "telemetry_counters", None)
         if isinstance(counters, dict) and counters:
             backend_details.setdefault("evaluator_telemetry", dict(counters))
-        if self.config.search_mode == "revolution_qd":
+        if self.config.search_mode in QD_SEARCH_MODES:
             backend_details.setdefault(
                 "qd_config",
                 {
@@ -301,6 +312,11 @@ class RevolutionBackend(EvolutionBackend):
                     "champion_lane_fraction": self.config.qd_champion_lane_fraction,
                     "scheduler_mode": self.config.qd_scheduler_mode,
                     "parent_selection": self.config.qd_parent_selection,
+                    "curiosity_gamma": (
+                        self.config.qd_curiosity_gamma
+                        if self.config.search_mode == "revolution_qd_natural"
+                        else None
+                    ),
                     "num_cells": self.config.qd_num_cells,
                     "fill_target_fraction": self.config.qd_fill_target_fraction,
                     "improve_backfill_fraction": self.config.qd_improve_backfill_fraction,

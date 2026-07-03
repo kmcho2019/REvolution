@@ -484,6 +484,7 @@ def _build_backend(
             qd_champion_lane_fraction=args.qd_champion_lane_fraction,
             qd_front_slot_lane_fraction=args.qd_front_slot_lane_fraction,
             qd_parent_selection=args.qd_parent_selection,
+            qd_curiosity_gamma=args.qd_curiosity_gamma,
             qd_memory_classic_fraction=args.qd_memory_classic_fraction,
             qd_memory_refine_fraction=args.qd_memory_refine_fraction,
             qd_memory_rescue_fraction=args.qd_memory_rescue_fraction,
@@ -825,7 +826,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--search_mode",
         type=str,
         default="revolution",
-        choices=["revolution", "revolution_qd"],
+        choices=["revolution", "revolution_qd", "revolution_qd_natural"],
     )
     parser.add_argument("--generation_mode", type=str, default="whole", choices=["whole", "diff"])
     parser.add_argument(
@@ -1123,6 +1124,15 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         default=0.10,
         help="Fraction of front-slot lane parent requests under front_slot_lane_nsga2.",
     )
+    parser.add_argument(
+        "--qd_curiosity_gamma",
+        type=float,
+        default=1.0,
+        help=(
+            "Inverse-cell-occupancy draw exponent for "
+            "search_mode=revolution_qd_natural (lane N02)."
+        ),
+    )
     parser.add_argument("--qd_parent_selection", type=str, default="cell_crowded_tournament",
         choices=[
             "cell_crowded_tournament",
@@ -1394,11 +1404,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if (
         args.backend == "revolution"
-        and args.search_mode == "revolution_qd"
+        and args.search_mode in {"revolution_qd", "revolution_qd_natural"}
         and args.population_pool_mode == "single"
     ):
         print(
-            "Configuration error: search_mode=revolution_qd does not support "
+            f"Configuration error: search_mode={args.search_mode} does not support "
             "population_pool_mode=single."
         )
         return 2
