@@ -45,9 +45,25 @@ the bar at seed 1001 (+6.4%/+8.0%) but replication landed at 98.9% HV
 / -2.8% AUC vs V2 — the pre-registered ladder intercepted a seed
 artifact before any full-suite spend. N03b remains the best
 non-platform arm (beats classic 3/3 seeds, better front breadth than
-V2 on every seed) and the Branch-B utility candidate. **P3 (V2 on
-full RTLLM 46, vs the reused classic 5-seed roots) is running** — see
-`../p3_full_rtllm/commands.md`.
+V2 on every seed) and the Branch-B utility candidate.
+
+## Full-suite standings (P3/P3b: RTLLM 46 ref-complete, 8x5)
+
+| Arm | Seeds | Mean HV | vs classic | HV-AUC | Coverage | Verdict |
+| --- | --- | --- | --- | --- | --- | --- |
+| classic (reused roots) | 5 | 0.103802 | - | 0.086982 | 164/230 | baseline (recompute = pinned) |
+| **V2 platform** | 5 | 0.098801 | **95.2%** | **0.087428 (100.5%)** | **166/230** | +5% gate FAILS; AUC tie; coverage edge |
+| gt3d descriptor swap | 2 | 0.091397 | 87.5% (2-seed) | - | 34+34 designs (best) | KILLED at gate; coverage datum kept |
+| N03b front-slot lane | 2 of 5 | 0.096844 | 92.7% (2-seed) | - | 33+32 | survived gate; seeds 1003-1005 running |
+
+**The two-scale story** (`../p3_full_rtllm/five_seed_verdict.md`): the
+natural QD extension WINS at screening scale (+12.9%, 3/3 seeds) and
+lands at no-cost parity with a coverage edge at suite scale, where
+outcomes are LLM-capability-bound. The measured screen->suite transfer
+gap (~18 points) is itself a methodology finding and triggered the
+P3b amendment (near-band arms get direct suite probes). Suite-scale
+descriptor result so far: BD semantics move COVERAGE (gt3d covered
+more designs than classic on both seeds), not HV.
 
 ---
 
