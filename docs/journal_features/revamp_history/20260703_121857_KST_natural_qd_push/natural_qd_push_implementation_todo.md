@@ -23,17 +23,23 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       `tables/v2_platform_config.md` (reconstructed from doc 16 +
       consolidated record; original launchers gone from exp/). Runtime
       verification happens with the P0 anchor run.
-- [ ] Port `audit_operator_contract.py` into `scripts/` with tests;
-      wire it into every comparison packaging step.
-- [ ] Canonicalize HV-AUC in shared reporting; regression-test equality
-      against stored 20260630 tables before first use.
-- [ ] Add `scripts/validate_natural_qd_run.py` (operator contract, token
-      budgets, seed, descriptor profile, archive config vs registration)
-      plus `tests/scripts/test_validate_natural_qd_run.py`.
-- [ ] Create `lanes/lane_registry.csv` and register N01-N08 with
-      mechanism, knobs, gates (before any live run).
+- [x] Port `audit_operator_contract.py` into `scripts/` with tests
+      (commit 47b6906bf6); sanity-reproduced the 20260630 all-pass audit
+      and added an `other_strategy_count` column (M-T visibility).
+- [x] Canonicalize HV-AUC in shared reporting (commit b5371925ff):
+      `revolution.qd.pareto_analysis.{cumulative_hypervolume_curve,
+      hypervolume_auc}` + `scripts/report_hv_auc.py`; regression equality
+      vs stored 20260630 tables (1e-9) tested.
+- [x] Add `scripts/validate_natural_qd_run.py` + tests (commit
+      03e3c48475): manifest agreement, strategy contract (M-T allowed for
+      QD arms per the 20260630 precedent, forbidden for classic), QD
+      artifact presence per arm.
+- [x] Create `lanes/lane_registry.csv` with N01-N08 draft registrations
+      (full pre-registration cards still required before each live run).
 - [ ] Run V2 platform anchor on the 8-design screen, seed 1001; add seeds
       1002/1003 (expected within +-5% of classic); package per policy.
+      Status: seed-1001 anchor launched 2026-07-03 04:10 UTC
+      (`exp/natural_qd_push/p0_v2_anchor_20260703_041010_UTC/`).
 
 ## P1 Single-Factor Screens (each: pre-register -> run -> package -> tier)
 

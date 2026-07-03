@@ -21,6 +21,7 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 
 | File | Role |
 | --- | --- |
+| `original_thoughts.md` | The user's founding intent, verbatim and unorganized — read for intent, not as a contract. |
 | `natural_qd_push_plan.md` | The contract: lessons, lanes, gates, phases. |
 | `natural_qd_push_implementation_todo.md` | Living checklist (hard line cap). |
 | `natural_qd_push_implementation_history.md` | Append-only audit log. |

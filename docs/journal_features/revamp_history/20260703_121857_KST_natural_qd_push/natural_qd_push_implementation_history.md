@@ -121,3 +121,37 @@ Load-bearing findings, with sources (paths relative to
   audit_operator_contract.py` (counts `single_thought_operator` vs EoH
   strategies {M-S, M-R, M-I, C-F, M-E, M-F} per method from
   `ppa_candidates.csv`; any single-thought row fails).
+
+## 2026-07-03 13:05 KST - P0 Tooling Landed + M-T Contract Note
+
+- Commits: b5371925ff (canonical HV-AUC: pareto_analysis primitives +
+  `scripts/report_hv_auc.py` + 1e-9 regression vs stored 20260630
+  tables), 47b6906bf6 (tracked `scripts/audit_operator_contract.py`),
+  03e3c48475 (`scripts/validate_natural_qd_run.py`). 18 focused tests
+  pass; ruff and pyright clean on touched files.
+- Auditor sanity run on the stored 20260630 candidates reproduced the
+  suite's all-pass contract (single_thought_count=0 for all five arms).
+- Versioned contract note (M-T): the corrected 20260630 EoH-preserving
+  QD arms emitted `M-T` (DeepGate 34, MasterRTL 18, Qwen 46 candidates)
+  — the QD engine's thought-mutation lane under `eoh_strategies`. Ruling
+  for this push, matching that precedent: QD arms MAY emit `M-T` (the
+  auditor's `other_strategy_count` keeps it visible; report it in every
+  lane package), classic arms may not; `single_thought_operator` remains
+  a hard fail everywhere.
+- generation_log.jsonl schema confirmed on a live classic root:
+  per-generation `strategy_counts_this_generation` dict is the audited
+  surface; problem dirs sit at `<save_path>/<model>/<benchmark>/<problem>`.
+
+## 2026-07-03 13:10 KST - V2 Anchor Seed-1001 Launched
+
+- Preflight recorded: `openai/gpt-oss-120b`, `max_model_len=131072`
+  (`exp/natural_qd_push/p0_v2_anchor_20260703_041010_UTC/
+  preflight_models_20260703_041010_UTC.json`).
+- Launched the pinned V2 anchor command (tables/v2_platform_config.md)
+  on the frozen 8-design screen, seed 1001, save path
+  `exp/natural_qd_push/p0_v2_anchor_20260703_041010_UTC/live/
+  smooth_qd_v2_8x5/seed_1001`, stdout/err in
+  `launch_smooth_qd_v2_seed1001.log`.
+- Comparator: reused classic seed-1001 metrics (mean HV
+  0.14064478405974706) from `tables/classic_baselines.csv`; no classic
+  relaunch.
