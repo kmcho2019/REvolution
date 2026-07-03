@@ -13,15 +13,16 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
 - [x] Create branch `feat/journal-qd-bd-exp-20260703` and this scaffold.
 - [x] Preflight `http://20.0.0.103:8000/v1/models`
       (`openai/gpt-oss-120b`, `max_model_len=131072`, 2026-07-03).
-- [ ] Pin the frozen 8-design screening manifest from
-      `../20260622_010615_KST_useful_bd_push/preliminary_planning/`
-      `20260625_encoder_config_screening/` into `tables/` here, with the
-      classic seed-1001/1002/1003 run roots and recomputed metrics.
-- [ ] Pin reusable classic baselines table (`tables/classic_baselines.csv`):
-      8x5 screen, 6x7, full RTLLM seed-1001 and 5-seed, classic_no_cf.
-- [ ] Pin the exact Smooth-QD V2 platform config (flags + descriptor
-      profile) from doc 16 / journal-revamp evidence into
-      `tables/v2_platform_config.md`; verify it runs on current code.
+- [x] Pin the frozen 8-design screening manifest into
+      `tables/screen_manifest.csv` (source: June-25 encoder screening
+      package; classic seed-1001/1002/1003 run roots verified on disk).
+- [x] Pin reusable classic baselines (`tables/classic_baselines.csv`):
+      8x5 screen (seeds 1001-1003), 6x7, full RTLLM seed-1001 and 5-seed,
+      classic_no_cf. Recompute verification of pinned rows still pending.
+- [x] Pin the exact Smooth-QD V2 platform config into
+      `tables/v2_platform_config.md` (reconstructed from doc 16 +
+      consolidated record; original launchers gone from exp/). Runtime
+      verification happens with the P0 anchor run.
 - [ ] Port `audit_operator_contract.py` into `scripts/` with tests;
       wire it into every comparison packaging step.
 - [ ] Canonicalize HV-AUC in shared reporting; regression-test equality

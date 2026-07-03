@@ -93,3 +93,31 @@ Load-bearing findings, with sources (paths relative to
   against the stored 20260630 tables.
 - D6: Natural-Extension Criterion (plan) is binding lane admissibility;
   PCN-style triggers/credit stacks are out of scope for this push.
+
+## 2026-07-03 12:50 KST - P0 Pinning Completed (goal activated)
+
+- Goal activated via `/goal` with the scaffold's goal template.
+- Pinned into `tables/`: `screen_manifest.csv` (8 designs, verbatim from
+  `prelim_screen_subset.csv`), `classic_baselines.csv` (screen seeds
+  1001/1002/1003 = 0.14064478405974706 / 0.15936940200276137 /
+  0.13253100841854415, 3-seed mean 0.14418173149368419; 6x7 0.1701; full
+  RTLLM rows), `v2_platform_config.md` (V2 flag set + anchor command),
+  `tables/README.md` (provenance + run-root availability).
+- Run-root check: classic screen roots exist on disk
+  (`exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC`,
+  `.../prelim_aux_archive_seed_replication_20260625_232854_UTC`); June-12
+  `exp/ablation_matrix/` + `exp/fast_iter/` roots are gone, so V2 flags
+  were reconstructed from tracked docs (doc 16 section 5; consolidated
+  record section 8) and screen-scale V2 evidence comes from the P0 anchor.
+- Canonical HV-AUC source identified for porting:
+  `RTLLM_full_suite/20260630/tools/summarize_full_suite.py::{hv_at_step,
+  auc,load_hv_auc}` — trapezoidal mean over cumulative-generation Pareto
+  HV, steps 0..num_generations, `g_P/g_A/g_T` (sequential) or `g_P/g_A`
+  (combinational), empty prefix = 0.0. Regression fixture:
+  `RTLLM_full_suite/20260630/analysis/full/reference_complete_ppa_
+  distribution/data/ppa_candidates.csv` vs stored
+  `tables/full_suite_problem_metrics.csv`.
+- Operator auditor source: `RTLLM_full_suite/20260630/tools/
+  audit_operator_contract.py` (counts `single_thought_operator` vs EoH
+  strategies {M-S, M-R, M-I, C-F, M-E, M-F} per method from
+  `ppa_candidates.csv`; any single-thought row fails).
