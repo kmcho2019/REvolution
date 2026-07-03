@@ -48,6 +48,17 @@ record the probe JSONs under this lane before launch. Any axis that
 fails to resolve or collapses on the probe sample kills that arm before
 spend.
 
+**Process deviation + quarantine (2026-07-03, codex review action 1):**
+the wave-1 probes committed before launch were metadata-only
+(axis resolution + requirements), not the sampled extraction and
+collapse check this section requires; the live wave-1 arms were
+launched on that weaker gate. Ruling: wave-1 LIVE RESULTS ARE
+QUARANTINED — no tier decision or comparison read until a real probe
+artifact is packaged per arm from the runs' own per-candidate
+descriptor values and `descriptor_health` artifacts (sampled values,
+collapse counts, occupied cells, pass/fail), and it passes. Wave 2
+must run the full sampled probe BEFORE launch, as written.
+
 ## Natural-Extension Criterion check
 
 1. "V2, but the archive bins designs by testability/decision structure

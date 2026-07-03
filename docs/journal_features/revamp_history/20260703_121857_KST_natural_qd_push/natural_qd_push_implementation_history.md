@@ -356,3 +356,34 @@ Load-bearing findings, with sources (paths relative to
   the retention-ladder wording, and N06 registration quality as the
   focus questions. Output:
   `reviews/codex_second_opinion_20260703_p1.md`.
+
+## 2026-07-03 18:20 KST - Codex Second Opinion: PASS_WITH_ACTIONS (5), Executed
+
+- Codex verdict PASS_WITH_ACTIONS with five findings the claude -p
+  channel missed — the dual-reviewer practice paid for itself on its
+  first run:
+  1. N06 probe gate not actually satisfied (metadata-only probes;
+     live arms already launched). Ruling recorded in the N06 card:
+     wave-1 live results QUARANTINED until a real sampled probe
+     artifact (per-candidate values, collapse counts, occupied cells)
+     is packaged from the runs and passes; wave 2 probes fully before
+     launch.
+  2. N05 validations used a reduced pin set — repackaged with the full
+     P0/N01 pin set; both arms pass.
+  3. N05 retirement misframed — warmup_16 is a near-tie on HV-AUC
+     (0.142240 vs V2 0.143660, -0.99%) and +16.5% HV over classic.
+     Report reframed: N05a closed, N05b PARKED (not a promotion-arm
+     candidate under the registered rule; revive inside N04 where
+     warmup x depth interacts). The "no path to the promotion bar"
+     wording conflated the plan's classic-based promote gate with the
+     registered V2-based promotion-arm rule.
+  4. N01 ladder wording softened to single-seed diagnostic signal
+     (V2 beats classic on 3/8 problems; slot2->V2 gain concentrated in
+     traffic_light/alu; replication before any narrative claim).
+  5. Validator config discovery tightened: exactly one resolved
+     config YAML required, ambiguity is an error (test added).
+- Note for the promotion decision: the two gates (plan promote gate =
+  vs classic; registered promotion-arm rule = vs V2) coexist by
+  design — the plan gate defines full-RTLLM eligibility, the
+  registered rule picks the single P3 arm. Recorded here to prevent
+  the next conflation.

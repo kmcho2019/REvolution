@@ -13,15 +13,17 @@ zero M-T; config-pinned validations pass; package under `package/`).
 | N01a elite_pareto_slot_2 | champion + 1 front slot | 0.15709 | +11.7% | -9.6% | 3.125 |
 | V2 anchor | bounded Pareto front (<=5) | 0.17376 | +23.5% | - | 2.625 |
 
-## Interpretation (single seed; attribution, not promotion)
+## Interpretation (single-seed diagnostic signal; attribution, not promotion)
 
 - **Retention capacity is monotone in mean HV on this seed**: classic
   0.1406 -> scalar cells 0.1468 -> one front slot 0.1571 -> 5-elite
-  Pareto cells 0.1738. This is the cleanest mechanism-attribution
-  ladder the program has produced: archive+NSGA-II selection alone
-  (+4.4%) and per-cell Pareto retention (+8.7 points more) both
-  contribute; the frozen thesis's "bounded per-cell Pareto fronts
-  instead of scalar replacement" carries most of the margin.
+  Pareto cells 0.1738. Read as a single-seed diagnostic signal, not a
+  narrative claim (codex review action 4): at the problem level V2
+  beats classic on only 3/8 designs, and the slot-2 -> V2 gain is
+  concentrated in traffic_light and alu, so the ladder's shape needs
+  seed replication before any paper-facing attribution statement.
+  Within this seed, archive+NSGA-II selection alone (+4.4%) and
+  per-cell Pareto retention (the remaining margin) both contribute.
 - Pareto POINTS run the other way (3.375 -> 3.125 -> 2.625): richer
   cells concentrate front mass into dominating designs rather than
   many shallow points. HV is the gate metric; breadth is reported.
