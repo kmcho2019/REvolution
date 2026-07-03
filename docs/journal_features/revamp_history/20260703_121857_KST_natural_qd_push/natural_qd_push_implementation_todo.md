@@ -45,8 +45,10 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
 
 - [ ] N01 per-cell Pareto slots (slot count 1; then 2 as registered
       follow-up) at 8x5 seed 1001; replicate seeds per gate ladder.
-- [ ] N02 Pareto-biased parent sampling (one weight knob; new code as a
-      small module with focused tests) at 8x5 seed 1001; replicate.
+- [ ] N02 curiosity sampling at 8x5 seed 1001; replicate. Code landed
+      (commit 3182602524: `src/revolution/qd_natural/`,
+      `--search_mode revolution_qd_natural`, `--qd_curiosity_gamma`);
+      bounded one-problem live smoke still required before the screen.
 - [ ] N03 archive parent lane fraction 0.10 and 0.30 at 8x5 seed 1001;
       replicate the better arm.
 - [ ] N05 warmup initialization (fixed g0) at 8x5 seed 1001; replicate.

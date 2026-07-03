@@ -1,0 +1,45 @@
+# P0 V2 Anchor — Packaging Commands (registered before results)
+
+Run root (seed 1001): `exp/natural_qd_push/p0_v2_anchor_20260703_041511_UTC/
+live/smooth_qd_v2_8x5/seed_1001`
+Classic comparator root (reused, no relaunch):
+`exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/
+classic_revolution_8x5/seed_1001`
+Subset config: `../../20260622_010615_KST_useful_bd_push/
+preliminary_planning/20260625_encoder_config_screening/tables/
+prelim_screen_subset.yaml`
+
+```bash
+PUSH=docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push
+PKG=$PUSH/p0_v2_anchor
+SUBSET=docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260625_encoder_config_screening/tables/prelim_screen_subset.yaml
+CLASSIC=exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/classic_revolution_8x5/seed_1001
+V2=exp/natural_qd_push/p0_v2_anchor_20260703_041511_UTC/live/smooth_qd_v2_8x5/seed_1001
+
+uv run python scripts/report_pareto_analysis.py \
+  --backend_run classic_revolution_8x5="$CLASSIC" \
+  --backend_run smooth_qd_v2_8x5="$V2" \
+  --subset-config "$SUBSET" --output-dir "$PKG/pareto_analysis"
+
+uv run python scripts/report_ppa_distribution.py \
+  --backend_run classic_revolution_8x5="$CLASSIC" \
+  --backend_run smooth_qd_v2_8x5="$V2" \
+  --subset-config "$SUBSET" --output-dir "$PKG/ppa_distribution"
+
+uv run python scripts/report_hv_auc.py \
+  --ppa-candidates "$PKG/ppa_distribution/data/ppa_candidates.csv" \
+  --num-generations 5 --output "$PKG/tables/hv_auc.csv"
+
+uv run python scripts/audit_operator_contract.py \
+  --ppa-candidates "$PKG/ppa_distribution/data/ppa_candidates.csv" \
+  --output "$PKG/tables/operator_contract.csv"
+
+uv run python scripts/validate_natural_qd_run.py \
+  --run-root "$V2" --manifest "$PUSH/tables/screen_manifest.csv" \
+  --arm qd --output "$PKG/tables/run_validation.json"
+```
+
+Reads, registered before results: the anchor is expected within +-5% of
+classic mean HV 0.14064478405974706 (V2 parity platform). The recompute
+of the classic side doubles as the pinned-baseline verification. Any
+`single_thought_count != 0` or run-validation failure voids the package.
