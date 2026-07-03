@@ -6,9 +6,10 @@ Checks, per the natural_qd_push plan (2026-07-03):
 - every manifest ``(benchmark, problem)`` maps to exactly one problem dir
   with a non-empty ``generation_log.jsonl`` under the run root;
 - zero ``single_thought_operator`` candidates; classic arms use only the
-  EoH suite; QD arms may additionally emit ``M-T`` (the QD engine's
-  thought-mutation lane under ``eoh_strategies`` — the 20260630 corrected
-  suite accepted it, and the audit CSV keeps its count visible);
+  EoH suite; QD arms may additionally emit ``M-T`` (thought-mutation) and
+  ``C-D`` (diverse-parent crossover) — the QD engine's own fill/backfill
+  lanes under ``eoh_strategies``, both tuple-individual operators in the
+  20260630 tolerance family; the audit CSV keeps their counts visible;
 - QD arms (``--arm qd``) carry ``archive_summary.json`` and
   ``qd_metrics.json`` in every problem dir; classic arms
   (``--arm classic``) carry neither;
@@ -33,7 +34,7 @@ import yaml
 EOH_STRATEGIES = frozenset({"M-S", "M-R", "M-I", "C-F", "M-E", "M-F"})
 ALLOWED_BY_ARM = {
     "classic": EOH_STRATEGIES | {"initial"},
-    "qd": EOH_STRATEGIES | {"initial", "M-T"},
+    "qd": EOH_STRATEGIES | {"initial", "M-T", "C-D"},
 }
 QD_ARTIFACTS = ("archive_summary.json", "qd_metrics.json")
 

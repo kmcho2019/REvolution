@@ -144,7 +144,7 @@ def test_thought_mutation_allowed_for_qd_forbidden_for_classic(
         run_root,
         "RTLLM",
         "Prob024_fsm",
-        [{"initial": 8}, {"M-T": 2, "M-S": 4}],
+        [{"initial": 8}, {"M-T": 2, "M-S": 4, "C-D": 1}],
         qd_artifacts=True,
     )
     manifest = tmp_path / "manifest.csv"
