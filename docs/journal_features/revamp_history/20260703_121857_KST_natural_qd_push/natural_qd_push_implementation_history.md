@@ -193,3 +193,24 @@ Load-bearing findings, with sources (paths relative to
   (`qd_grid_quantile_warmup_successes`, platform value 8; arms 4 and
   16). Exact single-factor definitions go in the registration cards
   before any launch.
+
+## 2026-07-03 13:55 KST - V2 Anchor Seed-1001 Landed (+23.5% HV, unverified)
+
+- Anchor completed in 1450 s, exit 0. Packaged per the pre-registered
+  chain into `p0_v2_anchor/` (pareto_analysis, ppa_distribution,
+  canonical hv_auc.csv, operator_contract.csv, run_validation.json).
+- Headline (seed 1001 only): V2 mean HV 0.17376375275693837 vs classic
+  0.14064478405974706 (+23.55%); mean HV-AUC 0.143659910 vs
+  0.123873865 (+15.97%); coverage tied 8/8; mean Pareto points 2.625 vs
+  3.25 (front breadth still trails); W/L/T 3/2/3.
+- All gates green: single_thought_count=0 both arms (V2: 166 EoH ops,
+  0 M-T); run validation pass; classic recompute reproduced the pinned
+  0.14064478405974706 exactly (baseline verification done for this
+  root).
+- Figures inspected (fsm: genuinely dominating new design; alu: small
+  area-axis exploit deficit). Cosmetic title/legend collision in
+  pairwise figures noted for a shared-surface fix.
+- Discipline: NO verdict language; the fsm 2.35x single-problem jump is
+  the T83-style pattern that dies at replication. Seeds 1002+1003
+  launched back-to-back immediately (same faithful config, per-seed
+  preflights recorded in the anchor base dir).

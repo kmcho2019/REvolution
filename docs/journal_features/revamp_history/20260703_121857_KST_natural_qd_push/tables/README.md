@@ -7,7 +7,7 @@ gitignored evidence and their availability is recorded here.
 | File | Content | Status |
 | --- | --- | --- |
 | `screen_manifest.csv` | Frozen 8-design 8x5 screening subset (copy of `prelim_screen_subset.csv`, June-25 encoder screening package). | pinned 2026-07-03 |
-| `classic_baselines.csv` | Reused operator-fair classic metrics with source tables and run roots. | pinned 2026-07-03; recompute verification pending (P0) |
+| `classic_baselines.csv` | Reused operator-fair classic metrics with source tables and run roots. | pinned 2026-07-03; screen seed-1001 row recompute-verified exactly by the P0 anchor package (`../p0_v2_anchor/`); 1002/1003 verify with the replication packaging; 6x7 row still pending |
 | `v2_platform_config.md` | Exact Smooth-QD V2 flag set + anchor command. | pinned 2026-07-03 |
 
 Run-root availability check (2026-07-03): classic screen seed-1001 root
