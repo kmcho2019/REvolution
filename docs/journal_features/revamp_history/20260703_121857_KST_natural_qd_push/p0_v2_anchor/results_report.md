@@ -1,10 +1,56 @@
-# P0 V2 Anchor — Seed-1001 Result (NOT a verdict; 3-seed pending)
+# P0 V2 Anchor — 3-Seed Result: V2 BEATS CLASSIC ON THE SCREEN
 
 Date: 2026-07-03. Arm: `smooth_qd_v2_8x5` (faithful V2 platform,
-`tables/v2_platform_config.md`), frozen 8-design 8x5 screen, seed 1001,
-operator-fair vs the reused classic seed-1001 root. Runtime 1450 s.
-Seeds 1002/1003 launched immediately after this read; no promotion or
-verdict language is permitted until they land (single-seed rule).
+`tables/v2_platform_config.md`), frozen 8-design 8x5 screen,
+operator-fair vs reused classic roots, seeds 1001/1002/1003.
+
+## 3-Seed Verdict (pre-registered screening gates)
+
+`tables/three_seed_summary.csv` (scripted from the per-seed packages):
+
+| Seed | classic HV | V2 HV | ratio | classic HV-AUC | V2 HV-AUC |
+| --- | --- | --- | --- | --- | --- |
+| 1001 | 0.140645 | 0.173764 | 123.5% | 0.123874 | 0.143660 |
+| 1002 | 0.159369 | 0.171800 | 107.8% | 0.129963 | 0.151323 |
+| 1003 | 0.132531 | 0.142943 | 107.9% | 0.111402 | 0.129256 |
+| mean | 0.144182 | 0.162835 | **112.9%** | 0.121746 | **0.141413 (+16.2%)** |
+
+- Promote gate: 3-seed mean HV >= classic (0.16284 vs 0.14418, +12.9%)
+  PASS; 3-seed HV-AUC >= classic (+16.2%) PASS; coverage retained 8/8
+  on every seed for both arms PASS.
+- **3/3 per-seed HV wins** — including classic's best seed (1002) —
+  the exact replication bar that killed every prior QD arm (T83,
+  aux-archive, PCN-v3 all went 0/3 or failed 5-seed).
+- Per-seed operator contracts and run validations all pass
+  (`replication/seed_100{2,3}/operator_contract.csv`,
+  `run_validation.json`); zero single-thought, zero M-T candidates.
+- Classic recomputes reproduced the pinned per-seed baselines exactly
+  (0.14064478405974706 / 0.15936940200276137 / 0.13253100841854415) —
+  the reused-baseline verification is complete for all three screen
+  roots.
+- Front breadth is seed-dependent, not uniformly worse: Pareto points
+  2.625/2.0/3.125 vs classic 3.25/2.125/2.875.
+
+**Result statement (scoped):** on the frozen 8-design 8x5 screen with
+seeds 1001-1003, the faithful Smooth-QD V2 platform — the natural
+MAP-Elites extension of classic REvolution (unchanged EoH operators
+and (thought, code, feedback) individuals; grid-quantile archive over
+the frozen BD trio; bounded per-cell Pareto fronts; NSGA-II global
+parent selection; champion refinement) — beats classic REvolution on
+mean PPA hypervolume (+12.9%) and canonical HV-AUC (+16.2%) with
+functionality retained on every design. This is a screening-scale
+result; the frozen-contract claim gates (full RTLLM, 5 seeds, cluster
+statistics, +5% log-ratio CI) remain to be run (P3).
+
+## Promotion-arm decision rule (registered 2026-07-03, before any P1 read)
+
+The P3 full-RTLLM promotion arm is V2 itself, unless a P1 lane beats
+V2 on 3-seed screening mean HV AND HV-AUC by more than +2% relative
+with coverage retained — in which case that lane (single factor only,
+no unregistered combinations) becomes the promotion arm. This rule is
+fixed now to prevent post-hoc arm shopping.
+
+## Seed-1001 detail (historical, superseded by the 3-seed table)
 
 ## Headline (seed 1001 only)
 

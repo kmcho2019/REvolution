@@ -214,3 +214,34 @@ Load-bearing findings, with sources (paths relative to
   the T83-style pattern that dies at replication. Seeds 1002+1003
   launched back-to-back immediately (same faithful config, per-seed
   preflights recorded in the anchor base dir).
+
+## 2026-07-03 15:10 KST - 3-SEED READ: V2 BEATS CLASSIC 3/3 ON THE SCREEN
+
+- Seeds 1002 (1355 s) and 1003 (1393 s) completed exit 0; packaged per
+  the same chain under `p0_v2_anchor/replication/seed_100{2,3}/`.
+- 3-seed means (scripted `tables/three_seed_summary.csv`): V2 HV
+  0.16283536749649596 vs classic 0.14418173149368418 (+12.9%); V2
+  HV-AUC 0.141413240 vs 0.121746133 (+16.2%); coverage 8/8 both arms
+  all seeds; per-seed ratios 123.5% / 107.8% / 107.9% — 3/3 wins,
+  including classic's best seed.
+- All per-seed gates green (operator contract, run validation); classic
+  recomputes matched all three pinned baselines exactly.
+- Pre-registered screening promote gate: PASS on all three conditions.
+  First QD arm in program history to beat classic on a seed-replicated
+  operator-fair surface. Scope discipline: screening-scale only; the
+  frozen-contract claim needs P3 (full RTLLM 46, 5 seeds, cluster
+  stats, +5% log-ratio CI, held-out).
+- Registered the promotion-arm decision rule BEFORE any P1 read (in
+  `p0_v2_anchor/results_report.md`): promotion arm = V2 unless a P1
+  lane beats V2 by >2% relative on 3-seed mean HV AND HV-AUC with
+  coverage retained.
+- Interpretation note for the journal narrative: this directly
+  confirms the operator-contamination thesis — the identical archive
+  mechanism that lost as thought_only+single_thought (F1 -0.093) wins
+  operator-fair. The mechanism sentence for the paper stays one line:
+  "REvolution, but survivors live in a MAP-Elites archive with bounded
+  per-cell Pareto fronts and NSGA-II parent selection."
+- One transcription-error near-miss: the first three_seed_summary.csv
+  was hand-typed and had two wrong trailing digit runs; caught and
+  replaced by the scripted generator before commit (rubric rule: no
+  hand-copied numbers).

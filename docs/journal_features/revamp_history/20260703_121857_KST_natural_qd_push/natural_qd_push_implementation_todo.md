@@ -36,10 +36,11 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       artifact presence per arm.
 - [x] Create `lanes/lane_registry.csv` with N01-N08 draft registrations
       (full pre-registration cards still required before each live run).
-- [ ] Run V2 platform anchor on the 8-design screen, seed 1001; add seeds
-      1002/1003 (expected within +-5% of classic); package per policy.
-      Status: seed-1001 anchor launched 2026-07-03 04:10 UTC
-      (`exp/natural_qd_push/p0_v2_anchor_20260703_041010_UTC/`).
+- [x] Run V2 platform anchor on the 8-design screen, seeds 1001-1003;
+      package per policy. Outcome: V2 beats classic 3/3 seeds — 3-seed
+      mean HV +12.9%, HV-AUC +16.2%, coverage 8/8 everywhere; all
+      operator/validation gates green (`p0_v2_anchor/`). Promotion-arm
+      rule registered before P1 reads.
 
 ## P1 Single-Factor Screens (each: pre-register -> run -> package -> tier)
 
