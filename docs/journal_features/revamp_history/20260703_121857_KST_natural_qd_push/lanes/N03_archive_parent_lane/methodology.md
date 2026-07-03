@@ -9,7 +9,15 @@ archive's local-front slot pool instead of the NSGA-II global pool:
 `--qd_parent_selection front_slot_lane_nsga2` with
 `--qd_front_slot_lane_fraction {0.10 | 0.30}` (arms N03a / N03b).
 Existing engine mode (`engine.py:_sample_success_parents`); champion
-lane and everything else identical to the pinned V2 anchor command.
+lane preserved.
+
+Amendment (2026-07-03, before any launch): the front-slot pool exists
+only under `qd_cell_mode=elite_pareto_slot`, so N03 arms run on the
+N01a cell mode (`elite_pareto_slot`, max 2) rather than the platform's
+`pareto_front(5)`. The lane is therefore single-factor relative to
+N01a, not V2: verdicts attribute the lane effect from the N03x-vs-N01a
+delta, and N03 is sequenced after N01a's seed-1001 read (re-registered
+if N01a is a kill).
 
 ## Natural-Extension Criterion check
 
