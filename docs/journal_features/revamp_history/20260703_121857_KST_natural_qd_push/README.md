@@ -4,18 +4,26 @@ Goal-scaffold root for the July 2026 push to find a natural QD/MAP-Elites
 extension of classic REvolution that beats classic on HV and HV-AUC while
 matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 
-## Current State
+## Current State (2026-07-04; P0-P3 campaign complete, P4 synthesis open)
 
-- Scaffold created 2026-07-03; goal not yet activated.
-- Founding analysis complete: the June-22 push's negative map (T01-T100) is
-  operator-contaminated (QD arms ran `single_thought_operator` vs classic's
-  `eoh_strategies`); corrected reruns swing QD retention up 30-46 points.
-- Platform: Smooth-QD V2 (code individuals + full EoH suite + champion
-  refinement + NSGA-II selection over the BD-trio archive) is at statistical
-  parity with classic. This push runs single-factor upgrades on that platform.
-- PCN-v3 (stagnation-triggered auxiliary memory) is retired: 5-seed negative,
-  C-F confounded, and rejected by colleagues as a bolt-on. Its mechanism
+- HEADLINE: the two-scale story. The faithful V2 platform BEATS classic
+  at screening scale (+12.9% HV, +16.2% HV-AUC, 3/3 seeds,
+  `p0_v2_anchor/`) — the first replicated operator-fair QD win in the
+  program — and lands at no-cost parity with a coverage edge at
+  full-suite scale (95.2% HV, 100.5% AUC, 166 vs 164 designs,
+  `p3_full_rtllm/five_seed_verdict.md`); the frozen +5% gate fails at
+  suite scale, where outcomes are LLM-capability-bound.
+- Start here: `lanes/README.md` (both-scale standings), then the plan
+  and history. 11 screen arms + 3 suite arms measured, every one
+  operator-audited and config-pinned; both periodic dual reviews
+  (claude -p, codex) verified the campaign with zero blocking findings.
+- Founding-analysis context: the June-22 negative map was
+  operator-contaminated (corrected reruns swing 30-46 points); PCN-v3
+  is retired (5-seed negative, C-F confounded) and its mechanism
   signature is banned by the adversarial rubric here.
+- Open: N03b suite ladder completing; P4 = canonical contract
+  statistics, central comparison report, dashboard refresh, viewer
+  bundle, adversarial sign-off.
 
 ## Top-Level Docs
 

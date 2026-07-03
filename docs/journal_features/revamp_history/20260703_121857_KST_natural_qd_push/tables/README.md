@@ -24,3 +24,12 @@ Rules:
   rows/files with a dated note in the push history.
 - The `depth_6x7` classic row is pinned from the lineage ledger and must
   be recompute-verified against its run root before N04 uses it.
+
+Dated correction note (2026-07-04, periodic review action 1): the
+classic full-RTLLM 5-seed HV recompute matches the pinned value
+exactly (0.103802), but the HV-AUC recompute is 0.086982 vs the pinned
+0.08680 (+0.21%). Cause: the pinned AUC predates the canonical
+HV-AUC implementation (which was regression-locked to the 20260630
+tables, not the 20260701 PCN table). No validity impact — both arms of
+every P3 comparison use the canonical path; the canonical value is the
+citable one. "Recompute = pinned" claims are scoped to HV.

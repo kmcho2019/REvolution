@@ -527,3 +527,23 @@ Load-bearing findings, with sources (paths relative to
 - P3b-B (N03b front-slot lane 0.30) pair launched (seeds 1001+1002)
   with per-seed preflights; same gate applies. P3b-C (compact_8d+CVT)
   remains contingent and currently unjustified.
+
+## 2026-07-04 06:30 KST - Dual Review on P3: codex PASS, claude PASS_WITH_ACTIONS
+
+- codex: clean PASS, zero actions — independently recomputed the
+  5-seed verdict, the interim log-ratio stats (faithful to the frozen
+  formula), both P3b gate decisions, scoping, and the coverage-vs-HV
+  wording (`reviews/codex_second_opinion_20260704_p3.md`).
+- claude -p: PASS_WITH_ACTIONS (4, documentation-grade), verifying the
+  same surface without execution (set-structure recount of T=149; the
+  80.0% jackpot decomposition; single-commit histories on all three
+  registration files; the C-D validator change shown irrelevant to the
+  headline — V2 P3 contracts all have other_strategy_count=0)
+  (`reviews/claude_periodic_review_20260704_p3.md`).
+- Actions executed: (1) dated AUC pinned-vs-canonical divergence note
+  in tables/README (0.086982 canonical vs 0.08680 pre-canonical
+  pinned; no validity impact; "recompute = pinned" scoped to HV);
+  (2) P3 todo items ticked with evidence pointers + explicit canonical
+  report_journal_statistics.py checkbox added + held-out gate marked
+  not-triggered; (3) scaffold README Current State rewritten for the
+  completed P0-P3 campaign; (4) subjects <=50 chars henceforth.

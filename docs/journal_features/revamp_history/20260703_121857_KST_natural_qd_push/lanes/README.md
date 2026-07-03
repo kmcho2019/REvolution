@@ -51,7 +51,7 @@ V2 on every seed) and the Branch-B utility candidate.
 
 | Arm | Seeds | Mean HV | vs classic | HV-AUC | Coverage | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
-| classic (reused roots) | 5 | 0.103802 | - | 0.086982 | 164/230 | baseline (recompute = pinned) |
+| classic (reused roots) | 5 | 0.103802 | - | 0.086982 | 164/230 | baseline (HV recompute = pinned; AUC is the canonical recompute, see tables/README correction note) |
 | **V2 platform** | 5 | 0.098801 | **95.2%** | **0.087428 (100.5%)** | **166/230** | +5% gate FAILS; AUC tie; coverage edge |
 | gt3d descriptor swap | 2 | 0.091397 | 87.5% (2-seed) | - | 34+34 designs (best) | KILLED at gate; coverage datum kept |
 | N03b front-slot lane | 2 of 5 | 0.096844 | 92.7% (2-seed) | - | 33+32 | survived gate; seeds 1003-1005 running |

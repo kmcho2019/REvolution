@@ -82,12 +82,21 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
 
 ## P3 Confirmation
 
-- [ ] Pre-register the promotion arm (single-factor winner or N08
-      combination) before seeing any full-suite result.
-- [ ] Full RTLLM 46 ref-complete seed 1001; then seeds 1001-1005 vs reused
-      classic 5-seed baselines; contract statistics; `ppa_completeness.csv`.
-- [ ] Held-out gate per `journal_narrative.md` if the 5-seed read clears
-      the screen bars.
+- [x] Pre-register the promotion arm before seeing any full-suite
+      result. Evidence: rule in `p0_v2_anchor/results_report.md`
+      (2026-07-03, before P1 reads); applied in
+      `p3_full_rtllm/commands.md` after N03b's displacement failed.
+- [x] Full RTLLM 46 ref-complete, seeds 1001-1005 vs reused classic
+      baselines. Outcome: `p3_full_rtllm/five_seed_verdict.md` — HV
+      95.2%, AUC 100.5%, coverage 166 vs 164; +5% gate fails; two-scale
+      story is the finding. P3b variant probes: gt3d killed at the
+      2-seed gate (coverage datum kept); N03b ladder completing.
+- [ ] Run the CANONICAL `report_journal_statistics.py` contract
+      statistics over the P3 packages (replaces the interim
+      contract-form implementation in the verdict; review action).
+- [ ] Held-out gate per `journal_narrative.md` — NOT triggered (the
+      5-seed read did not clear the screen bars); record as scoped-out
+      with the verdict as evidence.
 
 ## P4 Synthesis
 
