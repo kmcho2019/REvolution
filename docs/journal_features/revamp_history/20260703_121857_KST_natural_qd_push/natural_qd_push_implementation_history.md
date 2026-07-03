@@ -310,3 +310,34 @@ Load-bearing findings, with sources (paths relative to
   frozen-projection spec.
 - Sequencing: N06 wave 1 launches after the P1 chain frees the
   endpoint, alongside whatever N03/N02 steps their dependencies allow.
+
+## 2026-07-03 17:20 KST - P1 Reads: Retention Ladder; N05 Retired; Chain 2 Up
+
+- P1 chain completed exit 0 (all four screen arms + N02 smoke).
+  Packages: `lanes/N01_cell_retention_mode/package/`,
+  `lanes/N05_warmup_init/package/`; all operator contracts pass
+  (single_thought=0, M-T=0), coverage 8/8 everywhere, config-pinned
+  validations pass for all four arms.
+- N01 seed-1001 attribution ladder (mean HV): classic 0.14064 ->
+  scalar_elite 0.14683 (+4.4%) -> elite_pareto_slot_2 0.15709
+  (+11.7%) -> V2 pareto_front(5) 0.17376 (+23.5%). Retention capacity
+  monotone in HV; Pareto POINTS monotone the other way (3.375 -> 3.125
+  -> 2.625). Both arms diagnostic keepers; no challenger to V2.
+- N05 seed-1001: warmup 4 = 0.14927 (-14.1% vs V2), warmup 16 =
+  0.16383 (-5.7%); both directions lose, coverage unaffected. Lane
+  RETIRED per its registered rule (cause: platform-optimum; positive
+  tuning validation of warmup 8). Backlog note: revisit only inside
+  N04 depth shapes.
+- N02 smoke: `revolution_qd_natural` ran live cleanly (107 s, config
+  shows gamma 1.0 + nsga2_global_rank, archive artifacts written) —
+  N02a full screen cleared for chain 2.
+- N06 wave-1 probes recorded (`lanes/N06_descriptor_bakeoff/probes/`):
+  all three profiles resolve with requires_ppa=false
+  (graph_testability: rtl+graph metrics; size_control: rtl-text only;
+  random_hash: synthesis hash). Random control runs via explicit
+  `--qd_descriptor_axes random_hash_0..2` (profile not in the locked
+  YAML; no YAML edit needed).
+- Chain 2 launched sequentially: N06b graph_testability_3d, N06c
+  size_control_3d, N06d random_hash_3d, N03a/b front-slot lanes
+  (0.10/0.30 on elite_pareto_slot(2) per the amended card), N02a
+  curiosity gamma 1.0 — all seed 1001 with per-arm preflights.
