@@ -341,3 +341,18 @@ Load-bearing findings, with sources (paths relative to
   size_control_3d, N06d random_hash_3d, N03a/b front-slot lanes
   (0.10/0.30 on elite_pareto_slot(2) per the amended card), N02a
   curiosity gamma 1.0 — all seed 1001 with per-arm preflights.
+
+## 2026-07-03 17:45 KST - Second-Opinion Review Channel Adopted (codex)
+
+- User-adopted practice: alongside the periodic `claude -p` review, run
+  `codex --yolo exec "Requesting READ-ONLY review of <scope> following
+  GUIDELINES.md and the push plan ..."` for an independent second
+  opinion; outputs land under `reviews/`. Prompts must state read-only
+  and demand a PASS/FAIL verdict with numbered actions.
+- First trial launched now (codex-cli 0.142.4) over the review-action
+  batch + P1 packages (6fa46cfc77..HEAD), with spot-recompute of the
+  N01/N05 report numbers, the N05 retirement justification, GUIDELINES
+  simplicity of the three new scripts, single-seed overclaim risk in
+  the retention-ladder wording, and N06 registration quality as the
+  focus questions. Output:
+  `reviews/codex_second_opinion_20260703_p1.md`.

@@ -55,8 +55,11 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       bounded one-problem live smoke still required before the screen.
 - [ ] N03 archive parent lane fraction 0.10 and 0.30 at 8x5 seed 1001;
       replicate the better arm.
-- [ ] N05 warmup length (quantile-freeze warmup 4 and 16 vs platform 8)
-      at 8x5 seed 1001; replicate. Running in the P1 chain.
+- [x] N05 warmup length (4 and 16 vs platform 8) at 8x5 seed 1001.
+      Outcome: RETIRED per its registered rule — both directions lose
+      HV vs V2 (-14.1% / -5.7%) with coverage unaffected; recorded as
+      a positive tuning validation of warmup 8
+      (`lanes/N05_warmup_init/results_report.md`).
 - [ ] Fix the pairwise-front figure title/legend collision in the
       shared plotting surface before any colleague-facing package.
 - [ ] Every P1 verdict records cause class + follow-up idea or retirement
@@ -101,7 +104,13 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
 - [ ] `git diff --check`; no imports from untracked dirs.
 - [ ] vLLM preflight recorded before each live batch; 128k token budgets;
       blocked runs logged explicitly.
-- [ ] Periodic `claude -p` review after every ~10 commits; findings filed.
+- [ ] Periodic `claude -p` review after every ~10 commits; findings
+      filed. For second opinions, also run
+      `codex --yolo exec "Requesting READ-ONLY review of <scope>
+      following GUIDELINES.md and the push plan ..."` and record the
+      output under `reviews/` (user-adopted practice 2026-07-03;
+      prompts must state read-only and demand a PASS/FAIL verdict
+      with numbered actions).
 
 ## Commit Hygiene
 
