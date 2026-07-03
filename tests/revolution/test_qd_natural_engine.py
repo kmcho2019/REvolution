@@ -104,8 +104,6 @@ def test_draw_distribution_respects_weights() -> None:
     ]
     pool, weights = curiosity_pool(members, ("g_P", "g_A"), 4, 1.0)
     random.seed(1001)
-    draws = Counter(
-        random.choices(pool, weights=weights, k=4000)[i] for i in range(4000)
-    )
+    draws = Counter(random.choices(pool, weights=weights, k=4000))
     # sparse cell weight 1.0 vs 1/3 each: expect ~2000 sparse draws of 4000
     assert 1700 < draws["payload-s1"] < 2300

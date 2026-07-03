@@ -484,7 +484,11 @@ def _build_backend(
             qd_champion_lane_fraction=args.qd_champion_lane_fraction,
             qd_front_slot_lane_fraction=args.qd_front_slot_lane_fraction,
             qd_parent_selection=args.qd_parent_selection,
-            qd_curiosity_gamma=args.qd_curiosity_gamma,
+            qd_curiosity_gamma=(
+                args.qd_curiosity_gamma
+                if args.qd_curiosity_gamma is not None
+                else 1.0
+            ),
             qd_memory_classic_fraction=args.qd_memory_classic_fraction,
             qd_memory_refine_fraction=args.qd_memory_refine_fraction,
             qd_memory_rescue_fraction=args.qd_memory_rescue_fraction,
@@ -1127,10 +1131,10 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument(
         "--qd_curiosity_gamma",
         type=float,
-        default=1.0,
+        default=None,
         help=(
-            "Inverse-cell-occupancy draw exponent for "
-            "search_mode=revolution_qd_natural (lane N02)."
+            "Inverse-cell-occupancy draw exponent; required with (and only "
+            "valid for) search_mode=revolution_qd_natural (lane N02)."
         ),
     )
     parser.add_argument("--qd_parent_selection", type=str, default="cell_crowded_tournament",
@@ -1400,6 +1404,16 @@ def main(argv: list[str] | None = None) -> int:
         )
     except ConfigError as exc:
         print(f"Configuration error: {exc}")
+        return 2
+
+    if args.backend == "revolution" and (
+        (args.search_mode == "revolution_qd_natural")
+        != (args.qd_curiosity_gamma is not None)
+    ):
+        print(
+            "Configuration error: --qd_curiosity_gamma is required with, and "
+            "only valid for, search_mode=revolution_qd_natural."
+        )
         return 2
 
     if (
