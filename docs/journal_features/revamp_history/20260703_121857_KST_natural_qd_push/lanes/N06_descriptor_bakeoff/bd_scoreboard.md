@@ -44,10 +44,25 @@ per-problem `descriptor_health.json`).
 
 ## 3. Suite scale (RTLLM 46 ref-complete, 8x5)
 
-| Descriptor profile | Seeds | Mean HV | vs classic | HV-AUC46 | vs classic | Coverage |
+P3c uniform 2-seed sweep in progress (registration:
+`../../p3_full_rtllm/p3c_bd_sweep_registration.md`); classic 2-seed
+reference for seeds 1001+1002 = 0.104479.
+
+| Descriptor profile | Seeds | Mean HV | vs classic | HV-AUC46 | Coverage/seed | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| trio (V2) | 5 | 0.098801 | 95.2% | 0.087428 | 100.5% | **166** (cls 164) |
-| journal_graph_testability_3d | 2 (killed at gate) | 0.091397 | 87.5% (2-seed) | 0.079018 | 92.0% (2-seed) | **34+34/seed — best of ANY arm** |
+| trio (V2) | 5 | 0.098801 | 95.2% | 0.087428 (100.5%) | 166 total (cls 164) | 5-seed complete |
+| trio (V2, same 2 seeds) | 2 | 0.098539 | 94.3% | - | 32+33 | sweep reference |
+| size_control_3d | 2 | 0.096091 | 92.0% | - | 32+31 | packaged; NO coverage lift |
+| random_hash_3d (floor) | 2 | 0.091996 | 88.1% | - | 32+31 | packaged; **floor does NOT buy coverage — semantic claim survives falsification** |
+| journal_graph_testability_3d | 2 (HV-killed in P3b) | 0.091397 | 87.5% | 0.079018 (92.0%) | **34+34 (best of ANY arm)** | coverage datum kept |
+| source_aligned_shape_density_3d | 2 | running | - | - | - | pair mid-flight |
+| theory_grounded_compact_8d (CVT) + trio_cvt control | 2 | queued | - | - | - | health-gated pair 4/5 |
+
+Suite dissociation (the sweep's headline so far): gt3d and random are
+near-tied on HV (87.5% vs 88.1%), but ONLY the testability semantics
+buy coverage — random and size-control both COST coverage (32/31 <
+classic 33/33). The coverage lift is attributable to descriptor
+meaning, not to swapping or loosening the archive geometry.
 
 gt3d per-seed AUC46: 0.083973 / 0.074062 (classic same-seeds:
 0.090551 / 0.081183). The registered 2-seed gate (0.90x classic)
