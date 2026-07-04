@@ -122,14 +122,15 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       evidence verified sound; capture defect documented) -> fixes
       executed -> v2 PASS at the claimed tier with zero required
       fixes; report recorded verbatim.
-- [ ] Post-PASS punch list (validation v2 non-blocking observations
-      2-10): ppa_completeness.csv or versioned exception; canonical
-      gate-profile statistics run; single-seed-close relabels + cause
-      classes; Branch-C floor-leg wording mapped 1:1 to the narrative;
-      figure-inspection lines in lane reports; plan completion-gate
-      ticks with evidence pointers + arm-level accounting; commit-
-      subject debt note; 6x7 verify-before-N04 annotation; bootstrap-
-      seed clarifier.
+- [ ] Post-PASS punch list (validation v2 non-blocking observations;
+      item 3 DONE: canonical gate-profile FAIL recorded at
+      `p3_full_rtllm/canonical_statistics/gate_profile/`). Remaining:
+      ppa_completeness.csv or versioned exception; single-seed-close
+      relabels + cause classes; Branch-C floor-leg wording mapped 1:1
+      to the narrative; figure-inspection lines in lane reports; plan
+      completion-gate ticks with evidence pointers + arm-level
+      accounting; commit-subject debt note; 6x7 verify-before-N04
+      annotation; bootstrap-seed clarifier.
 
 ## Standing Validation (every code/report change)
 

@@ -66,3 +66,9 @@ citable gate evidence. Scope caveat unchanged (50-problem pairing;
 the frozen gates nominally target the held-out reference set, which
 is scoped out) — the canonical FAIL, the interim FAIL, and the
 46-scope arithmetic all agree in direction.
+
+Precision addendum: the canonical gate table's 50-scope log-ratio MEAN
+(0.2698) clears the 0.0488 bar while its CI-low (-0.4981) fails it —
+versus the interim 46-scope mean of +0.0298. The mean's scope
+sensitivity is the multi_booth/epsilon effect documented above; the
+gate outcome (FAIL, CI-low < 0) is identical under every computation.
