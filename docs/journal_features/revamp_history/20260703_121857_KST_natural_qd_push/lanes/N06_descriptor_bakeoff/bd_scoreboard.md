@@ -90,6 +90,8 @@ regime flags and details in `research_memo.md`.
 
 | Profile | Status | Why it waits |
 | --- | --- | --- |
-| theory_grounded_compact_8d (+CVT, paired trio-CVT control) | registered wave 2 | needs 2 arms per read; suite evidence shows BD moves coverage, not HV; scoped out in `p3b_closure.md`, revisitable |
 | SR ReLU PCA (T19 family) | registered follow-up idea | needs frozen-projection profile spec + holdout to stay leakage-clean |
-| source_aligned_shape_density_3d (T73 axes) | backlog | wave-2 candidate if the descriptor question reopens |
+
+(2026-07-04 sync: `theory_grounded_compact_8d`+CVT and
+`source_aligned_shape_density_3d` moved out of this section — both are
+in the P3c suite sweep, section 3.)
