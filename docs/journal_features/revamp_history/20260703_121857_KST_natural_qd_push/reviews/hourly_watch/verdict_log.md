@@ -8,3 +8,5 @@ skimmable trail. Format: one entry per review, newest last.
 | UTC | Cycle | Verdict | Actions | Disposition |
 | --- | --- | --- | --- | --- |
 | 2026-07-04 11:32 | c1 | PASS_WITH_ACTIONS | 2 | (1) size_control pair packaged with full audit chain before any read (HV 0.098696/0.093486 vs classic 0.111401/0.097557; validations pass); (2) raw transcripts gitignored, this condensed log tracked instead. P3c confirmed on protocol; preflights verified; no FAILED markers. |
+| 2026-07-04 12:34 | c2 | PASS | 0 | Protocol-consistent progress; packaged size_control read verified; no drift. random_hash pair mid-flight (~22/50). |
+| 2026-07-04 13:37 | c3 | PASS_WITH_ACTIONS | 2 | (1) random_hash pair packaging completed (raced the review; HV 0.095389/0.088602 = 88.1% 2-seed; coverage 32/31 — the FLOOR DOES NOT BUY COVERAGE, semantic-coverage claim survives falsification); (2) concurrency policy scope-amended: 32/8/4 is screen-scale, 48/12/4 is suite-scale (comparator-matched). |

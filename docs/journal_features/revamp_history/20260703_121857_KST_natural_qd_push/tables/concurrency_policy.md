@@ -11,9 +11,14 @@ user budget: up to ~48.
 
 Policy:
 
-1. Per-arm worker settings stay pinned at 32/8/4. Raising them buys
-   nothing (zero shortfall) and would deviate from the pinned command
-   card the reused classic baselines were run with.
+1. Per-arm worker settings are SCALE-SCOPED to match each scale's
+   reused classic comparators (amendment 2026-07-04, hourly-watch c3:
+   the original wording was unscoped and conflicted with the suite
+   commands): SCREEN runs stay pinned at 32/8/4 (the June-25 screen
+   card); FULL-SUITE runs stay pinned at 48/12/4 (the 20260701
+   classic comparator scripts' values). In both cases raising slots
+   buys nothing (zero shortfall in telemetry at both scales) and any
+   deviation from the matched comparator's settings is forbidden.
 2. Iteration speedup comes from ARM-LEVEL parallelism: up to TWO arms
    may run concurrently (nominal 64 slots, observed peak ~28 busy
    workers combined — inside the 48-core budget with margin). Never
