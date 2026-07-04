@@ -46,15 +46,19 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
 
 ## P1 Single-Factor Screens (each: pre-register -> run -> package -> tier)
 
-- [ ] N01 cell-retention mode (N01a elite_pareto_slot(2), N01b
-      scalar_elite control) at 8x5 seed 1001; replicate per gate
-      ladder. Seed-1001 arms running in the P1 chain.
-- [ ] N02 curiosity sampling at 8x5 seed 1001; replicate. Code landed
-      (commit 3182602524: `src/revolution/qd_natural/`,
-      `--search_mode revolution_qd_natural`, `--qd_curiosity_gamma`);
-      bounded one-problem live smoke still required before the screen.
-- [ ] N03 archive parent lane fraction 0.10 and 0.30 at 8x5 seed 1001;
-      replicate the better arm.
+- [x] N01 cell-retention mode. Outcome: diagnostic keepers — the
+      retention ladder (classic 0.14064 -> scalar 0.14683 -> slot-2
+      0.15709 -> V2 0.17376, single-seed, softened per review); no
+      challenger to V2 (`lanes/N01_cell_retention_mode/`).
+- [x] N02 curiosity sampling. Outcome: HARD-GATE KILL at gamma 1.0
+      (gshare coverage lost; exploration tax); engine stays; gamma-0.5
+      retry registered at low priority
+      (`lanes/N02_curiosity_sampling/results_report.md`).
+- [x] N03 archive parent lane. Outcome: N03a closed; N03b screen
+      displacement failed at 3 seeds (98.9% of V2) but is the best QD
+      arm at suite scale (96.9% HV, best AUC 102.5% of classic) and
+      the Branch-B utility candidate
+      (`lanes/N03_archive_parent_lane/`, `p3_full_rtllm/p3b_closure.md`).
 - [x] N05 warmup length (4 and 16 vs platform 8) at 8x5 seed 1001.
       Outcome: RETIRED per its registered rule — both directions lose
       HV vs V2 (-14.1% / -5.7%) with coverage unaffected; recorded as
@@ -71,12 +75,12 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       6x7; register 4x11 (with new classic arm) only if 6x7 is positive.
 - [ ] Registered follow-up variants from P1 diagnoses (stay within the
       Natural-Extension Criterion; single factor per variant).
-- [ ] N06 descriptor bake-off — UPGRADED to active at user request
-      (2026-07-03): wave-1 probe step then
-      journal_graph_testability_3d / size_control_3d / random floor at
-      8x5 seed 1001 vs the V2 trio anchor; wave 2 compact_8d on CVT
-      with paired trio-CVT control. Cards + memo in
-      `lanes/N06_descriptor_bakeoff/`.
+- [x] N06 descriptor bake-off, both scales COMPLETE (screen wave 1 +
+      P3c suite sweep). Outcome: trio wins screen HV; two suite tiers;
+      coverage is uniquely semantic (random-floor falsification held);
+      compact_8d ties trio HV with ~4x collapse resistance —
+      health-grounds swap candidate (`lanes/N06_descriptor_bakeoff/
+      bd_scoreboard.md`, `p3_full_rtllm/p3c_closure.md`).
 - [ ] N07 corrected-suite completion screen (three never-rerun profiles),
       lowest priority.
 

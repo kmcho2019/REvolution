@@ -226,6 +226,10 @@ metric >= 0.25. Seeds 1001-1005; debug seed 42 is never evidence.
   PCN code paths stay untouched and unused.
 - Contaminated June-22 numbers are never cited as evidence against a
   mechanism; only operator-fair runs count either way.
+- Gate-before-launch (added 2026-07-04, watch c8/c9): any health- or
+  evidence-gated launch requires its semantic gate ruling recorded
+  BEFORE the gated run fires; automated existence checks alone do not
+  satisfy a registered gate.
 
 ## Persistence Policy (anti premature-stop)
 
