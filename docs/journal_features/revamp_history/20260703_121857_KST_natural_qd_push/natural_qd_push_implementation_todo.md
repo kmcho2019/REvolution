@@ -120,6 +120,13 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       output under `reviews/` (user-adopted practice 2026-07-03;
       prompts must state read-only and demand a PASS/FAIL verdict
       with numbered actions).
+- [x] Hourly watch armed (user-adopted 2026-07-04, session-scoped
+      persistent monitor): per-cycle progress snapshot (chain state,
+      live frames, failure count, stall fingerprinting) plus a gated
+      codex read-only review (on new commits, chain completion, or
+      every 3rd cycle) checking progress, direction vs the registered
+      protocols, and GUIDELINES organization; verdicts filed under
+      `reviews/hourly_watch/`. Re-arm after any session restart.
 
 ## Commit Hygiene
 
