@@ -17,7 +17,33 @@ cross-arm bundles + isolated-grade per-task tables), see
 `PRELIMINARY` one seed, replication pending ·
 `MECHANISM-VERIFIED` process confirmed live, outcome tracked separately.
 
-**Last refreshed:** 2026-06-16 (held-out gap found, F25). The ablations +
+**MAJOR UPDATE 2026-07-04 — the natural_qd_push campaign
+(`revamp_history/20260703_121857_KST_natural_qd_push/`,
+`central_comparison_report.md` there) supersedes several findings
+below on operator-fair evidence:**
+- **F33 (CONFIRMED, 3/3 seeds, operator-fair): the natural QD
+  extension (Smooth-QD V2, faithful config incl. qd_num_cells 16 /
+  warmup 8 / 5-elite Pareto cells) BEATS classic at screening scale:
+  +12.9% mean HV, +16.2% canonical HV-AUC, coverage kept.** First
+  replicated QD win in the program; the F1-era loss was the
+  thought_only+single_thought substrate, not the archive.
+- **F34 (MEASURED, 5 seeds): at full-suite scale V2 is HV-parity
+  (95.2%; canonical CI spans zero), HV-AUC tie, coverage EDGE (166 vs
+  164), and Branch-B utility 0.413 vs the 0.25 bar** — the diversity
+  contribution (criticism #5) now has measured content; the +5% gate
+  remains unmet (suite outcomes are LLM-capability-bound, consistent
+  with F18-F32).
+- **F35 (MEASURED, 7 profile/geometry combos): descriptor choice is a
+  functionality/diversity/health dial, not an HV dial**; archive
+  health anti-correlates with HV; only testability semantics lift
+  coverage (random-floor falsification held); compact_8d ties trio HV
+  with ~4x collapse resistance (M13 answer; swap candidate).
+- The June-22 T-series negative map is OPERATOR-CONTAMINATED and must
+  not be cited against archive/descriptor mechanisms (corrected
+  reruns recover 30-46 retention points).
+
+**Last refreshed:** 2026-07-04 (natural_qd_push F33-F35 block above);
+previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the
 frozen narrative's final gate on the **20-problem held-out reference set**

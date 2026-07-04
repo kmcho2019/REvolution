@@ -112,8 +112,9 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       two-scale verdict, finding set, branch mapping (strong
       characterization; both Branch-C floor legs met plus the
       positive), answered/unanswered/TCAD-strength.
-- [ ] Refresh `docs/journal_features/13_findings_dashboard.md` tables and
-      add a closure note to the June-22 `technique_lineage_ledger.md`.
+- [x] Refresh `docs/journal_features/13_findings_dashboard.md` (F33-F35
+      block + contamination supersession + refresh stamp) and add the
+      closure note to the June-22 `technique_lineage_ledger.md`.
 - [ ] Run adversarial validation; PASS recorded in
       `natural_qd_push_subagent_validation_report.md`.
 

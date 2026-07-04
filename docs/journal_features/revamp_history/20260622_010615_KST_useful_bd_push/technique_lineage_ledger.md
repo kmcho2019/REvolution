@@ -359,3 +359,16 @@ commit as the method report:
   branch;
 - keep `techniques/technique_registry.csv` as the chronological source of
   truth for package IDs and paths.
+
+## Closure note (2026-07-04, from the natural_qd_push)
+
+The T-series' live QD negatives from T31 onward are
+OPERATOR-CONTAMINATED (single_thought vs classic EoH; see
+`RTLLM_full_suite/20260630/` and the natural_qd_push central report).
+The successor campaign
+(`../20260703_121857_KST_natural_qd_push/central_comparison_report.md`)
+re-ran the questions operator-fair: screening-scale QD WIN (+12.9%,
+3/3 seeds), suite-scale HV parity with coverage edge and utility
+0.413, descriptor dial characterized. Do not cite T-series live-QD
+negative rows as mechanism evidence; the lineage's replay/offline
+rows and operator-fair rows (T24-T30, T32, T38-T48) remain valid.
