@@ -55,8 +55,8 @@ reference for seeds 1001+1002 = 0.104479.
 | size_control_3d | 2 | 0.096091 | 92.0% | - | 32+31 | packaged; NO coverage lift |
 | random_hash_3d (floor) | 2 | 0.091996 | 88.1% | - | 32+31 | packaged; **floor does NOT buy coverage — semantic claim survives falsification** |
 | journal_graph_testability_3d | 2 (HV-killed in P3b) | 0.091397 | 87.5% | 0.079018 (92.0%) | **34+34 (best of ANY arm)** | coverage datum kept |
-| source_aligned_shape_density_3d | 2 | running | - | - | - | pair mid-flight |
-| theory_grounded_compact_8d (CVT) + trio_cvt control | 2 | queued | - | - | - | health-gated pair 4/5 |
+| source_aligned_shape_density_3d | 2 | 0.091818 | 87.9% | - | 32+32 | packaged; NO coverage lift |
+| theory_grounded_compact_8d (CVT) + trio_cvt control | 2 | running | - | - | - | seed-1001 pair mid-flight; seed 1002 health-gated |
 
 Suite dissociation (the sweep's headline so far): gt3d and random are
 near-tied on HV (87.5% vs 88.1%), but ONLY the testability semantics
