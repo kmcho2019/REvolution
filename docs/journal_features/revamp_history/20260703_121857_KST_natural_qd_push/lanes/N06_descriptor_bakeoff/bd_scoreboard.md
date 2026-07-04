@@ -73,19 +73,25 @@ it covered more designs per seed than classic (33/33) and the trio
 
 ## 4. The descriptor findings in one paragraph
 
-Across both scales and four descriptor spaces on an identical
-mechanism: (i) the frozen trio is the best HV descriptor despite the
-worst collapse health — its axes align with the PPA quality path even
-where they degenerate; (ii) descriptor semantics order the
-challengers consistently (testability > size-control > random on both
-screen metrics); (iii) what BD choice reliably moves is COVERAGE and
-archive breadth, not HV — gt3d bought the best per-seed design
-coverage in the campaign at the cost of ~8-12% HV; (iv) therefore BD
-selection on this platform is a functionality/diversity dial, and the
-trio remains the right default for HV-gated claims. Prior-regime
-descriptor numbers (F12 quality deltas, T19 SR-PCA replay +16.8%,
-CODE-EoH theory-profile reads) are NOT comparable to these tables —
-regime flags and details in `research_memo.md`.
+Across both scales and six profile/geometry combinations on an
+identical mechanism: (i) descriptor choice sets two suite HV tiers —
+the trio family and compact_8d at 93-94% of classic, everything else
+at 87-92% — and archive geometry (CVT vs grid) is a wash; (ii)
+descriptor semantics order the challengers consistently (testability
+> size-control > random on both screen metrics); (iii) what BD choice
+reliably moves is COVERAGE, not HV — only testability semantics
+lifted design coverage above classic, and the random floor proved the
+effect is semantic; (iv) **compact_8d ties the trio's HV while being
+~4x more collapse-resistant on identical geometry** — trio-level
+optimization without the trio's degeneracy (the M13 criticism),
+making it the recorded health-grounds swap candidate under the
+narrative's bake-off rule (decision deferred to the manuscript);
+(v) BD selection on this platform is therefore a
+functionality/diversity/health dial, with the trio and compact_8d as
+the HV-safe choices. Prior-regime descriptor numbers (F12 quality
+deltas, T19 SR-PCA replay +16.8%, CODE-EoH theory-profile reads) are
+NOT comparable to these tables — regime flags and details in
+`research_memo.md`.
 
 ## 5. Not-yet-measured on this platform (registered, unlaunched)
 
