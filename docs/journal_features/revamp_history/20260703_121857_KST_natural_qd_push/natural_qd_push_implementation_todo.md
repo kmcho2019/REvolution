@@ -118,8 +118,18 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
 - [x] Refresh `docs/journal_features/13_findings_dashboard.md` (F33-F35
       block + contamination supersession + refresh stamp) and add the
       closure note to the June-22 `technique_lineage_ledger.md`.
-- [ ] Run adversarial validation; PASS recorded in
-      `natural_qd_push_subagent_validation_report.md`.
+- [x] Run adversarial validation. Outcome: v1 FAIL (packaging-scoped;
+      evidence verified sound; capture defect documented) -> fixes
+      executed -> v2 PASS at the claimed tier with zero required
+      fixes; report recorded verbatim.
+- [ ] Post-PASS punch list (validation v2 non-blocking observations
+      2-10): ppa_completeness.csv or versioned exception; canonical
+      gate-profile statistics run; single-seed-close relabels + cause
+      classes; Branch-C floor-leg wording mapped 1:1 to the narrative;
+      figure-inspection lines in lane reports; plan completion-gate
+      ticks with evidence pointers + arm-level accounting; commit-
+      subject debt note; 6x7 verify-before-N04 annotation; bootstrap-
+      seed clarifier.
 
 ## Standing Validation (every code/report change)
 

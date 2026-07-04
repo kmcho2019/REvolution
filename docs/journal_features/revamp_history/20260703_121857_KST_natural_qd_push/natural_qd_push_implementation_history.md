@@ -597,3 +597,41 @@ Load-bearing findings, with sources (paths relative to
   cancel 11-vs-11; the positive mean comes from V2's large-relative
   wins on both-covered units) - no drift between the interim
   implementation and the frozen formula.
+
+## 2026-07-04 (backfill, watch-c9-era) - P3c Registration/Launch/Closure
+
+Backfilled per validation-v2 observation 1 (the audit log skipped the
+P3c window; full detail lives in the P3c files and the hourly-watch
+verdict log):
+
+- 15:22Z registered `p3_full_rtllm/p3c_bd_sweep_registration.md`
+  (user-directed uniform 2-seed suite BD sweep; random floor as the
+  falsification test; compact_8d+CVT with paired trio-CVT control,
+  live-probe-first health gate). `source_aligned_shape_density_3d`
+  provenance: the T73 axes (MasterRTL branching + RTLTimer wire/DFF
+  density), registered in `data/configs/qd_descriptor_profiles.yaml`,
+  probe recorded PPA-free in `lanes/N06_descriptor_bakeoff/probes/`.
+- 09:31-19:50Z ran all five pairs (size_control, random_hash,
+  shape_density, compact8d+trio_cvt x2 seeds), zero failures; each
+  pair packaged with the standard chain before any read (hourly-watch
+  c1-c9 verdicts + actions in `reviews/hourly_watch/verdict_log.md`).
+- Closure `p3_full_rtllm/p3c_closure.md`: two HV tiers; geometry a
+  wash; coverage uniquely semantic (floor falsification held);
+  compact_8d ties trio HV with ~4x collapse resistance.
+
+## 2026-07-04 24:00 KST - ADVERSARIAL VALIDATION v2: PASS (goal outcome met)
+
+- Verdict PASS at the claimed tier (two-scale characterization), with
+  "Required Fixes Before PASS: None" and a 10-item non-blocking punch
+  list. Report recorded verbatim in
+  `natural_qd_push_subagent_validation_report.md`.
+- The validator independently verified: screening win to the last
+  digit; suite reads against original run roots; every operator
+  contract (30 files, single_thought=0 both arms everywhere); all 26
+  config-pin validations; empty diffs on engine.py/algorithm.py; the
+  0.413 utility robust even under the stricter no-QD-only reading
+  (0.396); reward-hacking risk LOW with the record "consistently
+  self-adverse".
+- Punch list disposition: items 1 (this backfill) executed; remaining
+  items tracked in the TODO as post-PASS polish for the manuscript
+  phase.
