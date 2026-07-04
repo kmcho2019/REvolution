@@ -27,3 +27,20 @@ Disposition: the P4 canonical-statistics obligation (todo checkbox;
 review action) is discharged; the interim contract-form log-ratio in
 the verdict remains the 46-scoped reference-complete read, and both
 are cited together in the central report.
+
+## Branch-B utility metric (added 2026-07-04)
+
+Computed by the tracked `scripts/report_branch_b_utility.py` (frozen
+definition; canonical dominates() semantics; QD-only-covered units
+count, per the note in the script docstring):
+
+- **V2: 0.413 (95/230 units; 91 nondominated-improving + 4 QD-only)**
+- **N03b: 0.391 (90/230; 89 + 1)**
+
+Both clear the contract's >=0.25 utility bar by wide margins. Branch B
+itself stays unreachable (its HV log-ratio leg failed), but this is
+the campaign's strongest full-scale positive: on two of every five
+units the QD archive offers a valid, non-dominated ALTERNATIVE design
+improving at least one PPA axis over classic's best — the concrete,
+contract-defined content of the diversity contribution (criticism #5),
+delivered at HV parity with a coverage edge.
