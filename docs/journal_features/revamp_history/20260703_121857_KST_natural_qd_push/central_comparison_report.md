@@ -22,7 +22,9 @@ QD win in the program). At full-suite scale (46 reference-complete
 RTLLM designs, 5 seeds) the same mechanism lands at **HV parity**
 (95.2%; canonical stats: delta +0.0035, cluster CI [-0.0089, +0.0210])
 with an **HV-AUC tie (100.5%)**, a **functionality edge** (coverage
-166 vs 164; canonical functional_any_pass +0.020, 8W/3L), and a
+166 vs 164; canonical functional_any_pass +0.020, 8W/3L; scope note:
+the canonical delta's positive sign is 50-scope only — the 46-scope
+restriction is -0.0050, see canonical_statistics/read_note.md), and a
 **Branch-B utility of 0.413** (bar 0.25): on two of every five
 problem-seed units the archive holds a valid, non-dominated
 alternative design improving at least one PPA axis over classic's

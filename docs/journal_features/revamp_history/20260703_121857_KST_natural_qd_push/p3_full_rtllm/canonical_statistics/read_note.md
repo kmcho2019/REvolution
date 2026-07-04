@@ -44,3 +44,14 @@ units the QD archive offers a valid, non-dominated ALTERNATIVE design
 improving at least one PPA axis over classic's best — the concrete,
 contract-defined content of the diversity contribution (criticism #5),
 delivered at HV parity with a coverage edge.
+
+## Scope-sign note (2026-07-04, adversarial-validation addendum)
+
+The canonical 50-problem HV delta (+0.0035) owes its POSITIVE sign
+entirely to the four missing-reference designs the 46-scoped verdict
+excludes (Prob013_multi_booth's 0.876 jackpot, which V2 wins in 3/5
+seeds, contributes +0.0035 of the mean by itself). Restricted to the
+common 230-unit 46-scope, the same paired_deltas.csv yields -0.0050,
+exactly matching the packaged tables (0.098801 - 0.103802). Parity is
+unaffected (both CIs straddle zero), but any citation of the canonical
+delta must carry this scope note.
