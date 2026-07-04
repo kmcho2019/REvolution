@@ -55,3 +55,14 @@ common 230-unit 46-scope, the same paired_deltas.csv yields -0.0050,
 exactly matching the packaged tables (0.098801 - 0.103802). Parity is
 unaffected (both CIs straddle zero), but any citation of the canonical
 delta must carry this scope note.
+
+## Canonical gate-profile run (2026-07-04, punch-list item 3)
+
+`report_journal_statistics.py --gate-profile reference_ppa` over the
+five P3 pairs now records the frozen-gate outcome canonically:
+**gate(reference_ppa): FAIL** (`gate_profile/statistical_tests.{md,
+json}`), superseding the interim log-ratio implementation as the
+citable gate evidence. Scope caveat unchanged (50-problem pairing;
+the frozen gates nominally target the held-out reference set, which
+is scoped out) — the canonical FAIL, the interim FAIL, and the
+46-scope arithmetic all agree in direction.
