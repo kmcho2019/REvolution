@@ -44,7 +44,7 @@ per-problem `descriptor_health.json`).
 
 ## 3. Suite scale (RTLLM 46 ref-complete, 8x5)
 
-P3c uniform 2-seed sweep in progress (registration:
+P3c uniform 2-seed sweep COMPLETE (closure: ../../p3_full_rtllm/p3c_closure.md) (registration:
 `../../p3_full_rtllm/p3c_bd_sweep_registration.md`); classic 2-seed
 reference for seeds 1001+1002 = 0.104479.
 
@@ -56,8 +56,8 @@ reference for seeds 1001+1002 = 0.104479.
 | random_hash_3d (floor) | 2 | 0.091996 | 88.1% | - | 32+31 | packaged; **floor does NOT buy coverage — semantic claim survives falsification** |
 | journal_graph_testability_3d | 2 (HV-killed in P3b) | 0.091397 | 87.5% | 0.079018 (92.0%) | **34+34 (best of ANY arm)** | coverage datum kept |
 | source_aligned_shape_density_3d | 2 | 0.091818 | 87.9% | - | 32+32 | packaged; NO coverage lift |
-| theory_grounded_compact_8d (CVT) | 1 of 2 | 0.098944 (s1001) | 88.8% (s1001) | - | 32 | seed 1001 packaged; health strong (6/50 collapsed); seed 1002 running |
-| trio_cvt (geometry control) | 1 of 2 | 0.097248 (s1001) | 87.3% (s1001) | - | 33 | attribution reads (s1001 only): compact8d beats trio on same CVT geometry +1.7%; CVT-vs-grid geometry a wash (trio_cvt 0.09725 vs trio-grid V2 0.09677) |
+| theory_grounded_compact_8d (CVT) | 2 | 0.097600 | 93.4% | - | 32+32 | TIES trio HV on identical geometry (+0.2%); ~4x more collapse-resistant (6/50 vs 26/50); health-grounds swap candidate |
+| trio_cvt (geometry control) | 2 | 0.097440 | 93.3% | - | 33+32 | geometry is a wash (within 1.1% of trio-grid V2 same seeds); descriptor is the active factor |
 
 Suite dissociation (the sweep's headline so far): gt3d and random are
 near-tied on HV (87.5% vs 88.1%), but ONLY the testability semantics
