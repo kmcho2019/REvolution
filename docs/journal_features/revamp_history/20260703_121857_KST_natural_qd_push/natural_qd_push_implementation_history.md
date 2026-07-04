@@ -572,3 +572,28 @@ Load-bearing findings, with sources (paths relative to
   from V2/N03b archives; central comparison report; dashboard 13
   refresh + June-22 lineage closure note; viewer bundle; figure
   legend fix; final adversarial validation.
+
+## 2026-07-04 23:50 KST - Adversarial Validation v1: FAIL (packaging only); v2 rerun
+
+- The first full-rubric adversarial validation returned FAIL scoped
+  explicitly to packaging/completion-gate items, with "evidence and
+  claim tier verified sound - now with all headline numbers
+  independently recomputed to exactness" (a third verification agent
+  re-derived every number in items A-H from packaged CSVs, including
+  all six anchor seed-arm cells and the canonical paired deltas to
+  1e-9).
+- Capture defect: claude -p emits only the final message; the
+  validator's full report body (Required Fixes 1-7) was not in it -
+  only its addendum survived (preserved at
+  reviews/adversarial_validation_v1_addendum_only.md). The rerun (v2)
+  carries an explicit entire-final-message-is-the-report instruction.
+- The addendum's one concrete fix is EXECUTED (commit 91b6220d5d): the
+  canonical HV delta's positive sign is 50-scope-only - the 46-scope
+  restriction is -0.0050 (matching the packaged tables), with the sign
+  driven by the excluded missing-reference designs; scope note added
+  to read_note.md and the central report.
+- The addendum also independently confirmed the +0.0298 log-ratio /
+  95.2% ratio-of-means coexistence (epsilon coverage-jackpot terms
+  cancel 11-vs-11; the positive mean comes from V2's large-relative
+  wins on both-covered units) - no drift between the interim
+  implementation and the frozen formula.

@@ -1,0 +1,15 @@
+The third verification agent (full numeric recompute) has now completed. Every headline number in items A–H reproduces from packaged CSVs — most to the last printed digit — under a manual, execution-denied recompute. The FAIL verdict and required-fix list stand unchanged; the evidence side is further strengthened. Please append the following addendum to the recorded report:
+
+---
+
+## Addendum (post-report completion of the independent numeric recompute)
+
+The third verification pass (full manual recompute of items A–H from packaged CSVs, with all six p0 anchor seed×arm cells re-derived from per-problem rows and the canonical `paired_deltas.csv` cross-checked against the 46-scope aggregates to 1e-9) completed after the report body above was finalized. It **confirms every numeric claim** — screening anchor, full-suite 5-seed, N03b 5-seed, gt3d kill arithmetic, canonical statistics point estimates, Branch-B utility fractions, all ten lane screen numbers, and the interim log-ratio — and adds two findings:
+
+1. **Canonical HV delta sign is scope-driven (new weak-evidence item).** The canonical `report_journal_statistics` HV delta of **+0.0035** (250 units, all 50 problems) owes its *positive sign entirely to the four missing-reference designs* that the 46-scoped verdict excludes — Prob013_multi_booth's 0.876 jackpot (V2 wins it in 3 of 5 seeds) contributes +0.0035 of the mean by itself. Restricted to the common 230-unit 46-scope, the same `paired_deltas.csv` yields **−0.0050**, exactly matching the packaged tables (0.098801 − 0.103802). `read_note.md` correctly discloses the 50-vs-46 scope difference and the parity conclusion is unaffected (both CIs straddle zero), but the sign flip itself is stated nowhere, and the central report quotes "+0.0035" beside "95.2%" without it. **Add to Required Fixes (extends item 3/8):** one sentence in `canonical_statistics/read_note.md` (and ideally the central report) noting that the 46-scope restriction of the canonical deltas is −0.0050 and that the positive 50-scope sign comes from the excluded designs.
+
+2. **The +0.0298 log-ratio / 95.2% ratio-of-means coexistence is genuine, now fully recomputed.** All 81 non-tied in-scope per-unit log-ratio terms were re-derived: the ±14–20 epsilon "coverage jackpot" terms nearly cancel (11 V2-only, sum +169.05, vs 11 classic-only, sum −170.53), and the positive mean comes from V2's large-relative wins among both-covered units, against classic's large-absolute/small-relative wins. W/L/T 37/44/149 reproduces exactly. The frozen-gate FAIL (0.0298 < 0.0488, CI low < 0) follows from independently recomputed numbers — no drift between the interim implementation and the frozen formula.
+
+Neither finding changes any verdict in the report: the claim tier remains fully supported, and the FAIL remains a packaging/completion-gate failure only (Required Fixes 1–7, plus the one-sentence scope note above).
+
+**Verdict: FAIL** (packaging/completion gates; evidence and claim tier verified sound — now with all headline numbers independently recomputed to exactness).
