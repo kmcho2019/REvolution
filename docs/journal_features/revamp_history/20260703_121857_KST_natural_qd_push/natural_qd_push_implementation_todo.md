@@ -91,9 +91,12 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       95.2%, AUC 100.5%, coverage 166 vs 164; +5% gate fails; two-scale
       story is the finding. P3b variant probes: gt3d killed at the
       2-seed gate (coverage datum kept); N03b ladder completing.
-- [ ] Run the CANONICAL `report_journal_statistics.py` contract
-      statistics over the P3 packages (replaces the interim
-      contract-form implementation in the verdict; review action).
+- [x] Run the CANONICAL `report_journal_statistics.py` contract
+      statistics over the P3 packages. Outcome:
+      `p3_full_rtllm/canonical_statistics/` — HV parity confirmed
+      (+0.0035, CI [-0.0089,+0.0210]); functionality edge canonical
+      (functional_any_pass +0.020, 8W/3L); 50-problem-scoped
+      complement to the 46-scoped verdict (read_note.md).
 - [ ] Held-out gate per `journal_narrative.md` — NOT triggered (the
       5-seed read did not clear the screen bars); record as scoped-out
       with the verdict as evidence.
