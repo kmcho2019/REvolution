@@ -260,12 +260,19 @@ def _plot_pairwise_fronts(
         axis.axis("off")
 
     fig.suptitle(
-        f"{benchmark} / {problem}: projected Pareto fronts in normalized improvement space",
-        fontsize=13,
+        f"{benchmark} / {problem}\nprojected Pareto fronts in normalized improvement space",
+        fontsize=11,
+        y=1.00,
     )
     if legend_items:
-        fig.legend(handles=legend_items, loc="upper center", ncol=min(4, len(legend_items)))
-    fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.93))
+        fig.legend(
+            handles=legend_items,
+            loc="upper center",
+            ncol=min(4, len(legend_items)),
+            bbox_to_anchor=(0.5, 0.95),
+            frameon=False,
+        )
+    fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.89))
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=180)
     plt.close(fig)

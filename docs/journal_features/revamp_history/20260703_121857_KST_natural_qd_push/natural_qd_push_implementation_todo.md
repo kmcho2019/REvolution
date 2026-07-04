@@ -64,8 +64,11 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       HV vs V2 (-14.1% / -5.7%) with coverage unaffected; recorded as
       a positive tuning validation of warmup 8
       (`lanes/N05_warmup_init/results_report.md`).
-- [ ] Fix the pairwise-front figure title/legend collision in the
-      shared plotting surface before any colleague-facing package.
+- [x] Fix the pairwise-front figure title/legend collision in the
+      shared plotting surface (two-line suptitle + anchored frameless
+      legend; verified visually on a regenerated fsm figure). Applies
+      to future packages; committed evidence figures keep their
+      as-generated state with inspection notes.
 - [ ] Every P1 verdict records cause class + follow-up idea or retirement
       rationale in the lane package and history.
 
