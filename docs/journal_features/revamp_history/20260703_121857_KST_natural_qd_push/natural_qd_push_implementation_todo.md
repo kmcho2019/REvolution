@@ -101,13 +101,17 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       (+0.0035, CI [-0.0089,+0.0210]); functionality edge canonical
       (functional_any_pass +0.020, 8W/3L); 50-problem-scoped
       complement to the 46-scoped verdict (read_note.md).
-- [ ] Held-out gate per `journal_narrative.md` — NOT triggered (the
-      5-seed read did not clear the screen bars); record as scoped-out
-      with the verdict as evidence.
+- [x] Held-out gate per `journal_narrative.md` — scoped out: not
+      triggered (the 5-seed suite read did not clear the +5% gate);
+      recorded in the central report's branch mapping with
+      `p3_full_rtllm/five_seed_verdict.md` as evidence.
 
 ## P4 Synthesis
 
-- [ ] Central comparison report here (win or operator-fair negative map).
+- [x] Central comparison report (`central_comparison_report.md`):
+      two-scale verdict, finding set, branch mapping (strong
+      characterization; both Branch-C floor legs met plus the
+      positive), answered/unanswered/TCAD-strength.
 - [ ] Refresh `docs/journal_features/13_findings_dashboard.md` tables and
       add a closure note to the June-22 `technique_lineage_ledger.md`.
 - [ ] Run adversarial validation; PASS recorded in
