@@ -35,3 +35,8 @@ also loses coverage or fails to approach V2, the lane retires with
 this diagnosis. The engine itself (`src/revolution/qd_natural/`)
 stays: it is contract-clean, tested, and the negative is a mechanism
 result, not an implementation failure.
+
+Figure inspection (2026-07-05, validation-v2 obs 6): package
+pairwise-front PNGs reviewed; the gshare panel shows no valid V2
+points, matching the coverage-loss kill. Cause class (obs 4):
+exploration-tax (already assigned above).

@@ -69,8 +69,10 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       legend; verified visually on a regenerated fsm figure). Applies
       to future packages; committed evidence figures keep their
       as-generated state with inspection notes.
-- [ ] Every P1 verdict records cause class + follow-up idea or retirement
-      rationale in the lane package and history.
+- [x] Every P1 verdict records cause class + follow-up idea or
+      retirement rationale (completed 2026-07-05 per validation-v2
+      obs 4: relabels and cause classes appended to the N01/N02/N03/
+      N05/N06 results reports).
 
 ## P2 Shape And Follow-Ups
 
@@ -122,15 +124,16 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       evidence verified sound; capture defect documented) -> fixes
       executed -> v2 PASS at the claimed tier with zero required
       fixes; report recorded verbatim.
-- [ ] Post-PASS punch list (validation v2 non-blocking observations;
-      item 3 DONE: canonical gate-profile FAIL recorded at
-      `p3_full_rtllm/canonical_statistics/gate_profile/`). Remaining:
-      ppa_completeness.csv or versioned exception; single-seed-close
-      relabels + cause classes; Branch-C floor-leg wording mapped 1:1
-      to the narrative; figure-inspection lines in lane reports; plan
-      completion-gate ticks with evidence pointers + arm-level
-      accounting; commit-subject debt note; 6x7 verify-before-N04
-      annotation; bootstrap-seed clarifier.
+- [x] Post-PASS punch list (validation v2 observations 2-10): ALL
+      EXECUTED 2026-07-04/05 — canonical gate-profile FAIL recorded;
+      ppa_completeness versioned exception (tables/README); relabels +
+      cause classes in lane reports; Branch-C floor legs mapped 1:1 +
+      held-out basis cited (central report); figure-inspection lines
+      added; plan completion gates ticked with pointers + arm
+      accounting; commit-subject debt noted (14 subjects 51-54 chars,
+      accepted, no history rewrite); 6x7 verify-before-N04 annotation
+      confirmed in tables/README; bootstrap-seed clarifier in
+      read_note.
 
 ## Standing Validation (every code/report change)
 

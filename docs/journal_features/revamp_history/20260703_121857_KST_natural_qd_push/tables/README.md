@@ -33,3 +33,11 @@ HV-AUC implementation (which was regression-locked to the 20260630
 tables, not the 20260701 PCN table). No validity impact — both arms of
 every P3 comparison use the canonical path; the canonical value is the
 citable one. "Recompute = pinned" claims are scoped to HV.
+
+Versioned exception (2026-07-05, validation-v2 observation 2): suite
+packages do not ship a literal `ppa_completeness.csv`; the frozen
+reference-complete manifest restriction plus each package's
+`ppa_distribution/data/reference_ppa_metrics.csv` provide the
+equivalent semantics (candidate-vs-reference completeness separation).
+Recorded here as the policy-level equivalence rather than per-package
+sidecar files.

@@ -59,3 +59,11 @@ the pre-registered ladder.
   8/8 both seeds, validations green, no validity-collapse signature;
   runtimes +~34% vs solo (endpoint sharing), results normal. Pairing
   adopted as standard per `../../tables/concurrency_policy.md`.
+
+Protocol-deviation note (2026-07-05, validation-v2 obs 4): N03a's
+"closed" verdict rests on a single seed at +0.7% vs classic —
+within the plan's +-5% no-single-seed-verdict band. Relabel: PARKED
+(single-seed within-band); it stays closed in practice because it
+loses to its own no-lane base (N01a) by -9.9% on the same seed, which
+is the decisive comparator. Cause class: mechanism-inert-at-0.10.
+Figure inspection: package pairwise-front PNGs reviewed at packaging.

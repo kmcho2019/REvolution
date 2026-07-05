@@ -53,3 +53,13 @@ validations pass.
   remains registered with its full sampled probe required BEFORE
   launch; given wave-1's trio win, wave 2 runs at reduced priority
   behind the N03b promotion test.
+
+Protocol-deviation notes + cause classes (2026-07-05, validation-v2
+obs 4): N06c's screen close (+0.5% vs classic, single seed) is
+within-band — relabel PARKED (single-seed within-band); its P3c
+2-seed suite read (92.0%, no coverage lift) supplies the decisive
+evidence. N06d random floor: the -4.3% single-seed close is the
+registered control role, and its P3c suite read (88.1%, no coverage
+lift) completes it. Cause classes: N06b = descriptor-semantics-
+insufficient-for-HV (keeper); N06c = mechanism-inert; N06d = control.
+Figure inspection: package pairwise-front PNGs reviewed at packaging.

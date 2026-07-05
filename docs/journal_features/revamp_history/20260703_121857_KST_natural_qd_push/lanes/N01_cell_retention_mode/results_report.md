@@ -39,3 +39,9 @@ ABOVE 5 (pareto_front, max 7) is the natural probe of where the
 retention curve saturates — new card required before any launch.
 Seed replication for the attribution ladder is queued behind the
 challenger lanes (N06/N03/N02) on budget priority.
+
+Figure inspection (2026-07-05, validation-v2 obs 6): the package's
+pairwise-front PNGs (`package/pareto_analysis/problems/*/
+pairwise_fronts.png`) were reviewed at packaging time; fronts and
+markers are legible and match the tables. Cause classes (obs 4):
+N01a/N01b = attribution-control keepers, no kill class applicable.

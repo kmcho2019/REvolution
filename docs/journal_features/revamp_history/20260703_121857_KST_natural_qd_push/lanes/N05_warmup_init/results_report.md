@@ -37,3 +37,8 @@ review flagged the reduced pins — action 2).
 - Lane-level cause class: platform-near-optimum on this budget shape;
   a positive tuning validation of warmup 8, with the warmup-x-depth
   interaction recorded as the live follow-up inside N04.
+
+Cause classes (2026-07-05, validation-v2 obs 4): N05a =
+exploration-tax (shortened warmup starves boundary estimation); N05b
+= platform-near-optimum (parked). Figure inspection: package
+pairwise-front PNGs reviewed at packaging.

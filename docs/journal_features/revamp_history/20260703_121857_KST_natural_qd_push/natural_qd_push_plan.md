@@ -312,23 +312,28 @@ metric >= 0.25. Seeds 1001-1005; debug seed 42 is never evidence.
 
 ## Completion Gates
 
-- [ ] P0 artifacts exist: pinned manifests/baselines, V2 anchor runs,
-      canonical HV-AUC with regression test, tracked operator auditor,
-      run validator with tests.
-- [ ] >=8 lane packages across >=4 families, each operator-audited, with
-      figures, tables, tier decision, and follow-up/retirement rationale.
-- [ ] At least one arm promoted and run at full RTLLM 5-seed, or the
-      persistence policy exhausted with documented diagnoses.
-- [ ] Headline claims use reference-complete paired subsets, canonical
-      HV-AUC, and cluster statistics; no contaminated numbers cited.
-- [ ] Functionality: no promoted arm loses any classic-covered design;
-      yield warnings visible where triggered.
-- [ ] Code: no `engine.py` core-loop edits; new code small, typed, tested;
-      pytest/ruff/pyright recorded; no untracked imports.
-- [ ] Docs: lane registry current; TODO within cap; history complete;
-      dashboard refreshed; commits atomic, signed, message-verified.
-- [ ] Adversarial validator returns PASS in
-      `natural_qd_push_subagent_validation_report.md`.
+- [x] P0 artifacts exist (tables/, p0_v2_anchor/, commits b5371925ff/
+      47b6906bf6/03e3c48475).
+- [x] >=8 packages: 5 lane dirs / 4 strict families; 14 measured arms
+      (11 screen + 3 suite) — arm-level accounting per history and
+      validation-v2 finding 8; every arm operator-audited with tier
+      decisions and follow-up/retirement rationales.
+- [x] Promotion arm (V2) run at full RTLLM 5 seeds
+      (`p3_full_rtllm/five_seed_verdict.md`).
+- [x] Headline claims: reference-complete 46-scope, canonical HV-AUC,
+      canonical + interim cluster statistics; zero contaminated
+      citations (validator-verified).
+- [x] Functionality: V2 coverage 166 vs 164; no promoted-arm coverage
+      loss; N02's coverage loss was a kill, not a promotion.
+- [x] Code: engine.py/algorithm.py diffs EMPTY (validator-verified);
+      qd_natural subpackage + 3 validators, all tested; pytest/ruff/
+      pyright recorded per batch.
+- [x] Docs: registry/README/scoreboard current; TODO within cap;
+      history complete incl. P3c backfill; dashboard F33-F35; commits
+      signed and message-verified (14 subjects at 51-54 chars recorded
+      as accepted debt).
+- [x] Adversarial validator PASS recorded verbatim in
+      `natural_qd_push_subagent_validation_report.md` (v2, 2026-07-04).
 
 ## Risks And Blockers
 

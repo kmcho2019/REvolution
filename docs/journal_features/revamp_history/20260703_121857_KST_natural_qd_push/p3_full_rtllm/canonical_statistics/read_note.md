@@ -72,3 +72,8 @@ Precision addendum: the canonical gate table's 50-scope log-ratio MEAN
 versus the interim 46-scope mean of +0.0298. The mean's scope
 sensitivity is the multi_booth/epsilon effect documented above; the
 gate outcome (FAIL, CI-low < 0) is identical under every computation.
+
+Clarifier: `bootstrap_seed=42` in statistical_tests.json is the
+canonical script's RESAMPLING RNG seed (its CLI default), not an
+experiment seed — the banned debug seed 42 rule applies to live runs
+only.

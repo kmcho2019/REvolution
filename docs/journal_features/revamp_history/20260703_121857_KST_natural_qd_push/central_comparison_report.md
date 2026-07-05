@@ -83,12 +83,18 @@ swap candidate, decision deferred to the manuscript).
 REF_WIN and REF_PARITY fail (the HV log-ratio gate is unmet at suite
 scale), so Branch A/B headlines are unavailable; the held-out final
 gate is scoped out with the verdict as evidence. The supported posture
-is the STRONG characterization: Branch-C-family framing carrying (i) a
-replicated, scale-scoped positive win, (ii) transferable root-cause
-analysis (contamination forensics + capability-bound suite regime +
-the utility/coverage content), and (iii) the benchmark/statistics
-infrastructure — i.e., both Branch-C floor legs the June narrative
-feared losing, now met with a positive leg added.
+is the STRONG characterization mapped 1:1 to the narrative's Branch-C
+floor (journal_narrative.md:269-274): leg (i) the unified-operator
+one-factor ablation = the pre-existing F2 result (parity within QD;
+unchanged by this push); leg (ii) transferable root-cause analysis =
+the contamination forensics + the capability-bound suite regime + the
+utility/coverage content; leg (iii) the benchmark/statistics
+infrastructure. The replicated screening win is an ADDED positive on
+top of the floor, not a substitute for leg (i). The held-out final
+gate is scoped out on the narrative's own basis: no Branch A/B final
+claim is made (the :112-113 drop clause) and the June-16 F25 decision
+already established documented-limitation handling for the held-out
+set.
 
 ## Answered / unanswered / TCAD-strength
 
