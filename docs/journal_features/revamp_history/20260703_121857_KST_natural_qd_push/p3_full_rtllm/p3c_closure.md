@@ -1,9 +1,13 @@
 # P3c Closure — Suite-Scale BD Sweep Complete (2026-07-04)
 
 All ten runs completed, packaged, operator-audited, and config-pin
-validated; the chain finished with zero run-level failures and the
-compact_8d health gate passed with its semantic ruling recorded
-(`p3c_sweep/cvt_pair/health_gate_rationale.md`).
+validated; the chain finished with zero RUN-level failures.
+Qualification (2026-07-05): one PROBLEM-level worker failure occurred
+inside compact_8d seed 1002 — Prob050 died on a missing
+scoap_signal_smoothness metric (a genuine extraction failure per the
+registration's kill clause; zero-filled, negligible HV stakes,
+disclosed in `p3c_sweep/cvt_pair/health_gate_rationale.md`) — making
+compact_8d extraction-fragile at ~1/100 problem-runs.
 
 ## Final suite sweep table (46 ref-complete, 8x5, seeds 1001+1002; classic 2-seed reference 0.104479)
 

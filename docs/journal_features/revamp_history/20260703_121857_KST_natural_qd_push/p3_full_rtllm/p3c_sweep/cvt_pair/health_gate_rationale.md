@@ -31,3 +31,15 @@ Ruling, with evidence:
   record the semantic ruling BEFORE the gated launch fires — either
   by a manual gate step or by implementing the subset-semantics check
   in the chain itself.
+
+Post-hoc qualification (2026-07-05, watch c19): at seed 1002 the
+compact_8d arm DID hit a genuine extraction failure — Prob050 died
+with "Missing required descriptor metric 'scoap_signal_smoothness'"
+(worker log), leaving archive artifacts but no summary; the arm
+process exited 0 so the chain saw no run-level failure. Per the
+registration's own kill clause this makes compact_8d formally
+extraction-fragile (1 hard failure per ~100 problem-runs). HV impact
+is negligible (Prob050 zero-filled; classic 0.0028 / trio_cvt 0.0010
+there), but the fragility qualifies the swap candidacy and future
+validators should treat missing problem summaries as failures even
+when generation logs exist.

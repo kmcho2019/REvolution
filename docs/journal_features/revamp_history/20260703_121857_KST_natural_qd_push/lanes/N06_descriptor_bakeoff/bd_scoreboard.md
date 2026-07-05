@@ -56,7 +56,7 @@ reference for seeds 1001+1002 = 0.104479.
 | random_hash_3d (floor) | 2 | 0.091996 | 88.1% | - | 32+31 | packaged; **floor does NOT buy coverage — semantic claim survives falsification** |
 | journal_graph_testability_3d | 2 (HV-killed in P3b) | 0.091397 | 87.5% | 0.079018 (92.0%) | **34+34 (best of ANY arm)** | coverage datum kept |
 | source_aligned_shape_density_3d | 2 | 0.091818 | 87.9% | - | 32+32 | packaged; NO coverage lift |
-| theory_grounded_compact_8d (CVT) | 2 | 0.097600 | 93.4% | - | 32+32 | TIES trio HV on identical geometry (+0.2%); ~4x more collapse-resistant (6/50 vs 26/50); health-grounds swap candidate |
+| theory_grounded_compact_8d (CVT) | 2 | 0.097600 | 93.4% | - | 32+32 | TIES trio HV on identical geometry (+0.2%); ~4x more collapse-resistant (6/50 vs 26/50); swap candidacy QUALIFIED: one hard extraction failure (Prob050 s1002, missing SCOAP metric; zero-filled, negligible HV stakes) makes it extraction-fragile ~1/100 problem-runs |
 | trio_cvt (geometry control) | 2 | 0.097440 | 93.3% | - | 33+32 | geometry is a wash (within 1.1% of trio-grid V2 same seeds); descriptor is the active factor |
 
 Suite dissociation (the sweep's headline so far): gt3d and random are
