@@ -1,7 +1,10 @@
 # P3c Closure — Suite-Scale BD Sweep Complete (2026-07-04)
 
-All ten runs completed, packaged, operator-audited, and config-pin
-validated; the chain finished with zero RUN-level failures.
+All ten runs completed, packaged, and operator-audited; config-pin
+validations pass on nine of ten arms — compact_8d seed 1002 honestly
+records status=fail on its Prob050 missing summary (full pin set
+restored 2026-07-05; the config pins themselves match). The chain
+finished with zero RUN-level failures.
 Qualification (2026-07-05): one PROBLEM-level worker failure occurred
 inside compact_8d seed 1002 — Prob050 died on a missing
 scoap_signal_smoothness metric (a genuine extraction failure per the

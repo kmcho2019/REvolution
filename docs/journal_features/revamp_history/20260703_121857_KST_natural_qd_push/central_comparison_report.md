@@ -4,7 +4,9 @@ The consolidated answer to the push's question: does a natural
 QD/MAP-Elites extension of classic REvolution beat classic on HV and
 HV-AUC while keeping functionality? Twenty-seven operator-fair live
 runs (P0-P3c), every comparison operator-audited
-(`single_thought_count=0` both arms), config-pin validated,
+(`single_thought_count=0` both arms), config-pin validated (with one
+honest validation FAIL on record: compact_8d seed 1002's Prob050
+worker failure — disclosed wherever that arm is cited),
 seed-honest, and independently reviewer-verified (four scheduled
 reviews + ten hourly-watch cycles, all PASS or PASS_WITH_ACTIONS with
 every action executed).
