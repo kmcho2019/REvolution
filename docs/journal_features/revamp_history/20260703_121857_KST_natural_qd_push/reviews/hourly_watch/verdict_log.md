@@ -28,3 +28,5 @@ in this log and are committed with the next substantive change rather
 than per cycle — per-cycle log commits were themselves triggering the
 next review cycle's only diff. The watch stays armed; any verdict
 that is NOT the standing item gets an immediate commit as before.
+| 2026-07-05 02:08 | c15 | PASS_WITH_ACTIONS | 1 | Identical standing-item verdict (batched, uncommitted per the loop-break rule). |
+| 2026-07-05 05:10 | c18 | PASS_WITH_ACTIONS | 2 | Standing devcontainer item + the detached (uncommitted) c15 row — the reviewer is right that hours-old dirty tracked state is fragile. Rule refined: batched rows FLUSH in one commit at least every third cycle (or with the next substantive change, whichever first), keeping the tree clean while still damping the commit-per-cycle loop. This commit is the first flush (c15+c18). |
