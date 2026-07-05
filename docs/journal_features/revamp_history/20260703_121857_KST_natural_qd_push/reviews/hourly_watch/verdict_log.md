@@ -20,3 +20,11 @@ skimmable trail. Format: one entry per review, newest last.
 | 2026-07-04 21:58 | c11 | PASS_WITH_ACTIONS | 1 | Only recurring item: untracked `.devcontainer/devcontainer-lock.json` — standing c4 disposition applies (pre-existing user environment artifact, predates the push, not ours to commit/ignore unilaterally; awaiting a one-line user decision). No new push issues; PASS recording and P3c backfill verified. |
 | 2026-07-04 23:01 | c12 | PASS_WITH_ACTIONS | 1 | Recurring devcontainer-lock item only (standing c4 disposition; user decision requested); no new push issues. Punch-list item 3 executed this cycle (canonical gate-profile FAIL recorded, with a precision addendum on the log-ratio mean's scope sensitivity). |
 | 2026-07-05 00:04 | c13 | PASS_WITH_ACTIONS | 1 | Standing devcontainer-lock decision only (user-pending; c4 disposition). Punch-list completion batch verified; no push issues remain on any review surface. |
+| 2026-07-05 01:06 | c14 | PASS_WITH_ACTIONS | 1 | Identical to c13 (standing devcontainer item only). |
+
+**Batching rule (2026-07-05, loop-break):** with the campaign closed
+and the tree static, identical devcontainer-only verdicts accumulate
+in this log and are committed with the next substantive change rather
+than per cycle — per-cycle log commits were themselves triggering the
+next review cycle's only diff. The watch stays armed; any verdict
+that is NOT the standing item gets an immediate commit as before.
