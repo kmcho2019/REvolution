@@ -85,7 +85,9 @@ effect is semantic; (iv) **compact_8d ties the trio's HV while being
 ~4x more collapse-resistant on identical geometry** — trio-level
 optimization without the trio's degeneracy (the M13 criticism),
 making it the recorded health-grounds swap candidate under the
-narrative's bake-off rule (decision deferred to the manuscript);
+narrative's bake-off rule (decision deferred to the manuscript, and
+QUALIFIED by one hard extraction failure at suite scale — see the
+table row and health_gate_rationale.md);
 (v) BD selection on this platform is therefore a
 functionality/diversity/health dial, with the trio and compact_8d as
 the HV-safe choices. Prior-regime descriptor numbers (F12 quality
