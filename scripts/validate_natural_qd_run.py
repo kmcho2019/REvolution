@@ -142,6 +142,10 @@ def main(argv: list[str] | None = None) -> int:
         if key not in manifest:
             continue
         errors.extend(strategy_errors(problem_dir, args.arm))
+        # A generation log without a problem summary means the problem
+        # died mid-run (the compact8d/Prob050 class the chain missed).
+        if not (problem_dir / f"{key[1]}_summary.json").is_file():
+            errors.append(f"{key[1]}: missing problem summary (worker failure?)")
         for artifact in QD_ARTIFACTS:
             present = (problem_dir / artifact).is_file()
             if args.arm == "qd" and not present:

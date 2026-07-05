@@ -47,9 +47,25 @@ def _write_problem(
     (problem_dir / "generation_log.jsonl").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
     )
+    (problem_dir / f"{problem}_summary.json").write_text("{}", encoding="utf-8")
     if qd_artifacts:
         (problem_dir / "archive_summary.json").write_text("{}", encoding="utf-8")
         (problem_dir / "qd_metrics.json").write_text("{}", encoding="utf-8")
+
+
+def test_missing_problem_summary_fails(tmp_path: Path) -> None:
+    run_root = tmp_path / "run"
+    _write_problem(
+        run_root, "RTLLM", "Prob024_fsm", [{"initial": 8}], qd_artifacts=True
+    )
+    (run_root / "openai_gpt-oss-120b" / "RTLLM" / "Prob024_fsm"
+     / "Prob024_fsm_summary.json").unlink()
+    manifest = tmp_path / "manifest.csv"
+    _write_manifest(manifest, [("RTLLM", "Prob024_fsm")])
+    output = tmp_path / "report.json"
+    assert _run(run_root, manifest, "qd", output) == 1
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert any("missing problem summary" in error for error in report["errors"])
 
 
 def _run(run_root: Path, manifest: Path, arm: str, output: Path) -> int:

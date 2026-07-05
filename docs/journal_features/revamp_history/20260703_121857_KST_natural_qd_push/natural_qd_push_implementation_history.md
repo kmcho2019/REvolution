@@ -617,7 +617,9 @@ verdict log):
   c1-c9 verdicts + actions in `reviews/hourly_watch/verdict_log.md`).
 - Closure `p3_full_rtllm/p3c_closure.md`: two HV tiers; geometry a
   wash; coverage uniquely semantic (floor falsification held);
-  compact_8d ties trio HV with ~4x collapse resistance.
+  compact_8d ties trio HV with ~4x collapse resistance (qualified
+  2026-07-05: one hard extraction failure, Prob050 s1002 missing
+  SCOAP metric — watch c19 find).
 
 ## 2026-07-04 24:00 KST - ADVERSARIAL VALIDATION v2: PASS (goal outcome met)
 

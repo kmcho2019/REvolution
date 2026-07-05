@@ -54,7 +54,8 @@ others 87-92%); archive geometry (CVT vs grid) is a wash; ONLY
 testability semantics lift design coverage (gt3d 34+34/seed, best of
 any arm; the random floor proved the effect is semantic); compact_8d
 ties the trio's HV with ~4x its collapse resistance (health-grounds
-swap candidate, decision deferred to the manuscript).
+swap candidate — QUALIFIED by one hard extraction failure at suite
+scale, ~1/100 problem-runs; decision deferred to the manuscript).
 
 ## The finding set (all pre-registered, gate-governed)
 

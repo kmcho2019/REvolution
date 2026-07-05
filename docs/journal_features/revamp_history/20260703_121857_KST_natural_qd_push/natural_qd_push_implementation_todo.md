@@ -84,7 +84,8 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       P3c suite sweep). Outcome: trio wins screen HV; two suite tiers;
       coverage is uniquely semantic (random-floor falsification held);
       compact_8d ties trio HV with ~4x collapse resistance —
-      health-grounds swap candidate (`lanes/N06_descriptor_bakeoff/
+      swap candidate QUALIFIED by one hard extraction failure
+      (Prob050 s1002; watch c19) (`lanes/N06_descriptor_bakeoff/
       bd_scoreboard.md`, `p3_full_rtllm/p3c_closure.md`).
 - [ ] N07 corrected-suite completion screen (three never-rerun profiles),
       lowest priority.
