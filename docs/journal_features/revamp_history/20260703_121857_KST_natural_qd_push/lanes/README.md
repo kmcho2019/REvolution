@@ -42,7 +42,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N07 | implemented structural compact | 0.12395 | -11.9% | -28.7% | N07c closed; descriptor-collapse/front-loss |
 | N08 | combination | blocked | - | - | needs replicated winners |
 | N09 | pareto_front capacity 7 | 0.15928 | +13.3% | -8.3% | diagnostic keeper; no escalation |
-| N10 | SR-ReLU PCA descriptor | probe pass | - | - | smoke-passed; live screen eligible |
+| N10 | SR-ReLU PCA descriptor | 0.15683 | +11.5% | -9.7% | diagnostic keeper; no escalation |
 
 **Promotion decision (2026-07-03): V2 stays the P3 arm.** N03b cleared
 the bar at seed 1001 (+6.4%/+8.0%) but replication landed at 98.9% HV
@@ -199,7 +199,7 @@ trio's collapse on small control logic is substrate-independent.
 | Wave 1 | size_control_3d | 0.14129 | -18.7% | 3/8 | 37 | closed |
 | Wave 1 | random_hash_3d (floor) | 0.13457 | -22.6% | 0/8 | 70 | control closed |
 | Wave 2 | theory_grounded_compact_8d + CVT | 0.09760 suite | - | 6/50 suite | - | health-grounds swap candidate; no HV win |
-| Follow-up | SR ReLU PCA (T19 family) | registered idea | - | - | - | needs frozen-projection spec |
+| Follow-up | SR ReLU PCA (T19 family) | N10 measured | 0.15683 | -9.7% vs V2 | 1/8 live collapse | diagnostic keeper; no escalation |
 
 **Quarantine LIFTED** (real probe artifact:
 `probes/live_probe_summary.csv` from the runs' descriptor_health
@@ -262,21 +262,23 @@ capacity values.
 ## N10 — SR-ReLU PCA (`N10_sr_relu_pca/`)
 
 **Question:** can the strongest synthesis-response replay lead move onto
-the V2 platform without leakage or extraction collapse? This is a
-descriptor-only probe: same V2 archive, operators, representation,
-parent selection, warmup, and capacity; only the descriptor profile
-would change to `sr_pca_3d` if a live screen launches.
+the V2 platform as a clean descriptor-only extension? The lane freezes
+the old T19 projection artifact, proves no overlap with the frozen
+8-design screen, then changes only `qd_descriptor_file` and
+`qd_descriptor_profile` on the V2 platform.
 
-The frozen T19 SR-ReLU artifact trains on six development problems and
-has no overlap with the frozen 8-design screen. The extraction smoke
-ran fresh ST-NOD Yosys stage dumps on one existing V2 seed-1001
-candidate per screen problem, projected descriptors, and wrote compact
-health artifacts under `N10_sr_relu_pca/smokes/`. Result: PASS —
-8/8 problems, initialized `4x4x4`, 8 occupied cells, and no collapsed
-axes. This clears only the seed-1001 live-screen gate; it is not an HV
-or functionality result. Full-RTLLM use would require a fresh
-holdout-clean artifact because the old fitting corpus includes RTLLM
-problems.
+The extraction smoke passed on 8/8 existing V2 candidates with no
+collapsed axes. The live seed-1001 screen retained coverage and beat
+classic on mean HV/AUC (`0.15683`, +11.5%; HV-AUC +8.3%) but did not
+beat V2 (`90.3%` HV, `93.3%` HV-AUC). Valid-PPA yield dropped sharply
+(`139` vs V2's `196`) and Pareto breadth fell (`2.125` vs `2.625`).
+Live descriptor health was better than N07a/N07c (`7/8` problems kept
+all axes live), but `Prob135_m2014_q6b` collapsed all three SR-PCA axes.
+
+Cause class: yield-loss plus front-loss. Keep as a diagnostic descriptor
+result; do not escalate to seeds 1002/1003. Full-RTLLM use would require
+a new holdout-clean SR-ReLU artifact because the T19 fitting corpus
+includes RTLLM problems.
 
 ---
 

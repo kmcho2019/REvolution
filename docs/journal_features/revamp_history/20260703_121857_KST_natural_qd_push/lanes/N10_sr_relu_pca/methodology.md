@@ -1,12 +1,13 @@
 # N10 SR-ReLU PCA Descriptor Probe
 
-Status: extraction smoke passed, no live QD screen yet.
+Status: extraction smoke passed; seed-1001 live screen closed diagnostic
+with no escalation.
 
 ## Question
 
 Can the strongest synthesis-response replay lead, SR ReLU PCA, be moved onto
 the Smooth-QD V2 platform without leakage, descriptor-collapse, or extraction
-fragility?
+fragility, and does it improve the V2 screen result?
 
 This is a natural descriptor extension, not a new search heuristic: keep V2's
 operators, representation, archive mode, parent selection, warmup, and
@@ -71,9 +72,9 @@ Smoke result (2026-07-07 15:13 UTC): PASS. `8/8` screen problems, no
 screen/training overlap, initialized `4x4x4`, eight occupied cells, and no
 collapsed axes.
 
-## Conditional Live Screen
+## Live Screen
 
-Only if the smoke passes, run one seed-1001 8-design V2-faithful screen:
+After the smoke passed, run one seed-1001 8-design V2-faithful screen:
 
 - `search_mode=revolution_qd`
 - `representation_kind=code_individual`
@@ -89,3 +90,10 @@ Only if the smoke passes, run one seed-1001 8-design V2-faithful screen:
 Close immediately on coverage loss, mean HV below `0.95x` classic, operator
 audit failure, or `single_thought_count>0`. Escalate only if it beats V2 on
 both mean HV and HV-AUC with coverage retained.
+
+Live result (2026-07-07 15:51 UTC): PASS on hard gates, negative for
+promotion. Mean HV `0.15683` clears classic (`0.14064`) but trails V2
+(`0.17376`); HV-AUC `0.13411` clears classic (`0.12387`) but trails V2
+(`0.14366`). Coverage remains 8/8 and operator audit reports
+`single_thought_count=0`. Gate decision: diagnostic keeper only; do not
+escalate to seeds 1002/1003.

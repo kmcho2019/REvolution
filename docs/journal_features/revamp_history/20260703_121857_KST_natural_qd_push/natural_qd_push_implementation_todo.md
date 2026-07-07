@@ -90,11 +90,11 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       V2-faithful descriptor-only follow-up; extraction smoke passed
       8/8 with no screen-training overlap, initialized `4x4x4`, eight
       occupied cells, and no collapsed axes.
-- [ ] N10 live seed-1001 screen, if spending this branch: same V2
-      platform, only `qd_descriptor_profile=sr_pca_3d` and
-      `qd_descriptor_file=lanes/N10_sr_relu_pca/descriptor_profile.yaml`;
-      close on coverage loss, <0.95x classic HV, operator audit fail,
-      or single-thought leakage.
+- [x] N10 live seed-1001 screen: completed 2026-07-07. Outcome:
+      diagnostic keeper only. It beats classic on mean HV/AUC
+      (`0.15683`, +11.5%; HV-AUC +8.3%) but trails V2 (`90.3%` HV,
+      `93.3%` HV-AUC), with lower valid-PPA yield and Pareto breadth;
+      no seed ladder or full-suite spend.
 - [x] N06 descriptor bake-off, both scales COMPLETE (screen wave 1 +
       P3c suite sweep). Outcome: trio wins screen HV; two suite tiers;
       coverage is uniquely semantic (random-floor falsification held);

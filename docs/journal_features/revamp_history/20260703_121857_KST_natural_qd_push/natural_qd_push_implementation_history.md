@@ -908,3 +908,35 @@ verdict log):
   or any `single_thought_count>0`. Full-suite use would require a new
   holdout-clean artifact because the T19 fitting corpus includes RTLLM
   problems.
+
+## 2026-07-07 15:56 UTC - N10 SR-ReLU PCA: DIAGNOSTIC
+
+- Preflight recorded
+  `lanes/N10_sr_relu_pca/preflight_vllm_models_20260707_152537_UTC.json`:
+  `openai/gpt-oss-120b`, `max_model_len=131072`, `owned_by=vllm`.
+- Ran the V2-faithful N10 screen at
+  `exp/natural_qd_push/n10_sr_relu_pca_20260707_152554_UTC/live/sr_relu_pca_3d/seed_1001`
+  with `qd_operator_kind=eoh_strategies`,
+  `representation_kind=code_individual`, 128k token budgets, seed 1001,
+  and only the descriptor changed to the lane-local `sr_pca_3d` profile.
+  Runtime completed exit 0 in 1520.15 s.
+- Package artifacts: `pareto_analysis/`, `ppa_distribution/`,
+  `hv_auc.csv`, `operator_contract.csv`, `run_validation.json`, and
+  `results_report.md`.
+- Validation: config-pinned run validation PASS; operator audit PASS
+  with `single_thought_count=0`; package warnings empty. The candidate
+  audit shows 27 QD fill/backfill strategies (M-T/C-D), visible as
+  `other_strategy_count=27`, but no single-thought leakage.
+- Read: mean HV `0.156825295476909` vs classic
+  `0.140644784059788` (`111.5%`) and V2 `0.173763752757077`
+  (`90.3%`). HV-AUC `0.134106202651801` vs classic
+  `0.123873864821665` (`108.3%`) and V2 `0.143659910266867`
+  (`93.3%`). Coverage retained at 8/8; final-HV W/L/T `2/3/3` vs
+  classic and `1/2/5` vs V2.
+- Diagnosis: yield-loss plus front-loss. Live descriptor health is
+  materially better than N07a/N07c (`7/8` problems keep all SR-PCA axes
+  live), but `Prob135_m2014_q6b` collapses all three axes, valid-PPA
+  yield drops to 139 vs V2's 196, and Pareto breadth falls to 2.125 vs
+  V2's 2.625. Gate decision: diagnostic keeper only; do not escalate to
+  seeds 1002/1003. Full-suite use still requires a new holdout-clean
+  SR-ReLU artifact.
