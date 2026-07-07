@@ -32,6 +32,9 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 - Open by design: N07 due diligence has probe-only pre-registration.
   N07a and N07c now have closed negative live reads under the V2-faithful
   descriptor-only rule; N07b remains smoke-gated and low priority.
+- Newly registered next probe: N09 Pareto capacity, a config-only
+  `qd_max_elites_per_cell=7` follow-up to N01 that directly targets
+  front-loss without new engine code or descriptor machinery.
 
 ## Top-Level Docs
 

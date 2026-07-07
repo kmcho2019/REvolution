@@ -52,6 +52,6 @@ compact_8d extraction-fragile at ~1/100 problem-runs.
 ## Campaign state
 
 P0-P3c: 27 live runs, all operator-fair, gate-governed, packaged, and
-reviewer-verified. No further runs are registered; P4 synthesis
-(canonical statistics, Branch-B utility metric, central report,
-dashboard refresh, adversarial sign-off) closes the push.
+reviewer-verified. No further P3c sweep runs are registered. Later
+follow-ups are tracked in `../lanes/` and the top-level history so this
+closure remains scoped to the descriptor sweep.

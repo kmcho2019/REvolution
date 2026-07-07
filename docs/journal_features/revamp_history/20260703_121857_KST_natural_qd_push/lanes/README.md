@@ -41,6 +41,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N07 | source-aligned RF timing | 0.12759 | -9.3% | -26.6% | N07a closed; descriptor-collapse/front-loss |
 | N07 | implemented structural compact | 0.12395 | -11.9% | -28.7% | N07c closed; descriptor-collapse/front-loss |
 | N08 | combination | blocked | - | - | needs replicated winners |
+| N09 | pareto_front capacity 7 | registered | - | - | pending; one-knob front-loss probe |
 
 **Promotion decision (2026-07-03): V2 stays the P3 arm.** N03b cleared
 the bar at seed 1001 (+6.4%/+8.0%) but replication landed at 98.9% HV
@@ -196,7 +197,7 @@ trio's collapse on small control logic is substrate-independent.
 | Wave 1 | journal_graph_testability_3d | 0.15195 | -12.6% | 4/8 | 51 | diagnostic keeper (best challenger) |
 | Wave 1 | size_control_3d | 0.14129 | -18.7% | 3/8 | 37 | closed |
 | Wave 1 | random_hash_3d (floor) | 0.13457 | -22.6% | 0/8 | 70 | control closed |
-| Wave 2 | theory_grounded_compact_8d + CVT | registered | - | - | - | reduced priority; full probe first |
+| Wave 2 | theory_grounded_compact_8d + CVT | 0.09760 suite | - | 6/50 suite | - | health-grounds swap candidate; no HV win |
 | Follow-up | SR ReLU PCA (T19 family) | registered idea | - | - | - | needs frozen-projection spec |
 
 **Quarantine LIFTED** (real probe artifact:
@@ -241,6 +242,20 @@ bounded-extraction-smoke gated and low priority.
 Pre-registered merge of measured single-factor winners only. Blocked:
 no lane has beaten V2 yet. If N06 or N02 produces a winner, the
 combination card is written BEFORE any combined run.
+
+## N09 — Pareto Capacity (`N09_pareto_capacity/`)
+
+**Question:** does the V2 archive lose useful front material because
+each cell keeps only five non-dominated elites? This is the registered
+capacity-above-five follow-up from N01, now narrowed to a single
+config-only probe: `qd_cell_mode=pareto_front` unchanged, but
+`qd_max_elites_per_cell=7`.
+
+The arm is not a scan. It changes one existing archive-capacity knob,
+keeps `qd_operator_kind=eoh_strategies` and `code_individual`, and uses
+the same descriptor, parent selection, budget, and evaluation flow as
+V2. Run seed 1001 only; escalate only if it beats V2 on both HV and
+HV-AUC with coverage retained.
 
 ---
 

@@ -828,3 +828,21 @@ verdict log):
   archives, and 31 occupied cells total. Cause class:
   descriptor-collapse plus front-loss. Gate decision: close N07c; do
   not escalate to seeds 1002/1003.
+
+## 2026-07-07 14:25 UTC - N09 Pareto Capacity: REGISTERED
+
+- Registered `lanes/N09_pareto_capacity/` as the next cheapest natural
+  follow-up after N07a/N07c closed. The mechanism is V2 with
+  `qd_max_elites_per_cell=7` instead of 5, while keeping
+  `qd_cell_mode=pareto_front`, the frozen descriptor trio, NSGA-II global
+  parent selection, `qd_operator_kind=eoh_strategies`,
+  `representation_kind=code_individual`, and the same 8x5 budget.
+- Rationale: N01's seed-1001 retention ladder suggested per-cell Pareto
+  capacity carries much of the screen-scale gain, while N04/N07 failures
+  diagnose front-loss. Capacity 7 is one existing config knob and avoids
+  descriptor/projection machinery, PCN-style triggers, and core-engine
+  edits.
+- Gate: run only seed 1001 first; close on coverage loss or mean HV below
+  `0.95x` matched classic; escalate only if it beats V2 on both HV and
+  HV-AUC with coverage retained. No capacity scan is allowed from this
+  card.

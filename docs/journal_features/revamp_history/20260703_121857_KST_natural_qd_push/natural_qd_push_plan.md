@@ -1,11 +1,12 @@
 # Natural QD Push Plan
 
 Feature slug: `natural_qd_push`
-Status: run phase COMPLETE 2026-07-04 (P0-P3c, 27 operator-fair
-runs); P4 synthesis in progress. Verdicts: screening-scale QD win
-(V2 +12.9% HV, 3/3 seeds), suite-scale HV parity with coverage edge,
-Branch-B utility 0.413 (bar 0.25), descriptor dial characterized at
-both scales. See lanes/README.md and p3_full_rtllm/.
+Status: base run phase COMPLETE 2026-07-04; follow-up experimentation
+active 2026-07-07 after N04/N02b/N07a/N07c. Verdicts:
+screening-scale QD win (V2 +12.9% HV, 3/3 seeds), suite-scale HV
+parity with coverage edge, Branch-B utility 0.413 (bar 0.25),
+descriptor dial characterized at both scales, and N09 registered as a
+config-only front-loss probe. See lanes/README.md and p3_full_rtllm/.
 Branch: `feat/journal-qd-bd-exp-20260703` (from `f786d9306b`).
 
 ## Outcome

@@ -83,6 +83,9 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       no 4x11 or seed ladder.
 - [ ] Registered follow-up variants from P1 diagnoses (stay within the
       Natural-Extension Criterion; single factor per variant).
+- [ ] N09 pareto capacity: registered 2026-07-07 as a config-only
+      `qd_max_elites_per_cell=7` front-loss probe; launch seed 1001
+      only after preflight.
 - [x] N06 descriptor bake-off, both scales COMPLETE (screen wave 1 +
       P3c suite sweep). Outcome: trio wins screen HV; two suite tiers;
       coverage is uniquely semantic (random-floor falsification held);
