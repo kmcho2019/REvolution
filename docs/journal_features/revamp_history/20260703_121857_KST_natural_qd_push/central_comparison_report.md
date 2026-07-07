@@ -95,8 +95,9 @@ scale, ~1/100 problem-runs; decision deferred to the manuscript).
    V2-faithful descriptor-only versions of source-aligned RF timing and
    implemented structural compact both retain coverage but close below
    classic (90.7% and 88.1% HV). Smoke-healthy descriptors can still
-   collapse on live generated candidates; descriptor-only corrected-suite
-   completion is not the missing win lever.
+   collapse on live generated candidates; the RF/DeepGate hybrid arm
+   fails its extraction gate. Descriptor-only corrected-suite completion
+   is not the missing win lever.
 10. **Pareto capacity follow-up (N09, 2026-07-07)**: raising V2's
     per-cell Pareto-front capacity from 5 to 7 is clean and natural but
     not a win lever. It beats classic on mean HV/AUC (113.3% / 114.5%)
@@ -130,11 +131,12 @@ set.
 - Answered: the push's core question at both scales; the descriptor
   question at both scales; the utility content of diversity; the
   contamination question.
-- Unanswered (registered follow-ups, non-blocking): N07b smoke-gated
-  due diligence; compact_8d swap decision; held-out confirmation of the
+- Unanswered (registered follow-ups, non-blocking): compact_8d swap
+  decision; held-out confirmation of the
   screening win. N04 budget-depth, N02b curiosity, N07a/N07c
-  descriptor-only corrected-suite arms, N09 pareto capacity, and N10
-  SR-ReLU PCA are now measured negative for escalation.
+  descriptor-only corrected-suite arms, N07b RF/DeepGate extraction,
+  N09 pareto capacity, and N10 SR-ReLU PCA are now negative for
+  escalation.
 - TCAD-strength: the two-scale characterization with a replicated win,
   a 0.41 utility statistic, the descriptor dial, and full
   registration/audit provenance is materially stronger than the

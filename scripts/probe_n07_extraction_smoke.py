@@ -17,9 +17,13 @@ from revolution.qd.artifacts import write_descriptor_health_files  # noqa: E402
 from revolution.qd.descriptors import (  # noqa: E402
     descriptor_requirements,
     extract_descriptor_values,
+    load_deepgate_projection_artifact_path,
     resolve_descriptor_axes,
 )
 from revolution.qd.types import ArchiveMember  # noqa: E402
+from revolution.deepgate_descriptor_evaluator import (  # noqa: E402
+    DeepGatePooledDescriptorEvaluator,
+)
 from revolution.source_aligned_descriptor_evaluator import (  # noqa: E402
     SourceAlignedRTLDescriptorEvaluator,
 )
@@ -39,6 +43,11 @@ V2_ANCHOR_METRICS_ROOT = Path(
     "exp/natural_qd_push/p0_v2_anchor_20260703_041511_UTC/live/"
     "smooth_qd_v2_8x5/seed_1001/openai_gpt-oss-120b"
 )
+N07B_DESCRIPTOR_FILE = Path(
+    "docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/"
+    "preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/tables/"
+    "rf_deepgate_hybrid_descriptor_profiles.yaml"
+)
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -50,6 +59,7 @@ def _build_parser() -> argparse.ArgumentParser:
         default="source_aligned_rf_timing_state_3d",
         choices=[
             "source_aligned_rf_timing_state_3d",
+            "rf_deepgate_hybrid_3d",
             "implemented_structural_compact_3d",
         ],
     )
@@ -94,6 +104,36 @@ def _source_aligned_rows(axes: tuple[str, ...]) -> list[dict[str, Any]]:
     return rows
 
 
+def _rf_deepgate_rows(axes: tuple[str, ...]) -> list[dict[str, Any]]:
+    rf_evaluator = SourceAlignedRTLDescriptorEvaluator(include_rf_timing=True)
+    deepgate_evaluator = DeepGatePooledDescriptorEvaluator(
+        load_deepgate_projection_artifact_path(N07B_DESCRIPTOR_FILE)
+    )
+    rows: list[dict[str, Any]] = []
+    for benchmark, problem, raw_path in SCREEN_REFS:
+        path = Path(raw_path)
+        assert path.is_file(), f"missing frozen reference RTL: {path}"
+        metrics = rf_evaluator.extract_metrics(
+            code_file_path=path,
+            top_module_name="RefModule",
+        )
+        metrics.update(
+            deepgate_evaluator.extract_metrics(
+                code_file_path=path,
+                top_module_name="RefModule",
+            )
+        )
+        rows.append(
+            {
+                "benchmark": benchmark,
+                "problem": problem,
+                "rtl": str(path),
+                "descriptor_values": extract_descriptor_values(metrics, axes),
+            }
+        )
+    return rows
+
+
 def _structural_rows(axes: tuple[str, ...]) -> list[dict[str, Any]]:
     assert V2_ANCHOR_METRICS_ROOT.is_dir(), V2_ANCHOR_METRICS_ROOT
     rows: list[dict[str, Any]] = []
@@ -126,7 +166,9 @@ def main(argv: list[str] | None = None) -> int:
         resolve_descriptor_axes(
             profile_name=args.profile,
             explicit_axes=None,
-            descriptor_file=None,
+            descriptor_file=(
+                N07B_DESCRIPTOR_FILE if args.profile == "rf_deepgate_hybrid_3d" else None
+            ),
             archive_type="grid_quantile",
             circuit_type="sequential",
         )
@@ -137,6 +179,11 @@ def main(argv: list[str] | None = None) -> int:
         assert requirements["requires_source_aligned_rf_timing"] is True
         smoke_rows = _source_aligned_rows(axes)
         note_source = "frozen reference RTLs"
+    elif args.profile == "rf_deepgate_hybrid_3d":
+        assert requirements["requires_source_aligned_rf_timing"] is True
+        assert requirements["requires_deepgate_pooled_embedding"] is True
+        smoke_rows = _rf_deepgate_rows(axes)
+        note_source = "frozen reference RTLs plus DeepGate pooled embeddings"
     elif args.profile == "implemented_structural_compact_3d":
         assert requirements["requires_synthesis"] is True
         smoke_rows = _structural_rows(axes)

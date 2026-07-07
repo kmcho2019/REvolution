@@ -24,9 +24,25 @@ class FakeEvaluator:
         index = int(Path(code_file_path).stem.removeprefix("p")) + 1
         return {
             "source_aligned_rf_timing_leaf_rows": float(index),
+            "source_aligned_rf_timing_leaf_ids": float(index + 2),
             "source_aligned_rf_timing_path_count": float(index + 8),
             "source_aligned_masterrtl_branching": float(index) / 10.0,
         }
+
+
+class FakeDeepGateEvaluator:
+    def __init__(self, artifact_path: Path) -> None:
+        assert artifact_path.name == "projection.json"
+
+    def extract_metrics(
+        self,
+        *,
+        code_file_path: str | Path,
+        top_module_name: str,
+    ) -> dict[str, float]:
+        assert top_module_name == "RefModule"
+        index = int(Path(code_file_path).stem.removeprefix("p")) + 1
+        return {"deepgate_pool_pc0": float(index) / 10.0}
 
 
 def test_n07_extraction_smoke_writes_health(monkeypatch, tmp_path):
@@ -49,6 +65,38 @@ def test_n07_extraction_smoke_writes_health(monkeypatch, tmp_path):
     assert summary["descriptor_health"]["initialized"] is True
     assert (tmp_path / "out" / "descriptor_health.json").is_file()
     assert (tmp_path / "out" / "descriptor_health_report.md").is_file()
+
+
+def test_n07_rf_deepgate_smoke_combines_metrics(monkeypatch, tmp_path):
+    refs = []
+    for index in range(8):
+        path = tmp_path / f"p{index}.sv"
+        path.write_text(f"module p{index}; endmodule\n", encoding="utf-8")
+        refs.append(("RTLLM", f"Prob{index:03d}", str(path)))
+    monkeypatch.setattr(smoke, "SCREEN_REFS", tuple(refs))
+    monkeypatch.setattr(smoke, "SourceAlignedRTLDescriptorEvaluator", FakeEvaluator)
+    monkeypatch.setattr(smoke, "DeepGatePooledDescriptorEvaluator", FakeDeepGateEvaluator)
+    monkeypatch.setattr(
+        smoke,
+        "load_deepgate_projection_artifact_path",
+        lambda path: tmp_path / "projection.json",
+    )
+
+    rc = smoke.main(
+        [
+            "--profile",
+            "rf_deepgate_hybrid_3d",
+            "--output-dir",
+            str(tmp_path / "out"),
+        ]
+    )
+
+    summary = json.loads((tmp_path / "out" / "extraction_smoke_summary.json").read_text())
+    assert rc == 0
+    assert summary["profile"] == "rf_deepgate_hybrid_3d"
+    assert summary["requirements"]["requires_deepgate_pooled_embedding"] is True
+    assert summary["input_count"] == 8
+    assert summary["descriptor_health"]["initialized"] is True
 
 
 def test_n07_structural_smoke_uses_existing_metrics(monkeypatch, tmp_path):

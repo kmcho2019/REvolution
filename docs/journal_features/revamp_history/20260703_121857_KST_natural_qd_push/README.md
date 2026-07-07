@@ -31,7 +31,8 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   79.7% HV-AUC), so curiosity weighting is a clean negative.
 - Open by design: N07 due diligence has probe-only pre-registration.
   N07a and N07c now have closed negative live reads under the V2-faithful
-  descriptor-only rule; N07b remains smoke-gated and low priority.
+  descriptor-only rule; N07b failed its DeepGate extraction gate, so the
+  corrected-suite descriptor due-diligence lane is closed.
 - Follow-up update: N09 Pareto capacity is now measured. Raising
   `qd_max_elites_per_cell` from 5 to 7 beats classic on mean HV/AUC
   but trails V2 on both metrics and reduces Pareto breadth, so capacity

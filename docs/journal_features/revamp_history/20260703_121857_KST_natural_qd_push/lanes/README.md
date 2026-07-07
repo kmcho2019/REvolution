@@ -40,6 +40,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N04 | V2 6x7 | 0.17200 | +1.1% | n/a | no escalation: HV near tie, HV-AUC 90.5% |
 | N07 | source-aligned RF timing | 0.12759 | -9.3% | -26.6% | N07a closed; descriptor-collapse/front-loss |
 | N07 | implemented structural compact | 0.12395 | -11.9% | -28.7% | N07c closed; descriptor-collapse/front-loss |
+| N07 | RF DeepGate hybrid | gate fail | - | - | N07b closed; extraction failure |
 | N08 | combination | blocked | - | - | needs replicated winners |
 | N09 | pareto_front capacity 7 | 0.15928 | +13.3% | -8.3% | diagnostic keeper; no escalation |
 | N10 | SR-ReLU PCA descriptor | 0.15683 | +11.5% | -9.7% | diagnostic keeper; no escalation |
@@ -235,8 +236,9 @@ then the live seed-1001 screen also closed negative: mean HV `0.12395`
 (`88.1%` of classic, `71.3%` of V2), HV-AUC `0.10457`, 8/8 coverage,
 and live descriptor health degraded to `3/8` collapsed-axis problems
 plus two uninitialized archives. Cause class: descriptor-collapse plus
-front-loss. Do not escalate N07c. N07b remains
-bounded-extraction-smoke gated and low priority.
+front-loss. N07b failed its bounded extraction smoke on
+`RTLLM/Prob045_alu` when the DeepGate bridge failed AIG export after
+undriven-bit warnings, so no N07b live screen is allowed. N07 is closed.
 
 ## N08 — Combination (`N08` — no directory yet)
 

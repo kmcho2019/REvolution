@@ -66,14 +66,14 @@ metrics, but the live run still degraded on the generated distribution:
 Aggregate: `3/8` problems have collapsed axes, `2/8` never initialize,
 and the run occupies 31 cells total.
 
-## Verdict: CLOSE N07a and N07c
+## Verdict: CLOSE N07
 
 Cause class: descriptor-collapse plus front-loss. Both descriptor ideas
 are natural, but descriptor-only corrected-suite variants do not add
 front material under the V2 engine. N07c also shows that a smoke-healthy
 feature path can still collapse during live generation.
 
-Do not escalate N07a or N07c to seeds 1002/1003. N07b remains
-bounded-extraction-smoke gated and should stay low priority unless the
-campaign explicitly wants to finish the last corrected-suite
-due-diligence arm.
+Do not escalate N07a or N07c to seeds 1002/1003. N07b failed its
+bounded extraction smoke on `RTLLM/Prob045_alu` when the DeepGate bridge
+failed AIG export after undriven-bit warnings, so no live N07b screen is
+allowed.

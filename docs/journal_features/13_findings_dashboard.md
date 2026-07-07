@@ -52,7 +52,8 @@ below on operator-fair evidence:**
   variants are not the missing win lever.** V2-faithful source-aligned
   RF timing and implemented structural compact both retain 8/8 coverage
   but close below classic (90.7% and 88.1% HV); descriptor paths that
-  smoke-clear can still collapse on live generated candidates.
+  smoke-clear can still collapse on live generated candidates, while the
+  RF/DeepGate hybrid arm fails the extraction gate before any live spend.
 - **F39 (MEASURED, N09 follow-up): larger per-cell Pareto capacity is
   diagnostic, not a win lever.** Capacity 7 beats classic on mean
   HV/AUC (113.3% / 114.5%) but trails V2 (91.7% / 98.7%) and reduces

@@ -60,6 +60,24 @@ generated candidates across the frozen 8 problems. It was descriptor
 extraction only: no LLM calls, no new evolutionary run, and no
 performance claim.
 
+## N07b Extraction Smoke Already Run
+
+```bash
+timeout 1800s uv run python scripts/probe_n07_extraction_smoke.py \
+  --profile rf_deepgate_hybrid_3d \
+  --output-dir docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/smokes/n07b_rf_deepgate_hybrid_20260707_162135_UTC
+```
+
+Result: fail. Artifact:
+
+- `smokes/n07b_rf_deepgate_hybrid_20260707_162135_UTC/extraction_smoke_summary.json`
+
+This was descriptor extraction only: no LLM calls, no evolutionary run,
+and no performance claim. The DeepGate pooled embedding bridge extracted
+the first three frozen reference RTLs, then failed on
+`RTLLM/Prob045_alu` during AIG export after undriven-bit warnings. The
+N07b live screen is forbidden because the extraction gate did not pass.
+
 ## N07a Live Screen Already Run
 
 Preflight:
@@ -229,7 +247,8 @@ uv run python scripts/run_backend.py \
   --save_path "${RUN_ROOT}/<ARM>/seed_1001"
 ```
 
-For N07b only, add the frozen descriptor file:
+Historical N07b launch argument, not launchable because the N07b smoke
+failed:
 
 ```bash
 --qd_descriptor_file docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260626_rf_deepgate_hybrid_delayed_probe/tables/rf_deepgate_hybrid_descriptor_profiles.yaml

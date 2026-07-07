@@ -102,11 +102,11 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       swap candidate QUALIFIED by one hard extraction failure
       (Prob050 s1002; watch c19) (`lanes/N06_descriptor_bakeoff/
       bd_scoreboard.md`, `p3_full_rtllm/p3c_closure.md`).
-- [ ] N07 corrected-suite completion: probe-only pre-registration
+- [x] N07 corrected-suite completion: probe-only pre-registration
       written; N07a live read closed negative (90.7% of classic HV,
       descriptor-collapse/front-loss); N07c live read closed negative
-      (88.1% of classic HV, descriptor-collapse/front-loss); N07b still
-      smoke-gated.
+      (88.1% of classic HV, descriptor-collapse/front-loss); N07b failed
+      the DeepGate extraction gate on Prob045_alu, so no live screen.
 
 ## P3 Confirmation
 

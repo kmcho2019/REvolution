@@ -44,7 +44,8 @@ No broad RTLLM spend occurs before the small-scale gate clears.
   live seed-1001 screen closed negative.
   Probe: `probes/probe_source_aligned_rf_timing_state_3d.json`.
 - N07b: `rf_deepgate_hybrid_3d` with the frozen June-26 descriptor file;
-  extraction-smoke pending. Probe: `probes/probe_rf_deepgate_hybrid_3d.json`.
+  extraction-smoke failed on DeepGate AIG export. Probe:
+  `probes/probe_rf_deepgate_hybrid_3d.json`.
 - N07c: `implemented_structural_compact_3d`; extraction-smoke passed,
   live seed-1001 screen closed negative.
   Probe: `probes/probe_implemented_structural_compact_3d.json`.
@@ -91,6 +92,13 @@ shape `3x4x4`, occupied 14 cells, retained 57 archive entries, and
 reported no collapsed axes. This is not an optimization result and makes
 no HV or functionality claim; it only permits considering the N07c
 seed-1001 live screen under the command template.
+
+N07b failed the extraction gate:
+`smokes/n07b_rf_deepgate_hybrid_20260707_162135_UTC/`. The DeepGate
+pooled embedding bridge extracted the first three frozen reference RTLs,
+then failed on `RTLLM/Prob045_alu` during AIG export with
+``ERROR: Assert `a >= 0' failed in backends/aiger/aiger.cc:130.`` after
+undriven-bit warnings. This closes N07b without a live screen.
 
 ## Live Screen Result
 

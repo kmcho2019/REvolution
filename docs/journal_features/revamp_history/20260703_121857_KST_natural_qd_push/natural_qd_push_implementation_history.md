@@ -962,3 +962,28 @@ verdict log):
   user-provided raw restart transcript/source log rather than a committed
   result artifact. `.devcontainer/devcontainer-lock.json` also remains an
   unrelated pre-existing untracked file.
+
+## 2026-07-07 16:24 UTC - N07b RF/DeepGate Smoke: FAIL
+
+- Extended `scripts/probe_n07_extraction_smoke.py` narrowly to support
+  `rf_deepgate_hybrid_3d` using the frozen June-26 descriptor profile and
+  existing `DeepGatePooledDescriptorEvaluator`. No core QD engine code was
+  changed.
+- Focused validation before the smoke passed:
+  `uv run pytest tests/scripts/test_probe_n07_extraction_smoke.py`
+  (`3 passed`), `uv run ruff check scripts/probe_n07_extraction_smoke.py
+  tests/scripts/test_probe_n07_extraction_smoke.py`, `uv run python -m
+  pyright scripts/probe_n07_extraction_smoke.py
+  tests/scripts/test_probe_n07_extraction_smoke.py`, and `uv tool run ty
+  check scripts/probe_n07_extraction_smoke.py
+  tests/scripts/test_probe_n07_extraction_smoke.py`.
+- Ran:
+  `timeout 1800s uv run python scripts/probe_n07_extraction_smoke.py --profile rf_deepgate_hybrid_3d --output-dir docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/smokes/n07b_rf_deepgate_hybrid_20260707_162135_UTC`
+- Result: FAIL. A localization loop confirmed DeepGate extraction passed
+  `RTLLM/Prob015_multi_pipe_8bit`, `Prob024_fsm`, and
+  `Prob041_traffic_light`, then failed on `RTLLM/Prob045_alu` during AIG
+  export after undriven-bit warnings with
+  ``ERROR: Assert `a >= 0' failed in backends/aiger/aiger.cc:130.``
+- Decision: N07b fails the bounded extraction gate and no live N07b
+  screen is allowed. The corrected-suite due-diligence lane is closed:
+  N07a/N07c are live negatives and N07b is an extraction negative.
