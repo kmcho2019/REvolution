@@ -45,6 +45,11 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N09 | pareto_front capacity 7 | 0.15928 | +13.3% | -8.3% | diagnostic keeper; no escalation |
 | N10 | SR-ReLU PCA descriptor | 0.15683 | +11.5% | -9.7% | diagnostic keeper; no escalation |
 
+Post-N10 decision map: `../followup_decision_map.md` closes the current
+single-knob follow-up portfolio. Further capacity, gamma, warmup,
+budget-depth, descriptor-only, or archive-shape scans need a new
+mechanism card and a pre-recorded gate.
+
 **Promotion decision (2026-07-03): V2 stays the P3 arm.** N03b cleared
 the bar at seed 1001 (+6.4%/+8.0%) but replication landed at 98.9% HV
 / -2.8% AUC vs V2 — the pre-registered ladder intercepted a seed

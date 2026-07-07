@@ -42,6 +42,10 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   the live screen beats classic only (`0.15683` mean HV, +11.5%) and
   trails V2 (`90.3%` HV, `93.3%` HV-AUC) with lower valid-PPA yield and
   Pareto breadth, so it is diagnostic only and does not escalate.
+- Decision map: `followup_decision_map.md` closes the current
+  single-knob follow-up portfolio for manuscript synthesis. Do not open
+  another capacity/gamma/warmup/budget/descriptor scan without a new
+  mechanism card and pre-recorded gate.
 
 ## Top-Level Docs
 
@@ -51,6 +55,7 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 | `natural_qd_push_plan.md` | The contract: lessons, lanes, gates, phases. |
 | `natural_qd_push_implementation_todo.md` | Living checklist (hard line cap). |
 | `natural_qd_push_implementation_history.md` | Append-only audit log. |
+| `followup_decision_map.md` | Post-N10 operator-fair map of follow-up results, stop rules, and remaining paper decisions. |
 | `goal_template.md` | Compact `/goal` body. |
 | `natural_qd_push_adversarial_prompt.md` | Sign-off rubric (PASS/FAIL). |
 | `natural_qd_push_subagent_validation_report.md` | Validator output. |

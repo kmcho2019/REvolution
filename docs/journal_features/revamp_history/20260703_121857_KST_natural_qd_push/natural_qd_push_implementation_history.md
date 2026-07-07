@@ -987,3 +987,20 @@ verdict log):
 - Decision: N07b fails the bounded extraction gate and no live N07b
   screen is allowed. The corrected-suite due-diligence lane is closed:
   N07a/N07c are live negatives and N07b is an extraction negative.
+
+## 2026-07-07 16:45 UTC - Post-N10 Follow-Up Decision Map
+
+- Added `followup_decision_map.md` to summarize the operator-fair
+  follow-up portfolio after N04, N02b, N07a/N07b/N07c, N09, and N10.
+  The map records the current decision: stop opening new single-knob
+  natural-variant screens unless a qualitatively new mechanism card is
+  registered with a pre-launch gate.
+- Synthesis: the current best journal extension remains Smooth-QD V2,
+  with N03b as the suite utility/front-material candidate and compact_8d
+  as a qualified descriptor-health manuscript option. Post-PASS variants
+  failed by front-loss, yield-loss, exploration-tax, descriptor-collapse,
+  extraction failure, or mechanism-inert behavior rather than operator
+  contamination.
+- Boundaries: this does not declare the overall goal complete. The plan's
+  exhausted-portfolio stop condition still needs adversarial PASS before
+  the whole push can close on the negative map.

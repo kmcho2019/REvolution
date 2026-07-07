@@ -64,11 +64,16 @@ below on operator-fair evidence:**
   but the live V2-faithful screen only beats classic (111.5% HV,
   108.3% HV-AUC) while trailing V2 (90.3% HV, 93.3% HV-AUC), with
   lower valid-PPA yield/front breadth and one all-axis collapse.
+- Post-N10 decision map:
+  `revamp_history/20260703_121857_KST_natural_qd_push/followup_decision_map.md`
+  records the operator-fair negative map for N04/N02b/N07/N09/N10 and
+  stops further one-knob screens unless a new mechanism card is
+  registered.
 - The June-22 T-series negative map is OPERATOR-CONTAMINATED and must
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-07 (natural_qd_push F36-F40 follow-ups, N10 live close);
+**Last refreshed:** 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 decision map);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the

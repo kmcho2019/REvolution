@@ -108,6 +108,12 @@ scale, ~1/100 problem-runs; decision deferred to the manuscript).
     (90.3% / 93.3%), lowers valid-PPA yield and Pareto breadth, and
     collapses all three SR-PCA axes on one problem. No escalation.
 
+Post-N10 synthesis: `followup_decision_map.md` records the operator-fair
+negative map for N04/N02b/N07/N09/N10 and the stop rule for further
+single-knob screens. The remaining useful work is manuscript synthesis,
+the compact_8d swap stance, optional held-out confirmation, and an
+adversarial review if the campaign is closed on exhaustion.
+
 ## Branch mapping (frozen contract)
 
 REF_WIN and REF_PARITY fail (the HV log-ratio gate is unmet at suite
@@ -136,7 +142,7 @@ set.
   screening win. N04 budget-depth, N02b curiosity, N07a/N07c
   descriptor-only corrected-suite arms, N07b RF/DeepGate extraction,
   N09 pareto capacity, and N10 SR-ReLU PCA are now negative for
-  escalation.
+  escalation; see `followup_decision_map.md` for the stop rules.
 - TCAD-strength: the two-scale characterization with a replicated win,
   a 0.41 utility statistic, the descriptor dial, and full
   registration/audit provenance is materially stronger than the

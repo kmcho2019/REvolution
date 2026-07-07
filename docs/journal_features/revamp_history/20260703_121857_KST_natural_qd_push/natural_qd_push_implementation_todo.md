@@ -81,8 +81,10 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       (`lanes/N04_budget_shape/`). Outcome: HV 101.1% of classic with
       coverage retained, but HV-AUC 90.5% and Pareto breadth down;
       no 4x11 or seed ladder.
-- [ ] Registered follow-up variants from P1 diagnoses (stay within the
-      Natural-Extension Criterion; single factor per variant).
+- [x] Registered follow-up variants from P1 diagnoses (stay within the
+      Natural-Extension Criterion; single factor per variant). Outcome:
+      N04/N02b/N07/N09/N10 now form the post-N10 decision map; no new
+      one-knob scans without a qualitatively new mechanism card.
 - [x] N09 pareto capacity: completed 2026-07-07. Capacity 7 beats
       classic on mean HV/AUC but trails V2 and reduces Pareto breadth;
       no seed ladder or capacity scan.
@@ -153,6 +155,10 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       accepted, no history rewrite); 6x7 verify-before-N04 annotation
       confirmed in tables/README; bootstrap-seed clarifier in
       read_note.
+- [x] Post-N10 follow-up decision map added
+      (`followup_decision_map.md`): operator-fair negative map, stop
+      rules for further one-knob screens, and remaining manuscript
+      decisions.
 
 ## Standing Validation (every code/report change)
 
