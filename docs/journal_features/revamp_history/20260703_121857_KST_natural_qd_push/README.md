@@ -4,7 +4,7 @@ Goal-scaffold root for the July 2026 push to find a natural QD/MAP-Elites
 extension of classic REvolution that beats classic on HV and HV-AUC while
 matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 
-## Current State (2026-07-07; follow-ups N04/N02b/N07a/N07c measured)
+## Current State (2026-07-07; follow-ups N04/N02b/N07a/N07c/N09 measured; N10 smoke-passed)
 
 - HEADLINE: the two-scale story. The faithful V2 platform BEATS classic
   at screening scale (+12.9% HV, +16.2% HV-AUC, 3/3 seeds,
@@ -36,6 +36,11 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   `qd_max_elites_per_cell` from 5 to 7 beats classic on mean HV/AUC
   but trails V2 on both metrics and reduces Pareto breadth, so capacity
   above five is diagnostic only and does not escalate.
+- Follow-up update: N10 SR-ReLU PCA is probe-eligible, not yet an HV
+  result. The frozen T19 ReLU-PCA artifact is leak-clean for the
+  8-design screen, the ST-NOD extraction smoke passed on 8/8 existing
+  V2 candidates, and all three SR axes stayed live; a seed-1001 live
+  screen is the next registered spend if we continue this branch.
 
 ## Top-Level Docs
 

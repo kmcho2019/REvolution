@@ -3,7 +3,8 @@
 The consolidated answer to the push's question: does a natural
 QD/MAP-Elites extension of classic REvolution beat classic on HV and
 HV-AUC while keeping functionality? Thirty-two operator-fair live
-runs (P0-P3c plus N04/N02b/N07a/N07c/N09 follow-ups), every comparison
+runs (P0-P3c plus N04/N02b/N07a/N07c/N09 follow-ups), plus the N10
+SR-ReLU extraction smoke, every comparison
 operator-audited
 (`single_thought_count=0` both arms), config-pin validated (with one
 honest validation FAIL on record: compact_8d seed 1002's Prob050
@@ -100,6 +101,12 @@ scale, ~1/100 problem-runs; decision deferred to the manuscript).
     per-cell Pareto-front capacity from 5 to 7 is clean and natural but
     not a win lever. It beats classic on mean HV/AUC (113.3% / 114.5%)
     while trailing V2 (91.7% / 98.7%) and reducing Pareto breadth.
+11. **SR-ReLU PCA probe (N10, 2026-07-07)**: the strongest
+    descriptor-isolating replay lead is now extraction-eligible for one
+    V2-faithful screen. The frozen T19 artifact has no overlap with the
+    8-design screen, ST-NOD extraction passed on 8/8 existing V2
+    candidates, and all three SR axes stayed live. This is not yet an
+    HV or functionality result.
 
 ## Branch mapping (frozen contract)
 
@@ -125,10 +132,11 @@ set.
   question at both scales; the utility content of diversity; the
   contamination question.
 - Unanswered (registered follow-ups, non-blocking): N07b smoke-gated
-  due diligence; SR ReLU PCA profile; compact_8d swap decision; held-out
-  confirmation of the screening win. N04 budget-depth, N02b curiosity,
-  N07a/N07c descriptor-only corrected-suite arms, and N09 pareto
-  capacity are now measured negative for escalation.
+  due diligence; N10 SR ReLU PCA live screen after its extraction smoke
+  passed; compact_8d swap decision; held-out confirmation of the
+  screening win. N04 budget-depth, N02b curiosity, N07a/N07c
+  descriptor-only corrected-suite arms, and N09 pareto capacity are now
+  measured negative for escalation.
 - TCAD-strength: the two-scale characterization with a replicated win,
   a 0.41 utility statistic, the descriptor dial, and full
   registration/audit provenance is materially stronger than the

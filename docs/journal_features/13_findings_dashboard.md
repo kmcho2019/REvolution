@@ -57,11 +57,16 @@ below on operator-fair evidence:**
   diagnostic, not a win lever.** Capacity 7 beats classic on mean
   HV/AUC (113.3% / 114.5%) but trails V2 (91.7% / 98.7%) and reduces
   Pareto breadth, so the V2 capacity of five is not the limiting factor.
+- **F40 (MECHANISM-VERIFIED, N10 probe): SR-ReLU PCA is now
+  extraction-eligible for one V2-faithful screen.** The frozen T19
+  artifact has no overlap with the 8-design screen, fresh ST-NOD
+  extraction passed on 8/8 existing V2 candidates, and all three SR axes
+  stayed live; no HV/functionality claim yet.
 - The June-22 T-series negative map is OPERATOR-CONTAMINATED and must
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-07 (natural_qd_push F36-F39 follow-ups);
+**Last refreshed:** 2026-07-07 (natural_qd_push F36-F40 follow-ups);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the

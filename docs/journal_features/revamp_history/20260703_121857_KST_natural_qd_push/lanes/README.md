@@ -42,6 +42,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N07 | implemented structural compact | 0.12395 | -11.9% | -28.7% | N07c closed; descriptor-collapse/front-loss |
 | N08 | combination | blocked | - | - | needs replicated winners |
 | N09 | pareto_front capacity 7 | 0.15928 | +13.3% | -8.3% | diagnostic keeper; no escalation |
+| N10 | SR-ReLU PCA descriptor | probe pass | - | - | smoke-passed; live screen eligible |
 
 **Promotion decision (2026-07-03): V2 stays the P3 arm.** N03b cleared
 the bar at seed 1001 (+6.4%/+8.0%) but replication landed at 98.9% HV
@@ -257,6 +258,25 @@ The seed-1001 screen retained coverage and beat classic on mean HV/AUC
 and valid-PPA count (182 vs 196). Cause class: capacity-inert plus
 front-loss. Keep as a diagnostic result; do not escalate or scan
 capacity values.
+
+## N10 — SR-ReLU PCA (`N10_sr_relu_pca/`)
+
+**Question:** can the strongest synthesis-response replay lead move onto
+the V2 platform without leakage or extraction collapse? This is a
+descriptor-only probe: same V2 archive, operators, representation,
+parent selection, warmup, and capacity; only the descriptor profile
+would change to `sr_pca_3d` if a live screen launches.
+
+The frozen T19 SR-ReLU artifact trains on six development problems and
+has no overlap with the frozen 8-design screen. The extraction smoke
+ran fresh ST-NOD Yosys stage dumps on one existing V2 seed-1001
+candidate per screen problem, projected descriptors, and wrote compact
+health artifacts under `N10_sr_relu_pca/smokes/`. Result: PASS —
+8/8 problems, initialized `4x4x4`, 8 occupied cells, and no collapsed
+axes. This clears only the seed-1001 live-screen gate; it is not an HV
+or functionality result. Full-RTLLM use would require a fresh
+holdout-clean artifact because the old fitting corpus includes RTLLM
+problems.
 
 ---
 

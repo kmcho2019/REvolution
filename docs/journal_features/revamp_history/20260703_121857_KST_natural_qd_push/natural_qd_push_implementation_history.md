@@ -874,3 +874,37 @@ verdict log):
   (182 vs 196), so larger per-cell capacity does not add front
   material. Gate decision: diagnostic keeper only; do not escalate to
   seeds 1002/1003 and do not scan capacity values.
+
+## 2026-07-07 15:13 UTC - N10 SR-ReLU PCA: SMOKE PASS
+
+- Registered `lanes/N10_sr_relu_pca/` as the next natural descriptor
+  probe after N09 closed capacity-above-five. The mechanism is
+  V2-faithful descriptor-only: keep `qd_cell_mode=pareto_front`,
+  `qd_max_elites_per_cell=5`, `qd_parent_selection=nsga2_global_rank`,
+  `qd_operator_kind=eoh_strategies`, and
+  `representation_kind=code_individual`; only switch to the frozen
+  `sr_pca_3d` descriptor file if the live screen launches.
+- Rationale: T19 SR-ReLU PCA is the strongest descriptor-isolating
+  replay lead on record, but it needed a frozen projection spec and an
+  extraction gate. The old artifact trains on six development problems
+  and has no overlap with the frozen July 8-design screen; it is
+  screen-eligible only, not a full-RTLLM promotion artifact.
+- Added `scripts/probe_n10_sr_relu_smoke.py` plus a focused test. The
+  helper runs fresh ST-NOD Yosys stage dumps on one existing V2
+  seed-1001 candidate per frozen screen problem, projects SR-ReLU
+  descriptors, writes compact descriptor-health artifacts, and removes
+  generated stage-dump artifacts after projection. It performs no LLM
+  calls and makes no HV/functionality claim.
+- Ran:
+  `timeout 1200s uv run python scripts/probe_n10_sr_relu_smoke.py --output-dir docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N10_sr_relu_pca/smokes/sr_relu_pca_20260707_151320_UTC`
+- Result: PASS. Summary reports status `pass`,
+  `screen_training_overlap=[]`, initialized descriptor health,
+  effective `4x4x4`, `8` occupied cells, `8` archive entries, and no
+  collapsed axes. Package size after trimming generated stage dumps is
+  `24K`.
+- Gate decision: N10 is eligible for exactly one seed-1001 live screen
+  under the registered V2-faithful descriptor-only rule. Close on
+  coverage loss, mean HV below `0.95x` classic, operator audit failure,
+  or any `single_thought_count>0`. Full-suite use would require a new
+  holdout-clean artifact because the T19 fitting corpus includes RTLLM
+  problems.

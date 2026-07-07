@@ -86,6 +86,15 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
 - [x] N09 pareto capacity: completed 2026-07-07. Capacity 7 beats
       classic on mean HV/AUC but trails V2 and reduces Pareto breadth;
       no seed ladder or capacity scan.
+- [x] N10 SR-ReLU PCA descriptor probe: registered 2026-07-07 as a
+      V2-faithful descriptor-only follow-up; extraction smoke passed
+      8/8 with no screen-training overlap, initialized `4x4x4`, eight
+      occupied cells, and no collapsed axes.
+- [ ] N10 live seed-1001 screen, if spending this branch: same V2
+      platform, only `qd_descriptor_profile=sr_pca_3d` and
+      `qd_descriptor_file=lanes/N10_sr_relu_pca/descriptor_profile.yaml`;
+      close on coverage loss, <0.95x classic HV, operator audit fail,
+      or single-thought leakage.
 - [x] N06 descriptor bake-off, both scales COMPLETE (screen wave 1 +
       P3c suite sweep). Outcome: trio wins screen HV; two suite tiers;
       coverage is uniquely semantic (random-floor falsification held);
