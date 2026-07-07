@@ -132,17 +132,17 @@ two-factor exception vs V2).
 | Arm | Lane fraction | Mean HV | vs N01a | vs V2 | HV-AUC | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | N03a | 0.10 | 0.14160 | -9.9% | -18.5% | 0.12570 | closed (weak lane hurts) |
-| **N03b** | **0.30** | **0.18486** | **+17.7%** | **+6.4%** | **0.15511 (+8.0%)** | **promotion test: seeds 1002/1003 running** |
+| **N03b** | **0.30** | **0.18486** | **+17.7%** | **+6.4%** | **0.15511 (+8.0%)** | seed-1001 win; 3-seed displacement failed |
 
-**Takeaways:** N03b is the first arm past the promotion bar at seed
-1001 — on both metrics, with MORE Pareto points than V2 (2.875 vs
-2.625; the front-breadth deficit narrows). It is the T36
-one-front-slot mechanism plus a strong fixed archive-front parent
-lane, operator-fair at last (the old T54/T75 negatives were
-contaminated). Fraction response is non-monotone at n=1 (0.10 hurts,
-0.30 leads) — no fraction scanning; replication decides. The earlier
-pre-launch dependency catch (a bare V2+lane arm silently draws
-nothing) remains a process win.
+**Takeaways:** N03b cleared the promotion bar at seed 1001, but the
+registered replication ladder reversed the read: three-seed mean HV
+`0.16106` vs V2 `0.16284` (`98.9%`), HV-AUC `0.13750` vs `0.14141`
+(`-2.8%`). V2 stays the P3 arm. N03b remains a diagnostic keeper and
+Branch-B utility candidate because it beats classic on all three screen
+seeds and preserves more Pareto-front material than V2. Fraction
+response is non-monotone at n=1 (0.10 hurts, 0.30 helps), so no
+fraction scan is allowed. The earlier pre-launch dependency catch (a
+bare V2+lane arm silently draws nothing) remains a process win.
 
 ## N04 — Budget Shape (`N04_budget_shape/`)
 

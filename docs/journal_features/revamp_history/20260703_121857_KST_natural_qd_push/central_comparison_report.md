@@ -1,4 +1,4 @@
-# Natural QD Push — Central Comparison Report (2026-07-04)
+# Natural QD Push — Central Comparison Report (2026-07-04; updated 2026-07-07)
 
 The consolidated answer to the push's question: does a natural
 QD/MAP-Elites extension of classic REvolution beat classic on HV and

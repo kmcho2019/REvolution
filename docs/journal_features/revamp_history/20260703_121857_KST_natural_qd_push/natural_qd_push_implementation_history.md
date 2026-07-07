@@ -705,3 +705,19 @@ verdict log):
   without a new mechanism card and diagnosis. The self-contained engine
   remains useful as a tested negative-control implementation, not as a
   TCAD headline candidate.
+
+## 2026-07-07 12:45 UTC - Read-Only Follow-Up Audit: PASS
+
+- Ran a scoped `claude -p` read-only audit with a 10-minute timeout over
+  the July-7 follow-up commits (`338c4d2302`, `6f424a1270`) and the
+  current docs, focused on drift from the natural-extension vision,
+  operator parity, registration-before-results, metric recomputation,
+  navigation consistency, and commit hygiene.
+- Verdict recorded in
+  `reviews/claude_periodic_review_20260707_followups.md`: PASS, no
+  blocking issues. The reviewer recomputed N04 and N02b headline
+  values from tracked artifacts, confirmed the natural-extension
+  framing, and verified operator/config validation gates.
+- Non-blocking actions adopted immediately: refresh the stale N03 block
+  in `lanes/README.md` and update the central report header date for
+  the July-7 follow-up additions.
