@@ -846,3 +846,31 @@ verdict log):
   `0.95x` matched classic; escalate only if it beats V2 on both HV and
   HV-AUC with coverage retained. No capacity scan is allowed from this
   card.
+
+## 2026-07-07 15:03 UTC - N09 Pareto Capacity: DIAGNOSTIC
+
+- Preflight recorded
+  `lanes/N09_pareto_capacity/preflight_vllm_models_20260707_142703_UTC.json`:
+  `openai/gpt-oss-120b`, `max_model_len=131072`, `owned_by=vllm`.
+- Ran the V2-faithful N09 screen at
+  `exp/natural_qd_push/n09_pareto_capacity_20260707_142703_UTC/live/pareto_front_7/seed_1001`
+  with `qd_operator_kind=eoh_strategies`,
+  `representation_kind=code_individual`, 128k token budgets, seed 1001,
+  and only `qd_max_elites_per_cell=7` changed. Runtime completed exit 0
+  in 1857.00 s.
+- Package artifacts: `pareto_analysis/`, `ppa_distribution/`,
+  `hv_auc.csv`, `operator_contract.csv`, `run_validation.json`, and
+  `results_report.md`.
+- Validation: config-pinned run validation PASS; operator audit PASS
+  with `single_thought_count=0`; package warnings empty.
+- Read: mean HV `0.15928268015096297` vs classic
+  `0.14064478405974706` (`113.3%`) and V2
+  `0.17376375275693837` (`91.7%`). HV-AUC `0.141828877732136` vs
+  classic `0.123873864821665` (`114.5%`) and V2
+  `0.143659910266867` (`98.7%`). Coverage retained at 8/8; final-HV
+  W/L/T `1/4/3` vs classic and `1/3/4` vs V2.
+- Diagnosis: capacity-inert plus front-loss. N09 has fewer Pareto
+  points than V2 (2.375 vs 2.625) and fewer valid-PPA candidates
+  (182 vs 196), so larger per-cell capacity does not add front
+  material. Gate decision: diagnostic keeper only; do not escalate to
+  seeds 1002/1003 and do not scan capacity values.

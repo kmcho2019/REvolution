@@ -65,3 +65,12 @@ and V2 seed-1001 references. Use the P0 V2 command with only
   and `qd_max_elites_per_cell=7`.
 - Operator audit: `single_thought_count=0`.
 - Pareto/HV-AUC/descriptor-health package and cause-class decision.
+
+## Live Screen Result
+
+N09 seed 1001 completed under the V2 platform. It retained coverage and
+scored mean HV `0.15928`, `113.3%` of matched classic but only `91.7%`
+of V2. HV-AUC was `0.14183`, `114.5%` of classic and `98.7%` of V2.
+The run is a diagnostic keeper but does not escalate because it fails
+the registered V2-beating rule. Cause class: capacity-inert plus
+front-loss.

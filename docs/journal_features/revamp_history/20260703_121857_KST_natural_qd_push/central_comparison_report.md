@@ -2,8 +2,8 @@
 
 The consolidated answer to the push's question: does a natural
 QD/MAP-Elites extension of classic REvolution beat classic on HV and
-HV-AUC while keeping functionality? Thirty-one operator-fair live
-runs (P0-P3c plus N04/N02b/N07a/N07c follow-ups), every comparison
+HV-AUC while keeping functionality? Thirty-two operator-fair live
+runs (P0-P3c plus N04/N02b/N07a/N07c/N09 follow-ups), every comparison
 operator-audited
 (`single_thought_count=0` both arms), config-pin validated (with one
 honest validation FAIL on record: compact_8d seed 1002's Prob050
@@ -96,6 +96,10 @@ scale, ~1/100 problem-runs; decision deferred to the manuscript).
    classic (90.7% and 88.1% HV). Smoke-healthy descriptors can still
    collapse on live generated candidates; descriptor-only corrected-suite
    completion is not the missing win lever.
+10. **Pareto capacity follow-up (N09, 2026-07-07)**: raising V2's
+    per-cell Pareto-front capacity from 5 to 7 is clean and natural but
+    not a win lever. It beats classic on mean HV/AUC (113.3% / 114.5%)
+    while trailing V2 (91.7% / 98.7%) and reducing Pareto breadth.
 
 ## Branch mapping (frozen contract)
 
@@ -120,11 +124,11 @@ set.
 - Answered: the push's core question at both scales; the descriptor
   question at both scales; the utility content of diversity; the
   contamination question.
-- Unanswered (registered follow-ups, non-blocking): N09 pareto-capacity
-  probe; N07b smoke-gated due diligence; SR ReLU PCA profile;
-  compact_8d swap decision; held-out confirmation of the screening win.
-  N04 budget-depth, N02b curiosity, and N07a/N07c descriptor-only
-  corrected-suite arms are now measured negative for escalation.
+- Unanswered (registered follow-ups, non-blocking): N07b smoke-gated
+  due diligence; SR ReLU PCA profile; compact_8d swap decision; held-out
+  confirmation of the screening win. N04 budget-depth, N02b curiosity,
+  N07a/N07c descriptor-only corrected-suite arms, and N09 pareto
+  capacity are now measured negative for escalation.
 - TCAD-strength: the two-scale characterization with a replicated win,
   a 0.41 utility statistic, the descriptor dial, and full
   registration/audit provenance is materially stronger than the

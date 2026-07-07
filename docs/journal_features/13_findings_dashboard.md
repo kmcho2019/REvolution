@@ -53,11 +53,15 @@ below on operator-fair evidence:**
   RF timing and implemented structural compact both retain 8/8 coverage
   but close below classic (90.7% and 88.1% HV); descriptor paths that
   smoke-clear can still collapse on live generated candidates.
+- **F39 (MEASURED, N09 follow-up): larger per-cell Pareto capacity is
+  diagnostic, not a win lever.** Capacity 7 beats classic on mean
+  HV/AUC (113.3% / 114.5%) but trails V2 (91.7% / 98.7%) and reduces
+  Pareto breadth, so the V2 capacity of five is not the limiting factor.
 - The June-22 T-series negative map is OPERATOR-CONTAMINATED and must
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-07 (natural_qd_push F36-F38 follow-ups);
+**Last refreshed:** 2026-07-07 (natural_qd_push F36-F39 follow-ups);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the

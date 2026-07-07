@@ -2,6 +2,32 @@
 
 Registered: 2026-07-07 before any N09 live result.
 
+## Live Screen Already Run
+
+Preflight:
+`preflight_vllm_models_20260707_142703_UTC.json` reports
+`openai/gpt-oss-120b`, `max_model_len=131072`, `owned_by=vllm`.
+
+Run root:
+`exp/natural_qd_push/n09_pareto_capacity_20260707_142703_UTC/live/pareto_front_7/seed_1001`.
+
+The launched command matched the template below with:
+
+- `--search_mode revolution_qd`
+- `--representation_kind code_individual`
+- `--qd_operator_kind eoh_strategies`
+- `--qd_cell_mode pareto_front`
+- `--qd_max_elites_per_cell 7`
+- `--max_tokens 128000 --diff_max_tokens 128000`
+
+Package artifacts in this directory:
+
+- `pareto_analysis/`
+- `ppa_distribution/`
+- `hv_auc.csv`
+- `operator_contract.csv`
+- `run_validation.json`
+
 ## Live Screen Template
 
 Use the P0 V2 platform command and change only

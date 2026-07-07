@@ -41,7 +41,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N07 | source-aligned RF timing | 0.12759 | -9.3% | -26.6% | N07a closed; descriptor-collapse/front-loss |
 | N07 | implemented structural compact | 0.12395 | -11.9% | -28.7% | N07c closed; descriptor-collapse/front-loss |
 | N08 | combination | blocked | - | - | needs replicated winners |
-| N09 | pareto_front capacity 7 | registered | - | - | pending; one-knob front-loss probe |
+| N09 | pareto_front capacity 7 | 0.15928 | +13.3% | -8.3% | diagnostic keeper; no escalation |
 
 **Promotion decision (2026-07-03): V2 stays the P3 arm.** N03b cleared
 the bar at seed 1001 (+6.4%/+8.0%) but replication landed at 98.9% HV
@@ -251,11 +251,12 @@ capacity-above-five follow-up from N01, now narrowed to a single
 config-only probe: `qd_cell_mode=pareto_front` unchanged, but
 `qd_max_elites_per_cell=7`.
 
-The arm is not a scan. It changes one existing archive-capacity knob,
-keeps `qd_operator_kind=eoh_strategies` and `code_individual`, and uses
-the same descriptor, parent selection, budget, and evaluation flow as
-V2. Run seed 1001 only; escalate only if it beats V2 on both HV and
-HV-AUC with coverage retained.
+The seed-1001 screen retained coverage and beat classic on mean HV/AUC
+(`0.15928`, +13.3%; HV-AUC +14.5%) but did not beat V2 (`91.7%` HV,
+`98.7%` HV-AUC). It also reduced Pareto points (2.375 vs V2's 2.625)
+and valid-PPA count (182 vs 196). Cause class: capacity-inert plus
+front-loss. Keep as a diagnostic result; do not escalate or scan
+capacity values.
 
 ---
 
