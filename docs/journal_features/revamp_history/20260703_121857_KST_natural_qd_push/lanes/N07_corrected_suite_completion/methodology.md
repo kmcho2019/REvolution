@@ -41,7 +41,7 @@ No broad RTLLM spend occurs before the small-scale gate clears.
 ## Arms
 
 - N07a: `source_aligned_rf_timing_state_3d`; extraction-smoke passed,
-  live seed-1001 screen eligible.
+  live seed-1001 screen closed negative.
   Probe: `probes/probe_source_aligned_rf_timing_state_3d.json`.
 - N07b: `rf_deepgate_hybrid_3d` with the frozen June-26 descriptor file;
   extraction-smoke pending. Probe: `probes/probe_rf_deepgate_hybrid_3d.json`.
@@ -80,6 +80,15 @@ initialized with effective shape `4x4x4`, occupied 7 cells, and reported
 no collapsed axes. This is not an optimization result and makes no HV or
 functionality claim; it only permits considering the N07a seed-1001 live
 screen under the command template.
+
+## Live Screen Result
+
+N07a seed 1001 completed under the V2 platform. It retained coverage
+but scored mean HV `0.12759`, only `90.7%` of matched classic and
+`73.4%` of V2. HV-AUC was `0.10013`, `80.8%` of classic and `69.7%` of
+V2. Descriptor health degraded on generated candidates (`5/8`
+collapsed-axis problems and one uninitialized archive), so N07a is
+closed and must not escalate to seeds 1002/1003.
 
 ## Launch Gate
 

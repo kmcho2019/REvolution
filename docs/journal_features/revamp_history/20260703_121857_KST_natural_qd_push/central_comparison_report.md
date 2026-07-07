@@ -113,10 +113,11 @@ set.
 - Answered: the push's core question at both scales; the descriptor
   question at both scales; the utility content of diversity; the
   contamination question.
-- Unanswered (registered follow-ups, non-blocking): N07a smoke-cleared
-  due diligence; SR ReLU PCA profile; compact_8d swap decision;
-  held-out confirmation of the screening win. N04 budget-depth and
-  N02b curiosity are now measured negative for escalation.
+- Unanswered (registered follow-ups, non-blocking): N07b/N07c
+  smoke-gated due diligence; SR ReLU PCA profile; compact_8d swap
+  decision; held-out confirmation of the screening win. N04
+  budget-depth, N02b curiosity, and N07a source-aligned RF timing are
+  now measured negative for escalation.
 - TCAD-strength: the two-scale characterization with a replicated win,
   a 0.41 utility statistic, the descriptor dial, and full
   registration/audit provenance is materially stronger than the

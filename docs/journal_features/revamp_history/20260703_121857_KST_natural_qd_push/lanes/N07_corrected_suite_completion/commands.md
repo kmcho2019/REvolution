@@ -41,6 +41,69 @@ Result: pass. Artifacts:
 This was descriptor extraction only: no LLM calls, no evolutionary run,
 and no performance claim.
 
+## N07a Live Screen Already Run
+
+Preflight:
+`preflight_vllm_models_20260707_130714_UTC.json` reports
+`openai/gpt-oss-120b`, `max_model_len=131072`, `owned_by=vllm`.
+
+Run root:
+`exp/natural_qd_push/n07_corrected_suite_20260707_130714_UTC/live/source_aligned_rf_timing_state_3d/seed_1001`.
+
+The launched command matched the template below with:
+
+- `--search_mode revolution_qd`
+- `--representation_kind code_individual`
+- `--qd_operator_kind eoh_strategies`
+- `--qd_descriptor_profile source_aligned_rf_timing_state_3d`
+- `--max_tokens 128000 --diff_max_tokens 128000`
+
+Package commands:
+
+```bash
+uv run python scripts/report_pareto_analysis.py \
+  --backend_run classic_revolution_8x5=exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/classic_revolution_8x5/seed_1001 \
+  --backend_run smooth_qd_v2_8x5=exp/natural_qd_push/p0_v2_anchor_20260703_041511_UTC/live/smooth_qd_v2_8x5/seed_1001 \
+  --backend_run n07a_source_aligned_rf_timing=exp/natural_qd_push/n07_corrected_suite_20260707_130714_UTC/live/source_aligned_rf_timing_state_3d/seed_1001 \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260625_encoder_config_screening/tables/prelim_screen_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/n07a_pareto_analysis
+
+uv run python scripts/report_ppa_distribution.py \
+  --backend_run classic_revolution_8x5=exp/useful_bd_push/prelim_encoder_config_screen_20260625_134902_UTC/live/classic_revolution_8x5/seed_1001 \
+  --backend_run smooth_qd_v2_8x5=exp/natural_qd_push/p0_v2_anchor_20260703_041511_UTC/live/smooth_qd_v2_8x5/seed_1001 \
+  --backend_run n07a_source_aligned_rf_timing=exp/natural_qd_push/n07_corrected_suite_20260707_130714_UTC/live/source_aligned_rf_timing_state_3d/seed_1001 \
+  --subset-config docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/preliminary_planning/20260625_encoder_config_screening/tables/prelim_screen_subset.yaml \
+  --output-dir docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/n07a_ppa_distribution
+
+uv run python scripts/report_hv_auc.py \
+  --ppa-candidates docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/n07a_ppa_distribution/data/ppa_candidates.csv \
+  --num-generations 5 \
+  --output docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/n07a_hv_auc.csv
+
+uv run python scripts/audit_operator_contract.py \
+  --ppa-candidates docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/n07a_ppa_distribution/data/ppa_candidates.csv \
+  --output docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/n07a_operator_contract.csv
+
+uv run python scripts/validate_natural_qd_run.py \
+  --run-root exp/natural_qd_push/n07_corrected_suite_20260707_130714_UTC/live/source_aligned_rf_timing_state_3d/seed_1001 \
+  --manifest docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/tables/screen_manifest.csv \
+  --arm qd \
+  --expect-config search_mode=revolution_qd \
+  --expect-config qd_operator_kind=eoh_strategies \
+  --expect-config representation_kind=code_individual \
+  --expect-config population_size=8 \
+  --expect-config num_generations=5 \
+  --expect-config evaluation_mode=strict_ablation \
+  --expect-config seed=1001 \
+  --expect-config qd_num_cells=16 \
+  --expect-config qd_grid_quantile_warmup_successes=8 \
+  --expect-config qd_cell_mode=pareto_front \
+  --expect-config qd_max_elites_per_cell=5 \
+  --expect-config qd_parent_selection=nsga2_global_rank \
+  --expect-config qd_descriptor_profile=source_aligned_rf_timing_state_3d \
+  --output docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/n07a_run_validation.json
+```
+
 ## Live Screen Template
 
 Do not run this template until the arm's extraction smoke has passed.

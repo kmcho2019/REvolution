@@ -38,7 +38,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N06 | size_control_3d | 0.14129 | +0.5% | -18.7% | closed |
 | N06 | random_hash_3d (floor) | 0.13457 | -4.3% | -22.6% | control closed (health-vs-HV finding) |
 | N04 | V2 6x7 | 0.17200 | +1.1% | n/a | no escalation: HV near tie, HV-AUC 90.5% |
-| N07 | corrected-suite completion | N07a extraction-smoke pass | - | - | N07a live screen eligible; N07b/c still smoke-gated |
+| N07 | corrected-suite completion | 0.12759 | -9.3% | -26.6% | N07a closed; N07b/c still smoke-gated |
 | N08 | combination | blocked | - | - | needs replicated winners |
 
 **Promotion decision (2026-07-03): V2 stays the P3 arm.** N03b cleared
@@ -216,16 +216,18 @@ mix (visible in operator_contract.csv).
 Due-diligence lane: screen the three never-rerun corrected arms'
 descriptor profiles (rf_leafid structural, aurora raw-impl compact,
 rf_deepgate hybrid) operator-fair before the negative map cites them.
-The lane is now registered as V2-faithful descriptor-only due
-diligence. The 20260630 delayed/archive-activation commands are
-provenance only and are forbidden launch templates because they change
-multiple archive knobs at once. All three lightweight descriptor probes
-resolve with `requires_ppa=false`. N07a source-aligned RF timing has
-passed its extraction smoke on the frozen 8-design reference RTLs
-(effective shape `4x4x4`, 7 occupied cells, no collapsed axes), so only
-that arm is eligible for a seed-1001 live screen. N07b and N07c remain
-bounded-extraction-smoke gated.
-Lowest priority; encoder-flavored lanes do not headline this push.
+The lane is registered as V2-faithful descriptor-only due diligence.
+The 20260630 delayed/archive-activation commands are provenance only and
+are forbidden launch templates because they change multiple archive
+knobs at once. All three lightweight descriptor probes resolve with
+`requires_ppa=false`.
+
+N07a source-aligned RF timing passed its reference extraction smoke, but
+the live seed-1001 screen closed negative: mean HV `0.12759` (`90.7%`
+of classic, `73.4%` of V2), HV-AUC `0.10013`, 8/8 coverage, and
+`5/8` live descriptor-collapse problems plus one uninitialized archive.
+Cause class: descriptor-collapse plus front-loss. Do not escalate N07a.
+N07b and N07c remain bounded-extraction-smoke gated and low priority.
 
 ## N08 — Combination (`N08` — no directory yet)
 

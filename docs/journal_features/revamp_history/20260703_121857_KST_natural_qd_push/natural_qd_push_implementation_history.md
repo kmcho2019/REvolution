@@ -755,3 +755,31 @@ verdict log):
   7 cells, and reported no collapsed axes. N07a is now eligible for a
   seed-1001 live screen if we choose to spend the LLM budget. N07b/N07c
   remain extraction-smoke gated.
+
+## 2026-07-07 13:35 UTC - N07a Live Screen: CLOSE
+
+- Preflight recorded
+  `preflight_vllm_models_20260707_130714_UTC.json`:
+  `openai/gpt-oss-120b`, `max_model_len=131072`, `owned_by=vllm`.
+- Ran the V2-faithful N07a screen at
+  `exp/natural_qd_push/n07_corrected_suite_20260707_130714_UTC/live/source_aligned_rf_timing_state_3d/seed_1001`
+  with `qd_operator_kind=eoh_strategies`,
+  `representation_kind=code_individual`, 128k token budgets, seed 1001,
+  and only the descriptor changed to
+  `source_aligned_rf_timing_state_3d`. Runtime completed exit 0 in
+  1440.80 s.
+- Package artifacts: `n07a_pareto_analysis/`,
+  `n07a_ppa_distribution/`, `n07a_hv_auc.csv`,
+  `n07a_operator_contract.csv`, `n07a_run_validation.json`, and
+  `results_report.md`.
+- Validation: config-pinned run validation PASS; operator audit PASS
+  with `single_thought_count=0`; package warnings empty.
+- Read: mean HV `0.12758666838914773` vs classic
+  `0.14064478405974706` (`90.7%`) and V2
+  `0.17376375275693837` (`73.4%`). HV-AUC `0.100130201074` vs classic
+  `0.123873864822` (`80.8%`) and V2 `0.143659910267` (`69.7%`).
+  Coverage retained at 8/8; final-HV W/L/T `2/3/3` vs classic and V2.
+- Descriptor health explains the negative read: live generated
+  candidates have `5/8` collapsed-axis problems and one uninitialized
+  archive. Cause class: descriptor-collapse plus front-loss. Gate
+  decision: close N07a; do not escalate to seeds 1002/1003.
