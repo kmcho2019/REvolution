@@ -1035,3 +1035,6 @@ verdict log):
   remains an untracked local restart transcript/source log, not a curated
   result artifact; leaving it uncommitted avoids adding a bulky raw
   transcript to the manuscript evidence tree.
+- Added a short post-N10 addendum to the canonical
+  `natural_qd_push_subagent_validation_report.md` so the goal template's
+  named validation surface also records the exhausted-portfolio PASS.

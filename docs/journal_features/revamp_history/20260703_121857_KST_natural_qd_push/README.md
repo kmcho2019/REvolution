@@ -63,7 +63,7 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 | `negative_map_adversarial_validation_report.md` | Formal PASS review for the exhausted-portfolio alternative outcome. |
 | `goal_template.md` | Compact `/goal` body. |
 | `natural_qd_push_adversarial_prompt.md` | Sign-off rubric (PASS/FAIL). |
-| `natural_qd_push_subagent_validation_report.md` | Validator output. |
+| `natural_qd_push_subagent_validation_report.md` | Canonical validator output; includes the post-N10 negative-map PASS addendum. |
 
 ## Inherited Binding Policies (do not duplicate; reference these)
 

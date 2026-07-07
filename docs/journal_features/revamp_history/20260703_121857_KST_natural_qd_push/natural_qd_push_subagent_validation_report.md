@@ -1,5 +1,21 @@
 # Natural QD Push Sub-Agent Validation Report
 
+## Post-N10 Negative-Map Addendum
+
+Validation addendum, 2026-07-07. After N04, N02b, N07a/N07b/N07c,
+N09, and N10 follow-ups, the exhausted-portfolio alternative outcome is
+validated as PASS. The full addendum report is
+`negative_map_adversarial_validation_report.md`.
+
+Verdict: PASS. No stronger natural QD/MAP-Elites extension than the
+V2/N03b characterization was found under the registered, operator-fair
+follow-up loop, and the post-N10 decision map is complete enough to guide
+the TCAD manuscript. Required fixes before PASS: none. Residual
+compact_8d and held-out items are paper decisions, not blockers for this
+goal's follow-up campaign.
+
+---
+
 Validation v2, 2026-07-04. Rubric: `natural_qd_push_adversarial_prompt.md`, judged at the claimed tier exactly: two-scale characterization (replicated screening win; suite-scale HV parity with coverage edge; Branch-B utility 0.413; +5% gate honestly failed; held-out scoped out).
 
 ## Verdict
