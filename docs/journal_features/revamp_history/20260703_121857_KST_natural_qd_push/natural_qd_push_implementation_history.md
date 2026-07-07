@@ -940,3 +940,25 @@ verdict log):
   V2's 2.625. Gate decision: diagnostic keeper only; do not escalate to
   seeds 1002/1003. Full-suite use still requires a new holdout-clean
   SR-ReLU artifact.
+
+## 2026-07-07 16:10 UTC - N07-N10 Dual Review: PASS
+
+- Ran the requested periodic read-only audit after nine follow-up commits
+  since `0f8f616883`. Claude review is recorded at
+  `reviews/claude_periodic_review_20260707_n07_n10.md`; verdict:
+  PASS_WITH_ACTIONS, with no science blockers. It verified natural
+  extension faithfulness, operator parity, registration-before-results,
+  metric claims, and doc organization for N07a/N07c/N09/N10.
+- Ran the Codex-side read-only second opinion through the multi-agent
+  audit tool because the local `codex` CLI was not available in `PATH`.
+  Verdict: PASS, no required actions, recorded at
+  `reviews/codex_second_opinion_20260707_n07_n10.md`.
+- Review recommendation: do not open new single-knob scans. Either run the
+  bounded N07b extraction smoke to close due diligence, or explicitly
+  leave N07b low-priority and pivot to manuscript synthesis around the
+  two-scale V2/N03b story, compact_8d swap decision, and optional held-out
+  confirmation.
+- Working-tree note: `20260707_2005_code_logs.md` remains untracked as a
+  user-provided raw restart transcript/source log rather than a committed
+  result artifact. `.devcontainer/devcontainer-lock.json` also remains an
+  unrelated pre-existing untracked file.
