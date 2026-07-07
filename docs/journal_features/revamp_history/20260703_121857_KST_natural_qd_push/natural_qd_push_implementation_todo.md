@@ -92,7 +92,8 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       bd_scoreboard.md`, `p3_full_rtllm/p3c_closure.md`).
 - [ ] N07 corrected-suite completion: probe-only pre-registration
       written; N07a live read closed negative (90.7% of classic HV,
-      descriptor-collapse/front-loss); N07c smoke-cleared; N07b still
+      descriptor-collapse/front-loss); N07c live read closed negative
+      (88.1% of classic HV, descriptor-collapse/front-loss); N07b still
       smoke-gated.
 
 ## P3 Confirmation

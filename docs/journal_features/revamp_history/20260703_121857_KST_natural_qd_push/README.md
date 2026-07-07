@@ -4,7 +4,7 @@ Goal-scaffold root for the July 2026 push to find a natural QD/MAP-Elites
 extension of classic REvolution that beats classic on HV and HV-AUC while
 matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 
-## Current State (2026-07-07; follow-ups N04/N02b measured)
+## Current State (2026-07-07; follow-ups N04/N02b/N07a/N07c measured)
 
 - HEADLINE: the two-scale story. The faithful V2 platform BEATS classic
   at screening scale (+12.9% HV, +16.2% HV-AUC, 3/3 seeds,
@@ -14,8 +14,8 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   `p3_full_rtllm/five_seed_verdict.md`); the frozen +5% gate fails at
   suite scale, where outcomes are LLM-capability-bound.
 - Start here: `lanes/README.md` (both-scale standings), then the plan
-  and history. 13 screen/follow-up arms plus suite probes measured, every one
-  operator-audited and config-pinned; both periodic dual reviews
+  and history. Screen/follow-up arms plus suite probes are measured,
+  operator-audited, and config-pinned; both periodic dual reviews
   (claude -p, codex) verified the campaign with zero blocking findings.
 - Founding-analysis context: the June-22 negative map was
   operator-contaminated (corrected reruns swing 30-46 points); PCN-v3
@@ -30,8 +30,8 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   below classic (91.5% HV, 92.5% HV-AUC) and far below V2 (74.0% HV,
   79.7% HV-AUC), so curiosity weighting is a clean negative.
 - Open by design: N07 due diligence has probe-only pre-registration.
-  N07a now has a closed negative live read; N07c is smoke-cleared for a
-  live screen; N07b remains smoke-gated and low priority.
+  N07a and N07c now have closed negative live reads under the V2-faithful
+  descriptor-only rule; N07b remains smoke-gated and low priority.
 
 ## Top-Level Docs
 

@@ -797,4 +797,34 @@ verdict log):
   candidate metric artifacts across the frozen 8 problems; grid-quantile
   warmup initialized (`3x4x4` effective shape), occupied 14 cells,
   retained 57 archive entries, and reported no collapsed axes. This
-  clears only the N07c launch gate. N07c has no live HV read yet.
+  cleared only the N07c launch gate and made no live HV claim.
+
+## 2026-07-07 14:11 UTC - N07c Live Screen: CLOSE
+
+- Preflight recorded
+  `preflight_vllm_models_20260707_134510_UTC.json`:
+  `openai/gpt-oss-120b`, `max_model_len=131072`, `owned_by=vllm`.
+- Ran the V2-faithful N07c screen at
+  `exp/natural_qd_push/n07_corrected_suite_20260707_134510_UTC/live/implemented_structural_compact_3d/seed_1001`
+  with `qd_operator_kind=eoh_strategies`,
+  `representation_kind=code_individual`, 128k token budgets, seed 1001,
+  and only the descriptor changed to
+  `implemented_structural_compact_3d`. Runtime completed exit 0 in
+  1492.84 s.
+- Package artifacts: `n07c_pareto_analysis/`,
+  `n07c_ppa_distribution/`, `n07c_hv_auc.csv`,
+  `n07c_operator_contract.csv`, `n07c_run_validation.json`, and the
+  refreshed `results_report.md`.
+- Validation: config-pinned run validation PASS; operator audit PASS
+  with `single_thought_count=0`; package warnings empty.
+- Read: mean HV `0.12395121259161174` vs classic
+  `0.14064478405974706` (`88.1%`) and V2
+  `0.17376375275693837` (`71.3%`). HV-AUC `0.104572116155462` vs
+  classic `0.123873864821665` (`84.4%`) and V2
+  `0.143659910266867` (`72.8%`). Coverage retained at 8/8; final-HV
+  W/L/T `1/4/3` vs classic and V2.
+- Descriptor health explains the negative read: live generated
+  candidates have `3/8` collapsed-axis problems, two uninitialized
+  archives, and 31 occupied cells total. Cause class:
+  descriptor-collapse plus front-loss. Gate decision: close N07c; do
+  not escalate to seeds 1002/1003.

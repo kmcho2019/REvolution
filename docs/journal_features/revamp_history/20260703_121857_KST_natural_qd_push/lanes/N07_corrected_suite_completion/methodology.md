@@ -46,7 +46,7 @@ No broad RTLLM spend occurs before the small-scale gate clears.
 - N07b: `rf_deepgate_hybrid_3d` with the frozen June-26 descriptor file;
   extraction-smoke pending. Probe: `probes/probe_rf_deepgate_hybrid_3d.json`.
 - N07c: `implemented_structural_compact_3d`; extraction-smoke passed,
-  live seed-1001 screen eligible.
+  live seed-1001 screen closed negative.
   Probe: `probes/probe_implemented_structural_compact_3d.json`.
 
 N07c is only the compact structural proxy used by the June-30
@@ -100,6 +100,13 @@ but scored mean HV `0.12759`, only `90.7%` of matched classic and
 V2. Descriptor health degraded on generated candidates (`5/8`
 collapsed-axis problems and one uninitialized archive), so N07a is
 closed and must not escalate to seeds 1002/1003.
+
+N07c seed 1001 completed under the V2 platform. It retained coverage
+but scored mean HV `0.12395`, only `88.1%` of matched classic and
+`71.3%` of V2. HV-AUC was `0.10457`, `84.4%` of classic and `72.8%` of
+V2. Descriptor health degraded on generated candidates despite the
+smoke-clear path (`3/8` collapsed-axis problems and two uninitialized
+archives), so N07c is closed and must not escalate to seeds 1002/1003.
 
 ## Launch Gate
 

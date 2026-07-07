@@ -2,8 +2,9 @@
 
 The consolidated answer to the push's question: does a natural
 QD/MAP-Elites extension of classic REvolution beat classic on HV and
-HV-AUC while keeping functionality? Twenty-nine operator-fair live
-runs (P0-P3c plus N04/N02b follow-ups), every comparison operator-audited
+HV-AUC while keeping functionality? Thirty-one operator-fair live
+runs (P0-P3c plus N04/N02b/N07a/N07c follow-ups), every comparison
+operator-audited
 (`single_thought_count=0` both arms), config-pin validated (with one
 honest validation FAIL on record: compact_8d seed 1002's Prob050
 worker failure — disclosed wherever that arm is cited),
@@ -89,6 +90,12 @@ scale, ~1/100 problem-runs; decision deferred to the manuscript).
    under-populated-cell parent bias from gamma 1.0 to 0.5 fixes the
    gshare coverage failure but not quality. It lands at 91.5% of classic
    HV / 92.5% of classic HV-AUC and 74.0% / 79.7% of V2; the lane retires.
+9. **Corrected-suite descriptor due diligence (N07, 2026-07-07)**:
+   V2-faithful descriptor-only versions of source-aligned RF timing and
+   implemented structural compact both retain coverage but close below
+   classic (90.7% and 88.1% HV). Smoke-healthy descriptors can still
+   collapse on live generated candidates; descriptor-only corrected-suite
+   completion is not the missing win lever.
 
 ## Branch mapping (frozen contract)
 
@@ -113,11 +120,11 @@ set.
 - Answered: the push's core question at both scales; the descriptor
   question at both scales; the utility content of diversity; the
   contamination question.
-- Unanswered (registered follow-ups, non-blocking): N07c smoke-cleared
-  due diligence, N07b smoke-gated due diligence; SR ReLU PCA profile;
-  compact_8d swap decision; held-out confirmation of the screening win.
-  N04 budget-depth, N02b curiosity, and N07a source-aligned RF timing
-  are now measured negative for escalation.
+- Unanswered (registered follow-ups, non-blocking): N07b smoke-gated
+  due diligence; SR ReLU PCA profile; compact_8d swap decision; held-out
+  confirmation of the screening win. N04 budget-depth, N02b curiosity,
+  and N07a/N07c descriptor-only corrected-suite arms are now measured
+  negative for escalation.
 - TCAD-strength: the two-scale characterization with a replicated win,
   a 0.41 utility statistic, the descriptor dial, and full
   registration/audit provenance is materially stronger than the

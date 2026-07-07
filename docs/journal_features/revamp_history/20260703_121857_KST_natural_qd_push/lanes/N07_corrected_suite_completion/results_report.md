@@ -1,12 +1,18 @@
-# N07 Corrected-Suite Completion - N07a Result
+# N07 Corrected-Suite Completion - Results
 
-Run: `exp/natural_qd_push/n07_corrected_suite_20260707_130714_UTC/`.
-Package artifacts in this directory use the `n07a_*` prefix.
+N07 is due diligence for unfinished corrected-suite descriptor profiles.
+Both live arms used the V2 platform with exactly one mechanism change:
+`qd_descriptor_profile`. Config validation passes,
+`qd_operator_kind=eoh_strategies`, `representation_kind=code_individual`,
+and `single_thought_count=0`.
 
-The live screen used the V2 platform with only one mechanism change:
-`qd_descriptor_profile=source_aligned_rf_timing_state_3d`. Config
-validation passes, `qd_operator_kind=eoh_strategies`,
-`representation_kind=code_individual`, and `single_thought_count=0`.
+Run roots:
+
+- N07a: `exp/natural_qd_push/n07_corrected_suite_20260707_130714_UTC/live/source_aligned_rf_timing_state_3d/seed_1001`
+- N07c: `exp/natural_qd_push/n07_corrected_suite_20260707_134510_UTC/live/implemented_structural_compact_3d/seed_1001`
+
+Package artifacts in this directory use the `n07a_*` and `n07c_*`
+prefixes.
 
 ## Read (frozen 8-design 8x5, seed 1001)
 
@@ -15,15 +21,16 @@ validation passes, `qd_operator_kind=eoh_strategies`,
 | classic (ref) | 0.14064 | - | -19.1% | 0.12387 | 8/8 |
 | V2 trio (ref) | 0.17376 | +23.5% | - | 0.14366 | 8/8 |
 | N07a source-aligned RF timing | 0.12759 | -9.3% | -26.6% | 0.10013 | 8/8 |
+| N07c implemented structural compact | 0.12395 | -11.9% | -28.7% | 0.10457 | 8/8 |
 
-N07a final-HV W/L/T is `2/3/3` vs classic and `2/3/3` vs V2, but the
-mean read fails the registered close rule: mean HV is only `90.7%` of
-matched classic, below the `0.95x` threshold. HV-AUC is weaker still at
-`80.8%` of classic and `69.7%` of V2.
+N07a final-HV W/L/T is `2/3/3` vs classic and `2/3/3` vs V2. N07c
+final-HV W/L/T is `1/4/3` vs classic and `1/4/3` vs V2. Both arms fail
+the registered close rule because their mean HV is below `0.95x` matched
+classic. N07c HV-AUC is `84.4%` of classic and `72.8%` of V2.
 
-## Descriptor Health
+## N07a Descriptor Health
 
-The reference-only extraction smoke was healthy, but live generated
+The N07a reference-only extraction smoke was healthy, but live generated
 candidates were not:
 
 | Problem | Initialized | Collapsed axes | Occupied cells |
@@ -38,16 +45,35 @@ candidates were not:
 | Prob153_gshare | yes | 2 | 3 |
 
 Aggregate: `5/8` problems have collapsed axes, `1/8` never initializes,
-and the run occupies 35 cells total. This is a live-candidate
-descriptor-collapse signal, not just a reference-extraction issue.
+and the run occupies 35 cells total.
 
-## Verdict: CLOSE N07a
+## N07c Descriptor Health
 
-Cause class: descriptor-collapse plus front-loss. Source-aligned RF
-timing is a natural descriptor idea, but under the V2 engine it mostly
-degenerates on generated candidates and loses both final HV and HV-AUC.
-Do not escalate N07a to seeds 1002/1003.
+The N07c smoke was healthy on existing V2 generated-candidate synthesis
+metrics, but the live run still degraded on the generated distribution:
 
-N07b and N07c remain smoke-gated due-diligence arms. They should only run
-if their extraction smoke clears and the campaign still needs this
-low-priority corrected-suite completion read.
+| Problem | Initialized | Collapsed axes | Occupied cells |
+| --- | --- | --- | --- |
+| Prob015_multi_pipe_8bit | yes | 0 | 9 |
+| Prob024_fsm | yes | adder_ratio | 4 |
+| Prob041_traffic_light | yes | 0 | 13 |
+| Prob045_alu | no | 0 | 0 |
+| Prob049_signal_generator | yes | 0 | 3 |
+| Prob116_m2014_q3 | yes | comb_ratio; adder_ratio | 1 |
+| Prob135_m2014_q6b | yes | comb_ratio; adder_ratio; cell_count_log | 1 |
+| Prob153_gshare | no | 0 | 0 |
+
+Aggregate: `3/8` problems have collapsed axes, `2/8` never initialize,
+and the run occupies 31 cells total.
+
+## Verdict: CLOSE N07a and N07c
+
+Cause class: descriptor-collapse plus front-loss. Both descriptor ideas
+are natural, but descriptor-only corrected-suite variants do not add
+front material under the V2 engine. N07c also shows that a smoke-healthy
+feature path can still collapse during live generation.
+
+Do not escalate N07a or N07c to seeds 1002/1003. N07b remains
+bounded-extraction-smoke gated and should stay low priority unless the
+campaign explicitly wants to finish the last corrected-suite
+due-diligence arm.

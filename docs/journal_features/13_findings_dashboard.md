@@ -48,11 +48,16 @@ below on operator-fair evidence:**
   recovered valid-PPA coverage but landed below classic (91.5% HV,
   92.5% HV-AUC) and far below V2 (74.0% HV, 79.7% HV-AUC). Do not scan
   gamma without a new mechanism card.
+- **F38 (MEASURED, N07 due diligence): corrected-suite descriptor-only
+  variants are not the missing win lever.** V2-faithful source-aligned
+  RF timing and implemented structural compact both retain 8/8 coverage
+  but close below classic (90.7% and 88.1% HV); descriptor paths that
+  smoke-clear can still collapse on live generated candidates.
 - The June-22 T-series negative map is OPERATOR-CONTAMINATED and must
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-07 (natural_qd_push F36/F37 follow-ups);
+**Last refreshed:** 2026-07-07 (natural_qd_push F36-F38 follow-ups);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the
