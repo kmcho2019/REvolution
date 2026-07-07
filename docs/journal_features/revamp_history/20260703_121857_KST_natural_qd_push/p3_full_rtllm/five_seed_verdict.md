@@ -59,7 +59,7 @@ mean log-ratio +0.0298 (gate: >= log(1.05)=0.0488 with CI low > 0);
   three legs). Branch-B utility-metric analysis over the V2/N03b
   archives is the remaining upside at full scale (registered N03b
   property: better front breadth).
-- Registered-but-unrun screen lanes (N04 depth, N06 wave 2, N02b)
-  remain open; none has screen evidence suggesting it closes a
-  capability-shaped full-scale gap, so they are follow-ups, not
-  blockers, for the P4 synthesis.
+- Registered follow-up lanes remain non-blocking. N04 depth was measured
+  on 2026-07-07 and does not escalate (HV 101.1%, HV-AUC 90.5% at 6x7);
+  N02b/N07 and descriptor diagnostics remain open only with fresh
+  pre-registration.

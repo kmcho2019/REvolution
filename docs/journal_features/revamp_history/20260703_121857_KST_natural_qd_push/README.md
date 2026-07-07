@@ -4,7 +4,7 @@ Goal-scaffold root for the July 2026 push to find a natural QD/MAP-Elites
 extension of classic REvolution that beats classic on HV and HV-AUC while
 matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 
-## Current State (2026-07-04; P0-P3 campaign complete, P4 synthesis open)
+## Current State (2026-07-07; follow-up N04 measured)
 
 - HEADLINE: the two-scale story. The faithful V2 platform BEATS classic
   at screening scale (+12.9% HV, +16.2% HV-AUC, 3/3 seeds,
@@ -21,9 +21,12 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   operator-contaminated (corrected reruns swing 30-46 points); PCN-v3
   is retired (5-seed negative, C-F confounded) and its mechanism
   signature is banned by the adversarial rubric here.
-- Open: N03b suite ladder completing; P4 = canonical contract
-  statistics, central comparison report, dashboard refresh, viewer
-  bundle, adversarial sign-off.
+- Follow-up update: N04 6x7 budget shape is now measured. Faithful V2
+  reaches final-HV parity/slight edge against the verified T79 classic
+  6x7 comparator (101.1%) with coverage retained, but loses HV-AUC
+  (90.5%) and Pareto breadth, so no 4x11 or 6x7 seed ladder is justified.
+- Open by design: N02b gamma-0.5 retry, N07 due diligence, and any
+  descriptor/warmup diagnostics only with fresh pre-registration.
 
 ## Top-Level Docs
 

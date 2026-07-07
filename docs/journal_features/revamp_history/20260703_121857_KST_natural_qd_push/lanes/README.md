@@ -36,7 +36,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N03 | front_slot_lane_010 | 0.14160 | +0.7% | -18.5% | closed (weak lane hurts) |
 | N06 | size_control_3d | 0.14129 | +0.5% | -18.7% | closed |
 | N06 | random_hash_3d (floor) | 0.13457 | -4.3% | -22.6% | control closed (health-vs-HV finding) |
-| N04 | budget shape | not started | - | - | registered draft |
+| N04 | V2 6x7 | 0.17200 | +1.1% | n/a | no escalation: HV near tie, HV-AUC 90.5% |
 | N07 | corrected-suite completion | not started | - | - | conditional |
 | N08 | combination | blocked | - | - | needs replicated winners |
 
@@ -141,13 +141,23 @@ contaminated). Fraction response is non-monotone at n=1 (0.10 hurts,
 pre-launch dependency catch (a bare V2+lane arm silently draws
 nothing) remains a process win.
 
-## N04 — Budget Shape (`N04` — no directory yet)
+## N04 — Budget Shape (`N04_budget_shape/`)
 
 **Question:** does the QD platform benefit more from deeper budgets
 (6x7, 4x11) than classic does? Prior negative (T79) is bound to a
-contaminated arm and does not carry. Not started; the pinned classic
-6x7 comparator (0.1701) awaits recompute verification when this lane
-opens. N05b's warmup-x-depth interaction question lives here too.
+contaminated arm and does not carry. N04 reran the faithful V2 platform
+at 6x7 against the recompute-verified T79 classic 6x7 comparator.
+
+| Arm | Mean HV | vs classic | HV-AUC | Coverage | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| classic 6x7 | 0.17010 | - | 0.14622 | 8/8 | verified comparator |
+| V2 6x7 | 0.17200 | +1.1% | 0.13227 (90.5%) | 8/8 | no escalation |
+
+**Takeaway:** deeper budget does not rescue a headline win. V2 catches
+classic on final HV only late, while HV-AUC and Pareto breadth degrade
+(1.75 vs 2.625 points). Cause class: front-loss / anytime-loss. No 4x11
+spend is justified by this read; N05b warmup-depth remains only a
+diagnostic idea, not a promotion path.
 
 ## N05 — Warmup Length (`N05_warmup_init/`)
 

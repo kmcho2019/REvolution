@@ -637,3 +637,39 @@ verdict log):
 - Punch list disposition: items 1 (this backfill) executed; remaining
   items tracked in the TODO as post-PASS polish for the manuscript
   phase.
+
+## 2026-07-07 11:18 UTC - Goal Restart; N04 Pre-Registered
+
+- Restarted the natural-QD push as a continuation of the July-7 cleared
+  state, not a repeat of P0-P4. The active goal is the open-by-design
+  follow-up campaign: N04 first, then N02b/N07/descriptor decisions only
+  if their gates justify them.
+- Read the restart log (`20260707_2005_code_logs.md`), the goal template,
+  plan, TODO, central report, lanes index, T79 command table, and the
+  binding GUIDELINES.md simplicity/validation rules.
+- N04 is now pre-registered in `lanes/N04_budget_shape/`: first arm is
+  faithful Smooth-QD V2 at 6x7, seed 1001, with only the budget shape
+  changed from the P0 V2 platform. The matched comparator is the T79
+  `classic_revolution_6x7` seed-1001 run root. Before reading any V2
+  result, the comparator must be recompute-verified from that root and
+  validated against the manifest/config/operator contract.
+- Comparator verification completed before V2 launch:
+  `lanes/N04_budget_shape/baseline_verification.md`. Fresh recompute:
+  mean HV `0.1700994814185665`, mean HV-AUC `0.146221021526`, coverage
+  `8/8`, candidates `222`, LLM API calls `768`, `single_thought_count=0`,
+  operator audit pass, run validation pass. This matches the archived
+  T79 exact HV row and clears N04 to launch the V2 6x7 arm.
+- N04a launched at
+  `exp/natural_qd_push/n04_budget_shape_20260707_112042_UTC/live`.
+  Built-in vLLM preflight passed (`openai/gpt-oss-120b`,
+  `max_model_len=131072`); run completed exit 0 after the expected
+  `gshare` tail. Packaged in `lanes/N04_budget_shape/`.
+- Result: V2 6x7 mean HV `0.17199937669444593` vs classic
+  `0.1700994814185665` (`101.1%`), coverage `8/8`, but HV-AUC
+  `0.132267067187` vs classic `0.146221021526` (`90.5%`), Pareto
+  points `1.75` vs `2.625`, final-HV W/L/T `2/2/4`. Operator audit
+  pass (`single_thought_count=0`, `other_strategy_count=0`) and run
+  validation pass.
+- Gate decision: no 4x11 and no 6x7 seed ladder. Cause class:
+  front-loss / anytime-loss. This is useful negative evidence against
+  the simple "QD just needs deeper equal-candidate shape" explanation.

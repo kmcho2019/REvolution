@@ -80,6 +80,11 @@ scale, ~1/100 problem-runs; decision deferred to the manuscript).
    (small-subset screening validity); jackpot decomposition dominates
    single-seed suite reads; comparator variance across identical
    configs exceeds judged deltas.
+7. **Budget-shape follow-up (N04, 2026-07-07)**: faithful V2 at 6x7
+   reaches final-HV parity/slight edge vs the verified T79 classic 6x7
+   comparator (101.1%, coverage retained) but loses HV-AUC (90.5%) and
+   Pareto breadth. Simple deeper equal-candidate shape is not the missing
+   win lever; no 4x11 spend is justified by this read.
 
 ## Branch mapping (frozen contract)
 
@@ -104,9 +109,10 @@ set.
 - Answered: the push's core question at both scales; the descriptor
   question at both scales; the utility content of diversity; the
   contamination question.
-- Unanswered (registered follow-ups, non-blocking): N04 budget-depth
-  shapes; N02b gamma 0.5; SR ReLU PCA profile; compact_8d swap
-  decision; held-out confirmation of the screening win.
+- Unanswered (registered follow-ups, non-blocking): N02b gamma 0.5; N07
+  due diligence; SR ReLU PCA profile; compact_8d swap decision; held-out
+  confirmation of the screening win. N04 budget-depth is now measured
+  negative for escalation.
 - TCAD-strength: the two-scale characterization with a replicated win,
   a 0.41 utility statistic, the descriptor dial, and full
   registration/audit provenance is materially stronger than the

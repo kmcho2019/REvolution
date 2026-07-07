@@ -46,5 +46,6 @@ not systematic).
   the condition is met in letter by N03b, but N03b is a MECHANISM arm,
   not a descriptor arm; the descriptor evidence (gt3d kill +
   coverage-only movement) does not justify a two-arm CVT spend.
-  Recorded as a scoped-out decision; revisitable with the N04/wave-2
-  backlog.
+  Recorded as a scoped-out decision. The later N04 6x7 follow-up measured
+  budget depth negative for escalation; wave-2 descriptor work remains a
+  separate pre-registered backlog item.

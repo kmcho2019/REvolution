@@ -38,11 +38,16 @@ below on operator-fair evidence:**
   health anti-correlates with HV; only testability semantics lift
   coverage (random-floor falsification held); compact_8d ties trio HV
   with ~4x collapse resistance (M13 answer; swap candidate).
+- **F36 (MEASURED, N04 follow-up): deeper equal-candidate budget shape
+  is not the missing win lever for faithful V2.** At 6x7 on the frozen
+  eight-design screen, V2 reaches final-HV parity/slight edge vs the
+  verified classic comparator (101.1%, coverage kept) but loses HV-AUC
+  (90.5%) and Pareto breadth. No 4x11 spend is justified.
 - The June-22 T-series negative map is OPERATOR-CONTAMINATED and must
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-04 (natural_qd_push F33-F35 block above);
+**Last refreshed:** 2026-07-07 (natural_qd_push F36 N04 follow-up);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the

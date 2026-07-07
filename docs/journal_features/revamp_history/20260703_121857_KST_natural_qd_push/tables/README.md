@@ -22,8 +22,12 @@ Rules:
 
 - Never edit values here after a lane has read them; corrections are new
   rows/files with a dated note in the push history.
-- The `depth_6x7` classic row is pinned from the lineage ledger and must
-  be recompute-verified against its run root before N04 uses it.
+- The `depth_6x7` classic row is pinned from the lineage ledger and was
+  recompute-verified for N04 on 2026-07-07 against the real T79 run root:
+  `exp/useful_bd_push/t79_budget_shape_ablation_20260624_043841_UTC/live/classic_revolution_6x7/seed_1001`.
+  Fresh values: mean HV `0.1700994814185665`, mean HV-AUC
+  `0.146221021526`, coverage `8/8`; operator audit and run validation
+  pass (`../lanes/N04_budget_shape/baseline_verification.md`).
 
 Dated correction note (2026-07-04, periodic review action 1): the
 classic full-RTLLM 5-seed HV recompute matches the pinned value

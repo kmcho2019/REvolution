@@ -76,8 +76,10 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
 
 ## P2 Shape And Follow-Ups
 
-- [ ] N04 budget shape: current leader (or V2) at 6x7 vs matched classic
-      6x7; register 4x11 (with new classic arm) only if 6x7 is positive.
+- [x] N04 budget shape: V2 6x7 completed 2026-07-07
+      (`lanes/N04_budget_shape/`). Outcome: HV 101.1% of classic with
+      coverage retained, but HV-AUC 90.5% and Pareto breadth down;
+      no 4x11 or seed ladder.
 - [ ] Registered follow-up variants from P1 diagnoses (stay within the
       Natural-Extension Criterion; single factor per variant).
 - [x] N06 descriptor bake-off, both scales COMPLETE (screen wave 1 +
