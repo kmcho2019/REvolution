@@ -30,8 +30,8 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   below classic (91.5% HV, 92.5% HV-AUC) and far below V2 (74.0% HV,
   79.7% HV-AUC), so curiosity weighting is a clean negative.
 - Open by design: N07 due diligence has probe-only pre-registration.
-  N07a now has a closed negative live read; N07b/N07c remain smoke-gated
-  and low priority.
+  N07a now has a closed negative live read; N07c is smoke-cleared for a
+  live screen; N07b remains smoke-gated and low priority.
 
 ## Top-Level Docs
 

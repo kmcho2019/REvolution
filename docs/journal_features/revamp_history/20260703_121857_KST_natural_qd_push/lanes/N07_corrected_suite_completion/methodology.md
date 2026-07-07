@@ -45,7 +45,8 @@ No broad RTLLM spend occurs before the small-scale gate clears.
   Probe: `probes/probe_source_aligned_rf_timing_state_3d.json`.
 - N07b: `rf_deepgate_hybrid_3d` with the frozen June-26 descriptor file;
   extraction-smoke pending. Probe: `probes/probe_rf_deepgate_hybrid_3d.json`.
-- N07c: `implemented_structural_compact_3d`; extraction-smoke pending.
+- N07c: `implemented_structural_compact_3d`; extraction-smoke passed,
+  live seed-1001 screen eligible.
   Probe: `probes/probe_implemented_structural_compact_3d.json`.
 
 N07c is only the compact structural proxy used by the June-30
@@ -80,6 +81,16 @@ initialized with effective shape `4x4x4`, occupied 7 cells, and reported
 no collapsed axes. This is not an optimization result and makes no HV or
 functionality claim; it only permits considering the N07a seed-1001 live
 screen under the command template.
+
+N07c passed the extraction gate on existing V2 anchor generated-candidate
+synthesis metrics:
+`smokes/n07c_implemented_structural_compact_20260707_134155_UTC/`.
+Descriptor extraction completed for 196 candidate metric artifacts across
+the frozen 8 problems, grid-quantile warmup initialized with effective
+shape `3x4x4`, occupied 14 cells, retained 57 archive entries, and
+reported no collapsed axes. This is not an optimization result and makes
+no HV or functionality claim; it only permits considering the N07c
+seed-1001 live screen under the command template.
 
 ## Live Screen Result
 

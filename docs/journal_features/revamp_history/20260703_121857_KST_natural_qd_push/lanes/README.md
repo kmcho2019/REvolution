@@ -38,7 +38,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N06 | size_control_3d | 0.14129 | +0.5% | -18.7% | closed |
 | N06 | random_hash_3d (floor) | 0.13457 | -4.3% | -22.6% | control closed (health-vs-HV finding) |
 | N04 | V2 6x7 | 0.17200 | +1.1% | n/a | no escalation: HV near tie, HV-AUC 90.5% |
-| N07 | corrected-suite completion | 0.12759 | -9.3% | -26.6% | N07a closed; N07b/c still smoke-gated |
+| N07 | corrected-suite completion | 0.12759 | -9.3% | -26.6% | N07a closed; N07c smoke-cleared; N07b smoke-gated |
 | N08 | combination | blocked | - | - | needs replicated winners |
 
 **Promotion decision (2026-07-03): V2 stays the P3 arm.** N03b cleared
@@ -227,7 +227,11 @@ the live seed-1001 screen closed negative: mean HV `0.12759` (`90.7%`
 of classic, `73.4%` of V2), HV-AUC `0.10013`, 8/8 coverage, and
 `5/8` live descriptor-collapse problems plus one uninitialized archive.
 Cause class: descriptor-collapse plus front-loss. Do not escalate N07a.
-N07b and N07c remain bounded-extraction-smoke gated and low priority.
+N07c implemented structural compact passed a generated-candidate smoke
+on 196 existing V2 anchor synthesis-metric artifacts: initialized,
+effective shape `3x4x4`, 14 occupied cells, 57 archive entries, and no
+collapsed axes. That only clears the launch gate; it is not a
+performance result. N07b remains bounded-extraction-smoke gated.
 
 ## N08 — Combination (`N08` — no directory yet)
 

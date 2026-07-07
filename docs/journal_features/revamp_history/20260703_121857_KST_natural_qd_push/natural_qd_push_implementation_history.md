@@ -783,3 +783,18 @@ verdict log):
   candidates have `5/8` collapsed-axis problems and one uninitialized
   archive. Cause class: descriptor-collapse plus front-loss. Gate
   decision: close N07a; do not escalate to seeds 1002/1003.
+
+## 2026-07-07 13:42 UTC - N07c Extraction Smoke: PASS
+
+- Extended `scripts/probe_n07_extraction_smoke.py` narrowly to support
+  `implemented_structural_compact_3d` using existing V2 anchor
+  `code_synthesis_report.metrics.json` artifacts. The helper asserts the
+  expected profile and metrics shape, writes descriptor-health artifacts,
+  and makes no HV/functionality claim.
+- Ran:
+  `timeout 600s uv run python scripts/probe_n07_extraction_smoke.py --profile implemented_structural_compact_3d --output-dir docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/smokes/n07c_implemented_structural_compact_20260707_134155_UTC`
+- Result: PASS. Descriptor extraction covered 196 existing synthesized
+  candidate metric artifacts across the frozen 8 problems; grid-quantile
+  warmup initialized (`3x4x4` effective shape), occupied 14 cells,
+  retained 57 archive entries, and reported no collapsed axes. This
+  clears only the N07c launch gate. N07c has no live HV read yet.

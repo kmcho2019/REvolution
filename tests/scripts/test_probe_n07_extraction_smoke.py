@@ -45,6 +45,49 @@ def test_n07_extraction_smoke_writes_health(monkeypatch, tmp_path):
     assert summary["status"] == "pass"
     assert summary["requirements"]["requires_ppa"] is False
     assert summary["input_count"] == 8
+    assert len(summary["problem_counts"]) == 8
     assert summary["descriptor_health"]["initialized"] is True
     assert (tmp_path / "out" / "descriptor_health.json").is_file()
     assert (tmp_path / "out" / "descriptor_health_report.md").is_file()
+
+
+def test_n07_structural_smoke_uses_existing_metrics(monkeypatch, tmp_path):
+    refs = []
+    metrics_root = tmp_path / "metrics"
+    for index in range(8):
+        benchmark = "RTLLM"
+        problem = f"Prob{index:03d}"
+        refs.append((benchmark, problem, f"unused_{index}.sv"))
+        sample_dir = metrics_root / benchmark / problem / "Gen0" / f"s{index}"
+        sample_dir.mkdir(parents=True)
+        (sample_dir / "code_synthesis_report.metrics.json").write_text(
+            json.dumps(
+                {
+                    "structural_metrics": {
+                        "comb_ratio": 0.5 + index * 0.01,
+                        "adder_ratio": index * 0.01,
+                        "cell_count_log": index + 1,
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+    monkeypatch.setattr(smoke, "SCREEN_REFS", tuple(refs))
+    monkeypatch.setattr(smoke, "V2_ANCHOR_METRICS_ROOT", metrics_root)
+
+    rc = smoke.main(
+        [
+            "--profile",
+            "implemented_structural_compact_3d",
+            "--output-dir",
+            str(tmp_path / "out"),
+        ]
+    )
+
+    summary = json.loads((tmp_path / "out" / "extraction_smoke_summary.json").read_text())
+    assert rc == 0
+    assert summary["profile"] == "implemented_structural_compact_3d"
+    assert summary["requirements"]["requires_synthesis"] is True
+    assert summary["input_count"] == 8
+    assert len(summary["problem_counts"]) == 8
+    assert summary["descriptor_health"]["initialized"] is True
