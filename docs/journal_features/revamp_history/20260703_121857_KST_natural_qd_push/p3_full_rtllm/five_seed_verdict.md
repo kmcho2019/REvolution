@@ -60,6 +60,7 @@ mean log-ratio +0.0298 (gate: >= log(1.05)=0.0488 with CI low > 0);
   archives is the remaining upside at full scale (registered N03b
   property: better front breadth).
 - Registered follow-up lanes remain non-blocking. N04 depth was measured
-  on 2026-07-07 and does not escalate (HV 101.1%, HV-AUC 90.5% at 6x7);
-  N02b/N07 and descriptor diagnostics remain open only with fresh
-  pre-registration.
+  on 2026-07-07 and does not escalate (HV 101.1%, HV-AUC 90.5% at 6x7).
+  N02b gamma 0.5 was also measured and retired (91.5% of classic HV,
+  74.0% of V2 HV). N07 and descriptor diagnostics remain open only with
+  fresh pre-registration.

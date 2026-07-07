@@ -43,11 +43,16 @@ below on operator-fair evidence:**
   eight-design screen, V2 reaches final-HV parity/slight edge vs the
   verified classic comparator (101.1%, coverage kept) but loses HV-AUC
   (90.5%) and Pareto breadth. No 4x11 spend is justified.
+- **F37 (MEASURED, N02b follow-up): curiosity-weighted parent sampling
+  is a clean negative.** Gamma 1.0 lost gshare coverage; gamma 0.5
+  recovered valid-PPA coverage but landed below classic (91.5% HV,
+  92.5% HV-AUC) and far below V2 (74.0% HV, 79.7% HV-AUC). Do not scan
+  gamma without a new mechanism card.
 - The June-22 T-series negative map is OPERATOR-CONTAMINATED and must
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-07 (natural_qd_push F36 N04 follow-up);
+**Last refreshed:** 2026-07-07 (natural_qd_push F36/F37 follow-ups);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the

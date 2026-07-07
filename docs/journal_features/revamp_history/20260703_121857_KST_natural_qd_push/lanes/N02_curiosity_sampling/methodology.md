@@ -1,7 +1,7 @@
 # N02 Curiosity Sampling — Pre-Registration (2026-07-03)
 
-Status: registered before implementation; blocked on the P0 V2 anchor
-package and a bounded one-problem live smoke of the new engine.
+Status: complete; N02b gamma 0.5 was the lane's only retry and did not
+approach V2, so the lane is retired.
 
 ## Mechanism (single factor: one-parent draw distribution over the pool)
 

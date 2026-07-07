@@ -2,8 +2,8 @@
 
 The consolidated answer to the push's question: does a natural
 QD/MAP-Elites extension of classic REvolution beat classic on HV and
-HV-AUC while keeping functionality? Twenty-seven operator-fair live
-runs (P0-P3c), every comparison operator-audited
+HV-AUC while keeping functionality? Twenty-nine operator-fair live
+runs (P0-P3c plus N04/N02b follow-ups), every comparison operator-audited
 (`single_thought_count=0` both arms), config-pin validated (with one
 honest validation FAIL on record: compact_8d seed 1002's Prob050
 worker failure — disclosed wherever that arm is cited),
@@ -85,6 +85,10 @@ scale, ~1/100 problem-runs; decision deferred to the manuscript).
    comparator (101.1%, coverage retained) but loses HV-AUC (90.5%) and
    Pareto breadth. Simple deeper equal-candidate shape is not the missing
    win lever; no 4x11 spend is justified by this read.
+8. **Curiosity-sampling follow-up (N02b, 2026-07-07)**: softening the
+   under-populated-cell parent bias from gamma 1.0 to 0.5 fixes the
+   gshare coverage failure but not quality. It lands at 91.5% of classic
+   HV / 92.5% of classic HV-AUC and 74.0% / 79.7% of V2; the lane retires.
 
 ## Branch mapping (frozen contract)
 
@@ -109,9 +113,9 @@ set.
 - Answered: the push's core question at both scales; the descriptor
   question at both scales; the utility content of diversity; the
   contamination question.
-- Unanswered (registered follow-ups, non-blocking): N02b gamma 0.5; N07
-  due diligence; SR ReLU PCA profile; compact_8d swap decision; held-out
-  confirmation of the screening win. N04 budget-depth is now measured
+- Unanswered (registered follow-ups, non-blocking): N07 due diligence;
+  SR ReLU PCA profile; compact_8d swap decision; held-out confirmation of
+  the screening win. N04 budget-depth and N02b curiosity are now measured
   negative for escalation.
 - TCAD-strength: the two-scale characterization with a replicated win,
   a 0.41 utility statistic, the descriptor dial, and full

@@ -50,9 +50,10 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       retention ladder (classic 0.14064 -> scalar 0.14683 -> slot-2
       0.15709 -> V2 0.17376, single-seed, softened per review); no
       challenger to V2 (`lanes/N01_cell_retention_mode/`).
-- [x] N02 curiosity sampling. Outcome: HARD-GATE KILL at gamma 1.0
-      (gshare coverage lost; exploration tax); engine stays; gamma-0.5
-      retry registered at low priority
+- [x] N02 curiosity sampling. Outcome: RETIRED. Gamma 1.0 hard-gate
+      killed on gshare coverage; gamma 0.5 recovered coverage but fell
+      below classic and V2 on HV/HV-AUC. Engine stays as a tested
+      negative-control implementation
       (`lanes/N02_curiosity_sampling/results_report.md`).
 - [x] N03 archive parent lane. Outcome: N03a closed; N03b screen
       displacement failed at 3 seeds (98.9% of V2) but is the best QD

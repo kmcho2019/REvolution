@@ -673,3 +673,35 @@ verdict log):
 - Gate decision: no 4x11 and no 6x7 seed ladder. Cause class:
   front-loss / anytime-loss. This is useful negative evidence against
   the simple "QD just needs deeper equal-candidate shape" explanation.
+
+## 2026-07-07 12:30 UTC - N02b Gamma 0.5 Retry Completed; Lane Retired
+
+- Pre-registered the only allowed N02 retry in
+  `lanes/N02_curiosity_sampling/commands.md`: same frozen 8-design 8x5
+  screen, same V2 platform pins, natural-QD engine, only
+  `qd_curiosity_gamma=0.5` changed from the N02a mechanism.
+- Focused tests before launch passed:
+  `uv run pytest tests/revolution/test_qd_natural_engine.py
+  tests/scripts/test_validate_natural_qd_run.py` (`15 passed`).
+- Launched N02b at
+  `exp/natural_qd_push/n02b_curiosity_20260707_120427_UTC/live`;
+  built-in vLLM preflight passed (`openai/gpt-oss-120b`,
+  `max_model_len=131072`). Run completed cleanly after the expected
+  gshare tail.
+- Packaged against the pinned classic 8x5 and P0 V2 anchors in
+  `lanes/N02_curiosity_sampling/`. Operator audit passed
+  (`curiosity_g05`: 178 candidates, 26 initial, `single_thought_count=0`,
+  152 EoH strategies, 0 other), and config-pinned run validation passed
+  with 768 total LLM API calls.
+- Result: gamma 0.5 retained valid-PPA coverage (`8/8`, including
+  19 gshare candidates) but underperformed. Mean HV `0.1286403090258023`
+  vs classic `0.14064478405974706` (`91.5%`) and V2
+  `0.17376375275693837` (`74.0%`); HV-AUC `0.11454281702479292` vs
+  classic `0.12387386482166513` (`92.5%`) and V2
+  `0.14365991026686661` (`79.7%`). Final-HV W/L/T: `1/4/3` vs V2 and
+  `0/5/3` vs classic.
+- Gate decision: retire N02. The softened curiosity bias fixes the
+  coverage kill but not the quality loss; no gamma scan is allowed
+  without a new mechanism card and diagnosis. The self-contained engine
+  remains useful as a tested negative-control implementation, not as a
+  TCAD headline candidate.

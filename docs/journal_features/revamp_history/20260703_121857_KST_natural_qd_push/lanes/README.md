@@ -28,7 +28,8 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | --- | --- | --- | --- | --- | --- |
 | N03 | front_slot_lane_030 | 0.16106 (3-seed) | +11.7% (3/3 wins) | -1.1% (3-seed) | keeper; Branch-B utility candidate; displacement failed |
 | N01 | elite_pareto_slot_2 | 0.15709 | +11.7% | -9.6% | diagnostic keeper |
-| N02 | curiosity gamma 1.0 | 0.15449 | +9.8% | -11.1% | KILL (coverage 7/8); gamma 0.5 retry registered |
+| N02 | curiosity gamma 1.0 | 0.15449 | +9.8% | -11.1% | KILL (coverage 7/8); exploration tax |
+| N02 | curiosity gamma 0.5 | 0.12864 | -8.5% | -26.0% | retired; coverage fixed, quality worse |
 | N06 | graph_testability_3d | 0.15195 | +8.0% | -12.6% | diagnostic keeper (best challenger; trio wins) |
 | N05 | warmup_16 | 0.16383 | +16.5% | -5.7% | parked |
 | N05 | warmup_4 | 0.14927 | +6.1% | -14.1% | closed |
@@ -108,15 +109,17 @@ engine.
 
 | Sub-track | Status | Result |
 | --- | --- | --- |
-| Engine + unit tests | done | 11 tests; pool ordering mirrors V2; gamma required-and-only-valid for the natural mode |
+| Engine + focused tests | done | pool ordering mirrors V2; gamma required-and-only-valid for the natural mode |
 | Bounded live smoke (1 problem, 4x1, seed 42) | done | 107 s, clean; never evidence |
 | Full screen, gamma 1.0, seed 1001 | done | HV 0.15449 (+9.8% classic, -11.1% V2) but **coverage 7/8 — HARD-GATE KILL** (gshare lost, 0 valid-PPA) |
-| gamma 0.5 (N02b) | registered retry | the exploration-tax case the card anticipated; reduced priority |
+| gamma 0.5 (N02b) | done | HV 0.12864 (-8.5% classic, -26.0% V2), HV-AUC 0.11454, coverage 8/8 |
 
-**Takeaways:** curiosity weighting taxes exactly the problem that
-needs concentrated exploitation (the largest design, gshare) into
-zero valid candidates — a mechanism negative, not an implementation
-failure; the engine stays. One gamma-0.5 retry, then retire.
+**Takeaways:** curiosity weighting is a mechanism negative. Gamma 1.0
+taxes exactly the problem that needs concentrated exploitation (the
+largest design, gshare) into zero valid candidates. Gamma 0.5 recovers
+valid-PPA coverage, including gshare, but falls below both classic and
+V2 on final HV and HV-AUC. Retire the lane; do not scan gamma without a
+new mechanism card.
 
 ## N03 — Archive Parent Lane (`N03_archive_parent_lane/`)
 

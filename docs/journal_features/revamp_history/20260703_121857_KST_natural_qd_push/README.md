@@ -4,7 +4,7 @@ Goal-scaffold root for the July 2026 push to find a natural QD/MAP-Elites
 extension of classic REvolution that beats classic on HV and HV-AUC while
 matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 
-## Current State (2026-07-07; follow-up N04 measured)
+## Current State (2026-07-07; follow-ups N04/N02b measured)
 
 - HEADLINE: the two-scale story. The faithful V2 platform BEATS classic
   at screening scale (+12.9% HV, +16.2% HV-AUC, 3/3 seeds,
@@ -14,7 +14,7 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   `p3_full_rtllm/five_seed_verdict.md`); the frozen +5% gate fails at
   suite scale, where outcomes are LLM-capability-bound.
 - Start here: `lanes/README.md` (both-scale standings), then the plan
-  and history. 11 screen arms + 3 suite arms measured, every one
+  and history. 13 screen/follow-up arms plus suite probes measured, every one
   operator-audited and config-pinned; both periodic dual reviews
   (claude -p, codex) verified the campaign with zero blocking findings.
 - Founding-analysis context: the June-22 negative map was
@@ -25,8 +25,12 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   reaches final-HV parity/slight edge against the verified T79 classic
   6x7 comparator (101.1%) with coverage retained, but loses HV-AUC
   (90.5%) and Pareto breadth, so no 4x11 or 6x7 seed ladder is justified.
-- Open by design: N02b gamma-0.5 retry, N07 due diligence, and any
-  descriptor/warmup diagnostics only with fresh pre-registration.
+- Follow-up update: N02b gamma 0.5 is now measured and retired. It
+  recovers valid-PPA coverage after gamma 1.0 lost gshare, but falls
+  below classic (91.5% HV, 92.5% HV-AUC) and far below V2 (74.0% HV,
+  79.7% HV-AUC), so curiosity weighting is a clean negative.
+- Open by design: N07 due diligence and any descriptor/warmup
+  diagnostics only with fresh pre-registration.
 
 ## Top-Level Docs
 
