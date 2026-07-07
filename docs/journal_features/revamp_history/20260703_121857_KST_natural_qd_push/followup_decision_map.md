@@ -3,9 +3,10 @@
 Date: 2026-07-07.
 
 Purpose: summarize what the post-PASS follow-up portfolio says after N04,
-N02b, N07a/N07b/N07c, N09, and N10. This is the manuscript-facing map for
-why the campaign should not keep opening one-knob scans unless a new
-mechanism card changes the theory.
+N02b, N07a/N07b/N07c, N09, and N10, with N03b/N06/N08 context where it
+sets the manuscript stance. This is the manuscript-facing map for why the
+campaign should not keep opening one-knob scans unless a new mechanism
+card changes the theory.
 
 ## Decision
 
@@ -52,6 +53,7 @@ characterization:
 | N10 SR-ReLU PCA | Does the strongest descriptor-isolating replay lead transfer live? | Beats classic (`111.5%` HV, `108.3%` HV-AUC) but trails V2 (`90.3%` / `93.3%`) with lower valid-PPA yield and one all-axis collapse. | yield-loss / front-loss | Diagnostic descriptor result; no seed ladder or full-suite spend. |
 | N06/P3c descriptor sweep | Is BD choice an HV lever at suite scale? | Compact_8d ties trio-family HV while improving collapse resistance, but no descriptor beats classic or the +5% gate. | descriptor-health trade | Descriptor choice is a health/functionality dial, not a headline HV dial. |
 | N03b suite probe | Does archive parent sourcing matter at RTLLM scale? | N03b beats V2 on suite HV-AUC (`102.5%` of classic) but not the +5% HV gate; coverage is lower than V2. | axis trade | Keep as Branch-B utility/front-material candidate, not the registered promotion arm. |
+| N08 combination | Is there a replicated winner to combine with V2? | Blocked by gate: no post-PASS single-factor arm displaces V2. | blocked escalation | Do not invent combination arms without a winner pair. |
 
 ## Stop Rules For More Variants
 

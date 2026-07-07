@@ -1004,3 +1004,16 @@ verdict log):
 - Boundaries: this does not declare the overall goal complete. The plan's
   exhausted-portfolio stop condition still needs adversarial PASS before
   the whole push can close on the negative map.
+
+## 2026-07-07 16:58 UTC - Decision Map Read-Only Review: PASS
+
+- Ran a targeted `claude -p` read-only audit of commit `b8e2b51ff3`
+  against `GUIDELINES.md`/`AGENTS.md`, `journal_narrative.md`, the
+  push plan, and the touched decision-map docs.
+- Verdict: PASS, no blockers. The review confirms quantitative accuracy,
+  operator-fair constraints, correct stop-decision scoping, no PCN-style
+  mechanism drift, and adequate documentation navigation.
+- Recorded the review at `reviews/claude_post_n10_decision_map_20260707.md`.
+  Applied its two non-blocking wording nits: note that N03b/N06 are
+  context rows and explicitly mark N08 as blocked for lack of a winner
+  pair to combine.
