@@ -25,6 +25,22 @@ uv run python scripts/qd_descriptor_probe.py \
   > docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/probes/probe_implemented_structural_compact_3d.json
 ```
 
+## N07a Extraction Smoke Already Run
+
+```bash
+timeout 600s uv run python scripts/probe_n07_extraction_smoke.py \
+  --output-dir docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/smokes/n07a_source_aligned_rf_timing_20260707_130130_UTC
+```
+
+Result: pass. Artifacts:
+
+- `smokes/n07a_source_aligned_rf_timing_20260707_130130_UTC/extraction_smoke_summary.json`
+- `smokes/n07a_source_aligned_rf_timing_20260707_130130_UTC/descriptor_health.json`
+- `smokes/n07a_source_aligned_rf_timing_20260707_130130_UTC/descriptor_health_report.md`
+
+This was descriptor extraction only: no LLM calls, no evolutionary run,
+and no performance claim.
+
 ## Live Screen Template
 
 Do not run this template until the arm's extraction smoke has passed.

@@ -739,3 +739,19 @@ verdict log):
   synthesis metrics. Live 8-design screens remain blocked until the
   relevant arm passes a bounded extraction smoke that writes
   descriptor-health artifacts.
+
+## 2026-07-07 13:01 UTC - N07a Extraction Smoke: PASS
+
+- Added `scripts/probe_n07_extraction_smoke.py` as a narrow operational
+  helper outside the core engine. It extracts source-aligned RF timing
+  descriptors on the frozen 8-design reference RTLs, inserts synthetic
+  archive records only to exercise grid-quantile health reporting, and
+  writes smoke artifacts. It performs no LLM calls and makes no HV or
+  functionality claim.
+- Ran:
+  `timeout 600s uv run python scripts/probe_n07_extraction_smoke.py --output-dir docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/lanes/N07_corrected_suite_completion/smokes/n07a_source_aligned_rf_timing_20260707_130130_UTC`
+- Result: PASS. Descriptor extraction completed for all 8 frozen inputs;
+  grid-quantile warmup initialized (`4x4x4` effective shape), occupied
+  7 cells, and reported no collapsed axes. N07a is now eligible for a
+  seed-1001 live screen if we choose to spend the LLM budget. N07b/N07c
+  remain extraction-smoke gated.

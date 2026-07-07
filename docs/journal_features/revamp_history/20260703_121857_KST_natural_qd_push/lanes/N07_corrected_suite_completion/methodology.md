@@ -25,9 +25,23 @@ archive activation, `elite_pareto_slot`, 0.90 champion lane fraction,
 fill/backfill fractions, and other non-V2 archive knobs. That would be
 a multi-factor lane here.
 
+## Operator And Scale Loop
+
+All live QD/MAP-Elites arms in this campaign must use the conference
+operator stack: `qd_operator_kind=eoh_strategies` over
+`code_individual`. Prior `single_thought_operator` runs are contamination
+context only and must not be used as mechanism evidence.
+
+The operating loop is: write a natural mechanism card, run the cheapest
+probe or small screen that can falsify it, escalate only non-catastrophic
+reads to the larger suite, diagnose failures by cause class, and use that
+diagnosis plus relevant QD literature to formulate the next simple idea.
+No broad RTLLM spend occurs before the small-scale gate clears.
+
 ## Arms
 
-- N07a: `source_aligned_rf_timing_state_3d`; extraction-smoke pending.
+- N07a: `source_aligned_rf_timing_state_3d`; extraction-smoke passed,
+  live seed-1001 screen eligible.
   Probe: `probes/probe_source_aligned_rf_timing_state_3d.json`.
 - N07b: `rf_deepgate_hybrid_3d` with the frozen June-26 descriptor file;
   extraction-smoke pending. Probe: `probes/probe_rf_deepgate_hybrid_3d.json`.
@@ -56,6 +70,16 @@ requirement: source-aligned RF timing plus DeepGate pooled embedding.
 
 N07c axes: `comb_ratio`, `adder_ratio`, `cell_count_log`. Extra
 requirement: synthesis metrics.
+
+## Extraction Smoke Result
+
+N07a passed the extraction gate on the frozen 8-design reference RTLs:
+`smokes/n07a_source_aligned_rf_timing_20260707_130130_UTC/`.
+Descriptor extraction completed for all 8 inputs, grid-quantile warmup
+initialized with effective shape `4x4x4`, occupied 7 cells, and reported
+no collapsed axes. This is not an optimization result and makes no HV or
+functionality claim; it only permits considering the N07a seed-1001 live
+screen under the command template.
 
 ## Launch Gate
 

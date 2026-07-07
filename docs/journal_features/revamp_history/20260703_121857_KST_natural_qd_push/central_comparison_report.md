@@ -113,7 +113,7 @@ set.
 - Answered: the push's core question at both scales; the descriptor
   question at both scales; the utility content of diversity; the
   contamination question.
-- Unanswered (registered follow-ups, non-blocking): N07 probe-registered
+- Unanswered (registered follow-ups, non-blocking): N07a smoke-cleared
   due diligence; SR ReLU PCA profile; compact_8d swap decision;
   held-out confirmation of the screening win. N04 budget-depth and
   N02b curiosity are now measured negative for escalation.

@@ -91,7 +91,8 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       (Prob050 s1002; watch c19) (`lanes/N06_descriptor_bakeoff/
       bd_scoreboard.md`, `p3_full_rtllm/p3c_closure.md`).
 - [ ] N07 corrected-suite completion: probe-only pre-registration
-      written; live screen gated by extraction smokes.
+      written; N07a extraction smoke passed; live seed-1001 screen
+      still not launched.
 
 ## P3 Confirmation
 
