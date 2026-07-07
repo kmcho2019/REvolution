@@ -159,6 +159,9 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       (`followup_decision_map.md`): operator-fair negative map, stop
       rules for further one-knob screens, and remaining manuscript
       decisions.
+- [x] Formal negative-map adversarial validation PASS recorded
+      (`negative_map_adversarial_validation_report.md`); no required
+      fixes before the exhausted-portfolio alternative outcome.
 
 ## Standing Validation (every code/report change)
 

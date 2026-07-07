@@ -68,12 +68,14 @@ below on operator-fair evidence:**
   `revamp_history/20260703_121857_KST_natural_qd_push/followup_decision_map.md`
   records the operator-fair negative map for N04/N02b/N07/N09/N10 and
   stops further one-knob screens unless a new mechanism card is
-  registered.
+  registered. The formal negative-map adversarial validation report in
+  the same directory records PASS for the exhausted-portfolio alternative
+  outcome.
 - The June-22 T-series negative map is OPERATOR-CONTAMINATED and must
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 decision map);
+**Last refreshed:** 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the

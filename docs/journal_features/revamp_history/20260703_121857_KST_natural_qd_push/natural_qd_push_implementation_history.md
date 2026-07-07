@@ -1017,3 +1017,21 @@ verdict log):
   Applied its two non-blocking wording nits: note that N03b/N06 are
   context rows and explicitly mark N08 as blocked for lack of a winner
   pair to combine.
+
+## 2026-07-07 17:10 UTC - Negative-Map Adversarial Validation: PASS
+
+- Ran a stricter read-only adversarial validation of the exhausted-portfolio
+  alternative outcome. The prompt required evidence-level inspection of the
+  plan, goal template, journal narrative, follow-up decision map, central
+  report, lane packages, P3 suite closures, operator contracts, and prior
+  reviews.
+- Verdict: PASS. The validator found no required fixes before the
+  alternative outcome: no stronger natural QD/MAP-Elites extension than
+  V2/N03b was found, and the operator-fair decision map is complete enough
+  to guide the TCAD manuscript.
+- Recorded the report at `negative_map_adversarial_validation_report.md`.
+  Residual non-blocking paper decisions remain compact_8d stance and
+  optional held-out confirmation. The raw `20260707_2005_code_logs.md`
+  remains an untracked local restart transcript/source log, not a curated
+  result artifact; leaving it uncommitted avoids adding a bulky raw
+  transcript to the manuscript evidence tree.

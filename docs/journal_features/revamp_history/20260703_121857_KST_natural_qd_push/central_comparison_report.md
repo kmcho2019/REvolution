@@ -110,9 +110,10 @@ scale, ~1/100 problem-runs; decision deferred to the manuscript).
 
 Post-N10 synthesis: `followup_decision_map.md` records the operator-fair
 negative map for N04/N02b/N07/N09/N10 and the stop rule for further
-single-knob screens. The remaining useful work is manuscript synthesis,
-the compact_8d swap stance, optional held-out confirmation, and an
-adversarial review if the campaign is closed on exhaustion.
+single-knob screens. `negative_map_adversarial_validation_report.md`
+records PASS for closing the follow-up campaign on the exhausted-portfolio
+alternative outcome. The remaining useful work is manuscript synthesis,
+the compact_8d swap stance, and optional held-out confirmation.
 
 ## Branch mapping (frozen contract)
 
@@ -142,7 +143,8 @@ set.
   screening win. N04 budget-depth, N02b curiosity, N07a/N07c
   descriptor-only corrected-suite arms, N07b RF/DeepGate extraction,
   N09 pareto capacity, and N10 SR-ReLU PCA are now negative for
-  escalation; see `followup_decision_map.md` for the stop rules.
+  escalation; see `followup_decision_map.md` for the stop rules and
+  `negative_map_adversarial_validation_report.md` for the PASS review.
 - TCAD-strength: the two-scale characterization with a replicated win,
   a 0.41 utility statistic, the descriptor dial, and full
   registration/audit provenance is materially stronger than the

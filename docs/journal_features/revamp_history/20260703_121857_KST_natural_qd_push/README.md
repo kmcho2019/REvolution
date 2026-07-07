@@ -46,6 +46,10 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   single-knob follow-up portfolio for manuscript synthesis. Do not open
   another capacity/gamma/warmup/budget/descriptor scan without a new
   mechanism card and pre-recorded gate.
+- Closure review: `negative_map_adversarial_validation_report.md`
+  records PASS for the exhausted-portfolio alternative outcome. The
+  remaining compact_8d and held-out items are paper decisions, not
+  blockers for this goal's follow-up campaign.
 
 ## Top-Level Docs
 
@@ -56,6 +60,7 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 | `natural_qd_push_implementation_todo.md` | Living checklist (hard line cap). |
 | `natural_qd_push_implementation_history.md` | Append-only audit log. |
 | `followup_decision_map.md` | Post-N10 operator-fair map of follow-up results, stop rules, and remaining paper decisions. |
+| `negative_map_adversarial_validation_report.md` | Formal PASS review for the exhausted-portfolio alternative outcome. |
 | `goal_template.md` | Compact `/goal` body. |
 | `natural_qd_push_adversarial_prompt.md` | Sign-off rubric (PASS/FAIL). |
 | `natural_qd_push_subagent_validation_report.md` | Validator output. |

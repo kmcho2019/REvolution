@@ -20,10 +20,9 @@ due diligence. The tested variants are operator-fair:
 and `single_thought_count=0` in headline comparisons. None displaces the
 Smooth-QD V2 platform.
 
-This does not mark the overall goal complete. The plan's negative-map
-stop condition still requires adversarial PASS if we want to close the
-whole push on exhaustion. This file is the evidence map to review before
-that sign-off.
+The plan's negative-map stop condition has now been adversarially
+reviewed as PASS in `negative_map_adversarial_validation_report.md`.
+This file is the manuscript-facing evidence map for that closure path.
 
 ## Current Best Answer
 
@@ -78,12 +77,12 @@ or archive-shape scan from the existing backlog. A new run needs all of:
 - Held-out confirmation: optional because the suite +5% gate did not fire.
   If used, it should confirm the screening-scale characterization, not
   create a new Branch-A/B claim.
-- Adversarial negative-map review: required before declaring the whole
-  follow-up search exhausted under the plan.
+- Adversarial negative-map review: completed with PASS in
+  `negative_map_adversarial_validation_report.md`.
 
 ## Next Action
 
-Pivot to P4 manuscript synthesis and adversarial review of this decision
-map. Do not spend more vLLM budget on N07, N09, N10, or other one-knob
-natural variants without a new mechanism card that passes the stop rules
-above.
+Pivot to manuscript synthesis from the V2/N03b two-scale characterization
+and this operator-fair negative map. Do not spend more vLLM budget on N07,
+N09, N10, or other one-knob natural variants without a new mechanism card
+that passes the stop rules above.
