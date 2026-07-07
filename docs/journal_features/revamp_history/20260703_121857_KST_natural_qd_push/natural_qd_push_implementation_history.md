@@ -721,3 +721,21 @@ verdict log):
 - Non-blocking actions adopted immediately: refresh the stale N03 block
   in `lanes/README.md` and update the central report header date for
   the July-7 follow-up additions.
+
+## 2026-07-07 13:05 UTC - N07 Probe-Only Pre-Registration
+
+- Opened `lanes/N07_corrected_suite_completion/` as a due-diligence
+  lane, not a headline mechanism. The card explicitly rejects copying
+  the 20260630 delayed/archive-activation commands because they change
+  archive activation, cell mode, champion lane fraction, and fill knobs
+  in addition to descriptors.
+- Re-scoped N07 to V2-faithful descriptor-only variants:
+  `source_aligned_rf_timing_state_3d`, `rf_deepgate_hybrid_3d` with the
+  frozen June-26 descriptor file, and `implemented_structural_compact_3d`
+  as the compact structural proxy used by the old AURORA-labeled arm.
+- Ran lightweight descriptor probes for all three. They resolve and
+  report `requires_ppa=false`; N07a needs source-aligned RF timing,
+  N07b needs RF timing plus DeepGate pooled embeddings, and N07c needs
+  synthesis metrics. Live 8-design screens remain blocked until the
+  relevant arm passes a bounded extraction smoke that writes
+  descriptor-health artifacts.

@@ -29,8 +29,9 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   recovers valid-PPA coverage after gamma 1.0 lost gshare, but falls
   below classic (91.5% HV, 92.5% HV-AUC) and far below V2 (74.0% HV,
   79.7% HV-AUC), so curiosity weighting is a clean negative.
-- Open by design: N07 due diligence and any descriptor/warmup
-  diagnostics only with fresh pre-registration.
+- Open by design: N07 due diligence now has a probe-only
+  pre-registration; any live screen or descriptor/warmup diagnostic
+  still needs its launch gate satisfied before results.
 
 ## Top-Level Docs
 

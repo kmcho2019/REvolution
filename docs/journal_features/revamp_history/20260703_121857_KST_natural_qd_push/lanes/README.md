@@ -38,7 +38,7 @@ Frozen 8-design 8x5 screen, operator-fair, coverage 8/8 everywhere:
 | N06 | size_control_3d | 0.14129 | +0.5% | -18.7% | closed |
 | N06 | random_hash_3d (floor) | 0.13457 | -4.3% | -22.6% | control closed (health-vs-HV finding) |
 | N04 | V2 6x7 | 0.17200 | +1.1% | n/a | no escalation: HV near tie, HV-AUC 90.5% |
-| N07 | corrected-suite completion | not started | - | - | conditional |
+| N07 | corrected-suite completion | probe-only registration | - | - | live screen gated by extraction smokes |
 | N08 | combination | blocked | - | - | needs replicated winners |
 
 **Promotion decision (2026-07-03): V2 stays the P3 arm.** N03b cleared
@@ -211,11 +211,17 @@ challenger spaces trigger the engine's C-D/M-T fill lanes that the
 trio never fires — descriptor choice changes the effective operator
 mix (visible in operator_contract.csv).
 
-## N07 — Corrected-Suite Completion (`N07` — no directory yet)
+## N07 — Corrected-Suite Completion (`N07_corrected_suite_completion/`)
 
 Due-diligence lane: screen the three never-rerun corrected arms'
 descriptor profiles (rf_leafid structural, aurora raw-impl compact,
 rf_deepgate hybrid) operator-fair before the negative map cites them.
+The lane is now registered as V2-faithful descriptor-only due
+diligence. The 20260630 delayed/archive-activation commands are
+provenance only and are forbidden launch templates because they change
+multiple archive knobs at once. All three lightweight descriptor probes
+resolve with `requires_ppa=false`; live screen launch is gated on
+bounded extraction smokes that write descriptor-health artifacts.
 Lowest priority; encoder-flavored lanes do not headline this push.
 
 ## N08 — Combination (`N08` — no directory yet)

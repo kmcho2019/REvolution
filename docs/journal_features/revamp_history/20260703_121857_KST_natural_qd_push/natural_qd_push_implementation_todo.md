@@ -90,8 +90,8 @@ Adversarial rubric: `natural_qd_push_adversarial_prompt.md`.
       swap candidate QUALIFIED by one hard extraction failure
       (Prob050 s1002; watch c19) (`lanes/N06_descriptor_bakeoff/
       bd_scoreboard.md`, `p3_full_rtllm/p3c_closure.md`).
-- [ ] N07 corrected-suite completion screen (three never-rerun profiles),
-      lowest priority.
+- [ ] N07 corrected-suite completion: probe-only pre-registration
+      written; live screen gated by extraction smokes.
 
 ## P3 Confirmation
 
