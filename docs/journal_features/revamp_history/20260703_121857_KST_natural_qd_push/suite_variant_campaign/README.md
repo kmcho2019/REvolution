@@ -73,6 +73,12 @@ known extraction failures before expensive descriptors.
 | `commands.md` | Launch/package templates and exact Wave A command shape. |
 | `results_log.md` | Append-only run/results ledger for this campaign. |
 
+## Progress
+
+| ID | Status | Current read |
+| --- | --- | --- |
+| S01 | seed 1001 packaged | HV/AUC negative, coverage +1 vs matched classic. Complete seed 1002 before deciding. |
+
 ## Initial Wave Choice
 
 Wave A prioritizes variants that are already implemented and mostly
