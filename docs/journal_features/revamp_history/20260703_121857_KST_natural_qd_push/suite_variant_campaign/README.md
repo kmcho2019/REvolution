@@ -78,7 +78,8 @@ known extraction failures before expensive descriptors.
 | ID | Status | Current read |
 | --- | --- | --- |
 | S01 | two seeds packaged | Coverage +1/92 vs matched classic, but two-seed HV and HV-AUC remain below classic and V2. Do not promote as a primary arm. |
-| S02 | seed 1001 packaged | Warmup16 beats V2 on seed-1001 HV/HV-AUC and nearly matches classic AUC, but loses coverage. Complete seed 1002. |
+| S02 | two seeds packaged | Warmup16 nearly ties classic two-seed HV-AUC, but loses HV and coverage. Do not promote as a primary arm. |
+| S03 | seed 1001 packaged | Slot-2 beats V2 on seed-1001 HV/HV-AUC while tying V2 coverage, but trails classic. Complete seed 1002. |
 
 ## Initial Wave Choice
 
@@ -93,3 +94,20 @@ config-only:
 6. gt3d completion if the paper needs a coverage-focused arm.
 
 Wave B then tests small parent-source/capacity/interpolation variants.
+
+## Extended Queue
+
+`variant_registry.csv` now records a broader suite-first queue through
+S30. Rows S01-S28 are either already launched, config-only, or blocked
+only by the stated single-factor signal policy. Rows S29-S30 are not
+launch-ready: they capture literature-natural brainstorms that would need
+a small tested parent-selection module or a descriptor registration gate
+before any full-suite run.
+
+Near-term executable choices after S03 seed 1001 are:
+
+1. S03 seed 1002 because seed 1001 passed extraction and operator audit.
+2. S20/S21 simple parent/retention controls if S03 seed 1002 is weak.
+3. S07/S08/S19 capacity interpolation only if coverage remains a target.
+4. S11/S12 warmup interpolation only as a secondary AUC check.
+5. S23-S26 descriptor reductions after an extraction/config smoke.

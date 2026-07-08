@@ -1068,3 +1068,25 @@ verdict log):
   (`0.089942` vs `0.083539`) while nearly matching classic AUC. Complete
   seed 1002 before deciding whether longer warmup is a credible natural
   initialization variant.
+
+## 2026-07-08 - Suite Variant Wave A Continued
+
+- Expanded `suite_variant_campaign/variant_registry.csv` through S30 so
+  the suite-first campaign has a broader, explicit queue. S01-S28 are
+  config-first or signal-blocked variants; S29-S30 are documented
+  brainstorms that require a small design/descriptor gate before launch.
+- Completed and packaged S02 warmup16 seed 1002. The two-seed S02 read is
+  below matched classic on HV (`0.097494` vs `0.104479`) and coverage
+  (`63/92` vs `66/92`), while nearly tying classic HV-AUC46
+  (`0.085850` vs `0.085867`). Decision: do not promote S02 as a primary
+  five-seed TCAD arm; keep S11/S12 warmup interpolation as a secondary
+  AUC-oriented follow-up if needed.
+- Completed and packaged S03 elite-pareto slot 2 seed 1001. S03 trails
+  matched classic on HV (`0.100189` vs `0.111401`) but beats matched V2
+  on HV (`0.100189` vs `0.096767`) and HV-AUC46 (`0.088742` vs
+  `0.083539`) while tying V2 coverage (`32/46`). Decision: complete S03
+  seed 1002 before deciding whether slot-2 retention is a suite-level
+  robustness lead.
+- Both new packages pass full 50-problem manifest validation and operator
+  audit with `single_thought_count=0`, preserving the eoh-strategy
+  operator contract requested for the journal extension campaign.

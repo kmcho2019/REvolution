@@ -93,3 +93,59 @@ the suite-first campaign.
   complete seed 1002. Warmup16 is not a primary win on seed 1001, but it
   improves over V2 on HV and HV-AUC and nearly matches classic AUC with a
   clean, natural initialization-only mechanism.
+
+## 2026-07-08 - S02 Warmup 16 Seed 1002
+
+- Launched S02 warmup16 over full RTLLM 50 with seed 1002:
+  `exp/natural_qd_push/suite_variants_wave_a_20260708_140623_UTC/live/warmup16/seed_1002`.
+- vLLM preflight recorded:
+  `preflights/s02_warmup16_seed1002_20260708_140623_UTC.json`.
+- Runtime completed normally in 6257.36 seconds with 4800 total LLM API
+  calls.
+- Package:
+  `S02_warmup16/seed_1002/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest. The PPA/HV headline package remains scoped to the 46
+  reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S02 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.097557` HV / `0.081183` AUC46 / `33` covered;
+  V2 `0.100310` HV / `0.090753` AUC46 / `33` covered;
+  S02 `0.097839` HV / `0.081757` AUC46 / `32` covered.
+- Two-seed S02 read:
+  classic `0.104479` HV / `0.085867` AUC46 / `66/92` covered;
+  V2 `0.098539` HV / `0.087146` AUC46 / `65/92` covered;
+  S02 `0.097494` HV / `0.085850` AUC46 / `63/92` covered.
+- Decision:
+  do not promote S02 as a primary five-seed arm. Keep warmup
+  interpolation S11/S12 as a possible later check because S02 nearly ties
+  classic AUC but loses HV and coverage.
+
+## 2026-07-08 - S03 Elite Pareto Slot 2 Seed 1001
+
+- Launched S03 elite-pareto slot 2 over full RTLLM 50 with seed 1001:
+  `exp/natural_qd_push/suite_variants_wave_a_20260708_140623_UTC/live/elite_pareto_slot_2/seed_1001`.
+- vLLM preflight recorded:
+  `preflights/s03_elite_pareto_slot_2_seed1001_20260708_140623_UTC.json`.
+- Runtime completed normally in 6300.64 seconds with 4801 total LLM API
+  calls.
+- Package:
+  `S03_elite_pareto_slot_2/seed_1001/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest. The PPA/HV headline package remains scoped to the 46
+  reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S03 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.111401` HV / `0.090551` AUC46 / `33` covered;
+  V2 `0.096767` HV / `0.083539` AUC46 / `32` covered;
+  S03 `0.100189` HV / `0.088742` AUC46 / `32` covered.
+- Decision:
+  complete seed 1002. S03 does not beat classic on seed 1001, but it is
+  the best new Wave A V2-recovery signal so far: it beats V2 on HV and
+  AUC while tying V2 coverage with a simple retention-only mechanism.
