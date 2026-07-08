@@ -1051,3 +1051,20 @@ verdict log):
   full-suite probes. The prior negative map remains valid for the old
   gate policy; the new campaign is a user-directed continuation seeking a
   full RTLLM HV/functionality improvement over classic.
+
+## 2026-07-08 - Suite Variant Wave A First Results
+
+- Completed and packaged S01 capacity7 seed 1002 and S02 warmup16 seed
+  1001 under `suite_variant_campaign/`.
+- Both runs passed the full 50-problem validation manifest and the
+  operator contract with `single_thought_count=0`; both used the
+  `eoh_strategies` operator path and 128k vLLM budget contract.
+- S01 capacity7 now has two full-suite seeds. It has a tiny coverage
+  gain over matched classic (`67/92` vs `66/92`) but loses mean HV
+  (`0.092056` vs `0.104479`) and HV-AUC46 (`0.082392` vs `0.085867`),
+  so it is not promoted as a primary TCAD extension arm.
+- S02 warmup16 seed 1001 is not a primary win against classic HV, but it
+  beats matched V2 on HV (`0.097150` vs `0.096767`) and HV-AUC46
+  (`0.089942` vs `0.083539`) while nearly matching classic AUC. Complete
+  seed 1002 before deciding whether longer warmup is a credible natural
+  initialization variant.

@@ -37,3 +37,59 @@ the suite-first campaign.
   treats one suite seed as a runtime/extraction gate and the user
   explicitly reopened full-suite probing after weak screen-transfer
   evidence.
+
+## 2026-07-08 - S01 Capacity 7 Seed 1002
+
+- Launched S01 capacity7 over full RTLLM 50 with seed 1002:
+  `exp/natural_qd_push/suite_variants_wave_a_20260708_120949_UTC/live/capacity7/seed_1002`.
+- vLLM preflight recorded:
+  `preflights/s01_capacity7_seed1002_20260708_120949_UTC.json`.
+- Runtime completed normally in 6315.58 seconds with 4800 total LLM API
+  calls.
+- Package:
+  `S01_capacity7/seed_1002/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest. The PPA/HV headline package remains scoped to the 46
+  reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S01 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.097557` HV / `0.081183` AUC46 / `33` covered;
+  V2 `0.100310` HV / `0.090753` AUC46 / `33` covered;
+  S01 `0.094507` HV / `0.086806` AUC46 / `33` covered.
+- Two-seed S01 read:
+  classic `0.104479` HV / `0.085867` AUC46 / `66/92` covered;
+  V2 `0.098539` HV / `0.087146` AUC46 / `65/92` covered;
+  S01 `0.092056` HV / `0.082392` AUC46 / `67/92` covered.
+- Decision:
+  S01 is not a primary promotion candidate. The tiny coverage gain does
+  not justify a 5-seed confirmation because mean HV and HV-AUC remain
+  below both classic and V2.
+
+## 2026-07-08 - S02 Warmup 16 Seed 1001
+
+- Launched S02 warmup16 over full RTLLM 50 with seed 1001:
+  `exp/natural_qd_push/suite_variants_wave_a_20260708_120949_UTC/live/warmup16/seed_1001`.
+- vLLM preflight recorded:
+  `preflights/s02_warmup16_seed1001_20260708_120949_UTC.json`.
+- Runtime completed normally in 6345.74 seconds with 4800 total LLM API
+  calls.
+- Package:
+  `S02_warmup16/seed_1001/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest. The PPA/HV headline package remains scoped to the 46
+  reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S02 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.111401` HV / `0.090551` AUC46 / `33` covered;
+  V2 `0.096767` HV / `0.083539` AUC46 / `32` covered;
+  S02 `0.097150` HV / `0.089942` AUC46 / `31` covered.
+- Decision:
+  complete seed 1002. Warmup16 is not a primary win on seed 1001, but it
+  improves over V2 on HV and HV-AUC and nearly matches classic AUC with a
+  clean, natural initialization-only mechanism.

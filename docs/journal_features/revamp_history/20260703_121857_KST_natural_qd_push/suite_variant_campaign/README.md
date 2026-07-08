@@ -77,7 +77,8 @@ known extraction failures before expensive descriptors.
 
 | ID | Status | Current read |
 | --- | --- | --- |
-| S01 | seed 1001 packaged | HV/AUC negative, coverage +1 vs matched classic. Complete seed 1002 before deciding. |
+| S01 | two seeds packaged | Coverage +1/92 vs matched classic, but two-seed HV and HV-AUC remain below classic and V2. Do not promote as a primary arm. |
+| S02 | seed 1001 packaged | Warmup16 beats V2 on seed-1001 HV/HV-AUC and nearly matches classic AUC, but loses coverage. Complete seed 1002. |
 
 ## Initial Wave Choice
 
