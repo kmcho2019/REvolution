@@ -79,7 +79,7 @@ known extraction failures before expensive descriptors.
 | --- | --- | --- |
 | S01 | two seeds packaged | Coverage +1/92 vs matched classic, but two-seed HV and HV-AUC remain below classic and V2. Do not promote as a primary arm. |
 | S02 | two seeds packaged | Warmup16 nearly ties classic two-seed HV-AUC, but loses HV and coverage. Do not promote as a primary arm. |
-| S03 | three seeds packaged; continue | Slot-2 is 98.9% of matched classic HV, 100.7% of classic HV-AUC, and tied with classic coverage. Continue seeds 1004-1005 before opening backup variants. |
+| S03 | four seeds packaged; close seed 1005 | Slot-2 is 97.0% of matched classic HV, 98.0% of classic HV-AUC, +1 coverage vs classic, and 101.1% of V2 HV. Complete seed 1005, then likely pivot if classic HV is still below target. |
 
 ## Initial Wave Choice
 
@@ -104,11 +104,11 @@ launch-ready: they capture literature-natural brainstorms that would need
 a small tested parent-selection module or a descriptor registration gate
 before any full-suite run.
 
-Near-term executable choices after the S03 seed 1003 mixed read are:
+Near-term executable choices after the S03 seed 1004 negative read are:
 
-1. Complete S03 seeds 1004-1005 for a 5-seed confirmation attempt.
-2. Keep S20/S21 simple parent/retention controls as backups if S03 loses
-   the 5-seed classic-HV target.
+1. Complete S03 seed 1005 to close the 5-seed confirmation attempt.
+2. Prefer S20/S21 simple parent/retention controls next if S03 loses the
+   5-seed classic-HV target.
 3. Keep S07/S08/S19 capacity interpolation only if coverage remains a
    target after the S03 confirmation.
 4. Keep S11/S12 warmup interpolation only as a secondary AUC check.

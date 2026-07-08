@@ -211,3 +211,35 @@ the suite-first campaign.
   the three-seed aggregate remains within 1.1% of matched classic HV,
   beats classic HV-AUC46, ties classic coverage, and still beats V2 mean
   HV.
+
+## 2026-07-08 - S03 Elite Pareto Slot 2 Seed 1004
+
+- Launched S03 elite-pareto slot 2 over full RTLLM 50 with seed 1004:
+  `exp/natural_qd_push/suite_variants_wave_a_20260708_185527_UTC/live/elite_pareto_slot_2/seed_1004`.
+- vLLM preflight recorded:
+  `preflights/s03_elite_pareto_slot_2_seed1004_20260708_185527_UTC.json`.
+- Runtime completed normally in 4666.62 seconds with 4800 total LLM API
+  calls.
+- Package:
+  `S03_elite_pareto_slot_2/seed_1004/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest. The PPA/HV headline package remains scoped to the 46
+  reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S03 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.103555` HV / `0.089027` AUC46 / `32` covered;
+  V2 `0.101008` HV / `0.086425` AUC46 / `33` covered;
+  S03 `0.094876` HV / `0.080182` AUC46 / `33` covered.
+- Four-seed S03 read:
+  classic `0.103652` HV / `0.086993` AUC46 / `131/184` covered;
+  V2 `0.099485` HV / `0.087753` AUC46 / `133/184` covered;
+  S03 `0.100588` HV / `0.085231` AUC46 / `132/184` covered.
+- Decision:
+  close S03 with seed 1005, but treat the candidate as likely below the
+  classic-HV manuscript target unless seed 1005 recovers unusually
+  strongly. If the final five-seed read remains below classic HV/AUC,
+  pivot to backup suite-first variants instead of opening S03
+  combinations.

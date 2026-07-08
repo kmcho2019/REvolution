@@ -1130,3 +1130,24 @@ verdict log):
   combination variants. The signal is not yet manuscript-grade, but it
   remains the cleanest natural retention-only candidate found in the
   suite-first campaign.
+
+## 2026-07-08 - S03 Confirmation Seed 1004
+
+- Completed and packaged S03 elite-pareto slot 2 seed 1004 under
+  `suite_variant_campaign/S03_elite_pareto_slot_2/seed_1004/`.
+- The run passes the full 50-problem validation manifest and the operator
+  audit with `single_thought_count=0`; it uses `eoh_strategies`,
+  `code_individual`, and the 128k vLLM budget contract.
+- Seed 1004 is a negative S03 confirmation seed: S03 trails matched
+  classic on HV (`0.094876` vs `0.103555`) and HV-AUC46 (`0.080182` vs
+  `0.089027`), and also trails matched V2 on HV/AUC while tying V2
+  coverage (`33/46`).
+- Across seeds 1001-1004, S03 is below the matched classic target:
+  `0.100588` HV vs classic `0.103652`, `0.085231` HV-AUC46 vs classic
+  `0.086993`, with a small coverage gain over classic (`132/184` vs
+  `131/184`). It still beats V2 on mean HV but trails V2 on HV-AUC46 and
+  coverage.
+- Decision: complete seed 1005 to close the registered five-seed
+  confirmation. If the final read remains below classic HV/AUC, record
+  S03 as a clean natural negative or secondary V2-HV variant and pivot to
+  backup suite-first variants rather than S03 combinations.
