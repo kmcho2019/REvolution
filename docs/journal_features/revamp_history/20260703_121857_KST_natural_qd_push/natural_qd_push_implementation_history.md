@@ -1110,3 +1110,23 @@ verdict log):
   arms. This is the first suite-first lane with a credible TCAD
   confirmation signal because the mechanism is a simple MAP-Elites
   retention change, not a trigger/credit heuristic.
+
+## 2026-07-08 - S03 Confirmation Seed 1003
+
+- Completed and packaged S03 elite-pareto slot 2 seed 1003 under
+  `suite_variant_campaign/S03_elite_pareto_slot_2/seed_1003/`.
+- The run passes the full 50-problem validation manifest and the operator
+  audit with `single_thought_count=0`; it uses `eoh_strategies`,
+  `code_individual`, and the 128k vLLM budget contract.
+- Seed 1003 is mixed: S03 trails matched classic on HV (`0.100070` vs
+  `0.102093`) and HV-AUC46 (`0.080866` vs `0.087210`), but covers one
+  more reference-complete problem (`34/46` vs `33/46`) and slightly beats
+  matched V2 HV (`0.100070` vs `0.099854`).
+- Across seeds 1001-1003, S03 remains close to the classic target:
+  `0.102492` HV vs classic `0.103684`, `0.086914` HV-AUC46 vs classic
+  `0.086315`, and equal classic coverage (`99/138`). It beats V2 on mean
+  HV but trails V2 on HV-AUC46 and coverage.
+- Decision: continue S03 seeds 1004-1005 before opening backup or
+  combination variants. The signal is not yet manuscript-grade, but it
+  remains the cleanest natural retention-only candidate found in the
+  suite-first campaign.
