@@ -149,3 +149,34 @@ the suite-first campaign.
   complete seed 1002. S03 does not beat classic on seed 1001, but it is
   the best new Wave A V2-recovery signal so far: it beats V2 on HV and
   AUC while tying V2 coverage with a simple retention-only mechanism.
+
+## 2026-07-08 - S03 Elite Pareto Slot 2 Seed 1002
+
+- Launched S03 elite-pareto slot 2 over full RTLLM 50 with seed 1002:
+  `exp/natural_qd_push/suite_variants_wave_a_20260708_160650_UTC/live/elite_pareto_slot_2/seed_1002`.
+- vLLM preflight recorded:
+  `preflights/s03_elite_pareto_slot_2_seed1002_20260708_160650_UTC.json`.
+- Runtime completed normally in 4662.90 seconds with 4801 total LLM API
+  calls.
+- Package:
+  `S03_elite_pareto_slot_2/seed_1002/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest. The PPA/HV headline package remains scoped to the 46
+  reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S03 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.097557` HV / `0.081183` AUC46 / `33` covered;
+  V2 `0.100310` HV / `0.090753` AUC46 / `33` covered;
+  S03 `0.107216` HV / `0.091135` AUC46 / `33` covered.
+- Two-seed S03 read:
+  classic `0.104479` HV / `0.085867` AUC46 / `66/92` covered;
+  V2 `0.098539` HV / `0.087146` AUC46 / `65/92` covered;
+  S03 `0.103703` HV / `0.089938` AUC46 / `65/92` covered.
+- Decision:
+  promote S03 to five-seed confirmation. The two-seed read is still just
+  below matched classic HV and one covered problem below classic, but it
+  is within one percent of classic HV, beats classic HV-AUC46, and beats
+  V2 on HV and HV-AUC46 while tying V2 coverage.

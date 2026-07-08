@@ -1090,3 +1090,23 @@ verdict log):
 - Both new packages pass full 50-problem manifest validation and operator
   audit with `single_thought_count=0`, preserving the eoh-strategy
   operator contract requested for the journal extension campaign.
+
+## 2026-07-08 - S03 Full-Suite Promotion Signal
+
+- Completed and packaged S03 elite-pareto slot 2 seed 1002 under
+  `suite_variant_campaign/S03_elite_pareto_slot_2/seed_1002/`.
+- The run passes the full 50-problem validation manifest and the operator
+  audit with `single_thought_count=0`; it uses `eoh_strategies`,
+  `code_individual`, and the 128k vLLM budget contract.
+- Seed 1002 is a positive matched-suite read: S03 beats classic on mean
+  HV (`0.107216` vs `0.097557`) and HV-AUC46 (`0.091135` vs `0.081183`)
+  with equal coverage (`33/46`), and also beats V2 on HV/AUC with equal
+  coverage.
+- Across seeds 1001-1002, S03 is near the classic HV target
+  (`0.103703` vs `0.104479`), beats classic HV-AUC46 (`0.089938` vs
+  `0.085867`), and ties V2 coverage (`65/92`) while beating V2 HV and
+  HV-AUC46.
+- Decision: promote S03 to seeds 1003-1005 before opening combination
+  arms. This is the first suite-first lane with a credible TCAD
+  confirmation signal because the mechanism is a simple MAP-Elites
+  retention change, not a trigger/credit heuristic.
