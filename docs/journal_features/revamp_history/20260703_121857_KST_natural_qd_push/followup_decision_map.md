@@ -86,3 +86,12 @@ Pivot to manuscript synthesis from the V2/N03b two-scale characterization
 and this operator-fair negative map. Do not spend more vLLM budget on N07,
 N09, N10, or other one-knob natural variants without a new mechanism card
 that passes the stop rules above.
+
+## 2026-07-08 User-Directed Reopen
+
+The user explicitly requested a more ambitious suite-first continuation
+because the 8-design screen appears weakly correlated with full RTLLM.
+That continuation is tracked separately under
+`suite_variant_campaign/`. It does not invalidate this decision map; it
+changes the research policy from screen-gated follow-ups to direct
+full-suite probing of natural variants.

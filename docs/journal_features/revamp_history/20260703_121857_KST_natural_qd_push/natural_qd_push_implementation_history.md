@@ -1038,3 +1038,16 @@ verdict log):
 - Added a short post-N10 addendum to the canonical
   `natural_qd_push_subagent_validation_report.md` so the goal template's
   named validation surface also records the exhausted-portfolio PASS.
+
+## 2026-07-08 - Suite-First Continuation Opened
+
+- User requested more persistence after the negative-map closure, arguing
+  that the 8-design screen has weak correlation with full RTLLM and that
+  more natural variants should be tested directly on the full suite.
+- Added `suite_variant_campaign/` with a suite-first rationale, literature
+  anchors, variant registry, Wave A pre-registration, command templates,
+  and results log.
+- Policy change: do not treat the old screen-gated stop rule as a ban on
+  full-suite probes. The prior negative map remains valid for the old
+  gate policy; the new campaign is a user-directed continuation seeking a
+  full RTLLM HV/functionality improvement over classic.

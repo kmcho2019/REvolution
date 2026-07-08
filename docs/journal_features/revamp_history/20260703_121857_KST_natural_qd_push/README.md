@@ -50,6 +50,10 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   records PASS for the exhausted-portfolio alternative outcome. The
   remaining compact_8d and held-out items are paper decisions, not
   blockers for this goal's follow-up campaign.
+- Reopened continuation: `suite_variant_campaign/` records the
+  2026-07-08 user-directed suite-first push. It treats the 8-design screen
+  as a weak filter and probes more natural variants directly on full
+  RTLLM before deciding whether a TCAD-positive method exists.
 
 ## Top-Level Docs
 
@@ -61,6 +65,7 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 | `natural_qd_push_implementation_history.md` | Append-only audit log. |
 | `followup_decision_map.md` | Post-N10 operator-fair map of follow-up results, stop rules, and remaining paper decisions. |
 | `negative_map_adversarial_validation_report.md` | Formal PASS review for the exhausted-portfolio alternative outcome. |
+| `suite_variant_campaign/` | New suite-first continuation plan, registry, commands, and results log. |
 | `goal_template.md` | Compact `/goal` body. |
 | `natural_qd_push_adversarial_prompt.md` | Sign-off rubric (PASS/FAIL). |
 | `natural_qd_push_subagent_validation_report.md` | Canonical validator output; includes the post-N10 negative-map PASS addendum. |
