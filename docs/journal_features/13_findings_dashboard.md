@@ -28,7 +28,12 @@ cross-arm bundles + isolated-grade per-task tables), see
   `0.100278` HV vs classic `0.103802`, `0.085114` HV-AUC46 vs classic
   `0.086982`, and `163/230` coverage vs classic `164/230`. It is only a
   secondary V2 final-HV recovery (`0.100278` vs V2 `0.098801`).
-- Next queue: S20/S21 simple parent/retention controls before more
+- S20 cell-crowded parent selection seed 1001 is a clean config-only
+  negative for the primary HV target: `0.089752` HV / `0.082324`
+  HV-AUC46 / `33/46` coverage versus matched classic `0.111401` /
+  `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`.
+  Complete seed 1002 before retiring it.
+- Next queue: S20 seed 1002, then S21 scalar-elite retention before more
   capacity or warmup scans. A read-only audit recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -92,7 +97,7 @@ below on operator-fair evidence:**
   reruns recover 30-46 retention points).
 
 **Last refreshed:** 2026-07-08 (suite-first natural_qd_push full-RTLLM
-continuation through S03 five-seed negative; next S20/S21);
+continuation through S20 seed 1001; next S20 seed 1002/S21);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

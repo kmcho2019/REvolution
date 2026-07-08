@@ -274,3 +274,31 @@ the suite-first campaign.
   retention-only negative against classic and only a secondary final-HV
   recovery over V2. Pivot to S20/S21 parent/retention controls before
   more capacity or warmup scans.
+
+## 2026-07-08 - S20 Cell-Crowded Parent Seed 1001
+
+- Launched S20 cell-crowded parent selection over full RTLLM 50 with seed
+  1001:
+  `exp/natural_qd_push/suite_variants_wave_b_20260708_214449_UTC/live/pareto_front_cell_crowded/seed_1001`.
+- vLLM preflight recorded:
+  `preflights/s20_pareto_front_cell_crowded_seed1001_20260708_214449_UTC.json`.
+- Runtime completed normally in 4657.62 seconds with 4800 total LLM API
+  calls.
+- Package:
+  `S20_pareto_front_cell_crowded/seed_1001/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with full V2 parity pins checked. The PPA/HV headline package
+  remains scoped to the 46 reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S20 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.111401` HV / `0.090551` AUC46 / `33` covered;
+  V2 `0.096767` HV / `0.083539` AUC46 / `32` covered;
+  S20 `0.089752` HV / `0.082324` AUC46 / `33` covered.
+- Decision:
+  do not promote on seed 1001. Complete seed 1002 before retiring S20:
+  the variant is a clean config-only parent-selection test and preserves
+  classic coverage, but seed 1001 loses too much final HV and is slightly
+  below V2 HV-AUC46.

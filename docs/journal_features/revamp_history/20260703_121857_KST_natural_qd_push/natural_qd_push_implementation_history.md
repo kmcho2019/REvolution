@@ -1177,3 +1177,26 @@ verdict log):
   pins, seed 1005 validation checks the same pins, doc 13 gets a
   2026-07-08 suite-first pointer, and future packages should stay compact
   with links to raw `exp/` roots.
+
+## 2026-07-08 - S20 Parent-Selection Seed 1001
+
+- Completed and packaged S20 `pareto_front_cell_crowded` seed 1001 under
+  `suite_variant_campaign/S20_pareto_front_cell_crowded/seed_1001/`.
+- Runtime completed normally in 4657.62 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest with full V2
+  parity pins checked and passes the operator audit with
+  `single_thought_count=0`.
+- Seed 1001 is a parent-selection negative for the primary HV target:
+  S20 trails matched classic on HV (`0.089752` vs `0.111401`) and
+  HV-AUC46 (`0.082324` vs `0.090551`) while tying classic coverage
+  (`33/46`). It also trails matched V2 on HV (`0.089752` vs `0.096767`)
+  and HV-AUC46 (`0.082324` vs `0.083539`) while covering one more
+  reference-complete problem than V2.
+- Mechanism read: cell-local crowded parent selection is yield-neutral
+  but HV-diluting on this seed. It slightly increases front material
+  relative to V2, but the extra material does not concentrate into
+  stronger suite-scale PPA hypervolume.
+- Decision: complete the registered S20 seed 1002 probe before retiring
+  the variant. If the two-seed read stays below classic/V2 on HV and
+  AUC, close S20 as a clean natural parent-selection negative and move
+  to S21 scalar-elite retention.
