@@ -1151,3 +1151,29 @@ verdict log):
   confirmation. If the final read remains below classic HV/AUC, record
   S03 as a clean natural negative or secondary V2-HV variant and pivot to
   backup suite-first variants rather than S03 combinations.
+
+## 2026-07-08 - S03 Five-Seed Confirmation Closed
+
+- Completed and packaged S03 elite-pareto slot 2 seed 1005 under
+  `suite_variant_campaign/S03_elite_pareto_slot_2/seed_1005/`.
+- Runtime completed normally in 4688.36 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest with full V2
+  parity pins checked and passes the operator audit with
+  `single_thought_count=0`.
+- Seed 1005 is negative: S03 trails matched classic on HV (`0.099037` vs
+  `0.104404`), HV-AUC46 (`0.084646` vs `0.086940`), and coverage
+  (`31/46` vs `33/46`).
+- Five-seed S03 closes below classic on all primary gates:
+  `0.100278` HV vs classic `0.103802`, `0.085114` HV-AUC46 vs classic
+  `0.086982`, and `163/230` coverage vs classic `164/230`. It does beat
+  V2 final HV (`0.100278` vs `0.098801`) but trails V2 HV-AUC46 and
+  coverage.
+- Decision: do not open S03 combination arms from this evidence alone.
+  Pivot the full-suite campaign to S20/S21, which isolate native
+  MAP-Elites parent pressure and scalar one-elite cell retention without
+  new engine code.
+- Read-only audit recorded in `reviews/suite_campaign_audit_20260708.md`.
+  Warnings addressed here: command template now includes full V2 parity
+  pins, seed 1005 validation checks the same pins, doc 13 gets a
+  2026-07-08 suite-first pointer, and future packages should stay compact
+  with links to raw `exp/` roots.

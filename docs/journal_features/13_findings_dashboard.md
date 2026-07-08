@@ -17,6 +17,22 @@ cross-arm bundles + isolated-grade per-task tables), see
 `PRELIMINARY` one seed, replication pending ·
 `MECHANISM-VERIFIED` process confirmed live, outcome tracked separately.
 
+**MAJOR UPDATE 2026-07-08 — suite-first natural_qd_push continuation
+(`revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/`):**
+- Small-screen transfer is now treated as weak. The new campaign uses
+  full RTLLM probes directly, with screens only for debugging/extraction.
+- S01 capacity7 and S02 warmup16 are two-seed full-suite negatives for
+  the primary target.
+- S03 elite-pareto slot 2 was promoted after a two-seed signal, but the
+  five-seed confirmation closed below classic on all primary gates:
+  `0.100278` HV vs classic `0.103802`, `0.085114` HV-AUC46 vs classic
+  `0.086982`, and `163/230` coverage vs classic `164/230`. It is only a
+  secondary V2 final-HV recovery (`0.100278` vs V2 `0.098801`).
+- Next queue: S20/S21 simple parent/retention controls before more
+  capacity or warmup scans. A read-only audit recorded WARN, not FAIL:
+  naturalness/operator parity are intact, but command templates and doc
+  navigation needed this refresh.
+
 **MAJOR UPDATE 2026-07-04 — the natural_qd_push campaign
 (`revamp_history/20260703_121857_KST_natural_qd_push/`,
 `central_comparison_report.md` there) supersedes several findings
@@ -75,7 +91,9 @@ below on operator-fair evidence:**
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
+**Last refreshed:** 2026-07-08 (suite-first natural_qd_push full-RTLLM
+continuation through S03 five-seed negative; next S20/S21);
+previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the

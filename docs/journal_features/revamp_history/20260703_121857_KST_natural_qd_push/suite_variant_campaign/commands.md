@@ -13,6 +13,12 @@ All Wave A commands follow the P3 full RTLLM command shape:
 - `--representation_kind code_individual`.
 - `--qd_operator_kind eoh_strategies`.
 - `--eoh_success_operator_set classic`.
+- V2 parity pins unless the arm explicitly changes one of them:
+  `--qd_parent_selection nsga2_global_rank`, `--qd_archive_type
+  grid_quantile`, `--qd_descriptor_profile journal_logic_ff_width_3d`,
+  `--qd_num_cells 16`, `--qd_grid_quantile_warmup_successes 8`,
+  `--qd_cell_mode pareto_front`, `--qd_max_elites_per_cell 5`, and
+  `--qd_rebinning_kind ks_triggered`.
 - `--no-backend_subdir`.
 
 ## S01 Capacity 7
@@ -60,5 +66,16 @@ Use the P3 package chain per seed:
 4. `scripts/audit_operator_contract.py`.
 5. `scripts/validate_natural_qd_run.py`.
 
+Validation packages should assert the shared pins above plus the
+variant-specific changed pins. This keeps the curated package contract as
+strict as the live launch command and prevents silent drift in
+suite-level comparisons.
+
 Then update `results_log.md`, `variant_registry.csv`, and the campaign
 README before any promotion decision.
+
+For negative probe or confirmation packages, keep the curated docs copy
+compact: summary JSON, CSV data/tables, validation output, operator
+audit, and a short result report are sufficient. Leave broad
+per-problem figure trees in the raw `exp/` root unless a figure is
+selected for paper-facing analysis.

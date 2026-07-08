@@ -243,3 +243,34 @@ the suite-first campaign.
   strongly. If the final five-seed read remains below classic HV/AUC,
   pivot to backup suite-first variants instead of opening S03
   combinations.
+
+## 2026-07-08 - S03 Elite Pareto Slot 2 Seed 1005
+
+- Launched S03 elite-pareto slot 2 over full RTLLM 50 with seed 1005:
+  `exp/natural_qd_push/suite_variants_wave_a_20260708_201819_UTC/live/elite_pareto_slot_2/seed_1005`.
+- vLLM preflight recorded:
+  `preflights/s03_elite_pareto_slot_2_seed1005_20260708_201819_UTC.json`.
+- Runtime completed normally in 4688.36 seconds with 4800 total LLM API
+  calls.
+- Package:
+  `S03_elite_pareto_slot_2/seed_1005/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with full V2 parity pins checked. The PPA/HV headline package
+  remains scoped to the 46 reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S03 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.104404` HV / `0.086940` AUC46 / `33` covered;
+  V2 `0.096063` HV / `0.086125` AUC46 / `33` covered;
+  S03 `0.099037` HV / `0.084646` AUC46 / `31` covered.
+- Five-seed S03 read:
+  classic `0.103802` HV / `0.086982` AUC46 / `164/230` covered;
+  V2 `0.098801` HV / `0.087428` AUC46 / `166/230` covered;
+  S03 `0.100278` HV / `0.085114` AUC46 / `163/230` covered.
+- Decision:
+  do not promote S03 as the TCAD primary extension. It is a clean
+  retention-only negative against classic and only a secondary final-HV
+  recovery over V2. Pivot to S20/S21 parent/retention controls before
+  more capacity or warmup scans.
