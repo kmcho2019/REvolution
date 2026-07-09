@@ -1,6 +1,6 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T18:10:00Z.
+Last updated: 2026-07-09T18:18:45Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
 `suite_variant_campaign/S22_front_slot_lane_010/seed_1002`.
@@ -227,9 +227,11 @@ No new long process is active. The conservative next executable options
 are:
 
 1. Treat S22 as an HV-AUC-positive front-slot control, not a primary arm.
-2. S04/S05 descriptor completion to five seeds if descriptor-health
+2. Run S07 capacity3 if continuing the primary-HV search after restart.
+   It is the one-knob opposite direction from S01 capacity7; the exact
+   seed-1001 preflight+launch block is in `commands.md`.
+3. S04/S05 descriptor completion to five seeds if descriptor-health
    evidence is needed.
-3. S07/S08 capacity interpolation only if coverage remains worth probing.
 
 Avoid combination arms unless a single-factor full-suite result gives a
 positive signal.
@@ -248,3 +250,7 @@ command template is not enough; the invalid S09 attempt showed that
 missing `qd_champion_lane_fraction=0.5` can silently invalidate a run.
 Keep future packages compact and do not copy broad figure trees into
 docs.
+
+S07 capacity3 now has that exact launch block and should be preferred
+over S10 if the next turn is allowed to start a long run. Do not start it
+before restart unless explicitly requested.

@@ -483,35 +483,6 @@ the suite-first campaign.
   `max_model_len=131072`. No seed metrics should be reported until the
   full 50-problem run completes and the standard package chain passes.
 
-## 2026-07-09 - S22 Front-Slot Lane 0.10 Two-Seed Closure
-
-- Completed S22 front-slot lane 0.10 seed 1002 normally in 4747.64
-  seconds with 4800 LLM API calls.
-- Package:
-  `S22_front_slot_lane_010/seed_1002/`.
-- Validation:
-  `tables/run_validation.json` passes against the full 50-problem RTLLM
-  manifest with the S22 config pins checked.
-- Operator audit:
-  `tables/operator_contract.csv` passes; S22 seed 1002 has
-  `single_thought_count=0`.
-- Seed 1002 read:
-  classic `0.097557` HV / `0.081183` AUC46 / `33` covered;
-  V2 `0.100310` HV / `0.090753` AUC46 / `33` covered;
-  S22 `0.100856` HV / `0.089351` AUC46 / `32` covered.
-- Two-seed S22 read:
-  classic `0.104479` HV / `0.085867` AUC46 / `66/92` covered;
-  V2 `0.098539` HV / `0.087146` AUC46 / `65/92` covered;
-  S22 `0.101722` HV / `0.089115` AUC46 / `66/92` covered.
-- Classification:
-  `HV-AUC-positive front-slot control`. S22 beats V2 on all two-seed
-  aggregate metrics and beats classic on HV-AUC46 while tying classic
-  coverage, but it still trails classic final HV.
-- Decision:
-  do not promote S22 to five seeds as a primary TCAD arm. Keep it as
-  natural parent-source evidence and move the primary search toward a
-  mechanism that can recover classic final HV.
-
 ## 2026-07-09 - S09 Front-Slot Lane 0.20 Two-Seed Closure
 
 - Completed S09 front-slot lane 0.20 seed 1002 normally in 4731.28
@@ -601,3 +572,48 @@ the suite-first campaign.
   run has started and printed the vLLM preflight line with
   `max_model_len=131072`. No seed metrics should be reported until the
   full 50-problem run completes and the standard package chain passes.
+
+## 2026-07-09 - S22 Front-Slot Lane 0.10 Two-Seed Closure
+
+- Completed S22 front-slot lane 0.10 seed 1002 normally in 4747.64
+  seconds with 4800 LLM API calls.
+- Package:
+  `S22_front_slot_lane_010/seed_1002/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with the S22 config pins checked.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S22 seed 1002 has
+  `single_thought_count=0`.
+- Seed 1002 read:
+  classic `0.097557` HV / `0.081183` AUC46 / `33` covered;
+  V2 `0.100310` HV / `0.090753` AUC46 / `33` covered;
+  S22 `0.100856` HV / `0.089351` AUC46 / `32` covered.
+- Two-seed S22 read:
+  classic `0.104479` HV / `0.085867` AUC46 / `66/92` covered;
+  V2 `0.098539` HV / `0.087146` AUC46 / `65/92` covered;
+  S22 `0.101722` HV / `0.089115` AUC46 / `66/92` covered.
+- Classification:
+  `HV-AUC-positive front-slot control`. S22 beats V2 on all two-seed
+  aggregate metrics and beats classic on HV-AUC46 while tying classic
+  coverage, but it still trails classic final HV.
+- Decision:
+  do not promote S22 to five seeds as a primary TCAD arm. Keep it as
+  natural parent-source evidence and move the primary search toward a
+  mechanism that can recover classic final HV.
+
+## 2026-07-09 - Post-S22 Next Launch Block Prepared
+
+- No new full-suite run launched. The handoff remains restart-safe with
+  no active benchmark or report process.
+- Added an exact S07 capacity3 seed-1001 preflight+launch block to
+  `commands.md` with all V2 parity pins expanded.
+- Rationale:
+  S01 capacity7 showed a small coverage signal with a large HV tax; S07
+  tests the opposite one-knob direction, reducing per-cell front capacity
+  from five to three to check whether less in-cell crowding restores
+  selection pressure while preserving coverage.
+- Decision:
+  after restart, prefer S07 over S10 for the next primary-HV probe if a
+  new long run is allowed. Keep S04/S05 descriptor completions for
+  descriptor-health evidence, not as the primary HV search.

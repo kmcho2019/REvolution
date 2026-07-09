@@ -63,6 +63,81 @@ Save under one of:
 - `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/capacity9/seed_<seed>`
 - `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/capacity11/seed_<seed>`
 
+### S07 Capacity 3 Seed 1001 Launch
+
+Use this as the first post-restart primary-search run if continuing the
+capacity/interpolation branch. It changes only
+`qd_max_elites_per_cell=3` from the V2 suite contract.
+
+```bash
+TS=$(date -u +%Y%m%d_%H%M%S_UTC)
+ROOT="/workspace/exp/natural_qd_push/suite_variants_wave_b_${TS}"
+RUN_DIR="$ROOT/live/capacity3/seed_1001"
+LOG="$ROOT/launch_capacity3_seed1001.log"
+PREFLIGHT="docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/preflights/s07_capacity3_seed1001_${TS}.json"
+mkdir -p "$ROOT" "$(dirname "$PREFLIGHT")"
+uv run python - <<PY
+import json
+from datetime import UTC, datetime
+from pathlib import Path
+from revolution.vllm_preflight import preflight_vllm_model
+
+path = Path("$PREFLIGHT")
+preflight = preflight_vllm_model(
+    host="20.0.0.103",
+    port=8000,
+    min_model_len=128000,
+    timeout_s=5.0,
+)
+max_model_len = preflight.get("max_model_len")
+payload = {
+    "endpoint": "http://20.0.0.103:8000/v1/models",
+    "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "max_model_len": max_model_len,
+    "min_required": 128000,
+    "model": preflight.get("model_id") or preflight.get("model"),
+    "status": "pass" if max_model_len and int(max_model_len) >= 128000 else "fail",
+}
+path.write_text(json.dumps(payload, indent=2) + "\n")
+print(json.dumps(payload, indent=2))
+assert payload["status"] == "pass"
+assert payload["model"] == "openai/gpt-oss-120b"
+PY
+OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} uv run python scripts/run_backend.py \
+  --backend revolution \
+  --search_mode revolution_qd \
+  --benchmarks RTLLM \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 128000 \
+  --model_name openai/gpt-oss-120b \
+  --population_size 8 \
+  --num_generations 5 \
+  --total_worker_slots 48 \
+  --max_active_problems 12 \
+  --max_workers_per_problem 4 \
+  --evaluation_mode strict_ablation \
+  --classic_operator_kind eoh_strategies \
+  --eoh_success_operator_set classic \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_archive_type grid_quantile \
+  --qd_descriptor_profile journal_logic_ff_width_3d \
+  --qd_num_cells 16 \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 3 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_rebinning_kind ks_triggered \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --seed 1001 \
+  --save_path "$RUN_DIR" \
+  --no-backend_subdir 2>&1 | tee "$LOG"
+```
+
 ## S09/S22/S10 Front-Slot Lane Interpolation
 
 Change:

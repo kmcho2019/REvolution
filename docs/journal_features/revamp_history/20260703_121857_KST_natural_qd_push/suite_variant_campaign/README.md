@@ -118,10 +118,14 @@ Near-term executable choices after S22 closure are:
    unless a later mechanism specifically motivates revisiting them.
 3. Treat S22 as an HV-AUC-positive front-slot interpolation control, not
    as the primary TCAD arm.
-4. Complete S04/S05 descriptor-health controls only if the manuscript
+4. Run S07 capacity3 after restart if continuing the primary-HV search.
+   It is the opposite capacity direction from S01 capacity7: less
+   in-cell crowding, one clean knob, and an exact launch block in
+   `commands.md`.
+5. Complete S04/S05 descriptor-health controls only if the manuscript
    needs descriptor evidence, not as primary HV candidates.
-5. Keep S07/S08/S19 capacity interpolation only if coverage remains a
-   target after the S03 confirmation.
-6. Keep S11/S12 warmup interpolation only as a secondary AUC check.
-7. Run S23-S26 descriptor reductions only after an extraction/config
+6. Keep S08/S19 larger-capacity interpolation only if coverage remains a
+   target after S07.
+7. Keep S11/S12 warmup interpolation only as a secondary AUC check.
+8. Run S23-S26 descriptor reductions only after an extraction/config
    smoke.

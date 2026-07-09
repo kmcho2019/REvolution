@@ -1377,3 +1377,18 @@ verdict log):
   useful evidence that a conservative front-slot lane can improve
   trajectory quality while preserving two-seed coverage, but it does not
   meet the journal gate of matching classic final HV.
+
+## 2026-07-09 - Post-S22 S07 Launch Block
+
+- No new full-suite run was launched. The campaign remains restart-safe
+  with no active benchmark process.
+- Prepared an exact S07 `capacity3` seed-1001 preflight+launch block in
+  `suite_variant_campaign/commands.md`, expanding all V2 parity pins and
+  explicitly retaining `qd_champion_lane_fraction=0.5`.
+- Rationale: S01 capacity7 showed a small coverage signal with a large HV
+  tax. S07 tests the opposite one-knob capacity direction
+  (`qd_max_elites_per_cell=3`) to check whether less in-cell crowding
+  restores selection pressure while preserving coverage.
+- Decision: after restart, prefer S07 over S10 if the next turn is
+  allowed to start a long primary-HV probe. Keep S04/S05 descriptor
+  completions scoped to descriptor-health evidence.
