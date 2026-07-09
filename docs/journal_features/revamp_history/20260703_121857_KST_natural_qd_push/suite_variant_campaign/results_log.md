@@ -642,3 +642,18 @@ the suite-first campaign.
 - Decision:
   do not promote from one seed. Complete seed 1002 only as a two-seed
   replication check; this seed alone does not meet the primary TCAD gate.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1002 Running
+
+- Launched S07 `capacity3` seed 1002:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_195220_UTC/live/capacity3/seed_1002`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_195220_UTC/launch_capacity3_seed1002.log`.
+- vLLM preflight recorded:
+  `preflights/s07_capacity3_seed1002_20260709_195220_UTC.json`.
+- Variant pins are unchanged from S07 seed 1001 except for `seed=1002`.
+- Current status:
+  run has started and printed the vLLM preflight line with
+  `max_model_len=131072`. No seed or two-seed metrics should be
+  reported until the full 50-problem run completes and the standard
+  package chain passes.

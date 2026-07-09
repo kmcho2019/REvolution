@@ -1408,3 +1408,13 @@ verdict log):
   reasonable under the two-seed probe ladder, but the current evidence is
   not a primary journal-arm result because classic final HV and coverage
   remain better.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1002 Launch
+
+- Launched S07 `capacity3` seed 1002 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_195220_UTC/live/capacity3/seed_1002`.
+- vLLM preflight recorded:
+  `suite_variant_campaign/preflights/s07_capacity3_seed1002_20260709_195220_UTC.json`.
+- Variant pins are unchanged from S07 seed 1001 except for `seed=1002`.
+  No metrics should be reported until all 50 RTLLM problems complete and
+  the standard validation/package chain passes.

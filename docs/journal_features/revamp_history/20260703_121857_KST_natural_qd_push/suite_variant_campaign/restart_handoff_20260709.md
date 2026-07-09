@@ -1,14 +1,14 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T19:47:06Z.
+Last updated: 2026-07-09T19:52:22Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
 `suite_variant_campaign/S07_capacity3/seed_1001`.
 
 ## Immediate State
 
-S07 capacity3 seed 1001 has completed and been packaged. There is no
-active full-suite process from this handoff.
+S07 capacity3 seed 1001 has completed and been packaged. S07 capacity3
+seed 1002 is currently running.
 
 ```text
 run root:
@@ -19,6 +19,12 @@ preflight:
 suite_variant_campaign/preflights/s07_capacity3_seed1001_20260709_182124_UTC.json
 package:
 suite_variant_campaign/S07_capacity3/seed_1001
+active run:
+exp/natural_qd_push/suite_variants_wave_b_20260709_195220_UTC/live/capacity3/seed_1002
+active launch log:
+exp/natural_qd_push/suite_variants_wave_b_20260709_195220_UTC/launch_capacity3_seed1002.log
+active preflight:
+suite_variant_campaign/preflights/s07_capacity3_seed1002_20260709_195220_UTC.json
 ```
 
 Observed at this handoff: S07 seed 1001 completed all 50 RTLLM problems
@@ -224,6 +230,10 @@ No S07 seed 1001 process needs to be preserved. After restart, verify the
 S07 seed 1001 package and docs are present before launching any new
 variant.
 
+If S07 seed 1002 is still active, let it finish before launching any
+other full-suite run. If it is gone after a restart, inspect the active
+launch log above and package only if all 50 RTLLM problems completed.
+
 ## Audit Feedback To Carry Forward
 
 Read-only narrative audit verdict: V2 remains the primary natural journal
@@ -256,12 +266,12 @@ direction if the campaign continues after restart.
 
 ## Next Campaign Step After S07 Seed 1001
 
-No new long process is active. The conservative next executable options
-are:
+S07 seed 1002 is active. The conservative next executable options after
+it completes are:
 
 1. Treat S22 as an HV-AUC-positive front-slot control, not a primary arm.
-2. Complete S07 capacity3 seed 1002 only as a replication check. Seed
-   1001 has a real HV-AUC signal, but misses classic final HV and
+2. Package S07 capacity3 seed 1002 and compute the two-seed aggregate.
+   Seed 1001 has a real HV-AUC signal, but misses classic final HV and
    coverage.
 3. S04/S05 descriptor completion to five seeds if descriptor-health
    evidence is needed.
