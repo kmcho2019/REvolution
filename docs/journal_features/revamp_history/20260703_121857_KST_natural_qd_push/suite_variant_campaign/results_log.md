@@ -754,3 +754,20 @@ the suite-first campaign.
   continue to seed 1004 under the pre-registered confirmation ladder.
   Do not claim S07 as a primary final-HV win unless the five-seed
   aggregate clears classic HV and coverage.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1004 Running
+
+- Launched S07 `capacity3` seed 1004:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_225719_UTC/live/capacity3/seed_1004`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_225719_UTC/launch_capacity3_seed1004.log`.
+- vLLM preflight recorded:
+  `preflights/s07_capacity3_seed1004_20260709_225719_UTC.json`.
+- Preflight passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- Variant pins are unchanged from S07 seeds 1001-1003 except for
+  `seed=1004`.
+- Current status:
+  run has started over 50 RTLLM problems. No seed or aggregate metrics
+  should be reported until the full run completes and the standard
+  package chain passes.

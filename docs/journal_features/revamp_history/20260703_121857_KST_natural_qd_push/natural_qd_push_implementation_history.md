@@ -1490,3 +1490,17 @@ verdict log):
 - Decision: continue to seed 1004 under the pre-registered confirmation
   ladder. Do not claim a primary final-HV win unless the five-seed
   aggregate clears classic HV and coverage.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1004 Launch
+
+- Launched S07 `capacity3` seed 1004 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_225719_UTC/live/capacity3/seed_1004`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_225719_UTC/launch_capacity3_seed1004.log`.
+- Preflight recorded at
+  `suite_variant_campaign/preflights/s07_capacity3_seed1004_20260709_225719_UTC.json`;
+  it passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- Variant pins are unchanged from S07 seeds 1001-1003 except for
+  `seed=1004`. No metrics should be reported until all 50 RTLLM
+  problems complete and the standard validation/package chain passes.

@@ -1,14 +1,14 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T22:54:28Z.
+Last updated: 2026-07-09T22:57:36Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
 `suite_variant_campaign/S07_capacity3/seed_1003`.
 
 ## Immediate State
 
-S07 capacity3 seed 1003 has completed and been packaged. There is no
-active full-suite process from this handoff.
+S07 capacity3 seed 1003 has completed and been packaged. S07 seed 1004
+is active as the next near-miss confirmation run.
 
 ```text
 seed 1001 run root:
@@ -35,6 +35,12 @@ seed 1003 preflight:
 suite_variant_campaign/preflights/s07_capacity3_seed1003_20260709_213030_UTC.json
 seed 1003 package:
 suite_variant_campaign/S07_capacity3/seed_1003
+active seed 1004 run root:
+exp/natural_qd_push/suite_variants_wave_b_20260709_225719_UTC/live/capacity3/seed_1004
+active seed 1004 launch log:
+exp/natural_qd_push/suite_variants_wave_b_20260709_225719_UTC/launch_capacity3_seed1004.log
+active seed 1004 preflight:
+suite_variant_campaign/preflights/s07_capacity3_seed1004_20260709_225719_UTC.json
 ```
 
 Observed at this handoff: S07 seed 1002 completed all 50 RTLLM problems
@@ -44,6 +50,10 @@ the full 50-problem run validation and operator audit.
 Observed after launch: S07 seed 1003 completed all 50 RTLLM problems
 normally in 4722.00 seconds with 4800 LLM API calls. The package passes
 the full 50-problem run validation and operator audit.
+
+Observed after seed 1004 launch: the vLLM preflight passed with model
+`openai/gpt-oss-120b` and `max_model_len=131072`, then the 50-problem
+RTLLM run started.
 
 The earlier S09 launch rooted at
 `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC` was
@@ -260,9 +270,13 @@ and that inflates the score.
 
 ## If The Server Restarts
 
-No S07 seed 1003 process needs to be preserved. After restart, verify the
-S07 seed 1003 package and docs are present before launching any new
-variant.
+S07 seed 1004 is the only active run from this handoff. Let it finish
+before launching another full-suite process. If a restart interrupts it,
+inspect the active launch log above and package only if all 50 RTLLM
+problems completed.
+
+S07 seed 1003 is already packaged and does not need to be preserved as a
+process.
 
 ## Audit Feedback To Carry Forward
 
@@ -309,8 +323,8 @@ self-contained with `classic_operator_kind=eoh_strategies`.
 
 The conservative next executable steps are:
 
-1. Launch S07 capacity3 seed 1004 as the next near-miss confirmation run
-   if the vLLM preflight passes.
+1. Let S07 capacity3 seed 1004 finish and package it with the standard
+   compact report chain.
 2. Keep S22 as an HV-AUC-positive front-slot control, not a primary arm.
 3. Keep S04/S05 descriptor completion for descriptor-health evidence if
    S07 confirmation does not clear the primary final-HV gate.
@@ -333,6 +347,6 @@ missing `qd_champion_lane_fraction=0.5` can silently invalidate a run.
 Keep future packages compact and do not copy broad figure trees into
 docs.
 
-S07 capacity3 seed 1003 is now packaged. S07 seed 1004 is prepared in
-`commands.md`. Do not describe S07 as promotion-ready unless the final
-five-seed aggregate clears the primary final-HV and coverage gates.
+S07 capacity3 seed 1003 is now packaged. S07 seed 1004 is active. Do not
+describe S07 as promotion-ready unless the final five-seed aggregate
+clears the primary final-HV and coverage gates.
