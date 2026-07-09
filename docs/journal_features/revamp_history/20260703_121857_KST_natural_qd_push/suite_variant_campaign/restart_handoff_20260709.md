@@ -1,29 +1,29 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T15:11:11Z.
+Last updated: 2026-07-09T15:14:03Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
-Current completed result package:
-`suite_variant_campaign/S09_front_slot_lane_020/seed_1002`.
+Current active run:
+`exp/natural_qd_push/suite_variants_wave_b_20260709_151403_UTC/live/front_slot_lane_010/seed_1001`.
 
 ## Immediate State
 
-S09 seed 1002 has completed and been packaged. There is no active
-full-suite process from this handoff.
+S22 seed 1001 is the active full-suite run. Do not launch another long
+full-suite process while this run is active.
 
 ```text
 run root:
-exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/live/front_slot_lane_020/seed_1002
+exp/natural_qd_push/suite_variants_wave_b_20260709_151403_UTC/live/front_slot_lane_010/seed_1001
 launch log:
-exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/launch_front_slot_lane_020_seed1002.log
+exp/natural_qd_push/suite_variants_wave_b_20260709_151403_UTC/launch_front_slot_lane_010_seed1001.log
 preflight:
-suite_variant_campaign/preflights/s09_front_slot_lane_020_seed1002_20260709_134750_UTC.json
+suite_variant_campaign/preflights/s22_front_slot_lane_010_seed1001_20260709_151403_UTC.json
 package:
-suite_variant_campaign/S09_front_slot_lane_020/seed_1002
+pending
 ```
 
-Observed at this handoff: S09 seed 1002 completed all 50 RTLLM problems
-normally in 4731.28 seconds with 4800 LLM API calls. The package passes
-the full 50-problem run validation and operator audit.
+Observed at this handoff: S22 seed 1001 has a passing vLLM preflight
+with `max_model_len=131072`. No seed metrics should be reported until
+all 50 RTLLM problems complete and the standard package chain passes.
 
 The earlier S09 launch rooted at
 `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC` was
@@ -69,6 +69,29 @@ Across two seeds, S09 is a front-loss control, not a promotion arm:
 S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs classic
 `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` /
 `65/92`.
+
+## S22 Contract
+
+S22 is the conservative front-slot interpolation probe:
+
+```text
+--qd_cell_mode elite_pareto_slot
+--qd_max_elites_per_cell 2
+--qd_parent_selection front_slot_lane_nsga2
+--qd_front_slot_lane_fraction 0.10
+--qd_champion_lane_fraction 0.5
+--qd_descriptor_profile journal_logic_ff_width_3d
+--qd_archive_type grid_quantile
+--qd_grid_quantile_warmup_successes 8
+--qd_rebinning_kind ks_triggered
+--qd_operator_kind eoh_strategies
+--classic_operator_kind eoh_strategies
+--eoh_success_operator_set classic
+--representation_kind code_individual
+--max_tokens 128000
+--diff_max_tokens 128000
+--evaluation_mode strict_ablation
+```
 
 ## S21 Contract
 
@@ -148,8 +171,9 @@ and that inflates the score.
 
 ## If The Server Restarts
 
-No S09 process needs to be preserved. After restart, verify the S09 seed
-1002 package and docs are present before launching any new variant.
+If interrupted, preserve the active S22 seed 1001 process if it is still
+running. If it has completed, package it before launching any new
+variant.
 
 ## Audit Feedback To Carry Forward
 
@@ -183,11 +207,11 @@ direction if the campaign continues after restart.
 
 ## Next Campaign Step After S09 Closure
 
-No new long process is active. The conservative next executable options
-are:
+No new long process should start while S22 seed 1001 is active. After
+S22 seed 1001 is packaged, the conservative next executable options are:
 
-1. S22 front-slot lane 0.10 as a conservative adjacent parent-source
-   interpolation, if the campaign continues this family.
+1. Promote S22 to seed 1002 only if seed 1001 recovers the S09
+   front-loss while preserving HV-AUC/coverage.
 2. S04/S05 descriptor completion to five seeds if descriptor-health
    evidence is needed.
 3. S07/S08 capacity interpolation only if coverage remains worth probing.

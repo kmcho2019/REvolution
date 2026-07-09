@@ -511,3 +511,23 @@ the suite-first campaign.
   do not promote S09 to five seeds. Treat front-slot lane 0.20 as a
   natural parent-source interpolation control, not a TCAD primary-arm
   candidate.
+
+## 2026-07-09 - S22 Front-Slot Lane 0.10 Seed 1001 Running
+
+- Launched S22 front-slot lane 0.10 over full RTLLM 50 with seed 1001:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_151403_UTC/live/front_slot_lane_010/seed_1001`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_151403_UTC/launch_front_slot_lane_010_seed1001.log`.
+- vLLM preflight recorded:
+  `preflights/s22_front_slot_lane_010_seed1001_20260709_151403_UTC.json`.
+- Variant pins:
+  `qd_cell_mode=elite_pareto_slot`,
+  `qd_max_elites_per_cell=2`,
+  `qd_parent_selection=front_slot_lane_nsga2`,
+  `qd_front_slot_lane_fraction=0.10`, and
+  `qd_champion_lane_fraction=0.5`, with all other V2 parity pins
+  retained.
+- Current status:
+  run has not yet produced metrics. No seed metrics should be reported
+  until the full 50-problem run completes and the standard package chain
+  passes.

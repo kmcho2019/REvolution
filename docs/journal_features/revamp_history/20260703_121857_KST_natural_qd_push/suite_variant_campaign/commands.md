@@ -134,6 +134,53 @@ OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} uv run python scripts/r
   --no-backend_subdir 2>&1 | tee "$LOG"
 ```
 
+### Current S22 Seed 1001 Launch
+
+S22 is the conservative front-slot interpolation check after S09
+front-loss closure. It changes only the front-slot lane fraction from
+`0.20` to `0.10` relative to S09.
+
+```bash
+ROOT=/workspace/exp/natural_qd_push/suite_variants_wave_b_20260709_151403_UTC
+RUN_DIR="$ROOT/live/front_slot_lane_010/seed_1001"
+LOG="$ROOT/launch_front_slot_lane_010_seed1001.log"
+mkdir -p "$ROOT"
+OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} uv run python scripts/run_backend.py \
+  --backend revolution \
+  --search_mode revolution_qd \
+  --benchmarks RTLLM \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 128000 \
+  --model_name openai/gpt-oss-120b \
+  --population_size 8 \
+  --num_generations 5 \
+  --total_worker_slots 48 \
+  --max_active_problems 12 \
+  --max_workers_per_problem 4 \
+  --evaluation_mode strict_ablation \
+  --classic_operator_kind eoh_strategies \
+  --eoh_success_operator_set classic \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_archive_type grid_quantile \
+  --qd_descriptor_profile journal_logic_ff_width_3d \
+  --qd_num_cells 16 \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode elite_pareto_slot \
+  --qd_max_elites_per_cell 2 \
+  --qd_parent_selection front_slot_lane_nsga2 \
+  --qd_front_slot_lane_fraction 0.10 \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_rebinning_kind ks_triggered \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --seed 1001 \
+  --save_path "$RUN_DIR" \
+  --no-backend_subdir 2>&1 | tee "$LOG"
+```
+
 ## S20 Cell-Crowded Parent Selection
 
 Change only:
