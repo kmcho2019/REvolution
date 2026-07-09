@@ -84,7 +84,7 @@ known extraction failures before expensive descriptors.
 | S03 | five seeds packaged; not promoted | Slot-2 closes at 96.6% of classic HV, 97.9% of classic HV-AUC, and 163/230 coverage. It recovers V2 final HV to 101.5% of V2, but trails classic on all primary gates. |
 | S20 | two seeds packaged; not promoted | Seed 1002 beats matched classic on HV/AUC with equal coverage, but the two-seed read remains below classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S21 | two seeds packaged; not promoted | Scalar-elite retention closes as a clean negative control: S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
-| S09 | seed 1001 packaged; seed 1002 pending restart | Positive single-seed front-slot interpolation read: S09 `0.102139` HV / `0.093403` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Complete seed 1002 after restart. |
+| S09 | seed 1001 packaged; seed 1002 running | Positive single-seed front-slot interpolation read: S09 `0.102139` HV / `0.093403` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Seed 1002 is running under `exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/live/front_slot_lane_020/seed_1002`. |
 
 ## Initial Wave Choice
 
@@ -111,9 +111,9 @@ before any full-suite run.
 
 Near-term executable choices after S09 seed 1001 are:
 
-1. Complete S09 seed 1002 after restart before any new variant, because
-   seed 1001 is the first Wave B probe to beat classic on HV-AUC46 and
-   coverage while also beating V2 on final HV.
+1. Complete and package the active S09 seed 1002 run before any new
+   variant, because seed 1001 is the first Wave B probe to beat classic
+   on HV-AUC46 and coverage while also beating V2 on final HV.
 2. Use S20 and S21 only as negative parent-selection/retention controls
    unless a later mechanism specifically motivates revisiting them.
 3. Keep S22 front-slot lane 0.10 as the adjacent conservative

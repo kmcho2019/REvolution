@@ -402,7 +402,7 @@ the suite-first campaign.
   MAP-Elites control, but it trails matched classic on HV, HV-AUC46, and
   coverage and trails V2 on HV/HV-AUC46 while only tying V2 coverage.
 
-## 2026-07-09 - S09 Front-Slot Lane 0.20 Seed 1001 Running
+## 2026-07-09 - INVALID - S09 Front-Slot Lane 0.20 Seed 1001 Attempt
 
 - Launched S09 front-slot lane 0.20 over full RTLLM 50 with seed 1001:
   `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC/live/front_slot_lane_020/seed_1001`.
@@ -462,3 +462,23 @@ the suite-first campaign.
   final HV and beats both classic and V2 on HV-AUC46 and coverage, but it
   still trails matched classic final HV. Complete seed 1002 after the
   planned server restart before considering five-seed confirmation.
+
+## 2026-07-09 - S09 Front-Slot Lane 0.20 Seed 1002 Running
+
+- Launched S09 front-slot lane 0.20 over full RTLLM 50 with seed 1002:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/live/front_slot_lane_020/seed_1002`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/launch_front_slot_lane_020_seed1002.log`.
+- vLLM preflight recorded:
+  `preflights/s09_front_slot_lane_020_seed1002_20260709_134750_UTC.json`.
+- Variant pins:
+  `qd_cell_mode=elite_pareto_slot`,
+  `qd_max_elites_per_cell=2`,
+  `qd_parent_selection=front_slot_lane_nsga2`,
+  `qd_front_slot_lane_fraction=0.20`, and
+  `qd_champion_lane_fraction=0.5`, with all other V2 parity pins
+  retained.
+- Current status:
+  run has started and printed the vLLM preflight line with
+  `max_model_len=131072`. No seed metrics should be reported until the
+  full 50-problem run completes and the standard package chain passes.

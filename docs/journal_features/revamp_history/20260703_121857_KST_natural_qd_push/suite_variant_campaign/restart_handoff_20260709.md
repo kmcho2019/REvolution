@@ -1,34 +1,30 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T11:59:13Z.
+Last updated: 2026-07-09T13:47:50Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
-Current completed result package:
-`suite_variant_campaign/S09_front_slot_lane_020/seed_1001`.
+Current active run:
+`exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/live/front_slot_lane_020/seed_1002`.
 
 ## Immediate State
 
-Do not launch another long full-suite run before the planned server restart.
-The corrected S09 seed 1001 long-running benchmark has completed and
-been packaged.
-There is no active full-suite process from this handoff.
+S09 seed 1002 is now the active full-suite run. Do not launch another
+long full-suite process while this run is active.
 
 ```text
 run root:
-exp/natural_qd_push/suite_variants_wave_b_20260709_103042_UTC/live/front_slot_lane_020/seed_1001
+exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/live/front_slot_lane_020/seed_1002
 launch log:
-exp/natural_qd_push/suite_variants_wave_b_20260709_103042_UTC/launch_front_slot_lane_020_seed1001.log
+exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/launch_front_slot_lane_020_seed1002.log
 preflight:
-suite_variant_campaign/preflights/s09_front_slot_lane_020_seed1001_20260709_103042_UTC.json
+suite_variant_campaign/preflights/s09_front_slot_lane_020_seed1002_20260709_134750_UTC.json
 package:
-suite_variant_campaign/S09_front_slot_lane_020/seed_1001
+pending
 ```
 
-Observed at this handoff: S09 seed 1001 completed all 50 RTLLM problems
-normally in 4809.40 seconds with 4800 LLM API calls. The package passes
-the full 50-problem run validation and operator audit. It is a positive
-single-seed probe: S09 `0.102139` HV / `0.093403` HV-AUC46 / `34/46`
-coverage vs matched classic `0.111401` / `0.090551` / `33/46` and V2
-`0.096767` / `0.083539` / `32/46`.
+Observed at this handoff: S09 seed 1002 has started and printed the
+vLLM preflight line with `max_model_len=131072`. No seed 1002 metrics
+should be reported until all 50 RTLLM problems complete and the standard
+package chain passes.
 
 The earlier S09 launch rooted at
 `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC` was
@@ -60,9 +56,14 @@ S09 is the front-slot interpolation probe:
 --evaluation_mode strict_ablation
 ```
 
-Seed 1002 should be the next benchmark after restart. Do not promote S09
-on one seed; final HV still trails matched classic even though HV-AUC46
-and coverage beat both comparators.
+Seed 1001 is already packaged. It is a positive single-seed probe:
+S09 `0.102139` HV / `0.093403` HV-AUC46 / `34/46` coverage vs matched
+classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
+`0.083539` / `32/46`.
+
+Seed 1002 is the active replication run. Do not promote S09 on one seed;
+final HV still trails matched classic even though HV-AUC46 and coverage
+beat both comparators.
 
 ## S21 Contract
 
@@ -96,15 +97,16 @@ only tying V2 coverage.
 
 ## Package Pointers
 
-S09 seed 1001 was packaged with the compact S20/S21 structure:
+After S09 seed 1002 completes, package it with the same compact S20/S21
+structure. Use matched seed 1002 comparators:
 
 ```text
 MANIFEST_YAML=docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_reference_complete_manifest.yaml
 MANIFEST_CSV=docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_full_manifest.csv
-CLASSIC=exp/useful_bd_push/pcn_v3_experiments_20260701/live/rtllm_full_5seed/classic_revolution_8x5/seed_1001
-V2=exp/natural_qd_push/p3_v2_full_rtllm_20260703_101258_UTC/live/smooth_qd_v2_8x5/seed_1001
-ARM=exp/natural_qd_push/suite_variants_wave_b_20260709_103042_UTC/live/front_slot_lane_020/seed_1001
-PKG=docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/S09_front_slot_lane_020/seed_1001
+CLASSIC=exp/useful_bd_push/pcn_v3_experiments_20260701/live/rtllm_full_5seed/classic_revolution_8x5/seed_1002
+V2=exp/natural_qd_push/p3_v2_full_rtllm_20260703_101258_UTC/live/smooth_qd_v2_8x5/seed_1002
+ARM=exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/live/front_slot_lane_020/seed_1002
+PKG=docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/S09_front_slot_lane_020/seed_1002
 ```
 
 The standard package chain was run:
@@ -132,7 +134,8 @@ docs/journal_features/13_findings_dashboard.md
 suite_variant_campaign/restart_handoff_20260709.md
 ```
 
-S09 is classified as a positive single-seed probe pending seed 1002.
+S09 is classified as a positive single-seed probe pending active seed
+1002 completion.
 S21 remains classified as a negative scalar-retention control.
 
 Compute HV-AUC46 with the fixed 46-problem denominator. Do not use a row
@@ -141,10 +144,9 @@ and that inflates the score.
 
 ## If The Server Restarts
 
-No S09 or S21 process needs to be preserved. After restart, verify the
-S09 package and docs are present. The next registered full-suite run is
-S09 seed 1002, but launch it only after the user confirms the server is
-ready.
+If interrupted, preserve the active S09 seed 1002 process if it is still
+running. If it has completed, package it before launching any new
+variant.
 
 ## Audit Feedback To Carry Forward
 
@@ -178,11 +180,12 @@ direction if the campaign continues after restart.
 
 ## Next Campaign Step After S09 Seed 1001
 
-No new long process should start before the restart. After restart and
-S09 seed 1001 packaging, the conservative next executable options are:
+No new long process should start while S09 seed 1002 is active. After
+S09 seed 1002 is packaged, the conservative next executable options are:
 
-1. S09 seed 1002 as the direct replication of the current positive
-   front-slot interpolation signal.
+1. Promote S09 to five seeds only if the two-seed read preserves the
+   HV-AUC/coverage gains and narrows the classic final-HV gap enough to
+   justify confirmation.
 2. S22 front-slot lane 0.10 only if S09 seed 1002 is encouraging but too
    volatile.
 3. S04/S05 descriptor completion to five seeds if descriptor-health
