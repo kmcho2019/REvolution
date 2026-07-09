@@ -1,34 +1,36 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T19:52:22Z.
+Last updated: 2026-07-09T21:19:14Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
-`suite_variant_campaign/S07_capacity3/seed_1001`.
+`suite_variant_campaign/S07_capacity3/seed_1002`.
 
 ## Immediate State
 
-S07 capacity3 seed 1001 has completed and been packaged. S07 capacity3
-seed 1002 is currently running.
+S07 capacity3 seed 1002 has completed and been packaged. There is no
+active full-suite process from this handoff.
 
 ```text
-run root:
+seed 1001 run root:
 exp/natural_qd_push/suite_variants_wave_b_20260709_182124_UTC/live/capacity3/seed_1001
-launch log:
+seed 1001 launch log:
 exp/natural_qd_push/suite_variants_wave_b_20260709_182124_UTC/launch_capacity3_seed1001.log
-preflight:
+seed 1001 preflight:
 suite_variant_campaign/preflights/s07_capacity3_seed1001_20260709_182124_UTC.json
-package:
+seed 1001 package:
 suite_variant_campaign/S07_capacity3/seed_1001
-active run:
+seed 1002 run root:
 exp/natural_qd_push/suite_variants_wave_b_20260709_195220_UTC/live/capacity3/seed_1002
-active launch log:
+seed 1002 launch log:
 exp/natural_qd_push/suite_variants_wave_b_20260709_195220_UTC/launch_capacity3_seed1002.log
-active preflight:
+seed 1002 preflight:
 suite_variant_campaign/preflights/s07_capacity3_seed1002_20260709_195220_UTC.json
+seed 1002 package:
+suite_variant_campaign/S07_capacity3/seed_1002
 ```
 
-Observed at this handoff: S07 seed 1001 completed all 50 RTLLM problems
-normally in 4763.21 seconds with 4800 LLM API calls. The package passes
+Observed at this handoff: S07 seed 1002 completed all 50 RTLLM problems
+normally in 4758.87 seconds with 4800 LLM API calls. The package passes
 the full 50-problem run validation and operator audit.
 
 The earlier S09 launch rooted at
@@ -142,9 +144,19 @@ but not a primary classic win: S07 `0.100296` HV / `0.091895` HV-AUC46 /
 `32/46` coverage vs matched classic `0.111401` / `0.090551` / `33/46`
 and V2 `0.096767` / `0.083539` / `32/46`.
 
-Do not promote S07 from one seed. A seed 1002 replication is reasonable
-under the two-seed probe ladder, but this seed alone fails the primary
-classic final-HV and coverage gates.
+Seed 1002 is packaged. It beats matched classic on final HV and coverage
+but not HV-AUC46: S07 `0.105630` HV / `0.088873` HV-AUC46 / `34/46`
+coverage vs classic `0.097557` / `0.081183` / `33/46` and V2
+`0.100310` / `0.090753` / `33/46`.
+
+Across two seeds, S07 is the strongest capacity-control near-miss:
+S07 `0.102963` HV / `0.090384` HV-AUC46 / `66/92` coverage vs classic
+`0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` /
+`65/92`.
+
+Do not claim S07 as a primary final-HV win. It beats V2, beats classic
+on HV-AUC46, and ties classic coverage, but it still trails classic
+final HV by about 1.5%.
 
 ## S21 Contract
 
@@ -226,13 +238,9 @@ and that inflates the score.
 
 ## If The Server Restarts
 
-No S07 seed 1001 process needs to be preserved. After restart, verify the
-S07 seed 1001 package and docs are present before launching any new
+No S07 seed 1002 process needs to be preserved. After restart, verify the
+S07 seed 1002 package and docs are present before launching any new
 variant.
-
-If S07 seed 1002 is still active, let it finish before launching any
-other full-suite run. If it is gone after a restart, inspect the active
-launch log above and package only if all 50 RTLLM problems completed.
 
 ## Audit Feedback To Carry Forward
 
@@ -264,15 +272,14 @@ both classic and V2 with a bounded HV tax. The audit recommends
 front-slot parent-source interpolation as the strongest next full-suite
 direction if the campaign continues after restart.
 
-## Next Campaign Step After S07 Seed 1001
+## Next Campaign Step After S07 Two-Seed Closure
 
-S07 seed 1002 is active. The conservative next executable options after
-it completes are:
+No new long process is active. The conservative next executable options
+are:
 
 1. Treat S22 as an HV-AUC-positive front-slot control, not a primary arm.
-2. Package S07 capacity3 seed 1002 and compute the two-seed aggregate.
-   Seed 1001 has a real HV-AUC signal, but misses classic final HV and
-   coverage.
+2. Treat S07 as the strongest capacity-control near-miss so far, not a
+   strict primary final-HV win.
 3. S04/S05 descriptor completion to five seeds if descriptor-health
    evidence is needed.
 
@@ -294,6 +301,6 @@ missing `qd_champion_lane_fraction=0.5` can silently invalidate a run.
 Keep future packages compact and do not copy broad figure trees into
 docs.
 
-S07 capacity3 seed 1001 is now packaged. Prefer a seed 1002 replication
-over S10 if continuing the same capacity branch, but do not describe S07
-as promotion-ready unless the two-seed aggregate clears the primary gate.
+S07 capacity3 seed 1002 is now packaged. Do not describe S07 as
+promotion-ready because the two-seed aggregate misses the primary final
+HV gate.

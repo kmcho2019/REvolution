@@ -657,3 +657,31 @@ the suite-first campaign.
   `max_model_len=131072`. No seed or two-seed metrics should be
   reported until the full 50-problem run completes and the standard
   package chain passes.
+
+## 2026-07-09 - S07 Capacity 3 Two-Seed Closure
+
+- Completed and packaged S07 `capacity3` seed 1002:
+  `S07_capacity3/seed_1002/`.
+- Runtime completed normally in 4758.87 seconds with 4800 LLM API calls.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with the S07 config pins checked.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S07 seed 1002 has
+  `single_thought_count=0`.
+- Seed 1002 read:
+  classic `0.097557` HV / `0.081183` AUC46 / `33` covered;
+  V2 `0.100310` HV / `0.090753` AUC46 / `33` covered;
+  S07 `0.105630` HV / `0.088873` AUC46 / `34` covered.
+- Two-seed S07 read:
+  classic `0.104479` HV / `0.085867` AUC46 / `66/92` covered;
+  V2 `0.098539` HV / `0.087146` AUC46 / `65/92` covered;
+  S07 `0.102963` HV / `0.090384` AUC46 / `66/92` covered.
+- Classification:
+  `HV-AUC-positive capacity near-miss`. S07 beats V2 on all two-seed
+  aggregate metrics, beats classic on HV-AUC46, and ties classic
+  coverage, but it still trails classic final HV by about 1.5%.
+- Decision:
+  do not claim S07 as a primary final-HV win. Treat it as the best
+  capacity-control near-miss and secondary trajectory-quality evidence
+  unless later seeds or variants clear the strict classic-HV gate.
