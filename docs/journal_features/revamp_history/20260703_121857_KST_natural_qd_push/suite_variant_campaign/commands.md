@@ -18,6 +18,7 @@ All suite-variant commands follow the P3 full RTLLM command shape:
   grid_quantile`, `--qd_descriptor_profile journal_logic_ff_width_3d`,
   `--qd_num_cells 16`, `--qd_grid_quantile_warmup_successes 8`,
   `--qd_cell_mode pareto_front`, `--qd_max_elites_per_cell 5`, and
+  `--qd_champion_lane_fraction 0.5`, and
   `--qd_rebinning_kind ks_triggered`.
 - `--no-backend_subdir`.
 
@@ -83,7 +84,8 @@ S09 runs first. Keep all other V2 parity pins, including
 `--qd_archive_type grid_quantile`,
 `--qd_descriptor_profile journal_logic_ff_width_3d`,
 `--qd_num_cells 16`, `--qd_grid_quantile_warmup_successes 8`, and
-`--qd_rebinning_kind ks_triggered`.
+`--qd_champion_lane_fraction 0.5`, and `--qd_rebinning_kind
+ks_triggered`.
 
 ## S20 Cell-Crowded Parent Selection
 

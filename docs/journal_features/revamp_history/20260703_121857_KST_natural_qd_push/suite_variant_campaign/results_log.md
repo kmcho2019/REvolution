@@ -418,3 +418,25 @@ the suite-first campaign.
   `qd_parent_selection=front_slot_lane_nsga2`, and
   `qd_front_slot_lane_fraction=0.20`, with all other V2 parity pins
   retained.
+- Correction:
+  this launch was stopped before any completed problem because the
+  command omitted the V2 parity pin `qd_champion_lane_fraction=0.5`.
+  The partial raw root was quarantined as
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC_INVALID_MISSING_CHAMPION_LANE`
+  and must not be interpreted as a result.
+
+## 2026-07-09 - S09 Front-Slot Lane 0.20 Seed 1001 Relaunched
+
+- Relaunched S09 front-slot lane 0.20 over full RTLLM 50 with seed 1001:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_103042_UTC/live/front_slot_lane_020/seed_1001`.
+- vLLM preflight recorded:
+  `preflights/s09_front_slot_lane_020_seed1001_20260709_103042_UTC.json`.
+- Variant pins:
+  `qd_cell_mode=elite_pareto_slot`,
+  `qd_max_elites_per_cell=2`,
+  `qd_parent_selection=front_slot_lane_nsga2`,
+  `qd_front_slot_lane_fraction=0.20`, and
+  `qd_champion_lane_fraction=0.5`, with all other V2 parity pins
+  retained.
+- No seed metrics should be reported until the full 50-problem run
+  completes and the standard package chain passes.
