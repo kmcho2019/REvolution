@@ -233,3 +233,18 @@ are:
 
 Avoid combination arms unless a single-factor full-suite result gives a
 positive signal.
+
+## Post-S22 Launch Guidance
+
+Read-only sub-agent audit after S22 closure recommends stopping launches
+before the server restart. Do not launch S10 from the current evidence:
+Wave B only justified the stronger 0.40 front-slot lane if S09 showed a
+positive HV/AUC signal without major coverage loss, and both S09 and S22
+missed the primary classic final-HV gate.
+
+If the campaign resumes after restart, first add an exact launch block
+for the selected variant with all V2 parity pins expanded. The generic
+command template is not enough; the invalid S09 attempt showed that
+missing `qd_champion_lane_fraction=0.5` can silently invalidate a run.
+Keep future packages compact and do not copy broad figure trees into
+docs.
