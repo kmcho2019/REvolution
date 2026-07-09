@@ -709,3 +709,20 @@ the suite-first campaign.
   `representation_kind=code_individual`, 128k token budgets,
   `strict_ablation`, and the S07 one-knob capacity change only. Any
   nonzero `single_thought_count` invalidates headline use.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1003 Running
+
+- Launched S07 `capacity3` seed 1003:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_213030_UTC/live/capacity3/seed_1003`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_213030_UTC/launch_capacity3_seed1003.log`.
+- vLLM preflight recorded:
+  `preflights/s07_capacity3_seed1003_20260709_213030_UTC.json`.
+- Preflight passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- Variant pins are unchanged from S07 seeds 1001/1002 except for
+  `seed=1003`.
+- Current status:
+  run has started over 50 RTLLM problems. No seed or aggregate metrics
+  should be reported until the full run completes and the standard
+  package chain passes.

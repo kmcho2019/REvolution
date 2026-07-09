@@ -1457,3 +1457,17 @@ verdict log):
   is not a promotion claim; it is a strict confirmation ladder. S07 must
   clear five-seed final HV and coverage against classic before it can be
   the primary TCAD extension.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1003 Launch
+
+- Launched S07 `capacity3` seed 1003 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_213030_UTC/live/capacity3/seed_1003`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_213030_UTC/launch_capacity3_seed1003.log`.
+- Preflight recorded at
+  `suite_variant_campaign/preflights/s07_capacity3_seed1003_20260709_213030_UTC.json`;
+  it passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- Variant pins are unchanged from S07 seeds 1001/1002 except for
+  `seed=1003`. No metrics should be reported until all 50 RTLLM
+  problems complete and the standard validation/package chain passes.
