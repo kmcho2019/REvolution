@@ -401,3 +401,20 @@ the suite-first campaign.
   do not promote S21. Scalar one-elite retention is a clean natural
   MAP-Elites control, but it trails matched classic on HV, HV-AUC46, and
   coverage and trails V2 on HV/HV-AUC46 while only tying V2 coverage.
+
+## 2026-07-09 - S09 Front-Slot Lane 0.20 Seed 1001 Running
+
+- Launched S09 front-slot lane 0.20 over full RTLLM 50 with seed 1001:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC/live/front_slot_lane_020/seed_1001`.
+- vLLM preflight recorded:
+  `preflights/s09_front_slot_lane_020_seed1001_20260709_102340_UTC.json`.
+- Current status at 2026-07-09T10:27:34Z:
+  run has started and printed the vLLM preflight line with
+  `max_model_len=131072`. No seed metrics should be reported until the
+  full 50-problem run completes and the standard package chain passes.
+- Variant pins:
+  `qd_cell_mode=elite_pareto_slot`,
+  `qd_max_elites_per_cell=2`,
+  `qd_parent_selection=front_slot_lane_nsga2`, and
+  `qd_front_slot_lane_fraction=0.20`, with all other V2 parity pins
+  retained.
