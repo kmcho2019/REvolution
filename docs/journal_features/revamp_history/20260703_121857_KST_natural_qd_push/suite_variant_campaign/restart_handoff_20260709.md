@@ -1,14 +1,15 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T21:19:14Z.
+Last updated: 2026-07-09T21:27:03Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
 `suite_variant_campaign/S07_capacity3/seed_1002`.
 
 ## Immediate State
 
-S07 capacity3 seed 1002 has completed and been packaged. There is no
-active full-suite process from this handoff.
+S07 capacity3 seed 1002 has completed and been packaged. S07 seed 1003
+is preregistered as the next near-miss confirmation run, but no
+full-suite process is active from this handoff.
 
 ```text
 seed 1001 run root:
@@ -242,6 +243,10 @@ No S07 seed 1002 process needs to be preserved. After restart, verify the
 S07 seed 1002 package and docs are present before launching any new
 variant.
 
+If continuing immediately, launch only the S07 seed 1003 confirmation
+block in `commands.md`. It is a five-seed confirmation step, not a
+promotion claim.
+
 ## Audit Feedback To Carry Forward
 
 Read-only narrative audit verdict: V2 remains the primary natural journal
@@ -272,16 +277,27 @@ both classic and V2 with a bounded HV tax. The audit recommends
 front-slot parent-source interpolation as the strongest next full-suite
 direction if the campaign continues after restart.
 
+Read-only post-S07 experimental audit verdict: confirm S07 to five seeds
+before opening a new mechanism. S07 is the only current lane within about
+1.5% of matched classic final HV while already beating classic HV-AUC46
+and tying classic coverage across two seeds.
+
+Read-only post-S07 organization audit verdict: fix stale command state
+before launching. The S07 seed 1001/1002 command blocks are now
+historical; S10 is blocked by S09/S22 evidence; S08/S19 are deferred;
+S12 is blocked behind an S11 signal; and the seed 1003 command block is
+self-contained with `classic_operator_kind=eoh_strategies`.
+
 ## Next Campaign Step After S07 Two-Seed Closure
 
 No new long process is active. The conservative next executable options
 are:
 
-1. Treat S22 as an HV-AUC-positive front-slot control, not a primary arm.
-2. Treat S07 as the strongest capacity-control near-miss so far, not a
-   strict primary final-HV win.
-3. S04/S05 descriptor completion to five seeds if descriptor-health
-   evidence is needed.
+1. Launch S07 capacity3 seed 1003 as the first five-seed confirmation
+   run if the vLLM preflight passes.
+2. Keep S22 as an HV-AUC-positive front-slot control, not a primary arm.
+3. Keep S04/S05 descriptor completion for descriptor-health evidence if
+   S07 confirmation does not clear the primary final-HV gate.
 
 Avoid combination arms unless a single-factor full-suite result gives a
 positive signal.
@@ -301,6 +317,6 @@ missing `qd_champion_lane_fraction=0.5` can silently invalidate a run.
 Keep future packages compact and do not copy broad figure trees into
 docs.
 
-S07 capacity3 seed 1002 is now packaged. Do not describe S07 as
-promotion-ready because the two-seed aggregate misses the primary final
-HV gate.
+S07 capacity3 seed 1002 is now packaged. S07 seed 1003 is prepared in
+`commands.md`. Do not describe S07 as promotion-ready unless the final
+five-seed aggregate clears the primary final-HV and coverage gates.

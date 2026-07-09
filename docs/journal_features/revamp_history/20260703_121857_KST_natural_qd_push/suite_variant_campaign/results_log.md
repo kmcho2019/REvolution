@@ -685,3 +685,27 @@ the suite-first campaign.
   do not claim S07 as a primary final-HV win. Treat it as the best
   capacity-control near-miss and secondary trajectory-quality evidence
   unless later seeds or variants clear the strict classic-HV gate.
+
+## 2026-07-09 - S07 Five-Seed Confirmation Preregistered
+
+- Read-only experimental audit recommended confirming S07 to five seeds
+  before launching a new mechanism. Rationale: S07 is the only current
+  lane within about 1.5% of matched classic final HV while already
+  beating classic on HV-AUC46 and tying classic coverage across two
+  seeds.
+- Read-only organization audit flagged stale command risk. The packaged
+  S07 seed 1001/1002 launch blocks in `commands.md` are now marked
+  historical, and a self-contained S07 seed 1003 confirmation block was
+  added with all V2 parity pins expanded.
+- Registry decisions before the next launch:
+  S07 is `confirming_near_miss_to_five_seeds`; S10 front-slot 0.40 is
+  blocked by S09/S22 evidence; S08/S19 larger-capacity variants are
+  deferred because capacity7 was negative and capacity3 is the better
+  capacity direction; S12 warmup24 is blocked until S11 warmup12 gives a
+  positive HV/coverage signal.
+- Launch gate:
+  seed 1003 must use `classic_operator_kind=eoh_strategies`,
+  `qd_operator_kind=eoh_strategies`, `eoh_success_operator_set=classic`,
+  `representation_kind=code_individual`, 128k token budgets,
+  `strict_ablation`, and the S07 one-knob capacity change only. Any
+  nonzero `single_thought_count` invalidates headline use.

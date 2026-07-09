@@ -54,7 +54,8 @@ known extraction failures before expensive descriptors.
 
 ## Guardrails
 
-- Use `qd_operator_kind=eoh_strategies`, `representation_kind=code_individual`,
+- Use `classic_operator_kind=eoh_strategies`,
+  `qd_operator_kind=eoh_strategies`, `representation_kind=code_individual`,
   and `single_thought_count=0` for every headline comparison.
 - Use `--eoh_success_operator_set classic` for comparator parity.
 - Keep `--max_tokens 128000 --diff_max_tokens 128000` and record vLLM
@@ -86,7 +87,7 @@ known extraction failures before expensive descriptors.
 | S21 | two seeds packaged; not promoted | Scalar-elite retention closes as a clean negative control: S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S09 | two seeds packaged; not promoted | Front-slot lane 0.20 is a front-loss control: S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. Seed 1001 was positive, but seed 1002 did not replicate it. |
 | S22 | two seeds packaged; not promoted | Conservative front-slot lane 0.10 is HV-AUC-positive but not a primary HV win: S22 `0.101722` HV / `0.089115` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. It beats V2 and ties classic coverage, but still trails classic final HV. |
-| S07 | two seeds packaged; near miss | Capacity3 is the strongest capacity-control result so far: S07 `0.102963` HV / `0.090384` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. It beats V2, beats classic on HV-AUC46, and ties classic coverage, but trails classic final HV by about 1.5%. |
+| S07 | five-seed confirmation prepared | Capacity3 is the strongest capacity-control result so far: S07 `0.102963` HV / `0.090384` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. It beats V2, beats classic on HV-AUC46, and ties classic coverage, but trails classic final HV by about 1.5%. Confirm seeds 1003-1005 before any claim. |
 
 ## Initial Wave Choice
 
@@ -113,19 +114,21 @@ before any full-suite run.
 
 Near-term executable choices after S07 two-seed closure are:
 
-1. Treat S09 as closed; do not promote front-slot lane 0.20 to five
+1. Confirm S07 capacity3 to five seeds as a near-miss confirmation, not
+   as a claim. It is the only current lane within about 1.5% of matched
+   classic final HV while beating classic HV-AUC46 and tying coverage.
+2. Treat S09 as closed; do not promote front-slot lane 0.20 to five
    seeds.
-2. Use S20 and S21 only as negative parent-selection/retention controls
+3. Use S20 and S21 only as negative parent-selection/retention controls
    unless a later mechanism specifically motivates revisiting them.
-3. Treat S22 as an HV-AUC-positive front-slot interpolation control, not
+4. Treat S22 as an HV-AUC-positive front-slot interpolation control, not
    as the primary TCAD arm.
-4. Treat S07 as the best capacity/retention near-miss so far. It is
-   HV-AUC-positive and coverage-neutral, but still misses classic final
-   HV; do not claim it as the primary TCAD arm without stronger evidence.
 5. Complete S04/S05 descriptor-health controls only if the manuscript
    needs descriptor evidence, not as primary HV candidates.
-6. Keep S08/S19 larger-capacity interpolation only if coverage remains a
-   target after S07.
-7. Keep S11/S12 warmup interpolation only as a secondary AUC check.
+6. Do not launch S10 front-slot 0.40, S08 capacity9, or S19 capacity11
+   from current evidence; front-slot 0.20 failed to replicate and larger
+   capacity moved opposite S07's better direction.
+7. Keep S11 warmup12 only as a lower-priority interpolation check. S12
+   warmup24 is blocked unless S11 recovers HV and coverage.
 8. Run S23-S26 descriptor reductions only after an extraction/config
    smoke.

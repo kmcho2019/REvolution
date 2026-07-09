@@ -1437,3 +1437,23 @@ verdict log):
 - Decision: do not claim a primary final-HV win. S07 is useful
   HV-AUC-positive and coverage-neutral evidence, but it still trails
   classic final HV by about 1.5%.
+
+## 2026-07-09 - S07 Confirmation Preregistration
+
+- Ran two read-only audits after the S07 closure. The experimental audit
+  recommended S07 five-seed confirmation before new variants because it
+  is the closest current lane to matched classic final HV and already
+  beats classic HV-AUC46 with equal two-seed coverage.
+- The organization audit found stale command risk: S07 seed 1001/1002
+  blocks still read like future launch commands, S10 remained a registry
+  candidate despite S09/S22 evidence, and future launch blocks needed the
+  explicit `classic_operator_kind=eoh_strategies` parity pin.
+- Updated `suite_variant_campaign/commands.md`,
+  `wave_b_preregistration.md`, `README.md`, and `variant_registry.csv`
+  to register S07 as a near-miss confirmation to seeds 1003-1005, mark
+  old S07 blocks historical, block S10, defer larger-capacity S08/S19,
+  and block S12 behind an S11 signal.
+- Decision: launch S07 seed 1003 next if the vLLM preflight passes. This
+  is not a promotion claim; it is a strict confirmation ladder. S07 must
+  clear five-seed final HV and coverage against classic before it can be
+  the primary TCAD extension.

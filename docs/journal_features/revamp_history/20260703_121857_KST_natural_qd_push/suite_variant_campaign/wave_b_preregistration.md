@@ -49,6 +49,7 @@ shows a positive AUC/HV signal without a major coverage loss.
 ## Gates
 
 - Every launched seed needs vLLM preflight, 128k token budgets,
+  `classic_operator_kind=eoh_strategies`,
   `qd_operator_kind=eoh_strategies`, `representation_kind=code_individual`,
   `--eoh_success_operator_set classic`, operator audit, and config-pin
   validation.
@@ -69,3 +70,20 @@ plus one local front slot per cell, with a fixed parent lane that samples
 those front slots. The purpose is to test whether moderate front-slot
 pressure keeps N03b's AUC/front-material benefit while recovering
 coverage.
+
+## 2026-07-09 Continuation
+
+S09 did not replicate and S22 remained HV-negative, so S10
+`front_slot_lane_040` is blocked by evidence. Do not launch stronger
+front-slot pressure from the current read.
+
+S07 `capacity3` is now the strongest Wave B near miss. Its two-seed read
+beats V2 on HV, HV-AUC46, and coverage; beats matched classic on
+HV-AUC46; ties matched classic coverage; and trails matched classic
+final HV by about 1.5%. Confirm S07 with seeds 1003-1005 before opening
+a new mechanism. This is a near-miss confirmation, not a promotion claim.
+
+Promotion remains strict: S07 needs the five-seed read to meet or beat
+classic final HV while retaining or improving coverage. If it only keeps
+the HV-AUC advantage, classify it as secondary trajectory-quality
+evidence rather than the primary TCAD extension.
