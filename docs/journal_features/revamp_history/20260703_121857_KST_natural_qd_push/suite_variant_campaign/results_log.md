@@ -302,3 +302,35 @@ the suite-first campaign.
   the variant is a clean config-only parent-selection test and preserves
   classic coverage, but seed 1001 loses too much final HV and is slightly
   below V2 HV-AUC46.
+
+## 2026-07-09 - S20 Cell-Crowded Parent Seed 1002
+
+- Launched S20 cell-crowded parent selection over full RTLLM 50 with seed
+  1002:
+  `exp/natural_qd_push/suite_variants_wave_b_20260708_231033_UTC/live/pareto_front_cell_crowded/seed_1002`.
+- vLLM preflight recorded:
+  `preflights/s20_pareto_front_cell_crowded_seed1002_20260708_231033_UTC.json`.
+- Runtime completed normally in 4713.26 seconds with 4800 total LLM API
+  calls.
+- Package:
+  `S20_pareto_front_cell_crowded/seed_1002/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with full V2 parity pins checked. The PPA/HV headline package
+  remains scoped to the 46 reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S20 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.097557` HV / `0.081183` AUC46 / `33` covered;
+  V2 `0.100310` HV / `0.090753` AUC46 / `33` covered;
+  S20 `0.101958` HV / `0.088570` AUC46 / `33` covered.
+- Two-seed S20 read:
+  classic `0.104479` HV / `0.085867` AUC46 / `66/92` covered;
+  V2 `0.098539` HV / `0.087146` AUC46 / `65/92` covered;
+  S20 `0.095855` HV / `0.085447` AUC46 / `66/92` covered.
+- Decision:
+  do not promote S20. Seed 1002 is a clean positive single-seed read, but
+  the registered two-seed probe remains below classic and V2 on HV/AUC
+  and only ties classic coverage. Close S20 as a natural
+  parent-selection negative and run S21 scalar-elite retention next.

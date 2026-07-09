@@ -1200,3 +1200,26 @@ verdict log):
   the variant. If the two-seed read stays below classic/V2 on HV and
   AUC, close S20 as a clean natural parent-selection negative and move
   to S21 scalar-elite retention.
+
+## 2026-07-09 - S20 Parent-Selection Two-Seed Closure
+
+- Completed and packaged S20 `pareto_front_cell_crowded` seed 1002 under
+  `suite_variant_campaign/S20_pareto_front_cell_crowded/seed_1002/`.
+- Runtime completed normally in 4713.26 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest with full V2
+  parity pins checked and passes the operator audit with
+  `single_thought_count=0`.
+- Seed 1002 is a positive matched-suite read: S20 beats matched classic
+  on HV (`0.101958` vs `0.097557`) and HV-AUC46 (`0.088570` vs
+  `0.081183`) with equal coverage (`33/46`). It also beats V2 on final
+  HV (`0.101958` vs `0.100310`) but trails V2 on HV-AUC46.
+- Across seeds 1001-1002, S20 remains below the registered promotion
+  gate: `0.095855` HV vs classic `0.104479`, `0.085447` HV-AUC46 vs
+  classic `0.085867`, and equal classic coverage (`66/92`). It also
+  trails V2 on HV (`0.098539`) and HV-AUC46 (`0.087146`) while covering
+  one more reference-complete problem than V2.
+- Decision: close S20 as a clean natural parent-selection negative. The
+  mechanism can win one seed, but it does not reliably convert
+  cell-local crowding into stronger full-suite PPA hypervolume. Launch
+  S21 scalar-elite retention next before returning to capacity,
+  warmup, or descriptor scans.

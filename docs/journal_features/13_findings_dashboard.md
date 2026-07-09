@@ -28,13 +28,15 @@ cross-arm bundles + isolated-grade per-task tables), see
   `0.100278` HV vs classic `0.103802`, `0.085114` HV-AUC46 vs classic
   `0.086982`, and `163/230` coverage vs classic `164/230`. It is only a
   secondary V2 final-HV recovery (`0.100278` vs V2 `0.098801`).
-- S20 cell-crowded parent selection seed 1001 is a clean config-only
-  negative for the primary HV target: `0.089752` HV / `0.082324`
-  HV-AUC46 / `33/46` coverage versus matched classic `0.111401` /
-  `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`.
-  Complete seed 1002 before retiring it.
-- Next queue: S20 seed 1002, then S21 scalar-elite retention before more
-  capacity or warmup scans. A read-only audit recorded WARN, not FAIL:
+- S20 cell-crowded parent selection is a clean two-seed parent-selection
+  negative. Seed 1002 alone beats matched classic (`0.101958` HV /
+  `0.088570` HV-AUC46 / `33/46` coverage vs classic `0.097557` /
+  `0.081183` / `33/46`), but the registered two-seed read remains below
+  classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 /
+  `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2
+  `0.098539` / `0.087146` / `65/92`.
+- Next queue: S21 scalar-elite retention before more capacity or warmup
+  scans. A read-only audit recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
 
@@ -96,8 +98,8 @@ below on operator-fair evidence:**
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-08 (suite-first natural_qd_push full-RTLLM
-continuation through S20 seed 1001; next S20 seed 1002/S21);
+**Last refreshed:** 2026-07-09 (suite-first natural_qd_push full-RTLLM
+continuation through S20 two-seed closure; next S21);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
