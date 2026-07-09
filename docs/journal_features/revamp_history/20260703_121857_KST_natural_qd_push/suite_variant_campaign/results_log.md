@@ -440,3 +440,25 @@ the suite-first campaign.
   retained.
 - No seed metrics should be reported until the full 50-problem run
   completes and the standard package chain passes.
+
+## 2026-07-09 - S09 Front-Slot Lane 0.20 Seed 1001 Packaged
+
+- Completed S09 front-slot lane 0.20 seed 1001 normally in 4809.40
+  seconds with 4800 LLM API calls.
+- Package:
+  `S09_front_slot_lane_020/seed_1001/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with the S09 config pins checked.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S09 seed 1001 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.111401` HV / `0.090551` AUC46 / `33` covered;
+  V2 `0.096767` HV / `0.083539` AUC46 / `32` covered;
+  S09 `0.102139` HV / `0.093403` AUC46 / `34` covered.
+- Decision:
+  S09 is a positive single-seed probe, not a conclusion. It beats V2 on
+  final HV and beats both classic and V2 on HV-AUC46 and coverage, but it
+  still trails matched classic final HV. Complete seed 1002 after the
+  planned server restart before considering five-seed confirmation.

@@ -40,6 +40,12 @@ cross-arm bundles + isolated-grade per-task tables), see
   `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` /
   `65/92`. One scalar elite per cell simplifies the MAP-Elites archive
   but does not recover suite-scale PPA/functionality.
+- S09 front-slot lane 0.20 is the current positive single-seed probe:
+  S09 `0.102139` HV / `0.093403` HV-AUC46 / `34/46` coverage vs matched
+  classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
+  `0.083539` / `32/46`. This beats V2 on final HV and beats both
+  comparators on HV-AUC46 and coverage, but it still trails classic
+  final HV; seed 1002 is required after restart.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -103,7 +109,7 @@ below on operator-fair evidence:**
   reruns recover 30-46 retention points).
 
 **Last refreshed:** 2026-07-09 (suite-first natural_qd_push full-RTLLM
-continuation through S21 two-seed scalar-retention closure);
+continuation through S09 seed 1001 front-slot positive probe);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

@@ -73,7 +73,7 @@ known extraction failures before expensive descriptors.
 | `wave_b_preregistration.md` | Front-slot and Wave B probe contract. |
 | `commands.md` | Launch/package templates and exact suite command shape. |
 | `results_log.md` | Append-only run/results ledger for this campaign. |
-| `restart_handoff_20260709.md` | Restart-safe state and closure note for S21 seed 1002. |
+| `restart_handoff_20260709.md` | Restart-safe state through S09 seed 1001. |
 
 ## Progress
 
@@ -84,6 +84,7 @@ known extraction failures before expensive descriptors.
 | S03 | five seeds packaged; not promoted | Slot-2 closes at 96.6% of classic HV, 97.9% of classic HV-AUC, and 163/230 coverage. It recovers V2 final HV to 101.5% of V2, but trails classic on all primary gates. |
 | S20 | two seeds packaged; not promoted | Seed 1002 beats matched classic on HV/AUC with equal coverage, but the two-seed read remains below classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S21 | two seeds packaged; not promoted | Scalar-elite retention closes as a clean negative control: S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
+| S09 | seed 1001 packaged; seed 1002 pending restart | Positive single-seed front-slot interpolation read: S09 `0.102139` HV / `0.093403` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Complete seed 1002 after restart. |
 
 ## Initial Wave Choice
 
@@ -108,16 +109,19 @@ launch-ready: they capture literature-natural brainstorms that would need
 a small tested parent-selection module or a descriptor registration gate
 before any full-suite run.
 
-Near-term executable choices after S21 closure are:
+Near-term executable choices after S09 seed 1001 are:
 
-1. Use S20 and S21 only as negative parent-selection/retention controls
+1. Complete S09 seed 1002 after restart before any new variant, because
+   seed 1001 is the first Wave B probe to beat classic on HV-AUC46 and
+   coverage while also beating V2 on final HV.
+2. Use S20 and S21 only as negative parent-selection/retention controls
    unless a later mechanism specifically motivates revisiting them.
-2. Keep S09/S22 front-slot interpolation as the strongest next
-   full-suite direction if another run is approved after restart.
-3. Complete S04/S05 descriptor-health controls only if the manuscript
+3. Keep S22 front-slot lane 0.10 as the adjacent conservative
+   interpolation if S09 seed 1002 is encouraging but volatile.
+4. Complete S04/S05 descriptor-health controls only if the manuscript
    needs descriptor evidence, not as primary HV candidates.
-4. Keep S07/S08/S19 capacity interpolation only if coverage remains a
+5. Keep S07/S08/S19 capacity interpolation only if coverage remains a
    target after the S03 confirmation.
-5. Keep S11/S12 warmup interpolation only as a secondary AUC check.
-6. Run S23-S26 descriptor reductions only after an extraction/config
+6. Keep S11/S12 warmup interpolation only as a secondary AUC check.
+7. Run S23-S26 descriptor reductions only after an extraction/config
    smoke.

@@ -1283,3 +1283,31 @@ verdict log):
   a clean negative control. The simpler retention state does not recover
   PPA hypervolume and does not improve functionality coverage on the
   two-seed full-RTLLM probe.
+
+## 2026-07-09 - S09 Front-Slot Lane Seed 1001
+
+- Registered Wave B front-slot interpolation and corrected an initial
+  S09 launch that omitted `qd_champion_lane_fraction=0.5`. The invalid
+  root was stopped before any completed problem and quarantined as
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC_INVALID_MISSING_CHAMPION_LANE`.
+- Relaunched the corrected S09 seed 1001 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_103042_UTC/live/front_slot_lane_020/seed_1001`
+  with `qd_cell_mode=elite_pareto_slot`,
+  `qd_max_elites_per_cell=2`,
+  `qd_parent_selection=front_slot_lane_nsga2`,
+  `qd_front_slot_lane_fraction=0.20`, and
+  `qd_champion_lane_fraction=0.5` plus the V2 suite parity pins.
+- Completed and packaged S09 seed 1001 under
+  `suite_variant_campaign/S09_front_slot_lane_020/seed_1001/`.
+  Runtime completed normally in 4809.40 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1001 is the current positive Wave B signal: S09 reaches
+  `0.102139` HV / `0.093403` HV-AUC46 / `34/46` coverage vs matched
+  classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
+  `0.083539` / `32/46`. It beats V2 on final HV and beats both
+  comparators on HV-AUC46 and coverage, but it still trails classic
+  final HV.
+- Decision: do not launch another long run before the planned server
+  restart. After restart, complete S09 seed 1002 before any new variant
+  or combination arm.
