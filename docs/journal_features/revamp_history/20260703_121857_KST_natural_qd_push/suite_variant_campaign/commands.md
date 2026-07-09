@@ -134,7 +134,7 @@ OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} uv run python scripts/r
   --no-backend_subdir 2>&1 | tee "$LOG"
 ```
 
-### Current S22 Seed 1002 Launch
+### S22 Seed 1002 Launch
 
 S22 is the conservative front-slot interpolation check after S09
 front-loss closure. It changes only the front-slot lane fraction from

@@ -1357,3 +1357,23 @@ verdict log):
 - Variant pins are unchanged from S22 seed 1001 except for `seed=1002`.
   No metrics should be reported until all 50 RTLLM problems complete and
   the standard validation/package chain passes.
+
+## 2026-07-09 - S22 Front-Slot Lane Two-Seed Closure
+
+- Completed and packaged S22 `front_slot_lane_010` seed 1002 under
+  `suite_variant_campaign/S22_front_slot_lane_010/seed_1002/`.
+- Runtime completed normally in 4747.64 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1002 is positive against matched classic on HV and HV-AUC46 but
+  loses one coverage point: S22 `0.100856` HV / `0.089351` HV-AUC46 /
+  `32/46` coverage vs classic `0.097557` / `0.081183` / `33/46` and V2
+  `0.100310` / `0.090753` / `33/46`.
+- Two-seed S22 closes as HV-AUC-positive but not a primary HV win:
+  S22 `0.101722` HV / `0.089115` HV-AUC46 / `66/92` coverage vs classic
+  `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` /
+  `65/92`.
+- Decision: do not promote S22 to five seeds as a primary arm. It is
+  useful evidence that a conservative front-slot lane can improve
+  trajectory quality while preserving two-seed coverage, but it does not
+  meet the journal gate of matching classic final HV.

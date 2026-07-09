@@ -85,7 +85,7 @@ known extraction failures before expensive descriptors.
 | S20 | two seeds packaged; not promoted | Seed 1002 beats matched classic on HV/AUC with equal coverage, but the two-seed read remains below classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S21 | two seeds packaged; not promoted | Scalar-elite retention closes as a clean negative control: S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S09 | two seeds packaged; not promoted | Front-slot lane 0.20 is a front-loss control: S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. Seed 1001 was positive, but seed 1002 did not replicate it. |
-| S22 | seed 1002 running | Conservative front-slot lane 0.10 is V2-positive and coverage-positive on seed 1001: S22 `0.102589` HV / `0.088878` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Seed 1002 is the active replication run. |
+| S22 | two seeds packaged; not promoted | Conservative front-slot lane 0.10 is HV-AUC-positive but not a primary HV win: S22 `0.101722` HV / `0.089115` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. It beats V2 and ties classic coverage, but still trails classic final HV. |
 
 ## Initial Wave Choice
 
@@ -110,13 +110,14 @@ launch-ready: they capture literature-natural brainstorms that would need
 a small tested parent-selection module or a descriptor registration gate
 before any full-suite run.
 
-Near-term executable choices after S09 closure are:
+Near-term executable choices after S22 closure are:
 
 1. Treat S09 as closed; do not promote front-slot lane 0.20 to five
    seeds.
 2. Use S20 and S21 only as negative parent-selection/retention controls
    unless a later mechanism specifically motivates revisiting them.
-3. Complete S22 seed 1002 before launching another variant.
+3. Treat S22 as an HV-AUC-positive front-slot interpolation control, not
+   as the primary TCAD arm.
 4. Complete S04/S05 descriptor-health controls only if the manuscript
    needs descriptor evidence, not as primary HV candidates.
 5. Keep S07/S08/S19 capacity interpolation only if coverage remains a

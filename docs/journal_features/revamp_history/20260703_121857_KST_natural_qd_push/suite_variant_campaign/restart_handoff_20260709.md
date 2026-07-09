@@ -1,14 +1,14 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T16:42:11Z.
+Last updated: 2026-07-09T18:10:00Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
-Current active run:
-`exp/natural_qd_push/suite_variants_wave_b_20260709_164211_UTC/live/front_slot_lane_010/seed_1002`.
+Current completed result package:
+`suite_variant_campaign/S22_front_slot_lane_010/seed_1002`.
 
 ## Immediate State
 
-S22 seed 1002 is the active full-suite replication run. Do not launch
-another long full-suite process while this run is active.
+S22 seed 1002 has completed and been packaged. There is no active
+full-suite process from this handoff.
 
 ```text
 run root:
@@ -18,13 +18,12 @@ exp/natural_qd_push/suite_variants_wave_b_20260709_164211_UTC/launch_front_slot_
 preflight:
 suite_variant_campaign/preflights/s22_front_slot_lane_010_seed1002_20260709_164211_UTC.json
 package:
-pending
+suite_variant_campaign/S22_front_slot_lane_010/seed_1002
 ```
 
-Observed at this handoff: S22 seed 1002 has a passing vLLM preflight
-with `max_model_len=131072` and has started. No seed metrics should be
-reported until all 50 RTLLM problems complete and the standard package
-chain passes.
+Observed at this handoff: S22 seed 1002 completed all 50 RTLLM problems
+normally in 4747.64 seconds with 4800 LLM API calls. The package passes
+the full 50-problem run validation and operator audit.
 
 The earlier S09 launch rooted at
 `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC` was
@@ -100,8 +99,15 @@ S22 `0.102589` HV / `0.088878` HV-AUC46 / `34/46` coverage vs classic
 `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` /
 `32/46`.
 
-Seed 1002 is active at
-`exp/natural_qd_push/suite_variants_wave_b_20260709_164211_UTC/live/front_slot_lane_010/seed_1002`.
+Seed 1002 is packaged. It beats matched classic on final HV and HV-AUC46
+but loses one coverage point: S22 `0.100856` HV / `0.089351` HV-AUC46 /
+`32/46` coverage vs classic `0.097557` / `0.081183` / `33/46` and V2
+`0.100310` / `0.090753` / `33/46`.
+
+Across two seeds, S22 is HV-AUC-positive but not a primary HV win:
+S22 `0.101722` HV / `0.089115` HV-AUC46 / `66/92` coverage vs classic
+`0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` /
+`65/92`.
 
 ## S21 Contract
 
@@ -181,8 +187,8 @@ and that inflates the score.
 
 ## If The Server Restarts
 
-If interrupted, preserve the active S22 seed 1002 process if it is still
-running. If it has completed, package it before launching any new
+No S22 seed 1002 process needs to be preserved. After restart, verify the
+S22 seed 1002 package and docs are present before launching any new
 variant.
 
 ## Audit Feedback To Carry Forward
@@ -217,10 +223,10 @@ direction if the campaign continues after restart.
 
 ## Next Campaign Step After S09 Closure
 
-No new long process should start while S22 seed 1002 is active. After
-S22 seed 1002 is packaged, the conservative next executable options are:
+No new long process is active. The conservative next executable options
+are:
 
-1. Promote or retire S22 based on the registered two-seed read.
+1. Treat S22 as an HV-AUC-positive front-slot control, not a primary arm.
 2. S04/S05 descriptor completion to five seeds if descriptor-health
    evidence is needed.
 3. S07/S08 capacity interpolation only if coverage remains worth probing.
