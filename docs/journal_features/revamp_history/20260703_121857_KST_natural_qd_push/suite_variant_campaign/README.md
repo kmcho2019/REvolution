@@ -70,7 +70,8 @@ known extraction failures before expensive descriptors.
 | --- | --- |
 | `variant_registry.csv` | Candidate list, wave assignment, status. |
 | `wave_a_preregistration.md` | First full-suite wave contract. |
-| `commands.md` | Launch/package templates and exact Wave A command shape. |
+| `wave_b_preregistration.md` | Front-slot and Wave B probe contract. |
+| `commands.md` | Launch/package templates and exact suite command shape. |
 | `results_log.md` | Append-only run/results ledger for this campaign. |
 | `restart_handoff_20260709.md` | Restart-safe state and closure note for S21 seed 1002. |
 

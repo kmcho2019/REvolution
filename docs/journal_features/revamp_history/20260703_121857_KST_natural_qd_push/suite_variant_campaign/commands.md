@@ -1,6 +1,6 @@
 # Suite Variant Commands
 
-All Wave A commands follow the P3 full RTLLM command shape:
+All suite-variant commands follow the P3 full RTLLM command shape:
 
 - `--benchmarks RTLLM` with no explicit problem list.
 - `--population_size 8 --num_generations 5`.
@@ -46,6 +46,45 @@ Save under:
 
 `exp/natural_qd_push/suite_variants_wave_a_<UTC>/live/elite_pareto_slot_2/seed_<seed>`.
 
+## S07/S08/S19 Capacity Interpolation
+
+Change only the capacity value:
+
+```text
+--qd_max_elites_per_cell 3
+--qd_max_elites_per_cell 9
+--qd_max_elites_per_cell 11
+```
+
+Save under one of:
+
+- `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/capacity3/seed_<seed>`
+- `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/capacity9/seed_<seed>`
+- `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/capacity11/seed_<seed>`
+
+## S09/S22/S10 Front-Slot Lane Interpolation
+
+Change:
+
+```text
+--qd_cell_mode elite_pareto_slot
+--qd_max_elites_per_cell 2
+--qd_parent_selection front_slot_lane_nsga2
+--qd_front_slot_lane_fraction 0.20
+```
+
+Use fraction `0.10` for S22 and `0.40` for S10. Save under one of:
+
+- `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/front_slot_lane_020/seed_<seed>`
+- `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/front_slot_lane_010/seed_<seed>`
+- `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/front_slot_lane_040/seed_<seed>`
+
+S09 runs first. Keep all other V2 parity pins, including
+`--qd_archive_type grid_quantile`,
+`--qd_descriptor_profile journal_logic_ff_width_3d`,
+`--qd_num_cells 16`, `--qd_grid_quantile_warmup_successes 8`, and
+`--qd_rebinning_kind ks_triggered`.
+
 ## S20 Cell-Crowded Parent Selection
 
 Change only:
@@ -71,6 +110,20 @@ Keep `--qd_parent_selection nsga2_global_rank` and all other V2 parity
 pins. Save under:
 
 `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/scalar_elite_nsga2/seed_<seed>`.
+
+## S11/S12 Warmup Interpolation
+
+Change only the warmup value:
+
+```text
+--qd_grid_quantile_warmup_successes 12
+--qd_grid_quantile_warmup_successes 24
+```
+
+Save under one of:
+
+- `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/warmup12/seed_<seed>`
+- `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/warmup24/seed_<seed>`
 
 ## S04/S05 Descriptor Completions
 
