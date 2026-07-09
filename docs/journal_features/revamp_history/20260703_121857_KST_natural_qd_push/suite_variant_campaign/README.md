@@ -85,7 +85,7 @@ known extraction failures before expensive descriptors.
 | S20 | two seeds packaged; not promoted | Seed 1002 beats matched classic on HV/AUC with equal coverage, but the two-seed read remains below classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S21 | two seeds packaged; not promoted | Scalar-elite retention closes as a clean negative control: S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S09 | two seeds packaged; not promoted | Front-slot lane 0.20 is a front-loss control: S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. Seed 1001 was positive, but seed 1002 did not replicate it. |
-| S22 | seed 1001 running | Conservative front-slot lane 0.10 follow-up after S09 front loss. No metrics until the full run and package chain complete. |
+| S22 | seed 1001 packaged; seed 1002 pending | Conservative front-slot lane 0.10 is V2-positive and coverage-positive on seed 1001: S22 `0.102589` HV / `0.088878` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Complete seed 1002 before any promotion decision. |
 
 ## Initial Wave Choice
 
@@ -116,8 +116,7 @@ Near-term executable choices after S09 closure are:
    seeds.
 2. Use S20 and S21 only as negative parent-selection/retention controls
    unless a later mechanism specifically motivates revisiting them.
-3. Complete and package the active S22 front-slot lane 0.10 run before
-   launching another variant.
+3. Complete S22 seed 1002 before launching another variant.
 4. Complete S04/S05 descriptor-health controls only if the manuscript
    needs descriptor evidence, not as primary HV candidates.
 5. Keep S07/S08/S19 capacity interpolation only if coverage remains a

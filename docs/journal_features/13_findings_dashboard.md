@@ -45,6 +45,12 @@ cross-arm bundles + isolated-grade per-task tables), see
   replicate. Two-seed S09: `0.096357` HV / `0.085650` HV-AUC46 /
   `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2
   `0.098539` / `0.087146` / `65/92`.
+- S22 front-slot lane 0.10 is the current conservative front-slot
+  follow-up. Seed 1001 is V2-positive and coverage-positive against
+  classic: S22 `0.102589` HV / `0.088878` HV-AUC46 / `34/46` coverage
+  vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
+  `0.083539` / `32/46`. Seed 1002 is required before any promotion
+  decision.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -108,7 +114,7 @@ below on operator-fair evidence:**
   reruns recover 30-46 retention points).
 
 **Last refreshed:** 2026-07-09 (suite-first natural_qd_push full-RTLLM
-continuation through S09 two-seed front-slot closure);
+continuation through S22 seed 1001 conservative front-slot probe);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

@@ -531,3 +531,24 @@ the suite-first campaign.
   run has not yet produced metrics. No seed metrics should be reported
   until the full 50-problem run completes and the standard package chain
   passes.
+
+## 2026-07-09 - S22 Front-Slot Lane 0.10 Seed 1001 Packaged
+
+- Completed S22 front-slot lane 0.10 seed 1001 normally in 4748.79
+  seconds with 4800 LLM API calls.
+- Package:
+  `S22_front_slot_lane_010/seed_1001/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with the S22 config pins checked.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S22 seed 1001 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.111401` HV / `0.090551` AUC46 / `33` covered;
+  V2 `0.096767` HV / `0.083539` AUC46 / `32` covered;
+  S22 `0.102589` HV / `0.088878` AUC46 / `34` covered.
+- Decision:
+  complete seed 1002. S22 seed 1001 is V2-positive and
+  coverage-positive against classic, but it still trails matched classic
+  on final HV and HV-AUC46, so it is not promotion-ready on one seed.
