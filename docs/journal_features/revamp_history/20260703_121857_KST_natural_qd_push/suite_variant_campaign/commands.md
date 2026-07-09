@@ -134,16 +134,16 @@ OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} uv run python scripts/r
   --no-backend_subdir 2>&1 | tee "$LOG"
 ```
 
-### Current S22 Seed 1001 Launch
+### Current S22 Seed 1002 Launch
 
 S22 is the conservative front-slot interpolation check after S09
 front-loss closure. It changes only the front-slot lane fraction from
 `0.20` to `0.10` relative to S09.
 
 ```bash
-ROOT=/workspace/exp/natural_qd_push/suite_variants_wave_b_20260709_151403_UTC
-RUN_DIR="$ROOT/live/front_slot_lane_010/seed_1001"
-LOG="$ROOT/launch_front_slot_lane_010_seed1001.log"
+ROOT=/workspace/exp/natural_qd_push/suite_variants_wave_b_20260709_164211_UTC
+RUN_DIR="$ROOT/live/front_slot_lane_010/seed_1002"
+LOG="$ROOT/launch_front_slot_lane_010_seed1002.log"
 mkdir -p "$ROOT"
 OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} uv run python scripts/run_backend.py \
   --backend revolution \
@@ -176,7 +176,7 @@ OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} uv run python scripts/r
   --qd_rebinning_kind ks_triggered \
   --max_tokens 128000 \
   --diff_max_tokens 128000 \
-  --seed 1001 \
+  --seed 1002 \
   --save_path "$RUN_DIR" \
   --no-backend_subdir 2>&1 | tee "$LOG"
 ```

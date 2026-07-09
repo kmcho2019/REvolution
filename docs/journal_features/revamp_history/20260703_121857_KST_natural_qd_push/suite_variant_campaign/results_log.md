@@ -552,3 +552,23 @@ the suite-first campaign.
   complete seed 1002. S22 seed 1001 is V2-positive and
   coverage-positive against classic, but it still trails matched classic
   on final HV and HV-AUC46, so it is not promotion-ready on one seed.
+
+## 2026-07-09 - S22 Front-Slot Lane 0.10 Seed 1002 Running
+
+- Launched S22 front-slot lane 0.10 over full RTLLM 50 with seed 1002:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_164211_UTC/live/front_slot_lane_010/seed_1002`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_164211_UTC/launch_front_slot_lane_010_seed1002.log`.
+- vLLM preflight recorded:
+  `preflights/s22_front_slot_lane_010_seed1002_20260709_164211_UTC.json`.
+- Variant pins:
+  `qd_cell_mode=elite_pareto_slot`,
+  `qd_max_elites_per_cell=2`,
+  `qd_parent_selection=front_slot_lane_nsga2`,
+  `qd_front_slot_lane_fraction=0.10`, and
+  `qd_champion_lane_fraction=0.5`, with all other V2 parity pins
+  retained.
+- Current status:
+  run has started and printed the vLLM preflight line with
+  `max_model_len=131072`. No seed metrics should be reported until the
+  full 50-problem run completes and the standard package chain passes.
