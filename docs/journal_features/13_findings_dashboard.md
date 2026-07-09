@@ -52,9 +52,9 @@ cross-arm bundles + isolated-grade per-task tables), see
   HV-AUC46 while tying classic coverage, but it still trails classic
   final HV.
 - S07 capacity3 is the strongest capacity-control near-miss so far.
-  Two-seed S07: `0.102963` HV / `0.090384` HV-AUC46 / `66/92`
-  coverage vs classic `0.104479` / `0.085867` / `66/92` and V2
-  `0.098539` / `0.087146` / `65/92`. It beats V2, beats classic on
+  Three-seed S07: `0.102130` HV / `0.089267` HV-AUC46 / `99/138`
+  coverage vs classic `0.103684` / `0.086315` / `99/138` and V2
+  `0.098977` / `0.088196` / `100/138`. It beats V2, beats classic on
   HV-AUC46, and ties classic coverage, but trails classic final HV by
   about 1.5%.
 - Read-only audits recorded WARN, not FAIL:
@@ -120,7 +120,7 @@ below on operator-fair evidence:**
   reruns recover 30-46 retention points).
 
 **Last refreshed:** 2026-07-09 (suite-first natural_qd_push full-RTLLM
-continuation through S07 capacity3 two-seed closure);
+continuation through S07 capacity3 seed 1003 package);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

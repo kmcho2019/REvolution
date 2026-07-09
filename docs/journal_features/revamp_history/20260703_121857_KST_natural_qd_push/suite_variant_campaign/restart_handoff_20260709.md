@@ -1,14 +1,14 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T21:30:48Z.
+Last updated: 2026-07-09T22:54:28Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
-`suite_variant_campaign/S07_capacity3/seed_1002`.
+`suite_variant_campaign/S07_capacity3/seed_1003`.
 
 ## Immediate State
 
-S07 capacity3 seed 1002 has completed and been packaged. S07 seed 1003
-is active as the next near-miss confirmation run.
+S07 capacity3 seed 1003 has completed and been packaged. There is no
+active full-suite process from this handoff.
 
 ```text
 seed 1001 run root:
@@ -27,21 +27,23 @@ seed 1002 preflight:
 suite_variant_campaign/preflights/s07_capacity3_seed1002_20260709_195220_UTC.json
 seed 1002 package:
 suite_variant_campaign/S07_capacity3/seed_1002
-active seed 1003 run root:
+seed 1003 run root:
 exp/natural_qd_push/suite_variants_wave_b_20260709_213030_UTC/live/capacity3/seed_1003
-active seed 1003 launch log:
+seed 1003 launch log:
 exp/natural_qd_push/suite_variants_wave_b_20260709_213030_UTC/launch_capacity3_seed1003.log
-active seed 1003 preflight:
+seed 1003 preflight:
 suite_variant_campaign/preflights/s07_capacity3_seed1003_20260709_213030_UTC.json
+seed 1003 package:
+suite_variant_campaign/S07_capacity3/seed_1003
 ```
 
 Observed at this handoff: S07 seed 1002 completed all 50 RTLLM problems
 normally in 4758.87 seconds with 4800 LLM API calls. The package passes
 the full 50-problem run validation and operator audit.
 
-Observed after launch: S07 seed 1003 printed the vLLM preflight line
-with model `openai/gpt-oss-120b` and `max_model_len=131072`, then
-started the 50-problem RTLLM run.
+Observed after launch: S07 seed 1003 completed all 50 RTLLM problems
+normally in 4722.00 seconds with 4800 LLM API calls. The package passes
+the full 50-problem run validation and operator audit.
 
 The earlier S09 launch rooted at
 `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC` was
@@ -164,6 +166,16 @@ S07 `0.102963` HV / `0.090384` HV-AUC46 / `66/92` coverage vs classic
 `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` /
 `65/92`.
 
+Seed 1003 is packaged. It nearly ties matched classic but does not win:
+S07 `0.100464` HV / `0.087032` HV-AUC46 / `33/46` coverage vs classic
+`0.102093` / `0.087210` / `33/46` and V2 `0.099854` / `0.090295` /
+`35/46`.
+
+Across three seeds, S07 remains the strongest capacity-control near-miss:
+S07 `0.102130` HV / `0.089267` HV-AUC46 / `99/138` coverage vs classic
+`0.103684` / `0.086315` / `99/138` and V2 `0.098977` / `0.088196` /
+`100/138`.
+
 Do not claim S07 as a primary final-HV win. It beats V2, beats classic
 on HV-AUC46, and ties classic coverage, but it still trails classic
 final HV by about 1.5%.
@@ -248,13 +260,9 @@ and that inflates the score.
 
 ## If The Server Restarts
 
-S07 seed 1003 is the only active run from this handoff. Let it finish
-before launching another full-suite process. If a restart interrupts it,
-inspect the active launch log above and package only if all 50 RTLLM
-problems completed.
-
-S07 seed 1002 is already packaged and does not need to be preserved as a
-process.
+No S07 seed 1003 process needs to be preserved. After restart, verify the
+S07 seed 1003 package and docs are present before launching any new
+variant.
 
 ## Audit Feedback To Carry Forward
 
@@ -301,8 +309,8 @@ self-contained with `classic_operator_kind=eoh_strategies`.
 
 The conservative next executable steps are:
 
-1. Let S07 capacity3 seed 1003 finish and package it with the standard
-   compact report chain.
+1. Launch S07 capacity3 seed 1004 as the next near-miss confirmation run
+   if the vLLM preflight passes.
 2. Keep S22 as an HV-AUC-positive front-slot control, not a primary arm.
 3. Keep S04/S05 descriptor completion for descriptor-health evidence if
    S07 confirmation does not clear the primary final-HV gate.
@@ -325,6 +333,6 @@ missing `qd_champion_lane_fraction=0.5` can silently invalidate a run.
 Keep future packages compact and do not copy broad figure trees into
 docs.
 
-S07 capacity3 seed 1002 is now packaged. S07 seed 1003 is prepared in
+S07 capacity3 seed 1003 is now packaged. S07 seed 1004 is prepared in
 `commands.md`. Do not describe S07 as promotion-ready unless the final
 five-seed aggregate clears the primary final-HV and coverage gates.

@@ -1471,3 +1471,22 @@ verdict log):
 - Variant pins are unchanged from S07 seeds 1001/1002 except for
   `seed=1003`. No metrics should be reported until all 50 RTLLM
   problems complete and the standard validation/package chain passes.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1003 Package
+
+- Completed and packaged S07 `capacity3` seed 1003 under
+  `suite_variant_campaign/S07_capacity3/seed_1003/`.
+- Runtime completed normally in 4722.00 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1003 nearly ties matched classic but does not win:
+  S07 `0.100464` HV / `0.087032` HV-AUC46 / `33/46` coverage vs
+  classic `0.102093` / `0.087210` / `33/46` and V2 `0.099854` /
+  `0.090295` / `35/46`.
+- Three-seed S07 remains an HV-AUC-positive near miss:
+  S07 `0.102130` HV / `0.089267` HV-AUC46 / `99/138` coverage vs
+  classic `0.103684` / `0.086315` / `99/138` and V2 `0.098977` /
+  `0.088196` / `100/138`.
+- Decision: continue to seed 1004 under the pre-registered confirmation
+  ladder. Do not claim a primary final-HV win unless the five-seed
+  aggregate clears classic HV and coverage.

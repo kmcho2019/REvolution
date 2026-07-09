@@ -726,3 +726,31 @@ the suite-first campaign.
   run has started over 50 RTLLM problems. No seed or aggregate metrics
   should be reported until the full run completes and the standard
   package chain passes.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1003 Packaged
+
+- Completed and packaged S07 `capacity3` seed 1003:
+  `S07_capacity3/seed_1003/`.
+- Runtime completed normally in 4722.00 seconds with 4800 LLM API calls.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with the S07 config pins checked.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S07 seed 1003 has
+  `single_thought_count=0`.
+- Seed 1003 read:
+  classic `0.102093` HV / `0.087210` AUC46 / `33` covered;
+  V2 `0.099854` HV / `0.090295` AUC46 / `35` covered;
+  S07 `0.100464` HV / `0.087032` AUC46 / `33` covered.
+- Three-seed S07 read:
+  classic `0.103684` HV / `0.086315` AUC46 / `99/138` covered;
+  V2 `0.098977` HV / `0.088196` AUC46 / `100/138` covered;
+  S07 `0.102130` HV / `0.089267` AUC46 / `99/138` covered.
+- Classification:
+  `HV-AUC-positive capacity near-miss`. Seed 1003 does not clear
+  classic final HV, but the three-seed read still beats V2 on HV and
+  HV-AUC46, beats classic on HV-AUC46, and ties classic coverage.
+- Decision:
+  continue to seed 1004 under the pre-registered confirmation ladder.
+  Do not claim S07 as a primary final-HV win unless the five-seed
+  aggregate clears classic HV and coverage.

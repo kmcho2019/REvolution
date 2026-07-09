@@ -87,7 +87,7 @@ known extraction failures before expensive descriptors.
 | S21 | two seeds packaged; not promoted | Scalar-elite retention closes as a clean negative control: S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S09 | two seeds packaged; not promoted | Front-slot lane 0.20 is a front-loss control: S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. Seed 1001 was positive, but seed 1002 did not replicate it. |
 | S22 | two seeds packaged; not promoted | Conservative front-slot lane 0.10 is HV-AUC-positive but not a primary HV win: S22 `0.101722` HV / `0.089115` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. It beats V2 and ties classic coverage, but still trails classic final HV. |
-| S07 | five-seed confirmation prepared | Capacity3 is the strongest capacity-control result so far: S07 `0.102963` HV / `0.090384` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. It beats V2, beats classic on HV-AUC46, and ties classic coverage, but trails classic final HV by about 1.5%. Confirm seeds 1003-1005 before any claim. |
+| S07 | three seeds packaged; near miss | Capacity3 remains the strongest capacity-control result so far: S07 `0.102130` HV / `0.089267` HV-AUC46 / `99/138` coverage vs classic `0.103684` / `0.086315` / `99/138` and V2 `0.098977` / `0.088196` / `100/138`. It beats V2, beats classic on HV-AUC46, and ties classic coverage, but trails classic final HV by about 1.5%. Continue seed 1004 before any claim. |
 
 ## Initial Wave Choice
 
@@ -114,9 +114,9 @@ before any full-suite run.
 
 Near-term executable choices after S07 two-seed closure are:
 
-1. Confirm S07 capacity3 to five seeds as a near-miss confirmation, not
-   as a claim. It is the only current lane within about 1.5% of matched
-   classic final HV while beating classic HV-AUC46 and tying coverage.
+1. Continue S07 capacity3 to seed 1004 as a near-miss confirmation, not
+   as a claim. It remains within about 1.5% of matched classic final HV
+   while beating classic HV-AUC46 and tying coverage across three seeds.
 2. Treat S09 as closed; do not promote front-slot lane 0.20 to five
    seeds.
 3. Use S20 and S21 only as negative parent-selection/retention controls
