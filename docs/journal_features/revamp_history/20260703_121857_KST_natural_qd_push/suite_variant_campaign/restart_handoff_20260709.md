@@ -1,14 +1,14 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T13:47:50Z.
+Last updated: 2026-07-09T15:11:11Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
-Current active run:
-`exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/live/front_slot_lane_020/seed_1002`.
+Current completed result package:
+`suite_variant_campaign/S09_front_slot_lane_020/seed_1002`.
 
 ## Immediate State
 
-S09 seed 1002 is now the active full-suite run. Do not launch another
-long full-suite process while this run is active.
+S09 seed 1002 has completed and been packaged. There is no active
+full-suite process from this handoff.
 
 ```text
 run root:
@@ -18,13 +18,12 @@ exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/launch_front_slot_
 preflight:
 suite_variant_campaign/preflights/s09_front_slot_lane_020_seed1002_20260709_134750_UTC.json
 package:
-pending
+suite_variant_campaign/S09_front_slot_lane_020/seed_1002
 ```
 
-Observed at this handoff: S09 seed 1002 has started and printed the
-vLLM preflight line with `max_model_len=131072`. No seed 1002 metrics
-should be reported until all 50 RTLLM problems complete and the standard
-package chain passes.
+Observed at this handoff: S09 seed 1002 completed all 50 RTLLM problems
+normally in 4731.28 seconds with 4800 LLM API calls. The package passes
+the full 50-problem run validation and operator audit.
 
 The earlier S09 launch rooted at
 `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC` was
@@ -61,9 +60,15 @@ S09 `0.102139` HV / `0.093403` HV-AUC46 / `34/46` coverage vs matched
 classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
 `0.083539` / `32/46`.
 
-Seed 1002 is the active replication run. Do not promote S09 on one seed;
-final HV still trails matched classic even though HV-AUC46 and coverage
-beat both comparators.
+Seed 1002 is packaged. It did not replicate seed 1001:
+S09 `0.090574` HV / `0.077897` HV-AUC46 / `32/46` coverage vs matched
+classic `0.097557` / `0.081183` / `33/46` and V2 `0.100310` /
+`0.090753` / `33/46`.
+
+Across two seeds, S09 is a front-loss control, not a promotion arm:
+S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs classic
+`0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` /
+`65/92`.
 
 ## S21 Contract
 
@@ -97,8 +102,7 @@ only tying V2 coverage.
 
 ## Package Pointers
 
-After S09 seed 1002 completes, package it with the same compact S20/S21
-structure. Use matched seed 1002 comparators:
+S09 seed 1002 was packaged with the same compact S20/S21 structure:
 
 ```text
 MANIFEST_YAML=docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_reference_complete_manifest.yaml
@@ -134,8 +138,8 @@ docs/journal_features/13_findings_dashboard.md
 suite_variant_campaign/restart_handoff_20260709.md
 ```
 
-S09 is classified as a positive single-seed probe pending active seed
-1002 completion.
+S09 is classified as a two-seed front-loss parent-source interpolation
+control and should not be promoted to five seeds.
 S21 remains classified as a negative scalar-retention control.
 
 Compute HV-AUC46 with the fixed 46-problem denominator. Do not use a row
@@ -144,9 +148,8 @@ and that inflates the score.
 
 ## If The Server Restarts
 
-If interrupted, preserve the active S09 seed 1002 process if it is still
-running. If it has completed, package it before launching any new
-variant.
+No S09 process needs to be preserved. After restart, verify the S09 seed
+1002 package and docs are present before launching any new variant.
 
 ## Audit Feedback To Carry Forward
 
@@ -178,19 +181,16 @@ both classic and V2 with a bounded HV tax. The audit recommends
 front-slot parent-source interpolation as the strongest next full-suite
 direction if the campaign continues after restart.
 
-## Next Campaign Step After S09 Seed 1001
+## Next Campaign Step After S09 Closure
 
-No new long process should start while S09 seed 1002 is active. After
-S09 seed 1002 is packaged, the conservative next executable options are:
+No new long process is active. The conservative next executable options
+are:
 
-1. Promote S09 to five seeds only if the two-seed read preserves the
-   HV-AUC/coverage gains and narrows the classic final-HV gap enough to
-   justify confirmation.
-2. S22 front-slot lane 0.10 only if S09 seed 1002 is encouraging but too
-   volatile.
-3. S04/S05 descriptor completion to five seeds if descriptor-health
+1. S22 front-slot lane 0.10 as a conservative adjacent parent-source
+   interpolation, if the campaign continues this family.
+2. S04/S05 descriptor completion to five seeds if descriptor-health
    evidence is needed.
-4. S07/S08 capacity interpolation only if coverage remains worth probing.
+3. S07/S08 capacity interpolation only if coverage remains worth probing.
 
 Avoid combination arms unless a single-factor full-suite result gives a
 positive signal.

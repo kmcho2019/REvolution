@@ -482,3 +482,32 @@ the suite-first campaign.
   run has started and printed the vLLM preflight line with
   `max_model_len=131072`. No seed metrics should be reported until the
   full 50-problem run completes and the standard package chain passes.
+
+## 2026-07-09 - S09 Front-Slot Lane 0.20 Two-Seed Closure
+
+- Completed S09 front-slot lane 0.20 seed 1002 normally in 4731.28
+  seconds with 4800 LLM API calls.
+- Package:
+  `S09_front_slot_lane_020/seed_1002/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with the S09 config pins checked.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S09 seed 1002 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.097557` HV / `0.081183` AUC46 / `33` covered;
+  V2 `0.100310` HV / `0.090753` AUC46 / `33` covered;
+  S09 `0.090574` HV / `0.077897` AUC46 / `32` covered.
+- Two-seed S09 read:
+  classic `0.104479` HV / `0.085867` AUC46 / `66/92` covered;
+  V2 `0.098539` HV / `0.087146` AUC46 / `65/92` covered;
+  S09 `0.096357` HV / `0.085650` AUC46 / `66/92` covered.
+- Classification:
+  `front-loss`. S09 ties classic coverage and covers one more problem
+  than V2 across two seeds, but the retained fronts are weaker on HV and
+  HV-AUC46. The seed 1001 positive result did not replicate.
+- Decision:
+  do not promote S09 to five seeds. Treat front-slot lane 0.20 as a
+  natural parent-source interpolation control, not a TCAD primary-arm
+  candidate.

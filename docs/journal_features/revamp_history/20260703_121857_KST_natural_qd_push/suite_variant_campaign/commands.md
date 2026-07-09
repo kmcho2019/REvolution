@@ -89,9 +89,9 @@ ks_triggered`.
 
 ### Current S09 Seed 1002 Launch
 
-This is the active replication command. Before reusing it, verify that no
-`front_slot_lane_020/seed_1002` process or completed run root already
-exists.
+This was the seed 1002 replication command. Before reusing it, verify
+that no `front_slot_lane_020/seed_1002` process or completed run root
+already exists.
 
 ```bash
 ROOT=/workspace/exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC

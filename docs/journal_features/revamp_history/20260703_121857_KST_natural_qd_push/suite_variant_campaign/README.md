@@ -84,7 +84,7 @@ known extraction failures before expensive descriptors.
 | S03 | five seeds packaged; not promoted | Slot-2 closes at 96.6% of classic HV, 97.9% of classic HV-AUC, and 163/230 coverage. It recovers V2 final HV to 101.5% of V2, but trails classic on all primary gates. |
 | S20 | two seeds packaged; not promoted | Seed 1002 beats matched classic on HV/AUC with equal coverage, but the two-seed read remains below classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S21 | two seeds packaged; not promoted | Scalar-elite retention closes as a clean negative control: S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
-| S09 | seed 1001 packaged; seed 1002 running | Positive single-seed front-slot interpolation read: S09 `0.102139` HV / `0.093403` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Seed 1002 is running under `exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/live/front_slot_lane_020/seed_1002`. |
+| S09 | two seeds packaged; not promoted | Front-slot lane 0.20 is a front-loss control: S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. Seed 1001 was positive, but seed 1002 did not replicate it. |
 
 ## Initial Wave Choice
 
@@ -109,15 +109,14 @@ launch-ready: they capture literature-natural brainstorms that would need
 a small tested parent-selection module or a descriptor registration gate
 before any full-suite run.
 
-Near-term executable choices after S09 seed 1001 are:
+Near-term executable choices after S09 closure are:
 
-1. Complete and package the active S09 seed 1002 run before any new
-   variant, because seed 1001 is the first Wave B probe to beat classic
-   on HV-AUC46 and coverage while also beating V2 on final HV.
+1. Treat S09 as closed; do not promote front-slot lane 0.20 to five
+   seeds.
 2. Use S20 and S21 only as negative parent-selection/retention controls
    unless a later mechanism specifically motivates revisiting them.
-3. Keep S22 front-slot lane 0.10 as the adjacent conservative
-   interpolation if S09 seed 1002 is encouraging but volatile.
+3. S22 front-slot lane 0.10 is now the adjacent conservative
+   interpolation if the campaign continues probing parent-source balance.
 4. Complete S04/S05 descriptor-health controls only if the manuscript
    needs descriptor evidence, not as primary HV candidates.
 5. Keep S07/S08/S19 capacity interpolation only if coverage remains a

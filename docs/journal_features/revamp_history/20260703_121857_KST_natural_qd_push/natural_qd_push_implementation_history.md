@@ -1311,3 +1311,23 @@ verdict log):
 - Decision: do not launch another long run before the planned server
   restart. After restart, complete S09 seed 1002 before any new variant
   or combination arm.
+
+## 2026-07-09 - S09 Front-Slot Lane Two-Seed Closure
+
+- Launched and completed S09 `front_slot_lane_020` seed 1002 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_134750_UTC/live/front_slot_lane_020/seed_1002`.
+- Runtime completed normally in 4731.28 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1002 is negative relative to matched comparators: S09 reaches
+  `0.090574` HV / `0.077897` HV-AUC46 / `32/46` coverage vs classic
+  `0.097557` / `0.081183` / `33/46` and V2 `0.100310` / `0.090753` /
+  `33/46`.
+- Two-seed S09 closes below the promotion gate:
+  S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs
+  classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` /
+  `0.087146` / `65/92`.
+- Classification: `front-loss`. The lane ties classic coverage and
+  covers one more problem than V2 across two seeds, but it fails to
+  retain strong fronts. Do not promote front-slot lane 0.20 to five
+  seeds.
