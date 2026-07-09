@@ -81,6 +81,7 @@ known extraction failures before expensive descriptors.
 | S02 | two seeds packaged | Warmup16 nearly ties classic two-seed HV-AUC, but loses HV and coverage. Do not promote as a primary arm. |
 | S03 | five seeds packaged; not promoted | Slot-2 closes at 96.6% of classic HV, 97.9% of classic HV-AUC, and 163/230 coverage. It recovers V2 final HV to 101.5% of V2, but trails classic on all primary gates. |
 | S20 | two seeds packaged; not promoted | Seed 1002 beats matched classic on HV/AUC with equal coverage, but the two-seed read remains below classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
+| S21 | seed 1001 packaged; seed 1002 next | Scalar-elite retention seed 1001 is coverage-positive but HV-negative: S21 `0.089155` HV / `0.082753` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. |
 
 ## Initial Wave Choice
 
@@ -105,11 +106,11 @@ launch-ready: they capture literature-natural brainstorms that would need
 a small tested parent-selection module or a descriptor registration gate
 before any full-suite run.
 
-Near-term executable choices after closing S20 are:
+Near-term executable choices after S21 seed 1001 are:
 
-1. Run S21 scalar-elite retention next. It is config-only and tests the
-   canonical one-elite MAP-Elites control after S20 showed cell-crowded
-   parent pressure is not reliable enough.
+1. Complete S21 seed 1002 before closing scalar-elite retention. Seed
+   1001 is too weak for promotion but gives a coverage-positive,
+   config-only canonical MAP-Elites control.
 2. Use S20 only as a negative parent-selection data point unless a later
    scalar-retention result specifically motivates revisiting cell-local
    crowding.

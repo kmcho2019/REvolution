@@ -334,3 +334,30 @@ the suite-first campaign.
   the registered two-seed probe remains below classic and V2 on HV/AUC
   and only ties classic coverage. Close S20 as a natural
   parent-selection negative and run S21 scalar-elite retention next.
+
+## 2026-07-09 - S21 Scalar-Elite NSGA-II Seed 1001
+
+- Launched S21 scalar-elite retention over full RTLLM 50 with seed 1001:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_003700_UTC/live/scalar_elite_nsga2/seed_1001`.
+- vLLM preflight recorded:
+  `preflights/s21_scalar_elite_nsga2_seed1001_20260709_003700_UTC.json`.
+- Runtime completed normally in 4735.83 seconds with 4800 total LLM API
+  calls.
+- Package:
+  `S21_scalar_elite_nsga2/seed_1001/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest. The PPA/HV headline package remains scoped to the 46
+  reference-complete problems, matching P3.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S21 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.111401` HV / `0.090551` AUC46 / `33` covered;
+  V2 `0.096767` HV / `0.083539` AUC46 / `32` covered;
+  S21 `0.089155` HV / `0.082753` AUC46 / `34` covered.
+- Decision:
+  do not promote on seed 1001. Complete seed 1002 because S21 is the
+  canonical scalar MAP-Elites retention control and seed 1001 improves
+  coverage, but treat the current signal as HV-negative and likely
+  coverage-only unless seed 1002 recovers strongly.

@@ -1223,3 +1223,23 @@ verdict log):
   cell-local crowding into stronger full-suite PPA hypervolume. Launch
   S21 scalar-elite retention next before returning to capacity,
   warmup, or descriptor scans.
+
+## 2026-07-09 - S21 Scalar-Elite Retention Seed 1001
+
+- Completed and packaged S21 `scalar_elite_nsga2` seed 1001 under
+  `suite_variant_campaign/S21_scalar_elite_nsga2/seed_1001/`.
+- Runtime completed normally in 4735.83 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1001 is coverage-positive but HV-negative: S21 covers `34/46`
+  reference-complete problems vs matched classic `33/46` and V2 `32/46`,
+  but trails matched classic on HV (`0.089155` vs `0.111401`) and
+  HV-AUC46 (`0.082753` vs `0.090551`). It also trails matched V2 on HV
+  (`0.096767`) and HV-AUC46 (`0.083539`).
+- Mechanism read: reducing each cell to one scalar elite does not rescue
+  the suite-scale PPA objective on this seed. It may reduce archive
+  dilution enough to expose one more valid problem, but the retained
+  elites are weaker than the classic and V2 PPA fronts.
+- Decision: complete S21 seed 1002 before closing the variant. Use the
+  two-seed read to decide whether scalar retention is a coverage-only
+  appendix result or a clean negative control for the QD retention story.
