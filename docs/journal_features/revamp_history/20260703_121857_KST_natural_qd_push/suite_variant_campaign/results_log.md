@@ -361,3 +361,18 @@ the suite-first campaign.
   canonical scalar MAP-Elites retention control and seed 1001 improves
   coverage, but treat the current signal as HV-negative and likely
   coverage-only unless seed 1002 recovers strongly.
+
+## 2026-07-09 - S21 Scalar-Elite NSGA-II Seed 1002 Running
+
+- Launched S21 scalar-elite retention over full RTLLM 50 with seed 1002:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_020320_UTC/live/scalar_elite_nsga2/seed_1002`.
+- vLLM preflight recorded:
+  `preflights/s21_scalar_elite_nsga2_seed1002_20260709_020320_UTC.json`.
+- Current status at 2026-07-09T02:13:37Z:
+  the first scheduler batch has produced 12 RTLLM problem summaries and
+  the run is still active. No seed metrics should be reported until the
+  full 50-problem run completes and the standard package chain passes.
+- Restart note:
+  `restart_handoff_20260709.md` records the active exec session, run
+  root, launch log, packaging commands, fixed-denominator HV-AUC warning,
+  and audit feedback.

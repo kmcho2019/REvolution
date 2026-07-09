@@ -46,6 +46,32 @@ Save under:
 
 `exp/natural_qd_push/suite_variants_wave_a_<UTC>/live/elite_pareto_slot_2/seed_<seed>`.
 
+## S20 Cell-Crowded Parent Selection
+
+Change only:
+
+```text
+--qd_parent_selection cell_crowded_tournament
+```
+
+Save under:
+
+`exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/pareto_front_cell_crowded/seed_<seed>`.
+
+## S21 Scalar Elite NSGA-II
+
+Change:
+
+```text
+--qd_cell_mode scalar_elite
+--qd_max_elites_per_cell 1
+```
+
+Keep `--qd_parent_selection nsga2_global_rank` and all other V2 parity
+pins. Save under:
+
+`exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/scalar_elite_nsga2/seed_<seed>`.
+
 ## S04/S05 Descriptor Completions
 
 Continue the existing P3c roots:

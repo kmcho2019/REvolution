@@ -72,6 +72,7 @@ known extraction failures before expensive descriptors.
 | `wave_a_preregistration.md` | First full-suite wave contract. |
 | `commands.md` | Launch/package templates and exact Wave A command shape. |
 | `results_log.md` | Append-only run/results ledger for this campaign. |
+| `restart_handoff_20260709.md` | Restart-safe state for the active S21 seed 1002 run. |
 
 ## Progress
 
@@ -81,7 +82,7 @@ known extraction failures before expensive descriptors.
 | S02 | two seeds packaged | Warmup16 nearly ties classic two-seed HV-AUC, but loses HV and coverage. Do not promote as a primary arm. |
 | S03 | five seeds packaged; not promoted | Slot-2 closes at 96.6% of classic HV, 97.9% of classic HV-AUC, and 163/230 coverage. It recovers V2 final HV to 101.5% of V2, but trails classic on all primary gates. |
 | S20 | two seeds packaged; not promoted | Seed 1002 beats matched classic on HV/AUC with equal coverage, but the two-seed read remains below classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
-| S21 | seed 1001 packaged; seed 1002 next | Scalar-elite retention seed 1001 is coverage-positive but HV-negative: S21 `0.089155` HV / `0.082753` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. |
+| S21 | seed 1001 packaged; seed 1002 running | Scalar-elite retention seed 1001 is coverage-positive but HV-negative: S21 `0.089155` HV / `0.082753` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Seed 1002 launched at `exp/natural_qd_push/suite_variants_wave_b_20260709_020320_UTC/live/scalar_elite_nsga2/seed_1002`; see `restart_handoff_20260709.md`. |
 
 ## Initial Wave Choice
 

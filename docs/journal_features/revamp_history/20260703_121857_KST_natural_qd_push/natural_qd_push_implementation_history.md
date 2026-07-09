@@ -1243,3 +1243,23 @@ verdict log):
 - Decision: complete S21 seed 1002 before closing the variant. Use the
   two-seed read to decide whether scalar retention is a coverage-only
   appendix result or a clean negative control for the QD retention story.
+
+## 2026-07-09 - Restart Handoff While S21 Seed 1002 Runs
+
+- Launched S21 `scalar_elite_nsga2` seed 1002 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_020320_UTC/live/scalar_elite_nsga2/seed_1002`.
+- Recorded the vLLM preflight at
+  `suite_variant_campaign/preflights/s21_scalar_elite_nsga2_seed1002_20260709_020320_UTC.json`.
+- As of 2026-07-09T02:13:37Z, the first scheduler batch has produced 12
+  RTLLM problem summaries and the run is still active. Do not report seed
+  metrics until all 50 RTLLM problems complete and the standard package
+  chain passes.
+- Added `suite_variant_campaign/restart_handoff_20260709.md` so the
+  planned server restart can preserve the active run state and resume the
+  same packaging flow.
+- Read-only audits were closed. They agreed that S21 seed 1002 is
+  justified as a pre-registered scalar MAP-Elites control, but not as a
+  promotion signal unless the two-seed aggregate materially recovers
+  HV/AUC. They also warned to keep HV-AUC46 on a fixed 46-problem
+  denominator and to avoid launching more long variants before the
+  restart.
