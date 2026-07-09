@@ -617,3 +617,28 @@ the suite-first campaign.
   after restart, prefer S07 over S10 for the next primary-HV probe if a
   new long run is allowed. Keep S04/S05 descriptor completions for
   descriptor-health evidence, not as the primary HV search.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1001 Packaged
+
+- Launched and completed S07 `capacity3` seed 1001:
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_182124_UTC/live/capacity3/seed_1001`.
+- Runtime completed normally in 4763.21 seconds with 4800 LLM API calls.
+- Package:
+  `S07_capacity3/seed_1001/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with the S07 config pins checked.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S07 seed 1001 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.111401` HV / `0.090551` AUC46 / `33` covered;
+  V2 `0.096767` HV / `0.083539` AUC46 / `32` covered;
+  S07 `0.100296` HV / `0.091895` AUC46 / `32` covered.
+- Classification:
+  `HV-AUC-positive capacity-control signal`. Capacity3 beats V2 on final
+  HV and beats both comparators on HV-AUC46, but it trails classic final
+  HV by about 10.0% and loses one coverage point against classic.
+- Decision:
+  do not promote from one seed. Complete seed 1002 only as a two-seed
+  replication check; this seed alone does not meet the primary TCAD gate.

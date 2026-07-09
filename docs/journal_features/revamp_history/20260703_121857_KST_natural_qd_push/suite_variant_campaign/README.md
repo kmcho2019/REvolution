@@ -73,7 +73,7 @@ known extraction failures before expensive descriptors.
 | `wave_b_preregistration.md` | Front-slot and Wave B probe contract. |
 | `commands.md` | Launch/package templates and exact suite command shape. |
 | `results_log.md` | Append-only run/results ledger for this campaign. |
-| `restart_handoff_20260709.md` | Restart-safe state through S09 seed 1001. |
+| `restart_handoff_20260709.md` | Restart-safe state through S07 seed 1001. |
 
 ## Progress
 
@@ -86,6 +86,7 @@ known extraction failures before expensive descriptors.
 | S21 | two seeds packaged; not promoted | Scalar-elite retention closes as a clean negative control: S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 | S09 | two seeds packaged; not promoted | Front-slot lane 0.20 is a front-loss control: S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. Seed 1001 was positive, but seed 1002 did not replicate it. |
 | S22 | two seeds packaged; not promoted | Conservative front-slot lane 0.10 is HV-AUC-positive but not a primary HV win: S22 `0.101722` HV / `0.089115` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. It beats V2 and ties classic coverage, but still trails classic final HV. |
+| S07 | seed 1001 packaged; mixed | Capacity3 seed 1001 is HV-AUC-positive and V2-positive, but not a primary classic win: S07 `0.100296` HV / `0.091895` HV-AUC46 / `32/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Complete seed 1002 only as a two-seed replication check. |
 
 ## Initial Wave Choice
 
@@ -110,7 +111,7 @@ launch-ready: they capture literature-natural brainstorms that would need
 a small tested parent-selection module or a descriptor registration gate
 before any full-suite run.
 
-Near-term executable choices after S22 closure are:
+Near-term executable choices after S07 seed 1001 are:
 
 1. Treat S09 as closed; do not promote front-slot lane 0.20 to five
    seeds.
@@ -118,10 +119,10 @@ Near-term executable choices after S22 closure are:
    unless a later mechanism specifically motivates revisiting them.
 3. Treat S22 as an HV-AUC-positive front-slot interpolation control, not
    as the primary TCAD arm.
-4. Run S07 capacity3 after restart if continuing the primary-HV search.
-   It is the opposite capacity direction from S01 capacity7: less
-   in-cell crowding, one clean knob, and an exact launch block in
-   `commands.md`.
+4. Treat S07 seed 1001 as a mixed capacity-control signal. It is
+   HV-AUC-positive but misses classic final HV and coverage; complete
+   seed 1002 only as a replication check, not as promotion evidence by
+   itself.
 5. Complete S04/S05 descriptor-health controls only if the manuscript
    needs descriptor evidence, not as primary HV candidates.
 6. Keep S08/S19 larger-capacity interpolation only if coverage remains a

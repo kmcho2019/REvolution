@@ -51,6 +51,11 @@ cross-arm bundles + isolated-grade per-task tables), see
   `0.098539` / `0.087146` / `65/92`. It beats V2 and beats classic on
   HV-AUC46 while tying classic coverage, but it still trails classic
   final HV.
+- S07 capacity3 seed 1001 is a mixed capacity-control signal:
+  `0.100296` HV / `0.091895` HV-AUC46 / `32/46` coverage vs matched
+  classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
+  `0.083539` / `32/46`. It beats V2 on final HV and beats both matched
+  comparators on HV-AUC46, but misses classic final HV and coverage.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -114,7 +119,7 @@ below on operator-fair evidence:**
   reruns recover 30-46 retention points).
 
 **Last refreshed:** 2026-07-09 (suite-first natural_qd_push full-RTLLM
-continuation through S22 two-seed front-slot closure);
+continuation through S07 capacity3 seed 1001);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

@@ -1392,3 +1392,19 @@ verdict log):
 - Decision: after restart, prefer S07 over S10 if the next turn is
   allowed to start a long primary-HV probe. Keep S04/S05 descriptor
   completions scoped to descriptor-health evidence.
+
+## 2026-07-09 - S07 Capacity 3 Seed 1001
+
+- Launched and completed S07 `capacity3` seed 1001 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260709_182124_UTC/live/capacity3/seed_1001`.
+- Runtime completed normally in 4763.21 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1001 is HV-AUC-positive but final-HV-negative against matched
+  classic: S07 `0.100296` HV / `0.091895` HV-AUC46 / `32/46` coverage
+  vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
+  `0.083539` / `32/46`.
+- Decision: do not promote from one seed. A seed 1002 replication is
+  reasonable under the two-seed probe ladder, but the current evidence is
+  not a primary journal-arm result because classic final HV and coverage
+  remain better.
