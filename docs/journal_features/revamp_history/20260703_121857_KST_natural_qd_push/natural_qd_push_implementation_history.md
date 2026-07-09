@@ -1263,3 +1263,23 @@ verdict log):
   HV/AUC. They also warned to keep HV-AUC46 on a fixed 46-problem
   denominator and to avoid launching more long variants before the
   restart.
+
+## 2026-07-09 - S21 Scalar-Elite Retention Closure
+
+- Completed and packaged S21 `scalar_elite_nsga2` seed 1002 under
+  `suite_variant_campaign/S21_scalar_elite_nsga2/seed_1002/`.
+- Runtime completed normally in 4751.68 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1002 is HV/AUC/coverage negative relative to matched classic:
+  S21 `0.084834` HV / `0.078138` HV-AUC46 / `31/46` coverage vs classic
+  `0.097557` / `0.081183` / `33/46`. It also trails matched V2
+  (`0.100310` HV / `0.090753` HV-AUC46 / `33/46` coverage).
+- Across seeds 1001-1002, S21 closes below the promotion gate:
+  S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs
+  classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` /
+  `0.087146` / `65/92`.
+- Decision: do not promote S21. Scalar one-elite MAP-Elites retention is
+  a clean negative control. The simpler retention state does not recover
+  PPA hypervolume and does not improve functionality coverage on the
+  two-seed full-RTLLM probe.

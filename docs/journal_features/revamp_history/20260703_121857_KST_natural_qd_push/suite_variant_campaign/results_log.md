@@ -376,3 +376,28 @@ the suite-first campaign.
   `restart_handoff_20260709.md` records the active exec session, run
   root, launch log, packaging commands, fixed-denominator HV-AUC warning,
   and audit feedback.
+
+## 2026-07-09 - S21 Scalar-Elite NSGA-II Two-Seed Closure
+
+- Completed S21 scalar-elite retention seed 1002 normally in 4751.68
+  seconds with 4800 LLM API calls.
+- Package:
+  `S21_scalar_elite_nsga2/seed_1002/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest with the S21 config pins checked.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S21 seed 1002 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.097557` HV / `0.081183` AUC46 / `33` covered;
+  V2 `0.100310` HV / `0.090753` AUC46 / `33` covered;
+  S21 `0.084834` HV / `0.078138` AUC46 / `31` covered.
+- Two-seed S21 read:
+  classic `0.104479` HV / `0.085867` AUC46 / `66/92` covered;
+  V2 `0.098539` HV / `0.087146` AUC46 / `65/92` covered;
+  S21 `0.086994` HV / `0.080445` AUC46 / `65/92` covered.
+- Decision:
+  do not promote S21. Scalar one-elite retention is a clean natural
+  MAP-Elites control, but it trails matched classic on HV, HV-AUC46, and
+  coverage and trails V2 on HV/HV-AUC46 while only tying V2 coverage.

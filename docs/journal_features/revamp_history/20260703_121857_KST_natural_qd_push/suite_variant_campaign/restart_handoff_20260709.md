@@ -1,29 +1,29 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-09T02:13:37Z.
+Last updated: 2026-07-09T03:28:16Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
-Last completed result package: `20762fb77c` (`docs(qd): Package S21 seed 1001`).
+Previous completed result package: `20762fb77c` (`docs(qd): Package S21 seed 1001`).
 
 ## Immediate State
 
 Do not launch another long full-suite run before the planned server restart.
-The only long-running process to preserve is S21 seed 1002:
+The S21 seed 1002 long-running benchmark has completed and been packaged.
+There is no active full-suite process from this handoff.
 
 ```text
-exec session: 5430
 run root:
 exp/natural_qd_push/suite_variants_wave_b_20260709_020320_UTC/live/scalar_elite_nsga2/seed_1002
 launch log:
 exp/natural_qd_push/suite_variants_wave_b_20260709_020320_UTC/launch_scalar_elite_nsga2_seed1002.log
 preflight:
 suite_variant_campaign/preflights/s21_scalar_elite_nsga2_seed1002_20260709_020320_UTC.json
+package:
+suite_variant_campaign/S21_scalar_elite_nsga2/seed_1002
 ```
 
-Observed at this handoff: the first active scheduler batch has produced
-twelve RTLLM problem summaries. The run is still active and should
-continue into later batches. The top-level launcher log is still mostly
-the vLLM preflight and tqdm header; use artifact timestamps and
-`*_summary.json` counts for live progress.
+Observed at this handoff: S21 seed 1002 completed all 50 RTLLM problems
+normally in 4751.68 seconds with 4800 LLM API calls. The package passes
+the full 50-problem run validation and operator audit.
 
 ## S21 Contract
 
@@ -51,13 +51,13 @@ S21 `0.089155` HV / `0.082753` HV-AUC46 / `34/46` coverage vs matched
 classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
 `0.083539` / `32/46`.
 
-Complete seed 1002 before closing S21. Do not promote S21 unless the
-two-seed read materially recovers HV/AUC or gives a clear coverage-only
-utility story.
+Seed 1002 is packaged. Do not promote S21: the two-seed read trails
+classic on HV, HV-AUC46, and coverage and trails V2 on HV/HV-AUC46 while
+only tying V2 coverage.
 
-## If The Run Completes
+## Package Pointers
 
-Package seed 1002 with the same compact structure as seed 1001:
+Seed 1002 was packaged with the same compact structure as seed 1001:
 
 ```text
 MANIFEST_YAML=docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_reference_complete_manifest.yaml
@@ -68,7 +68,7 @@ ARM=exp/natural_qd_push/suite_variants_wave_b_20260709_020320_UTC/live/scalar_el
 PKG=docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/S21_scalar_elite_nsga2/seed_1002
 ```
 
-Run the standard package chain:
+The standard package chain was run:
 
 ```text
 uv run python scripts/report_pareto_analysis.py
@@ -78,39 +78,33 @@ uv run python scripts/audit_operator_contract.py
 uv run python scripts/validate_natural_qd_run.py
 ```
 
-Validation expectations should include every S21 pin above. The run is
-invalid as a headline comparison if `single_thought_count` is nonzero or
-if the QD config drifts from the registered flags.
+Validation expectations included every S21 pin above. The run would be
+invalid as a headline comparison if `single_thought_count` were nonzero
+or if the QD config drifted from the registered flags.
 
-After packaging, update:
+Updated:
 
 ```text
 suite_variant_campaign/README.md
 suite_variant_campaign/results_log.md
 suite_variant_campaign/variant_registry.csv
 natural_qd_push_implementation_history.md
+docs/journal_features/13_findings_dashboard.md
+suite_variant_campaign/restart_handoff_20260709.md
 ```
 
-Then classify S21 as promoted, coverage-only, or negative. The likely
-classification from seed 1001 is coverage-only / not promoted.
+S21 is classified as a negative scalar-retention control.
 
 Compute HV-AUC46 with the fixed 46-problem denominator. Do not use a row
 mean over `hv_auc.csv`, because sparse arms omit zero-coverage problems
 and that inflates the score.
 
-## If The Server Restarts First
+## If The Server Restarts
 
-Check whether the raw run survived:
-
-```text
-find exp/natural_qd_push/suite_variants_wave_b_20260709_020320_UTC/live/scalar_elite_nsga2/seed_1002 -name '*_summary.json' | wc -l
-tail -80 exp/natural_qd_push/suite_variants_wave_b_20260709_020320_UTC/launch_scalar_elite_nsga2_seed1002.log
-```
-
-If it did not complete all 50 RTLLM problems, mark the run as interrupted
-and do not use partial seed 1002 metrics for the S21 decision. Relaunching
-seed 1002 after restart is the first long job to consider, but only after
-the user confirms the server is ready for another full-suite process.
+No S21 process needs to be preserved. After restart, verify the package
+and docs are present, then decide whether to stop for analysis or prepare
+the next registered full-suite run only after the user confirms the
+server is ready.
 
 ## Audit Feedback To Carry Forward
 
@@ -147,10 +141,10 @@ direction if the campaign continues after restart.
 No new long process should start before the restart. After restart and
 S21 closure, the conservative next executable options are:
 
-1. S04/S05 descriptor completion to five seeds if descriptor-health
-   evidence is needed.
-2. S09/S22 front-slot interpolation as an AUC/utility check with a
+1. S09/S22 front-slot interpolation as an AUC/utility check with a
    fresh mechanism card.
+2. S04/S05 descriptor completion to five seeds if descriptor-health
+   evidence is needed.
 3. S07/S08 capacity interpolation only if coverage remains worth probing.
 
 Avoid combination arms unless a single-factor full-suite result gives a

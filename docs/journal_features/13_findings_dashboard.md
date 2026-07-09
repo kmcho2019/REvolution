@@ -35,8 +35,12 @@ cross-arm bundles + isolated-grade per-task tables), see
   classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 /
   `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2
   `0.098539` / `0.087146` / `65/92`.
-- Next queue: S21 scalar-elite retention before more capacity or warmup
-  scans. A read-only audit recorded WARN, not FAIL:
+- S21 scalar-elite retention is also a clean two-seed negative control:
+  S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic
+  `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` /
+  `65/92`. One scalar elite per cell simplifies the MAP-Elites archive
+  but does not recover suite-scale PPA/functionality.
+- Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
 
@@ -99,7 +103,7 @@ below on operator-fair evidence:**
   reruns recover 30-46 retention points).
 
 **Last refreshed:** 2026-07-09 (suite-first natural_qd_push full-RTLLM
-continuation through S20 two-seed closure; next S21);
+continuation through S21 two-seed scalar-retention closure);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

@@ -72,7 +72,7 @@ known extraction failures before expensive descriptors.
 | `wave_a_preregistration.md` | First full-suite wave contract. |
 | `commands.md` | Launch/package templates and exact Wave A command shape. |
 | `results_log.md` | Append-only run/results ledger for this campaign. |
-| `restart_handoff_20260709.md` | Restart-safe state for the active S21 seed 1002 run. |
+| `restart_handoff_20260709.md` | Restart-safe state and closure note for S21 seed 1002. |
 
 ## Progress
 
@@ -82,7 +82,7 @@ known extraction failures before expensive descriptors.
 | S02 | two seeds packaged | Warmup16 nearly ties classic two-seed HV-AUC, but loses HV and coverage. Do not promote as a primary arm. |
 | S03 | five seeds packaged; not promoted | Slot-2 closes at 96.6% of classic HV, 97.9% of classic HV-AUC, and 163/230 coverage. It recovers V2 final HV to 101.5% of V2, but trails classic on all primary gates. |
 | S20 | two seeds packaged; not promoted | Seed 1002 beats matched classic on HV/AUC with equal coverage, but the two-seed read remains below classic and V2 on HV/AUC: S20 `0.095855` HV / `0.085447` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
-| S21 | seed 1001 packaged; seed 1002 running | Scalar-elite retention seed 1001 is coverage-positive but HV-negative: S21 `0.089155` HV / `0.082753` HV-AUC46 / `34/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Seed 1002 launched at `exp/natural_qd_push/suite_variants_wave_b_20260709_020320_UTC/live/scalar_elite_nsga2/seed_1002`; see `restart_handoff_20260709.md`. |
+| S21 | two seeds packaged; not promoted | Scalar-elite retention closes as a clean negative control: S21 `0.086994` HV / `0.080445` HV-AUC46 / `65/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. |
 
 ## Initial Wave Choice
 
@@ -107,16 +107,16 @@ launch-ready: they capture literature-natural brainstorms that would need
 a small tested parent-selection module or a descriptor registration gate
 before any full-suite run.
 
-Near-term executable choices after S21 seed 1001 are:
+Near-term executable choices after S21 closure are:
 
-1. Complete S21 seed 1002 before closing scalar-elite retention. Seed
-   1001 is too weak for promotion but gives a coverage-positive,
-   config-only canonical MAP-Elites control.
-2. Use S20 only as a negative parent-selection data point unless a later
-   scalar-retention result specifically motivates revisiting cell-local
-   crowding.
-3. Keep S07/S08/S19 capacity interpolation only if coverage remains a
+1. Use S20 and S21 only as negative parent-selection/retention controls
+   unless a later mechanism specifically motivates revisiting them.
+2. Keep S09/S22 front-slot interpolation as the strongest next
+   full-suite direction if another run is approved after restart.
+3. Complete S04/S05 descriptor-health controls only if the manuscript
+   needs descriptor evidence, not as primary HV candidates.
+4. Keep S07/S08/S19 capacity interpolation only if coverage remains a
    target after the S03 confirmation.
-4. Keep S11/S12 warmup interpolation only as a secondary AUC check.
-5. Run S23-S26 descriptor reductions only after an extraction/config
+5. Keep S11/S12 warmup interpolation only as a secondary AUC check.
+6. Run S23-S26 descriptor reductions only after an extraction/config
    smoke.
