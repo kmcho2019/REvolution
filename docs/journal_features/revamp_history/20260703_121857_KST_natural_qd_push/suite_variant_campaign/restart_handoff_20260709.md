@@ -1,9 +1,11 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-10T02:20:00Z.
+Last updated: 2026-07-10T02:18:42Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
 `suite_variant_campaign/S07_capacity3/seed_1005`.
+Current live run:
+`exp/natural_qd_push/suite_variants_wave_c_20260710_021651_UTC/live/journal_logic_width_2d/seed_1001`.
 
 ## Immediate State
 
@@ -99,6 +101,21 @@ All operator and evaluation parity pins remain unchanged:
 `eoh_success_operator_set=classic`, `representation_kind=code_individual`,
 `evaluation_mode=strict_ablation`, `max_tokens=128000`, and
 `diff_max_tokens=128000`.
+
+Seed 1001 was launched at:
+
+```text
+run root:
+exp/natural_qd_push/suite_variants_wave_c_20260710_021651_UTC/live/journal_logic_width_2d/seed_1001
+launch log:
+exp/natural_qd_push/suite_variants_wave_c_20260710_021651_UTC/launch_journal_logic_width_2d_seed1001.log
+preflight:
+suite_variant_campaign/preflights/s23_journal_logic_width_2d_seed1001_20260710_021651_UTC.json
+```
+
+The vLLM preflight passed with model `openai/gpt-oss-120b` and
+`max_model_len=131072`. No S23 metrics should be reported until all 50
+RTLLM problems complete and the standard package chain passes.
 
 Do not launch broad BD scans from this handoff. Compact8d/CVT is deferred
 because it changes descriptor family and geometry and had prior extraction

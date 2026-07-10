@@ -878,3 +878,30 @@ the suite-first campaign.
   family and geometry and had prior extraction fragility. GT3D/testability
   remains a coverage-focused reserve because existing suite evidence is
   HV-weak.
+
+## 2026-07-10 - S23 Logic-Width 2D Seed 1001 Running
+
+- Launched S23 `journal_logic_width_2d` seed 1001 at
+  `exp/natural_qd_push/suite_variants_wave_c_20260710_021651_UTC/live/journal_logic_width_2d/seed_1001`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_c_20260710_021651_UTC/launch_journal_logic_width_2d_seed1001.log`.
+- Preflight recorded at
+  `preflights/s23_journal_logic_width_2d_seed1001_20260710_021651_UTC.json`;
+  it passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- Variant pins:
+  `qd_descriptor_axes=logic_depth,comb_width_log`,
+  `qd_archive_type=grid_quantile`, `qd_num_cells=16`,
+  `qd_grid_quantile_warmup_successes=8`, `qd_cell_mode=pareto_front`,
+  `qd_max_elites_per_cell=5`, `qd_parent_selection=nsga2_global_rank`,
+  and `qd_champion_lane_fraction=0.5`.
+- Operator/evaluation pins:
+  `classic_operator_kind=eoh_strategies`,
+  `qd_operator_kind=eoh_strategies`, `eoh_success_operator_set=classic`,
+  `representation_kind=code_individual`,
+  `evaluation_mode=strict_ablation`, `max_tokens=128000`, and
+  `diff_max_tokens=128000`.
+- Current status:
+  full RTLLM smoke is running. No S23 metrics should be reported until
+  all 50 RTLLM problems complete and the standard validation/package chain
+  passes.

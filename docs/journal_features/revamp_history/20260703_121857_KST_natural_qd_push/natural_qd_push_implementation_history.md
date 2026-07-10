@@ -1600,3 +1600,20 @@ verdict log):
   changes. Defer S31, compact8d/CVT, and gt3d/testability until S23 gives
   a suite signal or the manuscript explicitly needs health/coverage
   appendices.
+
+## 2026-07-10 - S23 Logic-Width 2D Seed 1001 Launch
+
+- Launched S23 `journal_logic_width_2d` seed 1001:
+  `exp/natural_qd_push/suite_variants_wave_c_20260710_021651_UTC/live/journal_logic_width_2d/seed_1001`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_c_20260710_021651_UTC/launch_journal_logic_width_2d_seed1001.log`.
+- vLLM preflight recorded:
+  `suite_variant_campaign/preflights/s23_journal_logic_width_2d_seed1001_20260710_021651_UTC.json`.
+- Preflight passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- S23 keeps the V2 platform and changes only the descriptor axes:
+  `logic_depth, comb_width_log`. It does not pass
+  `qd_descriptor_profile`.
+- Current status:
+  run has started over 50 RTLLM problems. No metrics should be reported
+  until the run completes and the standard validation/package chain passes.
