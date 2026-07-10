@@ -1560,3 +1560,25 @@ verdict log):
   capacity reduction improves trajectory quality and coverage while
   recovering V2 final HV. The next primary search should shift away from
   capacity-only variants.
+
+## 2026-07-10 - S07 Final Statistics and Case Studies
+
+- Added `suite_variant_campaign/S07_capacity3/five_seed_analysis/` to
+  make the S07 decision auditable after seed 1005.
+- Contents:
+  `seed_paired_deltas.csv`, `statistical_tests.json`,
+  `per_problem_win_loss_map.csv`, `case_study_problem_metrics.csv`,
+  `case_study_best_candidates.csv`, `case_study_summary.csv`, and
+  `summary.md`.
+- Seed-paired S07-vs-classic read:
+  mean HV `-0.001322`, HV-AUC46 `+0.001049`, coverage `+0.2` problems
+  per seed. With only five seed pairs, sign/Wilcoxon/t-test values are
+  descriptive rather than claim-bearing.
+- Per-problem map:
+  S07 wins mean final HV on 15 problems, classic wins on 8, and 23 tie.
+  The requested mechanism cases are positive for S07:
+  `Prob015_multi_pipe_8bit` recovers coverage and `Prob024_fsm` improves
+  mean HV/AUC while retaining full coverage.
+- Decision:
+  keep S07 as secondary trajectory/coverage evidence and only then move
+  to targeted BD/descriptor follow-ups.

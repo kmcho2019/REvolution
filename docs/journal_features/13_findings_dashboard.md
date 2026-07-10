@@ -56,7 +56,10 @@ cross-arm bundles + isolated-grade per-task tables), see
   HV-AUC46 / `165/230` coverage vs classic `0.103802` / `0.086982` /
   `164/230` and V2 `0.098801` / `0.087428` / `166/230`. It beats
   classic on HV-AUC46 and coverage and beats V2 on HV/HV-AUC46, but
-  reaches only 98.7% of classic final HV.
+  reaches only 98.7% of classic final HV. The S07 seed-paired
+  statistics, per-problem win/loss map, and `Prob015`/`Prob024` case
+  studies are packaged in
+  `suite_variant_campaign/S07_capacity3/five_seed_analysis/summary.md`.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.

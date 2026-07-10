@@ -228,6 +228,22 @@ HV-AUC46 and coverage and beats V2 on HV/HV-AUC46, but it reaches only
 98.7% of classic final HV. The next primary search should shift away
 from capacity-only variants.
 
+S07 final statistics and case-study artifacts are packaged under:
+
+```text
+suite_variant_campaign/S07_capacity3/five_seed_analysis/summary.md
+suite_variant_campaign/S07_capacity3/five_seed_analysis/seed_paired_deltas.csv
+suite_variant_campaign/S07_capacity3/five_seed_analysis/statistical_tests.json
+suite_variant_campaign/S07_capacity3/five_seed_analysis/per_problem_win_loss_map.csv
+suite_variant_campaign/S07_capacity3/five_seed_analysis/case_study_summary.csv
+```
+
+The descriptive seed-paired tests show mean HV delta `-0.001322`,
+HV-AUC46 delta `+0.001049`, and coverage delta `+0.2` problems per seed.
+`Prob015_multi_pipe_8bit` and `Prob024_fsm` are the positive mechanism
+examples. Use this posture before launching targeted descriptor/BD
+follow-ups.
+
 ## S21 Contract
 
 S21 is the canonical one-elite MAP-Elites retention control:

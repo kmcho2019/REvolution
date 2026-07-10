@@ -837,3 +837,24 @@ the suite-first campaign.
   explains final-HV recovery. The next primary search should shift away
   from capacity-only variants, likely toward descriptor reduction or
   descriptor-health lanes after an extraction/config smoke.
+
+## 2026-07-10 - S07 Final Statistics and Case Studies
+
+- Added `S07_capacity3/five_seed_analysis/` with seed-paired deltas,
+  descriptive sign/Wilcoxon/t-test results, a per-problem win/loss map,
+  and case-study tables for `Prob015_multi_pipe_8bit` and `Prob024_fsm`.
+- Seed-paired S07-vs-classic deltas:
+  mean HV `-0.001322` (2 positive / 3 negative seeds, Wilcoxon
+  `p=0.6250`), HV-AUC46 `+0.001049` (3 positive / 2 negative seeds,
+  Wilcoxon `p=0.8125`), and coverage `+0.2` covered problems per seed.
+- Per-problem map:
+  S07 wins mean final HV on 15 problems, classic wins on 8, and 23 tie.
+  Coverage improves on 3 problems and drops on 4.
+- Mechanism read:
+  `Prob015_multi_pipe_8bit` is the clean compact-retention success case:
+  S07 recovers `3/5` covered seeds where classic has `0/5`.
+  `Prob024_fsm` is also S07-positive on mean HV/AUC while retaining
+  `5/5` coverage.
+- Decision remains unchanged:
+  S07 is secondary evidence, not the primary final-HV claim. Run targeted
+  descriptor follow-ups only after this S07 posture is kept explicit.
