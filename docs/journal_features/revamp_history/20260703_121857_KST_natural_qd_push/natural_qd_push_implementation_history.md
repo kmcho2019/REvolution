@@ -1744,3 +1744,23 @@ verdict log):
   close S32 after seed 1001. It trips the mechanism-card stop rule at
   86.3% of matched classic final HV and does not preserve S07's HV-AUC
   advantage, so seed 1002 is blocked from current evidence.
+
+## 2026-07-10 - Senior Advisor Review Bundle
+
+- Added `reviews/20260710_review_bundle/` in the style of the June-29
+  senior-review package.
+- Curated the accepted claims contract, current findings, conference-paper
+  text, natural-QD comparison, suite registry, S07/S32 evidence, C-F
+  ablation, RealBench PPA state, and selected validation source.
+- Wrote advisor briefings that distinguish the campaign's successful
+  mechanism study from its failed full-suite final-HV objective.
+- Ranked descriptor-free Pareto REvolution as the immediate primary
+  experiment and reference-seeded Pareto optimization as the larger-design
+  path with the highest strategic upside. Kept operator simplification as a
+  supporting ablation and QD as characterization evidence.
+- Ran an independent read-only `claude -p` direction review. It agreed with
+  the ranking, recommended retiring fixed two-emitter QD, and emphasized
+  formal equivalence, held-out confirmation, and canonical reanalysis of the
+  existing classic-no-C-F result.
+- No benchmark was launched. The bundle proposes gates for advisor review;
+  it does not change the frozen revision-3 claims contract.

@@ -4,7 +4,7 @@ Goal-scaffold root for the July 2026 push to find a natural QD/MAP-Elites
 extension of classic REvolution that beats classic on HV and HV-AUC while
 matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 
-## Current State (2026-07-07; follow-ups N04/N02b/N07a/N07c/N09/N10 measured)
+## Current State (2026-07-10; suite-first campaign closed, advisor bundle added)
 
 - HEADLINE: the two-scale story. The faithful V2 platform BEATS classic
   at screening scale (+12.9% HV, +16.2% HV-AUC, 3/3 seeds,
@@ -54,6 +54,11 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
   2026-07-08 user-directed suite-first push. It treats the 8-design screen
   as a weak filter and probes more natural variants directly on full
   RTLLM before deciding whether a TCAD-positive method exists.
+- Advisor review: `reviews/20260710_review_bundle/` packages the current
+  evidence, technical stack, candid QD verdict, ranked journal directions,
+  and proposed validation gates. It recommends descriptor-free Pareto
+  REvolution as the immediate method candidate and reference-seeded Pareto
+  optimization as the higher-upside larger-design track.
 
 ## Top-Level Docs
 
@@ -66,6 +71,7 @@ matching or improving functionality. Branch: `feat/journal-qd-bd-exp-20260703`.
 | `followup_decision_map.md` | Post-N10 operator-fair map of follow-up results, stop rules, and remaining paper decisions. |
 | `negative_map_adversarial_validation_report.md` | Formal PASS review for the exhausted-portfolio alternative outcome. |
 | `suite_variant_campaign/` | New suite-first continuation plan, registry, commands, and results log. |
+| `reviews/20260710_review_bundle/` | Senior-advisor decision bundle after the suite-first QD closure. |
 | `goal_template.md` | Compact `/goal` body. |
 | `natural_qd_push_adversarial_prompt.md` | Sign-off rubric (PASS/FAIL). |
 | `natural_qd_push_subagent_validation_report.md` | Canonical validator output; includes the post-N10 negative-map PASS addendum. |
