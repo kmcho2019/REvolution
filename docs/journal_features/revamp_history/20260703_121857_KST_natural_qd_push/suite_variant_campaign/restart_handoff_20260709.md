@@ -1,16 +1,14 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-10T00:24:48Z.
+Last updated: 2026-07-10T00:26:28Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
 `suite_variant_campaign/S07_capacity3/seed_1004`.
 
 ## Immediate State
 
-S07 capacity3 seed 1004 has completed and been packaged. There is no
-active benchmark or report process at this handoff. The next benchmark,
-if a new long run is allowed, is S07 seed 1005 as the final confirmation
-seed.
+S07 capacity3 seed 1004 has completed and been packaged. S07 seed 1005
+is active as the final confirmation seed.
 
 ```text
 seed 1001 run root:
@@ -45,7 +43,13 @@ seed 1004 preflight:
 suite_variant_campaign/preflights/s07_capacity3_seed1004_20260709_225719_UTC.json
 seed 1004 package:
 suite_variant_campaign/S07_capacity3/seed_1004
-next seed 1005 package after completion:
+active seed 1005 run root:
+exp/natural_qd_push/suite_variants_wave_b_20260710_002626_UTC/live/capacity3/seed_1005
+active seed 1005 launch log:
+exp/natural_qd_push/suite_variants_wave_b_20260710_002626_UTC/launch_capacity3_seed1005.log
+active seed 1005 preflight:
+suite_variant_campaign/preflights/s07_capacity3_seed1005_20260710_002626_UTC.json
+seed 1005 package after completion:
 suite_variant_campaign/S07_capacity3/seed_1005
 ```
 
@@ -62,6 +66,11 @@ Observed after seed 1004 launch: the vLLM preflight passed with model
 RTLLM run completed normally in 4675.61 seconds with 4800 LLM API calls.
 The compact package passes the full 50-problem run validation and the
 operator audit.
+
+Observed after seed 1005 launch: the vLLM preflight passed with model
+`openai/gpt-oss-120b` and `max_model_len=131072`, then the 50-problem
+RTLLM run started. No seed or five-seed metrics should be reported until
+the full run completes and the standard package chain passes.
 
 The earlier S09 launch rooted at
 `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC` was

@@ -795,3 +795,20 @@ the suite-first campaign.
   finish S07 seed 1005 before any manuscript claim. The final-HV margin
   is still small, so a fifth seed is required to decide whether S07 is a
   viable TCAD extension or another near-miss.
+
+## 2026-07-10 - S07 Capacity 3 Seed 1005 Running
+
+- Launched S07 `capacity3` seed 1005:
+  `exp/natural_qd_push/suite_variants_wave_b_20260710_002626_UTC/live/capacity3/seed_1005`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260710_002626_UTC/launch_capacity3_seed1005.log`.
+- vLLM preflight recorded:
+  `preflights/s07_capacity3_seed1005_20260710_002626_UTC.json`.
+- Preflight passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- Variant pins are unchanged from S07 seeds 1001-1004 except for
+  `seed=1005`.
+- Current status:
+  run has started over 50 RTLLM problems. No seed or five-seed metrics
+  should be reported until the full run completes and the standard
+  package chain passes.

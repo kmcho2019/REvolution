@@ -1524,3 +1524,17 @@ verdict log):
   finish S07 seed 1005 as the next run before opening a new mechanism.
   S07 is now the leading natural TCAD-extension lane, but the final-HV
   margin is too small to claim before the five-seed aggregate lands.
+
+## 2026-07-10 - S07 Capacity 3 Seed 1005 Launch
+
+- Launched S07 `capacity3` seed 1005 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260710_002626_UTC/live/capacity3/seed_1005`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260710_002626_UTC/launch_capacity3_seed1005.log`.
+- Preflight recorded at
+  `suite_variant_campaign/preflights/s07_capacity3_seed1005_20260710_002626_UTC.json`;
+  it passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- Variant pins are unchanged from S07 seeds 1001-1004 except for
+  `seed=1005`. No metrics should be reported until all 50 RTLLM
+  problems complete and the standard validation/package chain passes.
