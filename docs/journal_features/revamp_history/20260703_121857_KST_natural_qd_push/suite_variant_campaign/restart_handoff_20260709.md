@@ -1,16 +1,16 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-10T04:02:00Z.
+Last updated: 2026-07-10T05:30:00Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
-`suite_variant_campaign/S23_journal_logic_width_2d/seed_1001`.
-Current live run:
-`exp/natural_qd_push/suite_variants_wave_b_20260710_035929_UTC/live/warmup12/seed_1001`.
+`suite_variant_campaign/S11_warmup12/seed_1001`.
+Current live run: none.
 
 ## Immediate State
 
-S23 `journal_logic_width_2d` seed 1001 has completed and been packaged.
-S11 `warmup12` seed 1001 is the active full-RTLLM run.
+S23 `journal_logic_width_2d` seed 1001 and S11 `warmup12` seed 1001
+have completed and been packaged. No benchmark is currently running from
+this handoff.
 
 ```text
 seed 1001 run root:
@@ -134,7 +134,7 @@ existing suite signal is HV-weak. `S31 s07_logic_width_2d` remains
 blocked because S23 did not provide the required non-catastrophic
 single-factor signal.
 
-## Active S11 Warmup12 Run
+## S11 Warmup12 Closure
 
 S11 is a bounded warmup-family closure run, not a new primary TCAD lane.
 It keeps the V2 platform and changes only:
@@ -149,7 +149,7 @@ All operator and evaluation parity pins remain unchanged:
 `evaluation_mode=strict_ablation`, `max_tokens=128000`, and
 `diff_max_tokens=128000`.
 
-Seed 1001 was launched at:
+Seed 1001 completed and was packaged at:
 
 ```text
 run root:
@@ -158,13 +158,21 @@ launch log:
 exp/natural_qd_push/suite_variants_wave_b_20260710_035929_UTC/launch_warmup12_seed1001.log
 preflight:
 suite_variant_campaign/preflights/s11_warmup12_seed1001_20260710_035929_UTC.json
+package:
+suite_variant_campaign/S11_warmup12/seed_1001
 ```
 
 The vLLM preflight passed with model `openai/gpt-oss-120b` and
-`max_model_len=131072`. No S11 metrics should be reported until all 50
-RTLLM problems complete and the standard package chain passes. Stop
-after seed 1001 unless S11 shows real HV or coverage recovery; do not
-launch S12 warmup24 from current evidence.
+`max_model_len=131072`. The run completed normally in 4793.56 seconds
+with 4800 LLM API calls. The package passes the full 50-problem
+validation manifest and operator audit.
+
+S11 seed 1001 is a negative warmup interpolation control:
+S11 `0.095807` HV / `0.085702` HV-AUC46 / `33/46` coverage vs matched
+classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
+`0.083539` / `32/46`. It ties matched classic coverage but is far below
+classic on final HV and HV-AUC46. Close S11 after seed 1001 and keep S12
+warmup24 blocked from current evidence.
 
 ## S09 Contract
 

@@ -69,10 +69,13 @@ cross-arm bundles + isolated-grade per-task tables), see
   1002 and blocks the contingent `S31 s07_logic_width_2d` combination.
   Package:
   `suite_variant_campaign/S23_journal_logic_width_2d/seed_1001/results_report.md`.
-- S11 `warmup12` is now running as bounded warmup-family closure, not a
-  new primary lane. It changes only
-  `qd_grid_quantile_warmup_successes=12`; S12 warmup24 remains blocked
-  unless S11 shows real HV or coverage recovery after packaging.
+- S11 `warmup12` closes as a valid one-seed negative warmup
+  interpolation control: S11 `0.095807` HV / `0.085702` HV-AUC46 /
+  `33/46` coverage vs matched classic `0.111401` / `0.090551` /
+  `33/46` and V2 `0.096767` / `0.083539` / `32/46`. It ties classic
+  coverage but is far below classic on final HV and HV-AUC46, so seed
+  1002 is closed and S12 warmup24 remains blocked. Package:
+  `suite_variant_campaign/S11_warmup12/seed_1001/results_report.md`.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -136,8 +139,8 @@ below on operator-fair evidence:**
   reruns recover 30-46 retention points).
 
 **Last refreshed:** 2026-07-10 (suite-first natural_qd_push full-RTLLM
-continuation through S07 closure and S23 negative descriptor-reduction
-control; S11 warmup12 closure launch);
+continuation through S07 closure, S23 negative descriptor-reduction
+control, and S11 negative warmup12 closure);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

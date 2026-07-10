@@ -967,3 +967,28 @@ the suite-first campaign.
   RTLLM problems complete and the standard validation/package chain
   passes. Stop after seed 1001 unless it shows real HV or coverage
   recovery.
+
+## 2026-07-10 - S11 Warmup12 Seed 1001 Package
+
+- Completed and packaged S11 `warmup12` seed 1001 under
+  `S11_warmup12/seed_1001/`.
+- Runtime completed normally in 4793.56 seconds with 4800 LLM API calls.
+  `tables/run_validation.json` passes the full 50-problem manifest with
+  the `qd_grid_quantile_warmup_successes=12` contract.
+- `tables/operator_contract.csv` passes with `single_thought_count=0`:
+  classic `1002` candidates / `804` EoH, S11 `970` candidates / `763`
+  EoH, and V2 `1007` candidates / `803` EoH.
+- Seed read:
+  S11 `0.095807` HV / `0.085702` HV-AUC46 / `33/46` coverage vs
+  matched classic `0.111401` / `0.090551` / `33/46` and V2
+  `0.096767` / `0.083539` / `32/46`.
+- Mechanism read:
+  S11 ties matched classic coverage and improves on V2 coverage by one
+  problem, but final HV is `-0.015595` below classic and `-0.000961`
+  below V2. The largest losses are `Prob036_edge_detect` (`-0.538825`),
+  `Prob024_fsm` (`-0.239912`), `Prob041_traffic_light` (`-0.054059`),
+  and `Prob025_sequence_detector` (`-0.043390`).
+- Classification:
+  `seed1001 HV-negative warmup interpolation control`. Close S11 after
+  seed 1001, do not launch seed 1002, and keep S12 `warmup24` blocked
+  from current evidence.

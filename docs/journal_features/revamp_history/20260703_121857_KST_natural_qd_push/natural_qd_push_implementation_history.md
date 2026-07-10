@@ -1660,3 +1660,23 @@ verdict log):
 - S11 keeps the V2 platform and changes only
   `qd_grid_quantile_warmup_successes=12`. S12 warmup24 remains blocked
   unless S11 shows real HV or coverage recovery after packaging.
+
+## 2026-07-10 - S11 Warmup12 Seed 1001 Closure
+
+- Completed and packaged S11 `warmup12` seed 1001 under
+  `suite_variant_campaign/S11_warmup12/seed_1001/`.
+- Runtime completed normally in 4793.56 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- S11 keeps the V2 platform and changes only
+  `qd_grid_quantile_warmup_successes=12`; all EoH operator, token-budget,
+  archive, descriptor, and strict-ablation pins validate.
+- Seed read:
+  S11 `0.095807` HV / `0.085702` HV-AUC46 / `33/46` coverage vs
+  matched classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767`
+  / `0.083539` / `32/46`.
+- Decision:
+  close S11 after seed 1001 as a
+  `seed1001 HV-negative warmup interpolation control`. It ties matched
+  classic coverage, but final HV and HV-AUC46 remain well below classic,
+  so seed 1002 and S12 warmup24 remain blocked from current evidence.

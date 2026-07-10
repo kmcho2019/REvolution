@@ -60,3 +60,19 @@ Package S11 seed 1001 before interpreting any metrics. Stop after seed
 Do not launch S12 `warmup24` or any warmup combination from current
 evidence. Promote S11 beyond two seeds only if a two-seed result can
 plausibly challenge classic, not merely V2.
+
+## Outcome
+
+S11 seed 1001 completed and was packaged at
+`S11_warmup12/seed_1001/`. It ties matched classic coverage but fails the
+stop rule on PPA quality:
+
+| Arm | HV | HV-AUC46 | Coverage |
+| --- | ---: | ---: | ---: |
+| classic REvolution | 0.111401 | 0.090551 | 33/46 |
+| S11 warmup12 | 0.095807 | 0.085702 | 33/46 |
+| Smooth-QD V2 | 0.096767 | 0.083539 | 32/46 |
+
+Final HV is far below matched classic and HV-AUC46 is not near matched
+classic. Close S11 after seed 1001, do not launch seed 1002, and keep
+S12 `warmup24` blocked from current evidence.
