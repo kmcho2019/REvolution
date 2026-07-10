@@ -418,83 +418,28 @@ and that inflates the score.
 
 ## If The Server Restarts
 
-S07 seed 1004 is the only active run from this handoff. Let it finish
-before launching another full-suite process. If a restart interrupts it,
-inspect the active launch log above and package only if all 50 RTLLM
-problems completed.
+No benchmark process is active from this handoff. S07, S23, and S11 are
+already packaged. There is no in-flight run to preserve across restart.
 
-S07 seed 1003 is already packaged and does not need to be preserved as a
-process.
+Do not launch another full-suite process from this handoff. The current
+post-S11 decision is recorded in `post_s11_suite_decision.md`: the
+registered config-first primary queue is closed negative/near-miss, and
+S04/S05/S06 are reserve appendix options only unless a fresh decision note
+selects one.
 
 ## Audit Feedback To Carry Forward
 
-Read-only narrative audit verdict: V2 remains the primary natural journal
-extension unless a later full-suite variant beats classic. S21 should close
-the scalar MAP-Elites control, not become a new paper arm on weak coverage
-alone.
+Recent read-only audits agree on the current posture:
 
-Read-only organization audit verdict: WARN, not FAIL. Operator parity was
-clean in sampled packages, but the campaign has bloat and command-spec
-risks:
+- S07 is secondary trajectory/coverage evidence, not a primary PPA-HV
+  win.
+- S23 closes descriptor reduction as a primary path and blocks S31.
+- S11 closes warmup interpolation and blocks S12.
+- S04/S05/S06 are appendix-specific descriptor/coverage controls, not the
+  next primary HV lane.
+- A new primary experiment requires a mechanism card that explains which
+  existing failure class it should defeat.
 
-- `suite_variant_campaign/` is too large because early S01-S03 packages
-  kept broad PNG/problem trees. Future packages should stay compact.
-- Wave B should get first-class launch documentation before more runs.
-- Launch parity pins are easy to omit because `scripts/run_backend.py`
-  defaults are not the V2 suite contract.
-- Keep future S29/S30 ideas out of central `QDEngine` until a small typed
-  module is justified.
-- Resolve the typo file `suite_campagin_initial_message.md` later.
-
-Claude CLI review was attempted but unavailable due the weekly limit until
-2026-07-10 08:00 UTC.
-
-Read-only experimental-validity audit verdict: completing S21 seed 1002 is
-justified as the pre-registered scalar MAP-Elites control, but promotion
-language must stay strict. A coverage-only claim would need coverage above
-both classic and V2 with a bounded HV tax. The audit recommends
-front-slot parent-source interpolation as the strongest next full-suite
-direction if the campaign continues after restart.
-
-Read-only post-S07 experimental audit verdict: confirm S07 to five seeds
-before opening a new mechanism. S07 is the only current lane within about
-1.5% of matched classic final HV while already beating classic HV-AUC46
-and tying classic coverage across two seeds.
-
-Read-only post-S07 organization audit verdict: fix stale command state
-before launching. The S07 seed 1001/1002 command blocks are now
-historical; S10 is blocked by S09/S22 evidence; S08/S19 are deferred;
-S12 is blocked behind an S11 signal; and the seed 1003 command block is
-self-contained with `classic_operator_kind=eoh_strategies`.
-
-## Next Campaign Step After S07 Two-Seed Closure
-
-The conservative next executable steps are:
-
-1. Let S07 capacity3 seed 1004 finish and package it with the standard
-   compact report chain.
-2. Keep S22 as an HV-AUC-positive front-slot control, not a primary arm.
-3. Keep S04/S05 descriptor completion for descriptor-health evidence if
-   S07 confirmation does not clear the primary final-HV gate.
-
-Avoid combination arms unless a single-factor full-suite result gives a
-positive signal.
-
-## Post-S22 Launch Guidance
-
-Read-only sub-agent audit after S22 closure recommends stopping launches
-before the server restart. Do not launch S10 from the current evidence:
-Wave B only justified the stronger 0.40 front-slot lane if S09 showed a
-positive HV/AUC signal without major coverage loss, and both S09 and S22
-missed the primary classic final-HV gate.
-
-If the campaign resumes after restart, first add an exact launch block
-for the selected variant with all V2 parity pins expanded. The generic
-command template is not enough; the invalid S09 attempt showed that
-missing `qd_champion_lane_fraction=0.5` can silently invalidate a run.
-Keep future packages compact and do not copy broad figure trees into
-docs.
-
-S07 capacity3 seed 1003 is now packaged. S07 seed 1004 is active. Do not
-describe S07 as promotion-ready unless the final five-seed aggregate
-clears the primary final-HV and coverage gates.
+Historical audit guidance above this section is superseded when it talks
+about active S07 seeds or front-slot/warmup launches. The live current
+state is the top of this handoff plus `post_s11_suite_decision.md`.

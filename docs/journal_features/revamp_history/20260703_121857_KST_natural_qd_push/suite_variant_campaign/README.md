@@ -77,6 +77,7 @@ known extraction failures before expensive descriptors.
 | `restart_handoff_20260709.md` | Restart-safe state through S11 warmup12 closure. |
 | `post_s07_followup_decision.md` | Decision note for the first targeted descriptor follow-up after S07. |
 | `post_s23_warmup_decision.md` | Decision note bounding S11 as warmup-family closure after S23. |
+| `post_s11_suite_decision.md` | Decision note closing the suite-first primary queue after S11. |
 
 ## Progress
 
@@ -111,7 +112,7 @@ Wave B then tests small parent-source/capacity/interpolation variants.
 ## Extended Queue
 
 `variant_registry.csv` now records a broader suite-first queue through
-S30. Rows S01-S28 are either already launched, config-only, or blocked
+S31. Rows S01-S28 are either already launched, config-only, or blocked
 only by the stated single-factor signal policy. Rows S29-S30 are not
 launch-ready: they capture literature-natural brainstorms that would need
 a small tested parent-selection module or a descriptor registration gate
@@ -127,8 +128,9 @@ Near-term executable choices after S07 five-seed closure are:
    unless a later mechanism specifically motivates revisiting them.
 4. Treat S22 as an HV-AUC-positive front-slot interpolation control, not
    as the primary TCAD arm.
-5. Complete S04/S05 descriptor-health controls only if the manuscript
-   needs descriptor evidence, not as primary HV candidates.
+5. Keep S04/S05/S06 as appendix-only descriptor-health or coverage
+   controls unless a fresh decision note selects them; they are not
+   primary HV candidates from current evidence.
 6. Do not launch S10 front-slot 0.40, S08 capacity9, or S19 capacity11
    from current evidence; front-slot 0.20 failed to replicate and larger
    capacity moved opposite S07's better direction.

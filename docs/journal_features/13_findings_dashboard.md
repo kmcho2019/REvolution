@@ -76,6 +76,10 @@ cross-arm bundles + isolated-grade per-task tables), see
   coverage but is far below classic on final HV and HV-AUC46, so seed
   1002 is closed and S12 warmup24 remains blocked. Package:
   `suite_variant_campaign/S11_warmup12/seed_1001/results_report.md`.
+- The suite-first primary queue is now closed pending a fresh mechanism
+  card. S04/S05/S06 are appendix-only descriptor-health/coverage reserves,
+  not next primary HV lanes. Decision:
+  `suite_variant_campaign/post_s11_suite_decision.md`.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -939,7 +943,9 @@ an independent simplification win. This is now the project's central risk.
 - Profile freeze: **RESOLVED 2026-06-14 → `journal_logic_ff_width_3d` (the fallback trio) is FROZEN.** Applied the predeclared rule (narrative §"Why the descriptor axes mean something") to the bake-off (F12/descriptor_bakeoff.json): rank by best-quality delta, winner must also pass occupancy≥0.25 + collapse gates + per-axis design meaning, ELSE the trio stays. Outcome: **activity** ranks 1st on quality (−0.103) but its axes collapse on 3–5/6 problems (fails collapse gate) and need dynamic icarus_vcd metrics (verilator-incompatible, see VerilatorEvaluator assert); **simple_2d** (−0.131, collapse-healthy) carries only code-size proxies (wire/assign counts), not the architectural BD thesis; **graph_testability** is worst on quality. No candidate wins → the trio stays, as the rule prescribes. **Disclosures for the manuscript:** (a) `comb_width_log` = log(1+comb cell count) correlates with the area objective by construction → name it a size proxy and DROP its diversity claim (keep logic_depth + ff_depth as the diversity axes); (b) honestly report that the chosen thesis profile is NOT the most collapse-resistant (simple_2d collapses least, F12) — sophistication did not buy diversity health, which is itself a characterization finding.
 - Equivalence spot-check scope (M7): **RESOLVED → restrict to fully-specified problems.** Bare NOT_PROVEN on don't-care problems is not a defect (the flow over-rejects on don't-cares); the spot-check runs only where NOT_PROVEN is meaningful, and don't-care problems are noted as a method limitation rather than a false defect.
 
-**Remaining execution:** CVDP/RealBench debug pairs · seed-42 debug gate · 5-seed finals (1001-1005) · manuscript.
+**Remaining execution:** manuscript synthesis and any explicitly
+pre-registered appendix checks. The natural_qd_push suite-first primary
+queue is closed to new launches unless a fresh mechanism card is recorded.
 
 ---
 

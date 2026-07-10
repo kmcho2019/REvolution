@@ -642,7 +642,9 @@ standard package chain passes.
 
 ## S04/S05 Descriptor Completions
 
-Continue the existing P3c roots:
+Reserve-only descriptor-health/geometry controls. Do not launch these as
+the next primary HV lane from current evidence. If a manuscript appendix
+or a fresh decision note selects them, continue the existing P3c roots:
 
 - `exp/natural_qd_push/p3c_bd_sweep_20260704_093150_UTC/live/compact8d_cvt/seed_<seed>`
 - `exp/natural_qd_push/p3c_bd_sweep_20260704_093150_UTC/live/trio_cvt/seed_<seed>`

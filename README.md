@@ -823,6 +823,8 @@ Moved from GUIDELINES.md (which now holds practices only).
 - Journal-revamp onboarding (read in this order when implementing the TCAD goal):
   [docs/journal_features/revamp_ruminations_20260612.md](docs/journal_features/revamp_ruminations_20260612.md) is the original intent;
   [docs/journal_features/journal_narrative.md](docs/journal_features/journal_narrative.md) is the ACCEPTED claims contract (gates/branch rules frozen — it wins on any conflict);
+  [docs/journal_features/13_findings_dashboard.md](docs/journal_features/13_findings_dashboard.md) is the current START-HERE findings view;
+  [docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md](docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md) is the suite-first natural-QD follow-up campaign state;
   in `docs/journal_features/revamp_history/20260612_005012_KST_journal_revamp/`: `goal_template.md` is the v2 objective, `journal_revamp_plan.md` the P1–P5 execution plan, `journal_revamp_implementation_todo.md` the phase-grouped checklist (sign-off requires every item checked and spot-verified), `journal_revamp_adversarial_prompt.md` the sign-off process, `journal_revamp_implementation_history.md` the evidence log, `rerun_ledger.jsonl` the run ledger; `*_v1_initial.md` files are archived originals.
   Locked artifacts live in `data/configs/` (seed manifest, subsets, probe); revise only by version bump with recorded rationale.
 - Use [docs/journal_features/resources/README.md](docs/journal_features/resources/README.md) before editing paper sources; it explains the frozen ASP-DAC 2026 conference-paper submodule and the working TCAD journal-draft submodule.

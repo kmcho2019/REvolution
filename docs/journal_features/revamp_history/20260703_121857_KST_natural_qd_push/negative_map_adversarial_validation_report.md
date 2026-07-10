@@ -96,3 +96,20 @@ None.
   evidence tree.
 - When writing the manuscript, keep the 46-vs-50 coverage/statistics
   caveat from `p3_full_rtllm/canonical_statistics/read_note.md`.
+
+## 2026-07-10 Suite-First Reopen Addendum
+
+The user-directed suite-first reopen after this PASS is tracked in
+`suite_variant_campaign/`. It adds S07/S23/S11 evidence but does not
+change the negative-map posture:
+
+- S07 `capacity3` is a five-seed near miss: better HV-AUC and coverage
+  than classic, but final HV remains below classic.
+- S23 `journal_logic_width_2d` is a descriptor-reduction negative:
+  collapse health improves, but PPA HV and coverage fall sharply.
+- S11 `warmup12` is a warmup interpolation negative: coverage ties
+  classic, but final HV and HV-AUC46 stay below classic.
+
+The suite campaign now records S04/S05/S06 as appendix-only reserves.
+Further primary experimentation requires a fresh mechanism card before
+launch.

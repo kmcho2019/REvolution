@@ -1680,3 +1680,22 @@ verdict log):
   `seed1001 HV-negative warmup interpolation control`. It ties matched
   classic coverage, but final HV and HV-AUC46 remain well below classic,
   so seed 1002 and S12 warmup24 remain blocked from current evidence.
+
+## 2026-07-10 - Post-S11 Suite Decision
+
+- Added `suite_variant_campaign/post_s11_suite_decision.md` after
+  read-only audits found no current primary launch candidate and flagged
+  stale handoff launch text.
+- Decision:
+  the suite-first reopen has not produced a primary full-RTLLM HV lane.
+  S07 is secondary near-miss evidence, S23 and S11 are negative controls,
+  and S04/S05/S06 are now explicit appendix-only reserves.
+- Cleanup:
+  refreshed `suite_variant_campaign/restart_handoff_20260709.md` so it
+  has a single current state: no live run and no next launch without a
+  fresh decision note. Updated registry statuses for S04/S05/S06,
+  `commands.md`, the suite README, doc 13, and the root README onboarding
+  pointer.
+- Next action:
+  fold S07/S23/S11 into the operator-fair negative map. Any new primary
+  experiment must be preceded by a qualitatively new mechanism card.

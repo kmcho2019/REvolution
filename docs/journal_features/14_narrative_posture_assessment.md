@@ -56,6 +56,22 @@ not the triumphant Branch A.**
 > because the residual variance is a capability limit on alu/parallel2serial,
 > not seed noise. "No significant cost" is the correct, final framing.
 
+> **UPDATE 2026-07-10 — the suite-first natural_qd_push reopen strengthens
+> the characterization/negative-map posture, not the win claim.** The user
+> requested direct full-RTLLM probing because 8-design screens transferred
+> weakly. The reopened campaign tried natural, operator-fair variants across
+> archive capacity, per-cell retention, parent-source balance,
+> initialization, descriptor reduction, and descriptor geometry. The best
+> new result is S07 `capacity3`: five-seed HV-AUC and coverage beat classic
+> (`0.088031` vs `0.086982`, `165/230` vs `164/230`), but final HV remains
+> below classic (`0.102481` vs `0.103802`). S23 shows descriptor-collapse
+> health alone is insufficient and PPA-catastrophic; S11 shows warmup
+> interpolation is inert for final HV. S04/S05/S06 are now appendix-only
+> descriptor-health/coverage reserves. This does not change the frozen
+> claims contract: the +5% HV gate still fails. It makes the honest story
+> stronger because the negative map is now suite-first and operator-fair,
+> not only screen-gated.
+
 ## The stronger storyline the work actually produced
 
 A *characterization* contribution, not a victory lap — and it is more

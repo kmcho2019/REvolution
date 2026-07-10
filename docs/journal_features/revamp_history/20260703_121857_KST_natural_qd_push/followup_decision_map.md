@@ -95,3 +95,16 @@ That continuation is tracked separately under
 `suite_variant_campaign/`. It does not invalidate this decision map; it
 changes the research policy from screen-gated follow-ups to direct
 full-suite probing of natural variants.
+
+## 2026-07-10 Suite-First Addendum
+
+The suite-first reopen did not produce a primary full-RTLLM HV winner.
+Its strongest result is S07 `capacity3`: five-seed HV-AUC and coverage
+improve over classic, but final HV remains below classic (`0.102481` vs
+`0.103802`). S23 descriptor reduction and S11 warmup12 are valid negative
+controls. S04/S05/S06 are now appendix-only reserves, not primary HV
+lanes.
+
+Current posture returns to the negative-map synthesis path. A new primary
+experiment requires a fresh mechanism card before launch, not another
+queue scan of capacity, warmup, front-slot, or descriptor-only knobs.

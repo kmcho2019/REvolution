@@ -992,3 +992,23 @@ the suite-first campaign.
   `seed1001 HV-negative warmup interpolation control`. Close S11 after
   seed 1001, do not launch seed 1002, and keep S12 `warmup24` blocked
   from current evidence.
+
+## 2026-07-10 - Post-S11 Suite Decision
+
+- Added `post_s11_suite_decision.md` to close the suite-first primary
+  queue after S07, S23, and S11.
+- Decision:
+  do not launch another primary full-suite variant from the current
+  registry. Pivot the suite-first reopen into the negative-map addendum.
+- Reserve lanes:
+  S04 `compact8d_cvt_complete`, S05 `trio_cvt_complete`, and S06
+  `gt3d_complete` remain appendix-only descriptor-health/geometry or
+  coverage controls. They are not primary HV lanes from current evidence.
+- Rationale:
+  S07 is a five-seed near miss, S23 shows descriptor collapse reduction
+  alone is PPA-catastrophic, S11 shows warmup interpolation is
+  mechanism-inert, and the remaining registered descriptor controls had
+  HV-weak two-seed suite reads before the reopen.
+- Next primary experimentation requires a new mechanism card before
+  launch, including the failure class it should defeat and the exact
+  EoH/code-individual/strict-ablation contract pins.
