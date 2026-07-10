@@ -1538,3 +1538,25 @@ verdict log):
 - Variant pins are unchanged from S07 seeds 1001-1004 except for
   `seed=1005`. No metrics should be reported until all 50 RTLLM
   problems complete and the standard validation/package chain passes.
+
+## 2026-07-10 - S07 Capacity 3 Five-Seed Closure
+
+- Completed and packaged S07 `capacity3` seed 1005 under
+  `suite_variant_campaign/S07_capacity3/seed_1005/`.
+- Runtime completed normally in 4731.86 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1005 is negative for S07 against matched classic:
+  S07 `0.093760` HV / `0.078565` HV-AUC46 / `33/46` coverage vs
+  classic `0.104404` / `0.086940` / `33/46` and V2 `0.096063` /
+  `0.086125` / `33/46`.
+- Five-seed S07 closes at
+  `0.102481` HV / `0.088031` HV-AUC46 / `165/230` coverage vs matched
+  classic `0.103802` / `0.086982` / `164/230` and V2 `0.098801` /
+  `0.087428` / `166/230`.
+- Decision:
+  S07 is not the primary PPA-HV win because it reaches only 98.7% of
+  classic final HV. It remains useful secondary evidence: a simple
+  capacity reduction improves trajectory quality and coverage while
+  recovering V2 final HV. The next primary search should shift away from
+  capacity-only variants.

@@ -361,10 +361,10 @@ OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} uv run python scripts/r
   --no-backend_subdir 2>&1 | tee "$LOG"
 ```
 
-### S07 Capacity 3 Seed 1005 Confirmation Launch
+### S07 Capacity 3 Seed 1005 Historical Launch
 
-Use this only after seed 1004 is packaged. This is the final registered
-S07 confirmation seed before any manuscript claim.
+This was the final registered S07 confirmation seed. Do not rerun it
+unless the seed 1005 package is deliberately invalidated.
 
 ```bash
 TS=$(date -u +%Y%m%d_%H%M%S_UTC)

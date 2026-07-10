@@ -1,14 +1,14 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-10T00:26:28Z.
+Last updated: 2026-07-10T01:52:00Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
-`suite_variant_campaign/S07_capacity3/seed_1004`.
+`suite_variant_campaign/S07_capacity3/seed_1005`.
 
 ## Immediate State
 
-S07 capacity3 seed 1004 has completed and been packaged. S07 seed 1005
-is active as the final confirmation seed.
+S07 capacity3 seed 1005 has completed and been packaged. There is no
+active benchmark or report process at this handoff.
 
 ```text
 seed 1001 run root:
@@ -43,13 +43,13 @@ seed 1004 preflight:
 suite_variant_campaign/preflights/s07_capacity3_seed1004_20260709_225719_UTC.json
 seed 1004 package:
 suite_variant_campaign/S07_capacity3/seed_1004
-active seed 1005 run root:
+seed 1005 run root:
 exp/natural_qd_push/suite_variants_wave_b_20260710_002626_UTC/live/capacity3/seed_1005
-active seed 1005 launch log:
+seed 1005 launch log:
 exp/natural_qd_push/suite_variants_wave_b_20260710_002626_UTC/launch_capacity3_seed1005.log
-active seed 1005 preflight:
+seed 1005 preflight:
 suite_variant_campaign/preflights/s07_capacity3_seed1005_20260710_002626_UTC.json
-seed 1005 package after completion:
+seed 1005 package:
 suite_variant_campaign/S07_capacity3/seed_1005
 ```
 
@@ -69,8 +69,9 @@ operator audit.
 
 Observed after seed 1005 launch: the vLLM preflight passed with model
 `openai/gpt-oss-120b` and `max_model_len=131072`, then the 50-problem
-RTLLM run started. No seed or five-seed metrics should be reported until
-the full run completes and the standard package chain passes.
+RTLLM run completed normally in 4731.86 seconds with 4800 LLM API calls.
+The compact package passes the full 50-problem run validation and the
+operator audit.
 
 The earlier S09 launch rooted at
 `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC` was
@@ -212,9 +213,20 @@ S07 `0.104661` HV / `0.090397` HV-AUC46 / `132/184` coverage vs
 classic `0.103652` / `0.086993` / `131/184` and V2 `0.099485` /
 `0.087753` / `133/184`.
 
-Do not claim S07 yet. It now clears matched classic on final HV,
-HV-AUC46, and coverage across four seeds, but the final-HV margin is
-small. Finish seed 1005 before any manuscript claim.
+Seed 1005 is packaged and negative for S07 against matched classic:
+S07 `0.093760` HV / `0.078565` HV-AUC46 / `33/46` coverage vs classic
+`0.104404` / `0.086940` / `33/46` and V2 `0.096063` / `0.086125` /
+`33/46`.
+
+Across five seeds, S07 closes as a secondary near miss:
+S07 `0.102481` HV / `0.088031` HV-AUC46 / `165/230` coverage vs
+classic `0.103802` / `0.086982` / `164/230` and V2 `0.098801` /
+`0.087428` / `166/230`.
+
+Do not claim S07 as the primary PPA-HV win. It beats classic on
+HV-AUC46 and coverage and beats V2 on HV/HV-AUC46, but it reaches only
+98.7% of classic final HV. The next primary search should shift away
+from capacity-only variants.
 
 ## S21 Contract
 

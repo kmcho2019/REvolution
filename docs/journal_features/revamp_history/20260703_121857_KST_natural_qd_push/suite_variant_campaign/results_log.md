@@ -812,3 +812,28 @@ the suite-first campaign.
   run has started over 50 RTLLM problems. No seed or five-seed metrics
   should be reported until the full run completes and the standard
   package chain passes.
+
+## 2026-07-10 - S07 Capacity 3 Five-Seed Closure
+
+- Completed and packaged S07 `capacity3` seed 1005 under
+  `suite_variant_campaign/S07_capacity3/seed_1005/`.
+- Runtime completed normally in 4731.86 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1005 is negative for S07 against matched classic:
+  S07 `0.093760` HV / `0.078565` HV-AUC46 / `33/46` coverage vs
+  classic `0.104404` / `0.086940` / `33/46` and V2 `0.096063` /
+  `0.086125` / `33/46`.
+- Five-seed S07 closure:
+  S07 `0.102481` HV / `0.088031` HV-AUC46 / `165/230` coverage vs
+  classic `0.103802` / `0.086982` / `164/230` and V2 `0.098801` /
+  `0.087428` / `166/230`.
+- Classification:
+  `five-seed HV-negative, HV-AUC-positive, coverage-positive`. The
+  four-seed HV lead did not survive seed 1005. S07 is a clean secondary
+  result, not the primary TCAD PPA-HV win.
+- Decision:
+  do not open S07 combinations without a new mechanism that specifically
+  explains final-HV recovery. The next primary search should shift away
+  from capacity-only variants, likely toward descriptor reduction or
+  descriptor-health lanes after an extraction/config smoke.
