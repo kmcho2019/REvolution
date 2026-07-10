@@ -1,6 +1,6 @@
 # Natural QD Push Negative-Map Adversarial Validation Report
 
-Validation date: 2026-07-07.
+Validation date: 2026-07-07; suite-first reopen addendum: 2026-07-10.
 Rubric: `natural_qd_push_plan.md`, `goal_template.md`, and
 `docs/journal_features/journal_narrative.md`.
 

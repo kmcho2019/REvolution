@@ -1699,3 +1699,16 @@ verdict log):
 - Next action:
   fold S07/S23/S11 into the operator-fair negative map. Any new primary
   experiment must be preceded by a qualitatively new mechanism card.
+
+## 2026-07-10 - Suite-First Validation Addendum
+
+- Added the S07/S23/S11 suite-first reopen conclusion to
+  `natural_qd_push_subagent_validation_report.md`, the formal validation
+  surface named by the original adversarial process.
+- Clarified `negative_map_adversarial_validation_report.md` with the
+  2026-07-10 suite-first addendum date.
+- Decision:
+  the alternative negative-map outcome remains PASS. The registered
+  suite-first primary queue is exhausted for current evidence; S04/S05/S06
+  are appendix-only reserves, and any new primary full-suite run needs a
+  fresh mechanism card before launch.

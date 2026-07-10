@@ -1,5 +1,23 @@
 # Natural QD Push Sub-Agent Validation Report
 
+## Post-Suite-First Reopen Addendum
+
+Validation addendum, 2026-07-10. After the user-directed suite-first
+reopen, the campaign added S07, S23, and S11 to the full-RTLLM evidence
+map. The alternative negative-map outcome remains PASS. The suite
+decision report is
+`suite_variant_campaign/post_s11_suite_decision.md`.
+
+Verdict: PASS. S07 is a five-seed near miss with better HV-AUC and
+coverage than classic but lower final HV. S23 improves descriptor health
+while losing PPA quality and coverage. S11 shows warmup interpolation is
+not enough to recover classic final HV. No stronger primary HV lane was
+found under the registered, operator-fair suite-first queue. S04/S05/S06
+are appendix-only reserves, and any further primary experiment requires
+a fresh mechanism card before launch. Required fixes before PASS: none.
+
+---
+
 ## Post-N10 Negative-Map Addendum
 
 Validation addendum, 2026-07-07. After N04, N02b, N07a/N07b/N07c,
