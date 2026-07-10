@@ -53,6 +53,7 @@ Change only the capacity value:
 
 ```text
 --qd_max_elites_per_cell 3
+--qd_max_elites_per_cell 4
 --qd_max_elites_per_cell 9
 --qd_max_elites_per_cell 11
 ```
@@ -60,8 +61,13 @@ Change only the capacity value:
 Save under one of:
 
 - `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/capacity3/seed_<seed>`
+- `exp/natural_qd_push/suite_variants_wave_f_<UTC>/live/capacity4/seed_<seed>`
 - `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/capacity9/seed_<seed>`
 - `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/capacity11/seed_<seed>`
+
+S32 capacity4 is the only current capacity-interpolation launch target.
+It is registered by `s32_capacity4_mechanism_card.md` as a one-knob
+interpolation between V2 capacity5 and S07 capacity3.
 
 ### S07 Capacity 3 Seed 1001 Historical Launch
 

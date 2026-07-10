@@ -3,6 +3,22 @@
 Append-only. Record launch, package, validation, and decision events for
 the suite-first campaign.
 
+## 2026-07-10 - S32 Capacity4 Registration
+
+- Registered `s32_capacity4_mechanism_card.md` as the fresh
+  S07-family follow-up requested after the post-S11 queue closure.
+- Mechanism:
+  change only `qd_max_elites_per_cell` from 5 to 4, interpolating
+  between V2 capacity5 and S07 capacity3.
+- BD status:
+  S07+BD was only partially explored. S31 `S07 + logic_width_2d` is
+  blocked by the S23 descriptor-reduction failure, while compact8d/CVT
+  and gt3d remain appendix-specific descriptor-health or coverage
+  reserves rather than the cleanest primary-HV follow-up.
+- Launch rule:
+  run S32 seed 1001 first; continue to seed 1002 only if the package is
+  valid, operator-fair, and not catastrophically below matched classic.
+
 ## 2026-07-08 - Campaign Opened
 
 - User-directed continuation after the post-N10 negative-map PASS.

@@ -1712,3 +1712,17 @@ verdict log):
   suite-first primary queue is exhausted for current evidence; S04/S05/S06
   are appendix-only reserves, and any new primary full-suite run needs a
   fresh mechanism card before launch.
+
+## 2026-07-10 - S32 Capacity4 Mechanism Card
+
+- Registered `suite_variant_campaign/s32_capacity4_mechanism_card.md` as
+  a fresh, tightly scoped exception to the post-S11 queue closure.
+- Hypothesis:
+  S07 capacity3 improves HV-AUC and coverage but may be slightly too
+  restrictive for final Pareto quality; capacity4 directly interpolates
+  between V2 capacity5 and S07 capacity3.
+- BD read:
+  S07+BD has not been comprehensively tested, but the cleanest registered
+  S07+BD candidate, S31 `logic_width_2d`, is blocked by S23's
+  descriptor-reduction failure. compact8d/CVT and gt3d remain
+  appendix-specific reserves, not the first primary-HV follow-up.
