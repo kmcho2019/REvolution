@@ -25,6 +25,9 @@ The `docs/` directory contains deeper dives:
 - `docs/journal_features/08_journal_revamp_goal.md` – TCAD revamp goal spec for
   CVDP/RealBench integration, QD performance repair, descriptor evidence,
   narrative signoff, statistical gates, and faster evaluation scheduling.
+- [Pareto REvolution goal scaffold](docs/feature_history/20260710_222442_KST_pareto_revolution_validation/README.md)
+  is the draft contract for the descriptor-free Pareto candidate; it does not
+  activate a goal or benchmark.
 - `docs/journal_features/resources/README.md` – manuscript submodule guide for
   the frozen ASP-DAC 2026 conference paper and the working TCAD journal draft.
 - `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
