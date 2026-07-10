@@ -31,6 +31,14 @@ Only then reopen the contingent combination `S31 s07_logic_width_2d`,
 which applies the same reduced descriptor to S07 capacity3 retention.
 The small screen remains useful only for debugging extraction failures.
 
+For the seed-1001 smoke, treat "catastrophic" as a coarse stop rule,
+not a promotion rule. Quarantine the run if validation, extraction,
+config pins, or operator audit fail. If the package is valid, stop after
+seed 1001 only if S23 final HV is below 90% of matched classic or its
+successful-candidate coverage is at least four RTLLM problems below
+matched classic. Otherwise finish seed 1002 before deciding whether S23
+is useful.
+
 ## Candidate Triage
 
 | Candidate | Posture | Reason |
@@ -91,9 +99,9 @@ capacity:
 --diff_max_tokens 128000
 ```
 
-Do not pass `--qd_descriptor_profile` for S31. Do not launch S31 before
-S23 has at least one full-suite smoke seed and a recorded promotion
-decision.
+Do not pass `--qd_descriptor_profile` for S31. After the S23 seed-1001
+closure, do not launch S31 from current evidence because the required
+single-factor descriptor signal was HV-catastrophic.
 
 ## Config Smoke
 
@@ -120,3 +128,21 @@ Promote S23 from two seeds to five only if one of these holds:
 
 If S23 is HV-negative and does not improve coverage, close it as a
 descriptor-reduction control and do not broaden into a descriptor scan.
+
+## Seed-1001 Outcome
+
+S23 seed 1001 completed and was packaged under
+`S23_journal_logic_width_2d/seed_1001/`. It is a valid but negative
+descriptor-reduction control:
+
+```text
+S23:    0.084403 HV / 0.076832 HV-AUC46 / 31/46 coverage
+classic:0.111401 HV / 0.090551 HV-AUC46 / 33/46 coverage
+V2:     0.096767 HV / 0.083539 HV-AUC46 / 32/46 coverage
+```
+
+S23 reduced descriptor collapse to `4/50` archives, compared with
+`24/50` for matched V2 seed 1001, but final HV reached only 75.8% of
+matched classic. The smoke stop rule therefore closes S23 after seed
+1001. Do not run S23 seed 1002 or launch `S31 s07_logic_width_2d` from
+current evidence.

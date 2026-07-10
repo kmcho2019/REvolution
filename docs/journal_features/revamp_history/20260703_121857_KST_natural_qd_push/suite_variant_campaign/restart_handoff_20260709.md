@@ -1,16 +1,16 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-10T02:18:42Z.
+Last updated: 2026-07-10T03:55:00Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
-`suite_variant_campaign/S07_capacity3/seed_1005`.
+`suite_variant_campaign/S23_journal_logic_width_2d/seed_1001`.
 Current live run:
-`exp/natural_qd_push/suite_variants_wave_c_20260710_021651_UTC/live/journal_logic_width_2d/seed_1001`.
+none.
 
 ## Immediate State
 
-S07 capacity3 seed 1005 has completed and been packaged. There is no
-active benchmark or report process at this handoff.
+S23 `journal_logic_width_2d` seed 1001 has completed and been packaged.
+There is no active benchmark or report process at this handoff.
 
 ```text
 seed 1001 run root:
@@ -85,8 +85,8 @@ and must not be interpreted.
 ## Post-S07 Next Lane
 
 S07 is closed as secondary evidence, not the primary final-HV claim.
-The next registered lane is `S23 journal_logic_width_2d`, recorded in
-`post_s07_followup_decision.md` and `variant_registry.csv`.
+The last tested follow-up lane is `S23 journal_logic_width_2d`, recorded
+in `post_s07_followup_decision.md` and `variant_registry.csv`.
 
 S23 keeps the V2 platform and changes only the behavior descriptor to the
 explicit 2D subset:
@@ -102,7 +102,7 @@ All operator and evaluation parity pins remain unchanged:
 `evaluation_mode=strict_ablation`, `max_tokens=128000`, and
 `diff_max_tokens=128000`.
 
-Seed 1001 was launched at:
+Seed 1001 completed and was packaged at:
 
 ```text
 run root:
@@ -111,18 +111,28 @@ launch log:
 exp/natural_qd_push/suite_variants_wave_c_20260710_021651_UTC/launch_journal_logic_width_2d_seed1001.log
 preflight:
 suite_variant_campaign/preflights/s23_journal_logic_width_2d_seed1001_20260710_021651_UTC.json
+package:
+suite_variant_campaign/S23_journal_logic_width_2d/seed_1001
 ```
 
 The vLLM preflight passed with model `openai/gpt-oss-120b` and
-`max_model_len=131072`. No S23 metrics should be reported until all 50
-RTLLM problems complete and the standard package chain passes.
+`max_model_len=131072`. The run completed normally in 5223.39 seconds
+with 4800 LLM API calls. The package passes the full 50-problem
+validation manifest and operator audit.
+
+S23 seed 1001 is a negative descriptor-reduction control:
+S23 `0.084403` HV / `0.076832` HV-AUC46 / `31/46` coverage vs matched
+classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` /
+`0.083539` / `32/46`. It reduces descriptor-collapse events to `4/50`
+archives but reaches only 75.8% of classic final HV, so the
+pre-registered smoke stop rule closes S23 after seed 1001.
 
 Do not launch broad BD scans from this handoff. Compact8d/CVT is deferred
 because it changes descriptor family and geometry and had prior extraction
 fragility. GT3D/testability is deferred to a coverage appendix because the
-existing suite signal is HV-weak. `S31 s07_logic_width_2d` is the
-contingent S07 capacity3 combination and should wait for an S23
-full-suite smoke signal plus a recorded combination decision.
+existing suite signal is HV-weak. `S31 s07_logic_width_2d` remains
+blocked because S23 did not provide the required non-catastrophic
+single-factor signal.
 
 ## S09 Contract
 

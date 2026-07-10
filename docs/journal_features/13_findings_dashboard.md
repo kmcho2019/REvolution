@@ -60,12 +60,15 @@ cross-arm bundles + isolated-grade per-task tables), see
   statistics, per-problem win/loss map, and `Prob015`/`Prob024` case
   studies are packaged in
   `suite_variant_campaign/S07_capacity3/five_seed_analysis/summary.md`.
-- Post-S07 next lane: run `S23 journal_logic_width_2d` as the immediate
-  one-seed full-RTLLM smoke, then complete the two-seed probe only if it
-  is not catastrophically HV- or coverage-negative. `S31
-  s07_logic_width_2d` is registered only as a contingent S07 combination
-  after S23 gives a suite signal. Decision note:
-  `suite_variant_campaign/post_s07_followup_decision.md`.
+- S23 `journal_logic_width_2d` closes as a valid one-seed negative
+  descriptor-reduction control: S23 `0.084403` HV / `0.076832`
+  HV-AUC46 / `31/46` coverage vs matched classic `0.111401` /
+  `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`.
+  It reduces descriptor-collapse events to `4/50` archives, but reaches
+  only 75.8% of classic final HV, so the smoke stop rule blocks seed
+  1002 and blocks the contingent `S31 s07_logic_width_2d` combination.
+  Package:
+  `suite_variant_campaign/S23_journal_logic_width_2d/seed_1001/results_report.md`.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -129,7 +132,8 @@ below on operator-fair evidence:**
   reruns recover 30-46 retention points).
 
 **Last refreshed:** 2026-07-10 (suite-first natural_qd_push full-RTLLM
-continuation through S07 closure and S23 next-lane registration);
+continuation through S07 closure and S23 negative descriptor-reduction
+control);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

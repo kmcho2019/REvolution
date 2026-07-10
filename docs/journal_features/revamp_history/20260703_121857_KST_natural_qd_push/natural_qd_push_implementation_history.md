@@ -1617,3 +1617,30 @@ verdict log):
 - Current status:
   run has started over 50 RTLLM problems. No metrics should be reported
   until the run completes and the standard validation/package chain passes.
+
+## 2026-07-10 - S23 Logic-Width 2D Seed 1001 Closure
+
+- Completed and packaged S23 `journal_logic_width_2d` seed 1001 under
+  `suite_variant_campaign/S23_journal_logic_width_2d/seed_1001/`.
+- Runtime completed normally in 5223.39 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- S23 keeps the V2 platform and changes only the descriptor axes:
+  `logic_depth, comb_width_log`. The package validates the explicit axes
+  contract and confirms no `qd_descriptor_profile` drift.
+- Seed read:
+  S23 `0.084403` HV / `0.076832` HV-AUC46 / `31/46` coverage vs
+  matched classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767`
+  / `0.083539` / `32/46`.
+- Mechanism read:
+  descriptor-collapse health improves sharply (`4/50` collapsed S23
+  archives vs `24/50` for matched V2 and S07 seed 1001), but PPA quality
+  and successful-candidate yield drop. S23 has `857` successful
+  candidates over `31/46` reference-complete problems, compared with
+  classic `1002` over `33/46` and V2 `1007` over `32/46`.
+- Decision:
+  close S23 after seed 1001 as an
+  `HV-catastrophic descriptor-reduction control`. It reaches only 75.8%
+  of matched classic final HV, so the pre-registered smoke stop rule
+  blocks seed 1002 and blocks the `S31 s07_logic_width_2d` combination
+  from current evidence.

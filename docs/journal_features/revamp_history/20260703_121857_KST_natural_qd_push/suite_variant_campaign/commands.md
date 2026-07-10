@@ -630,6 +630,10 @@ Save under:
 
 `exp/natural_qd_push/suite_variants_wave_c_<UTC>/live/journal_logic_width_2d/seed_<seed>`.
 
+Status after seed 1001: packaged and closed negative. Do not run S23
+seed 1002 from current evidence because final HV reached only 75.8% of
+matched classic.
+
 ## S31 S07 Logic-Width 2D
 
 S31 is a contingent combination arm. It keeps S07's compact per-cell
@@ -640,9 +644,9 @@ Pareto retention and uses the S23 explicit 2D axes:
 --qd_max_elites_per_cell 3
 ```
 
-Do not pass `--qd_descriptor_profile` for S31. Do not launch S31 before
-S23 has at least one full-suite smoke seed and a recorded combination
-decision. Save under:
+Do not pass `--qd_descriptor_profile` for S31. Do not launch S31 from
+current evidence: the required S23 single-factor smoke was
+HV-catastrophic. Save under:
 
 `exp/natural_qd_push/suite_variants_wave_d_<UTC>/live/s07_logic_width_2d/seed_<seed>`.
 

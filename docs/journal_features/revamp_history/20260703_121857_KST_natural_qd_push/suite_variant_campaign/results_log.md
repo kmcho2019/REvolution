@@ -905,3 +905,35 @@ the suite-first campaign.
   full RTLLM smoke is running. No S23 metrics should be reported until
   all 50 RTLLM problems complete and the standard validation/package chain
   passes.
+
+## 2026-07-10 - S23 Logic-Width 2D Seed 1001 Package
+
+- Completed and packaged S23 `journal_logic_width_2d` seed 1001 under
+  `S23_journal_logic_width_2d/seed_1001/`.
+- Runtime completed normally in 5223.39 seconds with 4800 LLM API calls.
+  `tables/run_validation.json` passes the full 50-problem manifest with
+  the explicit `qd_descriptor_axes=['logic_depth', 'comb_width_log']`
+  contract and no `qd_descriptor_profile` drift.
+- `tables/operator_contract.csv` passes with `single_thought_count=0`:
+  classic `1002` candidates / `804` EoH, S23 `857` candidates / `579`
+  EoH / `82` allowed QD tuple-operator candidates, and V2 `1007`
+  candidates / `803` EoH.
+- Seed read:
+  S23 `0.084403` HV / `0.076832` HV-AUC46 / `31/46` coverage vs
+  matched classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767`
+  / `0.083539` / `32/46`.
+- Mechanism read:
+  S23 reduces descriptor-collapse events to `4/50` archives compared
+  with `24/50` for matched V2 seed 1001 and `24/50` for S07 seed 1001,
+  but successful-candidate yield drops to `857` candidates over
+  `31/46` reference-complete problems.
+- Largest final-HV losses vs classic are `Prob036_edge_detect`
+  (`-0.538825`), `Prob019_sub_64bit` (`-0.449959`), and `Prob024_fsm`
+  (`-0.195683`). Isolated wins on `Prob002_adder_16bit`,
+  `Prob008_comparator_4bit`, `Prob049_signal_generator`, and
+  `Prob043_RAM` do not offset those losses.
+- Classification:
+  `seed1001 HV-catastrophic descriptor-reduction control`. The
+  pre-registered smoke stop rule closes S23 after seed 1001 because it
+  reaches only 75.8% of matched classic final HV. Do not run seed 1002
+  or launch `S31 s07_logic_width_2d` from this evidence.
