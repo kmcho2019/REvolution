@@ -95,7 +95,7 @@ known extraction failures before expensive descriptors.
 | S23 | seed 1001 packaged; closed negative | Descriptor-reduction control: S23 `0.084403` HV / `0.076832` HV-AUC46 / `31/46` coverage vs matched classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. It reduces descriptor collapse to `4/50` archives but triggers the smoke stop rule at 75.8% of classic final HV. |
 | S11 | seed 1001 packaged; closed negative | Warmup12 is a one-knob initialization interpolation between V2 warmup8 and S02 warmup16. Seed 1001 ties matched classic coverage but remains HV-negative: S11 `0.095807` HV / `0.085702` HV-AUC46 / `33/46` coverage vs classic `0.111401` / `0.090551` / `33/46` and V2 `0.096767` / `0.083539` / `32/46`. Close after seed 1001 and keep S12 blocked. |
 | S31 | blocked after S23 negative | Contingent S07 combination: S07 capacity3 plus explicit `logic_depth comb_width_log` axes. Do not launch from current evidence because the required S23 single-factor signal was HV-catastrophic. |
-| S32 | registered | Capacity4 is the one-knob S07-family interpolation between V2 capacity5 and S07 capacity3. Run seed 1001 first; continue to seed 1002 only if validation passes and the seed is not catastrophic. |
+| S32 | seed 1001 packaged; closed negative | Capacity4 is the one-knob S07-family interpolation between V2 capacity5 and S07 capacity3. Seed 1001 is valid but negative: S32 `0.096196` HV / `0.080789` HV-AUC46 / `21/46` coverage vs classic `0.111401` / `0.090551` / `24/46`, V2 `0.096767` / `0.083539` / `23/46`, and S07 `0.100296` / `0.091895` / `21/46`. It trips the 90% classic-HV stop rule; do not run seed 1002. |
 
 ## Initial Wave Choice
 
@@ -144,6 +144,6 @@ Near-term executable choices after S07 five-seed closure are:
    this into a 2D descriptor scan or launch S31 without a new independent
    mechanism. Keep compact8d/CVT and gt3d/testability for specific
    health/coverage appendices, not the next primary HV lane.
-9. S32 capacity4 is the current fresh mechanism-card exception to the
-   post-S11 closure. It is not a broad queue reopen; it directly tests
-   whether S07 capacity3 was too restrictive for final Pareto quality.
+9. S32 capacity4 was the fresh mechanism-card exception to the post-S11
+   closure. It closed negative after seed 1001, so capacity interpolation
+   does not currently recover S07's final-HV gap.

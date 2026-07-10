@@ -1726,3 +1726,21 @@ verdict log):
   S07+BD candidate, S31 `logic_width_2d`, is blocked by S23's
   descriptor-reduction failure. compact8d/CVT and gt3d remain
   appendix-specific reserves, not the first primary-HV follow-up.
+
+## 2026-07-10 - S32 Capacity4 Seed 1001 Closure
+
+- Completed and packaged S32 `capacity4` seed 1001 under
+  `suite_variant_campaign/S32_capacity4/seed_1001/`.
+- Runtime completed normally in 4828.71 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- S32 keeps the V2/S07 platform and changes only
+  `qd_max_elites_per_cell=4`.
+- Seed read:
+  S32 `0.096196` HV / `0.080789` HV-AUC46 / `21/46` coverage vs
+  matched classic `0.111401` / `0.090551` / `24/46`, V2 `0.096767` /
+  `0.083539` / `23/46`, and S07 `0.100296` / `0.091895` / `21/46`.
+- Decision:
+  close S32 after seed 1001. It trips the mechanism-card stop rule at
+  86.3% of matched classic final HV and does not preserve S07's HV-AUC
+  advantage, so seed 1002 is blocked from current evidence.

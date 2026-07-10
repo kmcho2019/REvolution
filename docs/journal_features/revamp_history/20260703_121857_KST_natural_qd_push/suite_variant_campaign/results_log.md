@@ -19,6 +19,32 @@ the suite-first campaign.
   run S32 seed 1001 first; continue to seed 1002 only if the package is
   valid, operator-fair, and not catastrophically below matched classic.
 
+## 2026-07-10 - S32 Capacity4 Seed 1001
+
+- Launched S32 capacity4 over full RTLLM 50 with seed 1001:
+  `exp/natural_qd_push/suite_variants_wave_f_20260710_083829_UTC/live/capacity4/seed_1001`.
+- vLLM preflight recorded:
+  `preflights/s32_capacity4_seed1001_20260710_083829_UTC.json`.
+- Runtime completed normally in 4828.71 seconds with 4800 total LLM API
+  calls.
+- Package:
+  `S32_capacity4/seed_1001/`.
+- Validation:
+  `tables/run_validation.json` passes against the full 50-problem RTLLM
+  manifest and the registered S32 config pins.
+- Operator audit:
+  `tables/operator_contract.csv` passes; S32 has
+  `single_thought_count=0`.
+- Seed read:
+  classic `0.111401` HV / `0.090551` AUC46 / `24/46` covered;
+  V2 `0.096767` HV / `0.083539` AUC46 / `23/46` covered;
+  S07 `0.100296` HV / `0.091895` AUC46 / `21/46` covered;
+  S32 `0.096196` HV / `0.080789` AUC46 / `21/46` covered.
+- Decision:
+  close S32 after seed 1001. It reaches only 86.3% of matched classic
+  final HV and loses S07's AUC benefit, so the mechanism-card stop rule
+  blocks seed 1002.
+
 ## 2026-07-08 - Campaign Opened
 
 - User-directed continuation after the post-N10 negative-map PASS.

@@ -113,3 +113,18 @@ change the negative-map posture:
 The suite campaign now records S04/S05/S06 as appendix-only reserves.
 Further primary experimentation requires a fresh mechanism card before
 launch.
+
+## 2026-07-10 S32 Capacity4 Addendum
+
+S32 `capacity4` was registered as that fresh mechanism card and tested
+as the direct interpolation between V2 capacity5 and S07 capacity3. It
+does not change the negative-map posture:
+
+- S32 seed 1001 is valid and operator-fair with
+  `single_thought_count=0`.
+- S32 reaches `0.096196` HV / `0.080789` HV-AUC46 / `21/46` coverage vs
+  matched classic `0.111401` / `0.090551` / `24/46`.
+- The 90% classic-HV stop rule triggers, so S32 seed 1002 is blocked.
+
+The capacity-interpolation follow-up therefore closes negative unless a
+new, qualitatively different mechanism card is written first.

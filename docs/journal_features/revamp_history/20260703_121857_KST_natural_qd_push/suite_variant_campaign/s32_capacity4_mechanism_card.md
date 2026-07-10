@@ -91,3 +91,19 @@ beats S07 on final HV while retaining S07's HV-AUC/coverage posture.
 - If S32 loses both final HV and AUC, the capacity-interpolation path is
   closed and BD variants should remain appendix-specific unless a new
   independent descriptor mechanism is written first.
+
+## Seed-1001 Outcome
+
+Seed 1001 completed and was packaged under
+`S32_capacity4/seed_1001/`. The run is valid and operator-fair, but
+negative:
+
+```text
+classic:       0.111401 HV / 0.090551 HV-AUC46 / 24/46 coverage
+V2:            0.096767 HV / 0.083539 HV-AUC46 / 23/46 coverage
+S07 capacity3: 0.100296 HV / 0.091895 HV-AUC46 / 21/46 coverage
+S32 capacity4: 0.096196 HV / 0.080789 HV-AUC46 / 21/46 coverage
+```
+
+S32 reaches only 86.3% of matched classic final HV, so the stop rule
+triggers. Do not run seed 1002 from current evidence.

@@ -66,11 +66,13 @@ not the triumphant Branch A.**
 > (`0.088031` vs `0.086982`, `165/230` vs `164/230`), but final HV remains
 > below classic (`0.102481` vs `0.103802`). S23 shows descriptor-collapse
 > health alone is insufficient and PPA-catastrophic; S11 shows warmup
-> interpolation is inert for final HV. S04/S05/S06 are now appendix-only
-> descriptor-health/coverage reserves. This does not change the frozen
-> claims contract: the +5% HV gate still fails. It makes the honest story
-> stronger because the negative map is now suite-first and operator-fair,
-> not only screen-gated.
+> interpolation is inert for final HV. A fresh S32 capacity4 mechanism
+> card directly tested whether S07 capacity3 was too restrictive, but
+> seed 1001 closed below the 90% classic-HV stop floor and lost S07's
+> HV-AUC benefit. S04/S05/S06 are now appendix-only descriptor-health/
+> coverage reserves. This does not change the frozen claims contract: the
+> +5% HV gate still fails. It makes the honest story stronger because the
+> negative map is now suite-first and operator-fair, not only screen-gated.
 
 ## The stronger storyline the work actually produced
 

@@ -77,9 +77,14 @@ cross-arm bundles + isolated-grade per-task tables), see
   1002 is closed and S12 warmup24 remains blocked. Package:
   `suite_variant_campaign/S11_warmup12/seed_1001/results_report.md`.
 - The suite-first primary queue is now closed pending a fresh mechanism
-  card. S04/S05/S06 are appendix-only descriptor-health/coverage reserves,
-  not next primary HV lanes. Decision:
-  `suite_variant_campaign/post_s11_suite_decision.md`.
+  card. One fresh exception, S32 `capacity4`, was registered and tested
+  as the direct interpolation between V2 capacity5 and S07 capacity3. It
+  closed negative at seed 1001: S32 `0.096196` HV / `0.080789`
+  HV-AUC46 / `21/46` coverage vs matched classic `0.111401` /
+  `0.090551` / `24/46`, so seed 1002 is blocked. S04/S05/S06 remain
+  appendix-only descriptor-health/coverage reserves, not next primary HV
+  lanes. Decision: `suite_variant_campaign/post_s11_suite_decision.md`;
+  S32 package: `suite_variant_campaign/S32_capacity4/seed_1001/`.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -144,7 +149,8 @@ below on operator-fair evidence:**
 
 **Last refreshed:** 2026-07-10 (suite-first natural_qd_push full-RTLLM
 continuation through S07 closure, S23 negative descriptor-reduction
-control, and S11 negative warmup12 closure);
+control, S11 negative warmup12 closure, and S32 negative capacity4
+closure);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

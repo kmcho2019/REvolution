@@ -105,6 +105,12 @@ improve over classic, but final HV remains below classic (`0.102481` vs
 controls. S04/S05/S06 are now appendix-only reserves, not primary HV
 lanes.
 
-Current posture returns to the negative-map synthesis path. A new primary
-experiment requires a fresh mechanism card before launch, not another
-queue scan of capacity, warmup, front-slot, or descriptor-only knobs.
+Current posture returns to the negative-map synthesis path. One fresh
+S07-family exception was tested after this note: S32 `capacity4`, the
+direct interpolation between V2 capacity5 and S07 capacity3. It closed
+negative at seed 1001 (`0.096196` HV / `0.080789` HV-AUC46 / `21/46`
+coverage vs matched classic `0.111401` / `0.090551` / `24/46`) and
+blocks seed 1002 under its 90% classic-HV stop rule. A new primary
+experiment still requires a fresh mechanism card before launch, not
+another queue scan of capacity, warmup, front-slot, or descriptor-only
+knobs.

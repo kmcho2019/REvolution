@@ -18,6 +18,21 @@ a fresh mechanism card before launch. Required fixes before PASS: none.
 
 ---
 
+## Post-S32 Capacity4 Addendum
+
+Validation addendum, 2026-07-10. A fresh S32 mechanism card tested
+capacity4 as the direct interpolation between V2 capacity5 and S07
+capacity3. The result strengthens the negative-map outcome rather than
+reopening the primary-HV lane.
+
+Verdict: PASS. S32 seed 1001 is valid and operator-fair, but closes below
+the mechanism-card stop rule: `0.096196` HV / `0.080789` HV-AUC46 /
+`21/46` coverage vs matched classic `0.111401` / `0.090551` / `24/46`.
+It also loses S07 seed 1001's HV-AUC benefit. Required fixes before
+PASS: none.
+
+---
+
 ## Post-N10 Negative-Map Addendum
 
 Validation addendum, 2026-07-07. After N04, N02b, N07a/N07b/N07c,
