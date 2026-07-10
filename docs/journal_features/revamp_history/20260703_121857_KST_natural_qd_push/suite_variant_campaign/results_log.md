@@ -858,3 +858,23 @@ the suite-first campaign.
 - Decision remains unchanged:
   S07 is secondary evidence, not the primary final-HV claim. Run targeted
   descriptor follow-ups only after this S07 posture is kept explicit.
+
+## 2026-07-10 - Post-S07 Follow-Up Decision
+
+- Registered `S23 journal_logic_width_2d` as the next smoke-ready
+  full-suite lane after S07 closure.
+- S23 keeps the V2 platform and uses explicit `logic_depth comb_width_log`
+  descriptor axes, dropping `ff_depth` while preserving the original
+  journal trio descriptor family.
+- Registered `S31 s07_logic_width_2d` only as a contingent combination:
+  keep S07 capacity3 plus the S23 reduced descriptor after S23 gives a
+  non-catastrophic full-suite signal.
+- Non-LLM config smoke passed for S23/S31, the reserved
+  `logic_depth ff_depth` 2D lane, compact8d/CVT, and gt3d/testability
+  archive construction.
+- Decision:
+  run S23 before S31, compact8d/CVT, or gt3d/testability. Compact8d/CVT
+  remains a descriptor-health reserve because it changes descriptor
+  family and geometry and had prior extraction fragility. GT3D/testability
+  remains a coverage-focused reserve because existing suite evidence is
+  HV-weak.

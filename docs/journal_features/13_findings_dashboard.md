@@ -60,6 +60,12 @@ cross-arm bundles + isolated-grade per-task tables), see
   statistics, per-problem win/loss map, and `Prob015`/`Prob024` case
   studies are packaged in
   `suite_variant_campaign/S07_capacity3/five_seed_analysis/summary.md`.
+- Post-S07 next lane: run `S23 journal_logic_width_2d` as the immediate
+  one-seed full-RTLLM smoke, then complete the two-seed probe only if it
+  is not catastrophically HV- or coverage-negative. `S31
+  s07_logic_width_2d` is registered only as a contingent S07 combination
+  after S23 gives a suite signal. Decision note:
+  `suite_variant_campaign/post_s07_followup_decision.md`.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -123,7 +129,7 @@ below on operator-fair evidence:**
   reruns recover 30-46 retention points).
 
 **Last refreshed:** 2026-07-10 (suite-first natural_qd_push full-RTLLM
-continuation through S07 capacity3 five-seed closure);
+continuation through S07 closure and S23 next-lane registration);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the

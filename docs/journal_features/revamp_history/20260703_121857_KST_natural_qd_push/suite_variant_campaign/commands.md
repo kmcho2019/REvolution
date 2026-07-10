@@ -603,6 +603,49 @@ Continue the existing P3c roots:
 Use the same descriptor/CVT flags recorded in
 `../p3_full_rtllm/p3c_bd_sweep_registration.md`.
 
+## S23 Journal Logic-Width 2D
+
+S23 is the first post-S07 descriptor-reduction smoke. It keeps the V2
+platform and replaces the 3D journal trio profile with explicit 2D axes:
+
+```text
+--qd_descriptor_axes logic_depth comb_width_log
+--qd_max_elites_per_cell 5
+```
+
+Do not pass `--qd_descriptor_profile` for S23. Keep all other V2 pins,
+including:
+
+```text
+--qd_archive_type grid_quantile
+--qd_num_cells 16
+--qd_grid_quantile_warmup_successes 8
+--qd_cell_mode pareto_front
+--qd_parent_selection nsga2_global_rank
+--qd_champion_lane_fraction 0.5
+--qd_rebinning_kind ks_triggered
+```
+
+Save under:
+
+`exp/natural_qd_push/suite_variants_wave_c_<UTC>/live/journal_logic_width_2d/seed_<seed>`.
+
+## S31 S07 Logic-Width 2D
+
+S31 is a contingent combination arm. It keeps S07's compact per-cell
+Pareto retention and uses the S23 explicit 2D axes:
+
+```text
+--qd_descriptor_axes logic_depth comb_width_log
+--qd_max_elites_per_cell 3
+```
+
+Do not pass `--qd_descriptor_profile` for S31. Do not launch S31 before
+S23 has at least one full-suite smoke seed and a recorded combination
+decision. Save under:
+
+`exp/natural_qd_push/suite_variants_wave_d_<UTC>/live/s07_logic_width_2d/seed_<seed>`.
+
 ## Packaging
 
 Use the P3 package chain per seed:

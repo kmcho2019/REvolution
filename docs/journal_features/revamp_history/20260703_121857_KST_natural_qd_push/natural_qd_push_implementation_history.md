@@ -1582,3 +1582,21 @@ verdict log):
 - Decision:
   keep S07 as secondary trajectory/coverage evidence and only then move
   to targeted BD/descriptor follow-ups.
+
+## 2026-07-10 - Post-S07 Descriptor Follow-Up Registration
+
+- Added `suite_variant_campaign/post_s07_followup_decision.md`.
+- Registered `S23 journal_logic_width_2d` as the next smoke-ready
+  full-suite lane. It keeps the V2 platform and replaces the frozen 3D
+  trio profile with explicit `logic_depth comb_width_log` axes.
+- Registered `S31 s07_logic_width_2d` as a contingent combination only:
+  keep S07 capacity3 plus the S23 reduced descriptor after S23 gives a
+  non-catastrophic full-suite signal.
+- Non-LLM config smoke passed for S23/S31 and the deferred reserve lanes:
+  `logic_depth ff_depth`, compact8d/CVT, and gt3d/testability.
+- Decision:
+  S23 is the cleanest immediate test of whether descriptor reduction can
+  help recover the final-HV gap without new heuristics or operator
+  changes. Defer S31, compact8d/CVT, and gt3d/testability until S23 gives
+  a suite signal or the manuscript explicitly needs health/coverage
+  appendices.

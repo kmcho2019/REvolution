@@ -1,6 +1,6 @@
 # Restart Handoff - 2026-07-09
 
-Last updated: 2026-07-10T01:52:00Z.
+Last updated: 2026-07-10T02:20:00Z.
 Branch: `feat/journal-qd-bd-exp-20260703`.
 Current completed result package:
 `suite_variant_campaign/S07_capacity3/seed_1005`.
@@ -79,6 +79,33 @@ stopped before any completed problem because it missed
 `qd_champion_lane_fraction=0.5`. Its raw directory is quarantined as
 `exp/natural_qd_push/suite_variants_wave_b_20260709_102340_UTC_INVALID_MISSING_CHAMPION_LANE`
 and must not be interpreted.
+
+## Post-S07 Next Lane
+
+S07 is closed as secondary evidence, not the primary final-HV claim.
+The next registered lane is `S23 journal_logic_width_2d`, recorded in
+`post_s07_followup_decision.md` and `variant_registry.csv`.
+
+S23 keeps the V2 platform and changes only the behavior descriptor to the
+explicit 2D subset:
+
+```text
+--qd_descriptor_axes logic_depth comb_width_log
+--qd_max_elites_per_cell 5
+```
+
+All operator and evaluation parity pins remain unchanged:
+`classic_operator_kind=eoh_strategies`, `qd_operator_kind=eoh_strategies`,
+`eoh_success_operator_set=classic`, `representation_kind=code_individual`,
+`evaluation_mode=strict_ablation`, `max_tokens=128000`, and
+`diff_max_tokens=128000`.
+
+Do not launch broad BD scans from this handoff. Compact8d/CVT is deferred
+because it changes descriptor family and geometry and had prior extraction
+fragility. GT3D/testability is deferred to a coverage appendix because the
+existing suite signal is HV-weak. `S31 s07_logic_width_2d` is the
+contingent S07 capacity3 combination and should wait for an S23
+full-suite smoke signal plus a recorded combination decision.
 
 ## S09 Contract
 

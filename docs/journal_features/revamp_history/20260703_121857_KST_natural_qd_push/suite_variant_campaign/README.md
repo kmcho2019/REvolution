@@ -75,6 +75,7 @@ known extraction failures before expensive descriptors.
 | `commands.md` | Launch/package templates and exact suite command shape. |
 | `results_log.md` | Append-only run/results ledger for this campaign. |
 | `restart_handoff_20260709.md` | Restart-safe state through S07 seed 1004 package. |
+| `post_s07_followup_decision.md` | Decision note for the first targeted descriptor follow-up after S07. |
 
 ## Progress
 
@@ -88,6 +89,8 @@ known extraction failures before expensive descriptors.
 | S09 | two seeds packaged; not promoted | Front-slot lane 0.20 is a front-loss control: S09 `0.096357` HV / `0.085650` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. Seed 1001 was positive, but seed 1002 did not replicate it. |
 | S22 | two seeds packaged; not promoted | Conservative front-slot lane 0.10 is HV-AUC-positive but not a primary HV win: S22 `0.101722` HV / `0.089115` HV-AUC46 / `66/92` coverage vs classic `0.104479` / `0.085867` / `66/92` and V2 `0.098539` / `0.087146` / `65/92`. It beats V2 and ties classic coverage, but still trails classic final HV. |
 | S07 | five seeds packaged; secondary near miss | Capacity3 closes at S07 `0.102481` HV / `0.088031` HV-AUC46 / `165/230` coverage vs classic `0.103802` / `0.086982` / `164/230` and V2 `0.098801` / `0.087428` / `166/230`. It beats classic on HV-AUC46 and coverage and beats V2 on HV/HV-AUC46, but misses the primary classic final-HV gate at 98.7% of classic. Seed-paired stats and case studies are in `S07_capacity3/five_seed_analysis/summary.md`. |
+| S23 | registered; next smoke | Post-S07 single-factor descriptor-reduction lane: explicit `logic_depth comb_width_log` axes on the V2 platform. This keeps the original journal trio family and drops the often-collapsed `ff_depth` axis. |
+| S31 | blocked until S23 signal | Contingent S07 combination: S07 capacity3 plus explicit `logic_depth comb_width_log` axes. Do not launch until S23 has a non-catastrophic full-suite signal and a preregistered combination contract. |
 
 ## Initial Wave Choice
 
@@ -129,6 +132,8 @@ Near-term executable choices after S07 five-seed closure are:
    capacity moved opposite S07's better direction.
 7. Keep S11 warmup12 only as a lower-priority interpolation check. S12
    warmup24 is blocked unless S11 recovers HV and coverage.
-8. Prefer the next primary search in descriptor reduction/health lanes
-   such as S24 or S23 after an extraction/config smoke, because S07
-   shows capacity alone is not enough to recover classic final HV.
+8. Prefer S23 as the next primary smoke: keep the V2 platform, use
+   explicit `logic_depth comb_width_log` axes, and defer the S31
+   capacity3 combination until S23 gives a non-catastrophic full-suite
+   signal. Keep compact8d/CVT and gt3d/testability for specific
+   health/coverage appendices, not the next primary HV lane.
