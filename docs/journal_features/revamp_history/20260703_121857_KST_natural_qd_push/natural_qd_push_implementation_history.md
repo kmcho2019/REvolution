@@ -1504,3 +1504,23 @@ verdict log):
 - Variant pins are unchanged from S07 seeds 1001-1003 except for
   `seed=1004`. No metrics should be reported until all 50 RTLLM
   problems complete and the standard validation/package chain passes.
+
+## 2026-07-10 - S07 Capacity 3 Seed 1004 Package
+
+- Completed and packaged S07 `capacity3` seed 1004 under
+  `suite_variant_campaign/S07_capacity3/seed_1004/`.
+- Runtime completed normally in 4675.61 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1004 is the strongest S07 confirmation seed so far:
+  S07 `0.112252` HV / `0.093789` HV-AUC46 / `33/46` coverage vs
+  matched classic `0.103555` / `0.089027` / `32/46` and V2
+  `0.101008` / `0.086425` / `33/46`.
+- Four-seed S07 now reaches
+  `0.104661` HV / `0.090397` HV-AUC46 / `132/184` coverage vs matched
+  classic `0.103652` / `0.086993` / `131/184` and V2 `0.099485` /
+  `0.087753` / `133/184`.
+- Decision:
+  finish S07 seed 1005 as the next run before opening a new mechanism.
+  S07 is now the leading natural TCAD-extension lane, but the final-HV
+  margin is too small to claim before the five-seed aggregate lands.

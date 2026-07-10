@@ -771,3 +771,27 @@ the suite-first campaign.
   run has started over 50 RTLLM problems. No seed or aggregate metrics
   should be reported until the full run completes and the standard
   package chain passes.
+
+## 2026-07-10 - S07 Capacity 3 Seed 1004 Package
+
+- Completed and packaged S07 `capacity3` seed 1004 under
+  `suite_variant_campaign/S07_capacity3/seed_1004/`.
+- Runtime completed normally in 4675.61 seconds with 4800 LLM API calls.
+  The package passes the full 50-problem validation manifest and passes
+  the operator audit with `single_thought_count=0`.
+- Seed 1004 is a positive matched-suite seed:
+  S07 `0.112252` HV / `0.093789` HV-AUC46 / `33/46` coverage vs
+  classic `0.103555` / `0.089027` / `32/46` and V2 `0.101008` /
+  `0.086425` / `33/46`.
+- Four-seed S07 now clears the registered confirmation threshold:
+  S07 `0.104661` HV / `0.090397` HV-AUC46 / `132/184` coverage vs
+  classic `0.103652` / `0.086993` / `131/184` and V2 `0.099485` /
+  `0.087753` / `133/184`.
+- Classification:
+  `promoted-to-final-confirmation`. The capacity3 lane is the first
+  suite-first natural variant in this campaign to clear matched classic
+  on final HV, HV-AUC46, and coverage at four seeds.
+- Decision:
+  finish S07 seed 1005 before any manuscript claim. The final-HV margin
+  is still small, so a fifth seed is required to decide whether S07 is a
+  viable TCAD extension or another near-miss.

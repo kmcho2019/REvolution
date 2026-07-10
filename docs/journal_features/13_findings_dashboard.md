@@ -51,12 +51,13 @@ cross-arm bundles + isolated-grade per-task tables), see
   `0.098539` / `0.087146` / `65/92`. It beats V2 and beats classic on
   HV-AUC46 while tying classic coverage, but it still trails classic
   final HV.
-- S07 capacity3 is the strongest capacity-control near-miss so far.
-  Three-seed S07: `0.102130` HV / `0.089267` HV-AUC46 / `99/138`
-  coverage vs classic `0.103684` / `0.086315` / `99/138` and V2
-  `0.098977` / `0.088196` / `100/138`. It beats V2, beats classic on
-  HV-AUC46, and ties classic coverage, but trails classic final HV by
-  about 1.5%.
+- S07 capacity3 is now the leading suite-first natural extension.
+  Four-seed S07: `0.104661` HV / `0.090397` HV-AUC46 / `132/184`
+  coverage vs classic `0.103652` / `0.086993` / `131/184` and V2
+  `0.099485` / `0.087753` / `133/184`. It clears matched classic on
+  HV, HV-AUC46, and coverage before the final confirmation seed. The
+  final-HV margin is small, so seed 1005 is required before any
+  manuscript claim.
 - Read-only audits recorded WARN, not FAIL:
   naturalness/operator parity are intact, but command templates and doc
   navigation needed this refresh.
@@ -119,8 +120,8 @@ below on operator-fair evidence:**
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-09 (suite-first natural_qd_push full-RTLLM
-continuation through S07 capacity3 seed 1003 package);
+**Last refreshed:** 2026-07-10 (suite-first natural_qd_push full-RTLLM
+continuation through S07 capacity3 seed 1004 package);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
