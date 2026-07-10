@@ -593,6 +593,53 @@ Save under one of:
 - `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/warmup12/seed_<seed>`
 - `exp/natural_qd_push/suite_variants_wave_b_<UTC>/live/warmup24/seed_<seed>`
 
+### S11 Warmup12 Seed 1001 Launch
+
+Historical command for the active seed 1001 run. It changes only
+`qd_grid_quantile_warmup_successes=12` from the V2 platform.
+
+```bash
+ROOT="/workspace/exp/natural_qd_push/suite_variants_wave_b_20260710_035929_UTC"
+RUN_DIR="$ROOT/live/warmup12/seed_1001"
+LOG="$ROOT/launch_warmup12_seed1001.log"
+OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} uv run python scripts/run_backend.py \
+  --backend revolution \
+  --search_mode revolution_qd \
+  --benchmarks RTLLM \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 128000 \
+  --model_name openai/gpt-oss-120b \
+  --population_size 8 \
+  --num_generations 5 \
+  --total_worker_slots 48 \
+  --max_active_problems 12 \
+  --max_workers_per_problem 4 \
+  --evaluation_mode strict_ablation \
+  --classic_operator_kind eoh_strategies \
+  --eoh_success_operator_set classic \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_archive_type grid_quantile \
+  --qd_descriptor_profile journal_logic_ff_width_3d \
+  --qd_num_cells 16 \
+  --qd_grid_quantile_warmup_successes 12 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_rebinning_kind ks_triggered \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --seed 1001 \
+  --save_path "$RUN_DIR" \
+  --no-backend_subdir 2>&1 | tee "$LOG"
+```
+
+Do not launch S12 warmup24 unless S11 recovers HV or coverage after the
+standard package chain passes.
+
 ## S04/S05 Descriptor Completions
 
 Continue the existing P3c roots:

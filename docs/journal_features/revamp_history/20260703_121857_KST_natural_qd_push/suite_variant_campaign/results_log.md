@@ -937,3 +937,33 @@ the suite-first campaign.
   pre-registered smoke stop rule closes S23 after seed 1001 because it
   reaches only 75.8% of matched classic final HV. Do not run seed 1002
   or launch `S31 s07_logic_width_2d` from this evidence.
+
+## 2026-07-10 - S11 Warmup12 Seed 1001 Running
+
+- Launched S11 `warmup12` seed 1001 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260710_035929_UTC/live/warmup12/seed_1001`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260710_035929_UTC/launch_warmup12_seed1001.log`.
+- Preflight recorded at
+  `preflights/s11_warmup12_seed1001_20260710_035929_UTC.json`;
+  it passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- Variant pins:
+  S11 changes only `qd_grid_quantile_warmup_successes=12` from the V2
+  platform. It keeps `qd_descriptor_profile=journal_logic_ff_width_3d`,
+  `qd_archive_type=grid_quantile`, `qd_num_cells=16`,
+  `qd_cell_mode=pareto_front`, `qd_max_elites_per_cell=5`,
+  `qd_parent_selection=nsga2_global_rank`, and
+  `qd_champion_lane_fraction=0.5`.
+- Operator/evaluation pins:
+  `classic_operator_kind=eoh_strategies`,
+  `qd_operator_kind=eoh_strategies`, `eoh_success_operator_set=classic`,
+  `representation_kind=code_individual`,
+  `evaluation_mode=strict_ablation`, `max_tokens=128000`, and
+  `diff_max_tokens=128000`.
+- Decision posture:
+  S11 is warmup-family closure after the S02 warmup16 negative, not a
+  new primary TCAD lane. No metrics should be reported until all 50
+  RTLLM problems complete and the standard validation/package chain
+  passes. Stop after seed 1001 unless it shows real HV or coverage
+  recovery.

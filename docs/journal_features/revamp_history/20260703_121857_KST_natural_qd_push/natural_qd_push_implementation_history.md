@@ -1644,3 +1644,19 @@ verdict log):
   of matched classic final HV, so the pre-registered smoke stop rule
   blocks seed 1002 and blocks the `S31 s07_logic_width_2d` combination
   from current evidence.
+
+## 2026-07-10 - Post-S23 Warmup12 Launch
+
+- Added `suite_variant_campaign/post_s23_warmup_decision.md` to bound
+  S11 as warmup-family closure rather than a new primary TCAD lane.
+- Launched S11 `warmup12` seed 1001 at
+  `exp/natural_qd_push/suite_variants_wave_b_20260710_035929_UTC/live/warmup12/seed_1001`.
+- Launch log:
+  `exp/natural_qd_push/suite_variants_wave_b_20260710_035929_UTC/launch_warmup12_seed1001.log`.
+- vLLM preflight recorded:
+  `suite_variant_campaign/preflights/s11_warmup12_seed1001_20260710_035929_UTC.json`.
+- Preflight passed with model `openai/gpt-oss-120b` and
+  `max_model_len=131072`.
+- S11 keeps the V2 platform and changes only
+  `qd_grid_quantile_warmup_successes=12`. S12 warmup24 remains blocked
+  unless S11 shows real HV or coverage recovery after packaging.
