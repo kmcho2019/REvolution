@@ -24,12 +24,18 @@ Return FAIL immediately if any condition holds:
 
 1. The accepted `journal_narrative.md` revision 3 was silently changed to fit
    this result, or no reviewed candidate-specific addendum predates evidence.
-2. More than one unregistered method configuration entered the decision.
-3. Any evidence run used `single_thought_operator`, `M-T`, `C-D`, descriptors,
-   cells, QD retention, or an adaptive scalar fallback.
+2. Any unregistered treatment configuration entered a decision, or more than
+   one Pareto treatment configuration contributed to gate-bearing evidence.
+   Registered comparator and technical-smoke configurations are excluded.
+3. Any Pareto treatment or fresh comparator run launched for this goal used
+   `single_thought_operator`, `M-T`, `C-D`, descriptors, cells, QD retention,
+   or an adaptive scalar fallback. Registered historical V2 roots are exempt
+   as descriptive evidence only.
 4. Full RTLLM or held-out stages were launched out of gate order.
-5. Held-out problems influenced implementation, debugging, tuning, or stage
-   promotion before the final held-out launch.
+5. Any fresh candidate-holdout task appeared in a run or development manifest
+   before its freeze, or influenced implementation, debugging, tuning, or
+   promotion before the registered final classic/Pareto launches. The
+   overlapping revision-3 holdout was used as primary evidence.
 6. A failed final-HV gate was rescued by HV-AUC, archive health, selected seeds,
    complete cases, or a favorable task subset.
 7. Required runs or report processes are still live.
@@ -41,10 +47,15 @@ Verify from code and tests that:
 - one discriminated Pareto search mode exists and method state is narrow;
 - Pareto-specific logic is outside the classic engine except for minimal,
   behavior-preserving hooks and thin dispatch;
-- successful parents use binary rank/crowding tournament;
-- successful survivors use NSGA-II environmental selection;
+- successful parents use the pinned without-replacement binary tournament and
+  the pinned distinct-winner `C-F` procedure;
+- successful survivors use NSGA-II over the exact registered candidate set,
+  followed only by the pinned failed-offspring fill ordering;
 - active objectives are power/area for combinational and power/area/timing for
   sequential designs, with unknown types rejected;
+- reference-complete tasks use normalized gains, reference-incomplete tasks use
+  negative raw active PPA, and every Success candidate satisfies the required
+  post-synthesis/PPA invariant;
 - changing only scalar score cannot change Pareto parent or survivor choices;
 - the Fail pool, classic EoH operators, UCB, prompts, evaluator, and budget are
   preserved;
@@ -64,6 +75,10 @@ exhaustive handling of typed variants.
 Recompute or spot-check, rather than copy prose:
 
 - manifest membership and SHA-256 hashes;
+- fresh candidate-holdout disjointness against every run root and development
+  manifest that predates its freeze; the legacy nine-task overlap is disclosed;
+- holdout reference-sweep completeness, exact eligible inventory, proportional
+  quota calculation, sorted bucket inputs, seeded shuffle, and output hash;
 - seed/config/model/prompt/tool and comparator compatibility;
 - candidate-evaluation counts, LLM calls, tokens, and the +/-10% auxiliary
   budget rule;
@@ -72,7 +87,7 @@ Recompute or spot-check, rather than copy prose:
   cardinality, and per-axis results;
 - functional-any-pass and reference-beating coverage as separately named
   metrics, including resolution of the S07/S32 same-root discrepancy;
-- seed-1001 stop, two-seed promotion, and five-seed held-out promotion;
+- seed-1001 stop, two-seed promotion, and five-seed full-RTLLM promotion;
 - held-out penalized cluster-bootstrap gates, zero-HV units, epsilon
   sensitivity, per-seed results, and leave-one-seed-out tables;
 - missing-treatment losses and reason codes;

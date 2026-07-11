@@ -67,3 +67,87 @@ the claims addendum before activation, not after seeing live results.
 - No Pareto goal, `run_backend.py`, or benchmark process is active.
 - No pytest, ruff, pyright, or ty run was needed because this change contains
   planning documentation only and does not alter Python source.
+
+## 2026-07-11 - Long-Timeout Claude Review
+
+- Re-ran the read-only scaffold audit with `claude -p` and a 900-second bound.
+- The process completed normally after about nine minutes and returned `FAIL`
+  with three blocking and four optional findings.
+- Preserved the complete output at
+  `reviews/20260711_claude_readonly_review.md`.
+
+### Finding Disposition
+
+1. **Held-out overlap: accepted and strengthened.** The revision-3 holdout has
+   nine RTLLM tasks inside the repeatedly observed 46-task full-suite surface.
+   Keep that manifest as legacy descriptive evidence. Before implementation,
+   deterministically freeze a new 20-task, prior-run-disjoint VerilogEval set
+   for the candidate's paper-facing gate. This is stronger than computing
+   promotion on only the 37 non-overlap RTLLM tasks because it preserves the
+   full-suite development read and gives the final claim a fresh problem set.
+2. **Method edge states: accepted.** Pin negative raw active PPA objectives for
+   the four reference-incomplete RTLLM tasks; assert that every Success record
+   has post-synthesis functionality and complete PPA; fully specify the
+   survivor candidate set and failed-offspring fill order.
+3. **Unregistered-arm wording: accepted.** Any unregistered evidence arm now
+   causes adversarial FAIL.
+4. **Prior NSGA-II mechanism mismatch: accepted.** Disclose that the earlier
+   positive used truncated-pool uniform draws plus a champion lane, not this
+   binary tournament. Pin without-replacement tournaments and the `C-F`
+   second-winner rule.
+5. **Parent+survivor approval: accepted.** Name the bundling decision in the
+   pre-activation approval checklist.
+6. **Method-inherent budget skew: accepted.** Persistent skew closes as
+   budget-asymmetric supporting or negative evidence instead of blocking
+   forever.
+7. **Gate name: accepted.** Rename it five-seed full-RTLLM promotion.
+
+- No goal or benchmark was launched while resolving the review.
+
+## 2026-07-11 - Focused Claude Re-Review
+
+- Ran a second 900-second read-only review against the revised worktree.
+- The review confirmed all three original blockers and four optional findings
+  were resolved, then returned `FAIL` on one new blocking ambiguity in the
+  fresh-holdout selection rule.
+- Preserved the output at
+  `reviews/20260711_claude_readonly_rereview.md`.
+- Accepted the blocker: the plan now pins the reference-synthesis inventory,
+  proportional largest-remainder allocation, lexical ordering and tie break,
+  exact per-bucket `random.Random` seed string, shuffle/take procedure, and
+  freeze-time run-root audit.
+- Accepted the remaining optional precision fixes: survivor crowding ties use
+  the registered stable tie rule; the QD prohibition exempts historical V2
+  descriptive roots; selected holdout tasks cannot be replaced after freeze.
+- No goal or benchmark was launched.
+
+## 2026-07-11 - Final Claude Activation Audit
+
+- Ran a third 900-second read-only audit after pinning the complete holdout
+  selection procedure.
+- Verdict: `PASS`, with no blocking findings. The audit states that every prior
+  blocker is resolved and the scaffold is ready to activate after committing
+  the reviewed files.
+- Preserved the output at
+  `reviews/20260711_claude_final_activation_audit.md`.
+- Addressed its remaining documentation suggestions: named the concrete
+  exclusion sources, defined fewer than 20 eligible tasks as a blocked freeze,
+  and refreshed the README review trail.
+- The goal remains unactivated. The experimental sub-agent report remains
+  `PENDING`; this PASS validates only the planning contract.
+
+## 2026-07-11 - Review Revision Validation
+
+- Review trail contains three preserved outputs with verdicts
+  `FAIL -> FAIL -> PASS`.
+- `goal_template.md` is 3942 characters and does not repeat the `/goal` prefix
+  in its objective body.
+- The living TODO is 117 lines, below its 120-line limit.
+- The accepted narrative and locked manifest hashes remain unchanged.
+- Authored contract documents remain ASCII; the review files preserve Claude's
+  Unicode output verbatim.
+- `git diff --cached --check` passed after removing extra EOF blank lines from
+  the captured reviews.
+- No goal, Claude, `run_backend.py`, or benchmark process remains active.
+- No Python validation was needed because this revision changes planning and
+  review documentation only.

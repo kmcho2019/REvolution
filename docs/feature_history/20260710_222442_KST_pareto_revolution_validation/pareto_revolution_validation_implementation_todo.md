@@ -14,8 +14,8 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [x] Register one candidate: global Pareto parent and survivor selection on
       the classic substrate.
 - [x] Define positive, supporting, and negative completion paths.
-- [ ] Obtain user/advisor approval of the method contract and quantitative
-      gates before activating the goal.
+- [ ] Obtain user/advisor approval of the method contract, parent+survivor
+      bundling, and quantitative gates before activating the goal.
 
 ## Stage 0: Freeze
 
@@ -27,8 +27,10 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
       historical state exactly.
 - [ ] Resolve the same-root S07/S32 classic coverage discrepancy with one
       canonical definition and regression test.
-- [ ] Freeze and hash the 50-task RTLLM surface, 46-task headline manifest,
-      20-task held-out set, seed manifest, model, prompts, tools, and budgets.
+- [ ] Freeze and audit a prior-run-disjoint 20-task VerilogEval holdout; mark
+      the overlapping revision-3 holdout legacy descriptive evidence only.
+- [ ] Freeze and hash RTLLM, fresh holdout, seeds, model, prompts, tools, and
+      budgets.
 - [ ] Register compatible classic and V2 full-suite roots; rerun only a
       comparator that fails compatibility audit.
 - [ ] Freeze the one Pareto arm, commands, output roots, report commands, and
@@ -49,7 +51,8 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 
 ## Stage 2: Tests And Technical Smoke
 
-- [ ] Test sequential and combinational objective axes and unknown-type failure.
+- [ ] Test active axes, raw no-reference objectives, required Success/PPA
+      invariants, and unknown-type failure.
 - [ ] Test front ordering, crowding truncation, stable ties, population cap, and
       distinct `C-F` parents.
 - [ ] Test that changing scalar score alone cannot change Pareto selection.
@@ -73,11 +76,12 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [ ] Run seeds 1003-1005 only if the two-seed gate passes.
 - [ ] Package five-seed paired cluster statistics, per-seed/LOSO sensitivity,
       per-problem maps, budgets, yields, and delivered fronts.
-- [ ] Apply the five-seed held-out promotion gate without using HV-AUC rescue.
+- [ ] Apply the five-seed full-RTLLM promotion gate without HV-AUC rescue.
 
 ## Stage 4: Held-Out Evidence
 
-- [ ] Confirm the 20 held-out problems remain untouched by method tuning.
+- [ ] Confirm the fresh 20-task holdout is absent from every prior run and
+      method-development surface.
 - [ ] Run fresh matched classic and Pareto seeds 1001-1005 only after promotion.
 - [ ] Validate every run and resolve infrastructure failures without changing
       the method.

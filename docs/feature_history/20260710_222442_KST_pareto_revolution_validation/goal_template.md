@@ -29,16 +29,25 @@ warmup, rebinning, emitters, triggers, fallback selection, and follow-up knob
 scans. Disclose unchanged scalar use in feedback and UCB reward; claim only
 Pareto-aware population selection.
 
+Pin tournaments to two contestants without replacement; C-F's second draw
+excludes its first winner. Rank previous successes plus successful offspring,
+then fill open survivor slots from failed offspring by seeded-shuffle and score
+order. Assert complete post-synthesis PPA for every Success. Use normalized
+gains with references and negative raw PPA without them.
+
 Before live evidence, preserve journal_narrative.md revision 3, write and
 adversarially approve a versioned claims addendum, freeze manifests/seeds/
 comparators/configs/hashes, pass focused tests and classic regression, and
 resolve the existing same-root coverage-report discrepancy. Define valid-PPA,
-functional-any-pass, and reference-beating coverage separately. Record a 128k
-vLLM preflight. Use the full 50-task RTLLM run with the locked 46-task PPA
-denominator; screens are technical only. Run seed 1001, then 1002, then
-1003-1005 only through the registered gates. Run fresh matched classic and
-Pareto on the untouched 20-problem held-out set only after five-seed promotion.
-HV-AUC is secondary and cannot rescue final HV.
+functional-any-pass, and reference-beating coverage separately. Disclose that
+the revision-3 holdout overlaps nine repeatedly used RTLLM tasks and is legacy
+descriptive evidence only. Before implementation, freeze a new 20-task,
+prior-run-disjoint VerilogEval reference manifest with the plan's fixed rule.
+Record a 128k vLLM preflight. Use the full 50-task RTLLM run with the locked
+46-task PPA denominator; screens are technical only. Run seed 1001, then 1002,
+then 1003-1005 only through the registered gates. Run fresh matched classic and
+Pareto on the new holdout only after five-seed promotion. HV-AUC is secondary
+and cannot rescue final HV.
 
 Keep code skimmable and state narrow. Reuse existing ranking, reporting,
 validation, and ledger surfaces. Run focused checks as code changes, the full

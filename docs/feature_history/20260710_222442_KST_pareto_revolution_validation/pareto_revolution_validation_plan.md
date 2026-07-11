@@ -1,7 +1,7 @@
 # Pareto REvolution TCAD Validation Plan
 
-Status: draft for review. This scaffold does not activate `/goal` and does not
-authorize a benchmark launch.
+Status: reviewed draft, Claude activation audit PASS. User/advisor approval is
+still required. This scaffold does not activate `/goal` or authorize a run.
 
 Feature slug: `pareto_revolution_validation`
 
@@ -65,6 +65,11 @@ The natural-QD campaign found the following:
   effect, but global Pareto selection without descriptor cells has not been
   isolated on full RTLLM.
 
+That earlier NSGA-II effect came from a rank/crowding-truncated global pool,
+uniform draws, and a champion lane. It did not test the binary tournament used
+here. The prior result motivates Pareto selection but does not demonstrate this
+exact parent-selection rule.
+
 The hypothesis is that global Pareto selection is useful, while descriptor
 assignment and bounded per-cell survival impose an avoidable tax under a
 shallow, expensive search budget.
@@ -78,6 +83,12 @@ while the later S32 package reports `24/46` for the same classic root and the
 same HV/HV-AUC. The likely difference is successful-candidate coverage versus
 reference-beating coverage. Neither value may be used as a gate until one
 canonical reanalysis reproduces the definitions below.
+
+The revision-3 `data/configs/holdout_reference_subset.yaml` is also no longer
+untouched for this candidate. Nine of its RTLLM tasks are in the 46-task full
+RTLLM surface and have been used repeatedly in the natural-QD campaign. Keep it
+as a legacy validation manifest only. Before implementation, freeze a new
+20-task, prior-run-disjoint VerilogEval reference set for the paper-facing gate.
 
 ## Frozen Method Contract
 
@@ -99,21 +110,41 @@ add independent booleans or tunable rank/crowding parameters.
 
 For every problem:
 
-1. Convert each successful current candidate to maximize-form normalized PPA
-   gains against the reference.
+1. For a reference-complete task, convert each successful current candidate to
+   maximize-form normalized PPA gains against the reference. For a
+   reference-incomplete task, use negative raw active PPA metrics. Pareto rank
+   and normalized crowding are invariant to positive affine per-axis scaling,
+   so this is equivalent to using any fixed positive normalization and avoids
+   the classic synthetic-reference magnitude affecting population selection.
 2. Use active objectives `g_P,g_A` for combinational designs and
    `g_P,g_A,g_T` for sequential designs.
 3. Rank the fixed current Success population once per generation. Select
    successful parents by standard binary tournament over Pareto rank ascending
-   and crowding distance descending. Break exact ties by stable insertion order
-   and candidate id. `C-F` must receive two distinct tournament winners.
+   and crowding distance descending. For each tournament, sample two distinct
+   contestants without replacement; a singleton pool wins directly. Break
+   exact ties by stable insertion order and candidate id. For `C-F`, run a
+   second tournament after excluding the first winner. Disable `C-F` when fewer
+   than two Success candidates exist, matching classic.
 4. Select successful survivors by standard NSGA-II environmental selection:
    add complete fronts in rank order, then truncate the boundary front by
-   crowding distance. Preserve the existing classic failure fallback when
-   successful candidates do not fill the population.
+   crowding distance. The candidate set is exactly the previous Success pool
+   plus all new offspring. Rank every successful candidate first. If fewer
+   successful candidates exist than the population cap, fill remaining slots
+   from unsuccessful new offspring by the existing seeded-shuffle then
+   score-descending order. Previous Fail candidates are not retained, matching
+   classic. This intentionally gives every valid success priority over a
+   failure, unlike classic's mixed score sort; disclose that consequence.
+   The step-3 insertion-order and candidate-id tie rule also orders equal
+   crowding distances when truncating the boundary front.
 5. Build the delivered global Pareto front post hoc from the full evaluated
    successful-candidate history. It is reporting-only and never becomes a
    parent source or survivor store.
+
+For RTLLM and VerilogEval in this goal, assert that `status == "success"`
+implies post-synthesis functionality, `ppa_success`, and every active PPA
+metric. A violation is an invalid run, not another selectable state or a
+fallback to scalar selection. Functional-only benchmark modes are unsupported
+by `revolution_pareto` in this goal.
 
 Distinct candidate ids remain separate during search even when objective
 vectors tie. Delivered-front reports deduplicate identical objective vectors
@@ -171,7 +202,7 @@ version bump and recorded rationale, not an in-place update.
 | --- | --- |
 | `docs/journal_features/journal_narrative.md` | `aee1d8b7c2e3a5f54adf6003e8ca8ce988d393809152afa0d51dd737c05d3d8c` |
 | `data/configs/journal_seed_manifest.yaml` | `3f319e325d0fe8578ed54c565ad8f90affdd51935b06411cdd77e796a99e0629` |
-| `data/configs/holdout_reference_subset.yaml` | `4c3cab68f5cb58a7e85c0c17204cb57a72f462138dbb3e4f271fe97620f69812` |
+| Legacy `data/configs/holdout_reference_subset.yaml` | `4c3cab68f5cb58a7e85c0c17204cb57a72f462138dbb3e4f271fe97620f69812` |
 | `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_reference_complete_manifest.yaml` | `92d6ad2981b04a8aed531ca04ca1ac085bb9fb6fee866ada2a4bf397ee52497b` |
 
 Expected reusable comparator families, subject to the compatibility audit:
@@ -192,6 +223,8 @@ Expected reusable comparator families, subject to the compatibility audit:
 - Held-out evidence runs fresh matched classic and Pareto arms. A held-out V2
   or operator ablation requires a separate preregistered supporting decision;
   it is not part of this goal's primary gate.
+- The overlapping revision-3 holdout is legacy descriptive evidence only. It
+  cannot promote the method or satisfy the paper-facing gate.
 
 ## Pre-Launch Freeze
 
@@ -206,14 +239,43 @@ No LLM-backed evidence run may start until all items below are recorded:
 4. A canonical report recomputes S07 and S32's shared classic seed-1001 root and
    resolves the `33/46` versus `24/46` coverage discrepancy. The same input root
    must produce the same coverage under every future package.
-5. The 50-task RTLLM run surface, 46-task reference-complete headline manifest,
-   20-task held-out manifest, seeds, baseline roots, and hashes are frozen.
-6. Comparator compatibility is proven for model, prompt/operator set, budget,
+5. Freeze `data/configs/pareto_revolution_holdout_v1.yaml` before implementing
+   the search mode. Build the inventory from every
+   VerilogEval-Spec-to-RTL reference design that yields complete active PPA
+   under one archived, hashed reference-synthesis sweep with the frozen
+   toolchain; take circuit-type labels from that sweep. Apply no functionality
+   filter. Immediately before the manifest commit, exclude every task found in
+   a prior run root, hard/fast/debug manifest, or method-development surface.
+   Record the repository HEAD and hash the complete run-root/development input
+   inventory used by this freeze audit.
+
+   The exclusion audit enumerates evaluated problem records under `exp/`,
+   locked development/debug manifests under `data/configs/`, prior experiment
+   manifests and ledgers under `docs/journal_features/revamp_history/`, and
+   baseline CSV rows that contain evaluated outcomes. Source inventories that
+   contain no evaluated outcome do not exclude a task.
+
+   Select 20 tasks by the revision-3 proportional rule. Sort eligible problem
+   ids lexicographically within each circuit-type bucket. Allocate quotas in
+   proportion to eligible bucket sizes by largest-remainder rounding; break an
+   equal remainder by lexical circuit-type name. Shuffle each sorted bucket
+   with
+   `random.Random(f"20260711:VerilogEval-Spec-to-RTL:{circuit_type}")`, then
+   take its quota in shuffled order. Archive the sweep, eligible inventory,
+   exclusions, quota table, command, output manifest, and SHA-256 hashes.
+   If fewer than 20 eligible tasks remain, stop with a blocked freeze; do not
+   lower the count or relax exclusions.
+   Re-run the audit before committing if repository or run-root state changes.
+   After the manifest commit, any selected task used before Stage 6 invalidates
+   the paper-facing gate; do not replace it post hoc.
+6. The 50-task RTLLM run surface, 46-task reference-complete headline manifest,
+   fresh 20-task candidate holdout, seeds, baseline roots, and hashes are frozen.
+7. Comparator compatibility is proven for model, prompt/operator set, budget,
    toolchain, measurement semantics, and code revision. Rerun a comparator if
    compatibility cannot be established.
-7. Unit, integration, classic-regression, operator-contract, and artifact tests
+8. Unit, integration, classic-regression, operator-contract, and artifact tests
    pass at the frozen implementation commit.
-8. The local vLLM endpoint reports `openai/gpt-oss-120b` with at least 131072
+9. The local vLLM endpoint reports `openai/gpt-oss-120b` with at least 131072
    context. Evidence runs use `max_tokens=128000` and
    `diff_max_tokens=128000`.
 
@@ -234,7 +296,7 @@ transfer. Small runs are for technical validation only.
 | 3 | Full 50-task RTLLM, seed 1001, 8x5 | Gate on the locked 46 reference-complete tasks. |
 | 4 | Full RTLLM, seed 1002 | Run only if seed 1001 passes its stop rule. |
 | 5 | Full RTLLM, seeds 1003-1005 | Run only if the registered two-seed promotion gate passes. |
-| 6 | Held-out 20-problem reference set, fresh matched classic and Pareto, seeds 1001-1005 | Run only if five-seed full RTLLM passes promotion. This is the paper-facing gate. |
+| 6 | Fresh 20-problem VerilogEval reference set, matched classic and Pareto, seeds 1001-1005 | Run only if five-seed full RTLLM passes promotion. This is the paper-facing gate. |
 
 Infrastructure failures may be corrected and rerun with the same frozen
 method. Method failures stand. Screens, partial task subsets, or favorable
@@ -286,6 +348,9 @@ versioned pre-launch addendum blocks the run.
 - Report LLM calls and total tokens. A skew beyond +/-10% marks the comparison
   budget-asymmetric and blocks promotion until an infrastructure cause is
   corrected under the same frozen method.
+- If the skew persists and is method-inherent, close as budget-asymmetric
+  supporting or negative evidence. Do not tune prompts, parents, or accounting
+  to erase it.
 - Use the accepted missing-treatment-as-loss, reason-code, and full-history
   rules from `journal_narrative.md`.
 
@@ -293,7 +358,8 @@ versioned pre-launch addendum blocks the run.
 
 All HV and valid-PPA coverage gates use the locked 46-problem manifest. Run and
 report all 50 tasks, with the four reference-incomplete tasks excluded only
-from normalized PPA claims.
+from normalized PPA claims. Functional any-pass is gated over all 50 tasks and
+also reported on the 46-task subset.
 
 - **Seed-1001 stop**: stop if Pareto final mean HV is below 90% of matched
   classic, if valid-PPA coverage is at least four problems below classic, or
@@ -301,7 +367,7 @@ from normalized PPA claims.
 - **Two-seed promotion**: mean final HV must be at least matched classic and
   aggregate valid-PPA coverage and functional any-pass must each be at least
   matched classic.
-- **Five-seed held-out promotion**: mean final HV and aggregate valid-PPA
+- **Five-seed full-RTLLM promotion**: mean final HV and aggregate valid-PPA
   coverage and functional any-pass must all remain at least matched classic.
   Publish paired cluster statistics, per-seed deltas, leave-one-seed-out
   sensitivity, and per-problem maps before deciding.
@@ -310,8 +376,9 @@ HV-AUC is secondary and can never rescue a failed final-HV gate.
 
 ### Held-Out Gate
 
-Apply the accepted `reference_ppa` statistical contract to the untouched
-20-problem held-out set:
+Apply the accepted `reference_ppa` thresholds and statistics unchanged to the
+fresh 20-problem candidate holdout. This is a versioned addendum set, not the
+overlapping revision-3 manifest:
 
 - penalized cluster-bootstrap statistics over problem-seed units;
 - final-HV log-ratio threshold and CI from revision 3;
@@ -319,6 +386,7 @@ Apply the accepted `reference_ppa` statistical contract to the untouched
   `REF_WIN`;
 - absolute PPA, zero-HV counts, epsilon sensitivity, per-seed results, and
   leave-one-seed-out tables.
+- manifest disjointness against all prior run roots and development manifests.
 
 A primary positive requires `REF_WIN` with no valid-PPA or functional-any-pass
 coverage decline. A `REF_PARITY` or secondary-only improvement is a supporting
