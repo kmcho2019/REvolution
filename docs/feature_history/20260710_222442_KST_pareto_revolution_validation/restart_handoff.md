@@ -10,17 +10,20 @@ Last updated: 2026-07-13 UTC.
   re-review. Addendum V3 records the review's optional precision fixes.
 - Reporting distinguishes valid-PPA, weak reference-beating, and positive-HV
   coverage; focused reporting tests pass.
-- Implementation has not started. `src/revolution/algorithm.py` remains
-  unchanged with SHA-256
+- Commit `f376236d6e` implements the isolated `revolution_pareto` mode and its
+  focused tests. `src/revolution/algorithm.py` remains unchanged with SHA-256
   `78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655`.
+- Focused pytest, ruff, pyright, and ty pass. The broader revolution/scripts
+  suite has four pre-existing parity-fixture failures documented in history.
+- No benchmark is running and no live evidence has been collected.
 
 ## Next Actions
 
-1. Commit the PASS review and V3 precision clarifications.
-2. Implement only under `src/revolution/pareto_revolution/`, plus thin backend
-   and CLI dispatch.
-3. Run focused/full validation, then the matched three-problem seed-42 check.
-4. Launch full RTLLM seed 1001 only after the code audit passes.
+1. Commit the implementation provenance and repository navigation update.
+2. Run a long-timeout read-only code and direction audit; resolve every FAIL.
+3. Freeze exact commands, output roots, and report commands.
+4. Run and package the matched three-problem seed-42 technical check.
+5. Launch full RTLLM seed 1001 only after all prelaunch gates pass.
 
 ## Live Resources
 

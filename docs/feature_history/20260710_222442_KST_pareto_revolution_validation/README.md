@@ -1,8 +1,9 @@
 # Pareto REvolution TCAD Validation
 
-Status: execution approved on 2026-07-13. The independent V2 prelaunch
-re-review returned PASS. Addendum V3 records its optional precision fixes
-before implementation. No benchmark has launched.
+Status: implementation committed on 2026-07-13. The independent V2 prelaunch
+re-review returned PASS, and Addendum V3 records its precision fixes. Focused
+validation passes; the implementation audit and live evidence remain open.
+No benchmark has launched.
 
 ## Purpose
 

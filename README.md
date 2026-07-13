@@ -10,6 +10,8 @@
 ## Key Features
 
 - Dual-pool evolutionary engine with configurable strategies (`M-*`, `C-F`) and meta-strategy selection (random, epsilon-greedy, UCB).
+- Experimental `revolution_pareto` mode that changes only successful-parent
+  and successful-survivor selection to descriptor-free NSGA-II rank/crowding.
 - Experimental `revolution_qd` search mode with grid and CVT archive support, configurable descriptor axes, archive-event reporting, and retrospective-analysis-driven descriptor profiles.
 - End-to-end evaluation pipeline: Icarus Verilog for syntax/functional checks, Yosys + OpenROAD for PPA, and post-synthesis regression.
 - Unified LLM client with retry/backoff, prompt templating, diff/whole generation modes, and multi-backend support (OpenAI, OpenRouter, DeepSeek, Gemini, vLLM).
@@ -25,9 +27,9 @@ The `docs/` directory contains deeper dives:
 - `docs/journal_features/08_journal_revamp_goal.md` – TCAD revamp goal spec for
   CVDP/RealBench integration, QD performance repair, descriptor evidence,
   narrative signoff, statistical gates, and faster evaluation scheduling.
-- [Pareto REvolution goal scaffold](docs/feature_history/20260710_222442_KST_pareto_revolution_validation/README.md)
-  is the draft contract for the descriptor-free Pareto candidate; it does not
-  activate a goal or benchmark.
+- [Pareto REvolution validation ledger](docs/feature_history/20260710_222442_KST_pareto_revolution_validation/README.md)
+  is the active contract for the isolated descriptor-free Pareto candidate and
+  its gated RTLLM comparison against fresh classic REvolution.
 - `docs/journal_features/resources/README.md` – manuscript submodule guide for
   the frozen ASP-DAC 2026 conference paper and the working TCAD journal draft.
 - `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
@@ -158,10 +160,9 @@ Older config files that still use `num_workers`, `candidate_workers`, or
 `multiprocessing_mode` are translated automatically with warnings. Those legacy
 names are no longer accepted on the CLI.
 
-The `revolution` backend now also exposes the experimental QD search-mode
-surface:
+The `revolution` backend also exposes this experimental search-mode surface:
 
-- `--search_mode revolution|revolution_qd`
+- `--search_mode revolution|revolution_pareto|revolution_qd|revolution_qd_natural`
 - `--qd_archive_type grid|cvt`
 - `--qd_descriptor_profile`, `--qd_descriptor_axes`, `--qd_descriptor_file`
 - `--qd_fail_generation_mode`, `--qd_seed_generation_mode`,
@@ -169,6 +170,12 @@ surface:
   `--qd_crossover_generation_mode`
 
 Current status on this feature branch:
+
+- `revolution_pareto` keeps the classic engine byte-identical and isolates
+  successful-parent tournaments and environmental survivor selection under
+  `src/revolution/pareto_revolution/`. It requires dual pools, EoH operators,
+  strict-ablation evaluation, and code individuals. Its validation contract is
+  the Pareto REvolution ledger linked above.
 
 - `grid` is the active first runtime path for QD search.
 - grid runtime `auto` phase selection now honors benchmark defaults from
@@ -827,6 +834,7 @@ Moved from GUIDELINES.md (which now holds practices only).
   [docs/journal_features/revamp_ruminations_20260612.md](docs/journal_features/revamp_ruminations_20260612.md) is the original intent;
   [docs/journal_features/journal_narrative.md](docs/journal_features/journal_narrative.md) is the ACCEPTED claims contract (gates/branch rules frozen — it wins on any conflict);
   [docs/journal_features/13_findings_dashboard.md](docs/journal_features/13_findings_dashboard.md) is the current START-HERE findings view;
+  [docs/feature_history/20260710_222442_KST_pareto_revolution_validation/README.md](docs/feature_history/20260710_222442_KST_pareto_revolution_validation/README.md) is the active descriptor-free Pareto validation ledger;
   [docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md](docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md) is the suite-first natural-QD follow-up campaign state;
   in `docs/journal_features/revamp_history/20260612_005012_KST_journal_revamp/`: `goal_template.md` is the v2 objective, `journal_revamp_plan.md` the P1–P5 execution plan, `journal_revamp_implementation_todo.md` the phase-grouped checklist (sign-off requires every item checked and spot-verified), `journal_revamp_adversarial_prompt.md` the sign-off process, `journal_revamp_implementation_history.md` the evidence log, `rerun_ledger.jsonl` the run ledger; `*_v1_initial.md` files are archived originals.
   Locked artifacts live in `data/configs/` (seed manifest, subsets, probe); revise only by version bump with recorded rationale.
@@ -848,6 +856,9 @@ Moved from GUIDELINES.md (which now holds practices only).
   [src/revolution/qd/archive.py](src/revolution/qd/archive.py),
   [src/revolution/qd/descriptors.py](src/revolution/qd/descriptors.py),
   [src/revolution/qd/artifacts.py](src/revolution/qd/artifacts.py)
+- Descriptor-free Pareto selection experiment:
+  [src/revolution/pareto_revolution/engine.py](src/revolution/pareto_revolution/engine.py),
+  [src/revolution/pareto_revolution/selection.py](src/revolution/pareto_revolution/selection.py)
 - Evaluation stack:
   [src/revolution/evaluation.py](src/revolution/evaluation.py),
   [src/revolution/runtime/candidate_evaluator.py](src/revolution/runtime/candidate_evaluator.py),
@@ -892,7 +903,7 @@ Moved from GUIDELINES.md (which now holds practices only).
   [docs/journal_features/revamp_history/](docs/journal_features/revamp_history/)
 
 ## Project Structure & Module Organization
-- `src/revolution/`: core package. Start with `algorithm.py` for classic REvolution, `backends/` for runner adapters, `runtime/` for evaluation/problem abstractions, and `qd/` for the new archive/scoring/scheduler substrate.
+- `src/revolution/`: core package. Start with `algorithm.py` for classic REvolution, `backends/` for runner adapters, `runtime/` for evaluation/problem abstractions, `pareto_revolution/` for the isolated descriptor-free selection experiment, and `qd/` for the archive/scoring/scheduler substrate.
 - `scripts/`: runnable entry points and utilities. `run_backend.py` is the canonical runner with shared elastic parallelism controls, `run_evolution.py` is the legacy REvolution entry point that still resolves the same elastic settings, `run_backend_ablation.py` is the fairness-controlled sweep runner, `run_backend_qd_smoke_vllm.sh` is the repeatable QD smoke harness, and `run_qd_retrospective_redo_vllm.sh` is the long-budget retrospective redo harness.
 - `tests/revolution/` and `tests/scripts/`: unit tests for framework modules and script helpers. The closest matching `test_<module>.py` file is usually the fastest way to see intended behavior.
 - `data/bench/`: benchmark suites used by CLI runs (`RTLLM`, `VerilogEval-*`, `cvdp`).

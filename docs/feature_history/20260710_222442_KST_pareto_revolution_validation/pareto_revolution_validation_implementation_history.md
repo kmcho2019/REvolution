@@ -221,3 +221,54 @@ the claims addendum before activation, not after seeing live results.
   five-seed HV improvement for a positive label, and copied-loop provenance.
   It also refreshes the handoff. No treatment or gate-bearing metric changed
   after evidence because no implementation or benchmark exists yet.
+
+## 2026-07-13 - Isolated Pareto Implementation
+
+- Commit `f376236d6e` adds `revolution_pareto`, with all selection logic under
+  `src/revolution/pareto_revolution/` and thin backend/CLI dispatch.
+- `src/revolution/algorithm.py` remains byte-identical at SHA-256
+  `78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655`.
+- CLI validation requires dual pools, EoH strategies, the classic
+  success-operator set, strict-ablation evaluation, and code individuals. The
+  engine repeats the method-critical pool, operator, RTLLM, and synthesis
+  assertions.
+- Successful parents use one generation-level Pareto ranking and uniform
+  two-contestant tournaments. `C-F` excludes its first winner from the second
+  tournament. Successful survivors use rank, crowding, and insertion order;
+  new failures fill any remaining population slots by the classic ordering.
+- Objectives reuse `compute_ppa_gains`, `active_ppa_objectives`, and
+  `ranked_front`. Reference-incomplete tasks use negative raw active PPA.
+  Descriptors, cells, archives, and QD operators are absent.
+
+### Copied-Loop Provenance
+
+The override follows `EoHEngine.evolve_one_generation` at commit
+`9702534157`, lines 3773-4145:
+
+- classic lines 3773-3867 map to Pareto lines 48-125; fixed dual/EoH state
+  removes the unreachable single-pool and single-thought branches;
+- classic lines 3869-3950 map to Pareto lines 127-165; only lines 3888-3921,
+  weighted successful-parent choice, become Pareto lines 139-142;
+- classic lines 3952-4046 map to Pareto lines 167-221 and preserve request
+  execution, evaluation, scalar reward, and UCB accounting;
+- classic lines 4048-4129 become Pareto lines 223-236, replacing successful
+  survivor selection while preserving pool redivision;
+- classic lines 4131-4145 map to Pareto lines 238-251 and preserve generation
+  logging and completion behavior.
+
+Thus the only runtime-reachable treatment differences under the asserted
+contract are successful-parent and successful-survivor selection. Scalar score
+still drives feedback and UCB reward, exactly as disclosed.
+
+### Validation
+
+- Focused pytest: `48 passed` across the Pareto, backend, and runner tests.
+- Ruff, pyright, and ty passed on the touched source and test surfaces.
+- Broader `tests/revolution tests/scripts`: `1029 passed, 4 skipped, 4 failed`.
+  All four failures predate and are outside this change. The fixture in
+  `test_candidate_evaluator_parity.py` lacks
+  `_extract_candidate_descriptor_values`, so unchanged `algorithm.py:1295`
+  raises `AttributeError`. A focused rerun reproduced `3 passed, 4 failed`.
+- No benchmark process was launched. Stable boundary-front truncation,
+  post-hoc front reproduction, seeded classic equivalence, and the live smoke
+  remain explicit open gates.

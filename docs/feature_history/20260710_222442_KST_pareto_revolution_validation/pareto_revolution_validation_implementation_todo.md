@@ -22,7 +22,7 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [x] Re-read the journal onboarding documents in required order.
 - [x] Write the versioned method and claims addendum without changing accepted
       `journal_narrative.md` revision 3.
-- [ ] Run a read-only adversarial review of the addendum and resolve every FAIL.
+- [x] Run a read-only adversarial review of the addendum and resolve every FAIL.
 - [x] Complete the zero-compute discarded-front audit or document unavailable
       historical state exactly.
 - [x] Resolve the same-root S07/S32 classic coverage discrepancy with one
@@ -39,32 +39,32 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 
 ## Stage 1: Implementation
 
-- [ ] Add one `revolution_pareto` discriminated search mode.
-- [ ] Keep Pareto-specific logic in `src/revolution/pareto_revolution/`.
-- [ ] Reuse existing PPA gain, active-axis, and rank/crowding primitives.
-- [ ] Implement successful-parent binary tournament by rank/crowding.
-- [ ] Implement successful-survivor NSGA-II environmental selection.
-- [ ] Keep Fail-pool, EoH operator, UCB, prompt, feedback, evaluator, and budget
+- [x] Add one `revolution_pareto` discriminated search mode.
+- [x] Keep Pareto-specific logic in `src/revolution/pareto_revolution/`.
+- [x] Reuse existing PPA gain, active-axis, and rank/crowding primitives.
+- [x] Implement successful-parent binary tournament by rank/crowding.
+- [x] Implement successful-survivor NSGA-II environmental selection.
+- [x] Keep Fail-pool, EoH operator, UCB, prompt, feedback, evaluator, and budget
       behavior unchanged.
 - [ ] Build the delivered global front post hoc; prove it is reporting-only.
-- [ ] Add only thin backend/CLI wiring; keep `algorithm.py` byte-identical.
-- [ ] Record copied-loop source ranges and prove only the two selection blocks
+- [x] Add only thin backend/CLI wiring; keep `algorithm.py` byte-identical.
+- [x] Record copied-loop source ranges and prove only the two selection blocks
       differ before seed 1001.
 
 ## Stage 2: Tests And Technical Smoke
 
-- [ ] Test active axes, raw no-reference objectives, required Success/PPA
+- [x] Test active axes, raw no-reference objectives, required Success/PPA
       invariants, and unknown-type failure.
 - [ ] Test front ordering, crowding truncation, stable ties, population cap, and
       distinct `C-F` parents.
-- [ ] Test that changing scalar score alone cannot change Pareto selection.
+- [x] Test that changing scalar score alone cannot change Pareto selection.
 - [ ] Test classic seeded behavior and the frozen `algorithm.py` hash.
-- [ ] Test backend/CLI dispatch and reject incompatible QD state.
+- [x] Test backend/CLI dispatch and reject incompatible QD state.
 - [ ] Test post-hoc front reproduction from full generation logs.
-- [ ] Test valid-PPA, functional-any-pass, and reference-beating coverage as
+- [x] Test valid-PPA, functional-any-pass, and reference-beating coverage as
       separate metrics; same input roots must reproduce identically.
-- [ ] Test the operator contract: no single-thought, `M-T`, or `C-D` path.
-- [ ] Run focused pytest, ruff, pyright, and ty checks.
+- [x] Test the operator contract: no single-thought, `M-T`, or `C-D` path.
+- [x] Run focused pytest, ruff, pyright, and ty checks.
 - [ ] Run a seed-42 three-problem `8 x 5` vLLM smoke after a 128k preflight.
 - [ ] Package the smoke as technical evidence only.
 - [ ] Run the pre-seed-1001 read-only code and direction audit.
