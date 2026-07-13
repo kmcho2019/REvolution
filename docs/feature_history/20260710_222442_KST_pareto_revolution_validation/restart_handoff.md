@@ -94,8 +94,8 @@ Last updated: 2026-07-13 UTC.
 
 ## Next Actions
 
-1. Run final local tests and documentation/commit checks.
-2. Run the final read-only adversarial audit and resolve every FAIL.
+1. Run the final read-only adversarial audit and resolve every FAIL.
+2. Record the final validation verdict and close the goal if it passes.
 3. Launch no further benchmark inside this goal.
 
 ## Live Resources

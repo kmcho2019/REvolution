@@ -89,8 +89,8 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
       journal navigation/history docs.
 - [x] Preserve configs, hashes, commands, reports, raw-root map, and handoff.
 - [x] Close showcased-candidate checks as not applicable to a negative result.
-- [ ] Run full pytest and final ruff, pyright, ty, and `git diff --check`.
-- [ ] Inspect every goal commit for atomicity, message format, and one sign-off.
+- [x] Run full pytest and final ruff, pyright, ty, and `git diff --check`.
+- [x] Inspect every goal commit for atomicity, message format, and one sign-off.
 - [ ] Run the final adversarial prompt and resolve every FAIL finding.
 - [ ] Record PASS in `pareto_revolution_validation_subagent_validation_report.md`.
 

@@ -447,3 +447,17 @@ would add churn.
 - Compact evidence is preserved under `full_rtllm_seed1002/` and
   `full_rtllm_two_seed/`. This method closes as a negative primary candidate,
   with secondary front-diversity observations only.
+
+## 2026-07-13 - Final Local Verification
+
+- Full repository pytest passed `1039 passed, 4 skipped` in `348.26s`.
+- Ruff passed the isolated Pareto package, relevant report/runner scripts, and
+  focused tests. Pyright reported zero errors; ty passed.
+- `git diff --check` passed. The classic engine, frozen V2 manifest, claims
+  addenda, and RTLLM-46 manifest hashes remain exact.
+- Audited all 25 goal commits from scaffold through closure. Every subject is
+  at most 50 characters, every body line is at most 72 characters, every
+  header is conventional, no raw newline text appears, and each commit has
+  exactly one sign-off.
+- No seed-1003 through seed-1005 root, benchmark process, or report process
+  exists. Only the four disclosed unrelated untracked files remain.
