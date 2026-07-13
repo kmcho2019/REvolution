@@ -379,3 +379,29 @@ would add churn.
   runtime contract fails fast; the frozen smoke must not be changed.
 - The audit authorizes only a fresh preflight followed by unchanged full-RTLLM
   seed 1001. It supplies no smoke-based performance evidence.
+
+## 2026-07-13 - Full RTLLM Seed 1001
+
+- Fresh preflight passed, then classic and Pareto ran sequentially over all 50
+  frozen RTLLM tasks at seed 1001. Classic completed in `4646.99s`; Pareto
+  completed in `4712.14s`.
+- Each arm validated at 50 summaries, 300 generation rows, and 2,400 unique
+  evaluated candidates. Runtime configs differ only in `save_path` and
+  `search_mode`; all generated strategies satisfy the EoH-only contract.
+- Classic used 4,801 LLM calls because one empty response retried; Pareto used
+  4,800. Pareto token and runtime skews are `+0.564%` and `+1.402%`.
+- The frozen report chain completed under
+  `exp/pareto_revolution_validation/packages/full_rtllm_seed_1001/` and passed
+  package assertions. Compact tracked evidence is under
+  `full_rtllm_seed1001/`.
+- Locked-46 final mean HV is `0.101013` classic versus `0.098859` Pareto,
+  a Pareto retention ratio of `97.867%`. Mean HV-AUC is `0.085385` versus
+  `0.081920`.
+- Pareto trails valid-PPA and functional-any-pass coverage by one design each,
+  but improves reference-beating coverage `24 -> 26`, positive-HV coverage
+  `20 -> 22`, and mean Pareto points `1.586957 -> 1.695652`.
+- Applied the locked stop rule mechanically: HV exceeds 90% of fresh classic,
+  valid-PPA deficit is one rather than four, and correctness/budget checks
+  pass. Seed 1001 therefore passes continuation without establishing a win.
+- Only seed 1002 is now legal. No variant, tuning, or seeds 1003-1005 are
+  authorized before the two-seed gate.

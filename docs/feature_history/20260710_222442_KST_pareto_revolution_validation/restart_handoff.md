@@ -56,14 +56,18 @@ Last updated: 2026-07-13 UTC.
 - Runtime configs differ only in `save_path` and `search_mode`. All treatment
   summaries record the frozen NSGA-II methods, descriptors false, post-hoc
   delivered front, and exact normalized/raw objective source.
-- No benchmark process is running. The seed-1001 pair is not yet packaged or
-  gated.
+- The seed-1001 package is complete under
+  `exp/pareto_revolution_validation/packages/full_rtllm_seed_1001/`; compact
+  tracked evidence is under `full_rtllm_seed1001/`.
+- Seed 1001 passes the continuation gate without establishing a win. Pareto
+  retains `97.867%` of classic HV46 and trails valid-PPA coverage by one.
+- No benchmark process is running. Only matched seed 1002 is authorized.
 
 ## Next Actions
 
-1. Run the frozen per-seed report chain over the completed pair.
-2. Validate 46-task headline metrics and matched budget accounting.
-3. Apply the locked seed-1001 stop rule mechanically.
+1. Run a fresh endpoint preflight for seed 1002.
+2. Launch and validate classic seed 1002 before the Pareto arm.
+3. Package the pair and apply the locked two-seed gate mechanically.
 
 ## Live Resources
 

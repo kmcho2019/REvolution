@@ -71,8 +71,8 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 
 ## Stage 3: Full RTLLM
 
-- [ ] Run, validate, package, and hand off seed 1001 over all 50 RTLLM tasks.
-- [ ] Apply the locked 46-task seed-1001 stop rule mechanically.
+- [x] Run, validate, package, and hand off seed 1001 over all 50 RTLLM tasks.
+- [x] Apply the locked 46-task seed-1001 stop rule mechanically.
 - [ ] Run seed 1002 only if seed 1001 passes.
 - [ ] Package two-seed statistics and apply the promotion gate mechanically.
 - [ ] Run seeds 1003-1005 only if the two-seed gate passes.
