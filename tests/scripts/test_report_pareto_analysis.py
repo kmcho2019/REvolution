@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import json
 import os
 import subprocess
@@ -78,6 +79,7 @@ def test_report_pareto_analysis_generates_outputs(tmp_path: Path) -> None:
             {
                 "selected_problems": [
                     {"benchmark": "RTLLM", "problem": "Prob001"},
+                    {"benchmark": "RTLLM", "problem": "Prob002"},
                 ]
             },
             sort_keys=False,
@@ -106,6 +108,24 @@ def test_report_pareto_analysis_generates_outputs(tmp_path: Path) -> None:
         generation_payloads=[
             _generation_payload(0, [("cvt_a", 90.0, 0.92, 0.93)]),
             _generation_payload(1, [("cvt_b", 88.0, 0.89, 0.9)]),
+        ],
+    )
+    _write_problem(
+        classic_root,
+        benchmark="RTLLM",
+        problem="Prob002",
+        ref_ppa_metric=ref,
+        generation_payloads=[
+            _generation_payload(0, [("classic_valid", 101.0, 1.01, 1.01)]),
+        ],
+    )
+    _write_problem(
+        cvt_root,
+        benchmark="RTLLM",
+        problem="Prob002",
+        ref_ppa_metric=ref,
+        generation_payloads=[
+            _generation_payload(0, [("cvt_valid", 102.0, 1.02, 1.02)]),
         ],
     )
 
@@ -139,3 +159,14 @@ def test_report_pareto_analysis_generates_outputs(tmp_path: Path) -> None:
 
     summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
     assert summary["overall_multi_objective_winner"] == "cvt_struct"
+    rows = list(
+        csv.DictReader(
+            (output_dir / "aggregate_backend_metrics.csv").open(encoding="utf-8")
+        )
+    )
+    classic = next(
+        row for row in rows if row["backend"] == "classic" and row["benchmark"] == "ALL"
+    )
+    assert classic["pareto_valid_problem_count"] == "2"
+    assert classic["reference_beating_problem_count"] == "1"
+    assert classic["positive_hv_problem_count"] == "1"

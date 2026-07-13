@@ -424,6 +424,12 @@ def _aggregate_backend_rows(problem_rows: list[dict[str, Any]]) -> list[dict[str
                 "benchmark": benchmark,
                 "problem_count": len(group),
                 "pareto_valid_problem_count": sum(int(row["candidate_count"]) > 0 for row in group),
+                "reference_beating_problem_count": sum(
+                    int(row["reference_beating_count"]) > 0 for row in group
+                ),
+                "positive_hv_problem_count": sum(
+                    float(row["hypervolume"]) > 0.0 for row in group
+                ),
                 "mean_hypervolume": sum(float(row["hypervolume"]) for row in group) / len(group),
                 "mean_pareto_point_count": (
                     sum(float(row["pareto_point_count"]) for row in group) / len(group)
@@ -475,13 +481,16 @@ def _render_report(
         "",
         "## Aggregate Backend Metrics",
         "",
-        "| Backend | Benchmark | Problems | Pareto-Valid Problems | Mean Hypervolume | Mean Pareto Points | Mean Ref-Beating | HV Wins |",
-        "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Backend | Benchmark | Problems | Valid PPA | Ref-Beating | Positive HV | Mean Hypervolume | Mean Pareto Points | Mean Ref-Beating | HV Wins |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for row in aggregate_rows:
         lines.append(
             f"| `{row['backend']}` | {row['benchmark']} | {row['problem_count']} | "
-            f"{row['pareto_valid_problem_count']} | {float(row['mean_hypervolume']):.4f} | "
+            f"{row['pareto_valid_problem_count']} | "
+            f"{row['reference_beating_problem_count']} | "
+            f"{row['positive_hv_problem_count']} | "
+            f"{float(row['mean_hypervolume']):.4f} | "
             f"{float(row['mean_pareto_point_count']):.2f} | "
             f"{float(row['mean_reference_beating_count']):.2f} | "
             f"{row['hypervolume_win_count']} |"
@@ -640,6 +649,8 @@ def generate_pareto_analysis_report(
             "benchmark",
             "problem_count",
             "pareto_valid_problem_count",
+            "reference_beating_problem_count",
+            "positive_hv_problem_count",
             "mean_hypervolume",
             "mean_pareto_point_count",
             "mean_reference_beating_count",
