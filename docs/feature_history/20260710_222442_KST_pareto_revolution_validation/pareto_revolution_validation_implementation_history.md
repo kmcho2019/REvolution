@@ -151,3 +151,30 @@ the claims addendum before activation, not after seeing live results.
 - No goal, Claude, `run_backend.py`, or benchmark process remains active.
 - No Python validation was needed because this revision changes planning and
   review documentation only.
+
+## 2026-07-13 - Execution Approval And Scope Audit
+
+- The user approved one ablation of classic weighted-sum population selection
+  against descriptor-free NSGA-II parent and survivor selection. The user also
+  required the classic core engine to remain intact.
+- Re-read the required journal onboarding sources in order and mapped the
+  request to the reviewed Pareto REvolution candidate.
+- Confirmed the local endpoint at `20.0.0.103:8000` serves
+  `openai/gpt-oss-120b` with `max_model_len=131072`.
+- Confirmed all five registered classic and V2 comparator roots contain 50
+  problem summaries and retain the frozen `8 x 5`, EoH, strict-evaluation,
+  direct-code platform.
+- Found that the fresh-holdout premise is infeasible: an archived conference
+  root contains evaluated summaries for all 156 VerilogEval-Spec-to-RTL tasks.
+  No exclusion was relaxed and no replacement holdout was invented. Claims
+  addendum V1 limits this experiment to RTLLM development evidence.
+- Canonically reproduced the S07/S32 shared classic seed-1001 root as 33/46
+  valid-PPA coverage, 26/46 weak reference-beating coverage, and 24/46
+  positive-HV coverage. The old discrepancy was an unlabeled metric switch.
+- Historical classic logs do not record every retained population, so exact
+  generation-level nondominated-survivor discard counts are unavailable. This
+  is recorded rather than reconstructed by assumption.
+- Drafted the frozen RTLLM experiment manifest, restart handoff, prelaunch
+  audit, and claims addendum before implementation or live evidence.
+- `src/revolution/algorithm.py` is unchanged; its activation hash is
+  `78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655`.

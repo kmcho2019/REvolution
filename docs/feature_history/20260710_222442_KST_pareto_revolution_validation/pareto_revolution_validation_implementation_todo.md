@@ -14,7 +14,7 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [x] Register one candidate: global Pareto parent and survivor selection on
       the classic substrate.
 - [x] Define positive, supporting, and negative completion paths.
-- [ ] Obtain user/advisor approval of the method contract, parent+survivor
+- [x] Obtain user/advisor approval of the method contract, parent+survivor
       bundling, and quantitative gates before activating the goal.
 
 ## Stage 0: Freeze
@@ -23,12 +23,12 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [ ] Write the versioned method and claims addendum without changing accepted
       `journal_narrative.md` revision 3.
 - [ ] Run a read-only adversarial review of the addendum and resolve every FAIL.
-- [ ] Complete the zero-compute discarded-front audit or document unavailable
+- [x] Complete the zero-compute discarded-front audit or document unavailable
       historical state exactly.
-- [ ] Resolve the same-root S07/S32 classic coverage discrepancy with one
+- [x] Resolve the same-root S07/S32 classic coverage discrepancy with one
       canonical definition and regression test.
-- [ ] Freeze and audit a prior-run-disjoint 20-task VerilogEval holdout; mark
-      the overlapping revision-3 holdout legacy descriptive evidence only.
+- [x] Prove the prior-run-disjoint VerilogEval holdout infeasible and narrow
+      this campaign to RTLLM development evidence without relaxing exclusions.
 - [ ] Freeze and hash RTLLM, fresh holdout, seeds, model, prompts, tools, and
       budgets.
 - [ ] Register compatible classic and V2 full-suite roots; rerun only a

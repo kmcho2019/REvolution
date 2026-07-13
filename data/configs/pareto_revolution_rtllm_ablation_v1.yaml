@@ -1,0 +1,113 @@
+version: 1
+experiment_name: pareto_revolution_rtllm_ablation
+claim_scope: development_evidence
+treatment_search_mode: revolution_pareto
+method_change:
+  successful_parent_selection: nsga2_binary_tournament
+  successful_survivor_selection: nsga2_environmental
+  delivered_pareto_front: posthoc_only
+preserved:
+  representation_kind: code_individual
+  population_pool_mode: dual
+  classic_operator_kind: eoh_strategies
+  eoh_success_operator_set: classic
+  strategy_selection: ucb
+  evaluation_mode: strict_ablation
+  population_size: 8
+  num_generations: 5
+  model_name: openai/gpt-oss-120b
+  max_tokens: 128000
+  diff_max_tokens: 128000
+  temperature: 1.0
+  top_p: 1.0
+  total_worker_slots: 48
+  max_active_problems: 12
+  max_workers_per_problem: 4
+small_check:
+  seed: 42
+  evidence_role: technical_and_directional_only
+  problems:
+    - Prob003_adder_32bit
+    - Prob024_fsm
+full_rtllm:
+  seeds: [1001, 1002, 1003, 1004, 1005]
+  problems:
+    - Prob001_accu
+    - Prob002_adder_16bit
+    - Prob003_adder_32bit
+    - Prob004_adder_8bit
+    - Prob005_adder_bcd
+    - Prob006_adder_pipe_64bit
+    - Prob007_comparator_3bit
+    - Prob008_comparator_4bit
+    - Prob009_div_16bit
+    - Prob010_radix2_div
+    - Prob011_multi_16bit
+    - Prob012_multi_8bit
+    - Prob013_multi_booth_8bit
+    - Prob014_multi_pipe_4bit
+    - Prob015_multi_pipe_8bit
+    - Prob016_fixed_point_adder
+    - Prob017_fixed_point_substractor
+    - Prob018_float_multi
+    - Prob019_sub_64bit
+    - Prob020_JC_counter
+    - Prob021_counter_12
+    - Prob022_ring_counter
+    - Prob023_up_down_counter
+    - Prob024_fsm
+    - Prob025_sequence_detector
+    - Prob026_asyn_fifo
+    - Prob027_LIFObuffer
+    - Prob028_LFSR
+    - Prob029_barrel_shifter
+    - Prob030_right_shifter
+    - Prob031_freq_div
+    - Prob032_freq_divbyeven
+    - Prob033_freq_divbyfrac
+    - Prob034_freq_divbyodd
+    - Prob035_calendar
+    - Prob036_edge_detect
+    - Prob037_parallel2serial
+    - Prob038_pulse_detect
+    - Prob039_serial2parallel
+    - Prob040_synchronizer
+    - Prob041_traffic_light
+    - Prob042_width_8to16
+    - Prob043_RAM
+    - Prob044_ROM
+    - Prob045_alu
+    - Prob046_clkgenerator
+    - Prob047_instr_reg
+    - Prob048_pe
+    - Prob049_signal_generator
+    - Prob050_square_wave
+  ppa_manifest: docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_reference_complete_manifest.yaml
+  ppa_manifest_sha256: 92d6ad2981b04a8aed531ca04ca1ac085bb9fb6fee866ada2a4bf397ee52497b
+  reference_incomplete:
+    - Prob006_adder_pipe_64bit
+    - Prob013_multi_booth_8bit
+    - Prob018_float_multi
+    - Prob040_synchronizer
+classic_comparator_root: exp/useful_bd_push/pcn_v3_experiments_20260701/live/rtllm_full_5seed/classic_revolution_8x5
+descriptive_v2_root: exp/natural_qd_push/p3_v2_full_rtllm_20260703_101258_UTC/live/smooth_qd_v2_8x5
+gates:
+  seed_1001:
+    min_classic_hv_ratio: 0.90
+    max_valid_ppa_deficit: 3
+  two_seed:
+    require_hv_at_least_classic: true
+    require_valid_ppa_at_least_classic: true
+    require_functional_any_pass_at_least_classic: true
+  five_seed:
+    require_hv_at_least_classic: true
+    require_valid_ppa_at_least_classic: true
+    require_functional_any_pass_at_least_classic: true
+  auxiliary_budget_max_relative_skew: 0.10
+forbidden:
+  - single_thought_operator
+  - M-T
+  - C-D
+  - qd_descriptors
+  - qd_cells
+  - followup_parameter_scan

@@ -1,7 +1,14 @@
 # Pareto REvolution TCAD Validation Plan
 
-Status: reviewed draft, Claude activation audit PASS. User/advisor approval is
-still required. This scaffold does not activate `/goal` or authorize a run.
+Status: execution approved by the user on 2026-07-13. Claude's scaffold audit
+passed. Claims addendum V1 narrows the live campaign to RTLLM development
+evidence because the proposed fresh VerilogEval holdout is infeasible.
+
+Execution note: all 156 VerilogEval-Spec-to-RTL tasks have prior evaluated
+outcomes in an archived conference run. The reviewed disjoint-holdout rule is
+not weakened. Stage 4 and paper-facing primary-win language remain unavailable
+for this campaign; see `pareto_revolution_claims_addendum_v1.md` and
+`prelaunch_audits.md`.
 
 Feature slug: `pareto_revolution_validation`
 

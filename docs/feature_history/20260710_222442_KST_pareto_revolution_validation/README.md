@@ -1,8 +1,8 @@
 # Pareto REvolution TCAD Validation
 
-Status: reviewed draft. The final Claude activation audit returned PASS;
-user/advisor approval remains open. No goal is active and no benchmark was
-launched by this scaffold.
+Status: execution approved on 2026-07-13. The final Claude scaffold audit
+returned PASS. Claims addendum V1 is awaiting its independent prelaunch review;
+no benchmark has launched.
 
 ## Purpose
 
@@ -17,11 +17,14 @@ closure under frozen gates.
 ## Reading Order
 
 1. `pareto_revolution_validation_plan.md`
-2. `pareto_revolution_validation_implementation_todo.md`
-3. `goal_template.md`
-4. `pareto_revolution_validation_adversarial_prompt.md`
-5. `pareto_revolution_validation_implementation_history.md`
-6. `pareto_revolution_validation_subagent_validation_report.md`
+2. `pareto_revolution_claims_addendum_v1.md`
+3. `prelaunch_audits.md`
+4. `pareto_revolution_validation_implementation_todo.md`
+5. `restart_handoff.md`
+6. `goal_template.md`
+7. `pareto_revolution_validation_adversarial_prompt.md`
+8. `pareto_revolution_validation_implementation_history.md`
+9. `pareto_revolution_validation_subagent_validation_report.md`
 
 Independent draft reviews live under `reviews/`. Two 2026-07-11 Claude reviews
 returned FAIL and drove contract fixes. The final activation audit returned
