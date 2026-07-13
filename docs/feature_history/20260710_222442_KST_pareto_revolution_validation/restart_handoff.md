@@ -72,11 +72,17 @@ Last updated: 2026-07-13 UTC.
   `exp/pareto_revolution_validation/full_rtllm/seed_1002/classic`.
   Classic log:
   `exp/pareto_revolution_validation/logs/full_rtllm_seed1002_classic.log`.
-- No benchmark process is running. Pareto seed 1002 remains unlaunched.
+- The matched Pareto seed-1002 arm launched unchanged at `21:58:11 UTC`.
+  The `uv` runner PID was `1944124` at launch; verify by exact command rather
+  than assuming a PID survives a restart.
+- Active Pareto root:
+  `exp/pareto_revolution_validation/full_rtllm/seed_1002/pareto`.
+  Pareto log:
+  `exp/pareto_revolution_validation/logs/full_rtllm_seed1002_pareto.log`.
 
 ## Next Actions
 
-1. Launch the matched Pareto seed-1002 arm unchanged.
+1. Let the active Pareto seed-1002 arm finish without launching another run.
 2. Validate all 50 treatment tasks and matched budgets.
 3. Package the pair and apply the locked two-seed gate mechanically.
 
