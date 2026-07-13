@@ -63,18 +63,21 @@ Last updated: 2026-07-13 UTC.
   retains `97.867%` of classic HV46 and trails valid-PPA coverage by one.
 - Fresh seed-1002 preflight passed for `openai/gpt-oss-120b` at context
   `131072`.
-- The classic full-RTLLM seed-1002 arm launched at
-  `2026-07-13T20:35:36Z` under parent process `1886655`.
-- Active root:
+- The classic full-RTLLM seed-1002 arm completed and validated: 50 summaries,
+  300 generation rows, 2,400 unique evaluated candidates, EoH-only, and
+  `4679.01s`.
+- Classic used 4,801 LLM calls and 14,852,813 tokens. One empty API response
+  on Prob041 generation 5 retried without adding an evaluated candidate.
+- Completed classic root:
   `exp/pareto_revolution_validation/full_rtllm/seed_1002/classic`.
-  Active log:
+  Classic log:
   `exp/pareto_revolution_validation/logs/full_rtllm_seed1002_classic.log`.
-- Do not launch Pareto seed 1002 until classic exits and validates.
+- No benchmark process is running. Pareto seed 1002 remains unlaunched.
 
 ## Next Actions
 
-1. Wait for classic seed 1002 and validate all 50 tasks.
-2. Record completion before launching the Pareto seed-1002 arm.
+1. Launch the matched Pareto seed-1002 arm unchanged.
+2. Validate all 50 treatment tasks and matched budgets.
 3. Package the pair and apply the locked two-seed gate mechanically.
 
 ## Live Resources
