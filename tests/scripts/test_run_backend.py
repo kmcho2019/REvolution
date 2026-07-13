@@ -218,6 +218,14 @@ def test_backend_parser_accepts_qd_options():
     assert args.qd_memory_rescue_fraction == pytest.approx(0.05)
 
 
+def test_backend_parser_accepts_pareto_search_mode():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(
+        ["--backend", "revolution", "--search_mode", "revolution_pareto"]
+    )
+    assert args.search_mode == "revolution_pareto"
+
+
 def test_backend_parser_accepts_pcn_memory_options():
     parser, _ = _build_parser()
     args, _ = parser.parse_known_args(
@@ -338,6 +346,27 @@ def test_run_backend_rejects_single_pool_qd_mode(capsys):
     captured = capsys.readouterr()
     assert code == 2
     assert "population_pool_mode=single" in captured.out
+
+
+def test_run_backend_rejects_non_eoh_pareto_mode(capsys):
+    code = run_backend_main(
+        [
+            "--backend",
+            "revolution",
+            "--search_mode",
+            "revolution_pareto",
+            "--classic_operator_kind",
+            "single_thought_operator",
+            "--benchmarks",
+            "RTLLM",
+            "--problems",
+            "Prob001_accu",
+        ]
+    )
+
+    captured = capsys.readouterr()
+    assert code == 2
+    assert "requires eoh_strategies" in captured.out
 
 
 @pytest.mark.parametrize(

@@ -138,6 +138,29 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     assert captured["kwargs"]["problem_concurrency"] is services.problem_concurrency
 
 
+def test_revolution_backend_uses_pareto_engine(monkeypatch, tmp_path):
+    captured = {}
+
+    class _FakeParetoEngine:
+        def __init__(self, **kwargs):
+            captured["kwargs"] = kwargs
+
+    monkeypatch.setattr(
+        "revolution.backends.revolution_backend.ParetoEoHEngine",
+        _FakeParetoEngine,
+    )
+    backend = RevolutionBackend(
+        context=_context(tmp_path),
+        services=_services(tmp_path),
+        config=RevolutionBackendConfig(search_mode="revolution_pareto"),
+        base_save_path=str(tmp_path / "exp"),
+    )
+    backend.initialize()
+    assert isinstance(backend.engine, _FakeParetoEngine)
+    assert captured["kwargs"]["classic_operator_kind"] == "eoh_strategies"
+    assert captured["kwargs"]["eoh_success_operator_set"] == "classic"
+
+
 def test_revolution_backend_uses_natural_engine_for_qd_natural(monkeypatch, tmp_path):
     captured = {}
 

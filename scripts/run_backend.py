@@ -830,7 +830,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--search_mode",
         type=str,
         default="revolution",
-        choices=["revolution", "revolution_qd", "revolution_qd_natural"],
+        choices=[
+            "revolution",
+            "revolution_pareto",
+            "revolution_qd",
+            "revolution_qd_natural",
+        ],
     )
     parser.add_argument("--generation_mode", type=str, default="whole", choices=["whole", "diff"])
     parser.add_argument(
@@ -1418,7 +1423,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if (
         args.backend == "revolution"
-        and args.search_mode in {"revolution_qd", "revolution_qd_natural"}
+        and args.search_mode
+        in {"revolution_pareto", "revolution_qd", "revolution_qd_natural"}
         and args.population_pool_mode == "single"
     ):
         print(
@@ -1426,6 +1432,21 @@ def main(argv: list[str] | None = None) -> int:
             "population_pool_mode=single."
         )
         return 2
+
+    if args.backend == "revolution" and args.search_mode == "revolution_pareto":
+        pareto_contract = (
+            args.classic_operator_kind == "eoh_strategies"
+            and args.eoh_success_operator_set == "classic"
+            and args.evaluation_mode == "strict_ablation"
+            and args.representation_kind == "code_individual"
+        )
+        if not pareto_contract:
+            print(
+                "Configuration error: search_mode=revolution_pareto requires "
+                "eoh_strategies, the classic success operator set, "
+                "strict_ablation, and code_individual."
+            )
+            return 2
 
     if args.api_backend == "vllm":
         preflight = preflight_vllm_model(

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 from revolution.algorithm import EoHEngine
 from revolution.backends.base import (
@@ -11,18 +11,27 @@ from revolution.backends.base import (
     BackendServices,
     EvolutionBackend,
 )
+from revolution.pareto_revolution import ParetoEoHEngine
+from revolution.pareto_revolution.selection import resolve_circuit_type
 from revolution.qd import QDEngine
 from revolution.qd_natural import NaturalQDEngine
 from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
 
 QD_SEARCH_MODES = {"revolution_qd", "revolution_qd_natural"}
+PARETO_SEARCH_MODE = "revolution_pareto"
+RevolutionSearchMode = Literal[
+    "revolution",
+    "revolution_pareto",
+    "revolution_qd",
+    "revolution_qd_natural",
+]
 
 
 @dataclass(frozen=True)
 class RevolutionBackendConfig:
     """Configuration snapshot for the REvolution backend adapter."""
 
-    search_mode: str = "revolution"
+    search_mode: RevolutionSearchMode = "revolution"
     population_size: int = 5
     num_generations: int = 5
     default_llm_temp: float = 1.0
@@ -140,19 +149,23 @@ class RevolutionBackend(EvolutionBackend):
 
     def initialize(self) -> None:
         if (
-            self.config.search_mode in QD_SEARCH_MODES
+            self.config.search_mode in {*QD_SEARCH_MODES, PARETO_SEARCH_MODE}
             and self.config.population_pool_mode == "single"
         ):
             raise ValueError(
-                f"search_mode={self.config.search_mode} requires archive-backed "
-                "success state and does not support population_pool_mode=single."
+                f"search_mode={self.config.search_mode} requires dual success state "
+                "and does not support population_pool_mode=single."
             )
         if self.config.search_mode == "revolution_qd_natural":
             engine_cls: type[EoHEngine] = NaturalQDEngine
         elif self.config.search_mode == "revolution_qd":
             engine_cls = QDEngine
-        else:
+        elif self.config.search_mode == PARETO_SEARCH_MODE:
+            engine_cls = ParetoEoHEngine
+        elif self.config.search_mode == "revolution":
             engine_cls = EoHEngine
+        else:
+            raise AssertionError(f"unknown search mode: {self.config.search_mode}")
         engine_kwargs: dict[str, Any] = dict(
             benchmark_name=self.context.benchmark_name,
             problem_name=self.context.problem_name,
@@ -404,6 +417,25 @@ class RevolutionBackend(EvolutionBackend):
                         "max_attempts_per_thought": self.config.repair_max_attempts_per_thought,
                         "evidence": self.config.repair_evidence,
                     },
+                },
+            )
+        if self.config.search_mode == PARETO_SEARCH_MODE:
+            assert self.context.problem_spec is not None
+            backend_details.setdefault(
+                "pareto_selection",
+                {
+                    "successful_parents": "nsga2_binary_tournament",
+                    "successful_survivors": "nsga2_environmental",
+                    "descriptors": False,
+                    "delivered_front": "posthoc_only",
+                    "resolved_circuit_type": resolve_circuit_type(
+                        self.context.problem_spec
+                    ),
+                    "objective_source": (
+                        "normalized_reference_gains"
+                        if self.context.problem_spec.supports_reference_ppa
+                        else "negative_raw_ppa"
+                    ),
                 },
             )
 
