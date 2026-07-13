@@ -32,13 +32,22 @@ Last updated: 2026-07-13 UTC.
 - The independent smoke-package audit returned PASS with no blockers. Its
   reconstructed evidence and limitations are preserved at
   `reviews/20260713_claude_smoke_package_review.md`.
-- No benchmark process is running. Full RTLLM remains unlaunched.
+- Fresh full-suite preflight passed for `openai/gpt-oss-120b` at context
+  `131072`.
+- The classic full-RTLLM seed-1001 arm launched at
+  `2026-07-13T17:42:19Z` under parent process `1767464`.
+- Active root:
+  `exp/pareto_revolution_validation/full_rtllm/seed_1001/classic`.
+  Active log:
+  `exp/pareto_revolution_validation/logs/full_rtllm_seed1001_classic.log`.
+- Do not launch Pareto until classic exits and validates as one complete
+  50-task attempt.
 
 ## Next Actions
 
-1. Re-run the endpoint preflight.
-2. Launch the fresh classic full-RTLLM seed-1001 arm with all 50 frozen tasks.
-3. Validate and package classic before launching the matched Pareto arm.
+1. Wait for the classic full-suite process and validate all 50 tasks.
+2. Record classic completion before launching the matched Pareto arm.
+3. Package the completed pair and apply the locked seed-1001 stop rule.
 
 ## Live Resources
 
