@@ -19,21 +19,39 @@ REFERENCE_INCOMPLETE_CIRCUIT_TYPES: dict[str, Literal["sequential"]] = {
     "Prob018_float_multi": "sequential",
     "Prob040_synchronizer": "sequential",
 }
+FROZEN_SMOKE_OBJECTIVES: dict[
+    str,
+    tuple[Literal["combinational", "sequential"], bool, int],
+] = {
+    "Prob003_adder_32bit": ("combinational", True, 2),
+    "Prob025_sequence_detector": ("sequential", True, 3),
+    "Prob006_adder_pipe_64bit": ("sequential", False, 3),
+}
 
 
 def resolve_circuit_type(problem_spec: ProblemSpec) -> CircuitType:
     """Resolve the active RTLLM objective set from the frozen contract."""
 
     if problem_spec.circuit_type == "combinational":
-        return "combinational"
-    if problem_spec.circuit_type == "sequential":
-        return "sequential"
-    if problem_spec.circuit_type == "unknown":
+        circuit_type: CircuitType = "combinational"
+    elif problem_spec.circuit_type == "sequential":
+        circuit_type = "sequential"
+    elif problem_spec.circuit_type == "unknown":
         assert problem_spec.benchmark_name == "RTLLM"
         assert not problem_spec.supports_reference_ppa
         assert problem_spec.problem_name in REFERENCE_INCOMPLETE_CIRCUIT_TYPES
-        return REFERENCE_INCOMPLETE_CIRCUIT_TYPES[problem_spec.problem_name]
-    raise AssertionError(f"unknown circuit type: {problem_spec.circuit_type}")
+        circuit_type = REFERENCE_INCOMPLETE_CIRCUIT_TYPES[problem_spec.problem_name]
+    else:
+        raise AssertionError(f"unknown circuit type: {problem_spec.circuit_type}")
+
+    smoke_contract = FROZEN_SMOKE_OBJECTIVES.get(problem_spec.problem_name)
+    if smoke_contract is not None:
+        expected_type, expected_reference, expected_count = smoke_contract
+        assert problem_spec.benchmark_name == "RTLLM"
+        assert circuit_type == expected_type
+        assert problem_spec.supports_reference_ppa is expected_reference
+        assert len(active_ppa_objectives(circuit_type)) == expected_count
+    return circuit_type
 
 
 def candidate_objectives(

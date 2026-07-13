@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import random
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
-from revolution.algorithm import Heuristic
+from revolution.algorithm import EoHEngine, Heuristic
 from revolution.pareto_revolution.engine import ParetoEoHEngine
 from revolution.pareto_revolution.selection import (
+    FROZEN_SMOKE_OBJECTIVES,
     REFERENCE_INCOMPLETE_CIRCUIT_TYPES,
     candidate_objectives,
     rank_successes,
@@ -17,6 +19,7 @@ from revolution.pareto_revolution.selection import (
     select_success_parents,
     select_survivors,
 )
+from revolution.qd.pareto_analysis import analyze_problem_pareto
 from revolution.runtime.problem_spec import CircuitType, ProblemSpec
 
 
@@ -85,6 +88,11 @@ def test_reference_incomplete_mapping_is_exact_and_sequential():
         supports_reference_ppa=False,
     )
     assert resolve_circuit_type(spec) == "sequential"
+    assert FROZEN_SMOKE_OBJECTIVES == {
+        "Prob003_adder_32bit": ("combinational", True, 2),
+        "Prob025_sequence_detector": ("sequential", True, 3),
+        "Prob006_adder_pipe_64bit": ("sequential", False, 3),
+    }
 
 
 def test_unknown_problem_outside_frozen_mapping_fails():
@@ -220,6 +228,93 @@ def test_environmental_selection_uses_successes_then_new_failures():
     assert survivors[2].id == "high_fail"
 
 
+def test_environmental_selection_truncates_stable_boundary_front():
+    spec = _problem_spec(
+        "Prob003_adder_32bit",
+        "combinational",
+        supports_reference_ppa=True,
+    )
+    candidates = [
+        _success("first_edge", power=9.0, area=6.0, timing=0.0, score=-100.0),
+        _success("first_tie", power=8.0, area=7.0, timing=0.0, score=100.0),
+        _success("second_tie", power=7.0, area=8.0, timing=0.0, score=1000.0),
+        _success("second_edge", power=6.0, area=9.0, timing=0.0, score=-1000.0),
+    ]
+    reference = {"power": 10.0, "area": 10.0, "eff_clk_period": 0.0}
+
+    first = select_survivors(candidates, [], 3, spec, reference)
+    for candidate in candidates:
+        candidate.score *= -100.0
+    second = select_survivors(candidates, [], 3, spec, reference)
+
+    assert [candidate.id for candidate in first] == [
+        "first_edge",
+        "second_edge",
+        "first_tie",
+    ]
+    assert [candidate.id for candidate in second] == [
+        candidate.id for candidate in first
+    ]
+
+
+def test_posthoc_front_reproduces_generation_log_front(tmp_path: Path):
+    problem_dir = tmp_path / "RTLLM" / "Prob003_adder_32bit"
+    problem_dir.mkdir(parents=True)
+    reference = {"power": 10.0, "area": 10.0, "eff_clk_period": 0.0}
+    candidates = [
+        _success("power", power=8.0, area=9.0, timing=0.0),
+        _success("area", power=9.0, area=8.0, timing=0.0),
+        _success("dominated", power=9.0, area=9.0, timing=0.0),
+    ]
+    (problem_dir / "Prob003_adder_32bit_summary.json").write_text(
+        json.dumps(
+            {
+                "benchmark_name": "RTLLM",
+                "problem_name": "Prob003_adder_32bit",
+                "ref_ppa_metric": reference,
+            }
+        ),
+        encoding="utf-8",
+    )
+    log_rows = [
+        {
+            "generation": generation,
+            "population_ppa_details": [
+                {
+                    "id": candidate.id,
+                    "strategy": "M-S",
+                    "ppa_metrics": candidate.ppa_metrics,
+                }
+            ],
+        }
+        for generation, candidate in enumerate(candidates)
+    ]
+    (problem_dir / "generation_log.jsonl").write_text(
+        "".join(f"{json.dumps(row)}\n" for row in log_rows),
+        encoding="utf-8",
+    )
+
+    expected = {
+        row.member.candidate_id
+        for row in rank_successes(
+            candidates,
+            _problem_spec(
+                "Prob003_adder_32bit",
+                "combinational",
+                supports_reference_ppa=True,
+            ),
+            reference,
+        )
+        if row.pareto_rank == 1
+    }
+    first = analyze_problem_pareto(problem_dir)
+    second = analyze_problem_pareto(problem_dir)
+
+    assert {candidate.candidate_id for candidate in first.pareto_candidates} == expected
+    assert second == first
+    assert all(candidate.source == "generation_log" for candidate in first.candidates)
+
+
 def test_engine_generation_uses_distinct_eoh_crossover_parents():
     spec = _problem_spec(
         "Prob003_adder_32bit",
@@ -279,6 +374,66 @@ def test_engine_generation_uses_distinct_eoh_crossover_parents():
     assert all(row["strategy"] == "C-F" for row in metadata)
     assert all(len({parent.id for parent in row["parents"]}) == 2 for row in metadata)
     assert len(engine.success_pool) == 2
+
+
+def test_classic_seeded_selection_regression():
+    previous = [
+        _success("one", power=5.0, area=9.0, timing=0.0, score=0.1),
+        _success("two", power=9.0, area=5.0, timing=0.0, score=0.2),
+        _success("three", power=8.0, area=8.0, timing=0.0, score=0.3),
+    ]
+    offspring = [
+        _success("child_one", power=4.0, area=9.0, timing=0.0, score=0.4),
+        _success("child_two", power=9.0, area=4.0, timing=0.0, score=0.05),
+    ]
+    captured: dict[str, object] = {}
+
+    async def generate(requests, *_args):
+        return [(None, None, {}) for _ in requests]
+
+    def materialize(_results, metadata):
+        captured["metadata"] = metadata
+        return offspring
+
+    engine = object.__new__(EoHEngine)
+    engine.current_generation = 0
+    engine.num_offspring_lambda = 2
+    engine.population_size = 2
+    engine.population_pool_mode = "dual"
+    engine.classic_operator_kind = "eoh_strategies"
+    engine.fail_pool = []
+    engine.success_pool = previous
+    engine.fail_strats = ["M-F"]
+    engine.success_strats = ["C-F"]
+    engine.fail_strategy_stats = {"M-F": {"count": 0, "value": 0.0}}
+    engine.success_strategy_stats = {"C-F": {"count": 0, "value": 0.0}}
+    engine.generation_mode = "whole"
+    engine.default_llm_temp = 1.0
+    engine.default_llm_top_p = 1.0
+    engine.default_llm_max_tokens = 128000
+    engine.champion_metrics_config = []
+    engine.llm = SimpleNamespace(generate_batch_responses=generate)
+    engine._select_strategy = lambda *_args: ("C-F", {"C-F": 1.0})
+    engine._create_prompt_C_F = lambda _parents: "prompt"
+    engine._with_mode = lambda _mode, prompt_fn, parents: prompt_fn(parents)
+    engine._get_generation_system_prompt = lambda _mode: "system"
+    engine._build_prompt_request = lambda **kwargs: kwargs
+    engine._materialize_offspring_batch = materialize
+    engine._evaluate_candidates = lambda _candidates: None
+    engine._log_generation_stats = lambda *_args: None
+
+    random.seed(37)
+    assert engine.evolve_one_generation() is None
+    metadata = captured["metadata"]
+    assert isinstance(metadata, list)
+    assert [[parent.id for parent in row["parents"]] for row in metadata] == [
+        ["three", "one"],
+        ["three", "two"],
+    ]
+    assert [candidate.id for candidate in engine.success_pool] == [
+        "child_one",
+        "three",
+    ]
 
 
 def test_classic_engine_hash_is_unchanged():

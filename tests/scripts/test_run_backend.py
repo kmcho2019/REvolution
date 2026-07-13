@@ -348,15 +348,24 @@ def test_run_backend_rejects_single_pool_qd_mode(capsys):
     assert "population_pool_mode=single" in captured.out
 
 
-def test_run_backend_rejects_non_eoh_pareto_mode(capsys):
+@pytest.mark.parametrize(
+    ("flag", "value"),
+    [
+        ("--classic_operator_kind", "single_thought_operator"),
+        ("--eoh_success_operator_set", "one_parent"),
+        ("--evaluation_mode", "search_accelerated"),
+        ("--representation_kind", "thought_only"),
+    ],
+)
+def test_run_backend_rejects_invalid_pareto_contract(capsys, flag, value):
     code = run_backend_main(
         [
             "--backend",
             "revolution",
             "--search_mode",
             "revolution_pareto",
-            "--classic_operator_kind",
-            "single_thought_operator",
+            flag,
+            value,
             "--benchmarks",
             "RTLLM",
             "--problems",
