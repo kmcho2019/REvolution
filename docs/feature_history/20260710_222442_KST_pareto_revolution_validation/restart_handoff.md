@@ -44,17 +44,25 @@ Last updated: 2026-07-13 UTC.
   `exp/pareto_revolution_validation/full_rtllm/seed_1001/classic`.
   Classic log:
   `exp/pareto_revolution_validation/logs/full_rtllm_seed1001_classic.log`.
-- The Pareto full-RTLLM seed-1001 arm launched at
-  `2026-07-13T19:04:03Z` under parent process `1824908`.
-- Active Pareto root:
+- The Pareto full-RTLLM seed-1001 arm completed and validated: 50 summaries,
+  300 generation rows, 2,400 unique evaluated candidates, EoH-only, and
+  `4712.14s`.
+- Pareto used 4,800 LLM calls and 14,954,728 tokens. Token skew versus classic
+  is `+0.564%`; runtime skew is `+1.402%`.
+- Completed Pareto root:
   `exp/pareto_revolution_validation/full_rtllm/seed_1001/pareto`.
-  Active log:
+  Pareto log:
   `exp/pareto_revolution_validation/logs/full_rtllm_seed1001_pareto.log`.
+- Runtime configs differ only in `save_path` and `search_mode`. All treatment
+  summaries record the frozen NSGA-II methods, descriptors false, post-hoc
+  delivered front, and exact normalized/raw objective source.
+- No benchmark process is running. The seed-1001 pair is not yet packaged or
+  gated.
 
 ## Next Actions
 
-1. Wait for the Pareto process and validate all 50 tasks.
-2. Package the completed pair and validate matched budget accounting.
+1. Run the frozen per-seed report chain over the completed pair.
+2. Validate 46-task headline metrics and matched budget accounting.
 3. Apply the locked seed-1001 stop rule mechanically.
 
 ## Live Resources
