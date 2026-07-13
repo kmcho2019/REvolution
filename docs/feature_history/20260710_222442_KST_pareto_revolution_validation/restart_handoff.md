@@ -5,7 +5,8 @@ Last updated: 2026-07-13 UTC.
 ## Current State
 
 - User approved execution of one descriptor-free Pareto selection ablation.
-- No benchmark is running.
+- The seed-42 classic technical-smoke arm launched at `2026-07-13T16:56:07Z`
+  and is running under parent process `1746024`.
 - Claims addendum V2 and the V2 RTLLM manifest passed independent prelaunch
   re-review. Addendum V3 records the review's optional precision fixes.
 - Reporting distinguishes valid-PPA, weak reference-beating, and positive-HV
@@ -21,16 +22,21 @@ Last updated: 2026-07-13 UTC.
   `execution_commands.md`.
 - The long-timeout implementation re-review returned PASS with no blockers and
   is preserved at `reviews/20260713_claude_implementation_rereview.md`.
-- No benchmark is running and no live evidence has been collected.
+- Fresh preflight passed for `openai/gpt-oss-120b` at context `131072` and is
+  stored at `exp/pareto_revolution_validation/preflight/latest.json`.
+- Active root: `exp/pareto_revolution_validation/smoke/seed_42/classic`.
+  Active log: `exp/pareto_revolution_validation/logs/smoke_seed42_classic.log`.
+  Do not launch the Pareto arm until this process exits and validates.
 
 ## Next Actions
 
-1. Recheck the classic hash and run the 128k endpoint preflight.
-2. Run and package the matched three-problem seed-42 technical check.
+1. Wait for the classic smoke process; verify three complete summaries.
+2. Launch the frozen Pareto smoke arm, then package both arms as technical
+   evidence only.
 3. Launch full RTLLM seed 1001 only after the smoke passes.
 
 ## Live Resources
 
 - vLLM: `http://20.0.0.103:8000`, `openai/gpt-oss-120b`, context 131072.
 - Raw run root: `exp/pareto_revolution_validation/`.
-- Goal-local run ledger: `rerun_ledger.jsonl` after the first launch.
+- Goal-local run ledger: `rerun_ledger.jsonl`.
