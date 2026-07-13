@@ -33,7 +33,7 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
       prompts, tools, and budgets in the V2 config.
 - [x] Require fresh matched classic for gates; keep historical classic and V2
       roots descriptive because server-revision parity is unproven.
-- [ ] Freeze the one Pareto arm, commands, output roots, report commands, and
+- [x] Freeze the one Pareto arm, commands, output roots, report commands, and
       stop/promotion rules before any evidence run.
 - [x] Add rerun-ledger and restart-handoff locations.
 
@@ -46,7 +46,7 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [x] Implement successful-survivor NSGA-II environmental selection.
 - [x] Keep Fail-pool, EoH operator, UCB, prompt, feedback, evaluator, and budget
       behavior unchanged.
-- [ ] Build the delivered global front post hoc; prove it is reporting-only.
+- [x] Build the delivered global front post hoc; prove it is reporting-only.
 - [x] Add only thin backend/CLI wiring; keep `algorithm.py` byte-identical.
 - [x] Record copied-loop source ranges and prove only the two selection blocks
       differ before seed 1001.
@@ -55,12 +55,12 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 
 - [x] Test active axes, raw no-reference objectives, required Success/PPA
       invariants, and unknown-type failure.
-- [ ] Test front ordering, crowding truncation, stable ties, population cap, and
+- [x] Test front ordering, crowding truncation, stable ties, population cap, and
       distinct `C-F` parents.
 - [x] Test that changing scalar score alone cannot change Pareto selection.
-- [ ] Test classic seeded behavior and the frozen `algorithm.py` hash.
+- [x] Test classic seeded behavior and the frozen `algorithm.py` hash.
 - [x] Test backend/CLI dispatch and reject incompatible QD state.
-- [ ] Test post-hoc front reproduction from full generation logs.
+- [x] Test post-hoc front reproduction from full generation logs.
 - [x] Test valid-PPA, functional-any-pass, and reference-beating coverage as
       separate metrics; same input roots must reproduce identically.
 - [x] Test the operator contract: no single-thought, `M-T`, or `C-D` path.

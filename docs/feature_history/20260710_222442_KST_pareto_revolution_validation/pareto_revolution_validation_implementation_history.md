@@ -272,3 +272,56 @@ still drives feedback and UCB reward, exactly as disclosed.
 - No benchmark process was launched. Stable boundary-front truncation,
   post-hoc front reproduction, seeded classic equivalence, and the live smoke
   remain explicit open gates.
+
+Correction: pyright and ty passed the touched source modules; they were not
+run over the monkeypatched test modules. Focused pytest and ruff covered the
+test surfaces. This narrows the earlier wording without changing a result.
+
+## 2026-07-13 - Implementation Audit FAIL And Resolution
+
+- Ran a read-only `claude -p` audit with a 900-second bound against commits
+  `f376236d6e` and `3f5f3c999d`. It completed after about thirteen minutes and
+  returned `FAIL`. The complete output is preserved at
+  `reviews/20260713_claude_implementation_review.md`.
+- The reviewer found no treatment drift, classic-core change, QD state,
+  fallback behavior, provenance error, or method-level defect. It judged the
+  implementation a natural controlled extension, but identified four frozen
+  pre-evidence requirements that were not yet complete.
+
+### Blocking-Finding Disposition
+
+1. Accepted the stale parity-fixture finding. Commit `21b662441b` supplies the
+   required descriptor-extraction method on two test-only `SimpleNamespace`
+   fixtures. All seven strict-ablation parity cases now pass. Classic source
+   remains untouched.
+2. Accepted the missing-test finding. Commit `0bb3fbc51d` adds stable
+   boundary-front truncation and population-cap coverage, survivor scalar
+   invariance, exact seeded classic parent/survivor regression, repeatable
+   generation-log Pareto reconstruction, and all four CLI rejection cases.
+3. Accepted the smoke-axis finding. The same commit freezes each smoke task's
+   resolved circuit type, reference availability, and `2/3/3` active-axis
+   count in the isolated selection module. Runtime fails on any mismatch.
+4. Accepted the command-freeze finding. `execution_commands.md` pins the code,
+   hashes, preflight, shared arguments, all smoke/full problems, sequential arm
+   commands, output roots, report chain, rerun posture, and mechanical gates.
+
+Accepted one optional item because it directly strengthens the frozen CLI
+contract: tests now reject the non-classic success set, accelerated evaluation,
+and thought representation as well as single-thought operators. Did not adopt
+the optional constructor test, extra engine state, cosmetic print parity, or
+test-fixture score rewrite; none closes a registered behavioral gap and each
+would add churn.
+
+### Validation After Resolution
+
+- Strict-ablation parity: `7 passed`.
+- Focused Pareto/backend/runner/parity selection: `58 passed` before the final
+  CLI parameter expansion; the targeted final pair then passed `50` tests.
+- Full repository proxy, `tests/revolution tests/scripts`:
+  `1039 passed, 4 skipped` in `360.52s`.
+- Ruff passed all touched source/tests. Pyright and ty passed
+  `src/revolution/pareto_revolution/`.
+- `git diff --check` passed and the classic engine SHA-256 remains
+  `78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655`.
+- No LLM-backed benchmark has launched. Independent re-review remains required
+  before the seed-42 technical smoke.

@@ -21,12 +21,13 @@ is unavailable because no prior-run-disjoint VerilogEval task remains.
 1. `pareto_revolution_validation_plan.md`
 2. `pareto_revolution_claims_addendum_v3.md`, then V2 for the full contract
 3. `prelaunch_audits.md`
-4. `pareto_revolution_validation_implementation_todo.md`
-5. `restart_handoff.md`
-6. `goal_template.md`
-7. `pareto_revolution_validation_adversarial_prompt.md`
-8. `pareto_revolution_validation_implementation_history.md`
-9. `pareto_revolution_validation_subagent_validation_report.md`
+4. `execution_commands.md`
+5. `pareto_revolution_validation_implementation_todo.md`
+6. `restart_handoff.md`
+7. `goal_template.md`
+8. `pareto_revolution_validation_adversarial_prompt.md`
+9. `pareto_revolution_validation_implementation_history.md`
+10. `pareto_revolution_validation_subagent_validation_report.md`
 
 Independent reviews live under `reviews/`. The 2026-07-11 scaffold trail was
 `FAIL -> FAIL -> PASS`. The 2026-07-13 V1 prelaunch review returned FAIL and
