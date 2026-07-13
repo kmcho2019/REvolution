@@ -362,3 +362,20 @@ would add churn.
   `exp/pareto_revolution_validation/packages/smoke_seed_42/` and preserved
   compact tracked results under `smoke_seed42/`. Metrics are technical-only;
   no promotion or performance inference was made.
+
+## 2026-07-13 - Smoke Package Audit PASS
+
+- Ran an independent read-only audit of the frozen contract, raw roots,
+  compact package, configs, ledger, hashes, budgets, and operator provenance.
+- The audit returned `PASS` with no blockers and independently reconstructed
+  all task, generation, candidate, call, token, coverage, and runtime counts.
+  The complete review is preserved at
+  `reviews/20260713_claude_smoke_package_review.md`.
+- It confirmed the two runtime configs differ only in `save_path` and
+  `search_mode`, classic core remains byte-identical, and no full-suite root or
+  partial benchmark process exists.
+- It classified the absent live successful-PPA raw-objective evaluation as a
+  disclosed non-blocking limitation. Exact arithmetic is unit-tested and the
+  runtime contract fails fast; the frozen smoke must not be changed.
+- The audit authorizes only a fresh preflight followed by unchanged full-RTLLM
+  seed 1001. It supplies no smoke-based performance evidence.

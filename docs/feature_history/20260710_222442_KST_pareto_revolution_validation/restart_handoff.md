@@ -29,14 +29,16 @@ Last updated: 2026-07-13 UTC.
 - The pair is packaged as technical-only evidence under
   `exp/pareto_revolution_validation/packages/smoke_seed_42/`; tracked compact
   results live under `smoke_seed42/`.
+- The independent smoke-package audit returned PASS with no blockers. Its
+  reconstructed evidence and limitations are preserved at
+  `reviews/20260713_claude_smoke_package_review.md`.
 - No benchmark process is running. Full RTLLM remains unlaunched.
 
 ## Next Actions
 
-1. Run a read-only smoke-package audit, including the disclosed raw-path
-   limitation.
-2. Re-run the endpoint preflight.
-3. Launch fresh matched full RTLLM seed 1001 only if the audit passes.
+1. Re-run the endpoint preflight.
+2. Launch the fresh classic full-RTLLM seed-1001 arm with all 50 frozen tasks.
+3. Validate and package classic before launching the matched Pareto arm.
 
 ## Live Resources
 

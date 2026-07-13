@@ -67,7 +67,7 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [x] Run focused pytest, ruff, pyright, and ty checks.
 - [x] Run a seed-42 three-problem `8 x 5` vLLM smoke after a 128k preflight.
 - [x] Package the smoke as technical evidence only.
-- [x] Run the pre-seed-1001 read-only code and direction audit.
+- [x] Run the pre-seed-1001 read-only code, direction, and smoke-package audit.
 
 ## Stage 3: Full RTLLM
 
