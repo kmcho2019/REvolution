@@ -19,14 +19,15 @@ Last updated: 2026-07-13 UTC.
   revolution/scripts proxy suite now passes `1039 passed, 4 skipped`.
 - Exact launch, output, report, and gate commands are frozen in
   `execution_commands.md`.
+- The long-timeout implementation re-review returned PASS with no blockers and
+  is preserved at `reviews/20260713_claude_implementation_rereview.md`.
 - No benchmark is running and no live evidence has been collected.
 
 ## Next Actions
 
-1. Re-run the long-timeout read-only implementation audit and require PASS.
-2. Recheck the classic hash and run the 128k endpoint preflight.
-3. Run and package the matched three-problem seed-42 technical check.
-4. Launch full RTLLM seed 1001 only after the smoke and audit pass.
+1. Recheck the classic hash and run the 128k endpoint preflight.
+2. Run and package the matched three-problem seed-42 technical check.
+3. Launch full RTLLM seed 1001 only after the smoke passes.
 
 ## Live Resources
 

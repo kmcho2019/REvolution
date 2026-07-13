@@ -1,9 +1,9 @@
 # Pareto REvolution TCAD Validation
 
-Status: implementation committed on 2026-07-13. The independent V2 prelaunch
-re-review returned PASS, and Addendum V3 records its precision fixes. Focused
-validation passes; the implementation audit and live evidence remain open.
-No benchmark has launched.
+Status: implementation and command freeze approved on 2026-07-13. The
+independent implementation re-review returned PASS with no blockers. The
+seed-42 technical smoke is authorized after a fresh endpoint preflight. No
+benchmark has launched.
 
 ## Purpose
 
@@ -32,7 +32,7 @@ is unavailable because no prior-run-disjoint VerilogEval task remains.
 Independent reviews live under `reviews/`. The 2026-07-11 scaffold trail was
 `FAIL -> FAIL -> PASS`. The 2026-07-13 V1 prelaunch review returned FAIL and
 drove V2; the V2 re-review returned PASS. V1 remains historical and cannot
-govern a run.
+govern a run. The implementation trail is also `FAIL -> PASS`.
 
 ## Upstream Decision
 
