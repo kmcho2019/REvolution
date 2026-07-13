@@ -64,6 +64,7 @@ def _run_legacy(
     engine.synthesis_evaluator = _FakeSynthesisEvaluator(synthesis_result)
     engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
     engine._calculate_fitness_score = MethodType(EoHEngine._calculate_fitness_score, engine)
+    engine._extract_candidate_descriptor_values = lambda _candidate, _results: {}
 
     candidate = Heuristic(thought="", code="module m; endmodule\n", feedback="")
     candidate.code_file_path = "x.sv"
@@ -233,6 +234,7 @@ def test_legacy_pipeline_uses_testbench_top_for_simulation_and_synthesis_top_for
     engine.synthesis_evaluator = synthesis
     engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
     engine._calculate_fitness_score = MethodType(EoHEngine._calculate_fitness_score, engine)
+    engine._extract_candidate_descriptor_values = lambda _candidate, _results: {}
 
     candidate = Heuristic(thought="", code="module m; endmodule\n", feedback="")
     candidate.code_file_path = "x.sv"
