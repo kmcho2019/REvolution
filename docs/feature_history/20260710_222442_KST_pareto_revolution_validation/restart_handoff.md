@@ -61,12 +61,20 @@ Last updated: 2026-07-13 UTC.
   tracked evidence is under `full_rtllm_seed1001/`.
 - Seed 1001 passes the continuation gate without establishing a win. Pareto
   retains `97.867%` of classic HV46 and trails valid-PPA coverage by one.
-- No benchmark process is running. Only matched seed 1002 is authorized.
+- Fresh seed-1002 preflight passed for `openai/gpt-oss-120b` at context
+  `131072`.
+- The classic full-RTLLM seed-1002 arm launched at
+  `2026-07-13T20:35:36Z` under parent process `1886655`.
+- Active root:
+  `exp/pareto_revolution_validation/full_rtllm/seed_1002/classic`.
+  Active log:
+  `exp/pareto_revolution_validation/logs/full_rtllm_seed1002_classic.log`.
+- Do not launch Pareto seed 1002 until classic exits and validates.
 
 ## Next Actions
 
-1. Run a fresh endpoint preflight for seed 1002.
-2. Launch and validate classic seed 1002 before the Pareto arm.
+1. Wait for classic seed 1002 and validate all 50 tasks.
+2. Record completion before launching the Pareto seed-1002 arm.
 3. Package the pair and apply the locked two-seed gate mechanically.
 
 ## Live Resources
