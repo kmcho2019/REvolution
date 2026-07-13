@@ -2,8 +2,8 @@
 
 Status: implementation and command freeze approved on 2026-07-13. The
 independent implementation re-review returned PASS with no blockers. The
-seed-42 technical smoke is authorized after a fresh endpoint preflight. No
-benchmark has launched.
+seed-42 technical smoke completed and is packaged with its raw-path limitation
+disclosed. Full RTLLM remains unlaunched.
 
 ## Purpose
 
@@ -22,12 +22,13 @@ is unavailable because no prior-run-disjoint VerilogEval task remains.
 2. `pareto_revolution_claims_addendum_v3.md`, then V2 for the full contract
 3. `prelaunch_audits.md`
 4. `execution_commands.md`
-5. `pareto_revolution_validation_implementation_todo.md`
-6. `restart_handoff.md`
-7. `goal_template.md`
-8. `pareto_revolution_validation_adversarial_prompt.md`
-9. `pareto_revolution_validation_implementation_history.md`
-10. `pareto_revolution_validation_subagent_validation_report.md`
+5. `smoke_seed42/README.md`
+6. `pareto_revolution_validation_implementation_todo.md`
+7. `restart_handoff.md`
+8. `goal_template.md`
+9. `pareto_revolution_validation_adversarial_prompt.md`
+10. `pareto_revolution_validation_implementation_history.md`
+11. `pareto_revolution_validation_subagent_validation_report.md`
 
 Independent reviews live under `reviews/`. The 2026-07-11 scaffold trail was
 `FAIL -> FAIL -> PASS`. The 2026-07-13 V1 prelaunch review returned FAIL and

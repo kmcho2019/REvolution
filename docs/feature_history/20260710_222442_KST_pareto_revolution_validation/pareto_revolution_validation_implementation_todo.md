@@ -65,8 +65,8 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
       separate metrics; same input roots must reproduce identically.
 - [x] Test the operator contract: no single-thought, `M-T`, or `C-D` path.
 - [x] Run focused pytest, ruff, pyright, and ty checks.
-- [ ] Run a seed-42 three-problem `8 x 5` vLLM smoke after a 128k preflight.
-- [ ] Package the smoke as technical evidence only.
+- [x] Run a seed-42 three-problem `8 x 5` vLLM smoke after a 128k preflight.
+- [x] Package the smoke as technical evidence only.
 - [x] Run the pre-seed-1001 read-only code and direction audit.
 
 ## Stage 3: Full RTLLM

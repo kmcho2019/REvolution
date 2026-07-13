@@ -7,8 +7,8 @@ Last updated: 2026-07-13 UTC.
 - User approved execution of one descriptor-free Pareto selection ablation.
 - The seed-42 classic technical-smoke arm completed and validated: three
   problems, 18 generation rows, 144 candidates, EoH-only, `682.73s`.
-- The matched seed-42 Pareto arm launched from the frozen command at
-  `2026-07-13T17:09:47Z` and is running under parent process `1752486`.
+- The matched seed-42 Pareto arm completed and validated: three problems, 18
+  generation rows, 144 candidates, EoH-only, `648.29s`.
 - Claims addendum V2 and the V2 RTLLM manifest passed independent prelaunch
   re-review. Addendum V3 records the review's optional precision fixes.
 - Reporting distinguishes valid-PPA, weak reference-beating, and positive-HV
@@ -26,15 +26,17 @@ Last updated: 2026-07-13 UTC.
   is preserved at `reviews/20260713_claude_implementation_rereview.md`.
 - Fresh preflight passed for `openai/gpt-oss-120b` at context `131072` and is
   stored at `exp/pareto_revolution_validation/preflight/latest.json`.
-- Active root: `exp/pareto_revolution_validation/smoke/seed_42/pareto`.
-  Active log: `exp/pareto_revolution_validation/logs/smoke_seed42_pareto.log`.
-  Do not launch full RTLLM until this process exits and the pair is packaged.
+- The pair is packaged as technical-only evidence under
+  `exp/pareto_revolution_validation/packages/smoke_seed_42/`; tracked compact
+  results live under `smoke_seed42/`.
+- No benchmark process is running. Full RTLLM remains unlaunched.
 
 ## Next Actions
 
-1. Wait for the Pareto smoke process; verify three complete summaries.
-2. Package both arms as technical evidence only.
-3. Launch full RTLLM seed 1001 only after the smoke passes.
+1. Run a read-only smoke-package audit, including the disclosed raw-path
+   limitation.
+2. Re-run the endpoint preflight.
+3. Launch fresh matched full RTLLM seed 1001 only if the audit passes.
 
 ## Live Resources
 

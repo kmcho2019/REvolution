@@ -338,3 +338,27 @@ would add churn.
   byte-identical, and no treatment or QD-state drift.
 - PASS authorizes only the seed-42 technical smoke after a fresh 128k endpoint
   preflight. It approves no performance claim.
+
+## 2026-07-13 - Seed-42 Technical Smoke
+
+- Fresh preflight passed for `openai/gpt-oss-120b`, `max_model_len=131072`.
+- Ran classic and Pareto sequentially on the three frozen problems with seed
+  42, population 8, five evolution generations, whole mode, strict evaluation,
+  EoH operators, and 128k token limits.
+- Classic completed in `682.73s`; Pareto completed in `648.29s`. Each arm has
+  three summaries, 18 generation rows, 144 evaluated candidates, and 288 LLM
+  calls. Runtime configs differ only by `save_path` and `search_mode`.
+- Total tokens are 946218 classic and 938212 Pareto (`-0.8461%` skew). Both
+  arms have functional any-pass `3/3` and valid-PPA coverage `2/3`.
+- Generated candidates contain only initial and classic EoH strategies. No
+  single-thought, `M-T`, or `C-D` candidate appears.
+- Pareto metadata records the frozen circuit type and objective source for all
+  three problems, descriptors false, and delivered front post-hoc only.
+- `Prob006_adder_pipe_64bit` produced functional candidates but no valid
+  post-synthesis PPA in either arm. The live smoke therefore asserted its raw
+  3-axis contract but did not evaluate raw objective values for a successful
+  candidate. The unit test covers that arithmetic; no task was substituted.
+- Packaged the pair under
+  `exp/pareto_revolution_validation/packages/smoke_seed_42/` and preserved
+  compact tracked results under `smoke_seed42/`. Metrics are technical-only;
+  no promotion or performance inference was made.
