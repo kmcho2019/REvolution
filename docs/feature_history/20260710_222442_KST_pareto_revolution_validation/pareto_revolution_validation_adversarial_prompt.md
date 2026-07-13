@@ -31,11 +31,9 @@ Return FAIL immediately if any condition holds:
    `single_thought_operator`, `M-T`, `C-D`, descriptors, cells, QD retention,
    or an adaptive scalar fallback. Registered historical V2 roots are exempt
    as descriptive evidence only.
-4. Full RTLLM or held-out stages were launched out of gate order.
-5. Any fresh candidate-holdout task appeared in a run or development manifest
-   before its freeze, or influenced implementation, debugging, tuning, or
-   promotion before the registered final classic/Pareto launches. The
-   overlapping revision-3 holdout was used as primary evidence.
+4. Full RTLLM stages were launched out of gate order.
+5. Full RTLLM or the overlapping revision-3 holdout was presented as fresh,
+   paper-facing primary evidence despite the complete prior-use audit.
 6. A failed final-HV gate was rescued by HV-AUC, archive health, selected seeds,
    complete cases, or a favorable task subset.
 7. Required runs or report processes are still live.
@@ -45,14 +43,15 @@ Return FAIL immediately if any condition holds:
 Verify from code and tests that:
 
 - one discriminated Pareto search mode exists and method state is narrow;
-- Pareto-specific logic is outside the classic engine except for minimal,
-  behavior-preserving hooks and thin dispatch;
+- Pareto-specific logic is outside the classic engine, the frozen
+  `src/revolution/algorithm.py` hash is unchanged, and dispatch is thin;
 - successful parents use the pinned without-replacement binary tournament and
   the pinned distinct-winner `C-F` procedure;
 - successful survivors use NSGA-II over the exact registered candidate set,
   followed only by the pinned failed-offspring fill ordering;
 - active objectives are power/area for combinational and power/area/timing for
-  sequential designs, with unknown types rejected;
+  sequential designs; exactly the four frozen reference-incomplete RTLLM tasks
+  resolve from unknown to sequential and every other unknown type is rejected;
 - reference-complete tasks use normalized gains, reference-incomplete tasks use
   negative raw active PPA, and every Success candidate satisfies the required
   post-synthesis/PPA invariant;
@@ -75,10 +74,10 @@ exhaustive handling of typed variants.
 Recompute or spot-check, rather than copy prose:
 
 - manifest membership and SHA-256 hashes;
-- fresh candidate-holdout disjointness against every run root and development
-  manifest that predates its freeze; the legacy nine-task overlap is disclosed;
-- holdout reference-sweep completeness, exact eligible inventory, proportional
-  quota calculation, sorted bucket inputs, seeded shuffle, and output hash;
+- the complete VerilogEval audit reproduces 156 source tasks and 156 prior
+  evaluated outcomes; no task substitution or relaxed exclusion entered;
+- the four frozen reference-incomplete circuit types match clocked reference
+  RTL and no synthetic-reference fallback is reachable;
 - seed/config/model/prompt/tool and comparator compatibility;
 - candidate-evaluation counts, LLM calls, tokens, and the +/-10% auxiliary
   budget rule;
@@ -88,17 +87,18 @@ Recompute or spot-check, rather than copy prose:
 - functional-any-pass and reference-beating coverage as separately named
   metrics, including resolution of the S07/S32 same-root discrepancy;
 - seed-1001 stop, two-seed promotion, and five-seed full-RTLLM promotion;
-- held-out penalized cluster-bootstrap gates, zero-HV units, epsilon
-  sensitivity, per-seed results, and leave-one-seed-out tables;
 - missing-treatment losses and reason codes;
 - equivalence and synthesis-determinism evidence for showcased candidates.
 
 Confirm the final classification is exact:
 
-- primary positive only with held-out `REF_WIN` and no valid-PPA or
-  functional-any-pass coverage decline;
-- supporting when parity or secondary evidence does not pass that gate;
+- positive development evidence only when five-seed full RTLLM final HV,
+  valid-PPA, and functional-any-pass all meet fresh matched classic;
+- supporting when parity or secondary evidence does not pass every gate;
 - negative when a registered stop or final gate fails.
+
+Confirm that no outcome is labeled `REF_WIN`, a paper-facing primary result, or
+the complete TCAD extension. A genuinely fresh benchmark is outside this goal.
 
 Confirm full RTLLM is labeled a repeatedly observed screening surface and that
 no full multi-suite Branch-A claim is made without separate `NEW_OK` evidence.
@@ -129,7 +129,7 @@ PASS or FAIL
 
 ## Outcome Class Checked
 
-Primary positive, supporting result, or negative closure.
+Positive development evidence, supporting result, or negative closure.
 
 ## Evidence Recomputed
 

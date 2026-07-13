@@ -178,3 +178,31 @@ the claims addendum before activation, not after seeing live results.
   audit, and claims addendum before implementation or live evidence.
 - `src/revolution/algorithm.py` is unchanged; its activation hash is
   `78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655`.
+
+## 2026-07-13 - V1 Prelaunch Review And V2 Contract
+
+- Ran a read-only `claude -p` prelaunch review with a 900-second timeout. It
+  completed after approximately ten minutes and returned `FAIL` with three
+  blockers. Preserved the finding record at
+  `reviews/20260713_claude_prelaunch_review.md`.
+- Accepted the circuit-type blocker. The four reference-incomplete RTLLM tasks
+  are also the exact four loaded as `unknown`; each reference RTL contains
+  clocked state. V2 freezes all four as sequential and requires every other
+  unknown type to fail.
+- Accepted the smoke blocker. Replaced `Prob024_fsm`, whose proxy timing is
+  zero, with `Prob025_sequence_detector` and added
+  `Prob006_adder_pipe_64bit`. The three-task check now covers normalized
+  two-axis, normalized three-axis, and negative-raw three-axis objectives.
+- Accepted the stage blocker. The unavailable paper-facing evidence is
+  plan-table Stage 6, not RTLLM seed-1002 Stage 4. The infeasible holdout is a
+  completed audit finding rather than a pending prelaunch requirement.
+- Accepted the unique-insertion-index tie rule, corrected the success-versus-
+  failure disclosure, recorded the historical seed-1001 HV diagnostic, and
+  required fresh matched classic runs because historical vLLM revision parity
+  cannot be established.
+- Rejected the optional suggestion to add hooks to the classic engine because
+  the user explicitly requires the conference engine to remain intact. V2
+  requires `src/revolution/algorithm.py` to remain byte-for-byte unchanged.
+- Drafted claims addendum V2 and
+  `data/configs/pareto_revolution_rtllm_ablation_v2.yaml`. No implementation or
+  benchmark launched before independent V2 re-review.

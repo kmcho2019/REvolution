@@ -19,8 +19,8 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 
 ## Stage 0: Freeze
 
-- [ ] Re-read the journal onboarding documents in required order.
-- [ ] Write the versioned method and claims addendum without changing accepted
+- [x] Re-read the journal onboarding documents in required order.
+- [x] Write the versioned method and claims addendum without changing accepted
       `journal_narrative.md` revision 3.
 - [ ] Run a read-only adversarial review of the addendum and resolve every FAIL.
 - [x] Complete the zero-compute discarded-front audit or document unavailable
@@ -29,13 +29,13 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
       canonical definition and regression test.
 - [x] Prove the prior-run-disjoint VerilogEval holdout infeasible and narrow
       this campaign to RTLLM development evidence without relaxing exclusions.
-- [ ] Freeze and hash RTLLM, fresh holdout, seeds, model, prompts, tools, and
-      budgets.
-- [ ] Register compatible classic and V2 full-suite roots; rerun only a
-      comparator that fails compatibility audit.
+- [x] Freeze the RTLLM surfaces, missing-reference circuit types, seeds, model,
+      prompts, tools, and budgets in the V2 config.
+- [x] Require fresh matched classic for gates; keep historical classic and V2
+      roots descriptive because server-revision parity is unproven.
 - [ ] Freeze the one Pareto arm, commands, output roots, report commands, and
       stop/promotion rules before any evidence run.
-- [ ] Add rerun-ledger and restart-handoff locations.
+- [x] Add rerun-ledger and restart-handoff locations.
 
 ## Stage 1: Implementation
 
@@ -47,7 +47,7 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [ ] Keep Fail-pool, EoH operator, UCB, prompt, feedback, evaluator, and budget
       behavior unchanged.
 - [ ] Build the delivered global front post hoc; prove it is reporting-only.
-- [ ] Add only thin backend/CLI wiring and any strictly required classic hooks.
+- [ ] Add only thin backend/CLI wiring; keep `algorithm.py` byte-identical.
 
 ## Stage 2: Tests And Technical Smoke
 
@@ -56,14 +56,14 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [ ] Test front ordering, crowding truncation, stable ties, population cap, and
       distinct `C-F` parents.
 - [ ] Test that changing scalar score alone cannot change Pareto selection.
-- [ ] Test classic seeded behavior after any hook extraction.
+- [ ] Test classic seeded behavior and the frozen `algorithm.py` hash.
 - [ ] Test backend/CLI dispatch and reject incompatible QD state.
 - [ ] Test post-hoc front reproduction from full generation logs.
 - [ ] Test valid-PPA, functional-any-pass, and reference-beating coverage as
       separate metrics; same input roots must reproduce identically.
 - [ ] Test the operator contract: no single-thought, `M-T`, or `C-D` path.
 - [ ] Run focused pytest, ruff, pyright, and ty checks.
-- [ ] Run a seed-42 two-problem bounded vLLM smoke after a 128k preflight.
+- [ ] Run a seed-42 three-problem bounded vLLM smoke after a 128k preflight.
 - [ ] Package the smoke as technical evidence only.
 - [ ] Run the pre-seed-1001 read-only code and direction audit.
 
@@ -78,25 +78,15 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
       per-problem maps, budgets, yields, and delivered fronts.
 - [ ] Apply the five-seed full-RTLLM promotion gate without HV-AUC rescue.
 
-## Stage 4: Held-Out Evidence
+## Stage 4: Closure
 
-- [ ] Confirm the fresh 20-task holdout is absent from every prior run and
-      method-development surface.
-- [ ] Run fresh matched classic and Pareto seeds 1001-1005 only after promotion.
-- [ ] Validate every run and resolve infrastructure failures without changing
-      the method.
-- [ ] Run canonical `reference_ppa` statistics and revision-3 robustness tables.
-- [ ] Apply `REF_WIN`/`REF_PARITY`, valid-PPA, and functional-any-pass rules
-      mechanically.
-- [ ] Run equivalence and synthesis-determinism checks for showcased candidates.
-
-## Stage 5: Closure
-
-- [ ] Record one final class: primary positive, supporting result, or negative.
+- [ ] Record one final class: positive development evidence, supporting result,
+      or negative closure.
 - [ ] State claim limits, scalar-score residual use, and synthesis-proxy limits.
 - [ ] Update goal README/history, root README, findings dashboard, and nearest
       journal navigation/history docs.
 - [ ] Preserve configs, hashes, commands, reports, raw-root map, and handoff.
+- [ ] Run equivalence and synthesis-determinism checks for showcased candidates.
 - [ ] Run full pytest and final ruff, pyright, ty, and `git diff --check`.
 - [ ] Inspect every goal commit for atomicity, message format, and one sign-off.
 - [ ] Run the final adversarial prompt and resolve every FAIL finding.
@@ -115,3 +105,5 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 
 - [ ] After this candidate closes, decide whether to scaffold reference-seeded
       Pareto optimization. Do not begin it inside this goal.
+- [ ] Freeze a genuinely fresh benchmark before any paper-facing primary claim;
+      all 156 current VerilogEval tasks have prior evaluated outcomes.

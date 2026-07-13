@@ -1,13 +1,13 @@
 # Pareto REvolution TCAD Validation Plan
 
-Status: execution approved by the user on 2026-07-13. Claude's scaffold audit
-passed. Claims addendum V1 narrows the live campaign to RTLLM development
-evidence because the proposed fresh VerilogEval holdout is infeasible.
+Status: execution approved by the user on 2026-07-13. Claims addendum V2 is the
+candidate execution contract and awaits independent prelaunch re-review.
 
 Execution note: all 156 VerilogEval-Spec-to-RTL tasks have prior evaluated
 outcomes in an archived conference run. The reviewed disjoint-holdout rule is
-not weakened. Stage 4 and paper-facing primary-win language remain unavailable
-for this campaign; see `pareto_revolution_claims_addendum_v1.md` and
+not weakened. Plan-table Stage 6 is unavailable, so this campaign cannot
+produce a paper-facing primary win; see
+`pareto_revolution_claims_addendum_v2.md` and
 `prelaunch_audits.md`.
 
 Feature slug: `pareto_revolution_validation`
@@ -22,11 +22,11 @@ Decisively test one evidence-derived journal candidate:
 
 The goal finishes with exactly one of these evidence packages:
 
-1. **Primary positive**: the frozen method passes full-RTLLM promotion and the
-   accepted held-out reference-PPA gates against matched classic REvolution.
+1. **Positive development evidence**: the frozen method passes the five-seed
+   full-RTLLM gates against fresh matched classic REvolution.
 2. **Supporting result**: the method improves a secondary surface or reaches
-   parity but does not pass the held-out primary gate; claims are downgraded.
-3. **Negative closure**: a preregistered stop or final gate fails; the method is
+   parity but does not pass every full-RTLLM gate.
+3. **Negative closure**: a preregistered stop or promotion gate fails; the method is
    closed without metric substitution or a follow-up knob scan.
 
 Completing this goal resolves this candidate. It does not by itself mean that
@@ -94,8 +94,9 @@ canonical reanalysis reproduces the definitions below.
 The revision-3 `data/configs/holdout_reference_subset.yaml` is also no longer
 untouched for this candidate. Nine of its RTLLM tasks are in the 46-task full
 RTLLM surface and have been used repeatedly in the natural-QD campaign. Keep it
-as a legacy validation manifest only. Before implementation, freeze a new
-20-task, prior-run-disjoint VerilogEval reference set for the paper-facing gate.
+as a legacy validation manifest only. The complete VerilogEval inventory audit
+found prior evaluated outcomes for all 156 tasks, so no replacement holdout is
+frozen and paper-facing primary-win language is unavailable.
 
 ## Frozen Method Contract
 
@@ -129,7 +130,8 @@ For every problem:
    successful parents by standard binary tournament over Pareto rank ascending
    and crowding distance descending. For each tournament, sample two distinct
    contestants without replacement; a singleton pool wins directly. Break
-   exact ties by stable insertion order and candidate id. For `C-F`, run a
+   exact ties by the unique insertion index in the ranked list. Candidate UUID
+   is audit metadata and never decides selection. For `C-F`, run a
    second tournament after excluding the first winner. Disable `C-F` when fewer
    than two Success candidates exist, matching classic.
 4. Select successful survivors by standard NSGA-II environmental selection:
@@ -139,10 +141,11 @@ For every problem:
    successful candidates exist than the population cap, fill remaining slots
    from unsuccessful new offspring by the existing seeded-shuffle then
    score-descending order. Previous Fail candidates are not retained, matching
-   classic. This intentionally gives every valid success priority over a
-   failure, unlike classic's mixed score sort; disclose that consequence.
-   The step-3 insertion-order and candidate-id tie rule also orders equal
-   crowding distances when truncating the boundary front.
+   classic. Both classic and Pareto place valid successes before failures
+   because failed scalar scores are `-inf`. The changed mechanisms are scalar
+   ordering and the explicit champion lane among successes. The step-3 unique
+   insertion index also orders equal crowding distances at boundary-front
+   truncation.
 5. Build the delivered global Pareto front post hoc from the full evaluated
    successful-candidate history. It is reporting-only and never becomes a
    parent source or survivor store.
@@ -153,13 +156,19 @@ metric. A violation is an invalid run, not another selectable state or a
 fallback to scalar selection. Functional-only benchmark modes are unsupported
 by `revolution_pareto` in this goal.
 
+The only RTLLM `ProblemSpec` entries with `circuit_type == "unknown"` are
+`Prob006_adder_pipe_64bit`, `Prob013_multi_booth_8bit`,
+`Prob018_float_multi`, and `Prob040_synchronizer`. Resolve exactly this frozen
+set as sequential because each reference RTL contains clocked state. Reject
+every other unknown type. Never inherit a synthetic-reference fallback.
+
 Distinct candidate ids remain separate during search even when objective
 vectors tie. Delivered-front reports deduplicate identical objective vectors
 and report both objective-vector and normalized-code duplicate counts.
 
 The weighted scalar score may remain in unchanged feedback text and UCB reward
 accounting for this one-factor experiment. It must not affect successful-parent
-or successful-survivor selection. The paper-facing claim is therefore
+or successful-survivor selection. The method claim is therefore
 "Pareto-aware population selection," not "weighted scalar fitness is absent
 from every control path."
 
@@ -180,9 +189,9 @@ Expected code shape:
 - Put Pareto-specific code under `src/revolution/pareto_revolution/`.
 - Reuse `active_ppa_objectives`, `compute_ppa_gains`, `ranked_front`, and the
   current evaluated-history reporting surfaces.
-- Keep `src/revolution/algorithm.py` behavior unchanged for classic mode. If a
-  subclass needs an extension point, extract only the smallest parent and
-  survivor hooks and prove classic seeded behavior is unchanged.
+- Keep `src/revolution/algorithm.py` byte-for-byte unchanged. Isolate the
+  experimental generation engine under `src/revolution/pareto_revolution/`
+  and prove classic dispatch and seeded behavior remain unchanged.
 - Add one thin backend/CLI dispatch value. Do not expose method-internal knobs.
 - Add focused tests under `tests/revolution/` and, only if report behavior
   changes, `tests/scripts/`.
@@ -212,14 +221,15 @@ version bump and recorded rationale, not an in-place update.
 | Legacy `data/configs/holdout_reference_subset.yaml` | `4c3cab68f5cb58a7e85c0c17204cb57a72f462138dbb3e4f271fe97620f69812` |
 | `docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_reference_complete_manifest.yaml` | `92d6ad2981b04a8aed531ca04ca1ac085bb9fb6fee866ada2a4bf397ee52497b` |
 
-Expected reusable comparator families, subject to the compatibility audit:
+Historical descriptive families (not gate comparators):
 
 - Classic: `exp/useful_bd_push/pcn_v3_experiments_20260701/live/rtllm_full_5seed/classic_revolution_8x5/seed_<seed>`
 - V2: `exp/natural_qd_push/p3_v2_full_rtllm_20260703_101258_UTC/live/smooth_qd_v2_8x5/seed_<seed>`
 
 ## Comparator Contract
 
-- Matched classic REvolution is the only promotion and final-gate comparator.
+- Fresh matched classic REvolution is the only promotion and final-gate
+  comparator.
 - Existing Smooth-QD V2 is a descriptive full-RTLLM mechanism comparator. It
   cannot substitute for classic or relax a gate.
 - Classic plus a post-hoc Pareto report is not a new arm. The same classic run
@@ -227,9 +237,8 @@ Expected reusable comparator families, subject to the compatibility audit:
 - Existing classic-without-C-F evidence may be canonically reanalyzed as
   supporting context, but this goal does not launch a fresh no-C-F arm or
   change the Pareto arm's classic operator set.
-- Held-out evidence runs fresh matched classic and Pareto arms. A held-out V2
-  or operator ablation requires a separate preregistered supporting decision;
-  it is not part of this goal's primary gate.
+- Historical classic and V2 roots are descriptive checks only. Their vLLM
+  server revision cannot be proven identical, so they cannot satisfy a gate.
 - The overlapping revision-3 holdout is legacy descriptive evidence only. It
   cannot promote the method or satisfy the paper-facing gate.
 
@@ -246,37 +255,12 @@ No LLM-backed evidence run may start until all items below are recorded:
 4. A canonical report recomputes S07 and S32's shared classic seed-1001 root and
    resolves the `33/46` versus `24/46` coverage discrepancy. The same input root
    must produce the same coverage under every future package.
-5. Freeze `data/configs/pareto_revolution_holdout_v1.yaml` before implementing
-   the search mode. Build the inventory from every
-   VerilogEval-Spec-to-RTL reference design that yields complete active PPA
-   under one archived, hashed reference-synthesis sweep with the frozen
-   toolchain; take circuit-type labels from that sweep. Apply no functionality
-   filter. Immediately before the manifest commit, exclude every task found in
-   a prior run root, hard/fast/debug manifest, or method-development surface.
-   Record the repository HEAD and hash the complete run-root/development input
-   inventory used by this freeze audit.
-
-   The exclusion audit enumerates evaluated problem records under `exp/`,
-   locked development/debug manifests under `data/configs/`, prior experiment
-   manifests and ledgers under `docs/journal_features/revamp_history/`, and
-   baseline CSV rows that contain evaluated outcomes. Source inventories that
-   contain no evaluated outcome do not exclude a task.
-
-   Select 20 tasks by the revision-3 proportional rule. Sort eligible problem
-   ids lexicographically within each circuit-type bucket. Allocate quotas in
-   proportion to eligible bucket sizes by largest-remainder rounding; break an
-   equal remainder by lexical circuit-type name. Shuffle each sorted bucket
-   with
-   `random.Random(f"20260711:VerilogEval-Spec-to-RTL:{circuit_type}")`, then
-   take its quota in shuffled order. Archive the sweep, eligible inventory,
-   exclusions, quota table, command, output manifest, and SHA-256 hashes.
-   If fewer than 20 eligible tasks remain, stop with a blocked freeze; do not
-   lower the count or relax exclusions.
-   Re-run the audit before committing if repository or run-root state changes.
-   After the manifest commit, any selected task used before Stage 6 invalidates
-   the paper-facing gate; do not replace it post hoc.
+5. Record the completed VerilogEval inventory audit proving that every one of
+   the 156 source tasks has a prior evaluated outcome. Do not relax the
+   disjointness rule, substitute tasks, or retain a pending holdout gate.
 6. The 50-task RTLLM run surface, 46-task reference-complete headline manifest,
-   fresh 20-task candidate holdout, seeds, baseline roots, and hashes are frozen.
+   four-task circuit-type mapping, seeds, comparator policy, and hashes are
+   frozen in the V2 config.
 7. Comparator compatibility is proven for model, prompt/operator set, budget,
    toolchain, measurement semantics, and code revision. Rerun a comparator if
    compatibility cannot be established.
@@ -299,11 +283,11 @@ transfer. Small runs are for technical validation only.
 | --- | --- | --- |
 | 0 | Zero compute | Freeze claims, code, configs, manifests, baselines, and hashes. |
 | 1 | Unit and deterministic integration tests | Prove Pareto semantics and unchanged classic behavior. |
-| 2 | Seed 42, `Prob003_adder_32bit` and `Prob024_fsm`, bounded budget | Exercise combinational and sequential paths; no performance inference. |
+| 2 | Seed 42, `Prob003_adder_32bit`, `Prob025_sequence_detector`, and `Prob006_adder_pipe_64bit`, bounded budget | Exercise normalized 2-axis, normalized 3-axis, and raw 3-axis paths; no performance inference. |
 | 3 | Full 50-task RTLLM, seed 1001, 8x5 | Gate on the locked 46 reference-complete tasks. |
 | 4 | Full RTLLM, seed 1002 | Run only if seed 1001 passes its stop rule. |
 | 5 | Full RTLLM, seeds 1003-1005 | Run only if the registered two-seed promotion gate passes. |
-| 6 | Fresh 20-problem VerilogEval reference set, matched classic and Pareto, seeds 1001-1005 | Run only if five-seed full RTLLM passes promotion. This is the paper-facing gate. |
+| 6 | Prior-run-disjoint held-out evidence | Unavailable: all 156 VerilogEval tasks have prior evaluated outcomes. |
 
 Infrastructure failures may be corrected and rerun with the same frozen
 method. Method failures stand. Screens, partial task subsets, or favorable
@@ -336,12 +320,13 @@ versioned pre-launch addendum blocks the run.
 
 - Changing scalar `score` while objectives stay fixed must not change Pareto
   parent or survivor decisions.
-- Active objective axes must match the accepted sequential/combinational rule;
-  unknown circuit types fail explicitly.
+- Active objective axes must match the accepted sequential/combinational rule.
+  Resolve only the four frozen RTLLM unknowns as sequential; every other
+  unknown circuit type fails explicitly.
 - Population size, parent arity, uniqueness, and full evaluated-candidate
   logging must be exact.
 - Classic mode must pass existing tests plus a seeded selection-regression
-  test after any hook extraction.
+  test, and the frozen classic engine hash must remain unchanged.
 - Pareto evidence logs must contain zero `single_thought_operator`, `M-T`, and
   `C-D` candidates and only the frozen EoH operator set.
 - The post-hoc Pareto archive must be reproducible from generation logs and
@@ -381,25 +366,12 @@ also reported on the 46-task subset.
 
 HV-AUC is secondary and can never rescue a failed final-HV gate.
 
-### Held-Out Gate
+### Paper-Facing Gate
 
-Apply the accepted `reference_ppa` thresholds and statistics unchanged to the
-fresh 20-problem candidate holdout. This is a versioned addendum set, not the
-overlapping revision-3 manifest:
-
-- penalized cluster-bootstrap statistics over problem-seed units;
-- final-HV log-ratio threshold and CI from revision 3;
-- best-quality, average-PPA, win-rate, and valid-PPA-count conditions from
-  `REF_WIN`;
-- absolute PPA, zero-HV counts, epsilon sensitivity, per-seed results, and
-  leave-one-seed-out tables.
-- manifest disjointness against all prior run roots and development manifests.
-
-A primary positive requires `REF_WIN` with no valid-PPA or functional-any-pass
-coverage decline. A `REF_PARITY` or secondary-only improvement is a supporting
-result, not a headline performance win. This goal does not claim the full
-multi-suite Branch A without the separate `NEW_OK` evidence required by
-revision 3.
+No paper-facing held-out gate is available in this campaign. Passing the
+five-seed full-RTLLM gate yields positive development evidence, not `REF_WIN`
+or a headline journal claim. A later goal requires a genuinely fresh benchmark
+and the separate `NEW_OK` evidence required by revision 3.
 
 ## Required Evidence Package
 
@@ -463,8 +435,8 @@ metric.
 After three concrete attempts fail for the same external blocker, stop and
 record every command, artifact, error, and partial result. State the exact
 resource or decision needed to continue. Valid blockers include an unavailable
-128k vLLM endpoint, irrecoverable comparator artifacts, a contaminated held-out
-manifest, or unavailable verification infrastructure.
+128k vLLM endpoint, irrecoverable fresh comparator artifacts, or unavailable
+verification infrastructure.
 
 A method missing a performance gate is not blocked. It is a completed negative
 or supporting result and must be closed as such.

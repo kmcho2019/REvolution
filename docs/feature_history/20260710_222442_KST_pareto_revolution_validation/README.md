@@ -1,8 +1,8 @@
 # Pareto REvolution TCAD Validation
 
-Status: execution approved on 2026-07-13. The final Claude scaffold audit
-returned PASS. Claims addendum V1 is awaiting its independent prelaunch review;
-no benchmark has launched.
+Status: execution approved on 2026-07-13. Claims addendum V2 resolves the first
+prelaunch review's blockers and awaits independent re-review. No benchmark has
+launched.
 
 ## Purpose
 
@@ -11,13 +11,14 @@ global Pareto parent and survivor selection on the classic REvolution
 substrate, without descriptors or per-cell QD retention.
 
 It is deliberately not a general search for another QD variant. The goal ends
-with a primary positive, a supporting result, or a reproducible negative
-closure under frozen gates.
+with positive RTLLM development evidence, a supporting result, or a
+reproducible negative closure under frozen gates. A paper-facing primary claim
+is unavailable because no prior-run-disjoint VerilogEval task remains.
 
 ## Reading Order
 
 1. `pareto_revolution_validation_plan.md`
-2. `pareto_revolution_claims_addendum_v1.md`
+2. `pareto_revolution_claims_addendum_v2.md`
 3. `prelaunch_audits.md`
 4. `pareto_revolution_validation_implementation_todo.md`
 5. `restart_handoff.md`
@@ -26,9 +27,10 @@ closure under frozen gates.
 8. `pareto_revolution_validation_implementation_history.md`
 9. `pareto_revolution_validation_subagent_validation_report.md`
 
-Independent draft reviews live under `reviews/`. Two 2026-07-11 Claude reviews
-returned FAIL and drove contract fixes. The final activation audit returned
-PASS with no blocking findings.
+Independent reviews live under `reviews/`. The 2026-07-11 scaffold trail was
+`FAIL -> FAIL -> PASS`. The 2026-07-13 V1 prelaunch review returned FAIL and
+drove the V2 execution contract. V1 remains historical and cannot govern a
+run.
 
 ## Upstream Decision
 
