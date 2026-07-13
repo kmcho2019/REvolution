@@ -13,7 +13,8 @@ artifacts, hashes, and commits in the implementation history beside it.
 
 Outcome: produce exactly one reproducible conclusion. Positive development
 evidence must pass the frozen full-RTLLM promotion rules against fresh matched
-classic REvolution. A parity or secondary result must be labeled supporting. A
+classic REvolution, with strictly greater five-seed final mean HV and coverage
+at least classic. Exact final-HV parity or a secondary result must be labeled supporting. A
 failed stop or promotion gate must produce a negative closure. A paper-facing
 primary result is unavailable because every current VerilogEval task has a
 prior evaluated outcome. Performance failure is a valid completed result; do
@@ -50,7 +51,8 @@ VerilogEval holdout exists; do not weaken that rule or retain a pending holdout
 gate. Record a 128k vLLM preflight. Use the full 50-task RTLLM run with the
 locked 46-task PPA denominator; screens are technical only. Run fresh matched
 classic and Pareto at seed 1001, then 1002, then 1003-1005 only through the
-registered gates. HV-AUC is secondary and cannot rescue final HV.
+registered gates. The seed-42 check is fixed at `8 x 5` and is technical only.
+HV-AUC is secondary and cannot rescue final HV.
 
 Keep code skimmable and state narrow. Reuse existing ranking, reporting,
 validation, and ledger surfaces. Run focused checks as code changes, the full

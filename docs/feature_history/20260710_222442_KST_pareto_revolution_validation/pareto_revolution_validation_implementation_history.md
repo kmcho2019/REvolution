@@ -206,3 +206,18 @@ the claims addendum before activation, not after seeing live results.
 - Drafted claims addendum V2 and
   `data/configs/pareto_revolution_rtllm_ablation_v2.yaml`. No implementation or
   benchmark launched before independent V2 re-review.
+
+## 2026-07-13 - V2 Prelaunch PASS
+
+- Ran the independent V2 re-review with a 900-second bound. It completed after
+  approximately twelve minutes and returned `PASS` with no blockers. Preserved
+  the full output at `reviews/20260713_claude_v2_rereview.md`.
+- The reviewer independently reproduced the four missing-reference tasks and
+  their clocked RTL, all three smoke objective paths, the 156/156 holdout
+  infeasibility, tie semantics, classic mechanism disclosure, fresh-comparator
+  requirement, and frozen classic engine hash.
+- Accepted all six optional precision findings. Addendum V3 freezes technical-
+  only `8 x 5` smoke semantics, uniform run-seeded tournament draws, strict
+  five-seed HV improvement for a positive label, and copied-loop provenance.
+  It also refreshes the handoff. No treatment or gate-bearing metric changed
+  after evidence because no implementation or benchmark exists yet.

@@ -48,6 +48,8 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
       behavior unchanged.
 - [ ] Build the delivered global front post hoc; prove it is reporting-only.
 - [ ] Add only thin backend/CLI wiring; keep `algorithm.py` byte-identical.
+- [ ] Record copied-loop source ranges and prove only the two selection blocks
+      differ before seed 1001.
 
 ## Stage 2: Tests And Technical Smoke
 
@@ -63,7 +65,7 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
       separate metrics; same input roots must reproduce identically.
 - [ ] Test the operator contract: no single-thought, `M-T`, or `C-D` path.
 - [ ] Run focused pytest, ruff, pyright, and ty checks.
-- [ ] Run a seed-42 three-problem bounded vLLM smoke after a 128k preflight.
+- [ ] Run a seed-42 three-problem `8 x 5` vLLM smoke after a 128k preflight.
 - [ ] Package the smoke as technical evidence only.
 - [ ] Run the pre-seed-1001 read-only code and direction audit.
 

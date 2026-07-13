@@ -1,14 +1,14 @@
 # Pareto REvolution TCAD Validation Plan
 
-Status: execution approved by the user on 2026-07-13. Claims addendum V2 is the
-candidate execution contract and awaits independent prelaunch re-review.
+Status: execution approved by the user on 2026-07-13. Claims addendum V2 passed
+independent prelaunch re-review; V3 records its optional precision fixes.
 
 Execution note: all 156 VerilogEval-Spec-to-RTL tasks have prior evaluated
 outcomes in an archived conference run. The reviewed disjoint-holdout rule is
 not weakened. Plan-table Stage 6 is unavailable, so this campaign cannot
 produce a paper-facing primary win; see
 `pareto_revolution_claims_addendum_v2.md` and
-`prelaunch_audits.md`.
+`pareto_revolution_claims_addendum_v3.md` and `prelaunch_audits.md`.
 
 Feature slug: `pareto_revolution_validation`
 
@@ -129,7 +129,8 @@ For every problem:
 3. Rank the fixed current Success population once per generation. Select
    successful parents by standard binary tournament over Pareto rank ascending
    and crowding distance descending. For each tournament, sample two distinct
-   contestants without replacement; a singleton pool wins directly. Break
+   contestants uniformly with `random.sample` from the run-seeded Python RNG;
+   a singleton pool wins directly. Break
    exact ties by the unique insertion index in the ranked list. Candidate UUID
    is audit metadata and never decides selection. For `C-F`, run a
    second tournament after excluding the first winner. Disable `C-F` when fewer
@@ -283,7 +284,7 @@ transfer. Small runs are for technical validation only.
 | --- | --- | --- |
 | 0 | Zero compute | Freeze claims, code, configs, manifests, baselines, and hashes. |
 | 1 | Unit and deterministic integration tests | Prove Pareto semantics and unchanged classic behavior. |
-| 2 | Seed 42, `Prob003_adder_32bit`, `Prob025_sequence_detector`, and `Prob006_adder_pipe_64bit`, bounded budget | Exercise normalized 2-axis, normalized 3-axis, and raw 3-axis paths; no performance inference. |
+| 2 | Seed 42, `Prob003_adder_32bit`, `Prob025_sequence_detector`, and `Prob006_adder_pipe_64bit`, 8x5 | Exercise normalized 2-axis, normalized 3-axis, and raw 3-axis paths; technical evidence only, with no performance inference. |
 | 3 | Full 50-task RTLLM, seed 1001, 8x5 | Gate on the locked 46 reference-complete tasks. |
 | 4 | Full RTLLM, seed 1002 | Run only if seed 1001 passes its stop rule. |
 | 5 | Full RTLLM, seeds 1003-1005 | Run only if the registered two-seed promotion gate passes. |
@@ -359,8 +360,9 @@ also reported on the 46-task subset.
 - **Two-seed promotion**: mean final HV must be at least matched classic and
   aggregate valid-PPA coverage and functional any-pass must each be at least
   matched classic.
-- **Five-seed full-RTLLM promotion**: mean final HV and aggregate valid-PPA
-  coverage and functional any-pass must all remain at least matched classic.
+- **Five-seed full-RTLLM promotion**: mean final HV must be strictly greater
+  than matched classic; aggregate valid-PPA coverage and functional any-pass
+  must remain at least matched classic. Exact final-HV parity is supporting.
   Publish paired cluster statistics, per-seed deltas, leave-one-seed-out
   sensitivity, and per-problem maps before deciding.
 

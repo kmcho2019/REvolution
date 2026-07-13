@@ -85,6 +85,8 @@ discard audit. No quantitative discarded-survivor claim is made.
   `22ed6fcfeaa18b8f8db526a47a456b1830e58a6808e46c2d6e290da9cfd2aadb`.
 - Claims addendum V2 SHA-256:
   `cdf284610e5f9e0cdeca2b328ac9ca2a97439bf8d042ee5e11a887f641c2688e`.
+- Claims addendum V3 SHA-256:
+  `1468ec2ed5352ffc0730d422eb218bdcfd30afd8a54f51386767ace0e9ebb707`.
 - Python 3.11.15, Yosys 0.54+29, OpenROAD 2.0-22560, Icarus Verilog 12.0.
 - vLLM preflight passed at `20.0.0.103:8000`: model
   `openai/gpt-oss-120b`, maximum context 131072.

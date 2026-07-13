@@ -92,8 +92,9 @@ Recompute or spot-check, rather than copy prose:
 
 Confirm the final classification is exact:
 
-- positive development evidence only when five-seed full RTLLM final HV,
-  valid-PPA, and functional-any-pass all meet fresh matched classic;
+- positive development evidence only when five-seed full RTLLM final mean HV
+  strictly exceeds fresh matched classic and valid-PPA and functional-any-pass
+  both meet it;
 - supporting when parity or secondary evidence does not pass every gate;
 - negative when a registered stop or final gate fails.
 

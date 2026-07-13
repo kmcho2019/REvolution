@@ -1,8 +1,8 @@
 # Pareto REvolution TCAD Validation
 
-Status: execution approved on 2026-07-13. Claims addendum V2 resolves the first
-prelaunch review's blockers and awaits independent re-review. No benchmark has
-launched.
+Status: execution approved on 2026-07-13. The independent V2 prelaunch
+re-review returned PASS. Addendum V3 records its optional precision fixes
+before implementation. No benchmark has launched.
 
 ## Purpose
 
@@ -18,7 +18,7 @@ is unavailable because no prior-run-disjoint VerilogEval task remains.
 ## Reading Order
 
 1. `pareto_revolution_validation_plan.md`
-2. `pareto_revolution_claims_addendum_v2.md`
+2. `pareto_revolution_claims_addendum_v3.md`, then V2 for the full contract
 3. `prelaunch_audits.md`
 4. `pareto_revolution_validation_implementation_todo.md`
 5. `restart_handoff.md`
@@ -29,8 +29,8 @@ is unavailable because no prior-run-disjoint VerilogEval task remains.
 
 Independent reviews live under `reviews/`. The 2026-07-11 scaffold trail was
 `FAIL -> FAIL -> PASS`. The 2026-07-13 V1 prelaunch review returned FAIL and
-drove the V2 execution contract. V1 remains historical and cannot govern a
-run.
+drove V2; the V2 re-review returned PASS. V1 remains historical and cannot
+govern a run.
 
 ## Upstream Decision
 
