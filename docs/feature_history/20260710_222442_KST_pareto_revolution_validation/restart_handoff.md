@@ -34,19 +34,22 @@ Last updated: 2026-07-13 UTC.
   `reviews/20260713_claude_smoke_package_review.md`.
 - Fresh full-suite preflight passed for `openai/gpt-oss-120b` at context
   `131072`.
-- The classic full-RTLLM seed-1001 arm launched at
-  `2026-07-13T17:42:19Z` under parent process `1767464`.
-- Active root:
+- The classic full-RTLLM seed-1001 arm completed and validated: 50 summaries,
+  300 generation rows, 2,400 unique evaluated candidates, EoH-only, and
+  `4646.99s`.
+- Classic used 4,801 LLM calls and 14,870,892 tokens. One empty API response
+  on Prob024 generation 3 caused a successful retry without adding an
+  evaluated candidate.
+- Completed classic root:
   `exp/pareto_revolution_validation/full_rtllm/seed_1001/classic`.
-  Active log:
+  Classic log:
   `exp/pareto_revolution_validation/logs/full_rtllm_seed1001_classic.log`.
-- Do not launch Pareto until classic exits and validates as one complete
-  50-task attempt.
+- No benchmark process is running. The Pareto arm remains unlaunched.
 
 ## Next Actions
 
-1. Wait for the classic full-suite process and validate all 50 tasks.
-2. Record classic completion before launching the matched Pareto arm.
+1. Launch the matched Pareto full-RTLLM seed-1001 arm unchanged.
+2. Validate all 50 Pareto tasks and matched budget accounting.
 3. Package the completed pair and apply the locked seed-1001 stop rule.
 
 ## Live Resources
