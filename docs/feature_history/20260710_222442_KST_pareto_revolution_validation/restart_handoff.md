@@ -84,14 +84,19 @@ Last updated: 2026-07-13 UTC.
   `exp/pareto_revolution_validation/full_rtllm/seed_1002/pareto`.
   Pareto log:
   `exp/pareto_revolution_validation/logs/full_rtllm_seed1002_pareto.log`.
-- No benchmark process is running. Seeds 1003-1005 remain unauthorized until
-  the seed-1002 package and locked two-seed gate are complete.
+- The seed-1002 report package is complete and validated under
+  `exp/pareto_revolution_validation/packages/full_rtllm_seed_1002/`.
+- The frozen two-seed gate failed on final HV and functional coverage; only
+  valid-PPA coverage tied. Compact closure evidence is under
+  `full_rtllm_two_seed/`.
+- No benchmark process is running. Seeds 1003-1005 and treatment variants are
+  closed by the preregistered rule.
 
 ## Next Actions
 
-1. Generate and validate the frozen seed-1002 report package.
-2. Apply the locked two-seed gate mechanically.
-3. Launch nothing unless all three promotion conditions pass.
+1. Run final local tests and documentation/commit checks.
+2. Run the final read-only adversarial audit and resolve every FAIL.
+3. Launch no further benchmark inside this goal.
 
 ## Live Resources
 

@@ -28,8 +28,8 @@ The `docs/` directory contains deeper dives:
   CVDP/RealBench integration, QD performance repair, descriptor evidence,
   narrative signoff, statistical gates, and faster evaluation scheduling.
 - [Pareto REvolution validation ledger](docs/feature_history/20260710_222442_KST_pareto_revolution_validation/README.md)
-  is the active contract for the isolated descriptor-free Pareto candidate and
-  its gated RTLLM comparison against fresh classic REvolution.
+  preserves the completed descriptor-free Pareto ablation and its negative
+  two-seed RTLLM promotion-gate closure against fresh classic REvolution.
 - `docs/journal_features/resources/README.md` – manuscript submodule guide for
   the frozen ASP-DAC 2026 conference paper and the working TCAD journal draft.
 - `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
@@ -175,7 +175,9 @@ Current status on this feature branch:
   successful-parent tournaments and environmental survivor selection under
   `src/revolution/pareto_revolution/`. It requires dual pools, EoH operators,
   strict-ablation evaluation, and code individuals. Its validation contract is
-  the Pareto REvolution ledger linked above.
+  the Pareto REvolution ledger linked above. The frozen two-seed RTLLM result
+  did not pass final-HV or functionality promotion gates, so this mode remains
+  a reproducibility surface rather than the recommended journal method.
 
 - `grid` is the active first runtime path for QD search.
 - grid runtime `auto` phase selection now honors benchmark defaults from

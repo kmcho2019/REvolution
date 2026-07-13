@@ -17,6 +17,29 @@ cross-arm bundles + isolated-grade per-task tables), see
 `PRELIMINARY` one seed, replication pending ·
 `MECHANISM-VERIFIED` process confirmed live, outcome tracked separately.
 
+**MAJOR UPDATE 2026-07-13 - descriptor-free Pareto REvolution ablation
+(`docs/feature_history/20260710_222442_KST_pareto_revolution_validation/`):**
+- **F41 (MEASURED, frozen two-seed early stop): replacing classic successful-
+  parent and successful-survivor selection with global NSGA-II rank/crowding
+  does not pass the journal-candidate gate.** Fresh matched classic versus
+  Pareto final HV46 is `0.104745` versus `0.103991`; valid-PPA coverage ties
+  `65/92`; functional any-pass is `75/92` versus `74/92`.
+- Pareto improves secondary diversity surfaces: reference-beating units
+  `51 -> 53`, positive-HV units `42 -> 44`, and mean Pareto points
+  `1.489 -> 1.587`. It loses HV-AUC46 `0.090500 -> 0.083317`, valid-PPA
+  sample yield `2017 -> 1978`, and mean score improvement
+  `27.770% -> 24.881%`.
+- The final-HV direction flips by seed (`-0.002154`, then `+0.000645`) and
+  per-problem deltas do not correlate across seeds (Spearman `rho=-0.130`).
+  The problem-cluster 95% interval `[-0.009652, +0.009801]` spans zero.
+- The ablation is mechanism-clean: classic code stayed byte-identical, both
+  arms used EoH operators and equal candidate budgets, and no descriptor,
+  QD cell, or archive state entered the treatment. The failed frozen gate
+  closes seeds 1003-1005 and all same-goal tuning.
+- Interpretation: weighted-sum successful-population selection is not the sole
+  blocker. Global Pareto selection broadens front material but is not a
+  sufficient natural TCAD extension under the fixed `8 x 5` RTLLM budget.
+
 **MAJOR UPDATE 2026-07-08 — suite-first natural_qd_push continuation
 (`revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/`):**
 - Small-screen transfer is now treated as weak. The new campaign uses
@@ -147,10 +170,11 @@ below on operator-fair evidence:**
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-10 (suite-first natural_qd_push full-RTLLM
-continuation through S07 closure, S23 negative descriptor-reduction
-control, S11 negative warmup12 closure, and S32 negative capacity4
-closure);
+**Last refreshed:** 2026-07-13 (F41 descriptor-free Pareto REvolution
+two-seed negative closure);
+previously 2026-07-10 (suite-first natural_qd_push full-RTLLM continuation
+through S07 closure, S23 negative descriptor-reduction control, S11 negative
+warmup12 closure, and S32 negative capacity4 closure);
 previously 2026-07-07 (natural_qd_push F36-F40 follow-ups, post-N10 negative-map PASS);
 previously 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
@@ -184,6 +208,12 @@ every answer to the five conference criticisms is evidence-backed:
   +0.032]). The positive contribution answering #1 (no scalar weight) + #5
   (diversity). Source: `exp/fast_iter/smooth_qd_nsga2/stats_5seed_vs_classic/`
   and `exp/fast_iter/smooth_qd_code_individual/stats_5seed_vs_classic/`.
+- **F41 — descriptor-free global NSGA-II selection is not the missing win
+  lever.** It retains `99.280%` of fresh classic final HV over two seeds but
+  loses final HV, functionality, HV-AUC, and score improvement under the
+  frozen gate. Its small diversity gains are secondary characterization, not
+  a primary TCAD contribution. Source:
+  `docs/feature_history/20260710_222442_KST_pareto_revolution_validation/full_rtllm_two_seed/`.
 - **F18–F21, F28, F30–F31 — on harder/newer benchmarks QD never beats
   classic; the limit is LLM capability, not search.** Two benchmarks:
   **RealBench e203** — a genuine capability ceiling: 0 valid on the 5 larger

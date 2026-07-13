@@ -81,6 +81,17 @@ This closure does not show that all Pareto reporting or QD concepts are
 useless. It shows that this exact descriptor-free selection replacement is not
 a sufficient holistic improvement under the fixed `8 x 5` RTLLM budget.
 
+## Claim Limits
+
+- Scalar score remains in unchanged feedback text and UCB reward accounting.
+  This is Pareto-aware successful-population selection, not a scalar-free loop.
+- All current VerilogEval tasks have prior evaluated outcomes. RTLLM results
+  here are development evidence, not a fresh paper-facing primary test.
+- PPA is the fixed Yosys/OpenROAD synthesis-flow proxy used by both arms; it is
+  not post-layout silicon signoff.
+- The three-problem seed-42 smoke established runtime correctness only. It was
+  never a performance gate or a source of treatment tuning.
+
 ## Artifacts
 
 - Seed 1001 compact package: `../full_rtllm_seed1001/`

@@ -1,7 +1,8 @@
 # Pareto REvolution TCAD Validation Plan
 
-Status: execution approved by the user on 2026-07-13. Claims addendum V2 passed
-independent prelaunch re-review; V3 records its optional precision fixes.
+Status: execution closed negative on 2026-07-13. Claims addendum V2 passed
+independent prelaunch re-review; V3 records its optional precision fixes. The
+frozen two-seed promotion gate failed, so seeds 1003-1005 are closed.
 
 Execution note: all 156 VerilogEval-Spec-to-RTL tasks have prior evaluated
 outcomes in an archived conference run. The reviewed disjoint-holdout rule is

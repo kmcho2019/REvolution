@@ -1,8 +1,8 @@
 # Pareto REvolution TCAD Validation
 
-Status: seed-42 technical smoke and full-RTLLM seed 1001 are complete. Seed
-1001 passes the continuation gate without establishing a performance win;
-only matched seed 1002 is authorized.
+Status: negative closure. The frozen two-seed full-RTLLM promotion gate failed
+on final HV and functionality coverage. Seeds 1003-1005 and treatment variants
+are not authorized.
 
 ## Purpose
 
@@ -23,12 +23,14 @@ is unavailable because no prior-run-disjoint VerilogEval task remains.
 4. `execution_commands.md`
 5. `smoke_seed42/README.md`
 6. `full_rtllm_seed1001/README.md`
-7. `pareto_revolution_validation_implementation_todo.md`
-8. `restart_handoff.md`
-9. `goal_template.md`
-10. `pareto_revolution_validation_adversarial_prompt.md`
-11. `pareto_revolution_validation_implementation_history.md`
-12. `pareto_revolution_validation_subagent_validation_report.md`
+7. `full_rtllm_seed1002/README.md`
+8. `full_rtllm_two_seed/README.md`
+9. `pareto_revolution_validation_implementation_todo.md`
+10. `restart_handoff.md`
+11. `goal_template.md`
+12. `pareto_revolution_validation_adversarial_prompt.md`
+13. `pareto_revolution_validation_implementation_history.md`
+14. `pareto_revolution_validation_subagent_validation_report.md`
 
 Independent reviews live under `reviews/`. The 2026-07-11 scaffold trail was
 `FAIL -> FAIL -> PASS`. The 2026-07-13 V1 prelaunch review returned FAIL and

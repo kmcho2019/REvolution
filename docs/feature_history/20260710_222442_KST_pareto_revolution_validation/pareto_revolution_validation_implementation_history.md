@@ -423,3 +423,27 @@ would add churn.
   process is running.
 - Raw completion authorizes only the frozen report chain and mechanical
   two-seed gate. It does not authorize seeds 1003-1005, tuning, or a variant.
+
+## 2026-07-13 - Seed 1002 Package And Two-Seed Gate
+
+- Ran the frozen report chain under
+  `exp/pareto_revolution_validation/packages/full_rtllm_seed_1002/`.
+- Package assertions pass: 92 locked-subset problem rows, 1,986 valid-PPA
+  candidates, 65 HV-AUC rows, two passing operator rows, and 27 no-PPA
+  warnings exactly matching zero-candidate backend/problem units.
+- Seed 1002 is mixed: Pareto final HV46 is `0.109122` versus classic
+  `0.108477`, but HV-AUC46 is `0.084713` versus `0.095615`. Valid-PPA
+  coverage is `33/46` versus `32/46`; functionality is tied `37/46`.
+- Across seeds 1001-1002, Pareto final HV46 is `0.103991` versus classic
+  `0.104745`, valid-PPA coverage ties `65/92`, and functional any-pass is
+  `74/92` versus `75/92`.
+- Applied the frozen promotion gate mechanically: final HV FAIL, valid-PPA
+  PASS, functionality FAIL. Seeds 1003-1005 are closed; HV-AUC cannot rescue
+  final HV and also trails `0.083317` versus `0.090500`.
+- Exact task evidence gives 16 Pareto wins, 19 classic wins, and 57 ties over
+  92 design-seed units. The problem-cluster bootstrap interval is
+  `[-0.009652, +0.009801]`; Wilcoxon `p=0.526`, paired t-test `p=0.882`, and
+  sign-test `p=0.664` do not support improvement.
+- Compact evidence is preserved under `full_rtllm_seed1002/` and
+  `full_rtllm_two_seed/`. This method closes as a negative primary candidate,
+  with secondary front-diversity observations only.

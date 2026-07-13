@@ -12,7 +12,7 @@ assessment, not a claims change.
 
 | # | Conference criticism | Journal answer | Status (evidence) |
 | --- | --- | --- | --- |
-| 1 | Weighted-sum PPA biases search | Pareto-front cells (no scalar weight) | Implemented; performance value is seed-noise (F5). Defensible as *principled removal of a biasing knob*, not a measured win. |
+| 1 | Weighted-sum PPA biases search | Pareto-front cells (no scalar weight) | Isolated globally in F41: clean and principled, but no reliable PPA/functionality win. Keep as characterization, not a headline. |
 | 2 | EoH operators arbitrary | One unified thought-operator | **Parity within QD (F2): one operator = six, no cost** — answers the criticism, but only within QD (F9). |
 | 3 | Bandit/UCB claimed, never ablated | Bandit removed; operator ablated | **Ablated (F2, 3-seed): the missing ablation now exists** — verdict is parity, QD-entangled. |
 | 4 | Benchmarks too small | CVDP + RealBench integrated | Integrated, **not yet demonstrated** as meaningful PPA wins. |
@@ -73,6 +73,18 @@ not the triumphant Branch A.**
 > coverage reserves. This does not change the frozen claims contract: the
 > +5% HV gate still fails. It makes the honest story stronger because the
 > negative map is now suite-first and operator-fair, not only screen-gated.
+
+> **UPDATE 2026-07-13 - global Pareto selection was isolated and did not
+> recover the win (F41).** A fresh matched ablation kept classic REvolution's
+> EoH operators, UCB, prompts, evaluator, and `8 x 5` budget, changing only
+> successful-parent and successful-survivor selection to descriptor-free
+> NSGA-II rank/crowding. The frozen two-seed gate closed at Pareto `0.103991`
+> versus classic `0.104745` final HV46, tied `65/92` valid-PPA coverage, and
+> `74/92` versus `75/92` functionality. Secondary front material improves,
+> but HV-AUC and mean score improvement decline. This rules out the cleanest
+> "weighted-sum removal alone" headline and shows that archive descriptors are
+> not the only tax. The result strengthens the characterization narrative; it
+> does not supply a new primary TCAD contribution.
 
 ## The stronger storyline the work actually produced
 

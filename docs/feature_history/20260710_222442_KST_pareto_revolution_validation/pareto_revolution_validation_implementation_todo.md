@@ -73,22 +73,22 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 
 - [x] Run, validate, package, and hand off seed 1001 over all 50 RTLLM tasks.
 - [x] Apply the locked 46-task seed-1001 stop rule mechanically.
-- [ ] Run seed 1002 only if seed 1001 passes.
-- [ ] Package two-seed statistics and apply the promotion gate mechanically.
-- [ ] Run seeds 1003-1005 only if the two-seed gate passes.
-- [ ] Package five-seed paired cluster statistics, per-seed/LOSO sensitivity,
-      per-problem maps, budgets, yields, and delivered fronts.
-- [ ] Apply the five-seed full-RTLLM promotion gate without HV-AUC rescue.
+- [x] Run seed 1002 only if seed 1001 passes.
+- [x] Package two-seed statistics and apply the promotion gate mechanically.
+- [x] Do not run seeds 1003-1005 because the two-seed gate failed.
+- [x] Close five-seed statistics as not applicable after the frozen early stop;
+      preserve the two-seed per-seed and per-problem maps instead.
+- [x] Close the five-seed gate as not reached; HV-AUC did not rescue final HV.
 
 ## Stage 4: Closure
 
-- [ ] Record one final class: positive development evidence, supporting result,
+- [x] Record one final class: positive development evidence, supporting result,
       or negative closure.
-- [ ] State claim limits, scalar-score residual use, and synthesis-proxy limits.
-- [ ] Update goal README/history, root README, findings dashboard, and nearest
+- [x] State claim limits, scalar-score residual use, and synthesis-proxy limits.
+- [x] Update goal README/history, root README, findings dashboard, and nearest
       journal navigation/history docs.
-- [ ] Preserve configs, hashes, commands, reports, raw-root map, and handoff.
-- [ ] Run equivalence and synthesis-determinism checks for showcased candidates.
+- [x] Preserve configs, hashes, commands, reports, raw-root map, and handoff.
+- [x] Close showcased-candidate checks as not applicable to a negative result.
 - [ ] Run full pytest and final ruff, pyright, ty, and `git diff --check`.
 - [ ] Inspect every goal commit for atomicity, message format, and one sign-off.
 - [ ] Run the final adversarial prompt and resolve every FAIL finding.
