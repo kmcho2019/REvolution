@@ -44,13 +44,18 @@ Last updated: 2026-07-13 UTC.
   `exp/pareto_revolution_validation/full_rtllm/seed_1001/classic`.
   Classic log:
   `exp/pareto_revolution_validation/logs/full_rtllm_seed1001_classic.log`.
-- No benchmark process is running. The Pareto arm remains unlaunched.
+- The Pareto full-RTLLM seed-1001 arm launched at
+  `2026-07-13T19:04:03Z` under parent process `1824908`.
+- Active Pareto root:
+  `exp/pareto_revolution_validation/full_rtllm/seed_1001/pareto`.
+  Active log:
+  `exp/pareto_revolution_validation/logs/full_rtllm_seed1001_pareto.log`.
 
 ## Next Actions
 
-1. Launch the matched Pareto full-RTLLM seed-1001 arm unchanged.
-2. Validate all 50 Pareto tasks and matched budget accounting.
-3. Package the completed pair and apply the locked seed-1001 stop rule.
+1. Wait for the Pareto process and validate all 50 tasks.
+2. Package the completed pair and validate matched budget accounting.
+3. Apply the locked seed-1001 stop rule mechanically.
 
 ## Live Resources
 
