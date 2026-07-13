@@ -72,19 +72,26 @@ Last updated: 2026-07-13 UTC.
   `exp/pareto_revolution_validation/full_rtllm/seed_1002/classic`.
   Classic log:
   `exp/pareto_revolution_validation/logs/full_rtllm_seed1002_classic.log`.
-- The matched Pareto seed-1002 arm launched unchanged at `21:58:11 UTC`.
-  The `uv` runner PID was `1944124` at launch; verify by exact command rather
-  than assuming a PID survives a restart.
-- Active Pareto root:
+- The matched Pareto seed-1002 arm completed and validated: 50 summaries,
+  300 generation rows, 2,400 unique evaluated candidates, EoH-only, and
+  `4651.81s`.
+- Pareto used 4,800 LLM calls and 14,857,515 tokens with no retries. Token
+  skew versus matched classic is `+0.032%`; runtime skew is `-0.581%`.
+- Runtime configs differ only in `save_path` and `search_mode`. All treatment
+  summaries record the frozen NSGA-II methods, no descriptors, post-hoc
+  delivered fronts, and exact normalized/raw objective routing.
+- Completed Pareto root:
   `exp/pareto_revolution_validation/full_rtllm/seed_1002/pareto`.
   Pareto log:
   `exp/pareto_revolution_validation/logs/full_rtllm_seed1002_pareto.log`.
+- No benchmark process is running. Seeds 1003-1005 remain unauthorized until
+  the seed-1002 package and locked two-seed gate are complete.
 
 ## Next Actions
 
-1. Let the active Pareto seed-1002 arm finish without launching another run.
-2. Validate all 50 treatment tasks and matched budgets.
-3. Package the pair and apply the locked two-seed gate mechanically.
+1. Generate and validate the frozen seed-1002 report package.
+2. Apply the locked two-seed gate mechanically.
+3. Launch nothing unless all three promotion conditions pass.
 
 ## Live Resources
 

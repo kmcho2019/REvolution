@@ -405,3 +405,21 @@ would add churn.
   pass. Seed 1001 therefore passes continuation without establishing a win.
 - Only seed 1002 is now legal. No variant, tuning, or seeds 1003-1005 are
   authorized before the two-seed gate.
+
+## 2026-07-13 - Full RTLLM Seed 1002 Raw Completion
+
+- Fresh preflight passed, then classic and Pareto ran sequentially over all 50
+  frozen RTLLM tasks at seed 1002. Classic completed in `4679.01s`; Pareto
+  completed in `4651.81s`.
+- Each arm validated at 50 summaries, 300 generation rows, and 2,400 unique
+  evaluated candidates. Runtime configs differ only in `save_path` and
+  `search_mode`; all generated strategies satisfy the EoH-only contract.
+- Classic used 4,801 LLM calls because one empty response retried; Pareto used
+  4,800. Pareto token and runtime skews are `+0.032%` and `-0.581%`.
+- Pareto summaries record NSGA-II parent and survivor selection, no
+  descriptors, post-hoc delivered fronts, and exact normalized or raw
+  objective sources. No runtime QD state appears.
+- The classic engine and frozen manifest hashes remain exact. No benchmark
+  process is running.
+- Raw completion authorizes only the frozen report chain and mechanical
+  two-seed gate. It does not authorize seeds 1003-1005, tuning, or a variant.
