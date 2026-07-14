@@ -91,16 +91,16 @@ Adversarial rubric: `pareto_revolution_validation_adversarial_prompt.md`.
 - [x] Close showcased-candidate checks as not applicable to a negative result.
 - [x] Run full pytest and final ruff, pyright, ty, and `git diff --check`.
 - [x] Inspect every goal commit for atomicity, message format, and one sign-off.
-- [ ] Run the final adversarial prompt and resolve every FAIL finding.
-- [ ] Record PASS in `pareto_revolution_validation_subagent_validation_report.md`.
+- [x] Run the final adversarial prompt and resolve every FAIL finding.
+- [x] Record PASS in `pareto_revolution_validation_subagent_validation_report.md`.
 
 ## Completion Gate
 
-- [ ] The plan's correct positive/supporting/negative path is complete.
-- [ ] No unregistered variant, metric substitution, cherry-picking, or held-out
+- [x] The plan's correct positive/supporting/negative path is complete.
+- [x] No unregistered variant, metric substitution, cherry-picking, or held-out
       tuning entered the decision.
-- [ ] No required run or report process remains live.
-- [ ] The final evidence is reproducible from recorded commits, commands,
+- [x] No required run or report process remains live.
+- [x] The final evidence is reproducible from recorded commits, commands,
       manifests, comparator roots, and hashes.
 
 ## Separate Future Goal

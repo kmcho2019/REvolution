@@ -89,14 +89,18 @@ Last updated: 2026-07-13 UTC.
 - The frozen two-seed gate failed on final HV and functional coverage; only
   valid-PPA coverage tied. Compact closure evidence is under
   `full_rtllm_two_seed/`.
+- The final long-timeout read-only audit returned PASS with no blocker. Its
+  independent recomputation is preserved at
+  `reviews/20260713_claude_final_closure_review.md`.
 - No benchmark process is running. Seeds 1003-1005 and treatment variants are
   closed by the preregistered rule.
 
 ## Next Actions
 
-1. Run the final read-only adversarial audit and resolve every FAIL.
-2. Record the final validation verdict and close the goal if it passes.
-3. Launch no further benchmark inside this goal.
+1. This goal is complete; launch no further benchmark inside it.
+2. Preserve this method as a negative primary candidate with secondary
+   diversity characterization only.
+3. Scaffold any reference-seeded Pareto method as a separate future goal.
 
 ## Live Resources
 

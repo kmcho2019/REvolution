@@ -2,7 +2,7 @@
 
 Status: negative closure. The frozen two-seed full-RTLLM promotion gate failed
 on final HV and functionality coverage. Seeds 1003-1005 and treatment variants
-are not authorized.
+are not authorized. Final independent closure review returned PASS.
 
 ## Purpose
 
@@ -36,6 +36,8 @@ Independent reviews live under `reviews/`. The 2026-07-11 scaffold trail was
 `FAIL -> FAIL -> PASS`. The 2026-07-13 V1 prelaunch review returned FAIL and
 drove V2; the V2 re-review returned PASS. V1 remains historical and cannot
 govern a run. The implementation trail is also `FAIL -> PASS`.
+The final evidence-closure review returned PASS and is preserved at
+`reviews/20260713_claude_final_closure_review.md`.
 
 ## Upstream Decision
 

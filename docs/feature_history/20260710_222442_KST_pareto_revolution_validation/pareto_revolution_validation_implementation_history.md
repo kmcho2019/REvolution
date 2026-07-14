@@ -455,9 +455,29 @@ would add churn.
   focused tests. Pyright reported zero errors; ty passed.
 - `git diff --check` passed. The classic engine, frozen V2 manifest, claims
   addenda, and RTLLM-46 manifest hashes remain exact.
-- Audited all 25 goal commits from scaffold through closure. Every subject is
+- Audited all 28 commits from scaffold through final local verification.
+  Every subject is
   at most 50 characters, every body line is at most 72 characters, every
   header is conventional, no raw newline text appears, and each commit has
   exactly one sign-off.
 - No seed-1003 through seed-1005 root, benchmark process, or report process
   exists. Only the four disclosed unrelated untracked files remain.
+
+## 2026-07-13 - Final Independent Closure Review
+
+- A broad read-only `claude -p` invocation reached its 900-second timeout
+  without a verdict. No result was inferred from that timeout.
+- A focused long-timeout rerun restricted to frozen contracts, compact raw
+  tables, isolated source, tests, and journal posture returned PASS with no
+  blocker. The review is preserved at
+  `reviews/20260713_claude_final_closure_review.md`.
+- The reviewer independently reproduced mean final HV46 of `0.104745178045`
+  for classic and `0.103990528608` for Pareto, valid-PPA coverage of `65/92`
+  for both, and functionality coverage of `75/92` versus `74/92`.
+- The frozen promotion gate therefore fails final HV and functionality while
+  passing valid-PPA coverage. Seeds 1003-1005 remain forbidden.
+- Classic core isolation, EoH-only execution, equal candidate budgets,
+  disclosed scalar feedback/UCB, negative claim posture, and final local
+  verification all passed. No required fix remains.
+- Recorded PASS in the final validation report and closed every goal
+  completion-gate item. Any new Pareto mechanism belongs to a separate goal.
