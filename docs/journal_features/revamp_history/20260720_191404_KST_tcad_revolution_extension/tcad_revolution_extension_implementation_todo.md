@@ -51,12 +51,12 @@ detail in the append-only program and candidate histories.
 - [x] Obtain H5 pre-implementation naturalness, novelty, and methodology reviews.
 - [x] Implement one narrow typed mode in isolated experimental code.
 - [x] Keep classic core files and behavior byte-identical.
-- [ ] Add focused unit tests, determinism checks, and one integration smoke.
+- [x] Add focused unit tests, determinism checks, and one integration smoke.
 - [x] Add required-data asserts and fail on unknown state.
 - [x] Record all evaluated candidates and preregistered mechanism telemetry.
 - [x] Run `ruff`, focused tests, pyright or recorded existing debt, and `ty`.
 - [x] Complete an independent code-simplicity and isolation audit.
-- [ ] Run one debug-seed technical smoke on the frozen diverse set.
+- [x] Run one debug-seed technical smoke on the frozen diverse set.
 - [ ] Run the matched representative probe and analyze all registered metrics.
 - [ ] Advance non-catastrophic mechanisms to a two-seed frozen full-suite probe.
 - [ ] Permit at most two evidence-justified, mechanism-preserving revisions.

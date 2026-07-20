@@ -186,3 +186,21 @@ or holdout.
 - Frozen smoke manifest SHA-256:
   `b663c89673bd3b8a336d3ef36253a7774f11550bc9421a374994dc2446792fb9`.
 - No H5 live result existed when these code and smoke gates froze.
+
+## H5 Technical Smoke
+
+- Frozen raw root:
+  `exp/tcad_revolution_extension/h5_failed_parent_repair/wave1/smoke_seed42`.
+- Fresh sequential classic and H5 runs completed all three frozen problems at
+  seed 42 with exact 16-candidate problem budgets and no stopped generation or
+  infrastructure failure.
+- Saved configs differ only by search mode and artifact root. Classic used all
+  five failed operators; every H5 failed-parent request used M-F; success-side
+  operators remained classic.
+- The strict mechanism report and an independent replay accepted all lineage,
+  stages, PPA artifacts, and pool transitions. Independent smoke audit session
+  `019f80e8-a363-7af3-81bd-43094e71a965` returned `PASS`.
+- Observed direct valid-PPA repairs were 1 classic and 4 H5. The normalized
+  delta `+0.0625` is recorded only as smoke telemetry and does not promote H5.
+- H5 advances from `IMPLEMENTED` to `SMOKE_VALIDATED`. The representative
+  probe may be frozen next; no full-suite or paper claim is authorized.

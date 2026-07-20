@@ -1,6 +1,6 @@
 # Audit-Derived Candidate Ranking
 
-Status: `REVIEWED`; H5 is the sole Wave-1 candidate and is `IMPLEMENTED`.
+Status: `REVIEWED`; H5 is the sole Wave-1 candidate and is `SMOKE_VALIDATED`.
 
 The ranking combines the conference audit, completed QD/Pareto/operator
 evidence, implementation isolation, and current related-work collision. It is
@@ -8,7 +8,7 @@ not a quota or a parameter queue.
 
 | Rank | ID | Mechanism | Score | Intended role | Disposition |
 | ---: | --- | --- | ---: | --- | --- |
-| 1 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `IMPLEMENTED`; technical smoke pending |
+| 1 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `SMOKE_VALIDATED`; representative probe pending |
 | 2 | H4 | Test a confirmed method on seeded RTL optimization. | 11/14 provisional | Generalization | Hold until an algorithmic finalist exists |
 | 3 | H8 | Retain failed candidates by furthest verification stage. | 10/14 provisional | Reliability | Do not implement: COEVO collision and code-copy cost |
 | 4 | H3 | Contract-preserving local patch evolution. | 9/14 | Reliability | Retire current card: premise unmeasured, novelty crowded |
