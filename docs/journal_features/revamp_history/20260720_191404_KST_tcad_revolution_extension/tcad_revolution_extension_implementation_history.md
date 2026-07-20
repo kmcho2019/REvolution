@@ -42,6 +42,7 @@ Candidate-specific commands and results belong in each candidate history.
 | 2026-07-20 | Complete the first internal conference-method audit and related-work collision pass. | Conference paper at `6d81985f`; classic code at `9104aff2`; completed QD, F41, single-thought, PCN, and no-C-F evidence; six primary related-work papers. | H1-H4 remain `PROPOSED` but are not promotable as written. The audit prioritizes missing component evidence and one possible stage-aware failure correction; no live treatment is authorized. |
 | 2026-07-20 | Accept and verify the required findings from an external conference-audit review. | First 600-second attempt timed out; bounded retry returned `WARN`. Review and dispositions are in `reviews/20260720_claude_conference_audit.md`. Git history shows both major paper/code divergences predate the initial submission. | Narrow the whole-loop support claim, document verification and survivor mismatches, pin related-work evidence, calibrate negative-map wording, and keep all candidates `PROPOSED` pending re-review. |
 | 2026-07-20 | Close the conference-method audit gate after external `PASS`. | Re-review verified all required corrections, optional precision fixes, cited local numbers, and candidate holds. It identified no blocking issue. | Mark `conference_method_audit.md` `REVIEWED`; keep baseline/statistics gates open and all candidates `PROPOSED`. Describe the conference baseline as offspring-count-matched because initialization and feedback calls were not matched. |
+| 2026-07-20 | Freeze the classic baseline, statistical protocol, benchmark roles, holdout, and resource ceilings before treatment evidence. | Canonical five-seed reports reproduce fixed-denominator classic HV `0.103802` and HV-AUC `0.086982`; three synthesis/PPA replays agree exactly; the representative ranking is classic-only; the CVDP holdout excludes 58 prior outcome or manifest-exposed tasks. External methodology closure returned `PASS`. | Activate candidate ranking. Raw area/power/period remain non-imputed secondary evidence; confirmation uses fresh seeds 61001-61005; the holdout is described only as repository-evidence-disjoint functionality evidence. |
 
 ## Scaffold Revision Review
 
@@ -68,3 +69,24 @@ Candidate-specific commands and results belong in each candidate history.
   revision 1 now governs discovery and candidate evidence. The goal may perform
   the audit and baseline setup immediately; live candidate experiments remain
   blocked until the intake pre-live gates are frozen.
+
+## Baseline Freeze
+
+- Claims contract revision 2 SHA-256:
+  `8d0cb721981fa2805b0e44e46490371ff8eb70794d08d742a46c11a9976bde9b`.
+- Baseline contract revision 2 SHA-256:
+  `805d24a5352f06c5573c4f405bead3026315d561fb69901cb6a9b61911370aea`.
+- Program manifest revision 2 SHA-256:
+  `95d6ad5019e8cdd73cb064675556066ee35a35ef2204edbc71e74bf6593534d7`.
+- Holdout eligibility audit SHA-256:
+  `85606bddaf2ac34f345bd2efa7f69934fef7dc104a0a8b94e465e2b67990f789`.
+- External baseline review SHA-256:
+  `edc3dbef699a72c389399361501bfac8a94e1664036b4c6c55aa2d7cfae1af64`.
+- Canonical generated reports:
+  `exp/tcad_revolution_extension/baseline_20260720/historical_classic_5seed`.
+- Synthesis/PPA replay artifacts:
+  `exp/tcad_revolution_extension/baseline_20260720/synthesis_determinism`.
+- Review trail: two broad external attempts produced no evidence after timeout;
+  the constrained initial review returned `FAIL`, all findings were accepted,
+  and the focused closure review returned `PASS`.
+- No candidate implementation or treatment result existed at freeze time.

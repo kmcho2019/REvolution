@@ -1,7 +1,8 @@
 # TCAD REvolution Extension Research Goal Scaffold
 
-Status: `READY_FOR_AUDIT`; owner-approved on 2026-07-20. Live candidate
-experiments remain gated by `intake_review.md`.
+Status: `ACTIVE_CANDIDATE_RANKING`; baseline, statistics, benchmark roles,
+holdout, and resource ceilings froze on 2026-07-20 before treatment evidence.
+No candidate is runnable until its own card and pre-implementation reviews pass.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts
@@ -12,10 +13,10 @@ right answer.
 
 ## Start here
 
-1. Read `intake_review.md` and resolve the remaining activation blockers.
-2. Review `program_claims_contract.md`; it is a draft until explicitly accepted.
+1. Read the frozen `baseline_contract.md` and `program_claims_contract.md`.
+2. Use `intake_review.md` for provenance and pre-live gate closure.
 3. Use `tcad_revolution_extension_plan.md` as the durable program charter.
-4. Complete `conference_method_audit.md` before selecting implementation work.
+4. Use the reviewed `conference_method_audit.md` to rank implementation work.
 5. Track active work in `tcad_revolution_extension_implementation_todo.md`.
 6. Keep every proposed and tested direction in `extension_portfolio.md`.
 7. Use `shared/candidate_goal_contract.md` for each implementation loop.

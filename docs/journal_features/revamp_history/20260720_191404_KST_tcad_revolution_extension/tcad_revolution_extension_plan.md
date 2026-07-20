@@ -2,8 +2,8 @@
 
 Feature slug: `tcad_revolution_extension`
 
-Status: `READY_FOR_AUDIT`. `program_claims_contract.md` revision 1 is the
-owner-approved contract for this post-QD discovery program. Existing empirical
+Status: `ACTIVE_CANDIDATE_RANKING`. `program_claims_contract.md` revision 2 is
+the accepted contract for this post-QD discovery program. Existing empirical
 findings and measurement disclosures from
 `docs/journal_features/journal_narrative.md` remain authoritative where the new
 contract does not replace them.

@@ -1,6 +1,6 @@
 # TCAD Extension Portfolio
 
-Status: `AUDIT_COMPLETE_BASELINE_PENDING`
+Status: `BASELINE_FROZEN_CANDIDATE_RANKING`
 
 This is the final advisor-facing synthesis of the discovery program. Update it
 after every candidate transition. Detailed commands and raw results remain in
@@ -52,7 +52,7 @@ narrow the search rather than reappear under a new name or nearby parameter.
 | Smooth-QD V2 | Five-seed final HV `0.098801` versus classic `0.103802`; S07 reached `0.102481` but remained below classic. | Archive diversity improved some AUC/coverage surfaces but displaced final-HV exploitation. | BD scans, capacity interpolation, nearby archive-parent lanes, and AUC-only primary claims are deprioritized absent a distinct measured mechanism. | `20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md` |
 | F41 global Pareto | Two-seed final HV `0.103991` versus classic `0.104745`; AUC and functionality also lost. | Broad front preservation did not improve the constrained search budget. | H2 as written and adjacent NSGA-II parent/survivor variants are deprioritized absent a distinct measured mechanism. | `20260710_222442_KST_pareto_revolution_validation/README.md` |
 | Unified single-thought | Classic-substrate pooled delta `-0.092`, CI `[-0.149, -0.037]`. | Operator heterogeneity supplies exploration that archive behavior cannot replace. | `single_thought_operator` and presumed one-operator simplification. | `docs/journal_features/13_findings_dashboard.md`, F3/F9 |
-| PCN-v3 memory | Five-seed controlled comparisons failed against classic and no-C-F classic. | The active memory lane did not overcome its yield cost. | Triggered archive memory, credit knobs, and nearby rescue/refine schedules are deprioritized absent a distinct measured mechanism. | `reviews/20260710_review_bundle/evidence/operator_ablation/classic_no_cf_report.md` |
+| PCN-v3 memory | Five-seed controlled comparisons failed against classic and no-C-F classic. | The active memory lane did not overcome its yield cost. | Triggered archive memory, credit knobs, and nearby rescue/refine schedules are deprioritized absent a distinct measured mechanism. | `docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/natural_qd_push_implementation_history.md` |
 | No-C-F control | Positive mean HV/AUC/yield, but final-HV CI crosses zero with balanced wins/losses. | Fusion is not established as useful, but its removal is not confirmed as a final-HV win. | Claims that no-C-F is already a paper candidate. | Same no-C-F report. |
 
 ## Recommended Journal Package

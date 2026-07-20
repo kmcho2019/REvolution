@@ -1,7 +1,8 @@
-# Draft TCAD Extension Claims Contract
+# TCAD Extension Claims Contract
 
-Status: `ACCEPTED`, revision 1, 2026-07-20. This is the owner-approved discovery
-and evidence contract for the post-QD extension search. It supersedes the
+Status: `ACCEPTED`, revision 2, 2026-07-20. Revision 2 narrows holdout and
+missing-data wording after independent baseline review; it does not loosen a
+candidate gate. This contract supersedes the
 direction-selection and candidate-gating portions of
 `docs/journal_features/journal_narrative.md`; prior empirical findings and the
 accepted measurement disclosures remain authoritative unless a later versioned
@@ -43,7 +44,8 @@ An algorithmic primary candidate requires:
 - paired per-problem evidence, uncertainty, W/L/T, and seed sensitivity;
 - five matched, preregistered, development-disjoint seeds on the frozen
   confirmation suite;
-- one frozen run on a genuinely disjoint holdout;
+- one frozen run on the repository-evidence-disjoint holdout defined by the
+  eligibility audit; this is not a secret or cross-suite-independent benchmark;
 - mechanism ablation, code audit, reproducibility evidence, and adversarial PASS.
 
 The uplift may be modest. No fixed 3% or 5% gain is required unless justified by
@@ -106,9 +108,11 @@ scientific decision. Record the evidence required to resume.
 - Gate-bearing intervals use the repository's existing seeded problem-cluster
   bootstrap with the replicate count and bootstrap seed frozen in the manifest.
 - Primary statistics are penalized. A missing treatment unit where classic has
-  evidence is a method failure: functionality and coverage receive zero,
-  hypervolume receives zero, and other PPA metrics receive the jointly frozen
-  metric floor. Complete-case results are secondary and reported beside them.
+  evidence is a method failure: functionality, coverage, hypervolume, and
+  HV-AUC receive zero. A higher-is-better normalized PPA score receives the
+  minimum locked classic score. Raw lower-is-better area, power, and period are
+  never imputed; report valid-pair complete-case summaries and missing counts as
+  secondary evidence.
 - A missing classic unit caused by infrastructure is rerun before gating. A
   genuine classic method failure is reported and excluded from paired PPA gates;
   the treatment-only success count is reported separately.

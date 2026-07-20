@@ -1,8 +1,8 @@
 # Scaffold Intake Review
 
-Status: `READY_FOR_AUDIT`; owner approved the revised claims contract and goal
-launch on 2026-07-20. Complete the pre-live gates below before candidate
-experiments.
+Status: `ACTIVATED_BASELINE_FROZEN`; claims-contract revision 2 and every
+program-level pre-live gate closed on 2026-07-20. Candidate-specific review,
+implementation, and smoke gates still apply independently.
 
 ## Provenance
 
@@ -65,8 +65,9 @@ final-HV loss.
 
 ## Activation Decision
 
-Launch the root goal as a bounded discovery program. Phase 0 audit, baseline
-reproduction, literature review, and manifest preparation may begin. Do not
-implement or run a candidate until every pre-live gate above is complete.
-Candidate work remains sequential: one active candidate at a time, with no broad
-parameter scan and no assumption that H1-H4 must run.
+The root goal is active as a bounded discovery program. The reviewed conference
+audit, frozen baseline contract, frozen program manifest, and holdout audit
+close all four program-level gates above. Candidate work remains sequential:
+one active candidate at a time, with no broad parameter scan and no assumption
+that H1-H4 must run. A candidate still cannot run until its hypothesis,
+naturalness, novelty, methodology, code, and smoke gates close.

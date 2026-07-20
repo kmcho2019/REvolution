@@ -7,17 +7,17 @@ detail in the append-only program and candidate histories.
 
 - [x] Owner accepted `program_claims_contract.md` revision 1 on 2026-07-20.
 - [x] Record branch, HEAD, dirty state, model, toolchain, and artifact roots.
-- [ ] Freeze and hash the byte-identical classic engine and configuration.
-- [ ] Reproduce classic REvolution with the canonical reporting flow.
-- [ ] Measure classic seed variance, synthesis determinism, and missing outputs.
-- [ ] Freeze practical-regression margins and confirmation statistics from the
+- [x] Freeze and hash the byte-identical classic engine and configuration.
+- [x] Reproduce classic REvolution with the canonical reporting flow.
+- [x] Measure classic seed variance, synthesis determinism, and missing outputs.
+- [x] Freeze practical-regression margins and confirmation statistics from the
   baseline evidence, before treatment results.
-- [ ] Freeze statistical unit, bootstrap, missing-data, and W/L/T tie rules.
-- [ ] Freeze disjoint development and five-seed confirmation seed roles.
-- [ ] Freeze smoke, representative, full-suite, confirmation, and holdout roles.
-- [ ] Freeze benchmark manifests, selection rules, references, and missing policy.
-- [ ] Complete and freeze the holdout eligibility/contamination audit.
-- [ ] Freeze program and per-wave token, evaluation, synthesis, and time ceilings.
+- [x] Freeze statistical unit, bootstrap, missing-data, and W/L/T tie rules.
+- [x] Freeze disjoint development and five-seed confirmation seed roles.
+- [x] Freeze smoke, representative, full-suite, confirmation, and holdout roles.
+- [x] Freeze benchmark manifests, selection rules, references, and missing policy.
+- [x] Complete and freeze the holdout eligibility/contamination audit.
+- [x] Freeze program and per-wave token, evaluation, synthesis, and time ceilings.
 
 ## Conference Method Audit
 
