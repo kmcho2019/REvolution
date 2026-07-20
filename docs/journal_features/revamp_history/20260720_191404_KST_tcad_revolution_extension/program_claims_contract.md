@@ -1,8 +1,9 @@
 # TCAD Extension Claims Contract
 
-Status: `ACCEPTED`, revision 2, 2026-07-20. Revision 2 narrows holdout and
-missing-data wording after independent baseline review; it does not loosen a
-candidate gate. This contract supersedes the
+Status: `ACCEPTED`, revision 3, 2026-07-20. Revision 3 distinguishes
+RTL-simulation functionality from verification-complete valid-PPA coverage
+after pre-implementation review; it does not loosen a candidate gate. This
+contract supersedes the
 direction-selection and candidate-gating portions of
 `docs/journal_features/journal_narrative.md`; prior empirical findings and the
 accepted measurement disclosures remain authoritative unless a later versioned
@@ -39,7 +40,8 @@ An algorithmic primary candidate requires:
 
 - a natural, general, and literature-differentiated mechanism;
 - final mean reference-complete HV above matched classic REvolution;
-- no material regression in hardened valid-PPA or functionality coverage;
+- no material regression in verification-complete valid-PPA or RTL-simulation
+  functionality coverage;
 - no material HV-AUC regression;
 - paired per-problem evidence, uncertainty, W/L/T, and seed sensitivity;
 - five matched, preregistered, development-disjoint seeds on the frozen

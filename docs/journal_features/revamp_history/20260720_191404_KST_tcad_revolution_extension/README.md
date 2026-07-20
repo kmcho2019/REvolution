@@ -1,8 +1,8 @@
 # TCAD REvolution Extension Research Goal Scaffold
 
-Status: `ACTIVE_CANDIDATE_RANKING`; baseline, statistics, benchmark roles,
-holdout, and resource ceilings froze on 2026-07-20 before treatment evidence.
-No candidate is runnable until its own card and pre-implementation reviews pass.
+Status: `ACTIVE_WAVE_1`; baseline, statistics, benchmark roles, holdout, and
+resource ceilings froze on 2026-07-20 before treatment evidence. H5 is the sole
+Wave-1 candidate and passed its pre-implementation reviews.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts
@@ -17,9 +17,11 @@ right answer.
 2. Use `intake_review.md` for provenance and pre-live gate closure.
 3. Use `tcad_revolution_extension_plan.md` as the durable program charter.
 4. Use the reviewed `conference_method_audit.md` to rank implementation work.
-5. Track active work in `tcad_revolution_extension_implementation_todo.md`.
-6. Keep every proposed and tested direction in `extension_portfolio.md`.
-7. Use `shared/candidate_goal_contract.md` for each implementation loop.
+5. Read `component_evidence_audit.md` and `candidate_ranking.md` before opening
+   a candidate.
+6. Track active work in `tcad_revolution_extension_implementation_todo.md`.
+7. Keep every proposed and tested direction in `extension_portfolio.md`.
+8. Use `shared/candidate_goal_contract.md` for each implementation loop.
 
 ## Program flow
 
@@ -45,7 +47,9 @@ right answer.
 The H1-H4 directories are starting hypotheses supplied with the original
 bundle. They must pass the same audit as any new idea. The program does not
 require H1 and H2 to run, does not require every seed idea to be implemented,
-and may add stronger candidates discovered by the conference-method audit.
+and may add stronger candidates discovered by the conference-method audit. H5
+is the sole Wave-1 algorithmic card. H6 records retrospective no-C-F evidence,
+and H7 records a deferred UCB diagnostic outside the candidate state machine.
 
 ## Candidate state machine
 

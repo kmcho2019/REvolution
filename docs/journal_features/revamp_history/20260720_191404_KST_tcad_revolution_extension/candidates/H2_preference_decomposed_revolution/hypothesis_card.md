@@ -1,6 +1,6 @@
 # H2: Preference-Decomposed REvolution
 
-Status: `PROPOSED` seed idea; not `READY`.
+Status: `RETIRED` at proposal review; no implementation or live spend.
 
 ## Conference Weakness
 
@@ -14,7 +14,7 @@ that treatment.
 
 At equal total budget, a dominant balanced success lane plus a small fixed set
 of PPA preference lanes preserves classic hill climbing while improving final
-reference-complete hypervolume without reducing hardened functionality or
+reference-complete hypervolume without reducing RTL-simulation functionality or
 valid-PPA coverage.
 
 ## Proposed Mechanism

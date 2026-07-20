@@ -2,26 +2,22 @@
 
 ## Outcome
 
-`PENDING`
+`RETIRED`
 
 Allowed outcomes: `PAPER_CANDIDATE`, `VIABLE`, `RETIRED`, `BLOCKED`.
 
-## Frozen Hypothesis And Gates
-
-## Evidence By Stage
-
-## Primary And Secondary Results
-
-## Mechanism Findings
-
-## Naturalness And Novelty Assessment
-
-## Code And Documentation Assessment
-
-## Review Findings And Dispositions
-
 ## Decision Rationale
+
+The completed F41 global Pareto treatment did not improve final HV, HV-AUC, or
+functionality at the frozen budget. Preference lanes would spend more budget on
+standard multiobjective decomposition without a new measured mechanism showing
+that balanced-lane retention resolves that failure. POET and COEVO further
+reduce the available related-work delta.
+
+No code was implemented and no new live experiment was run.
 
 ## Allowed Claim And Paper Role
 
-## Portfolio And Negative-Map Updates
+H2 is excluded from the current portfolio. Reopening requires a distinct,
+measured failure mechanism that is not another Pareto or preference-allocation
+variant.

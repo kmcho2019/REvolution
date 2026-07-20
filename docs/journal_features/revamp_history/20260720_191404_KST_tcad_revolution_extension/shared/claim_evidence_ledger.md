@@ -2,14 +2,17 @@
 
 | Claim ID | Draft claim | Required evidence | Status | Artifacts | Allowed wording |
 | --- | --- | --- | --- | --- | --- |
-| C0 | The audit identifies specific limitations or unsupported choices in classic REvolution. | Conference-to-code map, completed ablations, baseline evidence, related-work comparison. | UNSUPPORTED | | Do not claim yet. |
+| C0 | The audit identifies specific limitations or unsupported choices in classic REvolution. | Conference-to-code map, completed ablations, baseline evidence, related-work comparison. | SUPPORTED | `conference_method_audit.md`; `component_evidence_audit.md` | Limit wording to the exact audited components and evidence labels. |
 | C1 | The selected algorithm improves final reference-complete PPA optimization over classic REvolution. | Five-seed frozen confirmation and disjoint holdout; final HV above classic; paired uncertainty/W/L/T; equal budget; no valid-PPA regression. | UNSUPPORTED | | Do not claim yet. |
-| C2 | Functionality and hardened valid-PPA are preserved under the selected method. | Complete missing-result accounting, testbench and gate-level checks, equivalence for the stated claim surface, per-design regressions. | UNSUPPORTED | | Do not claim yet. |
+| C2 | RTL-simulation functionality and verification-complete valid-PPA coverage are preserved under the selected method. | Complete missing-result accounting, testbench and post-synthesis checks for their stated surfaces, and per-design regressions. | UNSUPPORTED | | Do not claim yet. |
 | C3 | The proposed mechanism rather than incidental implementation changes causes the result. | One-factor control, registered mechanism telemetry, code diff audit, isolated ablation. | UNSUPPORTED | | Do not claim yet. |
 | C4 | Hardware-grounded evolutionary operators improve on or simplify the EoH-derived operator suite. | Operator-only matched ablation, useful-child analysis, PPA/functionality evidence, prompt and budget parity. | UNSUPPORTED | | Do not claim yet. |
 | C5 | A reliability extension reduces semantic drift or improves valid-PPA efficiency without material final-HV loss. | Frozen role-specific suite gate, failure taxonomy, equivalence/functional evidence, PPA noninferiority. | UNSUPPORTED | | Do not claim yet. |
 | C6 | The confirmed algorithmic paper candidate generalizes to seeded RTL optimization or another new task scope. | Optimization benchmark, changed equivalent descendants, seed-relative PPA, matched one-shot/classic controls. | UNSUPPORTED | | Do not claim yet. |
-| C7 | Generic QD and global Pareto pressure did not reliably improve classic REvolution under the tested settings. | Frozen negative-map packages with methods, budgets, seeds, and scope. | PARTIAL | | Limit wording to tested settings. |
+| C7 | Generic QD and global Pareto pressure did not reliably improve classic REvolution under the tested settings. | Frozen negative-map packages with methods, budgets, seeds, and scope. | SUPPORTED | `docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md`; `docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md` | Limit wording to tested mechanisms, budgets, model, and suites. |
+| C8 | Removing C-F had higher mean final HV, trajectory, and coverage under the historical full-RTLLM test. | Five-seed matched operator ablation, canonical HV/AUC, coverage, seed sensitivity, and resources. | HISTORICAL_SUPPORT | `component_evidence_audit.md`; `candidates/H6_fusion_free_success/decision.md` | Label this retrospective characterization; state that final-HV direction was mixed and unresolved; do not say fusion is harmful or claim a primary PPA win. |
 
 Every `VIABLE` result receives a scoped candidate-level row before manuscript
 use. It must not be upgraded to C1 wording unless all C1 evidence exists.
+`HISTORICAL_SUPPORT` denotes informative evidence that predates the current
+prospective roles or gates; it is not a candidate outcome.

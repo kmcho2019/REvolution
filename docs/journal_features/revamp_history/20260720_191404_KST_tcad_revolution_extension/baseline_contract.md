@@ -1,8 +1,10 @@
 # Classic Baseline And Evidence Contract
 
-Status: `FROZEN`, revision 2, 2026-07-20. Independent methodology review closed
-with `PASS`. No treatment result was generated before this file and
-`shared/program_manifest.yaml` froze every pre-Wave-1 evidence rule.
+Status: `FROZEN`, revision 3, 2026-07-20. Independent methodology review closed
+with `PASS`. Revision 3 clarifies metric names, representative-set scope,
+manifest roles, and discovery-budget scope after pre-implementation review; it
+does not change a treatment gate. No treatment result was generated before this
+file and `shared/program_manifest.yaml` froze every pre-Wave-1 evidence rule.
 
 ## Baseline Identity
 
@@ -46,7 +48,7 @@ The reporting chain was rerun under
 means therefore join its output to the locked 46-task manifest and assign zero
 HV and zero HV-AUC to absent units. Averaging emitted rows alone is invalid.
 
-| Seed | Mean HV46 | Mean HV-AUC46 | Valid PPA | Functional 46 | Functional 50 | Valid samples | Calls | Tokens | Synth attempts | Wall s |
+| Seed | Mean HV46 | Mean HV-AUC46 | Valid PPA | RTL-sim functional 46 | RTL-sim functional 50 | Valid samples | Calls | Tokens | Synth attempts | Wall s |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1001 | 0.111401 | 0.090551 | 33/46 | 38/46 | 42/50 | 1002 | 4801 | 14,933,967 | 1271 | 4732.65 |
 | 1002 | 0.097557 | 0.081183 | 33/46 | 38/46 | 42/50 | 974 | 4802 | 14,816,625 | 1240 | 4674.88 |
@@ -92,15 +94,21 @@ noise-free under arbitrary host load.
   The result is `Prob002_adder_16bit`, `Prob024_fsm`, `Prob041_traffic_light`,
   `Prob045_alu`, `Prob025_sequence_detector`, `Prob027_LIFObuffer`,
   `Prob036_edge_detect`, and `Prob043_RAM`.
+  Classic has valid PPA and an RTL-simulation pass on all 16 selected
+  problem-seed units. This stage can validate activation, telemetry, and HV
+  regression, but it cannot demonstrate a coverage increase.
 - **Full-suite development:** all 50 RTLLM tasks at seeds 1001 and 1002.
   Final HV and valid-PPA headlines use the immutable reference-complete 46;
-  functionality is reported on both 46 and 50.
+  RTL-simulation functionality is reported on both 46 and 50. Valid-PPA
+  coverage is verification-complete through synthesis and the configured
+  post-synthesis check.
 - **Confirmation:** the same frozen RTLLM manifests at matched seeds
   61001-61005, which have no prior repository evidence. Fresh classic is run
   once and may be shared by at most two frozen finalists.
 - **Holdout:** the 30 medium CVDP tasks in `shared/cvdp_holdout_v1.yaml`, seed
-  62001, run once after method freeze. It is a functionality/generalization
-  surface only and cannot support reference-normalized PPA generalization.
+  62001, run once after method freeze. It is an RTL-simulation functionality
+  generalization surface only and cannot support reference-normalized PPA
+  generalization.
 
 The holdout eligibility argument and known contamination are in
 `shared/holdout_eligibility_audit.md`. No role is relabeled after observation.
@@ -138,8 +146,9 @@ resolved when their interval crosses zero.
   rescue a final-HV loss.
 - Supporting-surface noninferiority: final HV46 may trail by at most `0.0050`
   and HV-AUC46 by at most `0.0036`, one classic across-seed standard deviation.
-- Coverage noninferiority: valid-PPA and functionality may each trail by at most
-  one problem per seed: two units in development or five in confirmation.
+- Coverage noninferiority: valid-PPA and RTL-simulation functionality may each
+  trail by at most one problem per seed: two units in development or five in
+  confirmation.
 - `VIABLE`: a preregistered benefit occurs in both full-suite development seeds
   and every other primary surface remains within the margins above.
 - Catastrophic full-suite stop: mean HV46 below 90% of matched classic, either
@@ -159,15 +168,17 @@ Ceilings are maxima, not spending targets:
 
 | Scope | Tokens | Candidates | Calls | Synthesis | Endpoint-arm h |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| One candidate, including at most one repeated full probe | 66M | 10,512 | 21,000 | 6,000 | 6 |
+| One candidate discovery loop, including at most one repeated full probe | 66M | 10,512 | 21,000 | 6,000 | 6 |
 | One three-candidate wave | 200M | 32,000 | 64,000 | 18,000 | 18 |
 | Entire two-wave program, confirmation, and holdout | 650M | 105,000 | 210,000 | 60,000 | 60 |
 
-The program also stops after 21 elapsed days. Shared-server accelerator
-utilization is not exposed; endpoint-arm wall time is the frozen auditable
-proxy. Per problem, cap at 48 candidates, 100 calls, 650,000 total tokens, 48
-synthesis attempts, and 2,400 seconds. Revisions share these ceilings and never
-authorize a parameter scan.
+The per-candidate ceiling covers smoke, representative, full-suite development,
+and one allowed repeated full probe. It excludes confirmation and holdout,
+which remain inside the program ceiling. The program also stops after 21
+elapsed days. Shared-server accelerator utilization is not exposed;
+endpoint-arm wall time is the frozen auditable proxy. Per problem, cap at 48
+candidates, 100 calls, 650,000 total tokens, 48 synthesis attempts, and 2,400
+seconds. Revisions share these ceilings and never authorize a parameter scan.
 
 ## Known Limits
 

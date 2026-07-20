@@ -2,7 +2,7 @@
 
 Feature slug: `tcad_revolution_extension`
 
-Status: `ACTIVE_CANDIDATE_RANKING`. `program_claims_contract.md` revision 2 is
+Status: `ACTIVE_WAVE_1_H5`. `program_claims_contract.md` revision 3 is
 the accepted contract for this post-QD discovery program. Existing empirical
 findings and measurement disclosures from
 `docs/journal_features/journal_narrative.md` remain authoritative where the new
@@ -236,7 +236,7 @@ the program cannot make a holdout-backed `PAPER_CANDIDATE` claim.
 Primary algorithmic surfaces:
 
 - reference-complete final PPA hypervolume;
-- hardened functionality and valid-PPA coverage;
+- RTL-simulation functionality and verification-complete valid-PPA coverage;
 - paired per-problem final-HV delta, uncertainty, and W/L/T.
 
 Secondary and mechanism surfaces:

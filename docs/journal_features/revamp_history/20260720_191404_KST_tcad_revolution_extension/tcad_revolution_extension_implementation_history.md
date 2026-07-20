@@ -43,6 +43,59 @@ Candidate-specific commands and results belong in each candidate history.
 | 2026-07-20 | Accept and verify the required findings from an external conference-audit review. | First 600-second attempt timed out; bounded retry returned `WARN`. Review and dispositions are in `reviews/20260720_claude_conference_audit.md`. Git history shows both major paper/code divergences predate the initial submission. | Narrow the whole-loop support claim, document verification and survivor mismatches, pin related-work evidence, calibrate negative-map wording, and keep all candidates `PROPOSED` pending re-review. |
 | 2026-07-20 | Close the conference-method audit gate after external `PASS`. | Re-review verified all required corrections, optional precision fixes, cited local numbers, and candidate holds. It identified no blocking issue. | Mark `conference_method_audit.md` `REVIEWED`; keep baseline/statistics gates open and all candidates `PROPOSED`. Describe the conference baseline as offspring-count-matched because initialization and feedback calls were not matched. |
 | 2026-07-20 | Freeze the classic baseline, statistical protocol, benchmark roles, holdout, and resource ceilings before treatment evidence. | Canonical five-seed reports reproduce fixed-denominator classic HV `0.103802` and HV-AUC `0.086982`; three synthesis/PPA replays agree exactly; the representative ranking is classic-only; the CVDP holdout excludes 58 prior outcome or manifest-exposed tasks. External methodology closure returned `PASS`. | Activate candidate ranking. Raw area/power/period remain non-imputed secondary evidence; confirmation uses fresh seeds 61001-61005; the holdout is described only as repository-evidence-disjoint functionality evidence. |
+| 2026-07-20 | Regenerate classic operator telemetry and the canonical five-seed no-C-F comparison before proposing new operator mechanisms. | `component_evidence_audit.md`; 500 problem-seed logs, 24,000 candidates, fixed-denominator HV/AUC, clustered intervals, and resource totals. | Treat per-operator rates as descriptive. Advance H5 M-F-only failed-pool routing to review; retain no-C-F as retrospective support and uniform allocation only as a deferred diagnostic. |
+
+## Component Evidence And Candidate Ranking
+
+- Reporting commit: `b93d1d02d1ceaa6da35158ffe117f089c21bc592`.
+- Policy-trajectory reporting commit:
+  `7106c4dfb2b120a81bf0386005f952a1072a9162`.
+- Classic and no-C-F each contribute 250 complete generation logs and 12,000
+  candidate records. The reporting tool preserves exact failure statuses and
+  does not infer causal operator effects from adaptive logs.
+- M-F has the highest descriptive failed-parent functionality and valid-PPA
+  rates. H5 tests this observation through one static operator-role constraint;
+  it adds no prompt, reward, stage score, gate, or fallback.
+- Classic UCB assigns M-F 20.3% of 3,966 failed-parent requests and does not
+  sustain its generation-2 share increase. Mean policy distance from uniform
+  falls from 17.6% in generation 1 to 7.1% in generation 5. The proposed static
+  role constraint is therefore not already implemented by classic adaptation.
+- Canonical no-C-F deltas are final HV `+0.003044`, HV-AUC `+0.007747`, valid PPA
+  `+2/230`, and functionality `+3/230`. Final-HV direction is mixed by seed and
+  the clustered interval crosses zero. Because current roles and gates postdate
+  these outcomes, this is historical support rather than a candidate result.
+- Internal architecture review found that H5 can subclass `EoHEngine`, narrow
+  `fail_strats` and its statistics map, and inherit the complete classic
+  generation loop. A generic classic fail-operator option and a copied
+  generation method are both rejected.
+- `candidate_ranking.md` provisionally selects H5 alone for Wave 1. H7 is a
+  deferred allocation diagnostic. H5 remains `PROPOSED` until novelty and
+  EDA-methodology reviews close; no live run is authorized by this draft.
+- Independent statistics review found a problem-clustered M-F functional-yield
+  association of `+0.0643`, CI `[+0.0179, +0.1199]`, while valid-PPA yield is
+  unresolved at `+0.0270`, CI `[-0.0126, +0.0781]`. It rejected the original
+  outcome-disjunctive H5 gate and retrospective H6 `VIABLE` label. H5 now uses
+  per-seed valid-PPA coverage as its sole development benefit and treats repair
+  yield as mechanism telemetry.
+- External candidate-ranking review returned `FAIL` on the draft because the
+  conference audit retained stale no-C-F numbers, H6 had a retroactive
+  `VIABLE` label, H7 occupied a wave despite zero hardware grounding, H1-H3/H8
+  state files drifted, and the UCB trajectory had not been checked. All findings
+  were accepted; closure review remains required before H5 becomes `READY`.
+- The 600-second external closure re-read every disposition, returned package
+  `PASS`, and independently rated H5 novelty/naturalness `ACCEPT`. It found no
+  blocking COEVO collision, post-hoc gate, claim inconsistency, or isolation
+  flaw at design time. The reviewer retained a 1/2 novelty warning and required
+  the separate hardware/EDA and post-diff reviews.
+- Hardware/EDA review initially deferred H5 because all EoH operators receive
+  feedback, M-I also targets correctness, conditional yield was confounded,
+  stage/pool telemetry was incomplete, and descendant HV credit was ambiguous.
+  The card now tests exact M-F-only routing, gates on unconditional direct
+  valid-PPA repairs per fixed budget, freezes exhaustive lineage/stage/pool
+  fields, and removes descendant credit. Focused closure returned `ACCEPT`.
+- H5 reached `READY` at 11/14 as the sole Wave-1 mechanism. No H5 treatment code
+  or result existed at this transition; implementation isolation and telemetry
+  conformance remain open code gates.
 
 ## Scaffold Revision Review
 
@@ -90,3 +143,22 @@ Candidate-specific commands and results belong in each candidate history.
   the constrained initial review returned `FAIL`, all findings were accepted,
   and the focused closure review returned `PASS`.
 - No candidate implementation or treatment result existed at freeze time.
+
+## Pre-Implementation Contract Clarification
+
+Independent candidate reviews found terminology and scope ambiguities before
+any H5 treatment was implemented or run. Revision 3 changes no numeric gate:
+it names RTL-simulation functionality accurately, limits the saturated
+representative stage to activation/regression evidence, permits smoke and
+holdout seed roles in candidate manifests, marks CVDP as non-reference-PPA, and
+states that the per-candidate ceiling covers discovery rather than confirmation
+or holdout.
+
+- Claims contract revision 3 SHA-256:
+  `74f2fea3ac839ba1b8395923e8b037e77109d3ae94005809f53a35d9e3ab0d1e`.
+- Baseline contract revision 3 SHA-256:
+  `f580c1cf91666dfbdaeb8c15de6d0116107b195407bcdd772c3643b48ca0f105`.
+- Program manifest revision 3 SHA-256:
+  `ce9434b86c0b6a58fa5cc59616378865001a8c611c214c0ea8b001440f151e84`.
+- Experiment manifest template SHA-256:
+  `c1caefe86b5f2ff042959dcbb06fbc51305f410b7a0a91c5e60e2a5b11475b40`.

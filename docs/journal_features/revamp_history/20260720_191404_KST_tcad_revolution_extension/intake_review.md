@@ -1,6 +1,6 @@
 # Scaffold Intake Review
 
-Status: `ACTIVATED_BASELINE_FROZEN`; claims-contract revision 2 and every
+Status: `ACTIVATED_BASELINE_FROZEN`; claims-contract revision 3 and every
 program-level pre-live gate closed on 2026-07-20. Candidate-specific review,
 implementation, and smoke gates still apply independently.
 

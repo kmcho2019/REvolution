@@ -1,6 +1,6 @@
 # H3: Contract-Preserving Patch Evolution
 
-Status: `PROPOSED` supporting seed idea; not `READY`.
+Status: `RETIRED` at proposal review; no implementation or live spend.
 
 ## Conference Weakness
 
@@ -11,7 +11,7 @@ must first quantify whether edit breadth predicts avoidable functional failure.
 ## Falsifiable Hypothesis
 
 At equal budget, localized RTL patches constrained by a general machine-readable
-design contract improve hardened valid-PPA child yield or time to PPA
+design contract improve valid-PPA child yield or time to PPA
 improvement without material final-HV loss versus full-output success mutation.
 
 ## Proposed Mechanism

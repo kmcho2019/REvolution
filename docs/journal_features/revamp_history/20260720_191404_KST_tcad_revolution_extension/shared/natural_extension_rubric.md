@@ -20,7 +20,8 @@ Reject a proposal before live experiments when any condition is true:
 ## Scored Criteria
 
 Score each item 0, 1, or 2. Require at least 11/14, with no zero for conference
-continuity, rationale, novelty, or simplicity.
+continuity, evidence-backed need, hardware/CAD grounding, novelty, or
+simplicity.
 
 1. **Conference continuity:** directly corrects or extends a documented classic
    state, population, operator, feedback, objective, or task boundary.

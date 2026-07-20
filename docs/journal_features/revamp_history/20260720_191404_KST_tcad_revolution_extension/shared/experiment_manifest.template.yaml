@@ -46,7 +46,7 @@ benchmarks:
   manifest_path: REQUIRED
   manifest_sha256: REQUIRED
   baseline_only_selection_rule_sha256: REQUIRED
-  reference_complete_only: true
+  reference_complete_only: REQUIRED  # false for functionality-only CVDP
   candidate_missing_policy: count_as_method_failure
   excluded_units_path: REQUIRED
   prior_exposure: REQUIRED
@@ -57,7 +57,7 @@ seeds:
   manifest_path: REQUIRED
   manifest_sha256: REQUIRED
   values: [REQUIRED]
-  role: REQUIRED  # development | confirmation
+  role: REQUIRED  # smoke | development | confirmation | holdout
   disjoint_role_manifest_sha256: REQUIRED
 
 toolchain:
@@ -66,12 +66,7 @@ toolchain:
   ppa_flow: REQUIRED
   container_or_environment_sha256: REQUIRED
 
-primary_metrics:
-  - reference_complete_final_hypervolume
-  - hardened_functionality_coverage
-  - hardened_valid_ppa_coverage
-  - paired_problem_final_hv_delta
-  - paired_problem_wlt
+primary_metrics: [REQUIRED]  # explicit metrics for the selected stage
 
 secondary_metrics:
   - hypervolume_auc

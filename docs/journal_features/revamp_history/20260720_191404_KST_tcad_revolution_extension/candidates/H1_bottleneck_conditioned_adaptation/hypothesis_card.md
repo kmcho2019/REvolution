@@ -1,6 +1,6 @@
 # H1: Bottleneck-Conditioned Strategy Adaptation
 
-Status: `PROPOSED` seed idea; not `READY`.
+Status: `RETIRED` at proposal review; no implementation or live spend.
 
 ## Conference Weakness
 
@@ -13,7 +13,7 @@ operator selection itself helps enough to justify adding context.
 
 At equal budget, one small synthesis-state-conditioned operator policy improves
 final PPA search or useful-child efficiency over classic global adaptation
-without reducing hardened functionality or valid-PPA coverage.
+without reducing RTL-simulation functionality or valid-PPA coverage.
 
 ## Proposed Mechanism
 

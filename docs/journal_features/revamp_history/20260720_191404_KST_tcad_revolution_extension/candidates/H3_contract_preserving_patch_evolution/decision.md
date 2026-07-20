@@ -2,26 +2,22 @@
 
 ## Outcome
 
-`PENDING`
+`RETIRED`
 
 Allowed outcomes: `PAPER_CANDIDATE`, `VIABLE`, `RETIRED`, `BLOCKED`.
 
-## Frozen Hypothesis And Gates
-
-## Evidence By Stage
-
-## Primary And Secondary Results
-
-## Mechanism Findings
-
-## Naturalness And Novelty Assessment
-
-## Code And Documentation Assessment
-
-## Review Findings And Dispositions
-
 ## Decision Rationale
+
+The required premise is unmeasured: current evidence does not show that edit
+breadth predicts avoidable functional failure. A contract extractor, patch
+representation, rejection rule, and equivalence control would also add several
+mechanisms before that premise is established, while local RTL rewriting and
+formal validation are already crowded areas.
+
+No code was implemented and no live experiment was run.
 
 ## Allowed Claim And Paper Role
 
-## Portfolio And Negative-Map Updates
+H3 is excluded from the current portfolio. Reopening requires classic-only
+evidence linking mutation breadth to semantic loss and a one-mechanism design
+with a defensible RTL-specific novelty delta.

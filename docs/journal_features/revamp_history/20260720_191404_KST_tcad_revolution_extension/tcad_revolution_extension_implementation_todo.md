@@ -35,20 +35,20 @@ detail in the append-only program and candidate histories.
 
 ## Candidate Portfolio
 
-- [ ] Generate candidate cards from the highest-priority audited weaknesses.
-- [ ] Include hardware/RTL-grounded operator directions where justified.
-- [ ] Consider core corrections and natural augmentations where the audit
+- [x] Generate candidate cards from the highest-priority audited weaknesses.
+- [x] Include hardware/RTL-grounded operator directions where justified.
+- [x] Consider core corrections and natural augmentations where the audit
   justifies them; do not create a category quota.
-- [ ] Score every card with the natural-extension rubric.
-- [ ] Record the related-work delta and strongest reviewer objection for each.
-- [ ] Reject parameter scans, fallback-heavy designs, and benchmark heuristics.
-- [ ] Rank H1-H4 beside new ideas; do not treat them as a required queue.
-- [ ] Select at most three distinct Wave 1 mechanisms.
+- [x] Score every card with the natural-extension rubric.
+- [x] Record the related-work delta and strongest reviewer objection for each.
+- [x] Reject parameter scans, fallback-heavy designs, and benchmark heuristics.
+- [x] Rank H1-H4 beside new ideas; do not treat them as a required queue.
+- [x] Select H5 as the sole Wave 1 mechanism.
 
 ## Per-Candidate Loop
 
-- [ ] Freeze hypothesis, mechanism, comparator, telemetry, budgets, and gates.
-- [ ] Obtain pre-implementation naturalness, novelty, and methodology reviews.
+- [x] Freeze H5 hypothesis, mechanism, comparator, telemetry, budgets, and gates.
+- [x] Obtain H5 pre-implementation naturalness, novelty, and methodology reviews.
 - [ ] Implement one narrow typed mode in isolated experimental code.
 - [ ] Keep classic core files and behavior byte-identical.
 - [ ] Add focused unit tests, determinism checks, and one integration smoke.
@@ -77,7 +77,8 @@ detail in the append-only program and candidate histories.
   for each nominated finalist.
 - [ ] Freeze code/configuration before one disjoint holdout run.
 - [ ] Produce paired uncertainty, W/L/T, per-problem, and seed-sensitivity tables.
-- [ ] Confirm functionality and hardened valid-PPA for every claimed artifact.
+- [ ] Confirm RTL-simulation functionality and verification-complete valid PPA
+  for every claimed artifact.
 - [ ] Integrate only independently supported components.
 - [ ] Run isolated and interaction ablations for any integrated package.
 - [ ] Select the smallest coherent non-regressing method.

@@ -75,7 +75,7 @@ single Llama offspring-count-matched ablation.
 
 | Component | Current classic behavior | Exact path | Tunable state |
 | --- | --- | --- | --- |
-| Representation | `Heuristic` stores thought, code, feedback, status, scalar score, and PPA metrics. | `src/revolution/algorithm.py:162-331` | Representation and generation modes exist post-conference; classic uses code individuals and whole output. |
+| Representation | `Heuristic` stores thought, code, feedback, status, scalar score, and PPA metrics. | `src/revolution/algorithm.py:160-317` | Representation and generation modes exist post-conference; classic uses code individuals and whole output. |
 | Fitness | On reference-complete tasks, valid PPA receives the equal mean of normalized power/area improvements and timing for sequential designs. Candidate-side invalid PPA receives `-inf`. | `src/revolution/algorithm.py:882-950`, `1298-1322` | Reference completeness is a baseline precondition; the helper otherwise returns zero for missing reference PPA. |
 | Verification funnel | Format, syntax, simulation, synthesis, post-synthesis functionality, and PPA produce typed statuses. Every failed stage receives `-inf`. | `src/revolution/algorithm.py:1154-1354` | Simulator, synthesis, and timeout configuration. |
 | Dual pools | Status `success` enters Success; every other status enters Fail. | `src/revolution/algorithm.py:3197-3208`, `3277-3403`, `4118-4125` | `population_pool_mode=dual`. |
@@ -108,12 +108,13 @@ The checked-in prompts ask broadly to fix, simplify, explore, refactor, improve,
 or fuse. They do not encode a validated hardware transformation model. The
 paper provides no per-operator ablation or useful-child yield analysis.
 
-The clean five-seed no-C-F control is informative but not decisive. Removing
-Fusion changes mean final HV from `0.103802` to `0.106846`, HV-AUC from
-`0.086797` to `0.094592`, mean coverage from `32.8` to `33.2`, and valid-PPA
-rows from 4882 to 4978. The paired final-HV delta is `+0.0030`, CI
-`[-0.0068, 0.0153]`, with `41/41/148` W/L/T. Fusion is therefore not proven
-useful, but removal is not yet a confirmed final-HV improvement.
+The clean five-seed no-C-F control is informative but not decisive. Canonical
+fixed-denominator regeneration changes mean final HV from `0.103802` to
+`0.106846` and HV-AUC from `0.086982` to `0.094729`. Valid-PPA coverage changes
+from `164/230` to `166/230`, and RTL-simulation functionality from `188/230` to
+`191/230`. The paired final-HV delta is `+0.003044`, with problem-clustered CI
+`[-0.004214, +0.013837]` and `41/41/148` W/L/T. Fusion is therefore not proven
+useful, but removal is not a confirmed final-HV improvement.
 
 A canonical no-C-F reanalysis and operator-yield audit are justified. A large
 new prompt taxonomy is not. POET and COEVO already publish hardware-specific
@@ -211,11 +212,11 @@ budget. They are resource-allocation rules, not universal impossibility claims.
 
 | Prior mechanism | Result | Default disposition here | Evidence |
 | --- | --- | --- | --- |
-| Smooth-QD V2 and full BD/geometry campaign | Five-seed V2 final HV `0.098801` versus classic `0.103802`; S07 capacity-3 near miss `0.102481`, with better AUC and one more covered unit. | Deprioritize broad QD revival, BD scans, and capacity interpolation absent a distinct measured mechanism. AUC cannot rescue a primary final-HV loss. | `20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md` |
-| Descriptor-free global Pareto selection (F41) | Two-seed final HV, AUC, and functionality gates failed. | Deprioritize H2 as written and adjacent NSGA-II variants absent a distinct measured mechanism. | `20260710_222442_KST_pareto_revolution_validation/README.md` |
+| Smooth-QD V2 and full BD/geometry campaign | Five-seed V2 final HV `0.098801` versus classic `0.103802`; S07 capacity-3 near miss `0.102481`, with better AUC and one more covered unit. | Deprioritize broad QD revival, BD scans, and capacity interpolation absent a distinct measured mechanism. AUC cannot rescue a primary final-HV loss. | `docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md` |
+| Descriptor-free global Pareto selection (F41) | Two-seed final HV, AUC, and functionality gates failed. | Deprioritize H2 as written and adjacent NSGA-II variants absent a distinct measured mechanism. | `docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md` |
 | Unified single-thought operator on classic | Pooled delta `-0.092`, CI `[-0.149, -0.037]`. | Single-operator simplification and any treatment using `single_thought_operator`. | `docs/journal_features/13_findings_dashboard.md`, F3/F9 |
-| PCN-v3 memory | Five-seed controlled comparisons did not beat classic or no-C-F classic. | Deprioritize triggered memory, archive credit, and nearby memory schedules absent a distinct measured mechanism. | `docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/natural_qd_push_implementation_history.md` |
-| C-F removal | Positive means and yield, but final-HV CI crosses zero. | Claims that Fusion is harmful or no-C-F is already paper-ready. | Same no-C-F report. |
+| PCN-v3 memory | Five-seed controlled comparisons did not beat classic or no-C-F classic. | Deprioritize triggered memory, archive credit, and nearby memory schedules absent a distinct measured mechanism. | `docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/reviews/20260710_review_bundle/evidence/operator_ablation/classic_no_cf_report.md` |
+| C-F removal | Positive means and yield, but final-HV CI crosses zero. | Claims that Fusion is harmful or no-C-F is already paper-ready. | `component_evidence_audit.md` |
 
 ## Ranked Weaknesses
 
