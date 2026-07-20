@@ -1,6 +1,6 @@
 # TCAD Extension Portfolio
 
-Status: `WAVE_1_H5_READY`
+Status: `WAVE_1_H5_IMPLEMENTED`
 
 This is the final advisor-facing synthesis of the discovery program. Update it
 after every candidate transition. Detailed commands and raw results remain in
@@ -30,7 +30,7 @@ terminal advisor-facing outcomes only.
 
 | ID | Mechanism | Role | Naturalness | Outcome | Key result |
 | --- | --- | --- | --- | --- | --- |
-| H5 | M-F-only failed-pool routing | Primary core correction | 11/14 | PENDING | Sole Wave-1 mechanism; pre-implementation reviews accepted. |
+| H5 | M-F-only failed-pool routing | Primary core correction | 11/14 | PENDING | Code gate passed at `59acb11def`; technical smoke pending. |
 | H1 | Bottleneck-conditioned adaptation | Primary core correction | 8/14 | RETIRED | Adds contextual-bandit state before classic UCB or context utility is isolated. |
 | H2 | Preference-decomposed populations | Primary core correction | 8/14 | RETIRED | F41 and related work remove the rationale for another ungrounded multiobjective allocation. |
 | H3 | Contract-preserving patch evolution | Supporting reliability | 9/14 | RETIRED | Edit-breadth premise is unmeasured and the first treatment would combine several mechanisms. |
@@ -97,6 +97,9 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
 - Component evidence: `component_evidence_audit.md`.
 - Ranking: `candidate_ranking.md`.
 - H5 card: `candidates/H5_role_aligned_failed_repair/hypothesis_card.md`.
+- H5 code and smoke contract:
+  `candidates/H5_role_aligned_failed_repair/implementation_history.md`,
+  `candidates/H5_role_aligned_failed_repair/smoke_experiment_manifest.yaml`.
 - Historical no-C-F record:
   `candidates/H6_fusion_free_success/decision.md`.
 - Generated evidence root:

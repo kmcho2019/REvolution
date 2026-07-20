@@ -187,4 +187,6 @@ Changing classic to add a general fail-operator-set option is forbidden. Copying
 | Hardware/EDA methodology | `../../reviews/20260720_internal_h5_hardware_methodology.md` | Prompt role, unconditional estimand, stage/pool schema, confirmation, and lineage-credit corrections closed. | ACCEPT |
 | Statistics/reproducibility | Frozen contracts | Exact gates and roles are fixed. | ACCEPT |
 | Classic-policy premise | `component_evidence_audit.md`; report commit `7106c4dfb2` | UCB does not sustain an M-F preference; treatment remains causally distinct. | ACCEPT |
-| Code simplicity | `../../reviews/20260720_internal_h5_architecture.md` | Subclass can narrow two fields without copying generation logic. | ACCEPT_PENDING_DIFF |
+| Code simplicity | `../../reviews/20260720_h5_internal_code_review.md` | The isolated subclass matches the frozen design; focused and broad validation pass. | ACCEPT |
+| External code audit | `../../reviews/20260720_h5_external_code_review.md` | No blocking isolation, simplicity, or classic-preservation issue remains. | ACCEPT |
+| Evidence readiness | `../../reviews/20260720_h5_evidence_readiness_review.md` | Fresh-control, lineage, stage, pool, and estimand checks are mandatory and tested. | ACCEPT |

@@ -1,6 +1,6 @@
 # Audit-Derived Candidate Ranking
 
-Status: `REVIEWED`; H5 is the sole Wave-1 candidate and is `READY`.
+Status: `REVIEWED`; H5 is the sole Wave-1 candidate and is `IMPLEMENTED`.
 
 The ranking combines the conference audit, completed QD/Pareto/operator
 evidence, implementation isolation, and current related-work collision. It is
@@ -8,7 +8,7 @@ not a quota or a parameter queue.
 
 | Rank | ID | Mechanism | Score | Intended role | Disposition |
 | ---: | --- | --- | ---: | --- | --- |
-| 1 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `READY`; sole Wave 1 mechanism |
+| 1 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `IMPLEMENTED`; technical smoke pending |
 | 2 | H4 | Test a confirmed method on seeded RTL optimization. | 11/14 provisional | Generalization | Hold until an algorithmic finalist exists |
 | 3 | H8 | Retain failed candidates by furthest verification stage. | 10/14 provisional | Reliability | Do not implement: COEVO collision and code-copy cost |
 | 4 | H3 | Contract-preserving local patch evolution. | 9/14 | Reliability | Retire current card: premise unmeasured, novelty crowded |
@@ -21,7 +21,7 @@ novelty/paper value.
 
 | ID | Score vector | Hard-rejection result |
 | --- | --- | --- |
-| H5 | 2/2/1/2/2/1/1 | PASS: novelty and hardware/EDA reviews accepted; diff review remains at code gate |
+| H5 | 2/2/1/2/2/1/1 | PASS: novelty, hardware/EDA, code, and evidence-readiness reviews accepted |
 | H4 | 2/2/2/2/1/1/1 | HOLD: requires an algorithmic finalist |
 | H8 | 2/2/2/2/1/0/1 | REJECT: monolithic code-copy surface |
 | H3 | 2/0/2/2/1/1/1 | REJECT: causal premise lacks evidence |

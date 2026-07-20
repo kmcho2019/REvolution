@@ -162,3 +162,27 @@ or holdout.
   `ce9434b86c0b6a58fa5cc59616378865001a8c611c214c0ea8b001440f151e84`.
 - Experiment manifest template SHA-256:
   `c1caefe86b5f2ff042959dcbb06fbc51305f410b7a0a91c5e60e2a5b11475b40`.
+
+## H5 Implementation And Pre-Smoke Freeze
+
+- H5 implementation commit:
+  `59acb11def38d12466cca425c6828bba25f98dc8`.
+- The implementation adds one fixed experimental search mode and one isolated
+  subclass. It narrows failed-pool operators to M-F and inherits classic
+  success evolution, evaluation, selection, and survivor behavior.
+- Classic algorithm SHA-256 remains
+  `78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655`;
+  default configuration SHA-256 remains
+  `cd44c8de823b9843339718cd8116d325f35a11188b38103553dcc2cbc8c0a34b`.
+- Validation closed with 76 focused tests, 1,073 broader tests, 4 skips, one
+  separately recorded legacy hanging report-test deselection, Ruff, Pyright,
+  focused `ty`, diff checks, and independent code and telemetry reviews.
+- Program manifest revision 4 records only that historical classic artifacts
+  are context and margin evidence, not admissible H5 mechanism controls. It
+  changes no metric, seed, benchmark, budget, or outcome gate. SHA-256:
+  `1ace858fdaf2bc3a9468526a48293d674afac7badaa726592d3a72a0b624be34`.
+- Frozen smoke config SHA-256:
+  `20c8b3daf931b0b322568af61c9fa8a4ff85ab5da5fdcf56568cc8471702d490`.
+- Frozen smoke manifest SHA-256:
+  `b663c89673bd3b8a336d3ef36253a7774f11550bc9421a374994dc2446792fb9`.
+- No H5 live result existed when these code and smoke gates froze.
