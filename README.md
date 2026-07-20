@@ -12,6 +12,8 @@
 - Dual-pool evolutionary engine with configurable strategies (`M-*`, `C-F`) and meta-strategy selection (random, epsilon-greedy, UCB).
 - Experimental `revolution_pareto` mode that changes only successful-parent
   and successful-survivor selection to descriptor-free NSGA-II rank/crowding.
+- Experimental `revolution_failed_parent_repair` mode that changes only
+  failed-parent routing to the existing M-F correction intent.
 - Experimental `revolution_qd` search mode with grid and CVT archive support, configurable descriptor axes, archive-event reporting, and retrospective-analysis-driven descriptor profiles.
 - End-to-end evaluation pipeline: Icarus Verilog for syntax/functional checks, Yosys + OpenROAD for PPA, and post-synthesis regression.
 - Unified LLM client with retry/backoff, prompt templating, diff/whole generation modes, and multi-backend support (OpenAI, OpenRouter, DeepSeek, Gemini, vLLM).
@@ -30,9 +32,8 @@ The `docs/` directory contains deeper dives:
 - [Pareto REvolution validation ledger](docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md)
   preserves the completed descriptor-free Pareto ablation and its negative
   two-seed RTLLM promotion-gate closure against fresh classic REvolution.
-- [TCAD REvolution extension scaffold](docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/README.md)
-  is the proposed next-goal research charter. Its intake blockers must be
-  resolved before any candidate goal is activated.
+- [TCAD REvolution extension program](docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/README.md)
+  is the active bounded candidate-discovery charter and evidence ledger.
 - `docs/journal_features/resources/README.md` – manuscript submodule guide for
   the frozen ASP-DAC 2026 conference paper and the working TCAD journal draft.
 - `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
@@ -41,6 +42,8 @@ The `docs/` directory contains deeper dives:
 - `scripts/report_pareto_analysis.py` – per-problem Pareto-front figures plus aggregate hypervolume tables for backend comparisons.
 - `scripts/report_ppa_distribution.py` – successful-candidate PPA distribution figures with score contours, projected Pareto-front overlays, best-candidate tables, and reference-normalized gain views for completed backend comparisons.
 - `scripts/report_revolution_operator_evidence.py` – exact-status, valid-PPA, rewarded-child, and resource summaries by origin pool and EoH operator from completed REvolution generation logs.
+- `scripts/report_failed_parent_repair.py` – strict paired mechanism validation
+  for fresh classic and H5 failed-parent repair runs.
 - `scripts/report_final_analysis_bundle.py` – one-command generator for `final_analysis/`, including backend comparison, hard-iteration analysis, Pareto analysis, PPA distribution analysis, PCA-mode design-space analysis, PCA-mode feature analysis, and evolutionary reports. The hard-iteration section reads accumulated end-of-run success rates plus nested final best-score fields from completed summaries.
 - `scripts/report_qd_problem_histograms.py` – per-problem CVT feature histograms over successful candidates, with final centroid overlays and cumulative generation-history views written back into each problem directory. The script scans only valid CVT problem directories and skips malformed/non-CVT artifact roots cleanly.
 - `docs/revolution_qd_map_elites_implementation_plan.md` – living QD/MAP-Elites implementation status, validation notes, and staged roadmap.
@@ -166,7 +169,7 @@ names are no longer accepted on the CLI.
 
 The `revolution` backend also exposes this experimental search-mode surface:
 
-- `--search_mode revolution|revolution_pareto|revolution_qd|revolution_qd_natural`
+- `--search_mode revolution|revolution_failed_parent_repair|revolution_pareto|revolution_qd|revolution_qd_natural`
 - `--qd_archive_type grid|cvt`
 - `--qd_descriptor_profile`, `--qd_descriptor_axes`, `--qd_descriptor_file`
 - `--qd_fail_generation_mode`, `--qd_seed_generation_mode`,
@@ -174,6 +177,10 @@ The `revolution` backend also exposes this experimental search-mode surface:
   `--qd_crossover_generation_mode`
 
 Current status on this feature branch:
+
+- `revolution_failed_parent_repair` is the isolated H5 Wave 1 treatment. It
+  retains classic successful-parent evolution and restricts failed-parent
+  offspring to M-F under a fixed dual-pool, EoH, UCB, whole-code contract.
 
 - `revolution_pareto` keeps the classic engine byte-identical and isolates
   successful-parent tournaments and environmental survivor selection under
@@ -841,7 +848,7 @@ Moved from GUIDELINES.md (which now holds practices only).
   [docs/journal_features/journal_narrative.md](docs/journal_features/journal_narrative.md) is the ACCEPTED claims contract (gates/branch rules frozen — it wins on any conflict);
   [docs/journal_features/13_findings_dashboard.md](docs/journal_features/13_findings_dashboard.md) is the current START-HERE findings view;
   [docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md](docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md) is the completed descriptor-free Pareto validation ledger;
-  [docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/README.md](docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/README.md) is the proposed next-goal program scaffold and intake review;
+  [docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/README.md](docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/README.md) is the active bounded TCAD extension program and evidence ledger;
   [docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md](docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md) is the suite-first natural-QD follow-up campaign state;
   in `docs/journal_features/revamp_history/20260612_005012_KST_journal_revamp/`: `goal_template.md` is the v2 objective, `journal_revamp_plan.md` the P1–P5 execution plan, `journal_revamp_implementation_todo.md` the phase-grouped checklist (sign-off requires every item checked and spot-verified), `journal_revamp_adversarial_prompt.md` the sign-off process, `journal_revamp_implementation_history.md` the evidence log, `rerun_ledger.jsonl` the run ledger; `*_v1_initial.md` files are archived originals.
   Locked artifacts live in `data/configs/` (seed manifest, subsets, probe); revise only by version bump with recorded rationale.

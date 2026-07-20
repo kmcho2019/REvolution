@@ -100,6 +100,9 @@ Changing classic to add a general fail-operator-set option is forbidden. Copying
 ## Controls
 
 - Matched control: frozen classic REvolution.
+- Every H5 stage runs a fresh classic control with the shared candidate schema.
+  Historical classic roots remain baseline context and are inadmissible for
+  H5 stage/lineage telemetry.
 - Mechanism control: the matched classic arm is the one-factor control; an
   operator-contract audit verifies five fail operators in control and only M-F
   in treatment. No extra null arm is justified.

@@ -1,6 +1,8 @@
 # H5 Telemetry Schema
 
-Status: `FROZEN_BEFORE_IMPLEMENTATION`, 2026-07-20.
+Status: `FROZEN_BEFORE_LIVE_EVIDENCE`, revision 2, 2026-07-20. Revision 2
+clarifies fresh-control and stopped-row handling after the pre-smoke evidence
+audit; it does not change an outcome gate.
 
 The schema supports one causal question: does routing all failed-parent requests
 through M-F create more direct valid-PPA repairs at the same 48-candidate
@@ -59,6 +61,15 @@ generation:
 
 The experimental subclass writes this row around the inherited generation
 method. It introduces no persistent policy state.
+
+For `generation_outcome=stop`, inherited REvolution returns before survivor
+selection. The two post-selection sizes therefore repeat the pre-selection
+sizes. A completed-stage report rejects stopped rows; an interrupted artifact
+cannot satisfy a mechanism gate.
+
+All H5 stages use fresh instrumented classic controls. Historical classic logs
+that predate the candidate fields may support baseline context but cannot enter
+the H5 mechanism report or parent-stage joins.
 
 ## Frozen Estimands
 

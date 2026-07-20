@@ -11,6 +11,7 @@ from revolution.backends.base import (
     BackendServices,
     EvolutionBackend,
 )
+from revolution.failed_parent_repair import FailedParentRepairEngine
 from revolution.pareto_revolution import ParetoEoHEngine
 from revolution.pareto_revolution.selection import resolve_circuit_type
 from revolution.qd import QDEngine
@@ -19,8 +20,10 @@ from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
 
 QD_SEARCH_MODES = {"revolution_qd", "revolution_qd_natural"}
 PARETO_SEARCH_MODE = "revolution_pareto"
+FAILED_PARENT_REPAIR_SEARCH_MODE = "revolution_failed_parent_repair"
 RevolutionSearchMode = Literal[
     "revolution",
+    "revolution_failed_parent_repair",
     "revolution_pareto",
     "revolution_qd",
     "revolution_qd_natural",
@@ -149,19 +152,39 @@ class RevolutionBackend(EvolutionBackend):
 
     def initialize(self) -> None:
         if (
-            self.config.search_mode in {*QD_SEARCH_MODES, PARETO_SEARCH_MODE}
+            self.config.search_mode
+            in {*QD_SEARCH_MODES, PARETO_SEARCH_MODE, FAILED_PARENT_REPAIR_SEARCH_MODE}
             and self.config.population_pool_mode == "single"
         ):
             raise ValueError(
                 f"search_mode={self.config.search_mode} requires dual success state "
                 "and does not support population_pool_mode=single."
             )
+        if self.config.search_mode == FAILED_PARENT_REPAIR_SEARCH_MODE:
+            valid_contract = (
+                self.config.population_pool_mode == "dual"
+                and self.config.classic_operator_kind == "eoh_strategies"
+                and self.config.eoh_success_operator_set == "classic"
+                and self.config.strategy_selection_method == "ucb"
+                and self.config.generation_mode == "whole"
+                and self.config.representation_kind == "code_individual"
+                and self.config.repair_kind == "none"
+                and self.context.metadata["evaluation_mode"] == "strict_ablation"
+            )
+            if not valid_contract:
+                raise ValueError(
+                    "revolution_failed_parent_repair requires dual pools, whole "
+                    "generation, EoH operators, the classic success set, UCB, "
+                    "code_individual, no repair wrapper, and strict_ablation."
+                )
         if self.config.search_mode == "revolution_qd_natural":
             engine_cls: type[EoHEngine] = NaturalQDEngine
         elif self.config.search_mode == "revolution_qd":
             engine_cls = QDEngine
         elif self.config.search_mode == PARETO_SEARCH_MODE:
             engine_cls = ParetoEoHEngine
+        elif self.config.search_mode == FAILED_PARENT_REPAIR_SEARCH_MODE:
+            engine_cls = FailedParentRepairEngine
         elif self.config.search_mode == "revolution":
             engine_cls = EoHEngine
         else:

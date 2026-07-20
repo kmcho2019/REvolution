@@ -369,6 +369,7 @@ class EoHLogger:
         generated_candidates = [
             {
                 "id": c.id,
+                "parent_ids": list(c.parent_ids),
                 "strategy": c.strategy,
                 "parent_count": getattr(c, "parent_count", None),
                 "requested_parent_count": getattr(
@@ -379,8 +380,13 @@ class EoHLogger:
                 "parent_arity": len(getattr(c, "parent_ids", [])),
                 "origin_pool": c.origin_pool,
                 "status": c.status,
+                "rtl_simulation_success": c.status
+                in {"success", "failed_synthesis", "failed_synthesis_functionality"},
+                "synthesis_success": c.synthesis_success,
+                "post_synthesis_functionality_success": c.synthesis_functionality,
+                "ppa_success": c.ppa_success,
                 "generated_mode": getattr(c, "generated_mode", None),
-                "code_file_path": getattr(c, "code_file_path", None),
+                "code_file_path": c.code_file_path,
             }
             for c in candidates_this_gen
         ]

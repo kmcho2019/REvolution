@@ -832,6 +832,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         default="revolution",
         choices=[
             "revolution",
+            "revolution_failed_parent_repair",
             "revolution_pareto",
             "revolution_qd",
             "revolution_qd_natural",
@@ -1424,7 +1425,12 @@ def main(argv: list[str] | None = None) -> int:
     if (
         args.backend == "revolution"
         and args.search_mode
-        in {"revolution_pareto", "revolution_qd", "revolution_qd_natural"}
+        in {
+            "revolution_failed_parent_repair",
+            "revolution_pareto",
+            "revolution_qd",
+            "revolution_qd_natural",
+        }
         and args.population_pool_mode == "single"
     ):
         print(
@@ -1432,6 +1438,29 @@ def main(argv: list[str] | None = None) -> int:
             "population_pool_mode=single."
         )
         return 2
+
+    if (
+        args.backend == "revolution"
+        and args.search_mode == "revolution_failed_parent_repair"
+    ):
+        repair_contract = (
+            args.population_pool_mode == "dual"
+            and args.generation_mode == "whole"
+            and args.classic_operator_kind == "eoh_strategies"
+            and args.eoh_success_operator_set == "classic"
+            and args.strategy_selection == "ucb"
+            and args.representation_kind == "code_individual"
+            and args.repair_kind == "none"
+            and args.evaluation_mode == "strict_ablation"
+        )
+        if not repair_contract:
+            print(
+                "Configuration error: search_mode=revolution_failed_parent_repair "
+                "requires dual pools, whole generation, eoh_strategies, the "
+                "classic success operator set, UCB, code_individual, no repair "
+                "wrapper, and strict_ablation."
+            )
+            return 2
 
     if args.backend == "revolution" and args.search_mode == "revolution_pareto":
         pareto_contract = (

@@ -226,6 +226,19 @@ def test_backend_parser_accepts_pareto_search_mode():
     assert args.search_mode == "revolution_pareto"
 
 
+def test_backend_parser_accepts_failed_parent_repair_mode():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(
+        [
+            "--backend",
+            "revolution",
+            "--search_mode",
+            "revolution_failed_parent_repair",
+        ]
+    )
+    assert args.search_mode == "revolution_failed_parent_repair"
+
+
 def test_backend_parser_accepts_pcn_memory_options():
     parser, _ = _build_parser()
     args, _ = parser.parse_known_args(
@@ -327,13 +340,16 @@ def test_backend_parser_exposes_shared_timeout_flags():
     assert args.post_synthesis_simulation_timeout_s == 31
 
 
-def test_run_backend_rejects_single_pool_qd_mode(capsys):
+@pytest.mark.parametrize(
+    "search_mode", ["revolution_qd", "revolution_failed_parent_repair"]
+)
+def test_run_backend_rejects_single_pool_modes(capsys, search_mode):
     code = run_backend_main(
         [
             "--backend",
             "revolution",
             "--search_mode",
-            "revolution_qd",
+            search_mode,
             "--population_pool_mode",
             "single",
             "--benchmarks",
@@ -376,6 +392,39 @@ def test_run_backend_rejects_invalid_pareto_contract(capsys, flag, value):
     captured = capsys.readouterr()
     assert code == 2
     assert "requires eoh_strategies" in captured.out
+
+
+@pytest.mark.parametrize(
+    ("flag", "value"),
+    [
+        ("--generation_mode", "diff"),
+        ("--classic_operator_kind", "single_thought_operator"),
+        ("--eoh_success_operator_set", "one_parent"),
+        ("--strategy_selection", "random"),
+        ("--representation_kind", "thought_only"),
+        ("--repair_kind", "bounded_local_repair"),
+        ("--evaluation_mode", "search_accelerated"),
+    ],
+)
+def test_run_backend_rejects_invalid_failed_parent_repair_contract(capsys, flag, value):
+    code = run_backend_main(
+        [
+            "--backend",
+            "revolution",
+            "--search_mode",
+            "revolution_failed_parent_repair",
+            flag,
+            value,
+            "--benchmarks",
+            "RTLLM",
+            "--problems",
+            "Prob001_accu",
+        ]
+    )
+
+    captured = capsys.readouterr()
+    assert code == 2
+    assert "requires dual pools" in captured.out
 
 
 @pytest.mark.parametrize(

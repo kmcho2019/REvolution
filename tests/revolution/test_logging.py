@@ -40,6 +40,11 @@ def test_logger_writes_generation_and_summary(tmp_path):
     logger.meta_strategy_name = "ucb"
 
     cand = Heuristic("thought", "code", "feedback", strategy="M-S", status="success")
+    cand.parent_ids = ["parent-1"]
+    cand.origin_pool = "fail_pool"
+    cand.code_file_path = "/tmp/candidate.sv"
+    cand.synthesis_success = True
+    cand.synthesis_functionality = True
     cand.ppa_success = True
     cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 1.8}
     cand.score = 0.1
@@ -84,6 +89,14 @@ def test_logger_writes_generation_and_summary(tmp_path):
     assert log_line["llm_api_calls"] == 2
     assert log_line["average_strategy_probabilities"]["success"]["M-S"] == pytest.approx(1.0)
     assert log_line["status_counts_this_generation"]["success"] == 1
+    generated = log_line["generated_candidates"][0]
+    assert generated["parent_ids"] == ["parent-1"]
+    assert generated["origin_pool"] == "fail_pool"
+    assert generated["rtl_simulation_success"] is True
+    assert generated["synthesis_success"] is True
+    assert generated["post_synthesis_functionality_success"] is True
+    assert generated["ppa_success"] is True
+    assert generated["code_file_path"] == "/tmp/candidate.sv"
 
     start = datetime.datetime.now(datetime.timezone.utc)
     end = start + datetime.timedelta(seconds=5)

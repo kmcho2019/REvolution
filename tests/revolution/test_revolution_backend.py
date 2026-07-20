@@ -1,3 +1,4 @@
+from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -159,6 +160,93 @@ def test_revolution_backend_uses_pareto_engine(monkeypatch, tmp_path):
     assert isinstance(backend.engine, _FakeParetoEngine)
     assert captured["kwargs"]["classic_operator_kind"] == "eoh_strategies"
     assert captured["kwargs"]["eoh_success_operator_set"] == "classic"
+
+
+def test_revolution_backend_uses_failed_parent_repair_engine(monkeypatch, tmp_path):
+    captured = {}
+
+    class _FakeRepairEngine:
+        def __init__(self, **kwargs):
+            captured["kwargs"] = kwargs
+
+    monkeypatch.setattr(
+        "revolution.backends.revolution_backend.FailedParentRepairEngine",
+        _FakeRepairEngine,
+    )
+    context = _context(tmp_path)
+    context.metadata["evaluation_mode"] = "strict_ablation"
+    backend = RevolutionBackend(
+        context=context,
+        services=_services(tmp_path),
+        config=RevolutionBackendConfig(search_mode="revolution_failed_parent_repair"),
+        base_save_path=str(tmp_path / "exp"),
+    )
+    backend.initialize()
+    assert isinstance(backend.engine, _FakeRepairEngine)
+    assert captured["kwargs"]["classic_operator_kind"] == "eoh_strategies"
+    assert captured["kwargs"]["eoh_success_operator_set"] == "classic"
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("generation_mode", "diff"),
+        ("classic_operator_kind", "single_thought_operator"),
+        ("eoh_success_operator_set", "one_parent"),
+        ("strategy_selection_method", "random"),
+        ("representation_kind", "thought_only"),
+        ("repair_kind", "bounded_local_repair"),
+    ],
+)
+def test_revolution_backend_rejects_invalid_repair_contract(
+    field, value, tmp_path
+):
+    context = _context(tmp_path)
+    context.metadata["evaluation_mode"] = "strict_ablation"
+    config = replace(
+        RevolutionBackendConfig(search_mode="revolution_failed_parent_repair"),
+        **{field: value},
+    )
+    backend = RevolutionBackend(
+        context=context,
+        services=_services(tmp_path),
+        config=config,
+        base_save_path=str(tmp_path / "exp"),
+    )
+
+    with pytest.raises(ValueError, match="requires dual pools"):
+        backend.initialize()
+
+
+def test_revolution_backend_rejects_accelerated_repair_evaluation(tmp_path):
+    context = _context(tmp_path)
+    context.metadata["evaluation_mode"] = "search_accelerated"
+    backend = RevolutionBackend(
+        context=context,
+        services=_services(tmp_path),
+        config=RevolutionBackendConfig(search_mode="revolution_failed_parent_repair"),
+        base_save_path=str(tmp_path / "exp"),
+    )
+
+    with pytest.raises(ValueError, match="strict_ablation"):
+        backend.initialize()
+
+
+def test_revolution_backend_rejects_single_pool_repair(tmp_path):
+    context = _context(tmp_path)
+    context.metadata["evaluation_mode"] = "strict_ablation"
+    backend = RevolutionBackend(
+        context=context,
+        services=_services(tmp_path),
+        config=RevolutionBackendConfig(
+            search_mode="revolution_failed_parent_repair",
+            population_pool_mode="single",
+        ),
+        base_save_path=str(tmp_path / "exp"),
+    )
+
+    with pytest.raises(ValueError, match="requires dual success state"):
+        backend.initialize()
 
 
 def test_revolution_backend_uses_natural_engine_for_qd_natural(monkeypatch, tmp_path):
