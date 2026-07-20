@@ -1,0 +1,128 @@
+experiment_id: h5_wave1_representative_probe
+candidate_id: H5
+candidate_class: CORE_CORRECTION
+stage: representative_probe
+
+code:
+  baseline_commit: 59acb11def38d12466cca425c6828bba25f98dc8
+  candidate_commit: 59acb11def38d12466cca425c6828bba25f98dc8
+  classic_core_sha256: 78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655
+  dirty_tree: false
+  candidate_mode: revolution_failed_parent_repair
+  config_sha256: b3c85757e2d18b3fa94d00f8decfd44c6468fdc0139a2bd93bced3b7c8997169
+  report_code_sha256: f952aa636e1a553d99c2f280a9ba60d89b04069d589a44bcb0e5c18bfaba1222
+  probe_report_code_sha256: 15d2c6698a781ab5aa8dca46adefbbcec1c25edb4ea83b202a803aa68a0e0689
+
+program_budget:
+  contract_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/program_claims_contract.md
+  contract_sha256: 74f2fea3ac839ba1b8395923e8b037e77109d3ae94005809f53a35d9e3ab0d1e
+  wave_id: wave1
+
+prompts:
+  manifest_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/default_prompt_manifest.sha256
+  hash_recipe: sha256_of_sha256sum_manifest
+  baseline_sha256: 044cc29db3bd20ecc1e00568cab74dc3efecaaf5da5a45ebbe306162b7b26a3a
+  candidate_sha256: 044cc29db3bd20ecc1e00568cab74dc3efecaaf5da5a45ebbe306162b7b26a3a
+  isolated_delta: failed_pool_operator_set_classic_five_to_m_f_only
+  baseline_operator_family: eoh_operators
+  candidate_operator_family: eoh_operators
+
+model:
+  provider: vllm
+  model: openai/gpt-oss-120b
+  temperature: 1.0
+  top_p: 1.0
+  max_tokens: 128000
+  diff_max_tokens: 128000
+
+budget:
+  generations: 5
+  population_size: 8
+  candidate_evaluations_per_problem: 48
+  max_llm_calls_per_problem: 100
+  max_total_tokens_per_problem: 650000
+  max_synthesis_calls_per_problem: 48
+
+benchmarks:
+  role: representative
+  source: classic_only_variance_stratified_selection
+  manifest_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/representative_problem_manifest.yaml
+  manifest_sha256: 9ed95986946980858b1391ce6c8725ba002959c864fed6706a0f8714b31286e5
+  baseline_only_selection_rule_sha256: 44bfacd9ad9969b7ec890892e5d28be3df3904b19ec734f4b8cc9505f50cc298
+  reference_complete_only: true
+  candidate_missing_policy: count_as_method_failure
+  excluded_units_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/representative_excluded_units.yaml
+  prior_exposure: prior_exposed_development
+  eligibility_audit_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/baseline_contract.md
+  eligibility_audit_sha256: f580c1cf91666dfbdaeb8c15de6d0116107b195407bcdd772c3643b48ca0f105
+
+seeds:
+  manifest_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/program_manifest.yaml
+  manifest_sha256: 1ace858fdaf2bc3a9468526a48293d674afac7badaa726592d3a72a0b624be34
+  values: [1001, 1002]
+  role: development
+  disjoint_role_manifest_sha256: 1ace858fdaf2bc3a9468526a48293d674afac7badaa726592d3a72a0b624be34
+
+toolchain:
+  simulator: Icarus_12.0
+  synthesizer: Yosys_0.54+29_7b0c1fe49
+  ppa_flow: OpenROAD_v2.0-22560-gb571c4b471
+  container_or_environment_sha256: 28600f81d265f2afa211eb7f1d2cc94f50487f5e0a5b5ff30bed777d7432de8d
+
+primary_metrics:
+  - unconditional_fail_origin_valid_ppa_repairs_per_48_candidates
+  - final_hypervolume
+  - hypervolume_auc
+  - rtl_simulation_functionality
+  - verification_complete_valid_ppa
+
+secondary_metrics:
+  - hypervolume_auc
+  - best_normalized_ppa
+  - reference_beating_count
+  - valid_ppa_sample_yield
+  - llm_calls_to_first_improvement
+  - total_llm_tokens
+  - total_synthesis_evaluations
+
+mechanism_metrics:
+  - direct_fail_origin_rtl_simulation_repairs
+  - direct_fail_origin_valid_ppa_repairs
+  - unconditional_valid_ppa_repair_rate
+  - conditional_repair_yields
+  - first_direct_valid_ppa_repair_generation
+  - recovered_design_indicator
+  - direct_repair_stage_transitions
+  - pre_and_post_selection_pool_sizes
+
+statistics:
+  unit: problem_seed_pair
+  cluster: problem
+  interval_method: seeded_problem_cluster_bootstrap
+  bootstrap_replicates: 10000
+  bootstrap_seed: 20260720
+  missing_treatment_policy: penalized_method_failure
+  tie_tolerance: 1.0e-9
+  ppa_metric_floor_policy: minimum_locked_classic_score
+  hypervolume_floor: 0.0
+  functionality_floor: 0.0
+  practical_margins_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/baseline_contract.md
+  practical_margins_sha256: f580c1cf91666dfbdaeb8c15de6d0116107b195407bcdd772c3643b48ca0f105
+
+frozen_gates:
+  catastrophic_stop: infrastructure_budget_mechanism_or_schema_failure
+  viable: not_evaluated_at_representative_stage
+  paper_candidate: not_evaluated_at_representative_stage
+  retirement: invalid_mechanism_budget_mismatch_code_failure_or_infrastructure
+
+reviews:
+  hypothesis_review_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/hypothesis_card.md
+  code_review_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/reviews/20260720_h5_internal_code_review.md
+  evidence_review_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/reviews/20260720_h5_representative_preregistration.md
+
+artifacts:
+  raw_root: exp/tcad_revolution_extension/h5_failed_parent_repair/wave1/representative_probe
+  report_command: uv run python scripts/report_failed_parent_repair.py --classic-root RAW_ROOT/seed_SEED/classic --treatment-root RAW_ROOT/seed_SEED/treatment --output-dir RAW_ROOT/packages/seed_SEED/mechanism --seed SEED --problems Prob002_adder_16bit Prob024_fsm Prob025_sequence_detector Prob027_LIFObuffer Prob036_edge_detect Prob041_traffic_light Prob043_RAM Prob045_alu --population-size 8 --generations 5
+  aggregate_report_command: uv run python scripts/report_failed_parent_repair_probe.py --manifest docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/representative_experiment_manifest.yaml --output-dir RAW_ROOT/packages/two_seed/probe
+  report_root: exp/tcad_revolution_extension/h5_failed_parent_repair/wave1/representative_probe/packages
+  decision_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/decision.md

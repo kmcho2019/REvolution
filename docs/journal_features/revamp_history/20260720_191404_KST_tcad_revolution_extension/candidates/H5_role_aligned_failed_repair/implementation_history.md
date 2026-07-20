@@ -42,3 +42,21 @@ history.
   `019f80e8-a363-7af3-81bd-43094e71a965` returned `PASS` with no technical
   finding and declared the representative probe technically admissible.
 - Candidate state: `SMOKE_VALIDATED`.
+
+## 2026-07-20: Representative Probe Freeze
+
+- Froze the eight classic-only-selected tasks, development seeds 1001 and 1002,
+  population 8, five generations, and fresh matched controls before inspecting
+  representative treatment evidence.
+- Shared run config SHA-256:
+  `b3c85757e2d18b3fa94d00f8decfd44c6468fdc0139a2bd93bced3b7c8997169`.
+- Problem manifest SHA-256:
+  `9ed95986946980858b1391ce6c8725ba002959c864fed6706a0f8714b31286e5`.
+- Experiment manifest SHA-256:
+  `0dcbc2f1012a06d5aac3f0ed64abbdfecc87ee902b174fcd096128af3fe0266f`.
+- Canonical probe report SHA-256:
+  `15d2c6698a781ab5aa8dca46adefbbcec1c25edb4ea83b202a803aa68a0e0689`.
+- The independent preregistration review found and closed incomplete metric,
+  unit-accounting, resource, prompt-hash, and classic-only floor issues. Final
+  verdict: `PASS`.
+- No representative H5 result existed when the commands and hashes froze.

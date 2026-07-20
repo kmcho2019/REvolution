@@ -204,3 +204,24 @@ or holdout.
   delta `+0.0625` is recorded only as smoke telemetry and does not promote H5.
 - H5 advances from `IMPLEMENTED` to `SMOKE_VALIDATED`. The representative
   probe may be frozen next; no full-suite or paper claim is authorized.
+
+## H5 Representative Preregistration
+
+- Froze the baseline-selected eight-problem manifest, development seeds 1001
+  and 1002, 8-by-5 candidate budget, matched sequential arms, exact mechanism
+  report, canonical PPA/HV/HV-AUC reports, and clustered paired statistics.
+- Shared config SHA-256:
+  `b3c85757e2d18b3fa94d00f8decfd44c6468fdc0139a2bd93bced3b7c8997169`.
+- Representative manifest SHA-256:
+  `0dcbc2f1012a06d5aac3f0ed64abbdfecc87ee902b174fcd096128af3fe0266f`.
+- A preregistration audit initially rejected the generic two-seed statistics
+  command because it omitted HV-AUC, the H5 repair endpoint, zero-PPA units,
+  and resource-ceiling validation. The accepted correction adds one isolated,
+  tested H5 probe validator and a directly checkable prompt checksum manifest.
+- A first closure review caught treatment-dependent normalized-PPA imputation.
+  The final implementation uses only locked classic scores, adds a distinguishing
+  regression test, and received preregistration `PASS`.
+- This saturated representative set is diagnostic. Performance cannot promote
+  or retire H5; only invalid mechanism, budget, code, or infrastructure can
+  stop it before the frozen two-seed full suite.
+- No representative treatment output existed at preregistration.
