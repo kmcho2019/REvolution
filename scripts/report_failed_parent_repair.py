@@ -9,7 +9,7 @@ import hashlib
 import json
 from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 from urllib.parse import urlparse
 
 import yaml
@@ -17,6 +17,7 @@ import yaml
 
 FAIL_OPERATORS = {"M-F", "M-S", "M-E", "M-R", "M-I"}
 SUCCESS_OPERATORS = {"M-S", "M-E", "M-R", "M-I", "C-F"}
+MissingPolicy = Literal["forbid", "zero"]
 PROGRAM_MANIFEST = (
     Path(__file__).resolve().parents[1]
     / "docs/journal_features/revamp_history"
@@ -76,7 +77,7 @@ def _completed_stage(candidate: dict[str, Any]) -> str:
 def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     assert rows
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -150,14 +151,44 @@ def _read_arm(
     problems: list[str],
     population_size: int,
     generations: int,
+    missing_policy: MissingPolicy,
 ) -> list[dict[str, Any]]:
     paths = sorted(root.rglob("generation_log.jsonl"))
-    assert {path.parent.name for path in paths} == set(problems)
-    assert len(paths) == len(problems)
+    paths_by_problem = {path.parent.name: path for path in paths}
+    assert len(paths_by_problem) == len(paths)
+    assert paths_by_problem.keys() <= set(problems)
+    match missing_policy:
+        case "forbid":
+            assert paths_by_problem.keys() == set(problems)
+        case "zero":
+            pass
+        case _:
+            raise AssertionError(f"Unknown missing-unit policy: {missing_policy}")
     rows: list[dict[str, Any]] = []
 
-    for path in paths:
-        problem = path.parent.name
+    for problem in problems:
+        if problem not in paths_by_problem:
+            rows.append(
+                {
+                    "arm": label,
+                    "problem": problem,
+                    "unit_status": "missing_method_failure",
+                    "candidate_count": 0,
+                    "initial_fail_pool_size": 0,
+                    "initial_success_pool_size": 0,
+                    "fail_parent_requests": 0,
+                    "direct_rtl_repairs": 0,
+                    "direct_valid_ppa_repairs": 0,
+                    "unconditional_valid_ppa_repair_rate": 0.0,
+                    "conditional_rtl_simulation_repair_yield": 0.0,
+                    "conditional_valid_ppa_repair_yield": 0.0,
+                    "first_direct_valid_ppa_generation": None,
+                    "recovered_design": 0,
+                    "direct_repair_stage_transitions": "{}",
+                }
+            )
+            continue
+        path = paths_by_problem[problem]
         records = [
             json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()
         ]
@@ -248,6 +279,7 @@ def _read_arm(
             {
                 "arm": label,
                 "problem": problem,
+                "unit_status": "complete",
                 "candidate_count": len(candidates),
                 "initial_fail_pool_size": sum(
                     candidate["status"] != "success" for candidate in initial_candidates
@@ -287,7 +319,11 @@ def _validate_pool_telemetry(
     population_size: int,
     generations: int,
 ) -> None:
-    problem_rows = {row["problem"]: row for row in treatment_rows}
+    problem_rows = {
+        row["problem"]: row
+        for row in treatment_rows
+        if row["unit_status"] == "complete"
+    }
     paths = sorted(treatment_root.rglob("failed_parent_repair_pool_telemetry.jsonl"))
     assert {path.parent.name for path in paths} == set(problem_rows)
     for path in paths:
@@ -356,6 +392,7 @@ def generate_report(
     problems: list[str],
     population_size: int,
     generations: int,
+    treatment_missing_policy: MissingPolicy,
 ) -> dict[str, Any]:
     """Generate a strict paired mechanism report for one H5 seed."""
     assert seed >= 0 and problems and len(problems) == len(set(problems))
@@ -368,9 +405,16 @@ def generate_report(
         population_size,
         generations,
     )
-    classic = _read_arm("classic", classic_root, problems, population_size, generations)
+    classic = _read_arm(
+        "classic", classic_root, problems, population_size, generations, "forbid"
+    )
     treatment = _read_arm(
-        "treatment", treatment_root, problems, population_size, generations
+        "treatment",
+        treatment_root,
+        problems,
+        population_size,
+        generations,
+        treatment_missing_policy,
     )
     _validate_pool_telemetry(treatment_root, treatment, population_size, generations)
     classic_by_problem = {row["problem"]: row for row in classic}
@@ -443,6 +487,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--problems", nargs="+", required=True)
     parser.add_argument("--population-size", type=int, required=True)
     parser.add_argument("--generations", type=int, required=True)
+    parser.add_argument(
+        "--treatment-missing-policy",
+        choices=("forbid", "zero"),
+        default="forbid",
+    )
     args = parser.parse_args(argv)
     generate_report(
         args.classic_root.resolve(),
@@ -452,6 +501,7 @@ def main(argv: list[str] | None = None) -> int:
         args.problems,
         args.population_size,
         args.generations,
+        args.treatment_missing_policy,
     )
     return 0
 
