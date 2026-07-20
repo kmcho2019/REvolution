@@ -57,8 +57,9 @@ detail in the append-only program and candidate histories.
 - [x] Run `ruff`, focused tests, pyright or recorded existing debt, and `ty`.
 - [x] Complete an independent code-simplicity and isolation audit.
 - [x] Run one debug-seed technical smoke on the frozen diverse set.
-- [ ] Run the matched representative probe and analyze all registered metrics.
-- [ ] Advance non-catastrophic mechanisms to a two-seed frozen full-suite probe.
+- [x] Run the matched representative probe and analyze all registered metrics.
+- [x] Advance H5 and freeze its two-seed full-suite probe before launch.
+- [ ] Run and analyze the frozen H5 full-suite probe.
 - [ ] Permit at most two evidence-justified, mechanism-preserving revisions.
 - [ ] Record PAPER_CANDIDATE, VIABLE, RETIRED, or BLOCKED in `decision.md`.
 - [ ] Update history, claim ledger, negative map, and portfolio before next work.

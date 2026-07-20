@@ -225,3 +225,42 @@ or holdout.
   or retire H5; only invalid mechanism, budget, code, or infrastructure can
   stop it before the frozen two-seed full suite.
 - No representative treatment output existed at preregistration.
+
+## H5 Representative Evidence And Reporting Closure
+
+- Fresh matched classic and H5 runs completed all eight frozen representative
+  tasks at development seeds 1001 and 1002 with exact 48-candidate budgets.
+- H5-minus-classic mean deltas were unconditional repair rate `+0.0052083`,
+  final HV `-0.0014420`, HV-AUC `+0.0076497`, valid-PPA sample yield
+  `+0.0299479`, and best normalized PPA `-0.0115159`. RTL-simulation
+  functionality and valid-PPA coverage tied at `16/16`.
+- Repair-rate direction was positive in both seeds. Final-HV and HV-AUC seed
+  directions were mixed. The representative stage remains diagnostic and did
+  not classify H5.
+- A reporting-only closure added per-seed, sensitivity, resource, missing-unit,
+  and pool-trajectory evidence. It registered the undefined
+  calls-to-first-improvement metric as a non-gating protocol deviation rather
+  than introducing a post-hoc definition.
+- Independent audit session `019f8152-17e0-72c1-89a9-40eeb2a1868e` initially
+  rejected incomplete reporting and missing-unit paths. After focused fixes,
+  14 tests, Ruff, Pyright, and `ty` passed and the reviewer returned `PASS`.
+  No live arm was rerun.
+
+## H5 Full-Suite Development Freeze
+
+- Froze a 50-task full run with the locked 46 reference-complete PPA headline,
+  fresh sequential classic controls, seeds 1001 and 1002, and the unchanged
+  8-by-5 candidate budget.
+- The benefit endpoint is the all-50 unconditional fail-origin valid-PPA repair
+  rate and must be positive in each seed. Final HV, HV-AUC, 46-task valid-PPA
+  coverage, and RTL-simulation functionality use only the pre-existing frozen
+  margins.
+- Missing H5 units are explicit zero-valued method failures, reduce treatment
+  candidate totals, and force `RETIRED`. Resource parity uses total calls,
+  tokens, and arm wall time. The stage cannot return `PAPER_CANDIDATE`.
+- Full manifest SHA-256:
+  `10cdf1eedbb560c6b36b5b7197490d2fe7f0bd5f48510c2b330574f575e9da9e`.
+- No full-suite arm had launched at freeze time. The first broad external
+  review timed out without evidence; a focused 600-second retry verified all
+  pins, scopes, failure paths, and gates and returned `PASS`. Full-suite launch
+  is authorized after committing and rechecking the frozen tree.

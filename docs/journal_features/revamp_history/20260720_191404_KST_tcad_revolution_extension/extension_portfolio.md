@@ -1,6 +1,6 @@
 # TCAD Extension Portfolio
 
-Status: `WAVE_1_H5_SMOKE_VALIDATED`
+Status: `WAVE_1_H5_REPRESENTATIVE_VALIDATED`
 
 This is the final advisor-facing synthesis of the discovery program. Update it
 after every candidate transition. Detailed commands and raw results remain in
@@ -30,7 +30,7 @@ terminal advisor-facing outcomes only.
 
 | ID | Mechanism | Role | Naturalness | Outcome | Key result |
 | --- | --- | --- | --- | --- | --- |
-| H5 | M-F-only failed-pool routing | Primary core correction | 11/14 | PENDING | Technical smoke passed; no performance inference; representative probe pending. |
+| H5 | M-F-only failed-pool routing | Primary core correction | 11/14 | PENDING | Representative repair rate improved in both seeds; final-HV direction was mixed; full-suite gate pending. |
 | H1 | Bottleneck-conditioned adaptation | Primary core correction | 8/14 | RETIRED | Adds contextual-bandit state before classic UCB or context utility is isolated. |
 | H2 | Preference-decomposed populations | Primary core correction | 8/14 | RETIRED | F41 and related work remove the rationale for another ungrounded multiobjective allocation. |
 | H3 | Contract-preserving patch evolution | Supporting reliability | 9/14 | RETIRED | Edit-breadth premise is unmeasured and the first treatment would combine several mechanisms. |
@@ -43,6 +43,7 @@ quota-driven variant list.
 
 | Candidate | Designs/seeds | Final HV delta | HV-AUC delta | Valid-PPA delta | Functionality delta | Mechanism evidence | Artifact |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| H5 representative | RTLLM 8, seeds 1001-1002 | -0.001442, CI [-0.017777, +0.009446] | +0.007650, CI [-0.011339, +0.025545] | 0/16 coverage; +0.029948 sample yield | 0/16 | Repair-rate delta +0.005208; positive in both seeds; all H5 failed requests used M-F. | `candidates/H5_role_aligned_failed_repair/representative_probe/README.md` |
 | Historical no C-F | RTLLM 46, seeds 1001-1005 | +0.003044, CI [-0.004214, +0.013837] | +0.007747, CI [-0.000467, +0.018882] | +2/230 | +3/230 RTL-simulation passes | C-F removed in all logs; calls differ by 2 and tokens by 1.8%. | `component_evidence_audit.md` |
 
 The no-C-F evidence predates the current seed roles and gates. It is
@@ -100,6 +101,9 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
 - H5 code and smoke contract:
   `candidates/H5_role_aligned_failed_repair/implementation_history.md`,
   `candidates/H5_role_aligned_failed_repair/smoke_experiment_manifest.yaml`.
+- H5 representative evidence and full-suite freeze:
+  `candidates/H5_role_aligned_failed_repair/representative_probe/README.md`,
+  `candidates/H5_role_aligned_failed_repair/full_suite_experiment_manifest.yaml`.
 - Historical no-C-F record:
   `candidates/H6_fusion_free_success/decision.md`.
 - Generated evidence root:

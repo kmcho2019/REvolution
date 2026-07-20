@@ -1,0 +1,139 @@
+experiment_id: h5_wave1_full_suite_probe
+candidate_id: H5
+candidate_class: CORE_CORRECTION
+stage: full_suite_probe
+
+code:
+  baseline_commit: 59acb11def38d12466cca425c6828bba25f98dc8
+  candidate_commit: 59acb11def38d12466cca425c6828bba25f98dc8
+  classic_core_sha256: 78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655
+  dirty_tree: false
+  candidate_mode: revolution_failed_parent_repair
+  config_sha256: 3a4ec607702bac8dbf53eedadfb637d2d5e952c12680834f113865de6576582a
+  mechanism_report_sha256: 350371b2b53cd069c63db3d92bae6e05d23fb3b1f3ac974358cd017ada2d5116
+  probe_report_sha256: 518cb20b78bef3aa796287644f27fc3f2ca43e0735674b7952835431a069f6c8
+
+program_budget:
+  contract_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/program_claims_contract.md
+  contract_sha256: 74f2fea3ac839ba1b8395923e8b037e77109d3ae94005809f53a35d9e3ab0d1e
+  wave_id: wave1
+
+prompts:
+  manifest_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/default_prompt_manifest.sha256
+  hash_recipe: sha256_of_sha256sum_manifest
+  baseline_sha256: 044cc29db3bd20ecc1e00568cab74dc3efecaaf5da5a45ebbe306162b7b26a3a
+  candidate_sha256: 044cc29db3bd20ecc1e00568cab74dc3efecaaf5da5a45ebbe306162b7b26a3a
+  isolated_delta: failed_pool_operator_set_classic_five_to_m_f_only
+  baseline_operator_family: eoh_operators
+  candidate_operator_family: eoh_operators
+
+model:
+  provider: vllm
+  model: openai/gpt-oss-120b
+  temperature: 1.0
+  top_p: 1.0
+  max_tokens: 128000
+  diff_max_tokens: 128000
+
+budget:
+  generations: 5
+  population_size: 8
+  candidate_evaluations_per_problem: 48
+  max_llm_calls_per_problem: 100
+  max_total_tokens_per_problem: 650000
+  max_synthesis_calls_per_problem: 48
+  max_wall_seconds_per_problem: 2400
+
+benchmarks:
+  role: full_suite_development
+  run_manifest_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/full_suite_problem_manifest.yaml
+  run_manifest_sha256: e46d54c07a7ef7f315f70872e8fab04ac49bc63ad5c0676f9aeecdea42bff578
+  locked_run_manifest_path: docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/qd_evaluaton_exp/20260701_1155_PCN_v3_experiments/tables/rtllm_full_manifest.yaml
+  locked_run_manifest_sha256: fcf42ec53a8d68f5e54c449539163bc7eea494c7a20630945ab3ea1206cc0d67
+  headline_manifest_path: docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_reference_complete_manifest.yaml
+  headline_manifest_sha256: 92d6ad2981b04a8aed531ca04ca1ac085bb9fb6fee866ada2a4bf397ee52497b
+  run_problem_count: 50
+  headline_problem_count: 46
+  reference_incomplete_problems:
+    - Prob006_adder_pipe_64bit
+    - Prob013_multi_booth_8bit
+    - Prob018_float_multi
+    - Prob040_synchronizer
+  candidate_missing_policy: count_as_method_failure
+  excluded_units_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/full_suite_excluded_units.yaml
+  excluded_units_sha256: 1579607eaa71914f7b0ec0c32209b107df825b35464a9164b86d36035f1fcb7e
+  prior_exposure: prior_exposed_development
+
+seeds:
+  manifest_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/program_manifest.yaml
+  manifest_sha256: 1ace858fdaf2bc3a9468526a48293d674afac7badaa726592d3a72a0b624be34
+  values: [1001, 1002]
+  role: development
+
+toolchain:
+  simulator: Icarus_12.0
+  synthesizer: Yosys_0.54+29_7b0c1fe49
+  ppa_flow: OpenROAD_v2.0-22560-gb571c4b471
+  container_or_environment_sha256: 28600f81d265f2afa211eb7f1d2cc94f50487f5e0a5b5ff30bed777d7432de8d
+
+primary_metrics:
+  - unconditional_fail_origin_valid_ppa_repairs_per_48_candidates_all_50
+  - final_hypervolume_reference_complete_46
+  - hypervolume_auc_reference_complete_46
+  - rtl_simulation_functionality_46_and_50
+  - verification_complete_valid_ppa_46
+
+secondary_metrics:
+  - best_normalized_ppa_46
+  - reference_beating_count_46
+  - valid_ppa_sample_yield_46
+  - total_llm_calls
+  - total_llm_tokens
+  - total_synthesis_evaluations
+  - runtime
+
+mechanism_metrics:
+  - direct_fail_origin_rtl_simulation_repairs
+  - direct_fail_origin_valid_ppa_repairs
+  - unconditional_valid_ppa_repair_rate
+  - conditional_repair_yields
+  - first_direct_valid_ppa_repair_generation
+  - recovered_design_indicator
+  - direct_repair_stage_transitions
+  - pre_and_post_selection_pool_sizes
+
+statistics:
+  unit: problem_seed_pair
+  cluster: problem
+  interval_method: seeded_problem_cluster_bootstrap
+  bootstrap_replicates: 10000
+  bootstrap_seed: 20260720
+  missing_treatment_policy: penalized_method_failure
+  tie_tolerance: 1.0e-9
+  ppa_metric_floor_policy: minimum_locked_classic_score
+  hypervolume_floor: 0.0
+  functionality_floor: 0.0
+  practical_margins_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/baseline_contract.md
+  practical_margins_sha256: f580c1cf91666dfbdaeb8c15de6d0116107b195407bcdd772c3643b48ca0f105
+
+frozen_gates:
+  benefit_endpoint: unconditional_valid_ppa_repair_rate_all_50
+  benefit_rule: paired_mean_delta_strictly_positive_in_each_seed
+  final_hv_noninferiority: -0.0050
+  hv_auc_noninferiority: -0.0036
+  maximum_coverage_deficit: 2
+  maximum_auxiliary_resource_relative_skew: 0.10
+  catastrophic_minimum_hv_ratio: 0.90
+  catastrophic_maximum_coverage_deficit: 3
+  require_exact_candidate_budget: true
+  paper_candidate: not_evaluated_at_full_suite_development_stage
+
+reviews:
+  hypothesis_review_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/hypothesis_card.md
+  code_review_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/reviews/20260720_h5_internal_code_review.md
+  preregistration_review_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/reviews/20260720_h5_full_suite_preregistration.md
+
+artifacts:
+  raw_root: exp/tcad_revolution_extension/h5_failed_parent_repair/wave1/full_suite_probe
+  report_root: exp/tcad_revolution_extension/h5_failed_parent_repair/wave1/full_suite_probe/packages
+  decision_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/decision.md

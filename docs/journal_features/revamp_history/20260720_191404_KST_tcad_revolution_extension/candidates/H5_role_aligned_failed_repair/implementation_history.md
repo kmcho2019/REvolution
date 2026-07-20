@@ -60,3 +60,43 @@ history.
   unit-accounting, resource, prompt-hash, and classic-only floor issues. Final
   verdict: `PASS`.
 - No representative H5 result existed when the commands and hashes froze.
+
+## 2026-07-20: Representative Probe
+
+- Completed fresh sequential classic and H5 arms for all eight frozen problems
+  at seeds 1001 and 1002. Each arm has 384 candidates and no missing unit.
+- Raw root:
+  `exp/tcad_revolution_extension/h5_failed_parent_repair/wave1/representative_probe`.
+- H5-minus-classic deltas were repair rate `+0.0052083`, final HV
+  `-0.0014420`, HV-AUC `+0.0076497`, valid-PPA sample yield `+0.0299479`, and
+  best normalized PPA `-0.0115159`. Functionality and valid-PPA coverage were
+  tied at `16/16`.
+- Repair-rate direction was positive at both seeds; final-HV and HV-AUC seed
+  directions were mixed. The stage is diagnostic and created no candidate
+  classification.
+- A reporting-only closure emitted per-seed, sensitivity, resource, and pool
+  trajectory tables. It documented that the frozen
+  `llm_calls_to_first_improvement` name lacked an estimand and excluded that
+  non-gating metric rather than defining it after outcomes.
+- Independent reporting audit session
+  `019f8152-17e0-72c1-89a9-40eeb2a1868e` returned final `PASS`. No live run was
+  repeated. Canonical derived package:
+  `packages/two_seed/probe_reporting_closure_v3`.
+
+## 2026-07-20: Full-Suite Probe Freeze
+
+- Froze all 50 RTLLM run tasks and the locked 46 reference-complete PPA
+  headline tasks, development seeds 1001 and 1002, population 8, five
+  generations, fresh sequential controls, and exact missing-result penalties.
+- Full run manifest SHA-256:
+  `e46d54c07a7ef7f315f70872e8fab04ac49bc63ad5c0676f9aeecdea42bff578`.
+- Shared config SHA-256:
+  `3a4ec607702bac8dbf53eedadfb637d2d5e952c12680834f113865de6576582a`.
+- Full-suite experiment manifest SHA-256:
+  `10cdf1eedbb560c6b36b5b7197490d2fe7f0bd5f48510c2b330574f575e9da9e`.
+- The stage can return only `VIABLE` or `RETIRED`. It cannot confer a paper
+  claim or use representative outcomes to change a numeric gate.
+- The first broad external review timed out without evidence. A focused
+  600-second `claude -p` retry verified all pins and gates and returned `PASS`
+  with no blocker.
+- No full-suite arm had launched at freeze time.

@@ -2,8 +2,8 @@
 
 Status: `ACTIVE_WAVE_1`; baseline, statistics, benchmark roles, holdout, and
 resource ceilings froze on 2026-07-20 before treatment evidence. H5 is the sole
-Wave-1 candidate, passed its technical smoke, and awaits the representative
-probe.
+Wave-1 candidate, passed its smoke and representative technical gates, and
+awaits its frozen full-suite development probe.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts
