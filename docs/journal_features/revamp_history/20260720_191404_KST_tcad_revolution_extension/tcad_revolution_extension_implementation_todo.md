@@ -6,7 +6,7 @@ detail in the append-only program and candidate histories.
 ## Activation And Baseline
 
 - [x] Owner accepted `program_claims_contract.md` revision 1 on 2026-07-20.
-- [ ] Record branch, HEAD, dirty state, model, toolchain, and artifact roots.
+- [x] Record branch, HEAD, dirty state, model, toolchain, and artifact roots.
 - [ ] Freeze and hash the byte-identical classic engine and configuration.
 - [ ] Reproduce classic REvolution with the canonical reporting flow.
 - [ ] Measure classic seed variance, synthesis determinism, and missing outputs.
@@ -21,17 +21,17 @@ detail in the append-only program and candidate histories.
 
 ## Conference Method Audit
 
-- [ ] Map conference claims and components to exact classic code paths.
-- [ ] Audit EoH operators and operator adaptation evidence.
-- [ ] Audit scalar success fitness and parent/survivor selection.
-- [ ] Audit fail/success populations and information retained from failures.
-- [ ] Audit mutation granularity, repair, and functional verification.
-- [ ] Audit PPA evaluator noise, proxy limits, and objective handling.
-- [ ] Audit task scope, benchmark generalization, and scale limitations.
-- [ ] Complete the current related-work comparison matrix.
-- [ ] Mark each component SUPPORTED, UNPROVEN, LIMITING, or OUT_OF_SCOPE.
-- [ ] Rank weaknesses by evidence, tractability, naturalness, and paper value.
-- [ ] Obtain independent conference-method and TCAD novelty reviews.
+- [x] Map conference claims and components to exact classic code paths.
+- [x] Audit EoH operators and operator adaptation evidence.
+- [x] Audit scalar success fitness and parent/survivor selection.
+- [x] Audit fail/success populations and information retained from failures.
+- [x] Audit mutation granularity, repair, and functional verification.
+- [x] Audit PPA evaluator noise, proxy limits, and objective handling.
+- [x] Audit task scope, benchmark generalization, and scale limitations.
+- [x] Complete the current related-work comparison matrix.
+- [x] Mark each component SUPPORTED, UNPROVEN, LIMITING, or OUT_OF_SCOPE.
+- [x] Rank weaknesses by evidence, tractability, naturalness, and paper value.
+- [x] Obtain independent conference-method and TCAD novelty reviews.
 
 ## Candidate Portfolio
 
