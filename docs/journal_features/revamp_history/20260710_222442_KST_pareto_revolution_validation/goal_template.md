@@ -5,9 +5,9 @@ repeat the `/goal` prefix when the goal tool expects only objective text.
 
 ```text
 Resolve the descriptor-free Pareto REvolution candidate specified in
-docs/feature_history/20260710_222442_KST_pareto_revolution_validation/pareto_revolution_validation_plan.md.
+docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/pareto_revolution_validation_plan.md.
 Use
-docs/feature_history/20260710_222442_KST_pareto_revolution_validation/pareto_revolution_validation_implementation_todo.md
+docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/pareto_revolution_validation_implementation_todo.md
 as the living checklist and record all decisions, commands, runs, failures,
 artifacts, hashes, and commits in the implementation history beside it.
 

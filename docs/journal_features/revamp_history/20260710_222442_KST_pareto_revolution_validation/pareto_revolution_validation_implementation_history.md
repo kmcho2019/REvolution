@@ -9,7 +9,7 @@ validation evidence. Do not rewrite earlier entries when conclusions change.
 - Branch: `feat/journal-qd-bd-exp-20260703`.
 - Starting HEAD: `eb3e918d9726a07a4497fc1b46831c8c1b4552dd`.
 - Goal directory:
-  `docs/feature_history/20260710_222442_KST_pareto_revolution_validation/`.
+  `docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/`.
 - Read the repository guidelines, journal onboarding sources, current
   natural-QD goal and closure history, senior-advisor bundle, current engine
   selection code, ranking primitives, runner wiring, validators, and locked

@@ -18,7 +18,7 @@ cross-arm bundles + isolated-grade per-task tables), see
 `MECHANISM-VERIFIED` process confirmed live, outcome tracked separately.
 
 **MAJOR UPDATE 2026-07-13 - descriptor-free Pareto REvolution ablation
-(`docs/feature_history/20260710_222442_KST_pareto_revolution_validation/`):**
+(`docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/`):**
 - **F41 (MEASURED, frozen two-seed early stop): replacing classic successful-
   parent and successful-survivor selection with global NSGA-II rank/crowding
   does not pass the journal-candidate gate.** Fresh matched classic versus
@@ -213,7 +213,7 @@ every answer to the five conference criticisms is evidence-backed:
   loses final HV, functionality, HV-AUC, and score improvement under the
   frozen gate. Its small diversity gains are secondary characterization, not
   a primary TCAD contribution. Source:
-  `docs/feature_history/20260710_222442_KST_pareto_revolution_validation/full_rtllm_two_seed/`.
+  `docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/full_rtllm_two_seed/`.
 - **F18–F21, F28, F30–F31 — on harder/newer benchmarks QD never beats
   classic; the limit is LLM capability, not search.** Two benchmarks:
   **RealBench e203** — a genuine capability ceiling: 0 valid on the 5 larger

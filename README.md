@@ -27,9 +27,12 @@ The `docs/` directory contains deeper dives:
 - `docs/journal_features/08_journal_revamp_goal.md` – TCAD revamp goal spec for
   CVDP/RealBench integration, QD performance repair, descriptor evidence,
   narrative signoff, statistical gates, and faster evaluation scheduling.
-- [Pareto REvolution validation ledger](docs/feature_history/20260710_222442_KST_pareto_revolution_validation/README.md)
+- [Pareto REvolution validation ledger](docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md)
   preserves the completed descriptor-free Pareto ablation and its negative
   two-seed RTLLM promotion-gate closure against fresh classic REvolution.
+- [TCAD REvolution extension scaffold](docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/README.md)
+  is the proposed next-goal research charter. Its intake blockers must be
+  resolved before any candidate goal is activated.
 - `docs/journal_features/resources/README.md` – manuscript submodule guide for
   the frozen ASP-DAC 2026 conference paper and the working TCAD journal draft.
 - `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
@@ -836,7 +839,8 @@ Moved from GUIDELINES.md (which now holds practices only).
   [docs/journal_features/revamp_ruminations_20260612.md](docs/journal_features/revamp_ruminations_20260612.md) is the original intent;
   [docs/journal_features/journal_narrative.md](docs/journal_features/journal_narrative.md) is the ACCEPTED claims contract (gates/branch rules frozen — it wins on any conflict);
   [docs/journal_features/13_findings_dashboard.md](docs/journal_features/13_findings_dashboard.md) is the current START-HERE findings view;
-  [docs/feature_history/20260710_222442_KST_pareto_revolution_validation/README.md](docs/feature_history/20260710_222442_KST_pareto_revolution_validation/README.md) is the active descriptor-free Pareto validation ledger;
+  [docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md](docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md) is the completed descriptor-free Pareto validation ledger;
+  [docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/README.md](docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/README.md) is the proposed next-goal program scaffold and intake review;
   [docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md](docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md) is the suite-first natural-QD follow-up campaign state;
   in `docs/journal_features/revamp_history/20260612_005012_KST_journal_revamp/`: `goal_template.md` is the v2 objective, `journal_revamp_plan.md` the P1–P5 execution plan, `journal_revamp_implementation_todo.md` the phase-grouped checklist (sign-off requires every item checked and spot-verified), `journal_revamp_adversarial_prompt.md` the sign-off process, `journal_revamp_implementation_history.md` the evidence log, `rerun_ledger.jsonl` the run ledger; `*_v1_initial.md` files are archived originals.
   Locked artifacts live in `data/configs/` (seed manifest, subsets, probe); revise only by version bump with recorded rationale.
@@ -902,7 +906,7 @@ Moved from GUIDELINES.md (which now holds practices only).
   [docs/journal_features/resources/journal_draft/](docs/journal_features/resources/journal_draft/)
 - Journal revamp planning:
   [docs/journal_features/08_journal_revamp_goal.md](docs/journal_features/08_journal_revamp_goal.md),
-  [docs/journal_features/revamp_history/](docs/journal_features/revamp_history/)
+  [docs/journal_features/revamp_history/README.md](docs/journal_features/revamp_history/README.md)
 
 ## Project Structure & Module Organization
 - `src/revolution/`: core package. Start with `algorithm.py` for classic REvolution, `backends/` for runner adapters, `runtime/` for evaluation/problem abstractions, `pareto_revolution/` for the isolated descriptor-free selection experiment, and `qd/` for the archive/scoring/scheduler substrate.

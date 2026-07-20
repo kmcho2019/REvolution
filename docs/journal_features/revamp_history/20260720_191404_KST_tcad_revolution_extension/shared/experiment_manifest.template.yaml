@@ -1,0 +1,56 @@
+experiment_id: H1_screen_v1
+hypothesis_id: H1
+stage: development_screen  # smoke | development_screen | holdout | final
+
+code:
+  baseline_commit: REQUIRED
+  candidate_commit: REQUIRED
+  dirty_tree: false
+  config_hash: REQUIRED
+  prompt_hash: REQUIRED
+
+model:
+  provider: REQUIRED
+  model: REQUIRED
+  temperature: REQUIRED
+  top_p: REQUIRED
+
+budget:
+  generations: REQUIRED
+  population_size: REQUIRED
+  max_llm_calls_per_problem: REQUIRED
+  max_synthesis_calls_per_problem: REQUIRED
+
+benchmarks:
+  manifest_path: REQUIRED
+  manifest_sha256: REQUIRED
+  reference_complete_only: true
+  candidate_missing_policy: count_as_method_failure
+
+seeds: [REQUIRED]
+
+toolchain:
+  simulator: REQUIRED
+  synthesizer: REQUIRED
+  ppa_flow: REQUIRED
+  container_or_environment_hash: REQUIRED
+
+primary_metrics:
+  - reference_complete_hypervolume
+  - hypervolume_auc
+  - hardened_valid_ppa_count
+
+secondary_metrics:
+  - paired_problem_wlt
+  - best_normalized_ppa
+  - reference_beating_count
+  - llm_calls_to_first_improvement
+
+frozen_gates:
+  promotion: REQUIRED
+  retirement: REQUIRED
+
+artifacts:
+  raw_root: REQUIRED
+  report_command: REQUIRED
+  report_root: REQUIRED
