@@ -1,56 +1,116 @@
-experiment_id: H1_screen_v1
-hypothesis_id: H1
-stage: development_screen  # smoke | development_screen | holdout | final
+experiment_id: REQUIRED
+candidate_id: REQUIRED
+candidate_class: REQUIRED  # CORE_CORRECTION | HARDWARE_EXTENSION | AUGMENTATION
+stage: REQUIRED  # smoke | representative_probe | full_suite_probe | confirmation | holdout
 
 code:
   baseline_commit: REQUIRED
   candidate_commit: REQUIRED
+  classic_core_sha256: REQUIRED
   dirty_tree: false
-  config_hash: REQUIRED
-  prompt_hash: REQUIRED
+  candidate_mode: REQUIRED
+  config_sha256: REQUIRED
+  report_code_sha256: REQUIRED
+
+program_budget:
+  contract_path: REQUIRED
+  contract_sha256: REQUIRED
+  wave_id: REQUIRED
+
+prompts:
+  baseline_sha256: REQUIRED
+  candidate_sha256: REQUIRED
+  isolated_delta: REQUIRED
+  baseline_operator_family: eoh_operators
+  candidate_operator_family: REQUIRED  # eoh_operators unless operator family is treatment
 
 model:
   provider: REQUIRED
   model: REQUIRED
   temperature: REQUIRED
   top_p: REQUIRED
+  max_tokens: REQUIRED
+  diff_max_tokens: REQUIRED
 
 budget:
   generations: REQUIRED
   population_size: REQUIRED
+  candidate_evaluations_per_problem: REQUIRED
   max_llm_calls_per_problem: REQUIRED
+  max_total_tokens_per_problem: REQUIRED
   max_synthesis_calls_per_problem: REQUIRED
 
 benchmarks:
+  role: REQUIRED  # smoke | representative | full_suite | confirmation | holdout
+  source: REQUIRED
   manifest_path: REQUIRED
   manifest_sha256: REQUIRED
+  baseline_only_selection_rule_sha256: REQUIRED
   reference_complete_only: true
   candidate_missing_policy: count_as_method_failure
+  excluded_units_path: REQUIRED
+  prior_exposure: REQUIRED
+  eligibility_audit_path: REQUIRED
+  eligibility_audit_sha256: REQUIRED
 
-seeds: [REQUIRED]
+seeds:
+  manifest_path: REQUIRED
+  manifest_sha256: REQUIRED
+  values: [REQUIRED]
+  role: REQUIRED  # development | confirmation
+  disjoint_role_manifest_sha256: REQUIRED
 
 toolchain:
   simulator: REQUIRED
   synthesizer: REQUIRED
   ppa_flow: REQUIRED
-  container_or_environment_hash: REQUIRED
+  container_or_environment_sha256: REQUIRED
 
 primary_metrics:
-  - reference_complete_hypervolume
-  - hypervolume_auc
-  - hardened_valid_ppa_count
+  - reference_complete_final_hypervolume
+  - hardened_functionality_coverage
+  - hardened_valid_ppa_coverage
+  - paired_problem_final_hv_delta
+  - paired_problem_wlt
 
 secondary_metrics:
-  - paired_problem_wlt
+  - hypervolume_auc
   - best_normalized_ppa
   - reference_beating_count
+  - valid_ppa_sample_yield
   - llm_calls_to_first_improvement
+  - total_llm_tokens
+  - total_synthesis_evaluations
+
+mechanism_metrics: [REQUIRED]
+
+statistics:
+  unit: problem_seed_pair
+  cluster: problem
+  interval_method: seeded_problem_cluster_bootstrap
+  bootstrap_replicates: REQUIRED
+  bootstrap_seed: REQUIRED
+  missing_treatment_policy: penalized_method_failure
+  tie_tolerance: REQUIRED
+  ppa_metric_floor_policy: REQUIRED
+  hypervolume_floor: 0.0
+  functionality_floor: 0.0
+  practical_margins_path: REQUIRED
+  practical_margins_sha256: REQUIRED
 
 frozen_gates:
-  promotion: REQUIRED
+  catastrophic_stop: REQUIRED
+  viable: REQUIRED
+  paper_candidate: REQUIRED
   retirement: REQUIRED
+
+reviews:
+  hypothesis_review_path: REQUIRED
+  code_review_path: REQUIRED
+  evidence_review_path: REQUIRED
 
 artifacts:
   raw_root: REQUIRED
   report_command: REQUIRED
   report_root: REQUIRED
+  decision_path: REQUIRED

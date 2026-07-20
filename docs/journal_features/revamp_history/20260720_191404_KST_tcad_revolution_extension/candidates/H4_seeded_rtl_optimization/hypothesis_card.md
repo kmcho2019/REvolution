@@ -1,45 +1,61 @@
-# H4 Hypothesis Card: Seeded RTL Optimization
+# H4: Seeded RTL Optimization
 
-## Falsifiable hypothesis
+Status: `PROPOSED` generalization seed idea; not `READY`.
 
-The promoted REvolution extension can optimize functionally valid but
-suboptimal RTL more reliably and effectively than one-shot rewriting and the
-conference method applied without optimization-specific structure.
+## Conference Scope Gap
 
-## Paper role
+The conference evidence is primarily specification-to-RTL generation. A useful
+CAD optimizer should also improve valid but suboptimal RTL while preserving its
+observable contract.
 
-This is a scope/generalization contribution, not a substitute for a promoted
-algorithmic contribution.
+## Falsifiable Hypothesis
 
-## Proposed task
+A separately confirmed algorithmic `PAPER_CANDIDATE` produces more functionally
+equivalent seed-relative PPA improvements than one-shot rewriting and seeded
+classic REvolution at equal budget.
 
-Initialize the success population with valid seed RTL and preserve an explicit
-contract. Evaluate seed-relative PPA improvement and functionality retention.
+## Program Role
 
-## Benchmark plan
+This is a task/generalization contribution, not a substitute for an algorithmic
+extension. Do not implement it before at least one algorithmic candidate reaches
+confirmation or the owner explicitly selects optimization as a separate paper
+direction after novelty review.
 
-- primary optimization benchmark with suboptimal/optimized RTL pairs;
-- generated first-valid REvolution seeds on a frozen RTLLM subset;
-- optional larger hierarchical stress subset after the core result is stable.
+## Proposed Task
 
-## Smallest decisive screen
+- Initialize the success population with valid suboptimal RTL.
+- Freeze an explicit functional contract and seed-relative PPA reference.
+- Count only changed descendants that pass the required functional/equivalence
+  gate as optimization successes.
+- Keep unchanged seeds in the baseline table but exclude them from improvement
+  counts.
 
-Eight optimization tasks:
+## Required Controls
 
 1. unchanged seed;
 2. one-shot LLM optimization;
-3. conference REvolution initialized from seed;
-4. best promoted extension initialized from seed.
+3. seeded classic REvolution;
+4. seeded confirmed algorithmic paper candidate.
 
-## Promotion gate
+Use a current RTL optimization benchmark plus a separately frozen RTLLM-derived
+set only when contamination and reference roles are explicit.
 
-- functionality preservation at least 90% for accepted candidates;
-- seed-relative PPA improvement on at least 60% of tasks;
-- promoted method beats one-shot and conference initialization on mean PPA gain
-  or valid-PPA efficiency;
-- gains survive the hardened evaluation flow.
+## Validation Posture
 
-## Retirement gate
+- Every accepted optimized artifact must pass the stated functional/equivalence
+  contract; there is no 90% correctness allowance for claimed artifacts.
+- Report task coverage separately from conditional correctness.
+- Require seed-relative PPA improvement, changed-equivalent descendant yield,
+  final HV where defined, and matched calls/tokens/synthesis cost.
+- Apply the shared role-specific `VIABLE` and `PAPER_CANDIDATE` gates.
 
-Retire as a main contribution if one-shot optimization matches the full system
-or improvements disappear under hardened/cross-flow evaluation.
+## Retirement Conditions
+
+Retire as a paper contribution when one-shot or seeded classic matches the
+confirmed algorithmic candidate, changes fail equivalence, gains disappear
+under hardened PPA, or current optimization systems remove the claimed novelty.
+
+## Main Reviewer Risk
+
+Seeding and RTL-to-RTL optimization are already crowded contributions. H4 is
+valuable only as convincing generalization of a distinct confirmed mechanism.

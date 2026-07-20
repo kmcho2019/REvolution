@@ -1,35 +1,44 @@
 # Natural Extension Rubric
 
-## Hard rejection conditions
+## Hard Rejection Conditions
 
-Reject the candidate before live experiments if any condition is true:
+Reject a proposal before live experiments when any condition is true:
 
-1. It requires problem IDs, benchmark names, or manually selected per-design
-   thresholds in the search path.
-2. It uses hidden tests, final-suite outcomes, or reference PPA to guide search.
-3. Its claimed novelty is already the central method of closely related work
-   and no clear REvolution-specific delta exists.
-4. It changes model, budget, evaluator, or problem coverage in the primary
-   comparison without a paired control.
-5. Its mechanism cannot be isolated by an ablation.
-6. It adds many knobs without a preregistered, problem-independent choice.
+1. It is not tied to an evidence-backed conference weakness or scope gap.
+2. It requires problem IDs, benchmark names, or per-design thresholds in search.
+3. It uses hidden tests, final outcomes, or reference PPA to guide search.
+4. It changes model, budget, evaluator, or coverage without a paired control.
+5. It is a generic algorithm transplant with no REvolution-specific mechanism.
+6. Closely related work already contains the claimed central contribution and
+   no clear delta remains.
+7. Its causal mechanism cannot be isolated or measured.
+8. It depends on fallback ladders, many optional states, or compatibility modes.
+9. It adds more than two knobs without an accepted simplicity exception.
+10. It is an adjacent parameter scan, stacked near-misses, or a renamed retired
+    mechanism.
 
-## Scored criteria
+## Scored Criteria
 
-Score each item 0, 1, or 2. Require at least 8/10.
+Score each item 0, 1, or 2. Require at least 11/14, with no zero for conference
+continuity, rationale, novelty, or simplicity.
 
-1. **Conference continuity**: directly extends an existing REvolution state,
-   population, feedback, strategy, or evaluation mechanism.
-2. **Generality**: applies across combinational, sequential, and control-heavy
-   RTL without per-problem changes.
-3. **Mechanistic clarity**: states why the change should affect PPA or validity
-   and exposes measurements that can falsify the explanation.
-4. **Implementation simplicity**: one narrow code path, limited public knobs,
-   typed states, and no unrelated refactor.
-5. **Paper value**: supports a substantive algorithm, reliability, or
-   generalization contribution beyond additional experiments.
+1. **Conference continuity:** directly corrects or extends a documented classic
+   state, population, operator, feedback, objective, or task boundary.
+2. **Evidence-backed need:** code, ablation, baseline, or reviewer evidence shows
+   why the current component warrants attention.
+3. **Hardware/CAD grounding:** the mechanism follows RTL functionality,
+   synthesis behavior, PPA tradeoffs, or a defensible search principle.
+4. **Generality:** it applies across design classes without per-problem behavior.
+5. **Mechanistic clarity:** telemetry and a control can falsify the causal story.
+6. **Implementation simplicity:** one narrow typed path, little state, at most
+   two knobs, no fallback, and clean removal if retired.
+7. **Novelty and paper value:** the related-work delta supports a substantive
+   algorithmic, reliability, or generalization contribution.
 
-## Required written decision
+## Review Procedure
 
-Record the score, hard-gate result, related-work delta, and reviewer objections
-before moving a candidate to `READY`.
+At least two independent read-only reviews must challenge the card before it
+becomes `READY`: one TCAD novelty/naturalness review and one hardware/EDA or
+methodology review. The owner records each finding as `ACCEPT`, `REJECT`, or
+`DEFER` with evidence. Reviewer agreement is not a substitute for checking code,
+artifacts, and primary literature.

@@ -1,54 +1,57 @@
-# H3 Hypothesis Card: Contract-Preserving Patch Evolution
+# H3: Contract-Preserving Patch Evolution
 
-## Falsifiable hypothesis
+Status: `PROPOSED` supporting seed idea; not `READY`.
 
-Restricting success-population mutations to localized, contract-checked RTL
-patches increases hardened valid-PPA yield and HV-AUC without final-HV
-regression compared with full-file rewrites.
+## Conference Weakness
 
-## Conference limitation addressed
+Whole-output success mutations may change interfaces, reset behavior, latency,
+or protocol behavior even when the PPA optimization intent is local. The audit
+must first quantify whether edit breadth predicts avoidable functional failure.
 
-Whole-design rewrites can introduce interface, reset, latency, and protocol
-regressions even when the optimization intent is local.
+## Falsifiable Hypothesis
 
-## Novelty warning
+At equal budget, localized RTL patches constrained by a general machine-readable
+design contract improve hardened valid-PPA child yield or time to PPA
+improvement without material final-HV loss versus full-output success mutation.
 
-Proceed only after a related-work audit distinguishes this from existing
-symbolic/AST-template and formal/localized RTL-repair systems. The intended
-REvolution-specific delta is evolutionary patch lineage, PPA-conditioned patch
-selection, and integration with the dual success/fail populations.
+## Proposed Mechanism
 
-## Proposed mechanism
+- Derive ports, clock/reset signals, and immutable interface structure from
+  existing RTL and evaluator metadata, without per-design annotations.
+- Request one unified diff or similarly narrow edit from a success parent.
+- Reject edits that exceed one frozen locality rule or violate the contract.
+- Keep full repair in the fail population unchanged.
+- Log changed lines/nodes, contract rejection, functionality, and PPA delta.
 
-- Define a typed design contract: ports, reset semantics, latency class, and
-  protected state/interface signals.
-- Request a unified diff or AST-local edit from success-population parents.
-- Reject patches that exceed the allowed locality or violate the contract.
-- Use full repair only in the fail population.
-- Measure patch size, contract rejection, functional preservation, and PPA gain.
+Do not build a new AST framework, retrieval system, transformation library, or
+fallback ladder for the first implementation.
 
-## Smallest decisive screen
+## Required Controls And Telemetry
 
-Paired-parent experiment on 6 designs:
-
-1. full-file success mutation;
+1. classic full-output success mutation;
 2. local patch mutation;
-3. local patch mutation without contract enforcement.
+3. local patch mutation without contract rejection, if safe to isolate.
 
-## Promotion gate
+Measure changed descendants only, patch size, parse/compile/pass rates, contract
+violations, equivalence outcomes, valid-PPA yield, and first improvement cost.
 
-- hardened valid-PPA child rate improves by at least 20% relative;
-- final HV is within 1% of classic/full rewrite;
-- HV-AUC improves or LLM calls to first PPA improvement decrease;
-- contract enforcement materially reduces hidden/equivalence failures.
+## Validation Posture
 
-## Retirement gate
+- Every claimed generated artifact must pass the frozen functional gate.
+- Small paired-parent runs test locality and contract behavior only.
+- A sound mechanism advances through representative and full-suite probes.
+- This candidate is normally `VIABLE` supporting evidence unless it satisfies
+  the role-specific `PAPER_CANDIDATE` gate and accompanies an independently
+  supported algorithmic contribution.
 
-Retire if local patches are mostly cosmetic, final HV falls by more than 3%, or
-novelty cannot be clearly separated from related work.
+## Retirement Conditions
 
-## Existing code path
+Retire when patch size does not predict validity, edits are mostly cosmetic,
+contract extraction requires per-design policy, locality blocks useful PPA
+changes, novelty overlaps existing RTL rewriting systems, or allowed revisions
+fail the frozen gates.
 
-Start from the success-population mutation interface and evaluation harness.
-Avoid a large AST rewrite framework unless the smallest diff-based version
-passes the screen.
+## Main Reviewer Risk
+
+Local rewriting, AST templates, and formal validation already have extensive
+related work. Evolutionary lineage alone may not provide sufficient novelty.

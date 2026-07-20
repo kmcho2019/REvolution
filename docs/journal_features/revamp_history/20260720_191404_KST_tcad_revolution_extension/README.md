@@ -1,36 +1,66 @@
 # TCAD REvolution Extension Research Goal Scaffold
 
-Status: `PROPOSED`; imported for review, not activated.
+Status: `READY_FOR_AUDIT`; owner-approved on 2026-07-20. Live candidate
+experiments remain gated by `intake_review.md`.
 
-This scaffold turns the journal-extension effort into a research program with
-separate, falsifiable `/goal` loops. Do not launch the whole program as one
-unbounded goal. Use `tcad_revolution_extension_plan.md` as the durable charter,
-then launch one candidate goal at a time.
+This scaffold is a bounded research-discovery program for finding natural,
+reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts
+from an audit of the conference algorithm, generates candidate mechanisms from
+documented weaknesses, and evaluates the strongest candidates through separate
+falsifiable loops. It does not assume that the four imported candidates are the
+right answer.
 
 ## Start here
 
-1. Read `intake_review.md` and resolve its activation blockers.
-2. Read `tcad_revolution_extension_plan.md` for the program contract.
-3. Track program setup in
-   `tcad_revolution_extension_implementation_todo.md`.
-4. Select exactly one hypothesis from `candidates/` for the next goal.
-5. Use `shared/candidate_goal_contract.md` for every candidate decision.
+1. Read `intake_review.md` and resolve the remaining activation blockers.
+2. Review `program_claims_contract.md`; it is a draft until explicitly accepted.
+3. Use `tcad_revolution_extension_plan.md` as the durable program charter.
+4. Complete `conference_method_audit.md` before selecting implementation work.
+5. Track active work in `tcad_revolution_extension_implementation_todo.md`.
+6. Keep every proposed and tested direction in `extension_portfolio.md`.
+7. Use `shared/candidate_goal_contract.md` for each implementation loop.
 
-## Recommended order
+## Program flow
 
-1. Resolve the intake review and freeze a versioned claims contract.
-2. Freeze the conference baseline and evaluation contract.
-3. Review H1, H2, and H3, then select one candidate rather than launching a
-   broad scan.
-4. Build H4 as the task/benchmark extension after at least one algorithmic
-   candidate has been promoted.
-5. Integrate only promoted components and choose the smallest winning system.
-6. Finish with a paper-evidence goal and independent adversarial validation.
+1. Freeze and reproduce classic REvolution.
+2. Audit its operators, populations, objectives, adaptation, verification, and
+   evaluation scope against code, conference claims, later evidence, and current
+   related work.
+3. Propose several natural responses to the audited weaknesses. A proposal must
+   have a hardware/CAD rationale, a clear REvolution-specific delta, and an
+   isolatable mechanism. It must not be a parameter scan or heuristic patch.
+4. Rank proposals with independent scientific and novelty reviews; evaluate at
+   most two waves of no more than three distinct mechanisms each.
+5. Implement candidates one at a time in isolated experimental modules.
+6. Audit code before live spend, run a bounded smoke, then a representative
+   probe. Non-catastrophic candidates advance to a frozen full-suite probe.
+7. Record each candidate as `PAPER_CANDIDATE`, `VIABLE`, `RETIRED`, or `BLOCKED`.
+8. Confirm only the strongest one or two candidates with five preregistered,
+   development-disjoint seeds and a disjoint holdout.
+9. Finish with a minimal journal thesis or an explicit evidence-backed pivot.
+
+## Seed ideas, not a required queue
+
+The H1-H4 directories are starting hypotheses supplied with the original
+bundle. They must pass the same audit as any new idea. The program does not
+require H1 and H2 to run, does not require every seed idea to be implemented,
+and may add stronger candidates discovered by the conference-method audit.
 
 ## Candidate state machine
 
-`PROPOSED -> READY -> IMPLEMENTED -> SCREENED -> PROMOTED | RETIRED | BLOCKED`
+`PROPOSED -> READY -> IMPLEMENTED -> SMOKE_VALIDATED -> SUITE_EVALUATED`
 
-A negative result is a successful candidate-goal outcome when it supports a
-well-evidenced `RETIRED` decision. It is not permission to weaken gates or tune
-on the final suite.
+A nominated finalist then enters `CONFIRMING`. Proposal review may retire an
+idea before implementation, and a named external blocker may stop any state.
+
+Every evaluated candidate ends as exactly one of:
+
+- `PAPER_CANDIDATE`: modest or larger suite-scale evidence supports a primary
+  or supporting journal claim at the level defined by the claims contract.
+- `VIABLE`: the mechanism is natural and useful, but the evidence does not
+  license a headline claim.
+- `RETIRED`: evidence or review rejects the mechanism for this program.
+- `BLOCKED`: a named external resource prevents a scientific decision.
+
+Negative and near-miss results are valid completion. They must inform the next
+hypothesis rather than trigger weaker gates or post-hoc tuning.

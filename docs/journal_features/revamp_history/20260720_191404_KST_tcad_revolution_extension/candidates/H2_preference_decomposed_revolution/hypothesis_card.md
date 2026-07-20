@@ -1,51 +1,62 @@
-# H2 Hypothesis Card: Preference-Decomposed REvolution
+# H2: Preference-Decomposed REvolution
 
-## Falsifiable hypothesis
+Status: `PROPOSED` seed idea; not `READY`.
 
-At equal total budget, maintaining a small number of objective-preference
-success lanes preserves classic hill-climbing while increasing reference-
-complete PPA hypervolume compared with one scalar success population.
+## Conference Weakness
 
-## Motivation
+Classic REvolution ranks successful candidates through one weighted PPA score.
+The completed global NSGA-II ablation shows that removing the scalar bias alone
+broadens front material but does not improve final suite-scale PPA. Any new
+multiobjective mechanism must preserve classic exploitation rather than repeat
+that treatment.
 
-Behavior-descriptor diversity was weakly aligned with PPA. PPA preference
-vectors are directly aligned with the evaluated objective and do not require a
-learned embedding or archive geometry.
+## Falsifiable Hypothesis
 
-## Proposed mechanism
+At equal total budget, a dominant balanced success lane plus a small fixed set
+of PPA preference lanes preserves classic hill climbing while improving final
+reference-complete hypervolume without reducing hardened functionality or
+valid-PPA coverage.
+
+## Proposed Mechanism
 
 - Keep one shared fail population unchanged.
-- Split the success population into a dominant balanced lane and a small number
-  of area/timing/power preference lanes.
-- Each lane uses classic parent selection and a fixed achievement scalarization.
-- Maintain a global nondominated reporting front, but do not use behavior cells.
-- Share only nondominated elites; no crossover in the first implementation.
+- Retain a dominant classic balanced success lane.
+- Add a small symmetric set of area, timing, and power preference lanes using
+  one fixed achievement scalarization.
+- Share only nondominated successful elites through one explicit rule.
+- Use EoH operators and no behavior descriptors, QD cells, crossover, adaptive
+  lane count, or problem-specific preferences.
 
-Use symmetric, preregistered preference vectors and at most one allocation knob.
+The lane allocation is the only allowed public knob and is frozen before runs.
 
-## Smallest decisive screen
+## Required Controls And Telemetry
 
-Frozen eight-design `8x5` screen:
+1. byte-identical classic scalar success population;
+2. completed/global Pareto selection control where artifact reuse is valid;
+3. preference-decomposed treatment.
 
-1. classic single-score REvolution;
-2. global Pareto-parent control;
-3. preference-decomposed REvolution.
+Report per-lane evaluations, useful children, valid-PPA yield, contribution to
+the final global front, lane starvation, and balanced-lane parent ancestry.
 
-## Promotion gate
+## Validation Posture
 
-- mean reference-complete HV improves by at least 5%, or by at least 3% with
-  positive HV-AUC and front-breadth gains;
-- no classic-covered design is lost;
-- valid-PPA yield remains within 10% relative of classic;
-- at least three of eight problems improve and no single problem explains over
-  half of the aggregate gain.
+- Small sets check lane execution and starvation only.
+- Use the baseline-only representative set, then the two-seed full suite for a
+  sound non-catastrophic mechanism.
+- Final-HV improvement and no functionality/valid-PPA regression are required
+  for a primary paper nomination; HV-AUC cannot rescue a final-HV loss.
+- A reproducible role-specific gain within practical margins may remain
+  `VIABLE` under the shared contract.
 
-## Retirement gate
+## Retirement Conditions
 
-Retire if the balanced lane is starved, HV is below classic by more than 3%, or
-front breadth increases without HV/HV-AUC value.
+Retire when lane budget dilution starves classic exploitation, extra front
+material has no PPA value, gains concentrate in one design, the mechanism is not
+novel beyond current preference/Pareto RTL work, or allowed revisions fail.
 
-## Existing code path
+## Main Reviewer Risk
 
-Start from classic success-population selection and current PPA metric helpers.
-Reuse Pareto reporting, not QD archive parent selection.
+Preference decomposition is standard multiobjective machinery. The card needs a
+clear REvolution-specific delta and evidence that preserving the balanced lane
+solves the measured global-Pareto failure rather than dressing an archive in new
+terminology.

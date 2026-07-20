@@ -1,19 +1,27 @@
-# Candidate Decision
+# H2 Candidate Decision
 
-## Verdict
+## Outcome
 
-PENDING
+`PENDING`
 
-## Frozen hypothesis and gates
+Allowed outcomes: `PAPER_CANDIDATE`, `VIABLE`, `RETIRED`, `BLOCKED`.
 
-## Evidence
+## Frozen Hypothesis And Gates
 
-## Mechanism findings
+## Evidence By Stage
 
-## Natural-extension and novelty assessment
+## Primary And Secondary Results
 
-## Code and documentation assessment
+## Mechanism Findings
 
-## Decision rationale
+## Naturalness And Novelty Assessment
 
-## Paper implication
+## Code And Documentation Assessment
+
+## Review Findings And Dispositions
+
+## Decision Rationale
+
+## Allowed Claim And Paper Role
+
+## Portfolio And Negative-Map Updates

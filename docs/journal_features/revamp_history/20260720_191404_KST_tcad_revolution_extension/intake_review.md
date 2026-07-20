@@ -1,6 +1,8 @@
 # Scaffold Intake Review
 
-Status: `HOLD`; resolve the blockers below before launching any goal template.
+Status: `READY_FOR_AUDIT`; owner approved the revised claims contract and goal
+launch on 2026-07-20. Complete the pre-live gates below before candidate
+experiments.
 
 ## Provenance
 
@@ -16,45 +18,55 @@ Status: `HOLD`; resolve the blockers below before launching any goal template.
 
 ## Content Assessment
 
-The bundle has a sound program shape: falsifiable candidate states, explicit
-negative outcomes, a natural-extension rubric, frozen experiment manifests,
-and a claim/evidence ledger. It correctly treats H4 seeded optimization as a
-generalization contribution rather than sufficient algorithmic novelty.
+The imported bundle had a sound evidence structure but treated four supplied
+hypotheses as the program. The revised scaffold instead begins with a
+conference-method audit and uses H1-H4 only as seed ideas. It supports repeated,
+bounded discovery loops while keeping negative outcomes, frozen manifests,
+claim/evidence traceability, and independent review.
 
-The four candidate cards are proposals, not approved experiments. The supplied
-recommendation to run H1 and H2 has not been accepted by this intake review.
+The revision also distinguishes a useful `VIABLE` mechanism from a confirmed
+`PAPER_CANDIDATE`. This permits modest or mixed improvements to remain in the
+portfolio without letting HV-AUC or a narrow case study rescue a primary
+final-HV loss.
 
-## Activation Blockers
+## Changes Incorporated
 
-1. `docs/journal_features/journal_narrative.md` remains the accepted claims
-   contract and wins on conflict. A versioned addendum or replacement contract
-   must authorize this post-QD program before activation.
-2. The H1, H2, and H3 cards use four-, six-, or eight-design performance
-   screens. Prior campaigns found weak screen-to-full-RTLLM transfer. Small
-   subsets may be technical smokes only; promotion needs a frozen full-suite
-   probe followed by five-seed confirmation.
-3. Several draft gates permit HV-AUC or efficiency to rescue a final-HV loss.
-   The completed Pareto and S07 evidence rejects that posture. A primary
-   algorithm must meet the frozen final-HV and functionality/valid-PPA gates;
-   HV-AUC remains secondary.
-4. H2 must explain how preference decomposition differs mechanistically from
-   the completed descriptor-free global NSGA-II negative result. H1 must pass
-   a strict naturalness review so synthesis context does not become a collection
-   of hand-tuned routing heuristics.
-5. H3 and H4 require a current related-work audit covering seeded evolutionary
-   RTL optimization, formal/local rewriting, and long-context partitioned RTL
-   optimization. Seeding, locality, hierarchy, or equivalence alone is not a
-   sufficient novelty claim.
-6. Primary experiments must use `eoh_operators`; the previously unsuccessful
-   `single_thought_operator` is excluded. The classic engine must remain
-   byte-identical and experimental logic must stay in isolated modules.
-7. The program plan currently allows two final seeds and three when affordable.
-   Paper-facing confirmation must use the existing five-seed standard unless a
-   newly accepted claims contract explicitly changes it.
+- Small subsets are now technical smokes or prioritization probes, never final
+  promotion evidence.
+- Non-catastrophic candidates advance to a frozen suite-scale probe because
+  prior small-screen transfer was weak.
+- Final HV and functionality/valid-PPA are primary for an algorithmic headline;
+  HV-AUC is secondary trajectory evidence.
+- Paper-facing confirmation uses five preregistered seeds disjoint from
+  development seeds, plus a disjoint holdout.
+- Candidate discovery now starts from audited conference weaknesses and current
+  related work rather than a fixed H1/H2 queue.
+- Non-operator comparisons require `eoh_operators`; a hardware-operator
+  candidate may change only that isolated factor. Every comparison requires
+  equal budgets, isolated experimental code, a byte-identical classic engine,
+  and no `single_thought_operator` arm.
+- Internal adversarial reviews and optional read-only `claude -p` reviews are
+  explicit transition gates rather than informal suggestions.
+
+## Pre-Live Experiment Gates
+
+1. The conference baseline hash, classic-only variability report, benchmark
+   roles, disjoint development/confirmation seed roles, and
+   development/holdout/final manifests must be frozen. Holdout selection needs
+   a documented eligibility and contamination audit.
+2. The conference-method audit and current related-work matrix must be complete
+   enough to rank candidate ideas without relying on benchmark outcomes.
+3. Exact practical-regression and confirmation gates must be frozen from the
+   baseline variance and minimum-detectable-effect analysis before candidates
+   are evaluated, together with the statistical unit, clustered interval method,
+   missing-data penalties, tie handling, and bootstrap settings.
+4. Program and per-wave ceilings for tokens, candidate evaluations, synthesis
+   evaluations, accelerator time, and wall-clock time must be frozen.
 
 ## Activation Decision
 
-Keep the scaffold at `PROPOSED`. The next action is an advisor-facing selection
-and novelty review that chooses one candidate, rewrites its quantitative gates
-against the current evidence, and records the result in a versioned claims
-contract. Do not launch all four candidates or the whole program as one goal.
+Launch the root goal as a bounded discovery program. Phase 0 audit, baseline
+reproduction, literature review, and manifest preparation may begin. Do not
+implement or run a candidate until every pre-live gate above is complete.
+Candidate work remains sequential: one active candidate at a time, with no broad
+parameter scan and no assumption that H1-H4 must run.

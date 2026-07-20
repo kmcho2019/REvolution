@@ -1,55 +1,58 @@
-# H1 Hypothesis Card: Bottleneck-Conditioned Strategy Adaptation
+# H1: Bottleneck-Conditioned Strategy Adaptation
 
-## Falsifiable hypothesis
+Status: `PROPOSED` seed idea; not `READY`.
 
-At equal LLM and synthesis budget, conditioning REvolution's existing adaptive
-strategy selection on a structured synthesis bottleneck state improves
-reference-complete PPA HV or HV-AUC over global strategy-success adaptation,
-without reducing hardened valid-PPA coverage.
+## Conference Weakness
 
-## Conference limitation addressed
+Classic REvolution adapts operator probabilities from aggregate success. It
+does not distinguish validity-, area-, timing-, or power-limited search states.
+Before implementation, the conference audit must establish that adaptive
+operator selection itself helps enough to justify adding context.
 
-The conference mechanism adapts strategy probabilities from aggregate success
-rates. It does not distinguish whether a valid design is area-, timing-,
-power-, or validity-limited.
+## Falsifiable Hypothesis
 
-## Proposed mechanism
+At equal budget, one small synthesis-state-conditioned operator policy improves
+final PPA search or useful-child efficiency over classic global adaptation
+without reducing hardened functionality or valid-PPA coverage.
 
-- Extract a small typed `SynthesisContext` from existing reports.
-- Keep a fixed, general operator set.
-- Maintain contextual operator success estimates with shrinkage to the global
-  prior.
-- Select operators from context-specific evidence; fall back to classic when
-  context evidence is weak.
-- Log context, selected operator, validity, targeted-objective delta, and front
-  contribution for mechanism analysis.
+## Proposed Mechanism
 
-Start simple: a context/operator success table or Beta-Bernoulli posterior.
-Do not begin with a neural router.
+- Derive one small typed `SynthesisContext` from evaluator data already produced
+  for every valid candidate.
+- Keep the fixed EoH operator family and all prompts unchanged.
+- Use one contextual success table initialized from one fixed global prior.
+- Use one update and selection rule for every context; do not switch to a
+  separate classic fallback mode.
+- Log context, operator, child validity, objective delta, and front contribution.
 
-## Smallest decisive screen
+No neural router, problem-specific threshold, learned embedding, or hierarchy
+is in scope.
 
-Four designs spanning different dominant bottlenecks, `12x3`, two seeds:
+## Required Controls
 
-1. classic conference adaptation;
-2. bottleneck-conditioned adaptation;
-3. shuffled-context control.
+1. byte-identical classic global adaptation;
+2. contextual adaptation;
+3. shuffled-context control with identical state and budget.
 
-## Promotion gate
+The context must predict useful-child outcomes and beat the shuffled control.
+A performance change without that signature does not support the mechanism.
 
-- final mean HV is no worse than classic by more than 1%;
-- HV-AUC improves by at least 5% or final HV improves by at least 3%;
-- no method-coverage loss;
-- contextual routing beats shuffled context on operator useful-child rate;
-- natural-extension score remains at least 8/10.
+## Validation Posture
 
-## Retirement gate
+- Small designs are execution and context-extraction checks only.
+- Use the baseline-only representative manifest for a matched probe.
+- Advance a non-catastrophic, mechanism-valid result to the two-seed full suite.
+- Apply the shared `VIABLE` and `PAPER_CANDIDATE` gates; freeze exact practical
+  margins after classic variance analysis.
 
-Retire after at most two revisions if shuffled context matches the method,
-context does not predict operator outcomes, or HV drops by more than 3%.
+## Retirement Conditions
 
-## Existing code path
+Retire when classic adaptation lacks value, context does not predict operator
+outcomes, shuffled context matches treatment, the mechanism needs hand-tuned
+context thresholds or fallbacks, or allowed revisions fail the frozen gates.
 
-Start from classic REvolution's adaptive strategy-probability update and success
-population. Add one typed context representation and one contextual selection
-implementation. Do not route through the QD archive code.
+## Main Reviewer Risk
+
+This can become a technical contextual-bandit variant rather than a natural RTL
+extension. It should rank below a simpler operator removal or hardware-grounded
+operator hypothesis unless the audit shows a clear context-dependent failure.

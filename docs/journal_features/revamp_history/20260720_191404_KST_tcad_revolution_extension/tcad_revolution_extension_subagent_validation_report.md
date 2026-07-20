@@ -1,19 +1,29 @@
-# REvolution TCAD Extension Sub-Agent Validation Report
+# REvolution TCAD Extension Validation Report
 
-## Verdict
+## Process Verdict
 
-PENDING
+`PENDING`
 
-## Evidence checked
+Allowed verdicts: `PASS`, `FAIL`.
 
-## Scientific validity findings
+## Evidence Outcome
 
-## Natural-extension and novelty findings
+`PENDING`
 
-## Code and documentation findings
+Allowed outcomes: `JOURNAL_READY`, `PORTFOLIO_READY`, `PIVOT_REQUIRED`.
 
-## Missing or weak evidence
+## Evidence Inspected
 
-## Reward-hacking or intent risks
+## Research Logic Findings
 
-## Required fixes before PASS
+## Naturalness And Novelty Findings
+
+## Experimental Validity Findings
+
+## Code And Documentation Findings
+
+## Claim And Portfolio Findings
+
+## Reward-Hacking Or Intent Risks
+
+## Required Fixes Before PASS
