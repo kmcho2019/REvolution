@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Literal
@@ -69,6 +70,10 @@ def generate_operator_evidence_report(
     arm_totals: Counter[tuple[str, str]] = Counter()
     arm_resources: defaultdict[tuple[str, str], float] = defaultdict(float)
     log_paths: dict[str, list[str]] = {}
+    fail_policy_units: list[dict[str, str]] = []
+    policy_totals: Counter[tuple[str, int, str]] = Counter()
+    policy_sums: defaultdict[tuple[str, int, str], float] = defaultdict(float)
+    policy_operator_sets: dict[tuple[str, int], tuple[str, ...]] = {}
 
     for label, root in runs:
         paths = sorted(root.rglob("generation_log.jsonl"))
@@ -92,6 +97,83 @@ def generate_operator_evidence_report(
                     value = generation[key]
                     assert isinstance(value, int | float) and value >= 0
                     arm_resources[label, key] += float(value)
+                pool_counts = generation["strategy_counts_for_each_origin_pool"]
+                pool_probabilities = generation["average_strategy_probabilities"]
+                assert isinstance(pool_counts, dict)
+                assert isinstance(pool_probabilities, dict)
+                fail_counts = pool_counts["fail_pool"]
+                assert isinstance(fail_counts, dict)
+                if fail_counts:
+                    fail_probabilities = pool_probabilities["fail_pool"]
+                    assert isinstance(fail_probabilities, dict)
+                    generation_index = generation["generation"]
+                    assert isinstance(generation_index, int) and generation_index > 0
+                    assert "M-F" in fail_probabilities
+                    assert set(fail_counts) <= set(fail_probabilities)
+                    assert all(
+                        isinstance(value, int) and value >= 0
+                        for value in fail_counts.values()
+                    )
+                    assert all(
+                        isinstance(value, int | float) and value >= 0
+                        for value in fail_probabilities.values()
+                    )
+                    assert abs(sum(fail_probabilities.values()) - 1.0) < 1e-9
+                    request_count = sum(fail_counts.values())
+                    assert request_count > 0
+                    operators = tuple(sorted(fail_probabilities))
+                    group = (label, generation_index)
+                    if group in policy_operator_sets:
+                        assert policy_operator_sets[group] == operators
+                    policy_operator_sets[group] = operators
+                    uniform_probability = 1.0 / len(operators)
+                    total_variation = 0.5 * sum(
+                        abs(fail_probabilities[operator] - uniform_probability)
+                        for operator in operators
+                    )
+                    normalized_entropy = 1.0
+                    if len(operators) > 1:
+                        normalized_entropy = -sum(
+                            probability * math.log(probability)
+                            for probability in fail_probabilities.values()
+                            if probability > 0
+                        ) / math.log(len(operators))
+                    mf_requests = fail_counts.get("M-F", 0)
+                    mf_is_max = fail_probabilities["M-F"] == max(
+                        fail_probabilities.values()
+                    )
+                    fail_policy_units.append(
+                        {
+                            "arm": label,
+                            "generation": str(generation_index),
+                            "generation_log": str(path.relative_to(root)),
+                            "operator_set": ";".join(operators),
+                            "fail_parent_requests": str(request_count),
+                            "m_f_requests": str(mf_requests),
+                            "m_f_request_fraction": f"{mf_requests / request_count:.12g}",
+                            "m_f_probability": f"{fail_probabilities['M-F']:.12g}",
+                            "m_f_is_max": str(int(mf_is_max)),
+                            "normalized_entropy": f"{normalized_entropy:.12g}",
+                            "total_variation_from_uniform": f"{total_variation:.12g}",
+                        }
+                    )
+                    policy_totals[label, generation_index, "units"] += 1
+                    policy_totals[label, generation_index, "requests"] += request_count
+                    policy_totals[label, generation_index, "m_f_requests"] += (
+                        mf_requests
+                    )
+                    policy_totals[label, generation_index, "m_f_is_max"] += int(
+                        mf_is_max
+                    )
+                    policy_sums[label, generation_index, "m_f_probability"] += float(
+                        fail_probabilities["M-F"]
+                    )
+                    policy_sums[label, generation_index, "normalized_entropy"] += (
+                        normalized_entropy
+                    )
+                    policy_sums[label, generation_index, "total_variation"] += (
+                        total_variation
+                    )
                 for candidate in candidates:
                     assert isinstance(candidate, dict)
                     status = candidate["status"]
@@ -172,6 +254,29 @@ def generate_operator_evidence_report(
     output_dir.mkdir(parents=True, exist_ok=True)
     _write_csv(output_dir / "operator_yield.csv", operator_rows)
     _write_csv(output_dir / "status_distribution.csv", status_rows)
+    _write_csv(output_dir / "fail_policy_units.csv", fail_policy_units)
+    fail_policy_rows: list[dict[str, str]] = []
+    for label, generation_index in sorted(policy_operator_sets):
+        units = policy_totals[label, generation_index, "units"]
+        requests = policy_totals[label, generation_index, "requests"]
+        mf_requests = policy_totals[label, generation_index, "m_f_requests"]
+        assert units > 0 and requests > 0
+        fail_policy_rows.append(
+            {
+                "arm": label,
+                "generation": str(generation_index),
+                "operator_set": ";".join(policy_operator_sets[label, generation_index]),
+                "active_problem_seed_count": str(units),
+                "fail_parent_requests": str(requests),
+                "m_f_requests": str(mf_requests),
+                "m_f_request_fraction": f"{mf_requests / requests:.12g}",
+                "mean_m_f_probability": f"{policy_sums[label, generation_index, 'm_f_probability'] / units:.12g}",
+                "m_f_is_max_fraction": f"{policy_totals[label, generation_index, 'm_f_is_max'] / units:.12g}",
+                "mean_normalized_entropy": f"{policy_sums[label, generation_index, 'normalized_entropy'] / units:.12g}",
+                "mean_total_variation_from_uniform": f"{policy_sums[label, generation_index, 'total_variation'] / units:.12g}",
+            }
+        )
+    _write_csv(output_dir / "fail_policy_by_generation.csv", fail_policy_rows)
     arms = [
         {
             "arm": label,
@@ -181,9 +286,7 @@ def generate_operator_evidence_report(
             "candidate_count": arm_totals[label, "candidates"],
             "llm_api_calls": int(arm_resources[label, "llm_api_calls"]),
             "llm_prompt_tokens": int(arm_resources[label, "llm_prompt_tokens"]),
-            "llm_completion_tokens": int(
-                arm_resources[label, "llm_completion_tokens"]
-            ),
+            "llm_completion_tokens": int(arm_resources[label, "llm_completion_tokens"]),
             "runtime_seconds": arm_resources[label, "runtime_seconds"],
         }
         for label, root in runs
@@ -192,6 +295,10 @@ def generate_operator_evidence_report(
         "arms": arms,
         "operator_yield_csv": str(output_dir / "operator_yield.csv"),
         "status_distribution_csv": str(output_dir / "status_distribution.csv"),
+        "fail_policy_units_csv": str(output_dir / "fail_policy_units.csv"),
+        "fail_policy_by_generation_csv": str(
+            output_dir / "fail_policy_by_generation.csv"
+        ),
         "generation_logs": log_paths,
     }
     (output_dir / "summary.json").write_text(
@@ -209,7 +316,7 @@ def generate_operator_evidence_report(
         "the classic logger. The report therefore preserves exact statuses and",
         "does not infer a post-synthesis pass rate.",
         "",
-        "| Arm | Pool | Strategy | N | Functional | Valid PPA | Rewarded |",
+        "| Arm | Pool | Strategy | N | RTL-sim functional | Valid PPA | Rewarded |",
         "| --- | --- | --- | ---: | ---: | ---: | ---: |",
     ]
     for row in operator_rows:
@@ -219,6 +326,27 @@ def generate_operator_evidence_report(
             f"{float(row['pre_synthesis_functional_pass_rate']):.1%} | "
             f"{float(row['valid_ppa_success_rate']):.1%} | "
             f"{float(row['rewarded_child_rate']):.1%} |"
+        )
+    report.extend(
+        [
+            "",
+            "## Failed-Parent Allocation By Generation",
+            "",
+            "M-F-is-max includes ties. Total variation compares the logged",
+            "selection probabilities with a uniform policy over the active",
+            "failed-parent operator set.",
+            "",
+            "| Arm | Gen | Active units | Requests | M-F share | Mean M-F p | Mean TV |",
+            "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        ]
+    )
+    for row in fail_policy_rows:
+        report.append(
+            f"| {row['arm']} | {row['generation']} | "
+            f"{row['active_problem_seed_count']} | {row['fail_parent_requests']} | "
+            f"{float(row['m_f_request_fraction']):.1%} | "
+            f"{float(row['mean_m_f_probability']):.1%} | "
+            f"{float(row['mean_total_variation_from_uniform']):.1%} |"
         )
     (output_dir / "report.md").write_text("\n".join(report) + "\n", encoding="utf-8")
     return summary

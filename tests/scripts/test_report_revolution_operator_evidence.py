@@ -24,25 +24,50 @@ def _write_log(root: Path, status: str = "success") -> None:
     path.parent.mkdir(parents=True)
     rows = [
         {
+            "generation": 0,
             "generated_candidates": [
-                {"status": "failed_functionality", "origin_pool": "initial", "strategy": "initial"},
+                {
+                    "status": "failed_functionality",
+                    "origin_pool": "initial",
+                    "strategy": "initial",
+                },
                 {"status": "success", "origin_pool": "initial", "strategy": "initial"},
             ],
             "strategy_rewards_this_generation": {"fail_pool": {}, "success_pool": {}},
+            "strategy_counts_for_each_origin_pool": {
+                "fail_pool": {},
+                "success_pool": {},
+                "initial_pool": {"initial": 2},
+            },
+            "average_strategy_probabilities": {"fail_pool": {}, "success_pool": {}},
             "llm_api_calls": 2,
             "llm_prompt_tokens": 20,
             "llm_completion_tokens": 10,
             "runtime_seconds": 3.0,
         },
         {
+            "generation": 1,
             "generated_candidates": [
                 {"status": status, "origin_pool": "fail_pool", "strategy": "M-F"},
-                {"status": "failed_syntax", "origin_pool": "fail_pool", "strategy": "M-F"},
+                {
+                    "status": "failed_syntax",
+                    "origin_pool": "fail_pool",
+                    "strategy": "M-F",
+                },
                 {"status": "success", "origin_pool": "success_pool", "strategy": "M-S"},
             ],
             "strategy_rewards_this_generation": {
                 "fail_pool": {"M-F": 1},
                 "success_pool": {"M-S": 1},
+            },
+            "strategy_counts_for_each_origin_pool": {
+                "fail_pool": {"M-F": 2},
+                "success_pool": {"M-S": 1},
+                "initial_pool": {},
+            },
+            "average_strategy_probabilities": {
+                "fail_pool": {"M-F": 1.0},
+                "success_pool": {"M-S": 1.0},
             },
             "llm_api_calls": 3,
             "llm_prompt_tokens": 30,
@@ -57,10 +82,14 @@ def test_report_operator_yields(tmp_path: Path) -> None:
     run_root = tmp_path / "run"
     _write_log(run_root)
     output = tmp_path / "report"
-    assert report.main(["--run", f"classic={run_root}", "--output-dir", str(output)]) == 0
+    assert (
+        report.main(["--run", f"classic={run_root}", "--output-dir", str(output)]) == 0
+    )
 
     with (output / "operator_yield.csv").open(newline="", encoding="utf-8") as handle:
-        rows = {(row["origin_pool"], row["strategy"]): row for row in csv.DictReader(handle)}
+        rows = {
+            (row["origin_pool"], row["strategy"]): row for row in csv.DictReader(handle)
+        }
     fail = rows[("fail_pool", "M-F")]
     assert fail["candidate_count"] == "2"
     assert float(fail["syntax_pass_rate"]) == pytest.approx(0.5)
@@ -68,6 +97,15 @@ def test_report_operator_yields(tmp_path: Path) -> None:
     assert float(fail["valid_ppa_success_rate"]) == pytest.approx(0.5)
     assert float(fail["rewarded_child_rate"]) == pytest.approx(0.5)
     assert (output / "status_distribution.csv").is_file()
+    with (output / "fail_policy_by_generation.csv").open(
+        newline="", encoding="utf-8"
+    ) as handle:
+        policy = list(csv.DictReader(handle))
+    assert len(policy) == 1
+    assert policy[0]["fail_parent_requests"] == "2"
+    assert policy[0]["m_f_request_fraction"] == "1"
+    assert policy[0]["mean_total_variation_from_uniform"] == "0"
+    assert (output / "fail_policy_units.csv").is_file()
     summary = json.loads((output / "summary.json").read_text())
     assert summary["arms"][0]["llm_api_calls"] == 5
     assert summary["arms"][0]["llm_prompt_tokens"] == 50
