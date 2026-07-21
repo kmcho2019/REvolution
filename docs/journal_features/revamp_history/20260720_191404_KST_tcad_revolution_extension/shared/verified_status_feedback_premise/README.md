@@ -14,6 +14,7 @@ This audit covers 4,800 candidates from 100 fresh classic full-suite logs.
 | `failed_synthesis_functionality` | 0 | 0 | 419 |
 
 The clear failure statuses disagree with the critic score contract in 687/2309 cases (29.75%). Functional failures include 215 false score-10 records. Success disagrees in 4/2067 cases.
+The `summary.json` `false_score_10_count` spans every non-success status: 216 equals 215 functional failures plus one format failure.
 
 ## Selected Failed Parents
 

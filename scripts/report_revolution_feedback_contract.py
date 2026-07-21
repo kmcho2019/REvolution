@@ -248,6 +248,7 @@ def generate_feedback_contract_report(
         row["status"] == "failed_functionality" and row["critic_score"] == "10"
         for row in candidate_rows
     )
+    false_all_tens = sum(row["false_score_10"] == "1" for row in candidate_rows)
     markdown = [
         "# Classic Feedback Contract Audit",
         "",
@@ -276,6 +277,9 @@ def generate_feedback_contract_report(
             f"failures include {false_functionality_tens} false score-10 records. "
             f"Success disagrees in {pooled['success', 'mismatch']}/"
             f"{sum(pooled['success', item] for item in CONTRACT_CLASSES)} cases.",
+            f"The `summary.json` `false_score_10_count` spans every non-success "
+            f"status: {false_all_tens} equals {false_functionality_tens} "
+            "functional failures plus one format failure.",
             "",
             "## Selected Failed Parents",
             "",
