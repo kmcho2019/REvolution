@@ -92,7 +92,7 @@ detail in the append-only program and candidate histories.
   close the pre-admission provenance rereview.
 - [x] Freeze the exact sequential smoke admission, run, seal, accounting, and
   reporting commands before the ledger changes.
-- [ ] Run and report the frozen H10 smoke pair; launch no full arm on smoke fail.
+- [x] Run and report the frozen H10 smoke pair; launch no full arm on smoke fail.
 - [ ] If smoke passes, run and classify the frozen two-seed RTLLM full suite.
 - [ ] Resolve and prospectively review CVDP evaluator composition before any H10
   confirmation or holdout arm; otherwise cap H10 at `VIABLE`.

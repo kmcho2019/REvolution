@@ -12,7 +12,7 @@ before implementation and link every terminal decision.
 | H5 | CORE_CORRECTION | M-F-only failed-pool routing improves unconditional valid-PPA repair count and preserves final PPA search. | Failed candidates share five intents despite a dedicated correction operator and short horizon. | PRIMARY_ALGORITHM | SUITE_EVALUATED | RETIRED |
 | H8 | CORE_CORRECTION | Retaining failed candidates by verification stage improves repair continuity. | Classic discards old failed lineages and scalarizes every failure to `-inf`. | RELIABILITY | RETIRED | RETIRED |
 | H9 | CORE_CORRECTION | Strict parent-relative deltas improve offspring validity without harming final PPA search. | Whole-output edit breadth is negatively associated with valid-PPA yield for successful-parent refinement. | PRIMARY_ALGORITHM | RETIRED | RETIRED |
-| H10 | CORE_CORRECTION | Preserving typed terminal status alongside critic analysis broadens fail-origin valid-PPA repair. | Classic uses terminal status for pools but omits it from ordinary parent memory; critic artifacts often disagree with it. | RELIABILITY | IMPLEMENTED | PENDING |
+| H10 | CORE_CORRECTION | Preserving typed terminal status alongside critic analysis broadens fail-origin valid-PPA repair. | Classic uses terminal status for pools but omits it from ordinary parent memory; critic artifacts often disagree with it. | RELIABILITY | SMOKE_VALIDATED | PENDING |
 
 Allowed progression states:
 
@@ -36,10 +36,11 @@ and the classic evidence reverses for failed-parent repair. See
 
 H10 is Wave 2's second reviewed mechanism. Its one-line terminal-state
 invariant passed scientific, evidence, exact-card, code-boundary, and runtime
-reviews. It is `IMPLEMENTED`, and its tracked implementation manifest now
-uses corrected v8 rebinding after a pre-admission provenance block. Final
-smoke-admission review passes; admission, smoke, and suite evidence remain
-open. CVDP confirmation is blocked pending a prospective evaluator composition.
+reviews. Corrected v8 rebinding closed the pre-admission provenance block. The
+fresh paired smoke passed all eight technical gates and independent raw-
+evidence review, so H10 is `SMOKE_VALIDATED`; no performance conclusion follows
+from the one-seed, three-problem run. Full-suite evidence remains open. CVDP
+confirmation is blocked pending a prospective evaluator composition.
 
 ## Evidence Outside The Candidate State Machine
 

@@ -120,3 +120,30 @@ events. No treatment code or result existed at candidate selection.
 - Froze `smoke_execution_commands.md` for the sequential admission, 161-second
   runs, raw-tree sealing, accounting, and report. No admission, model call,
   synthesis evaluation, or benchmark result exists.
+
+## 2026-07-21: Smoke validation
+
+- Ran the frozen classic then treatment smoke exactly once at seed 42 over
+  `Prob002_adder_16bit`, `Prob025_sequence_detector`, and `Prob043_RAM`.
+  Each arm completed 48 candidates and 96 model calls with no missing unit.
+- Classic used 235,981 tokens, 29 synthesis starts, and 145.752 wall seconds.
+  Treatment used 238,752 tokens, 35 synthesis starts, and 144.513 wall seconds.
+  Both remained within every preregistered arm cap; treatment reached but did
+  not exceed its synthesis cap.
+- The canonical report passed all eight smoke gates. Treatment applied the
+  exact prefix to 14 failed candidates and reproduced all eight failed-parent
+  prompt uses. It repaired one distinct smoke design through four valid-PPA
+  children; classic repaired none. This is technical smoke evidence only.
+- Raw-evidence session `019f84d7-6a53-7f53-959b-28d647050fe1` independently
+  rehashed all 529 classic and 600 treatment entries, reconstructed every gate,
+  and returned `PASS_FOR_SMOKE_VALIDATION`. The external methodology review
+  returned `PASS_FOR_SMOKE_TRANSITION` and kept suite efficacy unresolved.
+- Classic and treatment evidence-manifest SHA-256 values are
+  `d9f89a4ae5bb586bb0bc7c2e1d996d04456fb44c212bc9311ca675240d3ecbee`
+  and
+  `e6ffc8d1d3d2f580e6ea1cc93af10add36e782fb57b580f4b26b565c3128a62b`.
+  Canonical smoke-summary SHA-256 is
+  `c57a221ec87afe2674fc3e19f2b99f84bb4863c0c8a363662a8595f723d2f806`.
+- H10 advances from `IMPLEMENTED` to `SMOKE_VALIDATED`. No full-suite arm is
+  admitted. The implementation-bound card remains an immutable preregistration
+  snapshot; the living registry records the current state.

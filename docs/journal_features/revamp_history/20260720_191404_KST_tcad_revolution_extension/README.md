@@ -1,6 +1,6 @@
 # TCAD REvolution Extension Research Goal Scaffold
 
-Status: `ACTIVE_WAVE_2_H10_IMPLEMENTED`; baseline, statistics, benchmark
+Status: `ACTIVE_WAVE_2_H10_SMOKE_VALIDATED`; baseline, statistics, benchmark
 roles, holdout, and resource ceilings froze on 2026-07-20 before treatment
 evidence. Wave 1 is closed: H5 increased direct repairs but is `RETIRED` after a
 per-seed valid-PPA coverage failure and a cumulative discovery-budget
@@ -9,13 +9,14 @@ novelty and premise-scope review. The corrected Wave-2 methodology and program
 manifest froze on 2026-07-21. H10 verified terminal-status feedback is the sole
 active proposal. Its exact card, six-arm budget, reporter, and narrow Wave-2
 provenance amendment are frozen. Its isolated RTLLM runtime has passed
-implementation review, so H10 is `IMPLEMENTED`. No tracked implementation
-manifest existed at that transition. A first tracked manifest was later
-rejected by an independent pre-admission provenance audit. Corrected v8 and
-the 45-file replacement manifest now pass final smoke-admission review, and the
-exact smoke runbook is frozen. No admission or treatment evidence exists. CVDP
-confirmation remains blocked pending a prospective engine/evaluator
-composition.
+implementation review. A first tracked manifest was later rejected by an
+independent pre-admission provenance audit. Corrected v8 and the 45-file
+replacement manifest passed final smoke-admission review. The exact paired
+smoke then passed all eight technical gates and an independent raw-evidence
+audit, so H10 is `SMOKE_VALIDATED`. This is activation and integrity evidence,
+not efficacy evidence. No full-suite arm is admitted; a separate full-suite
+runbook must freeze and pass review first. CVDP confirmation remains blocked
+pending a prospective engine/evaluator composition.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts

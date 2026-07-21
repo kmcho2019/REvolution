@@ -1,6 +1,6 @@
 # TCAD Extension Portfolio
 
-Status: `WAVE_2_H10_IMPLEMENTED_NO_FINALIST`
+Status: `WAVE_2_H10_SMOKE_VALIDATED_NO_FINALIST`
 
 This is the final advisor-facing synthesis of the discovery program. Update it
 after every candidate transition. Detailed commands and raw results remain in
@@ -95,12 +95,14 @@ toggle, patch-policy knob, or interaction. Seeded-optimization generalization
 remains contingent on an independently supported algorithmic finalist.
 
 H10 is now the sole active mechanism. It preserves one typed terminal-status
-line beside unchanged critic analysis for failed parents. The exact card,
-budget, reporter, and isolated RTLLM runtime passed review; it remains a
-supporting reliability card with no performance evidence. A tracked
-implementation manifest was rejected in a later pre-admission provenance
-audit; corrected v8 rebinding now passes final review. The exact smoke runbook
-is frozen, but no arm is admitted. CVDP confirmation is blocked pending a
+line beside unchanged critic analysis for failed parents. Corrected v8
+rebinding closed its pre-admission provenance block. The fresh paired smoke
+passed all eight technical gates and independent raw-evidence review: 14 failed
+candidates received the exact prefix, all eight failed-parent uses reproduced,
+and treatment repaired one smoke design versus zero for classic. This is
+activation and integrity evidence only, not performance evidence. H10 is
+`SMOKE_VALIDATED`; no full-suite arm is admitted until an exact execution
+runbook freezes and passes review. CVDP confirmation remains blocked pending a
 prospective evaluator composition.
 
 ## Artifact Index
@@ -139,7 +141,9 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
   `reviews/20260721_h10_evidence_review.md`,
   `reviews/20260721_h10_implementation_review.md`,
   `reviews/20260721_h10_pre_admission_review.md`,
-  `reviews/20260721_h10_smoke_runbook_review.md`.
+  `reviews/20260721_h10_smoke_runbook_review.md`,
+  `reviews/20260721_h10_smoke_evidence_audit.md`,
+  `reviews/20260721_h10_smoke_transition_review.md`.
 - Historical no-C-F record:
   `candidates/H6_fusion_free_success/decision.md`.
 - Generated evidence root:

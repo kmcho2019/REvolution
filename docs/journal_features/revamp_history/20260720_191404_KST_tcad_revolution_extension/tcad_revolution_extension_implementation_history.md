@@ -529,3 +529,25 @@ or holdout.
 - The exact sequential smoke runbook freezes endpoint preflight, admission,
   161-second arm timeouts, evidence-tree sealing, resource accounting, and
   report output outside raw roots. No admission or live evidence exists.
+
+## H10 Smoke Validation
+
+- Completed the frozen seed-42 smoke pair sequentially with no rerun or missing
+  unit. Classic and treatment each produced 48 candidates and 96 model calls.
+  Wall times were 145.752 and 144.513 seconds, both below the 161-second cap.
+- The treatment used 238,752 tokens and 35 synthesis starts versus classic's
+  235,981 and 29. All resource gates passed; treatment exactly met the frozen
+  synthesis ceiling.
+- All eight canonical technical gates passed. Four treatment repair events on
+  `Prob025_sequence_detector` yielded one repaired design; this is descriptive
+  smoke telemetry and supplies no suite-scale PPA or functionality claim.
+- Independent raw-evidence review reproduced both sealed trees, ledger and
+  accounting chronology, exact activation and prompt-use telemetry, empty
+  failure registry, generated report, and unchanged implementation binding.
+  Verdict: `PASS_FOR_SMOKE_VALIDATION`.
+- A separate external methodology review returned
+  `PASS_FOR_SMOKE_TRANSITION`. It correctly requires the smoke ledger and state
+  transition to enter Git and a distinct full-suite runbook to pass review
+  before `seed_1001_classic` admission.
+- H10 is `SMOKE_VALIDATED`. The two-seed RTLLM-50 suite remains unlaunched and
+  is the only next efficacy experiment authorized by the frozen card.
