@@ -12,7 +12,7 @@ before implementation and link every terminal decision.
 | H5 | CORE_CORRECTION | M-F-only failed-pool routing improves unconditional valid-PPA repair count and preserves final PPA search. | Failed candidates share five intents despite a dedicated correction operator and short horizon. | PRIMARY_ALGORITHM | SUITE_EVALUATED | RETIRED |
 | H8 | CORE_CORRECTION | Retaining failed candidates by verification stage improves repair continuity. | Classic discards old failed lineages and scalarizes every failure to `-inf`. | RELIABILITY | RETIRED | RETIRED |
 | H9 | CORE_CORRECTION | Strict parent-relative deltas improve offspring validity without harming final PPA search. | Whole-output edit breadth is negatively associated with valid-PPA yield for successful-parent refinement. | PRIMARY_ALGORITHM | RETIRED | RETIRED |
-| H10 | CORE_CORRECTION | Preserving typed terminal status alongside critic analysis broadens fail-origin valid-PPA repair. | Classic uses terminal status for pools but omits it from ordinary parent memory; critic artifacts often disagree with it. | RELIABILITY | SMOKE_VALIDATED | PENDING |
+| H10 | CORE_CORRECTION | Preserving typed terminal status alongside critic analysis broadens fail-origin valid-PPA repair. | Classic uses terminal status for pools but omits it from ordinary parent memory; critic artifacts often disagree with it. | RELIABILITY | SUITE_EVALUATED | RETIRED |
 
 Allowed progression states:
 
@@ -34,13 +34,18 @@ live spend because global diff evolution has a direct related-work collision
 and the classic evidence reverses for failed-parent repair. See
 `../candidates/H9_strict_delta_evolution/decision.md`.
 
-H10 is Wave 2's second reviewed mechanism. Its one-line terminal-state
-invariant passed scientific, evidence, exact-card, code-boundary, and runtime
-reviews. Corrected v8 rebinding closed the pre-admission provenance block. The
-fresh paired smoke passed all eight technical gates and independent raw-
-evidence review, so H10 is `SMOKE_VALIDATED`; no performance conclusion follows
-from the one-seed, three-problem run. Full-suite evidence remains open. CVDP
-confirmation is blocked pending a prospective evaluator composition.
+H10 is Wave 2's second reviewed mechanism. Its full-suite treatment activated
+exactly, but pooled repair breadth was unchanged, both deletion-robust breadth
+gates failed, final HV fell by 0.017569, HV-AUC fell by 0.008203, and the
+catastrophic final-HV ratio was 0.887521. Coverage tied exactly per seed.
+Independent raw audit reproduced the result, so H10 is
+`SUITE_EVALUATED / RETIRED`; no confirmation, holdout, or H10 variant is
+authorized. See `../candidates/H10_verified_status_feedback/decision.md`.
+
+Wave 2 closes after H9 and H10. A third mechanism is not required by the
+contract, and no remaining concept currently passes all five admission
+questions: audited weakness, new measured premise, hardware/CAD rationale,
+related-work delta, and one clean isolatable mechanism.
 
 ## Evidence Outside The Candidate State Machine
 

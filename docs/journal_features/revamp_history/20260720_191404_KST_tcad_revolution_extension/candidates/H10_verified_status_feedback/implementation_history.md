@@ -165,3 +165,28 @@ events. No treatment code or result existed at candidate selection.
 - Frozen runbook SHA-256:
   `75ea35e87ae8a300539bddc2e1988baac71de0b4c00b1f0f76fd03d1cb6f88d4`.
   No full-suite admission, model call, synthesis start, or output exists.
+
+## 2026-07-21: Full-suite decision
+
+- Ran the four frozen RTLLM-50 arms sequentially and exactly once. All 200
+  problem-arm units completed with 2,400 candidates per arm and no exclusion,
+  missing unit, rerun, timeout, or cap violation.
+- H10 repair breadth changed from 16 to 15 at seed 1001 and 14 to 15 at seed
+  1002. The pooled mean delta was zero, W/L/T was 7/7/86, and both strict
+  leave-one-problem-out gates failed.
+- Final-HV delta was -0.017568569535370747 with clustered 95% CI
+  [-0.039532350937941246, -0.002706880656942561]. HV-AUC delta was
+  -0.008203193879029829 with W/L/T 13/28/24. The final-HV ratio was
+  0.8875213701846218 against the frozen 0.90 floor.
+- Verification-complete valid-PPA46 and RTL-simulation functionality46/50
+  coverage tied exactly in each seed. Equal coverage does not rescue the
+  failed breadth, final-HV, or HV-AUC gates.
+- Independent raw-evidence session
+  `019f8611-a882-7d80-8b6f-95b799313360` rehashed 96,651 sealed files,
+  reconstructed all metrics, verified 2,744 exact failed prefixes and 1,571
+  failed-parent prompt uses, and returned `PASS_FOR_H10_SUITE_EVIDENCE`.
+- A clean reporter replay regenerated all seven canonical artifacts
+  byte-for-byte. Focused engine, reporter, and admission tests passed 97 cases.
+- External read-only review recommended `CLOSE_H10_AND_CLOSE_WAVE2`. H10 is
+  `SUITE_EVALUATED / RETIRED`; no confirmation, holdout, or mechanism-preserving
+  revision is authorized.
