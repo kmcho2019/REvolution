@@ -1,6 +1,7 @@
 # H4: Seeded RTL Optimization
 
-Status: `PROPOSED` generalization seed idea; not `READY`.
+Status: `RETIRED`. This is the unrun proposal snapshot; no algorithmic finalist
+qualified for the generalization stage.
 
 ## Conference Scope Gap
 

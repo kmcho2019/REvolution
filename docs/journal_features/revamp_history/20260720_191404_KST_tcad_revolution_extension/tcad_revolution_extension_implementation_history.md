@@ -596,3 +596,24 @@ or holdout.
   variant has a distinct premise, and no remaining audited lane currently
   combines new measured support, a hardware/CAD rationale, a related-work
   delta, and a clean single-mechanism implementation.
+
+## Program Closure
+
+- Closed H4 unrun because its confirmed-finalist prerequisite was absent. Added
+  the missing H8 proposal-retirement decision for its COEVO collision,
+  implementation-copy cost, and unmeasured retention premise.
+- Refreshed the living ranking, registry, claim ledger, portfolio, contribution
+  map, artifact index, plan, README, and checklist. No active or pending
+  candidate remains; H6 stays historical support and H7 a deferred diagnostic
+  outside the candidate state machine.
+- Final local validation passed 97 focused H10 tests and 1,221 repository tests
+  with 4 skips and the previously recorded hanging report test deselected.
+  Registry-to-decision, path, stale-state, frozen-hash, and diff checks passed.
+- Independent final audit session
+  `019f862d-a1bb-7dd0-a925-d2ea0c9cfd97` first returned `FAIL` for H4/H8 state
+  and indexing gaps. After those exact fixes, focused rereview returned
+  `PROCESS_VERDICT: PASS` and `EVIDENCE_OUTCOME: PIVOT_REQUIRED`.
+- The program closes `PIVOT_REQUIRED`. It produced a reproducible limitation
+  map and negative portfolio, but no `VIABLE` or `PAPER_CANDIDATE` method. No
+  confirmation, holdout, integration, or additional Wave-2 experiment is
+  authorized by this goal.

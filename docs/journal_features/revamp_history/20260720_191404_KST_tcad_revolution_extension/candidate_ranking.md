@@ -1,9 +1,8 @@
 # Audit-Derived Candidate Ranking
 
-Status: `WAVE_2_H10_IMPLEMENTED`; H5 and H9 are `RETIRED`. H10 is the only
-active mechanism. Its exact card and runtime passed review; implementation
-identity rebinding and final pre-admission review now pass. Admission and live
-evidence remain open.
+Status: `COMPLETE_PIVOT_REQUIRED`; H5, H9, and H10 are `RETIRED`. H4 retires
+unrun because its confirmed-finalist prerequisite was not met. No active
+candidate or adjacent variant remains.
 
 The ranking combines the conference audit, completed QD/Pareto/operator
 evidence, implementation isolation, and current related-work collision. It is
@@ -11,10 +10,10 @@ not a quota or a parameter queue.
 
 | Rank | ID | Mechanism | Score | Intended role | Disposition |
 | ---: | --- | --- | ---: | --- | --- |
-| 1 | H10 | Preserve typed terminal status alongside unchanged critic analysis for failed parents. | 13/14 | Supporting reliability | `IMPLEMENTED`: exact smoke admission is next; no evidence yet |
+| 1 | H10 | Preserve typed terminal status alongside unchanged critic analysis for failed parents. | 13/14 | Supporting reliability | `RETIRED`: breadth tied and final HV/HV-AUC failed frozen suite gates |
 | 2 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `RETIRED`: seed-1001 valid-PPA coverage exceeds the frozen deficit; budget ceiling also exceeded |
-| 3 | H4 | Test a confirmed method on seeded RTL optimization. | 11/14 provisional | Generalization | Hold until an algorithmic finalist exists |
-| 4 | H8 | Retain failed candidates by furthest verification stage. | 10/14 provisional | Reliability | Do not implement: COEVO collision and code-copy cost |
+| 3 | H4 | Test a confirmed method on seeded RTL optimization. | 11/14 provisional | Generalization | `RETIRED` unrun: no algorithmic finalist exists to generalize |
+| 4 | H8 | Retain failed candidates by furthest verification stage. | 10/14 provisional | Reliability | `RETIRED`: COEVO collision and code-copy cost; no live spend |
 | 5 | H9 | Use strict parent-relative deltas for every post-initialization mutation. | 9/14 | Primary core correction | `RETIRED`: direct AlphaEvolve/CodeEvolve collision and failed-parent premise reversal |
 | 6 | H3 | Contract-preserving local patch evolution. | 9/14 | Reliability | Retire current card: combined mechanisms and crowded novelty |
 | 7 | H1 | Bottleneck-conditioned strategy adaptation. | 8/14 | Primary | Retire current card: COEVO collision and excess state |
@@ -27,10 +26,10 @@ novelty/paper value.
 | ID | Score vector | Hard-rejection result |
 | --- | --- | --- |
 | H5 | 2/2/1/2/2/1/1 | PASS: novelty, hardware/EDA, code, and evidence-readiness reviews accepted |
-| H4 | 2/2/2/2/1/1/1 | HOLD: requires an algorithmic finalist |
+| H4 | 2/2/2/2/1/1/1 | RETIRED: confirmed-finalist prerequisite absent |
 | H8 | 2/2/2/2/1/0/1 | REJECT: monolithic code-copy surface |
 | H9 | 2/1/1/2/1/2/0 | REJECT: novelty zero and treatment exceeds measured premise |
-| H10 | 2/2/2/2/2/2/1 | PASS_FOR_RTLLM_IMPLEMENTATION: exact card, resources, and isolated runtime reviewed |
+| H10 | 2/2/2/2/2/2/1 | RETIRED: exact activation, but breadth and PPA gates failed |
 | H3 | 2/0/2/2/1/1/1 | REJECT: reviewed card combines mechanisms; score is historical |
 | H1 | 2/1/0/2/1/1/1 | REJECT: low score and COEVO collision |
 | H2 | 2/0/1/2/1/1/1 | REJECT: F41 evidence and related work |
@@ -44,10 +43,9 @@ The generated reporter incorrectly netted seed deficits, and cumulative
 discovery exceeded the frozen per-candidate ceiling.
 
 No H5-plus-no-C-F, operator-ratio, prompt-mixture, or adjacent routing arm is
-authorized. H8 is not a default Wave-2 candidate; it still requires a new
-simplicity and novelty argument that avoids copying the classic generation
-loop. Wave 2 must be reranked from measured conference weaknesses and must
-include a prelaunch budget worksheet that counts all matched control arms.
+authorized. H8 retired at proposal review because COEVO narrows its novelty and
+the available implementation copies or broadly refactors the classic
+generation loop. It has no live evidence.
 
 ## Wave 2
 
@@ -63,18 +61,20 @@ parameters. A role-conditioned scope policy was audited as a distinct idea and
 failed the simple-isolation boundary before receiving a card or live spend.
 
 The role-conditioned scope idea failed its implementation audit because classic
-hardcodes generation mode inside both monolithic pool loops. H10 therefore
-addresses a different measured weakness: terminal verifier state is omitted
-from ordinary parent memory, while 687/2,309 clear failure critic records
-disagree with the status contract. The accepted proposal adds one fixed typed
-status line to failed feedback and leaves critic prose, operators, pools, UCB,
-and the success path unchanged. The RTLLM implementation passed review; CVDP
-confirmation remains blocked by evaluator composition. It is a supporting
-reliability card only.
+hardcodes generation mode inside both monolithic pool loops. H10 addressed a
+different measured weakness: terminal verifier state is omitted from ordinary
+parent memory, while 687/2,309 clear failure critic records disagree with the
+status contract. Its fixed status line activated exactly, but full-suite repair
+breadth tied, final HV fell by 0.017569, and HV-AUC fell by 0.008203. H10 is
+retired without confirmation, holdout, or a nearby feedback variant.
 
 Raw evaluator-payload replacement, success-only replacement, and
 mismatch-triggered policies are rejected. They exceed the evidence scope,
 require more invasive state, or create material prompt-resource risk.
+
+Wave 2 closes after H9 and H10. No third card has a new measured premise,
+hardware/CAD rationale, related-work delta, and clean one-mechanism boundary.
+The unused third slot is a ceiling, not an execution requirement.
 
 ## Evidence Outside The Candidate Wave
 
@@ -84,9 +84,8 @@ require more invasive state, or create material prompt-resource risk.
 | H7 | Uniform-versus-UCB operator allocation | 11/14 provisional | `DEFERRED_DIAGNOSTIC`; first measure per-problem and per-generation departure from uniform. |
 
 H7 has no primary TCAD role and aggregate classic pulls are already close to
-uniform. It is eligible for live spend only if the allocation audit shows that
-UCB materially changes policy and a fixed noninferiority question is frozen.
-It is not an improvement candidate and receives no holdout or confirmation.
+uniform. It receives no live spend, holdout, or confirmation in this closed
+program. Reopening it requires a new program and the missing allocation premise.
 
 ## Narrative Test
 

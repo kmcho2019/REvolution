@@ -1,23 +1,15 @@
 # TCAD REvolution Extension Research Goal Scaffold
 
-Status: `ACTIVE_WAVE_2_H10_SMOKE_VALIDATED`; baseline, statistics, benchmark
-roles, holdout, and resource ceilings froze on 2026-07-20 before treatment
-evidence. Wave 1 is closed: H5 increased direct repairs but is `RETIRED` after a
-per-seed valid-PPA coverage failure and a cumulative discovery-budget
-violation. Wave 2 opened with H9, which retired before implementation after
-novelty and premise-scope review. The corrected Wave-2 methodology and program
-manifest froze on 2026-07-21. H10 verified terminal-status feedback is the sole
-active proposal. Its exact card, six-arm budget, reporter, and narrow Wave-2
-provenance amendment are frozen. Its isolated RTLLM runtime has passed
-implementation review. A first tracked manifest was later rejected by an
-independent pre-admission provenance audit. Corrected v8 and the 45-file
-replacement manifest passed final smoke-admission review. The exact paired
-smoke then passed all eight technical gates and an independent raw-evidence
-audit, so H10 is `SMOKE_VALIDATED`. This is activation and integrity evidence,
-not efficacy evidence. The exact four-arm full-suite runbook is now frozen and
-independently reviewed; no full-suite arm is admitted, and only
-`seed_1001_classic` is eligible next. CVDP confirmation remains blocked pending
-a prospective engine/evaluator composition.
+Status: `COMPLETE_PIVOT_REQUIRED`; baseline, statistics, benchmark roles,
+holdout, and resource ceilings froze before treatment evidence. Wave 1 retired
+H5 after a per-seed valid-PPA coverage failure and resource overrun. Wave 2
+retired H9 before spend on novelty and premise scope, then retired H10 after a
+complete two-seed RTLLM-50 suite. H10 activated exactly and preserved coverage,
+but repair breadth did not improve and final HV, HV-AUC, and the catastrophic-HV
+ratio failed frozen gates. Independent raw audit and byte-for-byte report replay
+passed. No candidate is `VIABLE`, no third mechanism passes the admission
+logic, and no confirmation or holdout is authorized. Final adversarial process
+review passed, so the program closes as `PIVOT_REQUIRED`.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts
@@ -77,11 +69,10 @@ and may add stronger candidates discovered by the conference-method audit. H5
 is the retired Wave-1 algorithmic card. H6 records retrospective no-C-F
 evidence, and H7 records a deferred UCB diagnostic outside the candidate state
 machine. H9 is the retired global strict-diff proposal and records the
-role-dependent edit-breadth finding. Remaining Wave-2 work must use a distinct
-mechanism rather than an H5 mixture, global diff toggle, or parameter variant.
-H10 tests one typed terminal-status line beside unchanged critic analysis for
-failed parents; it is a supporting reliability card, not a primary feedback
-novelty claim.
+role-dependent edit-breadth finding. H10 is the retired typed terminal-status
+treatment and records that equal functionality coverage can coexist with worse
+PPA fronts. Wave 2 is closed; nearby routing, diff, status, Pareto, QD, or
+archive variants are not eligible without a distinct measured premise.
 
 ## Candidate state machine
 

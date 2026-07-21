@@ -94,33 +94,30 @@ detail in the append-only program and candidate histories.
   reporting commands before the ledger changes.
 - [x] Run and report the frozen H10 smoke pair; launch no full arm on smoke fail.
 - [x] Freeze and independently review the exact four-arm H10 suite runbook.
-- [ ] If smoke passes, run and classify the frozen two-seed RTLLM full suite.
-- [ ] Resolve and prospectively review CVDP evaluator composition before any H10
-  confirmation or holdout arm; otherwise cap H10 at `VIABLE`.
-- [ ] Select at most three distinct Wave 2 mechanisms.
-- [ ] Do not relaunch retired mechanisms as adjacent knobs or combinations.
-- [ ] Nominate at most two strongest candidates for confirmation.
+- [x] Run and classify the frozen H10 two-seed RTLLM full suite as `RETIRED`.
+- [x] Close CVDP composition as inapplicable after H10 retirement; run no arm.
+- [x] Close Wave 2 after two distinct mechanisms; no third card passes review.
+- [x] Do not relaunch retired mechanisms as adjacent knobs or combinations.
+- [x] Nominate zero candidates because none qualified for confirmation.
 
 ## Confirmation And Integration
 
-- [ ] Run five matched, preregistered, development-disjoint confirmation seeds
-  for each nominated finalist.
-- [ ] Freeze code/configuration before one disjoint holdout run.
-- [ ] Produce paired uncertainty, W/L/T, per-problem, and seed-sensitivity tables.
-- [ ] Confirm RTL-simulation functionality and verification-complete valid PPA
-  for every claimed artifact.
-- [ ] Integrate only independently supported components.
-- [ ] Run isolated and interaction ablations for any integrated package.
-- [ ] Select the smallest coherent non-regressing method.
+- [x] Close confirmation without runs because no candidate qualified.
+- [x] Close holdout without a run because no method reached final freeze.
+- [x] Produce paired uncertainty, W/L/T, per-problem, and seed tables.
+- [x] Verify stated functionality and valid-PPA surfaces for claimed artifacts.
+- [x] Integrate no components because none received independent support.
+- [x] Run no interaction ablation because no package qualified for integration.
+- [x] Record that no coherent non-regressing method qualified.
 
 ## Evidence And Handoff
 
-- [ ] Generate all tables and figures from raw artifacts with recorded commands.
-- [ ] Report calls, tokens, synthesis evaluations, runtime, and failure reasons.
-- [ ] Complete the conference-to-journal contribution map.
-- [ ] Complete `extension_portfolio.md` and its artifact index.
-- [ ] Record JOURNAL_READY, PORTFOLIO_READY, or PIVOT_REQUIRED.
-- [ ] Ensure the claim ledger has no unsupported core wording.
-- [ ] Document negative results, limitations, and threats to validity.
-- [ ] Run read-only internal and external audits at the documented cadence.
-- [ ] Obtain final adversarial process PASS.
+- [x] Generate registered tables from raw artifacts with recorded commands.
+- [x] Report calls, tokens, synthesis evaluations, runtime, and failures.
+- [x] Complete the conference-to-journal contribution map.
+- [x] Complete `extension_portfolio.md` and its artifact index.
+- [x] Record `PIVOT_REQUIRED` under the accepted claims contract.
+- [x] Ensure the claim ledger has no unsupported core wording.
+- [x] Document negative results, limitations, and threats to validity.
+- [x] Run read-only internal and external audits at the documented cadence.
+- [x] Obtain final adversarial process `PASS` with `PIVOT_REQUIRED` evidence.

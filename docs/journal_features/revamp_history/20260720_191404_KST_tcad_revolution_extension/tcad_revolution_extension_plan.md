@@ -2,9 +2,11 @@
 
 Feature slug: `tcad_revolution_extension`
 
-Status: `ACTIVE_WAVE_2_CANDIDATE_SELECTION`. Wave 1 closed with H5 `RETIRED` after a
-per-seed coverage failure and a discovery-budget overrun. The generated
-reporter label was rejected by post-run contract audits.
+Status: `COMPLETE_PIVOT_REQUIRED`. Wave 1 closed with H5 `RETIRED` after a
+per-seed coverage failure and a discovery-budget overrun. Wave 2 closed after
+H9 retired at proposal review and H10 retired on complete two-seed suite
+evidence. No candidate is `VIABLE`; final adversarial process review passed.
+The H5 generated reporter label was rejected by post-run contract audits.
 `program_claims_contract_v4.md` and program-manifest version 5 are the frozen
 prospective Wave-2 contract;
 revision 3 remains frozen in `program_claims_contract.md` for Wave 1. Existing empirical

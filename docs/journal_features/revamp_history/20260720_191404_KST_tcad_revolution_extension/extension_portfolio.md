@@ -1,6 +1,6 @@
 # TCAD Extension Portfolio
 
-Status: `WAVE_2_CLOSED_NO_FINALIST`
+Status: `COMPLETE_PIVOT_REQUIRED`
 
 This is the final advisor-facing synthesis of the discovery program. Update it
 after every candidate transition. Detailed commands and raw results remain in
@@ -36,6 +36,7 @@ terminal advisor-facing outcomes only.
 | H1 | Bottleneck-conditioned adaptation | Primary core correction | 8/14 | RETIRED | Adds contextual-bandit state before classic UCB or context utility is isolated. |
 | H2 | Preference-decomposed populations | Primary core correction | 8/14 | RETIRED | F41 and related work remove the rationale for another ungrounded multiobjective allocation. |
 | H3 | Contract-preserving patch evolution | Supporting reliability | 9/14 | RETIRED | The original card combines patching, contracts, locality rejection, and equivalence control; later breadth evidence does not rescue that design. |
+| H4 | Seeded RTL optimization | Generalization | 11/14 provisional | RETIRED | Contingent stage retired unrun because no algorithmic finalist existed to generalize; this is not negative optimization evidence. |
 | H8 | Verification-stage failed retention | Supporting reliability | 10/14 | RETIRED | COEVO collision and monolithic generation-loop copy cost fail novelty/simplicity review. |
 | H9 | Global strict-diff evolution | Primary core correction | 9/14 | RETIRED | Diff evolution is already established, and failed-parent repairs contradict the proposed all-offspring locality premise. No implementation or live spend occurred. |
 | H10 | Verified terminal-status feedback | Supporting reliability | 13/14 | RETIRED | Exact activation left repair breadth and coverage unchanged, while final HV, HV-AUC, and the catastrophic-HV ratio failed frozen gates. |
@@ -132,6 +133,12 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
 - Baseline and roles: `baseline_contract.md`, `shared/program_manifest.yaml`.
 - Component evidence: `component_evidence_audit.md`.
 - Ranking: `candidate_ranking.md`.
+- Proposal-stage retirements:
+  `candidates/H1_bottleneck_conditioned_adaptation/decision.md`,
+  `candidates/H2_preference_decomposed_revolution/decision.md`,
+  `candidates/H3_contract_preserving_patch_evolution/decision.md`,
+  `candidates/H4_seeded_rtl_optimization/decision.md`,
+  `candidates/H8_verification_stage_retention/decision.md`.
 - H5 card: `candidates/H5_role_aligned_failed_repair/hypothesis_card.md`.
 - H5 code and smoke contract:
   `candidates/H5_role_aligned_failed_repair/implementation_history.md`,

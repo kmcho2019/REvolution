@@ -8,7 +8,7 @@ before implementation and link every terminal decision.
 | H1 | CORE_CORRECTION | Bottleneck-conditioned strategy adaptation improves search over global success adaptation. | Strategy adaptation is global and outcome-only. | PRIMARY_ALGORITHM | RETIRED | RETIRED |
 | H2 | CORE_CORRECTION | Preference-decomposed success populations improve final PPA HV over one scalar success population. | Scalar ranking can collapse PPA tradeoffs. | PRIMARY_ALGORITHM | RETIRED | RETIRED |
 | H3 | AUGMENTATION | Contract-preserving local patch evolution improves valid-PPA yield without final-HV regression. | Broad rewrites can cause semantic drift. | RELIABILITY | RETIRED | RETIRED |
-| H4 | AUGMENTATION | A confirmed algorithmic paper candidate generalizes to optimization of valid suboptimal RTL. | Conference scope is generation-centric. | GENERALIZATION | PROPOSED | PENDING |
+| H4 | AUGMENTATION | A confirmed algorithmic paper candidate generalizes to optimization of valid suboptimal RTL. | Conference scope is generation-centric. | GENERALIZATION | RETIRED | RETIRED |
 | H5 | CORE_CORRECTION | M-F-only failed-pool routing improves unconditional valid-PPA repair count and preserves final PPA search. | Failed candidates share five intents despite a dedicated correction operator and short horizon. | PRIMARY_ALGORITHM | SUITE_EVALUATED | RETIRED |
 | H8 | CORE_CORRECTION | Retaining failed candidates by verification stage improves repair continuity. | Classic discards old failed lineages and scalarizes every failure to `-inf`. | RELIABILITY | RETIRED | RETIRED |
 | H9 | CORE_CORRECTION | Strict parent-relative deltas improve offspring validity without harming final PPA search. | Whole-output edit breadth is negatively associated with valid-PPA yield for successful-parent refinement. | PRIMARY_ALGORITHM | RETIRED | RETIRED |
@@ -46,6 +46,11 @@ Wave 2 closes after H9 and H10. A third mechanism is not required by the
 contract, and no remaining concept currently passes all five admission
 questions: audited weakness, new measured premise, hardware/CAD rationale,
 related-work delta, and one clean isolatable mechanism.
+
+H4 also retires without implementation or spend because its explicit
+prerequisite was a confirmed algorithmic finalist. No candidate qualified, so
+there is no method to generalize. This is not negative evidence about seeded
+RTL optimization.
 
 ## Evidence Outside The Candidate State Machine
 
