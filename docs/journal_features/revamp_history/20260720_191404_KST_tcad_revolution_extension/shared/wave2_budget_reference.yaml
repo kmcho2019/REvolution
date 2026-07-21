@@ -1,0 +1,29 @@
+version: 1
+status: FROZEN_H5_RESOURCE_REFERENCE
+
+sources:
+  smoke:
+    path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/smoke_seed42/gate_metrics.csv
+    sha256: 7130c249707567b68580e56ead00ef41b471c3cbb46a92c35b04fe4fbcf7c32f
+  smoke_synthesis:
+    path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/wave2_smoke_synthesis.json
+    sha256: 5337a06c301918ae53ce616afce4a694494766dacc70418c778a054fe26b2773
+  full_suite:
+    path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/full_suite_probe/resource_totals.csv
+    sha256: 14e813cec7cb9094655e3031f3d749aa75631a26059d1b1bba6ec21af50392e9
+
+rules:
+  candidates: exact_h5_matched_arm_count
+  calls: 100_per_problem_structural_limit
+  tokens: ceiling_of_110_percent_of_pair_maximum
+  synthesis: ceiling_of_110_percent_of_pair_maximum
+  wall_seconds: ceiling_of_110_percent_of_pair_maximum
+  smoke_synthesis_source: generated_candidates_with_rtl_simulation_success
+
+arm_caps:
+  smoke_classic: {candidates: 48, calls: 300, tokens: 265153, synthesis: 35, wall_seconds: 161}
+  smoke_treatment: {candidates: 48, calls: 300, tokens: 265153, synthesis: 35, wall_seconds: 161}
+  seed_1001_classic: {candidates: 2400, calls: 5000, tokens: 16291915, synthesis: 1407, wall_seconds: 5125}
+  seed_1001_treatment: {candidates: 2400, calls: 5000, tokens: 16291915, synthesis: 1407, wall_seconds: 5125}
+  seed_1002_classic: {candidates: 2400, calls: 5000, tokens: 16146270, synthesis: 1415, wall_seconds: 4985}
+  seed_1002_treatment: {candidates: 2400, calls: 5000, tokens: 16146270, synthesis: 1415, wall_seconds: 4985}
