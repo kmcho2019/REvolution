@@ -347,3 +347,27 @@ or holdout.
   `7152a84e764b1e7ad50a4f4622d747344b2e99e4e9c2d8f465d0267f84ef5e7d`.
 - Program-manifest version 5 SHA-256:
   `980135a9e5890804277ef18758a8f05253e93315983832ba120d8f38cf62cfdc`.
+
+## H9 Proposal Review And Retirement
+
+- H9 opened Wave 2 by isolating a single proposed change: replace every
+  post-initialization whole-output EoH request with the existing strict-diff
+  protocol. No source, config, worksheet, admission event, model call, or
+  synthesis run was created.
+- Independent novelty review returned `BLOCK`. AlphaEvolve already applies
+  generated deltas to parent programs inside evolutionary search and includes
+  Verilog optimization; CodeEvolve explicitly supports diff evolution and
+  full-code rewrite. H9 therefore scored `0` for novelty and `9/14` overall.
+- Independent methodology review returned `BLOCK`. It found that compact C-F
+  context omits the second parent, strict application still accepts an
+  empty-search append, and no terminal reporter or six-arm worksheet existed.
+- A read-only audit of all 4,000 post-Gen0 classic offspring showed that H9's
+  frozen premise did not generalize across parent roles. The 1,900
+  success-origin one-parent rows retained rho `-0.250869`, while 1,658
+  fail-origin rows reversed to rho `+0.060274`; successful failed-parent repairs
+  were broader on average than unsuccessful repairs.
+- The 600-second external `claude -p` review returned no substantive output and
+  is recorded as unavailable, not agreement.
+- H9 is `RETIRED` before live spend. Global diff ablations and patch-policy
+  variants are closed. A role-conditioned scope policy would be a distinct
+  candidate requiring its own novelty and clean-isolation review.

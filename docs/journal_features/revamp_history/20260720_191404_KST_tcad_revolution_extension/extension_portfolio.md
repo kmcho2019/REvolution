@@ -1,6 +1,6 @@
 # TCAD Extension Portfolio
 
-Status: `WAVE_1_CLOSED_NO_FINALIST`
+Status: `WAVE_2_OPEN_NO_FINALIST`
 
 This is the final advisor-facing synthesis of the discovery program. Update it
 after every candidate transition. Detailed commands and raw results remain in
@@ -20,8 +20,9 @@ Allowed outcomes: `JOURNAL_READY`, `PORTFOLIO_READY`, `PIVOT_REQUIRED`.
 | 1 | Component evidence | The conference validates the evolutionary loop only as a bundle; UCB and operator utility have no isolated evidence. | A journal extension cannot build its rationale on unverified internal mechanisms. | Run classic-only telemetry and the smallest fixed-policy/operator-subtraction ablations. |
 | 2 | Failure handling | Typed verification stages all receive `-inf`; old failed lineages are dropped; fail parents are uniform and only full repair earns reward. | Existing EDA evidence is discarded even though functionality is the main bottleneck. | Review one minimal stage-aware card against COEVO; do not use continuous reward or an adaptive gate. |
 | 3 | Operator grounding | Most prompts express generic code actions rather than validated RTL transformations; Fusion has no positive isolated evidence. | Weakens differentiation from EoH and the hardware-design argument. | Measure valid-child, transition, and PPA yield by operator before changing prompts. |
-| 4 | PPA scalarization | One scalar obscures tradeoffs, but direct Pareto and QD replacements lost final HV. | The conceptual flaw does not imply that a known multiobjective transplant will work at this budget. | Preserve classic exploitation; retire H2 as written. |
-| 5 | Scope and evidence | Generation-only tasks and success-conditioned PPA averages understate optimization and missing-output risks. | Limits generality and reviewer confidence. | Use hardened paired reporting now; reserve seeded optimization for finalist generalization. |
+| 4 | Mutation scope | Broad whole-output edits correlate with lower valid-PPA yield for successful-parent refinement, but failed-parent repair shows the opposite direction. | One global generation representation cannot be justified from the observed role-dependent evidence. | Retire global strict-diff H9; review role-conditioned scope only if it has a clean implementation and novel claim. |
+| 5 | PPA scalarization | One scalar obscures tradeoffs, but direct Pareto and QD replacements lost final HV. | The conceptual flaw does not imply that a known multiobjective transplant will work at this budget. | Preserve classic exploitation; retire H2 as written. |
+| 6 | Scope and evidence | Generation-only tasks and success-conditioned PPA averages understate optimization and missing-output risks. | Limits generality and reviewer confidence. | Use hardened paired reporting now; reserve seeded optimization for finalist generalization. |
 
 ## Candidate Decision Summary
 
@@ -33,8 +34,9 @@ terminal advisor-facing outcomes only.
 | H5 | M-F-only failed-pool routing | Primary core correction | 11/14 | RETIRED | Direct repairs rose by five and three, but seed 1001 exceeded the valid-PPA coverage margin; cumulative discovery also exceeded its frozen ceiling. |
 | H1 | Bottleneck-conditioned adaptation | Primary core correction | 8/14 | RETIRED | Adds contextual-bandit state before classic UCB or context utility is isolated. |
 | H2 | Preference-decomposed populations | Primary core correction | 8/14 | RETIRED | F41 and related work remove the rationale for another ungrounded multiobjective allocation. |
-| H3 | Contract-preserving patch evolution | Supporting reliability | 9/14 | RETIRED | Edit-breadth premise is unmeasured and the first treatment would combine several mechanisms. |
+| H3 | Contract-preserving patch evolution | Supporting reliability | 9/14 | RETIRED | The original card combines patching, contracts, locality rejection, and equivalence control; later breadth evidence does not rescue that design. |
 | H8 | Verification-stage failed retention | Supporting reliability | 10/14 | RETIRED | COEVO collision and monolithic generation-loop copy cost fail novelty/simplicity review. |
+| H9 | Global strict-diff evolution | Primary core correction | 9/14 | RETIRED | Diff evolution is already established, and failed-parent repairs contradict the proposed all-offspring locality premise. No implementation or live spend occurred. |
 
 Add candidates discovered by `conference_method_audit.md`; do not create a
 quota-driven variant list.
@@ -60,6 +62,7 @@ narrow the search rather than reappear under a new name or nearby parameter.
 | Candidate | Failure | Mechanistic interpretation | Follow-ups barred without new mechanism evidence | Artifact |
 | --- | --- | --- | --- | --- |
 | H5 M-F-only failed repair | Seed 1001 valid-PPA coverage fell 34/46 to 32/46, exceeding the frozen one-design margin; discovery ceilings were also exceeded. | M-F increases concentrated syntax-stage repair events but does not broaden repaired designs or causally explain PPA uplift. | No H5 confirmation, M-F mixtures, allocation ratios, no-C-F combination, or nearby routing variants without a distinct mechanism and prospective budget-compliant card. | `candidates/H5_role_aligned_failed_repair/decision.md` |
+| H9 global strict-diff evolution | Proposal review found direct AlphaEvolve/CodeEvolve collisions; only 1,900 of 4,000 proposed offspring supported the premise, and 1,658 failed-parent rows reversed its direction. | Edit scope is role-dependent in classic evidence; global diff generation is neither a novel algorithm nor an evidence-backed correction. | No global diff ablation, patch-policy scan, or H9 revision. A role-conditioned mechanism requires a new card and clean isolation argument. | `candidates/H9_strict_delta_evolution/decision.md` |
 | Smooth-QD V2 | Five-seed final HV `0.098801` versus classic `0.103802`; S07 reached `0.102481` but remained below classic. | Archive diversity improved some AUC/coverage surfaces but displaced final-HV exploitation. | BD scans, capacity interpolation, nearby archive-parent lanes, and AUC-only primary claims are deprioritized absent a distinct measured mechanism. | `docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md` |
 | F41 global Pareto | Two-seed final HV `0.103991` versus classic `0.104745`; AUC and functionality also lost. | Broad front preservation did not improve the constrained search budget. | H2 as written and adjacent NSGA-II parent/survivor variants are deprioritized absent a distinct measured mechanism. | `docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md` |
 | Unified single-thought | Classic-substrate pooled delta `-0.092`, CI `[-0.149, -0.037]`. | Operator heterogeneity supplies exploration that archive behavior cannot replace. | `single_thought_operator` and presumed one-operator simplification. | `docs/journal_features/13_findings_dashboard.md`, F3/F9 |
@@ -85,9 +88,10 @@ per-seed valid-PPA coverage or establishing PPA causality. Historical no-C-F
 remains retrospective characterization only, and hardened paired reporting is
 an evaluation contribution rather than an algorithmic journal thesis.
 
-Wave 2 must start from a distinct measured weakness, not an H5 routing ratio,
-operator mix, or interaction. Seeded-optimization generalization remains
-contingent on an independently supported algorithmic finalist.
+Wave 2 opened with H9 and retired it before spend. The next card must address a
+distinct measured weakness; it cannot be an H5 routing ratio, global diff
+toggle, patch-policy knob, or interaction. Seeded-optimization generalization
+remains contingent on an independently supported algorithmic finalist.
 
 ## Artifact Index
 
@@ -109,6 +113,11 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
   `reviews/20260721_h5_full_suite_evidence_audit.md`,
   `reviews/20260721_h5_scientific_interpretation.md`,
   `reviews/20260721_h5_external_contract_audit.md`.
+- H9 pre-spend retirement:
+  `candidates/H9_strict_delta_evolution/hypothesis_card.md`,
+  `candidates/H9_strict_delta_evolution/decision.md`,
+  `reviews/20260721_h9_novelty_review.md`,
+  `reviews/20260721_h9_methodology_review.md`.
 - Historical no-C-F record:
   `candidates/H6_fusion_free_success/decision.md`.
 - Generated evidence root:

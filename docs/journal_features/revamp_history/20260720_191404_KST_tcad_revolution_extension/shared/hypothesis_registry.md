@@ -11,6 +11,7 @@ before implementation and link every terminal decision.
 | H4 | AUGMENTATION | A confirmed algorithmic paper candidate generalizes to optimization of valid suboptimal RTL. | Conference scope is generation-centric. | GENERALIZATION | PROPOSED | PENDING |
 | H5 | CORE_CORRECTION | M-F-only failed-pool routing improves unconditional valid-PPA repair count and preserves final PPA search. | Failed candidates share five intents despite a dedicated correction operator and short horizon. | PRIMARY_ALGORITHM | SUITE_EVALUATED | RETIRED |
 | H8 | CORE_CORRECTION | Retaining failed candidates by verification stage improves repair continuity. | Classic discards old failed lineages and scalarizes every failure to `-inf`. | RELIABILITY | RETIRED | RETIRED |
+| H9 | CORE_CORRECTION | Strict parent-relative deltas improve offspring validity without harming final PPA search. | Whole-output edit breadth is negatively associated with valid-PPA yield for successful-parent refinement. | PRIMARY_ALGORITHM | RETIRED | RETIRED |
 
 Allowed progression states:
 
@@ -26,6 +27,11 @@ Allowed terminal outcomes:
 New IDs must represent distinct mechanisms derived from
 `conference_method_audit.md`. Parameter values and combinations do not receive
 new IDs unless an independent mechanism and rationale are stated.
+
+H9 was Wave 2's first reviewed mechanism. It retired before implementation or
+live spend because global diff evolution has a direct related-work collision
+and the classic evidence reverses for failed-parent repair. See
+`../candidates/H9_strict_delta_evolution/decision.md`.
 
 ## Evidence Outside The Candidate State Machine
 

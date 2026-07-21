@@ -1,10 +1,12 @@
 # TCAD REvolution Extension Research Goal Scaffold
 
-Status: `ACTIVE_WAVE_2_CANDIDATE_SELECTION`; baseline, statistics, benchmark roles,
-holdout, and resource ceilings froze on 2026-07-20 before treatment evidence.
-Wave 1 is closed: H5 increased direct repairs but is `RETIRED` after a per-seed
-valid-PPA coverage failure and a cumulative discovery-budget violation. The
-corrected Wave-2 methodology and program manifest froze on 2026-07-21.
+Status: `ACTIVE_WAVE_2_CANDIDATE_SELECTION`; baseline, statistics, benchmark
+roles, holdout, and resource ceilings froze on 2026-07-20 before treatment
+evidence. Wave 1 is closed: H5 increased direct repairs but is `RETIRED` after a
+per-seed valid-PPA coverage failure and a cumulative discovery-budget
+violation. Wave 2 opened with H9, which retired before implementation after
+novelty and premise-scope review. The corrected Wave-2 methodology and program
+manifest froze on 2026-07-21.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts
@@ -60,8 +62,9 @@ require H1 and H2 to run, does not require every seed idea to be implemented,
 and may add stronger candidates discovered by the conference-method audit. H5
 is the retired Wave-1 algorithmic card. H6 records retrospective no-C-F
 evidence, and H7 records a deferred UCB diagnostic outside the candidate state
-machine. Wave 2 must use a distinct mechanism rather than an H5 mixture or
-parameter variant.
+machine. H9 is the retired global strict-diff proposal and records the
+role-dependent edit-breadth finding. Remaining Wave-2 work must use a distinct
+mechanism rather than an H5 mixture, global diff toggle, or parameter variant.
 
 ## Candidate state machine
 

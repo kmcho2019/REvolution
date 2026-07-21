@@ -72,8 +72,9 @@ detail in the append-only program and candidate histories.
   version 5 after independent review and admission-tool tests.
 - [x] Freeze a prospective Wave-2 methodology addendum that reconciles the
   complete matched-control ladder with every per-candidate resource ceiling.
-- [ ] Start Wave 2 only from the H5 failure or another unresolved audited
-  weakness, never an H5 parameter or prompt mixture.
+- [x] Start Wave 2 from the audited mutation-scope weakness with H9, never an
+  H5 parameter or prompt mixture.
+- [x] Retire H9 before implementation after novelty and premise-scope review.
 - [ ] Select at most three distinct Wave 2 mechanisms.
 - [ ] Do not relaunch retired mechanisms as adjacent knobs or combinations.
 - [ ] Nominate at most two strongest candidates for confirmation.
