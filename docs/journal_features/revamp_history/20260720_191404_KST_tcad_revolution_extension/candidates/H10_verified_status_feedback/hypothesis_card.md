@@ -2,9 +2,10 @@
 
 Status: `IMPLEMENTED`; the exact hypothesis, reporter, six-arm budget, and
 Wave-2 provenance amendment froze under program-manifest v6 before
-implementation or treatment evidence. Program-manifest v7 now binds the
-audited runtime bytes. Admission remains blocked until the tracked
-implementation manifest passes; no treatment evidence exists.
+implementation or treatment evidence. Program-manifest v8 prospectively
+corrects the pre-admission v7 provenance defects and binds the audited runtime
+bytes. Admission remains blocked until the implementation is rebound and
+rereviewed; no treatment evidence exists.
 
 ## Identity
 
@@ -222,12 +223,14 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
 - Seed roles: smoke 42; development 1001/1002; confirmation 61001-61005;
   holdout 62001.
 - Governing contracts: `../../program_claims_contract_v4.md`,
-  `../../baseline_contract.md`, `../../shared/program_manifest_v7.yaml`,
+  `../../baseline_contract.md`, `../../shared/program_manifest_v8.yaml`,
   `../../wave2_methodology_addendum.md`, and
   `../../wave2_provenance_amendment.md`.
-- Program-manifest v7 supersedes v6 before live evidence and binds the H10
-  engine, backend registration, and CLI. Version 6 remains the historical
-  exact-card preregistration contract.
+- Program-manifest v8 supersedes v7 before live evidence. It binds the H10
+  engine, backend registration, CLI, current backend Git blob, and every
+  declared path/hash dependency. Version 6 remains the historical exact-card
+  preregistration. Version 7 is retained as the rejected first runtime binding;
+  no admission or evidence was accepted under it.
 - Frozen source configs are `smoke_run_config.yaml` and
   `full_suite_run_config.yaml`; their SHA-256 values are
   `20c8b3daf931b0b322568af61c9fa8a4ff85ab5da5fdcf56568cc8471702d490`
@@ -390,8 +393,10 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
 | Exact-card closure | `../../reviews/20260721_h10_exact_card_internal_review.md` | Code, scientific, evidence, and simplicity reviewers closed every blocking finding. | `PASS_FOR_IMPLEMENTATION` |
 | External review | `../../reviews/20260721_h10_exact_card_claude_review.md` | The 600-second retry returned no substantive output. | `UNAVAILABLE` |
 | Runtime implementation | `../../reviews/20260721_h10_implementation_review.md` | Three read-only audits accepted the isolated RTLLM implementation after v7, implementation-file, and version-guard corrections; CVDP remains a confirmation-only blocker. | `PASS_FOR_RTLLM_IMPLEMENTATION` |
+| Pre-admission provenance | `../../reviews/20260721_h10_pre_admission_review.md` | A later independent audit found v7's stale backend blob and skipped `*_path` hashes before any admission; v8 and a 45-file direct binding are required. | `BLOCK_PENDING_REBIND` |
 
 The executable artifact schema and gate mapping are specified in
-`reporter_contract.md`. The runtime source and dispatch exist. No tracked
-implementation manifest, admission event, model call, synthesis evaluation, or
-benchmark result exists at this implementation transition.
+`reporter_contract.md`. The runtime source and dispatch exist. The first tracked
+implementation manifest is retained as rejected pre-admission provenance and
+must be superseded. No admission event, model call, synthesis evaluation, or
+benchmark result exists.

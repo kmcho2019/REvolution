@@ -2,8 +2,9 @@
 
 Status: `FROZEN` at `2026-07-21T11:16:00Z`; synthetic and adversarial coverage
 passed independent closure. The H10 runtime passed isolated implementation
-review. The reporter cannot accept live evidence until the tracked
-implementation manifest and admission gates pass.
+review, but a later pre-admission audit found incomplete path/hash traversal.
+Program-manifest v8 corrects that defect. The reporter cannot accept live
+evidence until the corrected implementation manifest and admission gates pass.
 
 ## Entry Point
 
@@ -40,8 +41,10 @@ must exist, be an ancestor of the reporting checkout, and contain every
 registered byte. The implementation manifest itself must be tracked with the
 same bytes in reporting `HEAD`. Every candidate ledger event carries the same
 implementation-manifest path and SHA-256. The reporter independently rehashes
-all path/hash pairs in program-manifest v7, the environment, classic core,
-default prompt corpus, and all 46 reference-PPA files.
+all path/hash pairs in program-manifest v8, requires every resolved source in
+the implementation file set, validates current Git blobs, and separately
+rehashes the environment, default prompt corpus, and all 46 reference-PPA
+files.
 
 ## Unit States
 

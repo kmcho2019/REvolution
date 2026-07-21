@@ -10,8 +10,11 @@ manifest froze on 2026-07-21. H10 verified terminal-status feedback is the sole
 active proposal. Its exact card, six-arm budget, reporter, and narrow Wave-2
 provenance amendment are frozen. Its isolated RTLLM runtime has passed
 implementation review, so H10 is `IMPLEMENTED`. No tracked implementation
-manifest, admission, or treatment evidence exists. CVDP confirmation remains
-blocked pending a prospective engine/evaluator composition.
+manifest existed at that transition. A first tracked manifest was later
+rejected by an independent pre-admission provenance audit; corrected v8
+rebinding is in progress. No admission or treatment evidence exists. CVDP
+confirmation remains blocked pending a prospective engine/evaluator
+composition.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts
@@ -36,9 +39,10 @@ right answer.
 9. Apply `wave2_methodology_addendum.md` and the shared budget worksheet before
    any Wave-2 candidate treatment.
 10. Read `wave2_provenance_amendment.md`; use
-    `shared/program_manifest_v7.yaml` for H10 runtime evidence. Version 6 is the
-    historical H10 exact-card contract, version 5 the pre-amendment Wave-2
-    contract, and version 4 the H5 contract.
+    `shared/program_manifest_v8.yaml` for H10 runtime evidence. Version 7 is the
+    rejected first runtime binding, version 6 the historical H10 exact-card
+    contract, version 5 the pre-amendment Wave-2 contract, and version 4 the H5
+    contract.
 
 ## Program flow
 

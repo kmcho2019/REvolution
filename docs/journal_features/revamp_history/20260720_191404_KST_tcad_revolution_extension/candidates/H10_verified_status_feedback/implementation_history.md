@@ -73,3 +73,35 @@ events. No treatment code or result existed at candidate selection.
 - Advanced H10 from `READY` to `IMPLEMENTED`. No tracked implementation
   manifest, admission event, model call, synthesis evaluation, or benchmark
   result existed at this transition.
+
+## 2026-07-21: Implementation identity binding
+
+- Committed the reviewed runtime as
+  `a79bb74133886608f57cecba998834a7d3b51f0f` with a signed, wrapped message.
+- Added the tracked implementation manifest in commit
+  `0223e7c906b55132401e18d5df7d3cf185b6526b`. Its SHA-256 is
+  `e3514cc1e21e976ea7de2a95d38adb5e479879935e3e07ffd3a7ed8436b2d423`.
+- The manifest's exact 34-file set equals the reporter contract. Every current
+  hash reproduces the corresponding byte from the runtime commit, and the
+  reporter's tracked-manifest validator passes from the current `HEAD`.
+- The outcome-blind admission calculation returns `PASS` for
+  `smoke_classic`. This is a dry check only; no ledger event, endpoint call,
+  model call, synthesis evaluation, or benchmark evidence exists.
+
+## 2026-07-21: Pre-admission provenance block
+
+- Independent session `019f84a0-18a3-74b1-a899-efd67ae2d6df` returned
+  `BLOCK_FOR_SMOKE_ADMISSION` before the ledger changed.
+- Program-manifest v7 combined the current backend SHA-256 with its pre-H10 Git
+  blob. The reporter also skipped all 13 Wave-2 hashes whose source key ends in
+  `_path`, and the direct implementation set omitted 11 declared sources.
+- Preserved v7 and the first implementation manifest as rejected historical
+  records. No treatment output exists under either identity.
+- Drafted prospective program-manifest v8 with the current backend blob,
+  exhaustive 23-pair path/hash validation, direct 45-file implementation
+  membership, and distinguishing tests. Rebinding and independent rereview
+  remain required before admission.
+- The same reviewer independently reproduced every corrected source invariant
+  and returned `PASS_FOR_CORRECTED_RUNTIME_COMMIT`. Focused validation passed
+  181 tests; the headless full repository passed 1,222 tests with 4 skips.
+  Corrected runtime commit and implementation-manifest replacement remain next.

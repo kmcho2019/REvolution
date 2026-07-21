@@ -1018,12 +1018,29 @@ def test_catastrophic_hv_ratio_cannot_hide_behind_absolute_margin() -> None:
 @pytest.mark.parametrize(
     "keys",
     [
+        ("code", "classic_core", "sha256"),
         ("code", "backend", "sha256"),
+        ("code", "default_config", "sha256"),
+        ("code", "h10_runtime", "engine", "sha256"),
+        ("code", "h10_runtime", "cli", "sha256"),
         ("benchmarks", "representative", "selection_artifact_sha256"),
         ("benchmarks", "full_suite", "run_manifest_sha256"),
         ("benchmarks", "full_suite", "headline_manifest_sha256"),
         ("benchmarks", "holdout", "manifest_sha256"),
         ("benchmarks", "holdout", "prior_exposure_manifest_sha256"),
+        ("wave2_resource_compliance", "accounting_template_sha256"),
+        ("wave2_resource_compliance", "admission_test_sha256"),
+        ("wave2_resource_compliance", "admission_tool_sha256"),
+        ("wave2_resource_compliance", "budget_reference_sha256"),
+        ("wave2_resource_compliance", "budget_template_sha256"),
+        ("wave2_resource_compliance", "claims_contract_sha256"),
+        ("wave2_resource_compliance", "gate_test_sha256"),
+        ("wave2_resource_compliance", "gate_tool_sha256"),
+        ("wave2_resource_compliance", "methodology_sha256"),
+        ("wave2_resource_compliance", "provenance_amendment_sha256"),
+        ("wave2_resource_compliance", "smoke_synthesis_artifact_sha256"),
+        ("wave2_resource_compliance", "smoke_synthesis_report_sha256"),
+        ("wave2_resource_compliance", "smoke_synthesis_test_sha256"),
     ],
 )
 def test_frozen_inputs_reject_changed_program_dependency(
@@ -1034,6 +1051,30 @@ def test_frozen_inputs_reject_changed_program_dependency(
     for key in keys[:-1]:
         value = value[key]
     value[keys[-1]] = "0" * 64
+
+    with pytest.raises(AssertionError):
+        report._validate_frozen_inputs(program)
+
+
+@pytest.mark.parametrize("name", ["classic_core", "backend"])
+def test_frozen_inputs_reject_changed_git_blob(name: str) -> None:
+    program = yaml.safe_load(report.PROGRAM_MANIFEST.read_text(encoding="utf-8"))
+    program["code"][name]["git_blob"] = "0" * 40
+
+    with pytest.raises(AssertionError):
+        report._validate_frozen_inputs(program)
+
+
+def test_frozen_inputs_require_direct_implementation_binding(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    program = yaml.safe_load(report.PROGRAM_MANIFEST.read_text(encoding="utf-8"))
+    path = program["wave2_resource_compliance"]["budget_reference_path"]
+    monkeypatch.setattr(
+        report,
+        "IMPLEMENTATION_FILES",
+        report.IMPLEMENTATION_FILES - {path},
+    )
 
     with pytest.raises(AssertionError):
         report._validate_frozen_inputs(program)

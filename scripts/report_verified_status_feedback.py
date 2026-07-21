@@ -105,9 +105,9 @@ GOAL_ROOT = (
     / "20260720_191404_KST_tcad_revolution_extension"
 )
 H10_ROOT = GOAL_ROOT / "candidates/H10_verified_status_feedback"
-PROGRAM_MANIFEST = GOAL_ROOT / "shared/program_manifest_v7.yaml"
+PROGRAM_MANIFEST = GOAL_ROOT / "shared/program_manifest_v8.yaml"
 PROGRAM_MANIFEST_SHA256 = (
-    "316bab8cb0f404a9bff6ad839522df3137f78e2321b220cd17fddd90c066a662"
+    "26c83aa4ea6a01ef31f0757a560564c1df1c86ee42745242aad88eaf4ef83666"
 )
 WORKSHEET_SHA256 = "d7bd17b10e21a2acd970d43feb75603d83b57530efd27fcf38aa2323663a7378"
 REPORT_MANIFEST_SHA256 = {
@@ -149,6 +149,7 @@ IMPLEMENTATION_FILES = {
     "pyproject.toml",
     "scripts/report_verified_status_feedback.py",
     "scripts/report_failed_parent_repair.py",
+    "scripts/report_tcad_smoke_synthesis.py",
     "scripts/run_backend.py",
     "scripts/tcad_candidate_admission.py",
     "scripts/tcad_extension_gate_contract.py",
@@ -159,6 +160,7 @@ IMPLEMENTATION_FILES = {
     "src/revolution/verified_status_feedback/__init__.py",
     "src/revolution/verified_status_feedback/engine.py",
     "tests/scripts/test_report_verified_status_feedback.py",
+    "tests/scripts/test_report_tcad_smoke_synthesis.py",
     "tests/scripts/test_run_backend.py",
     "tests/scripts/test_tcad_candidate_admission.py",
     "tests/scripts/test_tcad_extension_gate_contract.py",
@@ -173,11 +175,20 @@ IMPLEMENTATION_FILES = {
     f"{H10_ROOT.relative_to(REPO_ROOT)}/reporter_contract.md",
     f"{H10_ROOT.relative_to(REPO_ROOT)}/smoke_report_manifest.yaml",
     f"{H10_ROOT.relative_to(REPO_ROOT)}/smoke_run_config.yaml",
+    f"{(GOAL_ROOT / 'shared/arm_accounting.template.yaml').relative_to(REPO_ROOT)}",
+    f"{(GOAL_ROOT / 'shared/candidate_budget.template.yaml').relative_to(REPO_ROOT)}",
+    f"{(GOAL_ROOT / 'shared/cvdp_holdout_v1.yaml').relative_to(REPO_ROOT)}",
+    f"{(GOAL_ROOT / 'shared/cvdp_prior_exposure.yaml').relative_to(REPO_ROOT)}",
+    f"{(GOAL_ROOT / 'shared/representative_selection.csv').relative_to(REPO_ROOT)}",
+    f"{(GOAL_ROOT / 'shared/wave2_budget_reference.yaml').relative_to(REPO_ROOT)}",
+    f"{(GOAL_ROOT / 'shared/wave2_smoke_synthesis.json').relative_to(REPO_ROOT)}",
     f"{PROGRAM_MANIFEST.relative_to(REPO_ROOT)}",
     f"{PROMPT_MANIFEST.relative_to(REPO_ROOT)}",
     f"{(GOAL_ROOT / 'program_claims_contract_v4.md').relative_to(REPO_ROOT)}",
     f"{(GOAL_ROOT / 'wave2_methodology_addendum.md').relative_to(REPO_ROOT)}",
     f"{(GOAL_ROOT / 'wave2_provenance_amendment.md').relative_to(REPO_ROOT)}",
+    "docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_reference_complete_manifest.yaml",
+    "docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/qd_evaluaton_exp/20260701_1155_PCN_v3_experiments/tables/rtllm_full_manifest.yaml",
 }
 PPA_METRICS = {"tns", "wns", "eff_clk_period", "power", "area"}
 
@@ -253,18 +264,35 @@ def _validate_frozen_inputs(program: dict[str, Any]) -> set[str]:
             if not isinstance(digest_name, str):
                 continue
             if digest_name == "sha256":
-                path_name = "path"
+                path_names = ("path",)
             elif digest_name.endswith("_sha256"):
-                path_name = digest_name.removesuffix("_sha256")
+                base = digest_name.removesuffix("_sha256")
+                path_names = (base, f"{base}_path")
             else:
                 continue
-            source = value.get(path_name)
-            if not isinstance(source, str):
+            sources = [
+                value[name]
+                for name in path_names
+                if isinstance(value.get(name), str)
+            ]
+            assert len(sources) <= 1
+            if not sources:
                 continue
+            source = sources[0]
             assert isinstance(digest, str)
             path = _path(source).resolve()
             assert path.is_relative_to(REPO_ROOT) and path.is_file()
+            assert str(path.relative_to(REPO_ROOT)) in IMPLEMENTATION_FILES
             assert hashlib.sha256(path.read_bytes()).hexdigest() == digest
+    for name in ("classic_core", "backend"):
+        artifact = program["code"][name]
+        path = _path(artifact["path"]).resolve()
+        result = subprocess.run(
+            ["git", "-C", str(REPO_ROOT), "hash-object", str(path)],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0 and result.stdout.strip() == artifact["git_blob"]
     environment = {
         "pyproject": REPO_ROOT / "pyproject.toml",
         "uv_lock": REPO_ROOT / "uv.lock",
@@ -1510,7 +1538,7 @@ def generate_report(manifest_path: Path, output_dir: Path) -> dict[str, Any]:
     )
     program = yaml.safe_load(PROGRAM_MANIFEST.read_text(encoding="utf-8"))
     assert isinstance(program, dict)
-    assert program["version"] == 7 and program["status"] == "FROZEN"
+    assert program["version"] == 8 and program["status"] == "FROZEN"
     reference_ppa_paths = _validate_frozen_inputs(program)
     worksheet_path = _path(manifest["worksheet_path"])
     assert hashlib.sha256(worksheet_path.read_bytes()).hexdigest() == WORKSHEET_SHA256

@@ -475,3 +475,41 @@ or holdout.
 - H10 advances to `IMPLEMENTED`. A tracked implementation manifest is the next
   gate. No admission, model call, synthesis evaluation, or benchmark evidence
   exists.
+
+## H10 Implementation Identity Binding
+
+- Signed runtime commit `a79bb74133886608f57cecba998834a7d3b51f0f`
+  contains the reviewed engine, dispatch, tests, reporter, frozen v7 manifest,
+  and implementation-transition documentation.
+- Signed provenance commit `0223e7c906b55132401e18d5df7d3cf185b6526b`
+  adds one tracked implementation manifest with the exact 34 paths required by
+  the reporter. Manifest SHA-256:
+  `e3514cc1e21e976ea7de2a95d38adb5e479879935e3e07ffd3a7ed8436b2d423`.
+- Every manifest hash matches both the current checkout and the named runtime
+  commit; the reporter's tracked-manifest validator passes from `HEAD`.
+- The frozen cumulative-budget calculation returns `PASS` for the next exact
+  arm, `smoke_classic`. This is not an admission event. The ledger remains
+  unchanged and no endpoint, model, synthesis, or benchmark evidence exists.
+
+## H10 Pre-Admission Provenance Block
+
+- An independent read-only audit returned `BLOCK_FOR_SMOKE_ADMISSION` before
+  any ledger event or treatment evidence.
+- Program-manifest v7 retained the pre-H10 backend Git blob while declaring the
+  current backend SHA-256. The reporter's generic walker also failed to map
+  `*_sha256` fields to `*_path` sources, silently skipping all 13 Wave-2
+  dependency hashes.
+- The first implementation manifest was internally valid for its 34 declared
+  files, but the exact set omitted 11 program-manifest sources promised by the
+  reporter contract. It is retained as rejected pre-admission provenance.
+- Prospective v8 uses the current backend blob, validates both source-key
+  conventions and both current Git blobs, requires all 23 program sources in a
+  45-file implementation set, and adds adversarial tests for every pair.
+- The model endpoint separately passed its 131,072-context preflight. This did
+  not admit or execute an arm. Corrected runtime commit, implementation rebind,
+  and independent rereview remain mandatory.
+- The same adversarial reviewer then reproduced all 23 source hashes and direct
+  memberships, both Git blobs, and ambiguity rejection, returning
+  `PASS_FOR_CORRECTED_RUNTIME_COMMIT`. Validation passed 181 focused tests and
+  the headless full repository at 1,222 passed with 4 skips. Replacement
+  implementation identity and final smoke-admission rereview remain open.

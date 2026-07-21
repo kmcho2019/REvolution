@@ -2,7 +2,8 @@
 
 Status: `WAVE_2_H10_IMPLEMENTED`; H5 and H9 are `RETIRED`. H10 is the only
 active mechanism. Its exact card and runtime passed review; implementation
-manifest, admission, and live evidence remain open.
+identity rebinding is in progress after a pre-admission provenance block.
+Admission and live evidence remain open.
 
 The ranking combines the conference audit, completed QD/Pareto/operator
 evidence, implementation isolation, and current related-work collision. It is
@@ -10,7 +11,7 @@ not a quota or a parameter queue.
 
 | Rank | ID | Mechanism | Score | Intended role | Disposition |
 | ---: | --- | --- | ---: | --- | --- |
-| 1 | H10 | Preserve typed terminal status alongside unchanged critic analysis for failed parents. | 13/14 | Supporting reliability | `IMPLEMENTED`: bind the reviewed runtime commit before smoke admission |
+| 1 | H10 | Preserve typed terminal status alongside unchanged critic analysis for failed parents. | 13/14 | Supporting reliability | `IMPLEMENTED`: correct and rebind pre-admission provenance before smoke |
 | 2 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `RETIRED`: seed-1001 valid-PPA coverage exceeds the frozen deficit; budget ceiling also exceeded |
 | 3 | H4 | Test a confirmed method on seeded RTL optimization. | 11/14 provisional | Generalization | Hold until an algorithmic finalist exists |
 | 4 | H8 | Retain failed candidates by furthest verification stage. | 10/14 provisional | Reliability | Do not implement: COEVO collision and code-copy cost |

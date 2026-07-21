@@ -1,0 +1,275 @@
+version: 8
+status: FROZEN
+program_id: tcad_revolution_extension_20260720
+frozen_before_treatment: true
+claims_contract_revision: 4
+supersedes: shared/program_manifest_v7.yaml
+revision_reason: close_h10_pre_admission_provenance_audit
+
+program_window:
+  start_utc: "2026-07-20T14:21:33+00:00"
+  deadline_utc: "2026-08-10T14:21:33+00:00"
+  basis: active_goal_created_at
+
+code:
+  audit_commit: 3a73dde53a0fda99cf12525efa6e64da1d6fa254
+  classic_last_change_commit: bafb47d49bd81cd16c0fe3fb76b6da792331f695
+  classic_core:
+    path: src/revolution/algorithm.py
+    git_blob: 31e64763a0c7567b206ca0f98fce92c5936b57fc
+    sha256: 78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655
+  backend:
+    path: src/revolution/backends/revolution_backend.py
+    baseline_sha256: 8eb619b85befc141188fbd6719967a56c9868d8fd4afac8afc7693dc17c0d4da
+    git_blob: be5a61ee44c734183635eee0ce4d4612ced4c364
+    sha256: 7a5e2f269fbbf8fd61f6696f08e16a153930f04d6df1d87c9a3a014e588d3ec9
+    dormant_h5_dispatch_commit: 59acb11def38d12466cca425c6828bba25f98dc8
+  default_config:
+    path: data/configs/evolution_default.yaml
+    sha256: cd44c8de823b9843339718cd8116d325f35a11188b38103553dcc2cbc8c0a34b
+  h10_runtime:
+    mode: revolution_verified_status_feedback
+    engine:
+      path: src/revolution/verified_status_feedback/engine.py
+      sha256: 6fefdc8ef6ebc3f99559cead409b7acaf4ad4c5c92d0f2f491ffa0855dcf325f
+    cli:
+      path: scripts/run_backend.py
+      sha256: 46cd34d8178114ff484b3efb8ee9cc478f6a413df0ee8d1bf7c650d3791c1614
+  environment:
+    pyproject_sha256: 54d1f3bb640e55b8b547a1651dbf7faa7962650b3236a54fd75ff37e99fbfada
+    uv_lock_sha256: 62309f91330a00672530a0ea200a759bc21da70fb011c533d44c775aa78bcb63
+    devcontainer_sha256: 28600f81d265f2afa211eb7f1d2cc94f50487f5e0a5b5ff30bed777d7432de8d
+
+historical_baseline:
+  role: context_and_margin_freeze_not_h5_mechanism_control
+  root: exp/useful_bd_push/pcn_v3_experiments_20260701/live/rtllm_full_5seed/classic_revolution_8x5
+  config_sha256:
+    1001: a738ae9784137aaf6c02f29bfaa947e212f2eb348116e0d5ccec3e26b5e509ce
+    1002: 81898ed1a6c0ed13537d228278dcde67a697ea2a12246f7e91539b825f772863
+    1003: 74b60a6d6621695b69803a00930034c80d6161f9bf2c2220a899310ce70244bb
+    1004: 1bd31ee88142a4466de5cfa566675ea66d419e14bfbbc6c8910e15b19c0fa376
+    1005: 3168613899acbb153592105bfd4286c9eae9e61f3307e923fec4ee3001e7c6c0
+  summary_units: 250
+  generation_logs: 250
+  missing_units: 0
+  mean_final_hv46: 0.103802076408
+  mean_hv_auc46: 0.086982154366
+  valid_ppa_units: 164
+  rtl_simulation_functional_units46: 188
+  rtl_simulation_functional_units50: 208
+
+method:
+  search_mode: revolution
+  representation: code_individual
+  operator_family: eoh_operators
+  classic_operator_kind: eoh_strategies
+  eoh_success_operator_set: classic
+  population_pool_mode: dual
+  strategy_selection: ucb
+  evaluation_mode: strict_ablation
+  generation_mode: whole
+  population_size: 8
+  generations: 5
+  candidate_evaluations_per_problem: 48
+  temperature: 1.0
+  top_p: 1.0
+  max_tokens_per_call: 128000
+  diff_max_tokens_per_call: 128000
+
+model:
+  provider: vllm
+  endpoint: http://20.0.0.103:8000
+  name: openai/gpt-oss-120b
+  context_length: 131072
+
+toolchain:
+  python: 3.11.15
+  uv: 0.11.23
+  simulator: Icarus_12.0
+  synthesizer: Yosys_0.54+29_7b0c1fe49
+  ppa_flow: OpenROAD_v2.0-22560-gb571c4b471
+  secondary_simulator: Verilator_5.030
+
+benchmarks:
+  smoke:
+    role: execution_only
+    problems:
+      - Prob002_adder_16bit
+      - Prob025_sequence_detector
+      - Prob043_RAM
+  representative:
+    role: development
+    selection: valid_ppa_all_5_and_positive_hv_3_of_5_then_top_4_sample_hv_sd_per_type
+    selection_source: exp/tcad_revolution_extension/baseline_20260720/historical_classic_5seed/hv_auc.csv
+    circuit_type_source: exp/tcad_revolution_extension/baseline_20260720/historical_classic_5seed/ppa_distribution/data/reference_ppa_metrics.csv
+    selection_artifact: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/representative_selection.csv
+    selection_artifact_sha256: 44bfacd9ad9969b7ec890892e5d28be3df3904b19ec734f4b8cc9505f50cc298
+    problems:
+      - Prob002_adder_16bit
+      - Prob024_fsm
+      - Prob025_sequence_detector
+      - Prob027_LIFObuffer
+      - Prob036_edge_detect
+      - Prob041_traffic_light
+      - Prob043_RAM
+      - Prob045_alu
+  full_suite:
+    role: development_and_confirmation
+    run_manifest: docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/qd_evaluaton_exp/20260701_1155_PCN_v3_experiments/tables/rtllm_full_manifest.yaml
+    run_manifest_sha256: fcf42ec53a8d68f5e54c449539163bc7eea494c7a20630945ab3ea1206cc0d67
+    headline_manifest: docs/journal_features/revamp_history/20260622_010615_KST_useful_bd_push/RTLLM_full_suite/20260630/tables/rtllm_reference_complete_manifest.yaml
+    headline_manifest_sha256: 92d6ad2981b04a8aed531ca04ca1ac085bb9fb6fee866ada2a4bf397ee52497b
+    missing_treatment_policy: zero_and_method_failure
+  holdout:
+    role: repository_evidence_disjoint_functionality_generalization_only
+    manifest: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/cvdp_holdout_v1.yaml
+    manifest_sha256: 9f0b8e1c7946858e901e337e5c963864e21b1724c921f701d7ebe6881f36fc5e
+    prior_exposure_manifest: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/cvdp_prior_exposure.yaml
+    prior_exposure_manifest_sha256: f5d36eb6150e430c2342cc1e31a5df5fa06ba66057d811313307d88363feddc0
+    eligibility_audit: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/holdout_eligibility_audit.md
+    reference_ppa: false
+
+seeds:
+  smoke: [42]
+  development: [1001, 1002]
+  confirmation: [61001, 61002, 61003, 61004, 61005]
+  holdout: [62001]
+  confirmation_and_holdout_prior_repository_hits: 0
+
+statistics:
+  unit: problem_seed_pair
+  cluster: problem
+  interval: percentile_problem_cluster_bootstrap
+  confidence: 0.95
+  bootstrap_replicates: 10000
+  bootstrap_seed: 20260720
+  hv_tie_tolerance: 1.0e-9
+  coverage_tie: exact
+  minimum_non_tied_for_sign_test: 10
+  missing_treatment_hv: 0.0
+  missing_treatment_hv_auc: 0.0
+  missing_treatment_functionality: 0.0
+  missing_treatment_valid_ppa: 0.0
+  missing_treatment_normalized_ppa_score: minimum_locked_classic_score
+  raw_area_power_period_missing_policy: no_imputation_complete_case_secondary
+  complete_case_role: secondary
+
+practical_margins:
+  final_hv_noninferiority: -0.0050
+  hv_auc_noninferiority: -0.0036
+  coverage_deficit_per_seed: 1
+  paper_candidate_final_hv: strictly_above_matched_classic
+  approximate_final_hv_mde_46x5: 0.02
+  mde_role: detectability_warning_not_acceptance_threshold
+
+budgets:
+  per_problem:
+    candidate_evaluations: 48
+    llm_calls: 100
+    llm_tokens: 650000
+    synthesis_evaluations: 48
+    wall_seconds: 2400
+  per_candidate:
+    scope: discovery_only_excludes_confirmation_and_holdout
+    llm_tokens: 66000000
+    candidate_evaluations: 10512
+    llm_calls: 21000
+    synthesis_evaluations: 6000
+    endpoint_arm_hours: 6
+  per_wave:
+    llm_tokens: 200000000
+    candidate_evaluations: 32000
+    llm_calls: 64000
+    synthesis_evaluations: 18000
+    endpoint_arm_hours: 18
+  program:
+    llm_tokens: 650000000
+    candidate_evaluations: 105000
+    llm_calls: 210000
+    synthesis_evaluations: 60000
+    endpoint_arm_hours: 60
+    elapsed_days: 21
+  wave2_opening_balance:
+    source: H5_governing_audit
+    llm_tokens: 69289552
+    candidate_evaluations: 11232
+    llm_calls: 22466
+    synthesis_evaluations: 6056
+    endpoint_arm_seconds: "22435.092"
+  wave2_program_remainder:
+    llm_tokens: 580710448
+    candidate_evaluations: 93768
+    llm_calls: 187534
+    synthesis_evaluations: 53944
+    endpoint_arm_seconds: "193564.908"
+
+wave2_resource_compliance:
+  semantics: evidence_eligibility_thresholds_with_sequential_post_arm_gate
+  ladder: smoke_then_full_suite
+  representative_probe: omitted
+  matched_arm_envelopes: pair_equal
+  candidate_and_call_enforcement: structural
+  wall_enforcement: command_timeout
+  token_and_synthesis_enforcement: sealed_post_arm_stop_gate
+  launch_operator_output: pass_or_stop_only
+  admission_time_source: process_utc_clock
+  accounting_wall_time: exact_decimal_seconds
+  accounting_arm_statuses: [completed, timed_out]
+  program_ledger_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/wave2_resource_ledger.jsonl
+  ledger_transaction: exclusive_flock_across_validation_and_append
+  implementation_manifest_binding: path_and_sha256_in_every_candidate_event
+  arm_outcome_evidence: exact_arm_tree_sha256_manifest
+  final_failure_registry_binding: final_treatment_arm_evidence_manifest
+  initial_program_ledger_sha256: 8aaf7d6eff5e00167b4a07522e674a8c3817062b48edc946aea375dffba26690
+  claims_contract_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/program_claims_contract_v4.md
+  claims_contract_sha256: 38799411baad7673005a229f14e610feb39bf63dbb55010a18b7a90c9e2b0d8f
+  methodology_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/wave2_methodology_addendum.md
+  methodology_sha256: 7152a84e764b1e7ad50a4f4622d747344b2e99e4e9c2d8f465d0267f84ef5e7d
+  provenance_amendment_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/wave2_provenance_amendment.md
+  provenance_amendment_sha256: 2a541309ba17f65e1682744bd2cfc941011b82cd7948fd597ba5a7cfde366c7f
+  budget_reference_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/wave2_budget_reference.yaml
+  budget_reference_sha256: bc21a57fb05941d21bf1528d17e66f666b5f6ffd1c2194653ecb042843353f66
+  smoke_synthesis_artifact_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/wave2_smoke_synthesis.json
+  smoke_synthesis_artifact_sha256: 5337a06c301918ae53ce616afce4a694494766dacc70418c778a054fe26b2773
+  smoke_synthesis_report_path: scripts/report_tcad_smoke_synthesis.py
+  smoke_synthesis_report_sha256: 3d135d189e41e4491e34d91ab7aaeb5fb45c2534f60fe93db4f9b47a3a8bf8c0
+  smoke_synthesis_test_path: tests/scripts/test_report_tcad_smoke_synthesis.py
+  smoke_synthesis_test_sha256: 563ea04c3c25137a132ab5966d16e0547594d65b35b8e5ded690bf362161889b
+  budget_template_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/candidate_budget.template.yaml
+  budget_template_sha256: 7a05ce4b4d4225f9dc179fbfb09d69a527d1563b6245e502020ea1146362ec0d
+  accounting_template_path: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/shared/arm_accounting.template.yaml
+  accounting_template_sha256: efade2abab3a362cd4575a926af9c958ec05ee236be11226621afbbed3641c91
+  admission_tool_path: scripts/tcad_candidate_admission.py
+  admission_tool_sha256: d80abec47748bc309c552e1b1f9c74391b4888ee4646e98cbbe97b14af5df40a
+  admission_test_path: tests/scripts/test_tcad_candidate_admission.py
+  admission_test_sha256: a32cde5812907f2cd524c5c76560815691208660199dcbc7bb8dbd247fe249bc
+  gate_tool_path: scripts/tcad_extension_gate_contract.py
+  gate_tool_sha256: 4850ba4cbe2cca6b90129cbff3216592230016dd1e295f64877ecfac10758a12
+  gate_test_path: tests/scripts/test_tcad_extension_gate_contract.py
+  gate_test_sha256: 18032b9b978760ad7b2697132e95f26ee912b9250da9402d9ca7e47a557a0360
+
+gates:
+  catastrophic_full_suite:
+    scope: two_seed_development_only
+    minimum_hv_ratio: 0.90
+    coverage_reduction: sum_per_seed_loss_only
+    maximum_valid_ppa46_loss: 3
+    maximum_rtl_functionality46_loss: 3
+    maximum_rtl_functionality50_loss: 3
+    require_candidate_budget_equality: true
+  confirmation:
+    outcome_based_early_stop: false
+  viable:
+    benefit_endpoint: candidate_card_single_preregistered_metric
+    require_benefit_in_each_development_seed: true
+    require_other_surfaces_inside_practical_margins: true
+  paper_candidate:
+    require_final_hv_strictly_above_classic: true
+    require_five_seed_confirmation: true
+    require_holdout: true
+    forbid_auc_rescue_of_final_hv_loss: true
+
+artifacts:
+  baseline_contract: docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/baseline_contract.md
+  canonical_report_root: exp/tcad_revolution_extension/baseline_20260720/historical_classic_5seed
+  synthesis_determinism_root: exp/tcad_revolution_extension/baseline_20260720/synthesis_determinism

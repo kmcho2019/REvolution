@@ -2,16 +2,20 @@
 
 Status: `FROZEN`. The machine worksheet and program-manifest v6 preregistration
 passed independent review at `2026-07-21T11:16:00Z`. Program-manifest v7 now
-binds the audited H10 runtime without changing any arm or gate. No arm may
-launch until the runtime is bound by a tracked implementation manifest and
-explicitly admitted.
+recorded the first H10 runtime binding without changing any arm or gate. A
+pre-admission audit rejected its provenance coverage. No arm may launch until
+program-manifest v8 and a corrected implementation manifest pass rereview and
+the arm is explicitly admitted.
 
 - Candidate ID: `H10`
 - Wave: `wave2`
 - Candidate proposal commit:
   `fec538bba98f10aee00ce3f88a15033fa6f75a17`
-- Program manifest path: `../../shared/program_manifest_v7.yaml`
+- Program manifest path: `../../shared/program_manifest_v8.yaml`
 - Program manifest SHA-256:
+  `26c83aa4ea6a01ef31f0757a560564c1df1c86ee42745242aad88eaf4ef83666`
+- Rejected pre-admission manifest: `../../shared/program_manifest_v7.yaml`,
+  SHA-256
   `316bab8cb0f404a9bff6ad839522df3137f78e2321b220cd17fddd90c066a662`
 - Historical exact-card manifest: `../../shared/program_manifest_v6.yaml`,
   SHA-256
@@ -36,6 +40,11 @@ explicitly admitted.
   `8aaf7d6eff5e00167b4a07522e674a8c3817062b48edc946aea375dffba26690`
 - Reviewer: `../../reviews/20260721_h10_exact_card_internal_review.md`
 - Runtime reviewer: `../../reviews/20260721_h10_implementation_review.md`
+- Runtime commit: `a79bb74133886608f57cecba998834a7d3b51f0f`
+- Implementation-manifest commit:
+  `0223e7c906b55132401e18d5df7d3cf185b6526b`
+- Implementation-manifest SHA-256:
+  `e3514cc1e21e976ea7de2a95d38adb5e479879935e3e07ffd3a7ed8436b2d423`
 
 ## Frozen Arm Caps
 
@@ -135,5 +144,6 @@ changes when actuals become available.
 - [x] The candidate froze `READY`, then reached `IMPLEMENTED`, before any
       admission event.
 
-Decision: budget `PASS`; runtime `PASS_FOR_RTLLM_IMPLEMENTATION`. This is not an
-admission or result verdict.
+Decision: budget `PASS`; runtime mechanism `PASS`; first implementation identity
+`REJECTED_PRE_ADMISSION`. Corrected v8 rebinding is required. No admission
+event or result verdict exists.

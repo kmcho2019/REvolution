@@ -98,8 +98,9 @@ H10 is now the sole active mechanism. It preserves one typed terminal-status
 line beside unchanged critic analysis for failed parents. The exact card,
 budget, reporter, and isolated RTLLM runtime passed review; it remains a
 supporting reliability card with no performance evidence. A tracked
-implementation manifest and admission are required before smoke. CVDP
-confirmation is blocked pending a prospective evaluator composition.
+implementation manifest was rejected in a later pre-admission provenance
+audit; v8 rebinding must pass before smoke admission. CVDP confirmation is
+blocked pending a prospective evaluator composition.
 
 ## Artifact Index
 
@@ -129,11 +130,13 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
 - H10 proposal, implementation, and classic-only premise:
   `candidates/H10_verified_status_feedback/hypothesis_card.md`,
   `candidates/H10_verified_status_feedback/implementation_history.md`,
+  `candidates/H10_verified_status_feedback/implementation_manifest.yaml`,
   `shared/verified_status_feedback_premise/README.md`,
   `reviews/20260721_h10_scientific_review.md`,
   `reviews/20260721_h10_code_boundary_review.md`,
   `reviews/20260721_h10_evidence_review.md`,
-  `reviews/20260721_h10_implementation_review.md`.
+  `reviews/20260721_h10_implementation_review.md`,
+  `reviews/20260721_h10_pre_admission_review.md`.
 - Historical no-C-F record:
   `candidates/H6_fusion_free_success/decision.md`.
 - Generated evidence root:

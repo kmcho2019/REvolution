@@ -2,6 +2,11 @@
 
 Verdict: `PASS_FOR_RTLLM_IMPLEMENTATION`
 
+Current disposition: runtime mechanism review remains valid, but its original
+evidence-readiness conclusion was superseded before admission by
+`20260721_h10_pre_admission_review.md`. Program-manifest v8 rebinding and
+rereview are required.
+
 - Scope: experimental engine, backend and CLI dispatch, telemetry, focused
   tests, reporter implementation binding, and program-manifest transition.
 - Boundary: this verdict permits creation of the tracked implementation
@@ -80,3 +85,14 @@ The runtime is sufficiently isolated, typed, and evidence-bound to advance
 H10 from `READY` to `IMPLEMENTED`. The next gate is a tracked
 `implementation_manifest.yaml` that binds one runtime commit and the exact
 reviewed file bytes. No admission event or live benchmark evidence exists.
+
+## Post-Review Binding
+
+- Runtime commit: `a79bb74133886608f57cecba998834a7d3b51f0f`.
+- Implementation-manifest commit:
+  `0223e7c906b55132401e18d5df7d3cf185b6526b`.
+- Implementation-manifest SHA-256:
+  `e3514cc1e21e976ea7de2a95d38adb5e479879935e3e07ffd3a7ed8436b2d423`.
+- The reporter validator reproduces all 34 current and committed file hashes.
+  The admission calculation returns `PASS` for `smoke_classic`; no admission
+  event has been written.
