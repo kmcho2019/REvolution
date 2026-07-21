@@ -513,3 +513,19 @@ or holdout.
   `PASS_FOR_CORRECTED_RUNTIME_COMMIT`. Validation passed 181 focused tests and
   the headless full repository at 1,222 passed with 4 skips. Replacement
   implementation identity and final smoke-admission rereview remain open.
+
+## H10 Corrected Identity Closure
+
+- Signed corrected runtime commit
+  `ed5863c5fa578a0a5a2ffb73d1aebef44e67f8e8` freezes program-manifest v8,
+  exhaustive dependency traversal, direct 45-file membership, and adversarial
+  tests without changing the H10 mechanism.
+- Signed replacement-manifest commit
+  `11ad5ccabcbc954909201543ea29cd8d633f38dc` binds every reviewed byte to that
+  runtime. Manifest SHA-256:
+  `c0ef63b5852252bee8d2128b557d433543e50042e096fb0a6181cc7bd0f9a582`.
+- Final independent review returned `PASS_FOR_SMOKE_ADMISSION`. The ledger
+  remains at its one-record opening hash and only `smoke_classic` is eligible.
+- The exact sequential smoke runbook freezes endpoint preflight, admission,
+  161-second arm timeouts, evidence-tree sealing, resource accounting, and
+  report output outside raw roots. No admission or live evidence exists.

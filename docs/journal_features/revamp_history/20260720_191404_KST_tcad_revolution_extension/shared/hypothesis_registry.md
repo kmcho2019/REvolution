@@ -37,9 +37,9 @@ and the classic evidence reverses for failed-parent repair. See
 H10 is Wave 2's second reviewed mechanism. Its one-line terminal-state
 invariant passed scientific, evidence, exact-card, code-boundary, and runtime
 reviews. It is `IMPLEMENTED`, and its tracked implementation manifest now
-requires corrected v8 rebinding after a pre-admission provenance block.
-Admission, smoke, and suite evidence remain open. CVDP confirmation is blocked
-pending a prospective evaluator composition.
+uses corrected v8 rebinding after a pre-admission provenance block. Final
+smoke-admission review passes; admission, smoke, and suite evidence remain
+open. CVDP confirmation is blocked pending a prospective evaluator composition.
 
 ## Evidence Outside The Candidate State Machine
 

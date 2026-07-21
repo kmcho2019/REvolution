@@ -3,9 +3,9 @@
 Status: `FROZEN`. The machine worksheet and program-manifest v6 preregistration
 passed independent review at `2026-07-21T11:16:00Z`. Program-manifest v7 now
 recorded the first H10 runtime binding without changing any arm or gate. A
-pre-admission audit rejected its provenance coverage. No arm may launch until
-program-manifest v8 and a corrected implementation manifest pass rereview and
-the arm is explicitly admitted.
+pre-admission audit rejected its provenance coverage. Program-manifest v8 and
+the corrected implementation manifest now pass final rereview. No arm may
+launch until it is explicitly admitted.
 
 - Candidate ID: `H10`
 - Wave: `wave2`
@@ -40,11 +40,17 @@ the arm is explicitly admitted.
   `8aaf7d6eff5e00167b4a07522e674a8c3817062b48edc946aea375dffba26690`
 - Reviewer: `../../reviews/20260721_h10_exact_card_internal_review.md`
 - Runtime reviewer: `../../reviews/20260721_h10_implementation_review.md`
-- Runtime commit: `a79bb74133886608f57cecba998834a7d3b51f0f`
-- Implementation-manifest commit:
+- Pre-admission reviewer: `../../reviews/20260721_h10_pre_admission_review.md`
+- Rejected runtime commit: `a79bb74133886608f57cecba998834a7d3b51f0f`
+- Rejected implementation-manifest commit:
   `0223e7c906b55132401e18d5df7d3cf185b6526b`
-- Implementation-manifest SHA-256:
+- Rejected implementation-manifest SHA-256:
   `e3514cc1e21e976ea7de2a95d38adb5e479879935e3e07ffd3a7ed8436b2d423`
+- Corrected runtime commit: `ed5863c5fa578a0a5a2ffb73d1aebef44e67f8e8`
+- Corrected implementation-manifest commit:
+  `11ad5ccabcbc954909201543ea29cd8d633f38dc`
+- Corrected implementation-manifest SHA-256:
+  `c0ef63b5852252bee8d2128b557d433543e50042e096fb0a6181cc7bd0f9a582`
 
 ## Frozen Arm Caps
 
@@ -145,5 +151,5 @@ changes when actuals become available.
       admission event.
 
 Decision: budget `PASS`; runtime mechanism `PASS`; first implementation identity
-`REJECTED_PRE_ADMISSION`. Corrected v8 rebinding is required. No admission
-event or result verdict exists.
+`REJECTED_PRE_ADMISSION`; corrected v8 identity
+`PASS_FOR_SMOKE_ADMISSION`. No admission event or result verdict exists.

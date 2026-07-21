@@ -105,3 +105,18 @@ events. No treatment code or result existed at candidate selection.
   and returned `PASS_FOR_CORRECTED_RUNTIME_COMMIT`. Focused validation passed
   181 tests; the headless full repository passed 1,222 tests with 4 skips.
   Corrected runtime commit and implementation-manifest replacement remain next.
+
+## 2026-07-21: Corrected identity closure
+
+- Corrected runtime commit `ed5863c5fa578a0a5a2ffb73d1aebef44e67f8e8`
+  preserves H10's mechanism and changes only evidence validation, v8
+  provenance, tests, and correction records.
+- Replacement manifest commit `11ad5ccabcbc954909201543ea29cd8d633f38dc`
+  binds all 45 files. Manifest SHA-256:
+  `c0ef63b5852252bee8d2128b557d433543e50042e096fb0a6181cc7bd0f9a582`.
+- The final independent rereview returned `PASS_FOR_SMOKE_ADMISSION`: every
+  bound current/runtime byte, v8 dependency, Git blob, prompt, reference,
+  config, worksheet, and untouched ledger identity reproduces.
+- Froze `smoke_execution_commands.md` for the sequential admission, 161-second
+  runs, raw-tree sealing, accounting, and report. No admission, model call,
+  synthesis evaluation, or benchmark result exists.

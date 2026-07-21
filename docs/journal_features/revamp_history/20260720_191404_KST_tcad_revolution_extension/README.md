@@ -11,8 +11,9 @@ active proposal. Its exact card, six-arm budget, reporter, and narrow Wave-2
 provenance amendment are frozen. Its isolated RTLLM runtime has passed
 implementation review, so H10 is `IMPLEMENTED`. No tracked implementation
 manifest existed at that transition. A first tracked manifest was later
-rejected by an independent pre-admission provenance audit; corrected v8
-rebinding is in progress. No admission or treatment evidence exists. CVDP
+rejected by an independent pre-admission provenance audit. Corrected v8 and
+the 45-file replacement manifest now pass final smoke-admission review, and the
+exact smoke runbook is frozen. No admission or treatment evidence exists. CVDP
 confirmation remains blocked pending a prospective engine/evaluator
 composition.
 

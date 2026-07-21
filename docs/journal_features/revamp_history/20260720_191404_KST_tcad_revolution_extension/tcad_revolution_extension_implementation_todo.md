@@ -88,8 +88,10 @@ detail in the append-only program and candidate histories.
 - [x] Pass focused H10 tests and independent isolation, evidence, and simplicity
   audits; freeze program-manifest version 7 around the runtime bytes.
 - [x] Commit the first H10 implementation manifest and audit it before admission.
-- [ ] Freeze program-manifest version 8, rebind all direct dependencies, and
+- [x] Freeze program-manifest version 8, rebind all direct dependencies, and
   close the pre-admission provenance rereview.
+- [x] Freeze the exact sequential smoke admission, run, seal, accounting, and
+  reporting commands before the ledger changes.
 - [ ] Run and report the frozen H10 smoke pair; launch no full arm on smoke fail.
 - [ ] If smoke passes, run and classify the frozen two-seed RTLLM full suite.
 - [ ] Resolve and prospectively review CVDP evaluator composition before any H10

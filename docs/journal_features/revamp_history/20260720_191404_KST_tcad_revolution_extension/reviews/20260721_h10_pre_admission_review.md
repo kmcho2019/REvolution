@@ -76,3 +76,26 @@ Verdict: `PASS_FOR_CORRECTED_RUNTIME_COMMIT`
 This rereview authorizes a corrected runtime commit only. Replacement of the
 tracked implementation manifest and final smoke-admission rereview remain
 ordered gates; no benchmark arm may launch yet.
+
+## Final Identity Rereview
+
+Verdict: `PASS_FOR_SMOKE_ADMISSION`
+
+- Corrected runtime commit:
+  `ed5863c5fa578a0a5a2ffb73d1aebef44e67f8e8`.
+- Replacement implementation-manifest commit:
+  `11ad5ccabcbc954909201543ea29cd8d633f38dc`.
+- Replacement manifest SHA-256:
+  `c0ef63b5852252bee8d2128b557d433543e50042e096fb0a6181cc7bd0f9a582`.
+- The reporter's implementation validator passes all 45 exact current and
+  runtime-commit bytes. No bound path changed after the corrected runtime
+  commit.
+- Frozen v8, 23 direct source hashes, two Git blobs, classic/default/prompt
+  pins, 46 reference files, worksheet, configs, and report manifests pass.
+- The ledger still contains only its opening record. Pure admission evaluation
+  returns `PASS` only for `smoke_classic`; every later arm returns `STOP`.
+- No H10 evidence root exists. The absent admission event is the expected next
+  action, not a blocker. CVDP remains confirmation-only.
+
+H10 may execute only the frozen sequential technical smoke. This is not a
+smoke, suite, or performance verdict.
