@@ -16,6 +16,15 @@ program_budget:
   contract_path: REQUIRED
   contract_sha256: REQUIRED
   wave_id: REQUIRED
+  frozen_worksheet_path: REQUIRED
+  frozen_worksheet_sha256: REQUIRED
+  program_ledger_path: REQUIRED
+  initial_program_ledger_sha256: REQUIRED
+  accounting_artifact_path: REQUIRED
+  accounting_evidence_path: REQUIRED
+  accounting_evidence_sha256: REQUIRED
+  token_and_synthesis_enforcement: sealed_post_arm_stop_gate
+  all_control_arms_included: true
 
 prompts:
   baseline_sha256: REQUIRED
@@ -94,8 +103,39 @@ statistics:
   practical_margins_sha256: REQUIRED
 
 frozen_gates:
-  catastrophic_stop: REQUIRED
-  viable: REQUIRED
+  benefit:
+    endpoint: REQUIRED
+    scope: per_seed
+    minimum_delta_exclusive: 0.0
+    combine_seeds: all
+  final_hv46:
+    scope: pooled_problem_seed
+    minimum_mean_delta: -0.0050
+  hv_auc46:
+    scope: pooled_problem_seed
+    minimum_mean_delta: -0.0036
+  coverage:
+    valid_ppa46:
+      scope: per_seed
+      maximum_deficit_each_seed: 1
+      combine_seeds: all
+    rtl_functionality46:
+      scope: per_seed
+      maximum_deficit_each_seed: 1
+      combine_seeds: all
+    rtl_functionality50:
+      scope: per_seed
+      maximum_deficit_each_seed: 1
+      combine_seeds: all
+  require_exact_candidate_budget: true
+  maximum_auxiliary_resource_relative_skew: 0.10
+  catastrophic_stop:
+    scope: aggregate_two_seed_development
+    minimum_mean_hv_ratio: 0.90
+    coverage_reduction: sum_per_seed_loss_only
+    maximum_valid_ppa46_loss: 3
+    maximum_rtl_functionality46_loss: 3
+    maximum_rtl_functionality50_loss: 3
   paper_candidate: REQUIRED
   retirement: REQUIRED
 
@@ -103,6 +143,8 @@ reviews:
   hypothesis_review_path: REQUIRED
   code_review_path: REQUIRED
   evidence_review_path: REQUIRED
+  contract_translation_test_path: REQUIRED
+  contract_translation_test_sha256: REQUIRED
 
 artifacts:
   raw_root: REQUIRED

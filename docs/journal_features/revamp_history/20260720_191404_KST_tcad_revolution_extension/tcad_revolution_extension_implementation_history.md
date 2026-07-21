@@ -305,3 +305,45 @@ or holdout.
   prospective methodology addendum that reconciles every stage and fresh
   control with the existing per-candidate ceilings. Do not reopen H5 as an
   operator ratio, mixture, no-C-F interaction, or nearby prompt variant.
+
+## Wave 2 Methodology Freeze
+
+- Claims-contract revision 4 and program-manifest version 5 froze
+  prospectively before any Wave-2 candidate treatment. Wave 1 and H5 remain
+  governed by revision 3 and manifest version 4.
+- The Wave-2 ladder is exactly one fresh three-design smoke pair followed by
+  fresh classic/treatment full-suite pairs at seeds 1001 and 1002. The weakly
+  transferring representative probe is omitted prospectively rather than
+  relabeled or used as evidence.
+- Pair-equal arm envelopes total 9,696 candidates, 20,600 calls, 65,406,676
+  tokens, 5,714 synthesis starts, and 20,542 endpoint-arm seconds. Raw H5
+  resource evidence and smoke generation logs reproduce every cap.
+- The program remainder subtracts H5's audited 11,232 candidates, 22,466 calls,
+  69,289,552 tokens, 6,056 synthesis starts, and 22,435.092 seconds before any
+  Wave-2 admission.
+- One locked append-only ledger enforces the exact six-arm order, one active
+  candidate, cumulative candidate/wave/program projections, the fixed 21-day
+  UTC window, exact decimal wall accounting, timeout retirement, and unique
+  arm-bound accounting/evidence artifacts.
+- Shared coverage logic requires both development seeds, evaluates the
+  one-design margin independently per seed and surface, and sums catastrophic
+  losses without offsetting gains.
+- Internal methodology session
+  `019f82d3-76f5-7b41-ba68-e45c314004f8` and code session
+  `019f830b-339c-7743-bfab-0b4cc9da2054` each rejected earlier drafts, then
+  returned `PASS` after serialization, parser, timeout, and lock fixes. A final
+  600-second read-only Claude closure review independently returned `PASS`.
+- Validation passed 37 focused tests, Ruff, Pyright, `ty`, YAML parsing, all 13
+  manifest hash checks, and byte-identical smoke/edit-premise reproductions.
+  An undeselected repository test attempt stalled in the previously documented
+  backend-comparison report test; a 300-second deselected attempt reached about
+  70 percent while still progressing and timed out. No model-backed run was
+  launched.
+- Admission implementation commit:
+  `d3b0ebd3ac3c6162357a450320d8a5f5a85c94c5`.
+- Claims-contract revision 4 SHA-256:
+  `38799411baad7673005a229f14e610feb39bf63dbb55010a18b7a90c9e2b0d8f`.
+- Wave-2 methodology SHA-256:
+  `7152a84e764b1e7ad50a4f4622d747344b2e99e4e9c2d8f465d0267f84ef5e7d`.
+- Program-manifest version 5 SHA-256:
+  `980135a9e5890804277ef18758a8f05253e93315983832ba120d8f38cf62cfdc`.

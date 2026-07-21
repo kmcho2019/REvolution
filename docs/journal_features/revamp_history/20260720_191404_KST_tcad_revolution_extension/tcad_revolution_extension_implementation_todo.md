@@ -59,15 +59,21 @@ detail in the append-only program and candidate histories.
 - [x] Run one debug-seed technical smoke on the frozen diverse set.
 - [x] Run the matched representative probe and analyze all registered metrics.
 - [x] Advance H5 and freeze its two-seed full-suite probe before launch.
-- [ ] Run and analyze the frozen H5 full-suite probe.
-- [ ] Permit at most two evidence-justified, mechanism-preserving revisions.
-- [ ] Record PAPER_CANDIDATE, VIABLE, RETIRED, or BLOCKED in `decision.md`.
-- [ ] Update history, claim ledger, negative map, and portfolio before next work.
+- [x] Run and analyze the frozen H5 full-suite probe.
+- [x] Close H5 without a mechanism revision after the governing gate failure.
+- [x] Record H5 as RETIRED in `decision.md`.
+- [x] Record the reporter gate defect and cumulative discovery-budget overrun.
+- [x] Update history, claim ledger, negative map, and portfolio before next work.
 
 ## Wave Decisions
 
-- [ ] Finish every Wave 1 candidate before opening Wave 2.
-- [ ] Start Wave 2 only from a measured failure or unresolved audited weakness.
+- [x] Finish every Wave 1 candidate before opening Wave 2.
+- [x] Freeze prospective claims-contract revision 4 and program-manifest
+  version 5 after independent review and admission-tool tests.
+- [x] Freeze a prospective Wave-2 methodology addendum that reconciles the
+  complete matched-control ladder with every per-candidate resource ceiling.
+- [ ] Start Wave 2 only from the H5 failure or another unresolved audited
+  weakness, never an H5 parameter or prompt mixture.
 - [ ] Select at most three distinct Wave 2 mechanisms.
 - [ ] Do not relaunch retired mechanisms as adjacent knobs or combinations.
 - [ ] Nominate at most two strongest candidates for confirmation.

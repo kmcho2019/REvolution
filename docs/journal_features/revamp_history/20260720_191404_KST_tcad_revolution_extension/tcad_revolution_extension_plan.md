@@ -2,8 +2,12 @@
 
 Feature slug: `tcad_revolution_extension`
 
-Status: `ACTIVE_WAVE_1_H5`. `program_claims_contract.md` revision 3 is
-the accepted contract for this post-QD discovery program. Existing empirical
+Status: `ACTIVE_WAVE_2_CANDIDATE_SELECTION`. Wave 1 closed with H5 `RETIRED` after a
+per-seed coverage failure and a discovery-budget overrun. The generated
+reporter label was rejected by post-run contract audits.
+`program_claims_contract_v4.md` and program-manifest version 5 are the frozen
+prospective Wave-2 contract;
+revision 3 remains frozen in `program_claims_contract.md` for Wave 1. Existing empirical
 findings and measurement disclosures from
 `docs/journal_features/journal_narrative.md` remain authoritative where the new
 contract does not replace them.
@@ -43,13 +47,16 @@ descriptor, or selection-parameter scan.
 
 ## Source Of Truth
 
-- Claims and outcome levels: `program_claims_contract.md`
+- Wave-2 claims and outcomes: `program_claims_contract_v4.md`
+- Wave-1/H5 claims archive: `program_claims_contract.md`
 - Conference audit: `conference_method_audit.md`
 - Living checklist: `tcad_revolution_extension_implementation_todo.md`
 - Program history: `tcad_revolution_extension_implementation_history.md`
 - Candidate portfolio: `extension_portfolio.md`
 - Candidate registry: `shared/hypothesis_registry.md`
 - Candidate loop: `shared/candidate_goal_contract.md`
+- Wave-2 process correction: `wave2_methodology_addendum.md`
+- Candidate budget worksheet: `shared/candidate_budget_worksheet.template.md`
 - Claims: `shared/claim_evidence_ledger.md`
 - Naturalness review: `shared/natural_extension_rubric.md`
 - Experiment schema: `shared/experiment_manifest.template.yaml`
@@ -126,7 +133,9 @@ Every proposal must state:
 - expected effect on final HV, HV-AUC, and functionality/valid-PPA;
 - mechanism telemetry that distinguishes causation from chance;
 - implementation surface, state, knobs, and removal plan;
-- smoke, representative, full-suite, and retirement gates.
+- smoke, full-suite, and retirement gates;
+- a control-inclusive arithmetic worksheet proving that all stages fit every
+  per-candidate resource ceiling before any live spend.
 
 Use the natural-extension rubric before code. Reject generic algorithm
 transplants, disguised parameter sweeps, and candidates whose explanation
@@ -169,15 +178,13 @@ Run one debug seed on a small, design-diverse set. The smoke checks execution,
 artifact extraction, budget accounting, and catastrophic functionality/PPA
 failure. It is not positive performance evidence.
 
-### E. Representative Probe
+### E. Wave-2 Screen Omission
 
-Run the frozen baseline-only-selected representative set with at least two
-matched seeds. Analyze final HV, HV-AUC, functionality, valid-PPA, yield,
-per-problem deltas, and mechanism telemetry.
-
-Retire only for a preregistered catastrophic failure, unsupported mechanism, or
-naturalness/novelty failure. Because prior small-set transfer was weak, a noisy
-or modest representative result does not by itself retire a sound candidate.
+Wave 2 omits the representative diagnostic prospectively because transfer was
+weak and the mandatory screen/full-suite ladder exceeded its candidate budget.
+Proceed directly from technical smoke to full-suite development. Reintroducing
+a screen requires a versioned claims-contract and budget-methodology revision;
+it is not a candidate-level option.
 
 ### F. Full-Suite Probe
 
@@ -195,7 +202,7 @@ an observed failure mechanism; adjacent parameter values are not revisions.
 
 Only the strongest one or two candidates receive five matched, preregistered
 confirmation seeds that are disjoint from all development seeds. Freeze code
-and configuration, then run a genuinely disjoint holdout once. End with
+and configuration, then run the repository-evidence-disjoint holdout once. End with
 `PAPER_CANDIDATE`, `VIABLE`, `RETIRED`, or `BLOCKED`.
 
 ### H. Learn Before The Next Candidate
@@ -211,15 +218,16 @@ Benchmark roles are frozen before candidate outcomes:
 
 - **Smoke:** a few combinational, sequential/datapath, and control designs for
   runtime and extraction only.
-- **Representative development:** a baseline-only-selected, design-diverse set
-  with moderate classic success, measurable PPA headroom, and acceptable
-  synthesis determinism. It prioritizes spend but does not license final claims.
+- **Representative development:** the frozen historical Wave-1 diagnostic. It
+  remains available for comparability but is omitted prospectively in Wave 2
+  and does not license final claims.
 - **Full-suite development:** all reference-complete tasks in a frozen RTLLM,
   VerilogEval, or equivalent manifest. No treatment-based filtering.
 - **Confirmation:** five matched, preregistered seeds disjoint from development
   seeds on the frozen suite for finalists.
-- **Holdout:** genuinely untouched designs or benchmark family, run once after
-  method freeze.
+- **Holdout:** the repository-evidence-disjoint benchmark defined by the frozen
+  eligibility audit, run once after method freeze. It is not secret or
+  cross-suite-independent.
 
 Use classic-only pilots to quantify task difficulty, valid-PPA rate, reference
 headroom, seed variance, and synthesis noise. Freeze the selection rule and all
@@ -249,7 +257,8 @@ Secondary and mechanism surfaces:
 - calls, tokens, synthesis evaluations, runtime, and failure reasons.
 
 Use the statistical unit, clustered bootstrap, penalized missing-data analysis,
-tie handling, and disjoint seed roles fixed in `program_claims_contract.md`.
+tie handling, and disjoint seed roles fixed in
+`program_claims_contract_v4.md`.
 
 Modest improvements are acceptable. Freeze practical-regression margins and
 uncertainty rules from classic variability before seeing treatment results.
@@ -281,6 +290,9 @@ primary literature before changing the plan.
 - Evaluate at most three distinct candidates per wave, sequentially.
 - Freeze a program-level ceiling for LLM tokens, candidate evaluations,
   synthesis evaluations, accelerator time, and wall-clock time before Wave 1.
+- Before each Wave-2 card is accepted, sum smoke, full-suite, and all mandatory
+  matched-control costs against every ceiling.
+  A reviewer must reproduce the arithmetic before code or live spend.
 - Start a second wave only when the first wave's negative or viable results
   identify a concrete unresolved mechanism.
 - Stop discovery as `JOURNAL_READY` when a confirmed candidate and coherent

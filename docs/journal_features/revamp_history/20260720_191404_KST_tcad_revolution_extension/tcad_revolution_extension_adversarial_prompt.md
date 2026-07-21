@@ -37,6 +37,8 @@ that the program produced a journal-ready method.
   failure reasons against raw artifacts.
 - Recompute final HV, HV-AUC, functionality, valid-PPA, yield, paired deltas,
   W/L/T, uncertainty, seed sensitivity, and concentration of gains.
+- Compare reporter gate logic line by line with the governing contract. Reject
+  aggregate netting when a margin is frozen independently per seed.
 - Check that small-set results were not used as paper evidence.
 - Check that every terminal `VIABLE` result reached the frozen two-seed
   full-suite probe.
@@ -69,8 +71,9 @@ that the program produced a journal-ready method.
   methods were frozen before treatment outputs were inspected.
 - Verify the holdout eligibility audit predates treatment selection and supports
   the claimed lack of exposure.
-- Reconcile program-level token, candidate, synthesis, accelerator, and time
-  ceilings against actual spend.
+- Reconcile per-candidate, per-wave, and program token, candidate, call,
+  synthesis, endpoint-arm, and elapsed-time ceilings against actual spend.
+  Count every mandatory matched classic and treatment arm at every stage.
 - Inspect internal and external read-only review prompts, findings, and owner
   dispositions. Confirm external advice was verified rather than blindly used.
 - Trace every claim through the claim ledger to raw evidence and report commands.

@@ -64,11 +64,10 @@ effect, and functionality constraint.
 - Seed/budget:
 - Catastrophic stop rule:
 
-### Representative Probe
+### Wave-2 Screen Omission
 
-- Baseline-only selection rule and manifest hash:
-- Seeds/budget:
-- Registered metrics and mechanism checks:
+- Confirm the representative probe is omitted under revision 4.
+- Record the exact smoke-to-full-suite budget worksheet.
 
 ### Full-Suite Probe
 

@@ -1,9 +1,10 @@
 # TCAD REvolution Extension Research Goal Scaffold
 
-Status: `ACTIVE_WAVE_1`; baseline, statistics, benchmark roles, holdout, and
-resource ceilings froze on 2026-07-20 before treatment evidence. H5 is the sole
-Wave-1 candidate, passed its smoke and representative technical gates, and
-awaits its frozen full-suite development probe.
+Status: `ACTIVE_WAVE_2_CANDIDATE_SELECTION`; baseline, statistics, benchmark roles,
+holdout, and resource ceilings froze on 2026-07-20 before treatment evidence.
+Wave 1 is closed: H5 increased direct repairs but is `RETIRED` after a per-seed
+valid-PPA coverage failure and a cumulative discovery-budget violation. The
+corrected Wave-2 methodology and program manifest froze on 2026-07-21.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts
@@ -14,7 +15,9 @@ right answer.
 
 ## Start here
 
-1. Read the frozen `baseline_contract.md` and `program_claims_contract.md`.
+1. Read `baseline_contract.md`, the Wave-1
+   `program_claims_contract.md`, and the Wave-2
+   `program_claims_contract_v4.md`.
 2. Use `intake_review.md` for provenance and pre-live gate closure.
 3. Use `tcad_revolution_extension_plan.md` as the durable program charter.
 4. Use the reviewed `conference_method_audit.md` to rank implementation work.
@@ -23,6 +26,10 @@ right answer.
 6. Track active work in `tcad_revolution_extension_implementation_todo.md`.
 7. Keep every proposed and tested direction in `extension_portfolio.md`.
 8. Use `shared/candidate_goal_contract.md` for each implementation loop.
+9. Apply `wave2_methodology_addendum.md` and the shared budget worksheet before
+   any Wave-2 candidate treatment.
+10. Use `shared/program_manifest_v5.yaml` for Wave 2; version 4 remains the H5
+    historical contract.
 
 ## Program flow
 
@@ -36,8 +43,10 @@ right answer.
 4. Rank proposals with independent scientific and novelty reviews; evaluate at
    most two waves of no more than three distinct mechanisms each.
 5. Implement candidates one at a time in isolated experimental modules.
-6. Audit code before live spend, run a bounded smoke, then a representative
-   probe. Non-catastrophic candidates advance to a frozen full-suite probe.
+6. Audit code and a complete control-inclusive budget worksheet before live
+   spend. Run a bounded technical smoke, then use the frozen full-suite probe
+   for scientific screening. Wave 2 omits the representative probe under the
+   prospective revision-4 contract.
 7. Record each candidate as `PAPER_CANDIDATE`, `VIABLE`, `RETIRED`, or `BLOCKED`.
 8. Confirm only the strongest one or two candidates with five preregistered,
    development-disjoint seeds and a disjoint holdout.
@@ -49,8 +58,10 @@ The H1-H4 directories are starting hypotheses supplied with the original
 bundle. They must pass the same audit as any new idea. The program does not
 require H1 and H2 to run, does not require every seed idea to be implemented,
 and may add stronger candidates discovered by the conference-method audit. H5
-is the sole Wave-1 algorithmic card. H6 records retrospective no-C-F evidence,
-and H7 records a deferred UCB diagnostic outside the candidate state machine.
+is the retired Wave-1 algorithmic card. H6 records retrospective no-C-F
+evidence, and H7 records a deferred UCB diagnostic outside the candidate state
+machine. Wave 2 must use a distinct mechanism rather than an H5 mixture or
+parameter variant.
 
 ## Candidate state machine
 
