@@ -264,3 +264,44 @@ or holdout.
   review timed out without evidence; a focused 600-second retry verified all
   pins, scopes, failure paths, and gates and returned `PASS`. Full-suite launch
   is authorized after committing and rechecking the frozen tree.
+
+## H5 Full-Suite Evidence
+
+- Four fresh sequential arms completed all 50 RTLLM tasks at seeds 1001 and
+  1002. Each arm emitted exactly 2,400 candidates; all 200 arm units completed
+  with no missing unit, exclusion, or rerun.
+- H5 direct valid-PPA repairs improved 36 to 41 and 37 to 40. Pooled deltas were
+  repair rate +0.001667, final HV46 +0.006678, HV-AUC46 +0.004498, valid-PPA
+  coverage -0.010870, and RTL functionality50 -0.010000. All reported
+  confidence intervals included zero.
+- Exact operator telemetry passed: all 1,561 H5 failed-parent requests used M-F,
+  classic used all five failed EoH operators, and both arms retained classic
+  successful-parent operators.
+- The frozen reporter emitted `VIABLE` after netting signed coverage deficits
+  across seeds. The generated package is preserved under
+  `candidates/H5_role_aligned_failed_repair/full_suite_probe`.
+
+## H5 Contract Audit And Wave-1 Closure
+
+- A post-run independent evidence audit found that the reporter implemented an
+  aggregate coverage rule inconsistent with the accepted per-seed contract.
+  Seed 1001 valid-PPA coverage fell from 34/46 to 32/46, exceeding the frozen
+  one-problem margin. Seed 1002's one-problem gain cannot offset that failure.
+- A second internal reviewer corrected its initial reporter-level `VIABLE`
+  reading after contract arbitration. A focused read-only `claude -p` audit
+  independently confirmed the same precedence and `FAIL / RETIRED` verdict.
+- Cumulative H5 discovery spend was 11,232 candidates, 22,466 calls,
+  69,289,552 tokens, 6,056 synthesis evaluations, and 6.231970 endpoint-arm
+  hours. These exceed every frozen per-candidate ceiling because the preregistered
+  ladder failed to count all mandatory matched control arms.
+- The within-full-suite comparison remains mechanically matched, but H5 cannot
+  receive a contract-compliant promotion. Its governing outcome is `RETIRED`;
+  no revision, confirmation, holdout, combination, or integration is authorized.
+- Mechanism interpretation is narrow: the repair increase is concentrated and
+  primarily syntax-stage. Most PPA uplift comes from `Prob036_edge_detect`,
+  which made no failed-parent request in either arm or seed, so repair routing
+  does not causally explain the observed HV direction.
+- Wave 1 closes without a finalist. Before Wave 2 live spend, freeze a
+  prospective methodology addendum that reconciles every stage and fresh
+  control with the existing per-candidate ceilings. Do not reopen H5 as an
+  operator ratio, mixture, no-C-F interaction, or nearby prompt variant.

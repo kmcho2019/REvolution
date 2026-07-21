@@ -23,6 +23,12 @@ In the historical matched full-RTLLM test, removing C-F had higher mean final
 HV, HV-AUC, and coverage, but the final-HV effect was mixed across seeds and
 statistically unresolved. This is retrospective characterization only.
 
+## Interaction Closure
+
+H5 closed `RETIRED` on its governing full-suite gate. The preregistered
+condition for an H5-plus-no-C-F interaction therefore did not occur. No such
+combination is authorized; H6 remains historical support only.
+
 ## Evidence
 
 - `../../component_evidence_audit.md`

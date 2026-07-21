@@ -9,7 +9,7 @@ before implementation and link every terminal decision.
 | H2 | CORE_CORRECTION | Preference-decomposed success populations improve final PPA HV over one scalar success population. | Scalar ranking can collapse PPA tradeoffs. | PRIMARY_ALGORITHM | RETIRED | RETIRED |
 | H3 | AUGMENTATION | Contract-preserving local patch evolution improves valid-PPA yield without final-HV regression. | Broad rewrites can cause semantic drift. | RELIABILITY | RETIRED | RETIRED |
 | H4 | AUGMENTATION | A confirmed algorithmic paper candidate generalizes to optimization of valid suboptimal RTL. | Conference scope is generation-centric. | GENERALIZATION | PROPOSED | PENDING |
-| H5 | CORE_CORRECTION | M-F-only failed-pool routing improves unconditional valid-PPA repair count and preserves final PPA search. | Failed candidates share five intents despite a dedicated correction operator and short horizon. | PRIMARY_ALGORITHM | SMOKE_VALIDATED | PENDING |
+| H5 | CORE_CORRECTION | M-F-only failed-pool routing improves unconditional valid-PPA repair count and preserves final PPA search. | Failed candidates share five intents despite a dedicated correction operator and short horizon. | PRIMARY_ALGORITHM | SUITE_EVALUATED | RETIRED |
 | H8 | CORE_CORRECTION | Retaining failed candidates by verification stage improves repair continuity. | Classic discards old failed lineages and scalarizes every failure to `-inf`. | RELIABILITY | RETIRED | RETIRED |
 
 Allowed progression states:

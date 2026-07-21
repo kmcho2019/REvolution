@@ -86,6 +86,22 @@ not the triumphant Branch A.**
 > not the only tax. The result strengthens the characterization narrative; it
 > does not supply a new primary TCAD contribution.
 
+> **UPDATE 2026-07-21 - role-aligned failed repair is also a bounded negative
+> (F42).** H5 made the conference dual-population story more literal by routing
+> every failed parent through the existing M-F correction intent while leaving
+> successful-parent search classic. It added five and three direct valid-PPA
+> repairs in the two full-suite development seeds, with positive but unresolved
+> final-HV/HV-AUC direction. It nevertheless lost two valid-PPA-covered designs
+> at seed 1001, exceeding the frozen one-design per-seed margin, and is
+> `RETIRED`. The canonical reporter's aggregate `VIABLE` label was rejected by
+> two internal audits and an external contract review because it netted the
+> seed-1002 gain against the seed-1001 failure. The repair effect is concentrated
+> and mainly syntax-stage; the dominant PPA-gain problem never exercised failed
+> repair. This closes “choose the dedicated repair prompt” as a primary TCAD
+> method. Wave 2 needs a distinct hardware/CAD mechanism, not an M-F ratio,
+> mixture, or no-C-F combination, and its complete control-inclusive budget must
+> be reconciled before launch.
+
 ## The stronger storyline the work actually produced
 
 A *characterization* contribution, not a victory lap — and it is more

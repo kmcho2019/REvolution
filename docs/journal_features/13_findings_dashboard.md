@@ -17,6 +17,27 @@ cross-arm bundles + isolated-grade per-task tables), see
 `PRELIMINARY` one seed, replication pending ·
 `MECHANISM-VERIFIED` process confirmed live, outcome tracked separately.
 
+**MAJOR UPDATE 2026-07-21 - H5 role-aligned failed repair
+(`revamp_history/20260720_191404_KST_tcad_revolution_extension/`):**
+- **F42 (MEASURED, frozen two-seed full suite): M-F-only failed-pool routing
+  increases direct valid-PPA repairs but is RETIRED on the governing coverage
+  gate.** Direct repairs change `36 -> 41` at seed 1001 and `37 -> 40` at seed
+  1002. Mean final HV46 is `+0.006678` and HV-AUC46 is `+0.004498`, but both
+  problem-cluster intervals include zero.
+- Valid-PPA coverage changes `34/46 -> 32/46` at seed 1001 and `32/46 -> 33/46`
+  at seed 1002. The frozen rule permits a deficit of one problem per seed, so
+  seed 1001 fails. The generated reporter incorrectly netted signed deficits
+  and emitted `VIABLE`; accepted contracts govern and require `RETIRED`.
+- The H5 ladder also exceeded its frozen per-candidate discovery ceilings after
+  mandatory controls were counted: 11,232 candidates, 22,466 calls, 69.29M
+  tokens, 6,056 synthesis evaluations, and 6.232 endpoint-arm hours. Full-suite
+  arms themselves remain matched; this is a separate process violation.
+- The repair gain is concentrated and primarily syntax-stage. `Prob036_edge_detect`
+  supplies 64% of final-HV and 114% of HV-AUC uplift despite zero failed-parent
+  requests in both arms and seeds. H5 therefore supports only a narrow repair-
+  event observation, not coverage preservation, PPA causality, or a journal
+  method. Wave 1 closes without a finalist.
+
 **MAJOR UPDATE 2026-07-13 - descriptor-free Pareto REvolution ablation
 (`docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/`):**
 - **F41 (MEASURED, frozen two-seed early stop): replacing classic successful-
@@ -170,8 +191,9 @@ below on operator-fair evidence:**
   not be cited against archive/descriptor mechanisms (corrected
   reruns recover 30-46 retention points).
 
-**Last refreshed:** 2026-07-13 (F41 descriptor-free Pareto REvolution
-two-seed negative closure);
+**Last refreshed:** 2026-07-21 (F42 H5 full-suite contract-audited retirement);
+previously 2026-07-13 (F41 descriptor-free Pareto REvolution two-seed negative
+closure);
 previously 2026-07-10 (suite-first natural_qd_push full-RTLLM continuation
 through S07 closure, S23 negative descriptor-reduction control, S11 negative
 warmup12 closure, and S32 negative capacity4 closure);
@@ -214,6 +236,13 @@ every answer to the five conference criticisms is evidence-backed:
   frozen gate. Its small diversity gains are secondary characterization, not
   a primary TCAD contribution. Source:
   `docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/full_rtllm_two_seed/`.
+- **F42 — role-aligned failed repair increases concentrated repair events but
+  fails the governing coverage gate.** M-F-only routing adds five and three
+  direct valid-PPA repairs in the two development seeds, while seed 1001 loses
+  two valid-PPA-covered designs against a one-design margin. The generated
+  aggregate `VIABLE` label is a reporter defect; H5 is `RETIRED`, and its PPA
+  direction is not causally tied to repair activation. Source:
+  `docs/journal_features/revamp_history/20260720_191404_KST_tcad_revolution_extension/candidates/H5_role_aligned_failed_repair/full_suite_probe/`.
 - **F18–F21, F28, F30–F31 — on harder/newer benchmarks QD never beats
   classic; the limit is LLM capability, not search.** Two benchmarks:
   **RealBench e203** — a genuine capability ceiling: 0 valid on the 5 larger

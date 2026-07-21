@@ -100,3 +100,48 @@ history.
   600-second `claude -p` retry verified all pins and gates and returned `PASS`
   with no blocker.
 - No full-suite arm had launched at freeze time.
+
+## 2026-07-21: Full-Suite Execution
+
+- Raw root:
+  `exp/tcad_revolution_extension/h5_failed_parent_repair/wave1/full_suite_probe`.
+- Ran four fresh arms sequentially: classic then H5 at seed 1001, followed by
+  classic then H5 at seed 1002. All 200 arm units completed, every arm emitted
+  exactly 2,400 candidates, and no exclusion, missing unit, or rerun occurred.
+- Calls were 4,800, 4,800, 4,801, and 4,800. Tokens were 14,679,912,
+  14,810,831, 14,598,180, and 14,678,427. Maximum matched resource skew was
+  0.027211.
+- All 1,561 H5 failed-parent requests used M-F, classic used all five failed
+  EoH operators, and both arms used the five classic success operators.
+- Direct valid-PPA repairs were 36 to 41 at seed 1001 and 37 to 40 at seed
+  1002. Final-HV deltas were +0.009943 and +0.003413; HV-AUC deltas were
+  +0.007007 and +0.001989.
+- Valid-PPA coverage changed 34/46 to 32/46 at seed 1001 and 32/46 to 33/46 at
+  seed 1002. RTL functionality50 changed 43/50 to 42/50 and 41/50 to 41/50.
+- The canonical reporter generated one two-seed package and returned `VIABLE`.
+  No raw arm or report was rerun after this result.
+
+## 2026-07-21: Post-Run Contract Audit And Decision
+
+- Independent evidence audit found that the reporter's aggregate coverage gate
+  conflicts with the accepted per-seed contract. The governing limit is one
+  problem per seed; H5's two-problem valid-PPA deficit at seed 1001 fails it.
+- A second scientific reviewer initially accepted the reporter label, then
+  independently rechecked the contract hierarchy and corrected its verdict to
+  `FAIL / RETIRED`. The later candidate manifest cannot supersede the accepted
+  claims contract, baseline contract, or program manifest.
+- The audit also recomputed cumulative discovery spend across smoke,
+  representative, and full-suite arms: 11,232 candidates, 22,466 calls,
+  69,289,552 tokens, 6,056 synthesis evaluations, and 6.231970 endpoint-arm
+  hours. These exceed every frozen per-candidate ceiling. Matched full-suite
+  arm fairness remains intact, but the bounded discovery process was violated.
+- PPA uplift is not attributable to failed repair. `Prob036_edge_detect`
+  contributes most pooled HV/HV-AUC uplift despite zero failed-parent requests
+  in either arm. The repair gain is concentrated, primarily syntax-stage, and
+  does not broaden repaired-unit coverage.
+- Governing outcome: `RETIRED`. Preserve the generated `VIABLE` field as an
+  auditable reporter defect; do not alter frozen contracts or regenerate the
+  evidence package after observing results.
+- No H5 revision, confirmation, holdout, combination, or integration arm is
+  authorized. Wave 1 closes with diagnostic positive directions but no viable
+  journal candidate.

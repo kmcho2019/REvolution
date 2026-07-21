@@ -1,7 +1,7 @@
 # Audit-Derived Candidate Ranking
 
-Status: `REVIEWED`; H5 is the sole Wave-1 candidate, completed its diagnostic
-representative probe, and awaits the full-suite development gate.
+Status: `WAVE_1_CLOSED`; H5 completed the full-suite development gate and is
+`RETIRED`. Wave 2 requires a fresh audit-derived mechanism review.
 
 The ranking combines the conference audit, completed QD/Pareto/operator
 evidence, implementation isolation, and current related-work collision. It is
@@ -9,7 +9,7 @@ not a quota or a parameter queue.
 
 | Rank | ID | Mechanism | Score | Intended role | Disposition |
 | ---: | --- | --- | ---: | --- | --- |
-| 1 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | Representative technical `PASS`; full-suite probe pending |
+| 1 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `RETIRED`: seed-1001 valid-PPA coverage exceeds the frozen deficit; budget ceiling also exceeded |
 | 2 | H4 | Test a confirmed method on seeded RTL optimization. | 11/14 provisional | Generalization | Hold until an algorithmic finalist exists |
 | 3 | H8 | Retain failed candidates by furthest verification stage. | 10/14 provisional | Reliability | Do not implement: COEVO collision and code-copy cost |
 | 4 | H3 | Contract-preserving local patch evolution. | 9/14 | Reliability | Retire current card: premise unmeasured, novelty crowded |
@@ -31,16 +31,17 @@ novelty/paper value.
 
 ## Wave 1
 
-Wave 1 contains H5 only. It stays one-factor: classic success operators, UCB,
-survivor selection, prompts, budgets, and evaluator remain frozen. Selecting a
-single card is intentional: no other reviewed direction currently combines a
-measured premise, hardware relevance, isolation, and sufficient paper value.
+Wave 1 contained H5 only and is complete. The one-factor implementation was
+mechanically clean, but the governing full-suite decision is `RETIRED`:
+seed-1001 valid-PPA coverage fell by two designs against a one-design margin.
+The generated reporter incorrectly netted seed deficits, and cumulative
+discovery exceeded the frozen per-candidate ceiling.
 
-No H5-plus-no-C-F interaction arm is authorized. It becomes eligible only if
-H5 is independently `VIABLE` or better and must then be preregistered as a new
-interaction experiment. H8 is not a default Wave-2 candidate; it requires a
-new simplicity review showing that failed-lineage retention can be isolated
-without copying the classic generation loop.
+No H5-plus-no-C-F, operator-ratio, prompt-mixture, or adjacent routing arm is
+authorized. H8 is not a default Wave-2 candidate; it still requires a new
+simplicity and novelty argument that avoids copying the classic generation
+loop. Wave 2 must be reranked from measured conference weaknesses and must
+include a prelaunch budget worksheet that counts all matched control arms.
 
 ## Evidence Outside The Candidate Wave
 
@@ -56,14 +57,14 @@ It is not an improvement candidate and receives no holdout or confirmation.
 
 ## Narrative Test
 
-The coherent claim under test is narrower than generic hardware-aware search:
+The Wave-1 claim tested was narrower than generic hardware-aware search:
 
 > REvolution's dual functional/PPA populations should route failed candidates
 > through a dedicated correction intent while successful candidates retain the
 > diverse EoH optimization portfolio.
 
-This differs from COEVO by retaining binary verification, the classic dual
-pools, and the classic reward/objective formulation. It adds no continuous
-correctness score, annealed gate, stage reward, or adaptive router. The novelty
-may still be too modest for a standalone TCAD method; the pre-implementation
-review must challenge that point directly.
+H5 preserved binary verification, classic dual pools, and the classic
+reward/objective formulation. It added no continuous score, annealed gate,
+stage reward, or adaptive router. Evidence shows modest, concentrated repair
+events without the required coverage preservation or causal PPA link, so this
+narrative is closed rather than carried into Wave 2.

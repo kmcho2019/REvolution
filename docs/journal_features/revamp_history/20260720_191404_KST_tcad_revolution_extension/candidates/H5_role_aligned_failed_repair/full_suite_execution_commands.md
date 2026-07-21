@@ -1,8 +1,9 @@
 # H5 Full-Suite Probe Commands
 
-Status: frozen before full-suite evidence. Run one arm at a time so matched
-methods do not compete for the model endpoint or local workers. Complete and
-package seed 1001 before starting seed 1002.
+Status: completed once on 2026-07-21 with no missing units or reruns. These are
+the frozen commands used for the preserved raw evidence. The generated reporter
+label is not the governing candidate decision; see `decision.md` and
+`full_suite_probe/README.md` for the post-run contract audit.
 
 ## Pins
 

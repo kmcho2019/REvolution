@@ -1,6 +1,6 @@
 # TCAD Extension Portfolio
 
-Status: `WAVE_1_H5_REPRESENTATIVE_VALIDATED`
+Status: `WAVE_1_CLOSED_NO_FINALIST`
 
 This is the final advisor-facing synthesis of the discovery program. Update it
 after every candidate transition. Detailed commands and raw results remain in
@@ -30,7 +30,7 @@ terminal advisor-facing outcomes only.
 
 | ID | Mechanism | Role | Naturalness | Outcome | Key result |
 | --- | --- | --- | --- | --- | --- |
-| H5 | M-F-only failed-pool routing | Primary core correction | 11/14 | PENDING | Representative repair rate improved in both seeds; final-HV direction was mixed; full-suite gate pending. |
+| H5 | M-F-only failed-pool routing | Primary core correction | 11/14 | RETIRED | Direct repairs rose by five and three, but seed 1001 exceeded the valid-PPA coverage margin; cumulative discovery also exceeded its frozen ceiling. |
 | H1 | Bottleneck-conditioned adaptation | Primary core correction | 8/14 | RETIRED | Adds contextual-bandit state before classic UCB or context utility is isolated. |
 | H2 | Preference-decomposed populations | Primary core correction | 8/14 | RETIRED | F41 and related work remove the rationale for another ungrounded multiobjective allocation. |
 | H3 | Contract-preserving patch evolution | Supporting reliability | 9/14 | RETIRED | Edit-breadth premise is unmeasured and the first treatment would combine several mechanisms. |
@@ -43,6 +43,7 @@ quota-driven variant list.
 
 | Candidate | Designs/seeds | Final HV delta | HV-AUC delta | Valid-PPA delta | Functionality delta | Mechanism evidence | Artifact |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| H5 full suite | RTLLM 50/46, seeds 1001-1002 | +0.006678, CI [-0.000627, +0.017287] | +0.004498, CI [-0.002928, +0.016273] | -1/92 pooled; seed 1001 deficit 2 fails gate | -1/100 and -1/92 | Direct repairs 73 to 81; gain concentrated and PPA uplift causally decoupled; governing outcome RETIRED. | `candidates/H5_role_aligned_failed_repair/full_suite_probe/README.md` |
 | H5 representative | RTLLM 8, seeds 1001-1002 | -0.001442, CI [-0.017777, +0.009446] | +0.007650, CI [-0.011339, +0.025545] | 0/16 coverage; +0.029948 sample yield | 0/16 | Repair-rate delta +0.005208; positive in both seeds; all H5 failed requests used M-F. | `candidates/H5_role_aligned_failed_repair/representative_probe/README.md` |
 | Historical no C-F | RTLLM 46, seeds 1001-1005 | +0.003044, CI [-0.004214, +0.013837] | +0.007747, CI [-0.000467, +0.018882] | +2/230 | +3/230 RTL-simulation passes | C-F removed in all logs; calls differ by 2 and tokens by 1.8%. | `component_evidence_audit.md` |
 
@@ -58,6 +59,7 @@ narrow the search rather than reappear under a new name or nearby parameter.
 
 | Candidate | Failure | Mechanistic interpretation | Follow-ups barred without new mechanism evidence | Artifact |
 | --- | --- | --- | --- | --- |
+| H5 M-F-only failed repair | Seed 1001 valid-PPA coverage fell 34/46 to 32/46, exceeding the frozen one-design margin; discovery ceilings were also exceeded. | M-F increases concentrated syntax-stage repair events but does not broaden repaired designs or causally explain PPA uplift. | No H5 confirmation, M-F mixtures, allocation ratios, no-C-F combination, or nearby routing variants without a distinct mechanism and prospective budget-compliant card. | `candidates/H5_role_aligned_failed_repair/decision.md` |
 | Smooth-QD V2 | Five-seed final HV `0.098801` versus classic `0.103802`; S07 reached `0.102481` but remained below classic. | Archive diversity improved some AUC/coverage surfaces but displaced final-HV exploitation. | BD scans, capacity interpolation, nearby archive-parent lanes, and AUC-only primary claims are deprioritized absent a distinct measured mechanism. | `docs/journal_features/revamp_history/20260703_121857_KST_natural_qd_push/suite_variant_campaign/README.md` |
 | F41 global Pareto | Two-seed final HV `0.103991` versus classic `0.104745`; AUC and functionality also lost. | Broad front preservation did not improve the constrained search budget. | H2 as written and adjacent NSGA-II parent/survivor variants are deprioritized absent a distinct measured mechanism. | `docs/journal_features/revamp_history/20260710_222442_KST_pareto_revolution_validation/README.md` |
 | Unified single-thought | Classic-substrate pooled delta `-0.092`, CI `[-0.149, -0.037]`. | Operator heterogeneity supplies exploration that archive behavior cannot replace. | `single_thought_operator` and presumed one-operator simplification. | `docs/journal_features/13_findings_dashboard.md`, F3/F9 |
@@ -77,17 +79,15 @@ evidence. Separate:
 Do not fill this section by combining individually weak candidates. If no
 minimal package qualifies, record `PORTFOLIO_READY` or `PIVOT_REQUIRED`.
 
-The current package under test is:
+Wave 1 produced no primary package. H5 is useful negative-map evidence that
+role-aligned correction can increase direct repairs without preserving
+per-seed valid-PPA coverage or establishing PPA causality. Historical no-C-F
+remains retrospective characterization only, and hardened paired reporting is
+an evaluation contribution rather than an algorithmic journal thesis.
 
-1. H5 as a primary correction that routes the failed population through the
-   dedicated M-F correction intent.
-2. Historical no-C-F evidence as characterization that the success-side
-   operator portfolio remains under-validated.
-3. Hardened paired reporting and a seeded-optimization generalization stage
-   only after an algorithmic finalist exists.
-
-This is provisional. H5 must pass novelty review and full evidence on its own;
-retrospective no-C-F evidence cannot rescue an H5 final-HV loss.
+Wave 2 must start from a distinct measured weakness, not an H5 routing ratio,
+operator mix, or interaction. Seeded-optimization generalization remains
+contingent on an independently supported algorithmic finalist.
 
 ## Artifact Index
 
@@ -101,9 +101,14 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
 - H5 code and smoke contract:
   `candidates/H5_role_aligned_failed_repair/implementation_history.md`,
   `candidates/H5_role_aligned_failed_repair/smoke_experiment_manifest.yaml`.
-- H5 representative evidence and full-suite freeze:
+- H5 representative and full-suite evidence:
   `candidates/H5_role_aligned_failed_repair/representative_probe/README.md`,
-  `candidates/H5_role_aligned_failed_repair/full_suite_experiment_manifest.yaml`.
+  `candidates/H5_role_aligned_failed_repair/full_suite_probe/README.md`,
+  `candidates/H5_role_aligned_failed_repair/decision.md`.
+- H5 post-run audits:
+  `reviews/20260721_h5_full_suite_evidence_audit.md`,
+  `reviews/20260721_h5_scientific_interpretation.md`,
+  `reviews/20260721_h5_external_contract_audit.md`.
 - Historical no-C-F record:
   `candidates/H6_fusion_free_success/decision.md`.
 - Generated evidence root:
