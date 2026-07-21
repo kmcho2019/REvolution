@@ -147,3 +147,21 @@ events. No treatment code or result existed at candidate selection.
 - H10 advances from `IMPLEMENTED` to `SMOKE_VALIDATED`. No full-suite arm is
   admitted. The implementation-bound card remains an immutable preregistration
   snapshot; the living registry records the current state.
+
+## 2026-07-21: Full-suite runbook freeze
+
+- Froze one linear four-arm procedure for fresh RTLLM-50 classic/treatment
+  pairs at seeds 1001 and 1002. It preserves worksheet order, literal `PASS`
+  guards, arm timeouts, external logs/accounting, immutable raw seals, and one
+  canonical report outside all raw roots.
+- Independent session `019f84e7-7bc4-75d2-a645-e703f5160c88` first returned
+  `BLOCK_FOR_FULL_SUITE_RUNBOOK`. It found per-problem caps and emitted config
+  identity were deferred until final reporting, `pipefail` depended on shell
+  continuity, and the final registry was not reasserted as empty.
+- The corrected runbook validates the exact six-variable arm tuple before
+  admission, every per-problem cap and resolved config before sealing, the
+  byte-identical empty registry, and `set -euo pipefail` in every operational
+  block. Rereview returned `PASS_FOR_FULL_SUITE_RUNBOOK`.
+- Frozen runbook SHA-256:
+  `75ea35e87ae8a300539bddc2e1988baac71de0b4c00b1f0f76fd03d1cb6f88d4`.
+  No full-suite admission, model call, synthesis start, or output exists.

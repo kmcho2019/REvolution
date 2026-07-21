@@ -101,9 +101,9 @@ passed all eight technical gates and independent raw-evidence review: 14 failed
 candidates received the exact prefix, all eight failed-parent uses reproduced,
 and treatment repaired one smoke design versus zero for classic. This is
 activation and integrity evidence only, not performance evidence. H10 is
-`SMOKE_VALIDATED`; no full-suite arm is admitted until an exact execution
-runbook freezes and passes review. CVDP confirmation remains blocked pending a
-prospective evaluator composition.
+`SMOKE_VALIDATED`. The exact sequential full-suite runbook is frozen and has
+passed independent review, but no full-suite arm is admitted. CVDP confirmation
+remains blocked pending a prospective evaluator composition.
 
 ## Artifact Index
 
@@ -135,6 +135,7 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
   `candidates/H10_verified_status_feedback/implementation_history.md`,
   `candidates/H10_verified_status_feedback/implementation_manifest.yaml`,
   `candidates/H10_verified_status_feedback/smoke_execution_commands.md`,
+  `candidates/H10_verified_status_feedback/full_suite_execution_commands.md`,
   `shared/verified_status_feedback_premise/README.md`,
   `reviews/20260721_h10_scientific_review.md`,
   `reviews/20260721_h10_code_boundary_review.md`,
@@ -143,7 +144,8 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
   `reviews/20260721_h10_pre_admission_review.md`,
   `reviews/20260721_h10_smoke_runbook_review.md`,
   `reviews/20260721_h10_smoke_evidence_audit.md`,
-  `reviews/20260721_h10_smoke_transition_review.md`.
+  `reviews/20260721_h10_smoke_transition_review.md`,
+  `reviews/20260721_h10_full_suite_runbook_review.md`.
 - Historical no-C-F record:
   `candidates/H6_fusion_free_success/decision.md`.
 - Generated evidence root:

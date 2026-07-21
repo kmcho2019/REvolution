@@ -14,9 +14,10 @@ independent pre-admission provenance audit. Corrected v8 and the 45-file
 replacement manifest passed final smoke-admission review. The exact paired
 smoke then passed all eight technical gates and an independent raw-evidence
 audit, so H10 is `SMOKE_VALIDATED`. This is activation and integrity evidence,
-not efficacy evidence. No full-suite arm is admitted; a separate full-suite
-runbook must freeze and pass review first. CVDP confirmation remains blocked
-pending a prospective engine/evaluator composition.
+not efficacy evidence. The exact four-arm full-suite runbook is now frozen and
+independently reviewed; no full-suite arm is admitted, and only
+`seed_1001_classic` is eligible next. CVDP confirmation remains blocked pending
+a prospective engine/evaluator composition.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts

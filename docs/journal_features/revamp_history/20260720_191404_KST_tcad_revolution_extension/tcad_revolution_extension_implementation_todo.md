@@ -93,6 +93,7 @@ detail in the append-only program and candidate histories.
 - [x] Freeze the exact sequential smoke admission, run, seal, accounting, and
   reporting commands before the ledger changes.
 - [x] Run and report the frozen H10 smoke pair; launch no full arm on smoke fail.
+- [x] Freeze and independently review the exact four-arm H10 suite runbook.
 - [ ] If smoke passes, run and classify the frozen two-seed RTLLM full suite.
 - [ ] Resolve and prospectively review CVDP evaluator composition before any H10
   confirmation or holdout arm; otherwise cap H10 at `VIABLE`.

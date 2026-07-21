@@ -551,3 +551,21 @@ or holdout.
   before `seed_1001_classic` admission.
 - H10 is `SMOKE_VALIDATED`. The two-seed RTLLM-50 suite remains unlaunched and
   is the only next efficacy experiment authorized by the frozen card.
+
+## H10 Full-Suite Runbook Freeze
+
+- Drafted the exact sequential admit, run, validate, seal, account, record, and
+  report procedure for the four frozen development arms.
+- Independent operator review initially blocked launch because per-problem
+  resource gates and emitted config identity were checked only at final report,
+  shell `pipefail` was not local to every live block, and a changed failure
+  registry could be sealed without the required separate review.
+- Corrected all four issues before admission. The final runbook exhaustively
+  validates each arm tuple, all 50 complete units and per-problem caps, emitted
+  config/source/root/seed/mode identity, the exact empty registry, aggregate
+  worksheet caps, raw seal, accounting, and literal ledger `PASS` transitions.
+- Rereview returned `PASS_FOR_FULL_SUITE_RUNBOOK`. All 12 Bash fences pass
+  `bash -n`; all four embedded Python programs compile. Frozen SHA-256:
+  `75ea35e87ae8a300539bddc2e1988baac71de0b4c00b1f0f76fd03d1cb6f88d4`.
+- No full-suite arm is admitted. `seed_1001_classic` is the sole eligible next
+  ledger event after a clean-tree preflight.
