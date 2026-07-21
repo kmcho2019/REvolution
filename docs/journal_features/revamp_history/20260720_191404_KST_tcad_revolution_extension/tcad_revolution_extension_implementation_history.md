@@ -440,3 +440,38 @@ or holdout.
 - H10 becomes `READY`, which authorizes implementation only. No H10 runtime,
   implementation manifest, admission event, model call, synthesis evaluation,
   or benchmark result existed at this freeze.
+
+## H10 Runtime Implementation
+
+- Implemented H10 as one isolated `EoHEngine` subclass that prepends the exact
+  typed terminal status to failed feedback after classic evaluation. Successful
+  feedback and critic artifacts remain byte-identical; two JSONL streams bind
+  activation and exact failed-parent prompt serialization.
+- Added one fixed backend/CLI mode with contract checks that preserve dual
+  pools, whole-generation classic EoH operators, the classic success set, UCB,
+  code individuals, no repair, strict formatting, default prompts, and
+  strict-ablation evaluation.
+- Classic `src/revolution/algorithm.py` and
+  `data/configs/evolution_default.yaml` retain their frozen SHA-256 values.
+- Three independent read-only implementation reviews first identified stale
+  v6 runtime provenance, a stale reporter version guard, omitted dispatch tests
+  in the implementation file set, and an unproved CVDP composition. The first
+  three issues were corrected; all reviewers then returned
+  `PASS_FOR_RTLLM_IMPLEMENTATION`.
+- Program-manifest version 7 prospectively supersedes v6 and binds the H10
+  engine, CLI, and backend runtime bytes before treatment evidence. Its
+  SHA-256 is
+  `316bab8cb0f404a9bff6ad839522df3137f78e2321b220cd17fddd90c066a662`.
+- Combined runtime, backend, CLI, reporter, admission, and gate validation
+  passed 161 tests, Ruff, Pyright, `ty`, YAML loading, and frozen hash checks.
+  The headless full repository passed 1,202 tests with 4 skips. Shared dispatch
+  still has pre-existing Ruff complexity debt; the isolated H10 engine itself
+  passes the explicit complexity check.
+- CVDP remains a confirmation-only blocker: its candidate evaluator is not the
+  functional evaluator supplied to this engine path. RTLLM smoke and the
+  two-seed development suite remain eligible; no confirmation or holdout may
+  launch before a prospective composition review, and H10 otherwise cannot
+  exceed `VIABLE`.
+- H10 advances to `IMPLEMENTED`. A tracked implementation manifest is the next
+  gate. No admission, model call, synthesis evaluation, or benchmark evidence
+  exists.

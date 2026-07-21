@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Literal
 
 from revolution.algorithm import EoHEngine
@@ -17,13 +18,16 @@ from revolution.pareto_revolution.selection import resolve_circuit_type
 from revolution.qd import QDEngine
 from revolution.qd_natural import NaturalQDEngine
 from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
+from revolution.verified_status_feedback import VerifiedStatusFeedbackEngine
 
 QD_SEARCH_MODES = {"revolution_qd", "revolution_qd_natural"}
 PARETO_SEARCH_MODE = "revolution_pareto"
 FAILED_PARENT_REPAIR_SEARCH_MODE = "revolution_failed_parent_repair"
+VERIFIED_STATUS_FEEDBACK_SEARCH_MODE = "revolution_verified_status_feedback"
 RevolutionSearchMode = Literal[
     "revolution",
     "revolution_failed_parent_repair",
+    "revolution_verified_status_feedback",
     "revolution_pareto",
     "revolution_qd",
     "revolution_qd_natural",
@@ -153,7 +157,12 @@ class RevolutionBackend(EvolutionBackend):
     def initialize(self) -> None:
         if (
             self.config.search_mode
-            in {*QD_SEARCH_MODES, PARETO_SEARCH_MODE, FAILED_PARENT_REPAIR_SEARCH_MODE}
+            in {
+                *QD_SEARCH_MODES,
+                PARETO_SEARCH_MODE,
+                FAILED_PARENT_REPAIR_SEARCH_MODE,
+                VERIFIED_STATUS_FEEDBACK_SEARCH_MODE,
+            }
             and self.config.population_pool_mode == "single"
         ):
             raise ValueError(
@@ -177,6 +186,31 @@ class RevolutionBackend(EvolutionBackend):
                     "generation, EoH operators, the classic success set, UCB, "
                     "code_individual, no repair wrapper, and strict_ablation."
                 )
+        if self.config.search_mode == VERIFIED_STATUS_FEEDBACK_SEARCH_MODE:
+            default_prompt_root = Path(__file__).resolve().parents[3] / "data/prompts"
+            valid_contract = (
+                self.config.population_pool_mode == "dual"
+                and self.config.classic_operator_kind == "eoh_strategies"
+                and self.config.eoh_success_operator_set == "classic"
+                and self.config.strategy_selection_method == "ucb"
+                and self.config.generation_mode == "whole"
+                and self.config.representation_kind == "code_individual"
+                and self.config.repair_kind == "none"
+                and self.config.require_strict_format
+                and self.config.prompt_profile == "default"
+                and (
+                    self.config.prompt_root is None
+                    or Path(self.config.prompt_root).resolve() == default_prompt_root
+                )
+                and self.context.metadata["evaluation_mode"] == "strict_ablation"
+            )
+            if not valid_contract:
+                raise ValueError(
+                    "revolution_verified_status_feedback requires dual pools, "
+                    "whole generation, EoH operators, the classic success set, "
+                    "UCB, code_individual, no repair wrapper, strict formatting, "
+                    "default prompts, and strict_ablation."
+                )
         if self.config.search_mode == "revolution_qd_natural":
             engine_cls: type[EoHEngine] = NaturalQDEngine
         elif self.config.search_mode == "revolution_qd":
@@ -185,6 +219,8 @@ class RevolutionBackend(EvolutionBackend):
             engine_cls = ParetoEoHEngine
         elif self.config.search_mode == FAILED_PARENT_REPAIR_SEARCH_MODE:
             engine_cls = FailedParentRepairEngine
+        elif self.config.search_mode == VERIFIED_STATUS_FEEDBACK_SEARCH_MODE:
+            engine_cls = VerifiedStatusFeedbackEngine
         elif self.config.search_mode == "revolution":
             engine_cls = EoHEngine
         else:

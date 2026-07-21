@@ -1,9 +1,10 @@
 # H10: Verified Terminal-Status Feedback
 
-Status: `READY`; the exact hypothesis, reporter, six-arm budget, and Wave-2
-provenance amendment froze before implementation or treatment evidence. This
-state authorizes implementation only; admission remains blocked until runtime
-tests, implementation reviews, and the tracked implementation manifest pass.
+Status: `IMPLEMENTED`; the exact hypothesis, reporter, six-arm budget, and
+Wave-2 provenance amendment froze under program-manifest v6 before
+implementation or treatment evidence. Program-manifest v7 now binds the
+audited runtime bytes. Admission remains blocked until the tracked
+implementation manifest passes; no treatment evidence exists.
 
 ## Identity
 
@@ -221,9 +222,12 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
 - Seed roles: smoke 42; development 1001/1002; confirmation 61001-61005;
   holdout 62001.
 - Governing contracts: `../../program_claims_contract_v4.md`,
-  `../../baseline_contract.md`, `../../shared/program_manifest_v6.yaml`,
+  `../../baseline_contract.md`, `../../shared/program_manifest_v7.yaml`,
   `../../wave2_methodology_addendum.md`, and
   `../../wave2_provenance_amendment.md`.
+- Program-manifest v7 supersedes v6 before live evidence and binds the H10
+  engine, backend registration, and CLI. Version 6 remains the historical
+  exact-card preregistration contract.
 - Frozen source configs are `smoke_run_config.yaml` and
   `full_suite_run_config.yaml`; their SHA-256 values are
   `20c8b3daf931b0b322568af61c9fa8a4ff85ab5da5fdcf56568cc8471702d490`
@@ -348,12 +352,13 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
   treatment RTL-functionality coverage may trail classic by at most one design,
   treatment RTL-repair breadth must be at least classic, the H10 mechanism must
   activate, and resource gates must pass.
-- Active holdout composition is fixed: `run_backend.py` selects
-  `CVDPEvaluator` as the candidate-evaluator service while
-  `RevolutionBackend` still dispatches `VerifiedStatusFeedbackEngine`. The
-  legacy sibling `CVDPEngine` in `algorithm.py` is not used. A focused backend
-  test must prove this dispatch before confirmation; no post-development engine
-  composition decision is permitted.
+- CVDP holdout composition is currently `BLOCKED`. `run_backend.py` constructs
+  `CVDPEvaluator` as `candidate_evaluator`, but `RevolutionBackend` supplies
+  `services.verilog_evaluator` to `VerifiedStatusFeedbackEngine`; the candidate
+  evaluator is not the engine's functional evaluator. No confirmation or
+  holdout arm may launch until a prospective, independently reviewed
+  composition is frozen. Without that correction H10 may reach `VIABLE` from
+  the two-seed RTLLM probe, but it cannot become `PAPER_CANDIDATE`.
 
 ## Risks And Interpretation
 
@@ -384,8 +389,9 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
 | Code simplicity | `../../reviews/20260721_h10_code_boundary_review.md` | One post-super subclass is clean; raw-payload alternatives are blocked. | `ACCEPT_PRELIMINARY` |
 | Exact-card closure | `../../reviews/20260721_h10_exact_card_internal_review.md` | Code, scientific, evidence, and simplicity reviewers closed every blocking finding. | `PASS_FOR_IMPLEMENTATION` |
 | External review | `../../reviews/20260721_h10_exact_card_claude_review.md` | The 600-second retry returned no substantive output. | `UNAVAILABLE` |
+| Runtime implementation | `../../reviews/20260721_h10_implementation_review.md` | Three read-only audits accepted the isolated RTLLM implementation after v7, implementation-file, and version-guard corrections; CVDP remains a confirmation-only blocker. | `PASS_FOR_RTLLM_IMPLEMENTATION` |
 
 The executable artifact schema and gate mapping are specified in
-`reporter_contract.md`. No H10 runtime source, implementation manifest,
-admission event, model call, synthesis evaluation, or benchmark result existed
-at this freeze.
+`reporter_contract.md`. The runtime source and dispatch exist. No tracked
+implementation manifest, admission event, model call, synthesis evaluation, or
+benchmark result exists at this implementation transition.

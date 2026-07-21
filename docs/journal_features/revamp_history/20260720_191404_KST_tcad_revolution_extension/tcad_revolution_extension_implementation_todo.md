@@ -83,6 +83,15 @@ detail in the append-only program and candidate histories.
   after independent code, evidence, scientific, and simplicity review.
 - [x] Close H10's exact card, reporter contract, and six-arm worksheet; record
   the unavailable external exact-card retry before implementation or admission.
+- [x] Implement H10 in one isolated subclass with fixed backend/CLI dispatch;
+  keep the classic engine, default config, prompts, operators, and routing fixed.
+- [x] Pass focused H10 tests and independent isolation, evidence, and simplicity
+  audits; freeze program-manifest version 7 around the runtime bytes.
+- [ ] Commit and validate H10's tracked implementation manifest before admission.
+- [ ] Run and report the frozen H10 smoke pair; launch no full arm on smoke fail.
+- [ ] If smoke passes, run and classify the frozen two-seed RTLLM full suite.
+- [ ] Resolve and prospectively review CVDP evaluator composition before any H10
+  confirmation or holdout arm; otherwise cap H10 at `VIABLE`.
 - [ ] Select at most three distinct Wave 2 mechanisms.
 - [ ] Do not relaunch retired mechanisms as adjacent knobs or combinations.
 - [ ] Nominate at most two strongest candidates for confirmation.

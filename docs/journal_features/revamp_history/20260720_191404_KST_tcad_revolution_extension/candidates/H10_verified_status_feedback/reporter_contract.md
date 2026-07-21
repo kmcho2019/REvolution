@@ -1,8 +1,9 @@
 # H10 Reporter Contract
 
 Status: `FROZEN` at `2026-07-21T11:16:00Z`; synthetic and adversarial coverage
-passed independent closure. The reporter cannot accept live evidence until the
-H10 runtime and tracked implementation manifest pass their separate gates.
+passed independent closure. The H10 runtime passed isolated implementation
+review. The reporter cannot accept live evidence until the tracked
+implementation manifest and admission gates pass.
 
 ## Entry Point
 
@@ -39,7 +40,7 @@ must exist, be an ancestor of the reporting checkout, and contain every
 registered byte. The implementation manifest itself must be tracked with the
 same bytes in reporting `HEAD`. Every candidate ledger event carries the same
 implementation-manifest path and SHA-256. The reporter independently rehashes
-all path/hash pairs in program-manifest v6, the environment, classic core,
+all path/hash pairs in program-manifest v7, the environment, classic core,
 default prompt corpus, and all 46 reference-PPA files.
 
 ## Unit States

@@ -187,6 +187,39 @@ def test_revolution_backend_uses_failed_parent_repair_engine(monkeypatch, tmp_pa
     assert captured["kwargs"]["eoh_success_operator_set"] == "classic"
 
 
+def test_revolution_backend_uses_verified_status_feedback_engine(
+    monkeypatch, tmp_path
+):
+    captured = {}
+
+    class _FakeFeedbackEngine:
+        def __init__(self, **kwargs):
+            captured["kwargs"] = kwargs
+
+    monkeypatch.setattr(
+        "revolution.backends.revolution_backend.VerifiedStatusFeedbackEngine",
+        _FakeFeedbackEngine,
+    )
+    context = _context(tmp_path)
+    context.metadata["evaluation_mode"] = "strict_ablation"
+    backend = RevolutionBackend(
+        context=context,
+        services=_services(tmp_path),
+        config=RevolutionBackendConfig(
+            search_mode="revolution_verified_status_feedback"
+        ),
+        base_save_path=str(tmp_path / "exp"),
+    )
+
+    backend.initialize()
+
+    assert isinstance(backend.engine, _FakeFeedbackEngine)
+    assert captured["kwargs"]["classic_operator_kind"] == "eoh_strategies"
+    assert captured["kwargs"]["eoh_success_operator_set"] == "classic"
+    assert captured["kwargs"]["require_strict_format"] is True
+    assert captured["kwargs"]["prompt_profile"] == "default"
+
+
 @pytest.mark.parametrize(
     ("field", "value"),
     [
@@ -246,6 +279,56 @@ def test_revolution_backend_rejects_single_pool_repair(tmp_path):
     )
 
     with pytest.raises(ValueError, match="requires dual success state"):
+        backend.initialize()
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("generation_mode", "diff"),
+        ("classic_operator_kind", "single_thought_operator"),
+        ("eoh_success_operator_set", "one_parent"),
+        ("strategy_selection_method", "random"),
+        ("representation_kind", "thought_only"),
+        ("repair_kind", "bounded_local_repair"),
+        ("require_strict_format", False),
+        ("prompt_profile", "custom"),
+        ("prompt_root", "/tmp/custom-prompts"),
+    ],
+)
+def test_revolution_backend_rejects_invalid_verified_feedback_contract(
+    field, value, tmp_path
+):
+    context = _context(tmp_path)
+    context.metadata["evaluation_mode"] = "strict_ablation"
+    config = replace(
+        RevolutionBackendConfig(search_mode="revolution_verified_status_feedback"),
+        **{field: value},
+    )
+    backend = RevolutionBackend(
+        context=context,
+        services=_services(tmp_path),
+        config=config,
+        base_save_path=str(tmp_path / "exp"),
+    )
+
+    with pytest.raises(ValueError, match="requires dual pools"):
+        backend.initialize()
+
+
+def test_revolution_backend_rejects_accelerated_verified_feedback(tmp_path):
+    context = _context(tmp_path)
+    context.metadata["evaluation_mode"] = "search_accelerated"
+    backend = RevolutionBackend(
+        context=context,
+        services=_services(tmp_path),
+        config=RevolutionBackendConfig(
+            search_mode="revolution_verified_status_feedback"
+        ),
+        base_save_path=str(tmp_path / "exp"),
+    )
+
+    with pytest.raises(ValueError, match="strict_ablation"):
         backend.initialize()
 
 

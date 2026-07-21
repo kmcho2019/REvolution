@@ -1,16 +1,20 @@
 # H10 Discovery Budget Worksheet
 
-Status: `FROZEN`. The machine worksheet and program-manifest v6 provenance
-contract passed independent review at `2026-07-21T11:16:00Z`. No arm may launch
-until H10 is implemented, audited, bound by a tracked implementation manifest,
-and explicitly admitted.
+Status: `FROZEN`. The machine worksheet and program-manifest v6 preregistration
+passed independent review at `2026-07-21T11:16:00Z`. Program-manifest v7 now
+binds the audited H10 runtime without changing any arm or gate. No arm may
+launch until the runtime is bound by a tracked implementation manifest and
+explicitly admitted.
 
 - Candidate ID: `H10`
 - Wave: `wave2`
 - Candidate proposal commit:
   `fec538bba98f10aee00ce3f88a15033fa6f75a17`
-- Program manifest path: `../../shared/program_manifest_v6.yaml`
+- Program manifest path: `../../shared/program_manifest_v7.yaml`
 - Program manifest SHA-256:
+  `316bab8cb0f404a9bff6ad839522df3137f78e2321b220cd17fddd90c066a662`
+- Historical exact-card manifest: `../../shared/program_manifest_v6.yaml`,
+  SHA-256
   `e54c59823640604f8669ca2fae2b7ced8d9dc5c3d76a310cd964c4948e7c06d6`
 - Program start UTC: `2026-07-20T14:21:33+00:00`
 - Program deadline UTC: `2026-08-10T14:21:33+00:00`
@@ -31,6 +35,7 @@ and explicitly admitted.
 - Initial program-ledger SHA-256:
   `8aaf7d6eff5e00167b4a07522e674a8c3817062b48edc946aea375dffba26690`
 - Reviewer: `../../reviews/20260721_h10_exact_card_internal_review.md`
+- Runtime reviewer: `../../reviews/20260721_h10_implementation_review.md`
 
 ## Frozen Arm Caps
 
@@ -127,6 +132,8 @@ changes when actuals become available.
       scheduler path alone.
 - [x] An independent reviewer reproduced every total and hash.
 - [x] The reporter contract and distinguishing gate tests pass review.
-- [x] The candidate is frozen `READY` before any admission event.
+- [x] The candidate froze `READY`, then reached `IMPLEMENTED`, before any
+      admission event.
 
-Decision: `PASS_FOR_IMPLEMENTATION`; this is not an admission or result verdict.
+Decision: budget `PASS`; runtime `PASS_FOR_RTLLM_IMPLEMENTATION`. This is not an
+admission or result verdict.

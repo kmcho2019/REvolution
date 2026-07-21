@@ -12,7 +12,7 @@ before implementation and link every terminal decision.
 | H5 | CORE_CORRECTION | M-F-only failed-pool routing improves unconditional valid-PPA repair count and preserves final PPA search. | Failed candidates share five intents despite a dedicated correction operator and short horizon. | PRIMARY_ALGORITHM | SUITE_EVALUATED | RETIRED |
 | H8 | CORE_CORRECTION | Retaining failed candidates by verification stage improves repair continuity. | Classic discards old failed lineages and scalarizes every failure to `-inf`. | RELIABILITY | RETIRED | RETIRED |
 | H9 | CORE_CORRECTION | Strict parent-relative deltas improve offspring validity without harming final PPA search. | Whole-output edit breadth is negatively associated with valid-PPA yield for successful-parent refinement. | PRIMARY_ALGORITHM | RETIRED | RETIRED |
-| H10 | CORE_CORRECTION | Preserving typed terminal status alongside critic analysis broadens fail-origin valid-PPA repair. | Classic uses terminal status for pools but omits it from ordinary parent memory; critic artifacts often disagree with it. | RELIABILITY | PROPOSED | PENDING |
+| H10 | CORE_CORRECTION | Preserving typed terminal status alongside critic analysis broadens fail-origin valid-PPA repair. | Classic uses terminal status for pools but omits it from ordinary parent memory; critic artifacts often disagree with it. | RELIABILITY | IMPLEMENTED | PENDING |
 
 Allowed progression states:
 
@@ -35,8 +35,10 @@ and the classic evidence reverses for failed-parent repair. See
 `../candidates/H9_strict_delta_evolution/decision.md`.
 
 H10 is Wave 2's second reviewed mechanism. Its one-line terminal-state
-invariant passed preliminary scientific, evidence, and code-boundary reviews.
-It remains `PROPOSED` until exact-card, budget, reporter, and external closure.
+invariant passed scientific, evidence, exact-card, code-boundary, and runtime
+reviews. It is `IMPLEMENTED`; the tracked implementation manifest, admission,
+smoke, and suite evidence remain open. CVDP confirmation is blocked pending a
+prospective evaluator composition.
 
 ## Evidence Outside The Candidate State Machine
 

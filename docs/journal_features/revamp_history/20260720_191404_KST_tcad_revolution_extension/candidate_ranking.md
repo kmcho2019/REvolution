@@ -1,7 +1,8 @@
 # Audit-Derived Candidate Ranking
 
-Status: `WAVE_2_H10_PROPOSED`; H5 and H9 are `RETIRED`. H10 is the only active
-proposal and cannot advance before exact-card and budget closure.
+Status: `WAVE_2_H10_IMPLEMENTED`; H5 and H9 are `RETIRED`. H10 is the only
+active mechanism. Its exact card and runtime passed review; implementation
+manifest, admission, and live evidence remain open.
 
 The ranking combines the conference audit, completed QD/Pareto/operator
 evidence, implementation isolation, and current related-work collision. It is
@@ -9,7 +10,7 @@ not a quota or a parameter queue.
 
 | Rank | ID | Mechanism | Score | Intended role | Disposition |
 | ---: | --- | --- | ---: | --- | --- |
-| 1 | H10 | Preserve typed terminal status alongside unchanged critic analysis for failed parents. | 13/14 preliminary | Supporting reliability | `PROPOSED`: close exact endpoint, worksheet, reporter, and reviews |
+| 1 | H10 | Preserve typed terminal status alongside unchanged critic analysis for failed parents. | 13/14 | Supporting reliability | `IMPLEMENTED`: bind the reviewed runtime commit before smoke admission |
 | 2 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `RETIRED`: seed-1001 valid-PPA coverage exceeds the frozen deficit; budget ceiling also exceeded |
 | 3 | H4 | Test a confirmed method on seeded RTL optimization. | 11/14 provisional | Generalization | Hold until an algorithmic finalist exists |
 | 4 | H8 | Retain failed candidates by furthest verification stage. | 10/14 provisional | Reliability | Do not implement: COEVO collision and code-copy cost |
@@ -28,7 +29,7 @@ novelty/paper value.
 | H4 | 2/2/2/2/1/1/1 | HOLD: requires an algorithmic finalist |
 | H8 | 2/2/2/2/1/0/1 | REJECT: monolithic code-copy surface |
 | H9 | 2/1/1/2/1/2/0 | REJECT: novelty zero and treatment exceeds measured premise |
-| H10 | 2/2/2/2/2/2/1 | PRELIMINARY PASS: exact-card and resource closure pending |
+| H10 | 2/2/2/2/2/2/1 | PASS_FOR_RTLLM_IMPLEMENTATION: exact card, resources, and isolated runtime reviewed |
 | H3 | 2/0/2/2/1/1/1 | REJECT: reviewed card combines mechanisms; score is historical |
 | H1 | 2/1/0/2/1/1/1 | REJECT: low score and COEVO collision |
 | H2 | 2/0/1/2/1/1/1 | REJECT: F41 evidence and related work |
@@ -66,7 +67,9 @@ addresses a different measured weakness: terminal verifier state is omitted
 from ordinary parent memory, while 687/2,309 clear failure critic records
 disagree with the status contract. The accepted proposal adds one fixed typed
 status line to failed feedback and leaves critic prose, operators, pools, UCB,
-and the success path unchanged. It is a supporting reliability card only.
+and the success path unchanged. The RTLLM implementation passed review; CVDP
+confirmation remains blocked by evaluator composition. It is a supporting
+reliability card only.
 
 Raw evaluator-payload replacement, success-only replacement, and
 mismatch-triggered policies are rejected. They exceed the evidence scope,

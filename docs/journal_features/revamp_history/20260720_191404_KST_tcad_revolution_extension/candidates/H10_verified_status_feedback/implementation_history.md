@@ -42,3 +42,34 @@ events. No treatment code or result existed at candidate selection.
 - Advanced H10 from `PROPOSED` to `READY`. This authorizes implementation only;
   no runtime source, implementation manifest, admission event, LLM call,
   synthesis evaluation, or benchmark result existed at the transition.
+
+## 2026-07-21: Runtime implementation
+
+- Added one isolated `VerifiedStatusFeedbackEngine` subclass. It calls classic
+  evaluation first, exhaustively transforms only the six failed terminal
+  states, leaves success unchanged, and records exact activation and
+  failed-parent serialization telemetry.
+- Registered one fixed H10 mode in the shared backend and CLI. Contract checks
+  pin dual pools, whole generation, EoH strategies, the classic success set,
+  UCB, code individuals, no repair, strict formatting, default prompts, and
+  strict-ablation evaluation.
+- The classic engine and default configuration remain byte-identical at
+  SHA-256 values
+  `78ebc901be4197f7d10a27097328a5f54a1fa60aeb72a999ad6dc3b661236655`
+  and
+  `cd44c8de823b9843339718cd8116d325f35a11188b38103553dcc2cbc8c0a34b`.
+- Three read-only audits accepted the RTLLM implementation after replacing the
+  stale v6 runtime binding with frozen program-manifest v7, correcting the
+  reporter version guard, and adding backend/CLI dispatch tests to the exact
+  implementation file set. Combined validation passed 161 relevant tests,
+  Ruff, Pyright, `ty`, YAML, and hash checks. The headless full repository
+  passed 1,202 tests with 4 skips.
+- Program-manifest v7 SHA-256:
+  `316bab8cb0f404a9bff6ad839522df3137f78e2321b220cd17fddd90c066a662`.
+- Review found that CVDP's `candidate_evaluator` is not supplied to this
+  classic-engine path. RTLLM smoke and development remain eligible, but
+  confirmation and holdout are blocked until a prospective composition review;
+  absent that fix, H10 cannot exceed `VIABLE`.
+- Advanced H10 from `READY` to `IMPLEMENTED`. No tracked implementation
+  manifest, admission event, model call, synthesis evaluation, or benchmark
+  result existed at this transition.

@@ -1,6 +1,6 @@
 # TCAD REvolution Extension Research Goal Scaffold
 
-Status: `ACTIVE_WAVE_2_H10_READY`; baseline, statistics, benchmark
+Status: `ACTIVE_WAVE_2_H10_IMPLEMENTED`; baseline, statistics, benchmark
 roles, holdout, and resource ceilings froze on 2026-07-20 before treatment
 evidence. Wave 1 is closed: H5 increased direct repairs but is `RETIRED` after a
 per-seed valid-PPA coverage failure and a cumulative discovery-budget
@@ -8,8 +8,10 @@ violation. Wave 2 opened with H9, which retired before implementation after
 novelty and premise-scope review. The corrected Wave-2 methodology and program
 manifest froze on 2026-07-21. H10 verified terminal-status feedback is the sole
 active proposal. Its exact card, six-arm budget, reporter, and narrow Wave-2
-provenance amendment are frozen, so H10 is `READY` for isolated implementation.
-No runtime, implementation manifest, admission, or treatment evidence exists.
+provenance amendment are frozen. Its isolated RTLLM runtime has passed
+implementation review, so H10 is `IMPLEMENTED`. No tracked implementation
+manifest, admission, or treatment evidence exists. CVDP confirmation remains
+blocked pending a prospective engine/evaluator composition.
 
 This scaffold is a bounded research-discovery program for finding natural,
 reviewer-defensible extensions of the ASP-DAC 2026 REvolution method. It starts
@@ -34,8 +36,9 @@ right answer.
 9. Apply `wave2_methodology_addendum.md` and the shared budget worksheet before
    any Wave-2 candidate treatment.
 10. Read `wave2_provenance_amendment.md`; use
-    `shared/program_manifest_v6.yaml` only after both freeze. Version 5 remains
-    the historical pre-amendment Wave-2 contract and version 4 the H5 contract.
+    `shared/program_manifest_v7.yaml` for H10 runtime evidence. Version 6 is the
+    historical H10 exact-card contract, version 5 the pre-amendment Wave-2
+    contract, and version 4 the H5 contract.
 
 ## Program flow
 

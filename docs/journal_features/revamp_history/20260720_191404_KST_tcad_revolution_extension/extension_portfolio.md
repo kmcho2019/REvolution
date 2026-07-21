@@ -1,6 +1,6 @@
 # TCAD Extension Portfolio
 
-Status: `WAVE_2_H10_PROPOSED_NO_FINALIST`
+Status: `WAVE_2_H10_IMPLEMENTED_NO_FINALIST`
 
 This is the final advisor-facing synthesis of the discovery program. Update it
 after every candidate transition. Detailed commands and raw results remain in
@@ -94,11 +94,12 @@ distinct measured weakness; it cannot be an H5 routing ratio, global diff
 toggle, patch-policy knob, or interaction. Seeded-optimization generalization
 remains contingent on an independently supported algorithmic finalist.
 
-H10 is now the sole active proposal. It preserves one typed terminal-status
-line beside unchanged critic analysis for failed parents. Preliminary reviews
-accept it only as a supporting reliability card. Exact endpoint, budget,
-reporter, and external closure are still required before implementation or
-live spend.
+H10 is now the sole active mechanism. It preserves one typed terminal-status
+line beside unchanged critic analysis for failed parents. The exact card,
+budget, reporter, and isolated RTLLM runtime passed review; it remains a
+supporting reliability card with no performance evidence. A tracked
+implementation manifest and admission are required before smoke. CVDP
+confirmation is blocked pending a prospective evaluator composition.
 
 ## Artifact Index
 
@@ -125,12 +126,14 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
   `candidates/H9_strict_delta_evolution/decision.md`,
   `reviews/20260721_h9_novelty_review.md`,
   `reviews/20260721_h9_methodology_review.md`.
-- H10 proposal and classic-only premise:
+- H10 proposal, implementation, and classic-only premise:
   `candidates/H10_verified_status_feedback/hypothesis_card.md`,
+  `candidates/H10_verified_status_feedback/implementation_history.md`,
   `shared/verified_status_feedback_premise/README.md`,
   `reviews/20260721_h10_scientific_review.md`,
   `reviews/20260721_h10_code_boundary_review.md`,
-  `reviews/20260721_h10_evidence_review.md`.
+  `reviews/20260721_h10_evidence_review.md`,
+  `reviews/20260721_h10_implementation_review.md`.
 - Historical no-C-F record:
   `candidates/H6_fusion_free_success/decision.md`.
 - Generated evidence root:

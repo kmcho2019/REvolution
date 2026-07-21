@@ -105,9 +105,9 @@ GOAL_ROOT = (
     / "20260720_191404_KST_tcad_revolution_extension"
 )
 H10_ROOT = GOAL_ROOT / "candidates/H10_verified_status_feedback"
-PROGRAM_MANIFEST = GOAL_ROOT / "shared/program_manifest_v6.yaml"
+PROGRAM_MANIFEST = GOAL_ROOT / "shared/program_manifest_v7.yaml"
 PROGRAM_MANIFEST_SHA256 = (
-    "e54c59823640604f8669ca2fae2b7ced8d9dc5c3d76a310cd964c4948e7c06d6"
+    "316bab8cb0f404a9bff6ad839522df3137f78e2321b220cd17fddd90c066a662"
 )
 WORKSHEET_SHA256 = "d7bd17b10e21a2acd970d43feb75603d83b57530efd27fcf38aa2323663a7378"
 REPORT_MANIFEST_SHA256 = {
@@ -159,9 +159,11 @@ IMPLEMENTATION_FILES = {
     "src/revolution/verified_status_feedback/__init__.py",
     "src/revolution/verified_status_feedback/engine.py",
     "tests/scripts/test_report_verified_status_feedback.py",
+    "tests/scripts/test_run_backend.py",
     "tests/scripts/test_tcad_candidate_admission.py",
     "tests/scripts/test_tcad_extension_gate_contract.py",
     "tests/revolution/test_verified_status_feedback.py",
+    "tests/revolution/test_revolution_backend.py",
     "uv.lock",
     f"{H10_ROOT.relative_to(REPO_ROOT)}/candidate_budget.yaml",
     f"{H10_ROOT.relative_to(REPO_ROOT)}/hypothesis_card.md",
@@ -1508,7 +1510,7 @@ def generate_report(manifest_path: Path, output_dir: Path) -> dict[str, Any]:
     )
     program = yaml.safe_load(PROGRAM_MANIFEST.read_text(encoding="utf-8"))
     assert isinstance(program, dict)
-    assert program["version"] == 6 and program["status"] == "FROZEN"
+    assert program["version"] == 7 and program["status"] == "FROZEN"
     reference_ppa_paths = _validate_frozen_inputs(program)
     worksheet_path = _path(manifest["worksheet_path"])
     assert hashlib.sha256(worksheet_path.read_bytes()).hexdigest() == WORKSHEET_SHA256

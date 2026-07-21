@@ -833,6 +833,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         choices=[
             "revolution",
             "revolution_failed_parent_repair",
+            "revolution_verified_status_feedback",
             "revolution_pareto",
             "revolution_qd",
             "revolution_qd_natural",
@@ -1427,6 +1428,7 @@ def main(argv: list[str] | None = None) -> int:
         and args.search_mode
         in {
             "revolution_failed_parent_repair",
+            "revolution_verified_status_feedback",
             "revolution_pareto",
             "revolution_qd",
             "revolution_qd_natural",
@@ -1459,6 +1461,32 @@ def main(argv: list[str] | None = None) -> int:
                 "requires dual pools, whole generation, eoh_strategies, the "
                 "classic success operator set, UCB, code_individual, no repair "
                 "wrapper, and strict_ablation."
+            )
+            return 2
+
+    if (
+        args.backend == "revolution"
+        and args.search_mode == "revolution_verified_status_feedback"
+    ):
+        feedback_contract = (
+            args.population_pool_mode == "dual"
+            and args.generation_mode == "whole"
+            and args.classic_operator_kind == "eoh_strategies"
+            and args.eoh_success_operator_set == "classic"
+            and args.strategy_selection == "ucb"
+            and args.representation_kind == "code_individual"
+            and args.repair_kind == "none"
+            and args.evaluation_mode == "strict_ablation"
+            and _resolve_prompt_profile(args) == "default"
+            and args.prompt_root is None
+        )
+        if not feedback_contract:
+            print(
+                "Configuration error: "
+                "search_mode=revolution_verified_status_feedback requires dual "
+                "pools, whole generation, eoh_strategies, the classic success "
+                "operator set, UCB, code_individual, no repair wrapper, default "
+                "prompts, and strict_ablation."
             )
             return 2
 
