@@ -77,8 +77,12 @@ detail in the append-only program and candidate histories.
 - [x] Retire H9 before implementation after novelty and premise-scope review.
 - [x] Select H10 verified terminal-status feedback as Wave 2's second distinct
   mechanism after preliminary scientific, evidence, and code review.
-- [ ] Close H10's exact card, reporter contract, six-arm worksheet, and external
-  review before implementation or admission.
+- [x] Correct H10's classic-method-failure exclusion, catastrophic-HV ratio,
+  serialized-payload proof, implementation identity, and raw-evidence binding.
+- [x] Freeze the Wave-2 provenance amendment and program-manifest version 6
+  after independent code, evidence, scientific, and simplicity review.
+- [x] Close H10's exact card, reporter contract, and six-arm worksheet; record
+  the unavailable external exact-card retry before implementation or admission.
 - [ ] Select at most three distinct Wave 2 mechanisms.
 - [ ] Do not relaunch retired mechanisms as adjacent knobs or combinations.
 - [ ] Nominate at most two strongest candidates for confirmation.

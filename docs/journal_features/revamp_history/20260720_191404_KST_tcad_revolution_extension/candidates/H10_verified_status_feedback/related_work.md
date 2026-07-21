@@ -1,6 +1,6 @@
 # H10 Related-Work Boundary
 
-Status: `PROPOSED`; primary sources checked on 2026-07-21.
+Status: `REVIEWED`; primary sources and H10's narrow delta froze on 2026-07-21.
 
 ## Closest Work
 

@@ -1,8 +1,9 @@
 # H10: Verified Terminal-Status Feedback
 
-Status: `PROPOSED`; the mechanism passed preliminary scientific, evidence, and
-implementation review. Exact-card closure, the immutable six-arm worksheet,
-and external review remain open before `READY`.
+Status: `READY`; the exact hypothesis, reporter, six-arm budget, and Wave-2
+provenance amendment froze before implementation or treatment evidence. This
+state authorizes implementation only; admission remains blocked until runtime
+tests, implementation reviews, and the tracked implementation manifest pass.
 
 ## Identity
 
@@ -101,13 +102,25 @@ noninferiority margins.
   `verified_status_feedback_telemetry.jsonl`, truncated deterministically at
   Gen0 and appended thereafter. It contains exactly one record per evaluated
   candidate: 16 per smoke problem and 48 per full-suite problem. Each record
-  contains generation, candidate ID, terminal status, prefix flag, UTF-8 byte
-  count and SHA-256 for original critic analysis and consumed feedback, and
-  SHA-256 of the untouched `code_feedback.txt` artifact.
+  contains generation, candidate ID, terminal status, prefix flag,
+  `critic_analysis_utf8_bytes`, `critic_analysis_sha256`,
+  `consumed_feedback_utf8_bytes`, `consumed_feedback_sha256`, and
+  `code_feedback_sha256` for the untouched critic artifact.
+- Prompt-use telemetry: one per-problem
+  `verified_status_feedback_use_telemetry.jsonl`, reset with the Gen0
+  activation stream and appended only when a failed parent is serialized for
+  an offspring prompt. Each row contains generation, parent ID, and the exact
+  UTF-8 byte count and SHA-256 of `parent.feedback`, plus the exact returned
+  serialized parent payload and its byte count and SHA-256. The reporter parses
+  that payload, requires its `feedback` field to equal the reconstructed
+  transformed bytes, and requires its `(generation, parent_id)` multiset to
+  equal the fail-origin child lineage.
 - Expected signature: every failed candidate receives exactly one canonical
   line; no successful candidate receives it; selected failed-parent prompt
   payloads contain it; critic artifacts and successful feedback remain
-  unchanged.
+  unchanged. Engine tests prove `consumed == prefix + original` and intercept
+  the selected-parent prompt; telemetry supplies independent activation,
+  payload-delivery, and artifact-integrity evidence.
 - Explicit non-goals: no raw evaluator log, diagnostic summarizer, critic-score
   gate, mismatch trigger, stage weighting, retention rule, reward shaping,
   operator or routing change, prompt taxonomy, fallback, threshold, QD/Pareto
@@ -142,9 +155,11 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
 ## Minimal Implementation
 
 - Experimental mode: `search_mode=revolution_verified_status_feedback`.
-- Experimental module: one `VerifiedStatusFeedbackEngine(EoHEngine)` subclass
-  that overrides only `_evaluate_candidates`, calls `super`, and transforms the
-  consumed feedback after the critic artifact is saved.
+- Experimental module: one `VerifiedStatusFeedbackEngine(EoHEngine)` subclass.
+  Its `_evaluate_candidates` override calls `super` and transforms consumed
+  feedback after the critic artifact is saved. Its observational
+  `_format_parent_for_prompt` override calls `super`, records only failed-parent
+  feedback identity, and returns the serialized payload unchanged.
 - Exhaustive state handling: `success` returns unchanged; all six failures
   receive the line; `new` asserts impossible; an unknown status reaches
   `assert_never`.
@@ -158,14 +173,28 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
 - Backend contract freezes dual pools, EoH strategies, classic success
   operators, UCB, whole generation, code individuals, no repair wrapper,
   strict output format, `prompt_profile=default`, `prompt_root=None`, and
-  strict-ablation evaluation. The engine asserts that the resolved prompt root
-  is the repository `data/prompts`; paired raw configs record no override.
+  strict-ablation evaluation. Paired resolved configs must match in every field
+  except the registered mode and exact save root. After the eight stage fields
+  are removed, the complete normalized config must reproduce SHA-256
+  `98988daa93d8671f530ac2232f558fcec9968ab489aa40fd0f917ed9d4bc1e28`;
+  unknown or jointly changed fields fail. The engine and backend tests prove
+  strict formatting and the repository `data/prompts` root.
 - Shared backend and CLI files necessarily register the new mode. Tests require
   classic `search_mode=revolution` to continue dispatching exactly
   `EoHEngine`; byte identity applies to the classic engine, default config, and
   default prompt corpus rather than shared dispatch code.
-- New runtime state: none beyond one fixed search-mode discriminant and one
-  append-only telemetry file.
+- Before admission, `implementation_manifest.yaml` must bind the implementation
+  commit and exact hashes of the experimental engine, shared dispatch/CLI,
+  classic core, reporter and gate helpers, frozen configs, manifests, and
+  reference inputs, governing contracts, focused tests, and environment locks.
+  The commit must exist, be an ancestor of the reporting checkout, and contain
+  those exact bytes; the implementation manifest itself must be tracked
+  byte-identically in reporting `HEAD`. Every admission-ledger event records the
+  implementation-manifest path and SHA-256; mutation stops later arms. The
+  reporter rejects a missing, incomplete, uncommitted, or ledger-mismatched
+  file set.
+- New runtime state: none beyond one fixed search-mode discriminant and the two
+  candidate-local telemetry streams above.
 - Public knobs: none. Prefix text and treatment scope are constants, not
   configuration.
 - Expected source surface: one experimental package, backend dispatch,
@@ -192,8 +221,13 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
 - Seed roles: smoke 42; development 1001/1002; confirmation 61001-61005;
   holdout 62001.
 - Governing contracts: `../../program_claims_contract_v4.md`,
-  `../../baseline_contract.md`, `../../shared/program_manifest_v5.yaml`, and
-  `../../wave2_methodology_addendum.md`.
+  `../../baseline_contract.md`, `../../shared/program_manifest_v6.yaml`,
+  `../../wave2_methodology_addendum.md`, and
+  `../../wave2_provenance_amendment.md`.
+- Frozen source configs are `smoke_run_config.yaml` and
+  `full_suite_run_config.yaml`; their SHA-256 values are
+  `20c8b3daf931b0b322568af61c9fa8a4ff85ab5da5fdcf56568cc8471702d490`
+  and `3a4ec607702bac8dbf53eedadfb637d2d5e952c12680834f113865de6576582a`.
 
 ## Validation Ladder
 
@@ -210,7 +244,8 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
   `origin_pool=fail_pool`; and that child's sole parent ID joins to a prefixed
   Gen0 failure. All treatment failures and no successes satisfy the exact
   hash/byte invariant, every recorded critic-artifact hash matches
-  `code_feedback.txt`, and the terminal reporter reproduces.
+  `code_feedback.txt`, every fail-origin child has one formatting-boundary use
+  record with the same feedback hash, and the terminal reporter reproduces.
 - Stop on missing units, wrong status handling, duplicate prefix, altered critic
   artifact, changed successful feedback, mechanism absence, resource stop, or
   infrastructure-independent crash. Smoke carries no positive performance
@@ -230,10 +265,12 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
   generations, exactly 2,400 candidates and at most 5,000 calls per arm.
 - `VIABLE`: leave-one-problem-out `valid_ppa_repair_breadth50` delta is
   strictly positive in each seed; pooled final-HV delta is at least `-0.0050`;
+  treatment/classic mean final-HV ratio is at least `0.90`;
   pooled HV-AUC delta is at least `-0.0036`; valid-PPA46,
   RTL-functionality46, and
   RTL-functionality50 deficits are at most one design independently in each
-  seed; mechanism, evidence, and resource gates pass.
+  seed; the separate loss-only catastrophic reduction is at most three designs
+  on each coverage surface; mechanism, evidence, and resource gates pass.
 - Resource caps: 16,291,915 tokens, 1,407 synthesis starts, and 5,125 seconds
   for each seed-1001 arm; 16,146,270 tokens, 1,415 synthesis starts, and 4,985
   seconds for each seed-1002 arm.
@@ -242,28 +279,55 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
   over the fixed all-50 denominator and reconcile exactly 2,400 total and 2,000
   post-Gen0 candidates per arm/seed. Count only Gen1-Gen5 children with
   `origin_pool=fail_pool`, `status=success`, and `ppa_success=true`; join the
-  sole parent and assert its earlier status was not `success`; count each
-  problem at most once. Eligibility never conditions on failure availability,
-  activation, critic score, parent stage, or synthesis success. Verify unique
-  candidate and parent IDs.
+  sole parent, require its generation to be strictly earlier, and assert its
+  status was not `success`; count each problem at most once. Eligibility never
+  conditions on failure availability, activation, critic score, parent stage,
+  or synthesis success. Verify unique candidate and parent IDs.
+- On all 50 endpoint tasks, every `ppa_success=true` flag must join to one
+  finite generation-local `population_ppa_details` record with the same ID and
+  operator. The frozen 46-file reference-PPA hash manifest controls only HV
+  normalization; the other four tasks can count breadth but cannot contribute
+  headline HV.
 - A missing or malformed treatment unit retains its problem row as zero, fails
-  exact candidate accounting, and retires H10. A missing classic unit caused by
-  named infrastructure follows the governing required-rerun rule; because the
-  frozen worksheet admits no rerun, H10 remains `BLOCKED` pending an
+  exact candidate accounting, and retires H10. Malformed evidence and named
+  classic infrastructure absence require a SHA-256-bound unit-failure record;
+  unregistered absent classic evidence is invalid and retires H10. Registered
+  classic infrastructure follows the governing required-rerun rule; because
+  the frozen worksheet admits no rerun, H10 remains `BLOCKED` pending an
   outcome-blind reviewed worksheet revision. A genuine complete classic method
-  failure is a zero breadth row. Any other malformed classic evidence retires
-  H10. Historical controls are never substituted.
+  failure is a zero breadth row. Historical controls are never substituted.
 - Retain one paired repaired/not-repaired indicator per problem and seed, then
   report per-seed breadth/delta, W/L/T, seeded problem-cluster uncertainty,
   gain/loss problem IDs, leave-one-problem-out deltas, event counts,
   generation/operator concentration, missing/exclusion states, the fresh
-  classic breadth, historical seed sensitivity, and every noninferiority and
-  resource gate. The candidate reporter imports the shared gate implementation.
-- Reporter tests cover duplicate repairs on one design, success-origin and Gen0
-  exclusion, inconsistent `status`/`ppa_success`, a missing treatment unit, and
-  a gain in only one seed. They also distinguish raw `+1` from leave-one-out
-  `+2`, classic infrastructure absence from a complete zero, exact 200-row
-  output, and all shared per-seed gate translations.
+  classic breadth, and every noninferiority and resource gate. Historical
+  five-seed sensitivity remains preregistration context above, not a duplicated
+  terminal-report input. Final HV and HV-AUC are recomputed from the same
+  validated raw roots and exact valid-PPA candidate IDs, never imported from a
+  detached package. The candidate reporter imports the shared gate
+  implementation.
+- A complete classic unit with no valid-PPA result is a genuine classic method
+  failure: report it, exclude it from paired final-HV and HV-AUC gates, and
+  separately report whether treatment produced valid PPA on that unit.
+- Resolved `save_path`, config-source path, benchmark/problem identity, and
+  UTC unit start/end times must bind each raw unit to its canonical arm and
+  fall within that arm's admission/capture interval. Before accounting, each
+  arm emits `arm_evidence_manifest.sha256` over its exact regular-file tree;
+  the stage-final treatment manifest also binds `unit_failures.yaml`. Each
+  accounting record hashes that manifest, whose single scheduler-telemetry
+  entry supplies arm wall time. The consumed failure registry must be the
+  stage-root file sealed by the final treatment arm, report output stays
+  outside raw roots, the opening ledger hash reproduces, and each next
+  admission follows the prior capture. Historical controls are never copied
+  into an H10 arm.
+- Reporter tests cover raw repair/telemetry parsing, same-generation rejection,
+  adversarial activation and serialized-payload delivery, wrong paired configs,
+  real-commit implementation identity, exact arm-tree hashes, exact raw
+  HV/HV-AUC identity, classic method-failure exclusion, the catastrophic-HV
+  ratio, loss-only catastrophic coverage,
+  disjoint failure states, raw `+1` versus leave-one-out `+2`, a gain in only
+  one seed, classic infrastructure absence, exact 200-row accounting, shared
+  per-seed gates, ledger replay, and one end-to-end smoke report.
 - `RETIRED`: any leave-one-problem-out breadth delta is `<= 0` in either
   required seed, any noninferiority surface fails, gains are fabricated by
   missing treatment units, the mechanism or reporter fails audit, or any
@@ -318,5 +382,10 @@ See `related_work.md` and the preliminary reviews in `../../reviews/`.
 | TCAD novelty | `../../reviews/20260721_h10_scientific_review.md` | Exact delta is narrow and supports reliability only; 13/14. | `ACCEPT_PRELIMINARY` |
 | Evidence | `../../reviews/20260721_h10_evidence_review.md` | Counts reproduce; outcome association is not causal and cannot be the premise. | `ACCEPT_PRELIMINARY` |
 | Code simplicity | `../../reviews/20260721_h10_code_boundary_review.md` | One post-super subclass is clean; raw-payload alternatives are blocked. | `ACCEPT_PRELIMINARY` |
-| Exact-card closure | Pending independent rereview | Endpoint, worksheet, and reporter table are not yet frozen. | `PENDING` |
-| External review | Pending read-only Claude review | No exact-card verdict yet. | `PENDING` |
+| Exact-card closure | `../../reviews/20260721_h10_exact_card_internal_review.md` | Code, scientific, evidence, and simplicity reviewers closed every blocking finding. | `PASS_FOR_IMPLEMENTATION` |
+| External review | `../../reviews/20260721_h10_exact_card_claude_review.md` | The 600-second retry returned no substantive output. | `UNAVAILABLE` |
+
+The executable artifact schema and gate mapping are specified in
+`reporter_contract.md`. No H10 runtime source, implementation manifest,
+admission event, model call, synthesis evaluation, or benchmark result existed
+at this freeze.

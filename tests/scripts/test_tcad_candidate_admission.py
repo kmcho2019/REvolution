@@ -84,6 +84,8 @@ def _identity(candidate_id: str = "H9") -> dict[str, str]:
         "wave_id": "wave2",
         "candidate_id": candidate_id,
         "worksheet_sha256": "worksheet",
+        "implementation_manifest_path": "implementation.yaml",
+        "implementation_manifest_sha256": "f" * 64,
     }
 
 
@@ -119,6 +121,11 @@ def _cli(
     ledger_path: Path,
     argv: list[str],
 ) -> None:
+    argv = list(argv)
+    if argv[1] == "admit":
+        implementation = ledger_path.parent / "implementation.yaml"
+        implementation.write_text("version: 1\n", encoding="utf-8")
+        argv.extend(["--implementation-manifest", str(implementation)])
     monkeypatch.setattr(admission, "PROGRAM_LEDGER", ledger_path)
     monkeypatch.setattr(admission, "_utc_now", lambda: NOW)
     monkeypatch.setattr(sys, "argv", argv)
@@ -283,6 +290,12 @@ def test_cli_binds_admission_to_system_time_and_worksheet(
     assert event["worksheet_sha256"] == hashlib.sha256(
         worksheet_path.read_bytes()
     ).hexdigest()
+    implementation = ledger_path.parent / "implementation.yaml"
+    assert event["implementation_manifest_path"] == str(implementation.resolve())
+    assert (
+        event["implementation_manifest_sha256"]
+        == hashlib.sha256(implementation.read_bytes()).hexdigest()
+    )
 
 
 def test_cli_wrong_arm_does_not_mutate_ledger(
@@ -307,6 +320,44 @@ def test_cli_wrong_arm_does_not_mutate_ledger(
             "smoke_treatment",
         ],
     )
+    assert capsys.readouterr().out == "STOP\n"
+    assert ledger_path.read_text() == before
+
+
+def test_cli_rejects_changed_implementation_manifest(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    worksheet_path = tmp_path / "worksheet.yaml"
+    ledger_path = tmp_path / "ledger.jsonl"
+    evidence_path = tmp_path / "evidence.json"
+    accounting_path = tmp_path / "actual.yaml"
+    _write_worksheet(worksheet_path)
+    _write_ledger(ledger_path)
+    evidence_path.write_text("{}\n", encoding="utf-8")
+    _cli(
+        monkeypatch,
+        ledger_path,
+        ["tool", "admit", "--worksheet", str(worksheet_path), "--arm", "smoke_classic"],
+    )
+    capsys.readouterr()
+    _accounting(
+        accounting_path,
+        worksheet_path,
+        evidence_path,
+        "smoke_classic",
+        48,
+    )
+    (tmp_path / "implementation.yaml").write_text("version: 2\n", encoding="utf-8")
+    before = ledger_path.read_text()
+
+    _cli(
+        monkeypatch,
+        ledger_path,
+        ["tool", "record", "--worksheet", str(worksheet_path), "--actual", str(accounting_path)],
+    )
+
     assert capsys.readouterr().out == "STOP\n"
     assert ledger_path.read_text() == before
 
@@ -371,6 +422,8 @@ def test_concurrent_processes_admit_only_one_candidate(tmp_path: Path) -> None:
     ledger_path.parent.mkdir(parents=True)
     _write_ledger(ledger_path)
     commands = []
+    implementation = tmp_path / "implementation.yaml"
+    implementation.write_text("version: 1\n", encoding="utf-8")
     for index in range(4):
         worksheet_path = tmp_path / f"H{index}.yaml"
         _write_worksheet(worksheet_path, f"H{index}")
@@ -383,6 +436,8 @@ def test_concurrent_processes_admit_only_one_candidate(tmp_path: Path) -> None:
                 str(worksheet_path),
                 "--arm",
                 "smoke_classic",
+                "--implementation-manifest",
+                str(implementation),
             ]
         )
     processes = [

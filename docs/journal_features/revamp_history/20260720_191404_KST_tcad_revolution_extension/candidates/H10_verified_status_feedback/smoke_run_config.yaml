@@ -1,0 +1,35 @@
+backend: revolution
+benchmarks:
+  - RTLLM
+api_backend: vllm
+vllm_host: 20.0.0.103
+vllm_port: 8000
+vllm_min_model_len: 128000
+vllm_preflight_timeout_s: 5.0
+model_name: openai/gpt-oss-120b
+population_size: 8
+num_generations: 1
+generation_mode: whole
+population_pool_mode: dual
+strategy_selection: ucb
+evaluation_mode: strict_ablation
+classic_operator_kind: eoh_strategies
+eoh_success_operator_set: classic
+representation_kind: code_individual
+repair_kind: none
+prompt_profile: default
+prompt_root: null
+temperature: 1.0
+top_p: 1.0
+max_tokens: 128000
+diff_max_tokens: 128000
+max_llm_calls_per_problem: 100
+total_worker_slots: 12
+max_active_problems: 3
+max_workers_per_problem: 4
+backend_subdir: false
+seed: 42
+problems:
+  - Prob002_adder_16bit
+  - Prob025_sequence_detector
+  - Prob043_RAM

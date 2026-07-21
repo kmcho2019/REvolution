@@ -402,3 +402,41 @@ or holdout.
 - H10 is `PROPOSED`. No runtime source, config, worksheet, admission event,
   model call, synthesis evaluation, or benchmark result exists. Exact-card,
   budget, reporter, and external closure precede `READY`.
+
+## H10 Exact-Card And Provenance Freeze
+
+- Froze one fixed treatment: prepend the exact terminal failure status to
+  failed-candidate critic analysis while leaving success feedback, critic
+  artifacts, EoH operators, pools, UCB, selection, and evaluator unchanged.
+- Froze a six-arm Wave-2 ladder totaling 9,696 candidates, 20,600 calls,
+  65,406,676 tokens, 5,714 synthesis starts, and 20,542 endpoint seconds. The
+  representative screen and mechanism revisions have literal zero budget.
+- The candidate reporter computes repair breadth, final HV, HV-AUC, coverage,
+  uncertainty, resources, and terminal gates from exact raw candidate IDs. It
+  excludes complete classic method failures from paired PPA, requires the
+  `0.90` catastrophic HV ratio, and imports shared per-seed and loss-only
+  coverage gates.
+- A prospective provenance amendment binds a real implementation commit,
+  tracked implementation manifest, exact committed/current dependency bytes,
+  immutable critic and prompt-use telemetry, exact arm trees, failure registry,
+  scheduler evidence, opening-ledger prefix, and cross-arm chronology.
+- Four independent final reviewers returned `PASS` for code boundary,
+  scientific translation, evidence provenance, and simplicity. Their closure
+  is `reviews/20260721_h10_exact_card_internal_review.md`. An external
+  600-second exact-card retry timed out without output and remains
+  `UNAVAILABLE`, not approval.
+- The final evidence pass followed adversarial fixes for implementation
+  identity, raw-tree substitution, output-root overlap, classic missing states,
+  catastrophic gates, serialized feedback delivery, ledger chronology, and
+  every non-ledger program-manifest path/hash dependency.
+- Wave-2 provenance amendment SHA-256:
+  `2a541309ba17f65e1682744bd2cfc941011b82cd7948fd597ba5a7cfde366c7f`.
+- Program-manifest version 6 SHA-256:
+  `e54c59823640604f8669ca2fae2b7ced8d9dc5c3d76a310cd964c4948e7c06d6`.
+- Focused reporter/admission validation passed 64 tests after the final
+  dependency fix. The final freeze passed 68 relevant tests, Ruff including
+  explicit complexity checks, Pyright, `ty`, YAML/hash validation, and the full
+  repository at 1,167 passed with 4 skips.
+- H10 becomes `READY`, which authorizes implementation only. No H10 runtime,
+  implementation manifest, admission event, model call, synthesis evaluation,
+  or benchmark result existed at this freeze.

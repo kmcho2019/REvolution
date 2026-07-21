@@ -174,16 +174,30 @@ def _load_ledger(path: Path) -> list[dict[str, Any]]:
         "wave_id": "wave2",
     }
     arm_events = events[1:]
-    common = {"kind", "wave_id", "candidate_id", "worksheet_sha256", "arm_id"}
+    common = {
+        "kind",
+        "wave_id",
+        "candidate_id",
+        "worksheet_sha256",
+        "implementation_manifest_path",
+        "implementation_manifest_sha256",
+        "arm_id",
+    }
     accounting_hashes = set()
     evidence_hashes = set()
-    candidate_hashes: dict[str, set[str]] = {}
+    candidate_identities: dict[str, tuple[str, str, str]] = {}
     for event in arm_events:
         assert event["wave_id"] == "wave2"
         assert isinstance(event["candidate_id"], str) and event["candidate_id"]
-        candidate_hashes.setdefault(event["candidate_id"], set()).add(
-            event["worksheet_sha256"]
+        identity = (
+            event["worksheet_sha256"],
+            event["implementation_manifest_path"],
+            event["implementation_manifest_sha256"],
         )
+        assert (
+            candidate_identities.setdefault(event["candidate_id"], identity) == identity
+        )
+        assert re.fullmatch(r"[0-9a-f]{64}", event["implementation_manifest_sha256"])
         match event["kind"]:
             case "admitted":
                 assert set(event) == common | {"admitted_at_utc"}
@@ -239,21 +253,20 @@ def _load_ledger(path: Path) -> list[dict[str, Any]]:
         assert hashlib.sha256(evidence.read_bytes()).hexdigest() == event[
             "evidence_sha256"
         ]
-    assert all(len(hashes) == 1 for hashes in candidate_hashes.values())
     candidate_order: list[str] = []
     for event in arm_events:
         candidate_id = event["candidate_id"]
-        if not candidate_order or candidate_id != candidate_order[-1]:
-            assert candidate_id not in candidate_order
-            if candidate_order:
-                previous = _candidate_events(arm_events, candidate_order[-1])
-                assert _candidate_finished(previous)
+        if candidate_id not in candidate_order:
             candidate_order.append(candidate_id)
+        assert candidate_id == candidate_order[-1]
     for candidate_id in candidate_order:
         candidate_events = [
             event for event in arm_events if event["candidate_id"] == candidate_id
         ]
         assert _ledger_position(candidate_events) is not None
+        assert candidate_id == candidate_order[-1] or _candidate_finished(
+            candidate_events
+        )
     return arm_events
 
 
@@ -436,6 +449,15 @@ def _utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _implementation_manifest(path: Path) -> dict[str, str]:
+    path = path.resolve()
+    assert path.is_file()
+    return {
+        "implementation_manifest_path": str(path),
+        "implementation_manifest_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+    }
+
+
 def _run_locked(args: argparse.Namespace) -> Status:
     worksheet = _load_worksheet(args.worksheet)
     worksheet_sha256 = hashlib.sha256(args.worksheet.read_bytes()).hexdigest()
@@ -448,10 +470,22 @@ def _run_locked(args: argparse.Namespace) -> Status:
         )
         position = _ledger_position(current)
         assert position is not None
+        assert args.command == "admit" or current
+        manifest_path = (
+            args.implementation_manifest
+            if args.command == "admit"
+            else Path(current[-1]["implementation_manifest_path"])
+        )
+        implementation = _implementation_manifest(manifest_path)
+        if current and any(
+            current[-1][name] != value for name, value in implementation.items()
+        ):
+            return "STOP"
         identity = {
             "wave_id": "wave2",
             "candidate_id": worksheet["candidate_id"],
             "worksheet_sha256": worksheet_sha256,
+            **implementation,
         }
         now = _utc_now()
 
@@ -547,6 +581,7 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest="command", required=True)
     admit = subparsers.add_parser("admit")
     admit.add_argument("--worksheet", type=Path, required=True)
+    admit.add_argument("--implementation-manifest", type=Path, required=True)
     admit.add_argument("--arm", required=True)
     record = subparsers.add_parser("record")
     record.add_argument("--worksheet", type=Path, required=True)
