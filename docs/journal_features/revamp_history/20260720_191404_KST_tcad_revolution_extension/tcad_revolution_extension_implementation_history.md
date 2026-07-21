@@ -371,3 +371,34 @@ or holdout.
 - H9 is `RETIRED` before live spend. Global diff ablations and patch-policy
   variants are closed. A role-conditioned scope policy would be a distinct
   candidate requiring its own novelty and clean-isolation review.
+
+## H10 Proposal Selection
+
+- A follow-up implementation audit rejected role-conditioned diff generation:
+  classic hardcodes generation mode inside both pool loops, so a clean subclass
+  would require copying the monolithic generation method or hidden mutable
+  dispatch state.
+- A fresh classic-only feedback audit then joined all 4,800 candidates from the
+  H5 matched controls to their terminal status and archived critic score. Clear
+  format/syntax/functionality failures disagree with the score contract in
+  687/2,309 cases; successes disagree in 4/2,067 cases. Functional failures
+  include 215 false score-10 records.
+- The reproducible premise package is commit
+  `8a20c2f69aa535ea6ffe9f8f37f6ccc2cdbf308e`. It also reproduces the
+  observational failed-parent outcomes: 49/972 valid-PPA children for compliant
+  critic records, 16/415 for mismatches, and 8/271 for undefined synthesis
+  records. This join is confounded and is not the causal premise.
+- The strict missing-testbench phrase audit found zero. A prior broad-regex
+  count of 366 was false and is withdrawn from every rationale and gate.
+- Scientific, evidence, and implementation reviewers rejected raw
+  evaluator-payload, all-candidate, success-only, and mismatch-triggered
+  variants. The raw failure payload is not available after the clean subclass
+  boundary and can materially enlarge parent prompts.
+- All three reviewers accepted only one fixed categorical invariant: prepend
+  the existing terminal failure status to unchanged critic analysis, leave the
+  success path byte-identical, and preserve every critic call and artifact.
+  Preliminary natural-extension score is 13/14 and the role is supporting
+  reliability.
+- H10 is `PROPOSED`. No runtime source, config, worksheet, admission event,
+  model call, synthesis evaluation, or benchmark result exists. Exact-card,
+  budget, reporter, and external closure precede `READY`.

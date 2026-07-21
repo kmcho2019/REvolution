@@ -1,7 +1,7 @@
 # Audit-Derived Candidate Ranking
 
-Status: `WAVE_2_OPEN`; H5 and H9 are `RETIRED`. Wave 2 has no active candidate
-and requires a fresh audit-derived mechanism review.
+Status: `WAVE_2_H10_PROPOSED`; H5 and H9 are `RETIRED`. H10 is the only active
+proposal and cannot advance before exact-card and budget closure.
 
 The ranking combines the conference audit, completed QD/Pareto/operator
 evidence, implementation isolation, and current related-work collision. It is
@@ -9,13 +9,14 @@ not a quota or a parameter queue.
 
 | Rank | ID | Mechanism | Score | Intended role | Disposition |
 | ---: | --- | --- | ---: | --- | --- |
-| 1 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `RETIRED`: seed-1001 valid-PPA coverage exceeds the frozen deficit; budget ceiling also exceeded |
-| 2 | H4 | Test a confirmed method on seeded RTL optimization. | 11/14 provisional | Generalization | Hold until an algorithmic finalist exists |
-| 3 | H8 | Retain failed candidates by furthest verification stage. | 10/14 provisional | Reliability | Do not implement: COEVO collision and code-copy cost |
-| 4 | H9 | Use strict parent-relative deltas for every post-initialization mutation. | 9/14 | Primary core correction | `RETIRED`: direct AlphaEvolve/CodeEvolve collision and failed-parent premise reversal |
-| 5 | H3 | Contract-preserving local patch evolution. | 9/14 | Reliability | Retire current card: combined mechanisms and crowded novelty |
-| 6 | H1 | Bottleneck-conditioned strategy adaptation. | 8/14 | Primary | Retire current card: COEVO collision and excess state |
-| 7 | H2 | Preference-decomposed success populations. | 8/14 | Primary | Retire current card: F41 negative and POET/COEVO collision |
+| 1 | H10 | Preserve typed terminal status alongside unchanged critic analysis for failed parents. | 13/14 preliminary | Supporting reliability | `PROPOSED`: close exact endpoint, worksheet, reporter, and reviews |
+| 2 | H5 | Route all failed-parent offspring through the existing dedicated M-F correction intent; leave classic success evolution unchanged. | 11/14 | Primary core correction | `RETIRED`: seed-1001 valid-PPA coverage exceeds the frozen deficit; budget ceiling also exceeded |
+| 3 | H4 | Test a confirmed method on seeded RTL optimization. | 11/14 provisional | Generalization | Hold until an algorithmic finalist exists |
+| 4 | H8 | Retain failed candidates by furthest verification stage. | 10/14 provisional | Reliability | Do not implement: COEVO collision and code-copy cost |
+| 5 | H9 | Use strict parent-relative deltas for every post-initialization mutation. | 9/14 | Primary core correction | `RETIRED`: direct AlphaEvolve/CodeEvolve collision and failed-parent premise reversal |
+| 6 | H3 | Contract-preserving local patch evolution. | 9/14 | Reliability | Retire current card: combined mechanisms and crowded novelty |
+| 7 | H1 | Bottleneck-conditioned strategy adaptation. | 8/14 | Primary | Retire current card: COEVO collision and excess state |
+| 8 | H2 | Preference-decomposed success populations. | 8/14 | Primary | Retire current card: F41 negative and POET/COEVO collision |
 
 Score vectors below follow the rubric order: conference continuity, evidence,
 hardware/CAD grounding, generality, mechanistic clarity, simplicity, and
@@ -27,6 +28,7 @@ novelty/paper value.
 | H4 | 2/2/2/2/1/1/1 | HOLD: requires an algorithmic finalist |
 | H8 | 2/2/2/2/1/0/1 | REJECT: monolithic code-copy surface |
 | H9 | 2/1/1/2/1/2/0 | REJECT: novelty zero and treatment exceeds measured premise |
+| H10 | 2/2/2/2/2/2/1 | PRELIMINARY PASS: exact-card and resource closure pending |
 | H3 | 2/0/2/2/1/1/1 | REJECT: reviewed card combines mechanisms; score is historical |
 | H1 | 2/1/0/2/1/1/1 | REJECT: low score and COEVO collision |
 | H2 | 2/0/1/2/1/1/1 | REJECT: F41 evidence and related work |
@@ -55,9 +57,20 @@ also covered only successful-parent refinement: failed-parent repairs showed
 the opposite edit-breadth direction in the fresh classic controls.
 
 Do not run global whole-versus-diff generation or rescue H9 through patch
-parameters. A role-conditioned scope policy is a distinct idea and requires a
-new card, a nonzero related-work delta, and a simple isolation boundary before
-it can occupy Wave 2's second mechanism slot.
+parameters. A role-conditioned scope policy was audited as a distinct idea and
+failed the simple-isolation boundary before receiving a card or live spend.
+
+The role-conditioned scope idea failed its implementation audit because classic
+hardcodes generation mode inside both monolithic pool loops. H10 therefore
+addresses a different measured weakness: terminal verifier state is omitted
+from ordinary parent memory, while 687/2,309 clear failure critic records
+disagree with the status contract. The accepted proposal adds one fixed typed
+status line to failed feedback and leaves critic prose, operators, pools, UCB,
+and the success path unchanged. It is a supporting reliability card only.
+
+Raw evaluator-payload replacement, success-only replacement, and
+mismatch-triggered policies are rejected. They exceed the evidence scope,
+require more invasive state, or create material prompt-resource risk.
 
 ## Evidence Outside The Candidate Wave
 

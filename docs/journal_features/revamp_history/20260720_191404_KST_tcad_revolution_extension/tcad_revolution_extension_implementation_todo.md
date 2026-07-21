@@ -75,6 +75,10 @@ detail in the append-only program and candidate histories.
 - [x] Start Wave 2 from the audited mutation-scope weakness with H9, never an
   H5 parameter or prompt mixture.
 - [x] Retire H9 before implementation after novelty and premise-scope review.
+- [x] Select H10 verified terminal-status feedback as Wave 2's second distinct
+  mechanism after preliminary scientific, evidence, and code review.
+- [ ] Close H10's exact card, reporter contract, six-arm worksheet, and external
+  review before implementation or admission.
 - [ ] Select at most three distinct Wave 2 mechanisms.
 - [ ] Do not relaunch retired mechanisms as adjacent knobs or combinations.
 - [ ] Nominate at most two strongest candidates for confirmation.

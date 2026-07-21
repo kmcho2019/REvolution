@@ -1,6 +1,6 @@
 # TCAD Extension Portfolio
 
-Status: `WAVE_2_OPEN_NO_FINALIST`
+Status: `WAVE_2_H10_PROPOSED_NO_FINALIST`
 
 This is the final advisor-facing synthesis of the discovery program. Update it
 after every candidate transition. Detailed commands and raw results remain in
@@ -19,10 +19,11 @@ Allowed outcomes: `JOURNAL_READY`, `PORTFOLIO_READY`, `PIVOT_REQUIRED`.
 | --- | --- | --- | --- | --- |
 | 1 | Component evidence | The conference validates the evolutionary loop only as a bundle; UCB and operator utility have no isolated evidence. | A journal extension cannot build its rationale on unverified internal mechanisms. | Run classic-only telemetry and the smallest fixed-policy/operator-subtraction ablations. |
 | 2 | Failure handling | Typed verification stages all receive `-inf`; old failed lineages are dropped; fail parents are uniform and only full repair earns reward. | Existing EDA evidence is discarded even though functionality is the main bottleneck. | Review one minimal stage-aware card against COEVO; do not use continuous reward or an adaptive gate. |
-| 3 | Operator grounding | Most prompts express generic code actions rather than validated RTL transformations; Fusion has no positive isolated evidence. | Weakens differentiation from EoH and the hardware-design argument. | Measure valid-child, transition, and PPA yield by operator before changing prompts. |
-| 4 | Mutation scope | Broad whole-output edits correlate with lower valid-PPA yield for successful-parent refinement, but failed-parent repair shows the opposite direction. | One global generation representation cannot be justified from the observed role-dependent evidence. | Retire global strict-diff H9; review role-conditioned scope only if it has a clean implementation and novel claim. |
-| 5 | PPA scalarization | One scalar obscures tradeoffs, but direct Pareto and QD replacements lost final HV. | The conceptual flaw does not imply that a known multiobjective transplant will work at this budget. | Preserve classic exploitation; retire H2 as written. |
-| 6 | Scope and evidence | Generation-only tasks and success-conditioned PPA averages understate optimization and missing-output risks. | Limits generality and reviewer confidence. | Use hardened paired reporting now; reserve seeded optimization for finalist generalization. |
+| 3 | Feedback memory | Terminal status determines pool membership but is omitted from ordinary parent serialization; 687/2,309 clear failure critic records disagree with its score contract. | A failed parent can be reused with free-form analysis that contradicts the engine's authoritative state. | Test one fixed terminal-status line while preserving critic prose, calls, operators, and routing. |
+| 4 | Operator grounding | Most prompts express generic code actions rather than validated RTL transformations; Fusion has no positive isolated evidence. | Weakens differentiation from EoH and the hardware-design argument. | Measure valid-child, transition, and PPA yield by operator before changing prompts. |
+| 5 | Mutation scope | Broad whole-output edits correlate with lower valid-PPA yield for successful-parent refinement, but failed-parent repair shows the opposite direction. | One global generation representation cannot be justified from the observed role-dependent evidence. | Retire global strict-diff H9; role-conditioned scope also fails the clean-isolation gate. |
+| 6 | PPA scalarization | One scalar obscures tradeoffs, but direct Pareto and QD replacements lost final HV. | The conceptual flaw does not imply that a known multiobjective transplant will work at this budget. | Preserve classic exploitation; retire H2 as written. |
+| 7 | Scope and evidence | Generation-only tasks and success-conditioned PPA averages understate optimization and missing-output risks. | Limits generality and reviewer confidence. | Use hardened paired reporting now; reserve seeded optimization for finalist generalization. |
 
 ## Candidate Decision Summary
 
@@ -93,6 +94,12 @@ distinct measured weakness; it cannot be an H5 routing ratio, global diff
 toggle, patch-policy knob, or interaction. Seeded-optimization generalization
 remains contingent on an independently supported algorithmic finalist.
 
+H10 is now the sole active proposal. It preserves one typed terminal-status
+line beside unchanged critic analysis for failed parents. Preliminary reviews
+accept it only as a supporting reliability card. Exact endpoint, budget,
+reporter, and external closure are still required before implementation or
+live spend.
+
 ## Artifact Index
 
 Link the frozen manifests, raw outputs, generated reports, decisions, code
@@ -118,6 +125,12 @@ commits, review records, and claim/evidence rows for every evaluated candidate.
   `candidates/H9_strict_delta_evolution/decision.md`,
   `reviews/20260721_h9_novelty_review.md`,
   `reviews/20260721_h9_methodology_review.md`.
+- H10 proposal and classic-only premise:
+  `candidates/H10_verified_status_feedback/hypothesis_card.md`,
+  `shared/verified_status_feedback_premise/README.md`,
+  `reviews/20260721_h10_scientific_review.md`,
+  `reviews/20260721_h10_code_boundary_review.md`,
+  `reviews/20260721_h10_evidence_review.md`.
 - Historical no-C-F record:
   `candidates/H6_fusion_free_success/decision.md`.
 - Generated evidence root:
